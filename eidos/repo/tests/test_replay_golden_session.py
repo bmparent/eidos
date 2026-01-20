@@ -7,6 +7,9 @@ Verifies that the engine runs deterministically on a known dataset.
 import pytest
 import shutil
 import os
+
+pytest.importorskip("torch")
+
 from eidos_brain.engine.adapters import run_session
 
 @pytest.fixture
@@ -28,7 +31,8 @@ def test_golden_session_replay(clean_artifact_root):
         },
         "engine_config": {
             "steps": 100,
-            "warmup_cap": 10
+            "warmup_cap": 10,
+            "reservoir": 128
         }
     }
     
