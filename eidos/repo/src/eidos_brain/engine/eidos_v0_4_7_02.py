@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 """
 EIDOS_BRAIN_UNIFIED_v0_4.7.02
 
@@ -56,6 +58,7 @@ otherwise /content/eidos_artifacts).
 
 import os
 import sys
+from copy import deepcopy
 
 # =============================================================================
 # USER CONFIG – EDIT THESE BETWEEN RUNS (NO HARDCODED AEP)
@@ -110,11 +113,13 @@ if IN_COLAB:
         LOCAL_TARGET = "/content"  # default to /content root for local scan
 
 # Preflight helper to prevent cryptic 'file not found' later
-def _preflight_inputs():
+def _preflight_inputs(config_mode=None):
     dst = (DATA_SOURCE_TYPE or "").upper()
     if dst == "LOCAL":
         # Only check if strictly MANUALLY configured (NL mode manages this dynamically)
-        if locals().get("CONFIG_MODE", "MANUAL") == "NL_GEMINI": return
+        mode = (config_mode or globals().get("CONFIG_MODE", "MANUAL")).upper()
+        if mode == "NL_GEMINI":
+            return
 
         if (LOCAL_MODE or "ARCHIVE").upper() == "ARCHIVE" and not os.path.isdir(LOCAL_TARGET):
             # If default E:\ failed locally (not colab), warn but don't hard crash yet? 
@@ -199,6 +204,31 @@ NL_SAFETY_REQUIRE_ALLOWLIST = True
 NL_LIMITS_MAX_RESULTS = 25
 NL_LIMITS_MAX_ROWS = 200000
 NL_LIMITS_MAX_FRAMES = 250000
+
+# Runtime defaults (for multi-session isolation)
+_RUNTIME_DEFAULTS = {
+    "DATA_SOURCE_TYPE": DATA_SOURCE_TYPE,
+    "PROFILE_LABEL": PROFILE_LABEL,
+    "LOCAL_MODE": LOCAL_MODE,
+    "LOCAL_TARGET": LOCAL_TARGET,
+    "LOCAL_MAX_FRAMES": LOCAL_MAX_FRAMES,
+    "LOCAL_MAX_LINES_PER_FILE": LOCAL_MAX_LINES_PER_FILE,
+    "LOCAL_SNIPPET_CHARS": LOCAL_SNIPPET_CHARS,
+    "STREAM_KIND": STREAM_KIND,
+    "STREAM_URL": STREAM_URL,
+    "STREAM_URL_HEADERS": deepcopy(STREAM_URL_HEADERS),
+    "STREAM_URL_TIMEOUT": STREAM_URL_TIMEOUT,
+    "STREAM_IP_ENDPOINT": STREAM_IP_ENDPOINT,
+    "KAGGLE_DATASET_ID": KAGGLE_DATASET_ID,
+    "KAGGLE_FILE_NAME": KAGGLE_FILE_NAME,
+    "KAGGLE_MAX_ROWS": KAGGLE_MAX_ROWS,
+    "KAGGLE_USE_KAGGLEHUB": KAGGLE_USE_KAGGLEHUB,
+    "ARTIFACT_ROOT_PREFERRED": ARTIFACT_ROOT_PREFERRED,
+    "CONFIG_MODE": CONFIG_MODE,
+    "NL_MODE": NL_MODE,
+    "LLM_PROVIDER": LLM_PROVIDER,
+    "NL_COMMAND": NL_COMMAND,
+}
 
 # Fix 3: Centralized Gemini API key handling
 def get_secret(name: str) -> str:
@@ -311,6 +341,8 @@ EIDOS_BRAIN_CONFIG = {
     },
 }
 
+DEFAULT_EIDOS_BRAIN_CONFIG = deepcopy(EIDOS_BRAIN_CONFIG)
+
 # =============================================================================
 # IMPORTS & PHYSICS INITIALIZATION
 # =============================================================================
@@ -333,7 +365,12 @@ import queue
 import struct
 
 import numpy as np
-import torch
+try:
+    import torch  # type: ignore
+    _TORCH_AVAILABLE = True
+except ImportError:
+    torch = None  # type: ignore
+    _TORCH_AVAILABLE = False
 import pandas as pd
 from pathlib import Path
 import re  # PATCH: needed by tokenize_smiles()
@@ -352,8 +389,10 @@ if MISSING_DEPS:
 # Patch: Google Cloud Storage Import
 try:
     from google.cloud import storage as gcs
+    _GCS_AVAILABLE = True
 except ImportError:
-    pass
+    gcs = None
+    _GCS_AVAILABLE = False
 
 #str_join_fix
 
@@ -446,7 +485,25 @@ def json_sanitize(obj, max_elems: int = 256):
     return str(obj)
 
 
-def _gpu_banner(device: torch.device, dtype: torch.dtype, tf32: bool, deterministic: bool):
+def _require_torch():
+    global torch, _TORCH_AVAILABLE
+    if _TORCH_AVAILABLE and torch is not None:
+        return torch
+    try:
+        import torch as torch_mod  # type: ignore
+    except ImportError as e:
+        raise ImportError(
+            "torch is required to run the Eidos engine. Install with `pip install torch`."
+        ) from e
+    torch = torch_mod
+    _TORCH_AVAILABLE = True
+    return torch_mod
+
+_TORCH_INITIALIZED = False
+device = None
+DTYPE = None
+
+def _gpu_banner(device, dtype, tf32: bool, deterministic: bool):
     name = "CPU"
     if device.type == "cuda":
         props = torch.cuda.get_device_properties(device)
@@ -457,35 +514,36 @@ def _gpu_banner(device: torch.device, dtype: torch.dtype, tf32: bool, determinis
     print(f"    TF32        = {tf32}")
     print(f"    deterministic= {deterministic}")
 
-# --- Compute policy (GPU first, fast by default) ---
-EIDOS_BRAIN_CONFIG.setdefault("precision", "float32")  # "float32" | "float64"
-EIDOS_BRAIN_CONFIG.setdefault("use_tf32", True)         # TF32 speeds up matmul on Ampere+ (safe for most monitoring)
-EIDOS_BRAIN_CONFIG.setdefault("deterministic_cuda", False)  # determinism costs speed
+def _initialize_torch_runtime():
+    global _TORCH_INITIALIZED, device, DTYPE
+    if _TORCH_INITIALIZED:
+        return
+    _require_torch()
 
-# Choose device
-device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+    # --- Compute policy (GPU first, fast by default) ---
+    EIDOS_BRAIN_CONFIG.setdefault("precision", "float32")  # "float32" | "float64"
+    EIDOS_BRAIN_CONFIG.setdefault("use_tf32", True)         # TF32 speeds up matmul on Ampere+ (safe for most monitoring)
+    EIDOS_BRAIN_CONFIG.setdefault("deterministic_cuda", False)  # determinism costs speed
 
-# Choose dtype
-_PREC = str(EIDOS_BRAIN_CONFIG["precision"]).lower()
-DTYPE = torch.float64 if _PREC in ("float64", "fp64", "64") else torch.float32
+    device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
-# Determinism (only if you really need repeatability)
-if EIDOS_BRAIN_CONFIG["deterministic_cuda"] and device.type == "cuda":
-    os.environ["CUBLAS_WORKSPACE_CONFIG"] = ":4096:8"
-    torch.use_deterministic_algorithms(True)
+    _PREC = str(EIDOS_BRAIN_CONFIG["precision"]).lower()
+    DTYPE = torch.float64 if _PREC in ("float64", "fp64", "64") else torch.float32
 
-# TF32 (performance win on Ampere+)
-if device.type == "cuda":
-    torch.backends.cuda.matmul.allow_tf32 = bool(EIDOS_BRAIN_CONFIG["use_tf32"])
-    torch.backends.cudnn.allow_tf32 = bool(EIDOS_BRAIN_CONFIG["use_tf32"])
+    if EIDOS_BRAIN_CONFIG["deterministic_cuda"] and device.type == "cuda":
+        os.environ["CUBLAS_WORKSPACE_CONFIG"] = ":4096:8"
+        torch.use_deterministic_algorithms(True)
 
-# NOTE: do NOT set a global default dtype unless you must.
-# Keep default dtype as torch.float32 and pass dtype=DTYPE when you create tensors.
+    if device.type == "cuda":
+        torch.backends.cuda.matmul.allow_tf32 = bool(EIDOS_BRAIN_CONFIG["use_tf32"])
+        torch.backends.cudnn.allow_tf32 = bool(EIDOS_BRAIN_CONFIG["use_tf32"])
 
-_gpu_banner(device, DTYPE, EIDOS_BRAIN_CONFIG["use_tf32"], EIDOS_BRAIN_CONFIG["deterministic_cuda"])
+    _gpu_banner(device, DTYPE, EIDOS_BRAIN_CONFIG["use_tf32"], EIDOS_BRAIN_CONFIG["deterministic_cuda"])
 
-prec_name = "Float64" if DTYPE == torch.float64 else "Float32"
-print(f">>> Hardware: {device.type} | Precision: {prec_name}")
+    prec_name = "Float64" if DTYPE == torch.float64 else "Float32"
+    print(f">>> Hardware: {device.type} | Precision: {prec_name}")
+    _TORCH_INITIALIZED = True
+
 ENGINE_VERSION = "0.4.7.02"
 print(f">>> Mode: EIDOS BRAIN UNIFIED v{ENGINE_VERSION} + Hippocampus (HDC/VSA)")
 
@@ -558,6 +616,11 @@ class LocalHiveStore(HiveStore):
 class GCSHiveStore(HiveStore):
     """Google Cloud Storage backend."""
     def __init__(self, project_id: str = "sentiment-scrapper"):
+        if not _GCS_AVAILABLE:
+            raise RuntimeError(
+                "HIVE_BACKEND=GCS requires google-cloud-storage. "
+                "Install with `pip install google-cloud-storage`."
+            )
         try:
             self.client = gcs.Client(project=project_id)
         except Exception as e: 
@@ -638,6 +701,11 @@ HIVE_BACKEND = os.environ.get("HIVE_BACKEND", "LOCAL").upper()
 print(f">>> HIVE BACKEND: {HIVE_BACKEND}")
 
 if HIVE_BACKEND == "GCS":
+    if not _GCS_AVAILABLE:
+        raise RuntimeError(
+            "HIVE_BACKEND=GCS requires google-cloud-storage. "
+            "Install with `pip install google-cloud-storage`."
+        )
     hive_store = GCSHiveStore()
 else:
     hive_store = LocalHiveStore()
@@ -647,24 +715,55 @@ else:
 # UTILS
 # =============================================================================
 
+def _require_websockets():
+    try:
+        import websockets  # type: ignore
+    except ImportError as e:
+        raise ImportError(
+            "websockets is required for ws/wss streaming. Install with `pip install websockets`."
+        ) from e
+    return websockets
+
+def _require_pubsub():
+    try:
+        from google.cloud import pubsub_v1
+    except ImportError as e:
+        raise ImportError(
+            "google-cloud-pubsub is required for HIVE_PUBSUB streaming. "
+            "Install with `pip install google-cloud-pubsub`."
+        ) from e
+    return pubsub_v1
+
+WS_ERROR_SENTINEL = "__EIDOS_WS_ERROR__"
+
 def websocket_lines_to_queue(url: str, headers: Dict[str, str], out_q: "queue.Queue[str]", stop_evt: threading.Event):
+    """Run websocket consumer in a dedicated thread with its own event loop."""
     import asyncio
-    import websockets
+    websockets = _require_websockets()
 
     async def _runner():
         # Fix 6: WebSocket headers are ignored
         extra_headers = [(k, v) for k, v in (headers or {}).items()]
-        async with websockets.connect(url, extra_headers=extra_headers) as ws:
-            while not stop_evt.is_set():
-                try:
+        try:
+            async with websockets.connect(url, extra_headers=extra_headers) as ws:
+                while not stop_evt.is_set():
                     msg = await ws.recv()
-                except Exception:
-                    break
-                if msg is None:
-                    break
-                out_q.put(str(msg))
+                    if msg is None:
+                        break
+                    out_q.put(str(msg))
+        except Exception as e:
+            if not stop_evt.is_set():
+                raise e
 
-    asyncio.run(_runner())
+    loop = asyncio.new_event_loop()
+    asyncio.set_event_loop(loop)
+    try:
+        loop.run_until_complete(_runner())
+    except Exception as e:
+        if not stop_evt.is_set():
+            out_q.put(f"{WS_ERROR_SENTINEL}:{type(e).__name__}:{e}")
+    finally:
+        loop.close()
 
 def estimate_spectral_radius_power_iter(W: torch.Tensor, iters: int = 50) -> float:
     # Estimates max |λ| for W via power iteration on W^T W
@@ -3357,10 +3456,7 @@ def stream_http_lines(url: str, headers: Dict[str, str], timeout: Tuple[int, int
             yield line
 
 async def stream_ws_lines(url: str, headers: Dict[str, str]) -> Iterator[str]:
-    try:
-        import websockets  # type: ignore
-    except ImportError as e:
-        raise ImportError("websockets is required for ws/wss streaming. Install with `!pip install websockets`.") from e
+    websockets = _require_websockets()
 
     extra_headers = [(k, v) for k, v in headers.items()] if headers else None
     async with websockets.connect(url, extra_headers=extra_headers) as ws:
@@ -3455,6 +3551,7 @@ def stream_live_frames(
             raise ValueError("STREAM_URL must be set when STREAM_KIND='URL'.")
 
         if url.lower().startswith(("ws://", "wss://")):
+            _require_websockets()
             # Fix 3: Websocket streaming in Colab/Jupyter (Thread + Queue)
             q = queue.Queue(maxsize=2048)
             stop_evt = threading.Event()
@@ -3465,49 +3562,53 @@ def stream_live_frames(
                 daemon=True,
             )
             t.start()
-
-            while count < max_frames:
-                try:
-                    line = q.get(timeout=1.0) # Wait for data
-                except queue.Empty:
-                    if not t.is_alive():
-                        break # Thread died
-                    continue
-
-                vec = _try_parse_numeric_list_from_line(line)
-                meta_extra = {}
-
-                if vec is None and STREAM_SECURITY_FEATURIZE:
-                    sec_vec, sec_snip, sec_meta = featurize_security_event(
-                        line,
-                        dim=features,
-                        seed=int(STREAM_PROJECT_SEED),
-                        fmt=STREAM_EVENT_FORMAT,
-                        prefix_ip=bool(STREAM_SECURITY_PREFIX_IP),
-                    )
-                    if sec_vec is not None:
-                        vec = sec_vec
-                        meta_extra = {"snippet": sec_snip, **sec_meta}
-
-                if vec is None:
-                    if not text_embed:
+            try:
+                while count < max_frames:
+                    try:
+                        line = q.get(timeout=1.0) # Wait for data
+                    except queue.Empty:
+                        if not t.is_alive():
+                            break # Thread died
                         continue
-                    vec = embed_line_to_vec(line, features=features)
 
-                meta = {
-                    "kind": "stream",
-                    "stream_kind": "ws",
-                    "source": url,
-                    "idx": count,
-                    "snippet": _clean_snippet(line, 160)
-                }
-                meta.update(meta_extra)
-                out, meta = _handle_vector(vec, meta)
-                yield out, meta
+                    if isinstance(line, str) and line.startswith(WS_ERROR_SENTINEL):
+                        raise RuntimeError(f"Websocket stream error: {line}")
 
-                count += 1
+                    vec = _try_parse_numeric_list_from_line(line)
+                    meta_extra = {}
 
-            stop_evt.set() # Signal thread to stop
+                    if vec is None and STREAM_SECURITY_FEATURIZE:
+                        sec_vec, sec_snip, sec_meta = featurize_security_event(
+                            line,
+                            dim=features,
+                            seed=int(STREAM_PROJECT_SEED),
+                            fmt=STREAM_EVENT_FORMAT,
+                            prefix_ip=bool(STREAM_SECURITY_PREFIX_IP),
+                        )
+                        if sec_vec is not None:
+                            vec = sec_vec
+                            meta_extra = {"snippet": sec_snip, **sec_meta}
+
+                    if vec is None:
+                        if not text_embed:
+                            continue
+                        vec = embed_line_to_vec(line, features=features)
+
+                    meta = {
+                        "kind": "stream",
+                        "stream_kind": "ws",
+                        "source": url,
+                        "idx": count,
+                        "snippet": _clean_snippet(line, 160)
+                    }
+                    meta.update(meta_extra)
+                    out, meta = _handle_vector(vec, meta)
+                    yield out, meta
+
+                    count += 1
+            finally:
+                stop_evt.set() # Signal thread to stop
+                t.join(timeout=2.0)
 
         else:
             # HTTP(S) line stream
@@ -4405,11 +4506,7 @@ def run_sentinel_stream(
 
 def _stream_pubsub_generator(project_id: str, sub_id: str, features: int, max_frames: int):
     """Synchronous pull loop for Pub/Sub."""
-    try:
-        from google.cloud import pubsub_v1
-    except ImportError:
-        print("!!! google-cloud-pubsub not installed.")
-        return
+    pubsub_v1 = _require_pubsub()
 
     subscriber = pubsub_v1.SubscriberClient()
     subscription_path = subscriber.subscription_path(project_id, sub_id)
@@ -4491,9 +4588,11 @@ def _stream_gcs_generator(project_id: str, bucket_name: str, prefix: str, featur
     # Real "tail" requires polling or notifications. 
     # We will implement "Process Existing + Stop" for now, or "Process Existing".
     
-    if not hive_store or not isinstance(hive_store, GCSHiveStore):
-        print("!!! HIVE_BACKEND is not GCS or Client failed.")
-        return
+    if not _GCS_AVAILABLE or not hive_store or not isinstance(hive_store, GCSHiveStore):
+        raise RuntimeError(
+            "HIVE_GCS requires google-cloud-storage and HIVE_BACKEND=GCS. "
+            "Install with `pip install google-cloud-storage` and set HIVE_BACKEND=GCS."
+        )
 
     bucket = hive_store.client.bucket(bucket_name)
     print(f">>> GCS WALKER: gs://{bucket_name}/{prefix}...")
@@ -4536,7 +4635,143 @@ def _stream_gcs_generator(project_id: str, bucket_name: str, prefix: str, featur
 
 # =============================================================================
 
+def deep_merge_dict(dst: Dict[str, Any], src: Dict[str, Any]) -> Dict[str, Any]:
+    for key, value in src.items():
+        if isinstance(value, dict) and isinstance(dst.get(key), dict):
+            dst[key] = deep_merge_dict(dict(dst[key]), value)
+        else:
+            dst[key] = deepcopy(value)
+    return dst
+
+def reset_runtime_state() -> None:
+    global DATA_SOURCE_TYPE, PROFILE_LABEL
+    global LOCAL_MODE, LOCAL_TARGET, LOCAL_MAX_FRAMES, LOCAL_MAX_LINES_PER_FILE, LOCAL_SNIPPET_CHARS
+    global STREAM_KIND, STREAM_URL, STREAM_URL_HEADERS, STREAM_URL_TIMEOUT, STREAM_IP_ENDPOINT
+    global KAGGLE_DATASET_ID, KAGGLE_FILE_NAME, KAGGLE_MAX_ROWS, KAGGLE_USE_KAGGLEHUB
+    global ARTIFACT_ROOT_PREFERRED, EIDOS_DATA_ROOT, EIDOS_ARCHIVE_ROOT
+    global CONFIG_MODE, NL_MODE, LLM_PROVIDER, NL_COMMAND
+    global EIDOS_BRAIN_CONFIG, _TORCH_INITIALIZED, device, DTYPE
+
+    DATA_SOURCE_TYPE = _RUNTIME_DEFAULTS["DATA_SOURCE_TYPE"]
+    PROFILE_LABEL = _RUNTIME_DEFAULTS["PROFILE_LABEL"]
+    LOCAL_MODE = _RUNTIME_DEFAULTS["LOCAL_MODE"]
+    LOCAL_TARGET = _RUNTIME_DEFAULTS["LOCAL_TARGET"]
+    LOCAL_MAX_FRAMES = _RUNTIME_DEFAULTS["LOCAL_MAX_FRAMES"]
+    LOCAL_MAX_LINES_PER_FILE = _RUNTIME_DEFAULTS["LOCAL_MAX_LINES_PER_FILE"]
+    LOCAL_SNIPPET_CHARS = _RUNTIME_DEFAULTS["LOCAL_SNIPPET_CHARS"]
+    STREAM_KIND = _RUNTIME_DEFAULTS["STREAM_KIND"]
+    STREAM_URL = _RUNTIME_DEFAULTS["STREAM_URL"]
+    STREAM_URL_HEADERS = deepcopy(_RUNTIME_DEFAULTS["STREAM_URL_HEADERS"])
+    STREAM_URL_TIMEOUT = _RUNTIME_DEFAULTS["STREAM_URL_TIMEOUT"]
+    STREAM_IP_ENDPOINT = _RUNTIME_DEFAULTS["STREAM_IP_ENDPOINT"]
+    KAGGLE_DATASET_ID = _RUNTIME_DEFAULTS["KAGGLE_DATASET_ID"]
+    KAGGLE_FILE_NAME = _RUNTIME_DEFAULTS["KAGGLE_FILE_NAME"]
+    KAGGLE_MAX_ROWS = _RUNTIME_DEFAULTS["KAGGLE_MAX_ROWS"]
+    KAGGLE_USE_KAGGLEHUB = _RUNTIME_DEFAULTS["KAGGLE_USE_KAGGLEHUB"]
+    ARTIFACT_ROOT_PREFERRED = _RUNTIME_DEFAULTS["ARTIFACT_ROOT_PREFERRED"]
+    CONFIG_MODE = _RUNTIME_DEFAULTS["CONFIG_MODE"]
+    NL_MODE = _RUNTIME_DEFAULTS["NL_MODE"]
+    LLM_PROVIDER = _RUNTIME_DEFAULTS["LLM_PROVIDER"]
+    NL_COMMAND = _RUNTIME_DEFAULTS["NL_COMMAND"]
+
+    EIDOS_BRAIN_CONFIG = deepcopy(DEFAULT_EIDOS_BRAIN_CONFIG)
+    _TORCH_INITIALIZED = False
+    device = None
+    DTYPE = None
+
+    EIDOS_DATA_ROOT = _resolve_artifact_root(ARTIFACT_ROOT_PREFERRED)
+    os.makedirs(EIDOS_DATA_ROOT, exist_ok=True)
+    EIDOS_ARCHIVE_ROOT = os.path.join(EIDOS_DATA_ROOT, "eidos_brain_archive")
+    os.makedirs(EIDOS_ARCHIVE_ROOT, exist_ok=True)
+
+def _apply_runtime_config(config: Dict[str, Any]) -> None:
+    global DATA_SOURCE_TYPE, PROFILE_LABEL
+    global LOCAL_MODE, LOCAL_TARGET, LOCAL_MAX_FRAMES, LOCAL_MAX_LINES_PER_FILE, LOCAL_SNIPPET_CHARS
+    global STREAM_KIND, STREAM_URL, STREAM_URL_HEADERS, STREAM_URL_TIMEOUT, STREAM_IP_ENDPOINT
+    global KAGGLE_DATASET_ID, KAGGLE_FILE_NAME, KAGGLE_MAX_ROWS, KAGGLE_USE_KAGGLEHUB
+    global ARTIFACT_ROOT_PREFERRED, EIDOS_DATA_ROOT, EIDOS_ARCHIVE_ROOT
+    global CONFIG_MODE, NL_MODE, LLM_PROVIDER, NL_COMMAND
+    global EIDOS_BRAIN_CONFIG
+
+    if not config:
+        return
+
+    if "source_type" in config:
+        DATA_SOURCE_TYPE = config["source_type"]
+    if "profile_label" in config:
+        PROFILE_LABEL = config["profile_label"]
+
+    if "artifact_root" in config and config["artifact_root"]:
+        ARTIFACT_ROOT_PREFERRED = config["artifact_root"]
+        EIDOS_DATA_ROOT = _resolve_artifact_root(ARTIFACT_ROOT_PREFERRED)
+        os.makedirs(EIDOS_DATA_ROOT, exist_ok=True)
+        EIDOS_ARCHIVE_ROOT = os.path.join(EIDOS_DATA_ROOT, "eidos_brain_archive")
+        os.makedirs(EIDOS_ARCHIVE_ROOT, exist_ok=True)
+
+    source_params = config.get("source_params", {}) or {}
+    local_params = source_params.get("local", {}) or {}
+    if "mode" in local_params:
+        LOCAL_MODE = local_params["mode"]
+    if "target" in local_params:
+        LOCAL_TARGET = local_params["target"]
+    if "max_frames" in local_params:
+        LOCAL_MAX_FRAMES = local_params["max_frames"]
+    if "max_lines_per_file" in local_params:
+        LOCAL_MAX_LINES_PER_FILE = local_params["max_lines_per_file"]
+    if "snippet_chars" in local_params:
+        LOCAL_SNIPPET_CHARS = local_params["snippet_chars"]
+
+    stream_params = source_params.get("stream", {}) or {}
+    if "kind" in stream_params:
+        STREAM_KIND = stream_params["kind"]
+    if "url" in stream_params:
+        STREAM_URL = stream_params["url"]
+    if "headers" in stream_params:
+        STREAM_URL_HEADERS = stream_params["headers"]
+    if "timeout" in stream_params:
+        STREAM_URL_TIMEOUT = stream_params["timeout"]
+    if "ip_endpoint" in stream_params:
+        STREAM_IP_ENDPOINT = stream_params["ip_endpoint"]
+
+    kaggle_params = source_params.get("kaggle", {}) or {}
+    if "dataset_id" in kaggle_params:
+        KAGGLE_DATASET_ID = kaggle_params["dataset_id"]
+    if "file_name" in kaggle_params:
+        KAGGLE_FILE_NAME = kaggle_params["file_name"]
+    if "max_rows" in kaggle_params:
+        KAGGLE_MAX_ROWS = kaggle_params["max_rows"]
+    if "use_kagglehub" in kaggle_params:
+        KAGGLE_USE_KAGGLEHUB = kaggle_params["use_kagglehub"]
+
+    if "config_mode" in config:
+        CONFIG_MODE = config["config_mode"]
+    if "nl_mode" in config:
+        NL_MODE = config["nl_mode"]
+    if "llm_provider" in config:
+        LLM_PROVIDER = config["llm_provider"]
+    if "nl_command" in config:
+        NL_COMMAND = config["nl_command"]
+
+    engine_config = config.get("engine_config")
+    if isinstance(engine_config, dict):
+        EIDOS_BRAIN_CONFIG = deep_merge_dict(deepcopy(EIDOS_BRAIN_CONFIG), engine_config)
+
+def run(config: Dict[str, Any]) -> Dict[str, Any]:
+    """Run a single Eidos session with config overrides."""
+    reset_runtime_state()
+    _apply_runtime_config(config or {})
+    _initialize_torch_runtime()
+    if str(CONFIG_MODE).upper() == "NL_GEMINI":
+        _bootstrap_nl_compiler()
+    run_eidos_sentinel()
+    return {
+        "status": "SUCCESS",
+        "engine_hash": CODE_HASH,
+        "artifact_root": EIDOS_DATA_ROOT,
+    }
+
 def run_eidos_sentinel():
+    _initialize_torch_runtime()
     # Patch 2: Preflight
     _preflight_inputs()
 
@@ -4553,40 +4788,47 @@ def run_eidos_sentinel():
     # --- PROVENANCE MANIFEST (Spec 6.2) ---
     def _write_provenance_manifest():
         try:
+            from eidos_brain.utils.provenance import write_run_manifest
+
             # 1. Code Hash
-            try:
-                script_path = _script_dir() / (Path(__file__).name if "__file__" in locals() else "EIDOS_BRAIN_UNIFIED_v0_4.7.02.py")
-                if script_path.exists():
+            script_path = _script_dir() / (
+                Path(__file__).name if "__file__" in globals() else "EIDOS_BRAIN_UNIFIED_v0_4.7.02.py"
+            )
+            code_hash = "unknown_script_source"
+            if script_path.exists():
+                try:
                     with open(script_path, "rb") as f:
-                        code_bytes = f.read()
-                    code_hash = hashlib.sha256(code_bytes).hexdigest()
-                else:
+                        code_hash = hashlib.sha256(f.read()).hexdigest()
+                except Exception:
                     code_hash = "unknown_script_source"
-            except Exception:
-                code_hash = "unknown_script_source"
-                code_bytes = f.read()
-            code_hash = hashlib.sha256(code_bytes).hexdigest()
 
-            # 2. Config Hash
-            config_str = json_dumps_safe(EIDOS_BRAIN_CONFIG)
-            config_hash = hashlib.sha256(config_str.encode("utf-8")).hexdigest()
-
-            # 3. Construct Manifest
-            manifest = {
+            # 2. Construct Manifest
+            manifest_extra = {
                 "engine_version": "0.4.7.02",
                 "engine_image_digest": os.environ.get("HIVE_IMAGE_DIGEST", "unknown"),
                 "engine_code_sha256": code_hash,
-                "config_sha256": config_hash,
                 "schema_ver": 1,
                 "featurizer_versions": {}, # TODO: dynamic registration
                 "precision_policy": {"use_float32": True, "determinism": False},
-                "timestamp": datetime.datetime.utcnow().isoformat() + "Z"
+                "timestamp": datetime.now(timezone.utc).isoformat(),
             }
-            
-            # 4. Write to Artifacts
-            # This uses the same store_memory_artifact logic but forces it for manifest
-            print(f">>> WRITING RUN MANIFEST: code={code_hash[:8]} config={config_hash[:8]}")
-            store_memory_artifact("run_manifest.json", manifest)
+
+            print(f">>> WRITING RUN MANIFEST: code={code_hash[:8]}")
+            manifest_path = write_run_manifest(
+                "run",
+                EIDOS_BRAIN_CONFIG,
+                EIDOS_DATA_ROOT,
+                filename="run_manifest.json",
+                extra=manifest_extra,
+            )
+
+            if manifest_path and HIVE_BACKEND == "GCS":
+                try:
+                    with open(manifest_path, "r", encoding="utf-8") as f:
+                        manifest_json = f.read()
+                    hive_store.put(manifest_path, manifest_json, "application/json")
+                except Exception:
+                    pass
             
             # TODO: also insert into BigQuery 'runs' table if possible, 
             # but that might be better handled by the Sentinel 'final report' logic or Ingestor.
