@@ -1,0 +1,1 @@
+pytest d:\eidos\tests

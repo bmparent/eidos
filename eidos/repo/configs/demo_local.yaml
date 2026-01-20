@@ -1,0 +1,12 @@
+# Demo Local Config
+source_type: "LOCAL"
+artifact_root: "./demo_artifacts"
+
+source_params:
+  local:
+    mode: "ARCHIVE"
+    target: "./demo_data/sample_folder"
+
+engine_config:
+  steps: 1000 # Short run for demo
+  warmup_cap: 100

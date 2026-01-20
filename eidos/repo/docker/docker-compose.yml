@@ -1,0 +1,38 @@
+version: '3.8'
+
+services:
+  eidos-api:
+    build:
+      context: ..
+      dockerfile: docker/Dockerfile
+    command: eidos-api
+    ports:
+      - "8000:8000"
+    volumes:
+      - ./eidos_artifacts:/data/eidos_artifacts
+    environment:
+      - HIVE_BACKEND=LOCAL
+      - EIDOS_ARTIFACT_ROOT=/data/eidos_artifacts
+      - GOOGLE_API_KEY=${GOOGLE_API_KEY}
+
+  eidos-dashboard:
+    build:
+      context: ..
+      dockerfile: docker/Dockerfile
+    command: streamlit run src/eidos_brain/demo/dashboard.py
+    ports:
+      - "8501:8501"
+    volumes:
+      - ./eidos_artifacts:/data/eidos_artifacts
+    environment:
+      - EIDOS_ARTIFACT_ROOT=/data/eidos_artifacts
+    depends_on:
+      - eidos-api
+
+  demo-streamer:
+    build:
+      context: ..
+      dockerfile: docker/Dockerfile
+    command: python -m eidos_brain.demo.demo_streamer
+    ports:
+      - "8001:8001"

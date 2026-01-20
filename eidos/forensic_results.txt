@@ -1,0 +1,61 @@
+test_encoding_shapes (__main__.TestHippocampus)
+Verify HDC vectors have correct dimension D. ... ok
+test_write_and_recall (__main__.TestHippocampus)
+Write to a bank and verify similarity increases. ... ok
+test_run_synthetic_stream (__main__.TestIntegration)
+Run the full run_sentinel_stream with synthetic generator. ... ERROR
+test_adapt_learning (__main__.TestRLSReservoir)
+Adapt should update readout weights W_out. ... ERROR
+test_initialization (__main__.TestRLSReservoir)
+Verify reservoir dimensions and initial state. ... ok
+test_listen_updates_state (__main__.TestRLSReservoir)
+Listening to input should change reservoir state. ... ERROR
+test_synaptic_hash (__main__.TestRLSReservoir)
+Hash should be deterministic for same weights. ... ok
+test_thermodynamics_update (__main__.TestRLSReservoir)
+Verify Leap III thermodynamic parameter updates. ... ok
+test_regime_detection (__main__.TestSentinelLogic)
+Test basic regime statemachine transitions. ... FAIL
+
+======================================================================
+ERROR: test_run_synthetic_stream (__main__.TestIntegration)
+Run the full run_sentinel_stream with synthetic generator.
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "d:\eidos\forensic_test_suite.py", line 246, in test_run_synthetic_stream
+    run_sentinel_stream(
+  File "d:\eidos\EIDOS_BRAIN_UNIFIED_v0_4.7.02.py", line 3993, in run_sentinel_stream
+    novel_enough = (1.0 - hipp_sim > n_min)
+TypeError: unsupported operand type(s) for -: 'float' and 'NoneType'
+
+======================================================================
+ERROR: test_adapt_learning (__main__.TestRLSReservoir)
+Adapt should update readout weights W_out.
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "d:\eidos\forensic_test_suite.py", line 91, in test_adapt_learning
+    u = torch.randn(self.features, device=self.reservoir.device)
+AttributeError: 'RLS_Reservoir' object has no attribute 'device'
+
+======================================================================
+ERROR: test_listen_updates_state (__main__.TestRLSReservoir)
+Listening to input should change reservoir state.
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "d:\eidos\forensic_test_suite.py", line 84, in test_listen_updates_state
+    u = torch.randn(self.features, device=self.reservoir.device)
+AttributeError: 'RLS_Reservoir' object has no attribute 'device'
+
+======================================================================
+FAIL: test_regime_detection (__main__.TestSentinelLogic)
+Test basic regime statemachine transitions.
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "d:\eidos\forensic_test_suite.py", line 208, in test_regime_detection
+    self.assertTrue("RED" in status or "AMBER" in status, f"Status was {status}, expected RED/AMBER")
+AssertionError: False is not true : Status was GREEN: NOMINAL, expected RED/AMBER
+
+----------------------------------------------------------------------
+Ran 9 tests in 0.061s
+
+FAILED (failures=1, errors=3)

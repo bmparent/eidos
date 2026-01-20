@@ -1,0 +1,1343 @@
+!!! FAILED TO WRITE MANIFEST: type object 'datetime.datetime' has no attribute 'datetime'
+>>> INITIALIZING SENTINEL V2.2 (UNIFIED STREAM)...
+>>> est_frames=200000, using WARMUP=50
+[DEMO] t=000000 raw=0.0000 ts=0.0000 mix=0.0000 z=0.00/th=1.50 expl=0.000 SURP=0
+[DEBUG] step=0 z=0.0 status=CALIBRATING emit=True
+[DEMO] t=000001 raw=1.2248 ts=0.0000 mix=1.2248 z=2.00/th=1.50 expl=0.000 SURP=1
+[DEMO] t=000002 raw=0.2106 ts=0.0000 mix=0.2106 z=0.39/th=1.50 expl=0.000 SURP=0
+[DEMO] t=000003 raw=0.2689 ts=0.0000 mix=0.2689 z=0.57/th=1.49 expl=0.000 SURP=0
+[DEMO] t=000004 raw=2.2197 ts=0.0000 mix=2.2197 z=2.66/th=1.49 expl=0.000 SURP=1
+[DEMO] t=000005 raw=1.3604 ts=0.0000 mix=1.3604 z=1.72/th=1.49 expl=0.000 SURP=1
+[DEMO] t=000006 raw=2.0461 ts=0.0000 mix=2.0461 z=2.44/th=1.49 expl=0.000 SURP=1
+[DEMO] t=000007 raw=2.2309 ts=0.0000 mix=2.2309 z=2.54/th=1.48 expl=0.000 SURP=1
+[DEMO] t=000008 raw=0.2148 ts=0.0000 mix=0.2148 z=0.23/th=1.48 expl=0.000 SURP=0
+[DEMO] t=000009 raw=2.0929 ts=0.0000 mix=2.0929 z=2.34/th=1.48 expl=0.000 SURP=1
+[DEMO] t=000010 raw=0.8933 ts=0.0000 mix=0.8933 z=1.03/th=1.48 expl=0.000 SURP=0
+[DEBUG] step=10 z=1.0 status=CALIBRATING emit=True
+[DEMO] t=000011 raw=0.6833 ts=0.0000 mix=0.6833 z=0.81/th=1.48 expl=0.000 SURP=0
+[DEMO] t=000012 raw=1.8471 ts=0.0000 mix=1.8471 z=2.24/th=1.47 expl=0.000 SURP=1
+[DEMO] t=000013 raw=0.7495 ts=0.0000 mix=0.7495 z=0.92/th=1.47 expl=0.000 SURP=0
+[DEMO] t=000014 raw=0.3884 ts=0.0000 mix=0.3884 z=0.47/th=1.47 expl=0.000 SURP=0
+[DEMO] t=000015 raw=0.9698 ts=0.0000 mix=0.9698 z=1.24/th=1.47 expl=0.000 SURP=0
+[DEMO] t=000016 raw=0.4103 ts=0.0000 mix=0.4103 z=0.52/th=1.47 expl=0.000 SURP=0
+[DEMO] t=000017 raw=1.1892 ts=0.0000 mix=1.1892 z=1.58/th=1.46 expl=0.000 SURP=1
+[DEMO] t=000018 raw=2.2247 ts=0.0000 mix=2.2247 z=2.88/th=1.46 expl=0.000 SURP=1
+[DEMO] t=000019 raw=2.1660 ts=0.0000 mix=2.1660 z=1.83/th=1.46 expl=0.000 SURP=1
+[DEMO] t=000020 raw=2.2018 ts=0.0000 mix=2.2018 z=1.71/th=1.46 expl=0.000 SURP=1
+[DEBUG] step=20 z=1.7 status=CALIBRATING emit=True
+[DEMO] t=000021 raw=1.4832 ts=0.0000 mix=1.4832 z=1.19/th=1.46 expl=0.000 SURP=0
+[DEMO] t=000022 raw=0.5260 ts=0.0000 mix=0.5260 z=0.42/th=1.45 expl=0.000 SURP=0
+[DEMO] t=000023 raw=1.4364 ts=0.0000 mix=1.4364 z=1.18/th=1.45 expl=0.000 SURP=0
+[DEMO] t=000024 raw=2.9157 ts=0.0000 mix=2.9157 z=2.37/th=1.45 expl=0.000 SURP=1
+[DEMO] t=000025 raw=0.5264 ts=0.0000 mix=0.5264 z=0.41/th=1.45 expl=0.000 SURP=0
+[DEMO] t=000026 raw=1.7618 ts=0.0000 mix=1.7618 z=1.43/th=1.45 expl=0.000 SURP=0
+[DEMO] t=000027 raw=0.2984 ts=0.0000 mix=0.2984 z=0.22/th=1.44 expl=0.000 SURP=0
+[DEMO] t=000028 raw=2.4576 ts=0.0000 mix=2.4576 z=1.99/th=1.44 expl=0.000 SURP=1
+[DEMO] t=000029 raw=1.0588 ts=0.0000 mix=1.0588 z=0.85/th=1.44 expl=0.000 SURP=0
+[DEMO] t=000030 raw=2.0832 ts=0.0000 mix=2.0832 z=1.68/th=1.44 expl=0.000 SURP=1
+[DEBUG] step=30 z=1.7 status=CALIBRATING emit=True
+[DEMO] t=000031 raw=1.5666 ts=0.0000 mix=1.5666 z=1.32/th=1.44 expl=0.000 SURP=0
+[DEMO] t=000032 raw=0.1608 ts=0.0000 mix=0.1608 z=0.10/th=1.43 expl=0.000 SURP=0
+[DEMO] t=000033 raw=2.6754 ts=0.0000 mix=2.6754 z=2.23/th=1.43 expl=0.000 SURP=1
+[DEMO] t=000034 raw=0.7104 ts=0.0000 mix=0.7104 z=0.55/th=1.43 expl=0.000 SURP=0
+[DEMO] t=000035 raw=0.3229 ts=0.0000 mix=0.3229 z=0.23/th=1.43 expl=0.000 SURP=0
+[DEMO] t=000036 raw=1.5748 ts=0.0000 mix=1.5748 z=1.26/th=1.43 expl=0.000 SURP=0
+[DEMO] t=000037 raw=0.4826 ts=0.0000 mix=0.4826 z=0.36/th=1.42 expl=0.000 SURP=0
+[DEMO] t=000038 raw=1.7011 ts=0.0000 mix=1.7011 z=1.37/th=1.42 expl=0.000 SURP=0
+[DEMO] t=000039 raw=0.0135 ts=0.0000 mix=0.0135 z=0.03/th=1.42 expl=0.000 SURP=0
+[DEMO] t=000040 raw=0.6537 ts=0.0000 mix=0.6537 z=0.52/th=1.42 expl=0.000 SURP=0
+[DEBUG] step=40 z=0.5 status=CALIBRATING emit=True
+[DEMO] t=000041 raw=3.0223 ts=0.0000 mix=3.0223 z=2.48/th=1.42 expl=0.000 SURP=1
+[DEMO] t=000042 raw=1.8928 ts=0.0000 mix=1.8928 z=1.52/th=1.41 expl=0.000 SURP=1
+[DEMO] t=000043 raw=1.4596 ts=0.0000 mix=1.4596 z=1.22/th=1.41 expl=0.000 SURP=0
+[DEMO] t=000044 raw=1.1352 ts=0.0000 mix=1.1352 z=0.98/th=1.41 expl=0.000 SURP=0
+[DEMO] t=000045 raw=1.5182 ts=0.0000 mix=1.5182 z=1.29/th=1.41 expl=0.000 SURP=0
+[DEMO] t=000046 raw=2.1059 ts=0.0000 mix=2.1059 z=1.88/th=1.41 expl=0.000 SURP=1
+[DEMO] t=000047 raw=0.9790 ts=0.0000 mix=0.9790 z=0.81/th=1.40 expl=0.000 SURP=0
+[DEMO] t=000048 raw=0.1155 ts=0.0000 mix=0.1155 z=0.05/th=1.40 expl=0.000 SURP=0
+[DEMO] t=000049 raw=0.5036 ts=0.0000 mix=0.5036 z=0.42/th=1.40 expl=0.000 SURP=0
+[DEMO] t=000050 raw=0.3841 ts=0.0000 mix=0.3841 z=0.31/th=1.40 expl=0.000 SURP=0
+[DEBUG] step=50 z=0.3 status=GREEN emit=True
+[DEMO] t=000051 raw=1.2394 ts=0.0000 mix=1.2394 z=1.11/th=1.40 expl=0.000 SURP=0
+[DEMO] t=000052 raw=0.6821 ts=0.0000 mix=0.6821 z=0.59/th=1.40 expl=0.000 SURP=0
+[DEMO] t=000053 raw=2.7700 ts=0.0000 mix=2.7700 z=2.55/th=1.39 expl=0.000 SURP=1
+[ANOMALY] step=53 err=2.7700 z=2.555 z_thr=1.393 ema=0.0661 sig=1.0584 ratio=15.3 plas_rms=0.0304 plas_clp=0.00 clip_frac~0.06 fatigue=0.21 lr_raw=1.484 lr_eff=1.427 HIPP bank=ELEVATED sim=+0.007 chi=0.051 write=0 status=CALIBRATING | Thermo E=0.22 | text=''
+[DEMO] t=000054 raw=1.0155 ts=0.0000 mix=1.0155 z=0.91/th=1.39 expl=0.000 SURP=0
+[DEMO] t=000055 raw=0.7882 ts=0.0000 mix=0.7882 z=0.71/th=1.39 expl=0.000 SURP=0
+[DEMO] t=000056 raw=1.6007 ts=0.0000 mix=1.6007 z=1.51/th=1.39 expl=0.000 SURP=1
+[ANOMALY] step=56 err=1.6007 z=1.507 z_thr=1.388 ema=0.0693 sig=1.0164 ratio=13.4 plas_rms=0.0185 plas_clp=0.00 clip_frac~0.11 fatigue=0.22 lr_raw=1.480 lr_eff=1.426 HIPP bank=ELEVATED sim=-0.007 chi=0.049 write=0 status=CALIBRATING | Thermo E=0.25 | text=''
+[DEMO] t=000057 raw=1.5697 ts=0.0000 mix=1.5697 z=1.48/th=1.39 expl=0.000 SURP=1
+[ANOMALY] step=57 err=1.5697 z=1.479 z_thr=1.386 ema=0.0708 sig=1.0132 ratio=10.3 plas_rms=0.0172 plas_clp=0.00 clip_frac~0.11 fatigue=0.24 lr_raw=1.475 lr_eff=1.419 HIPP bank=ELEVATED sim=+0.007 chi=0.051 write=0 status=CALIBRATING | Thermo E=0.29 | text=''
+[DEMO] t=000058 raw=1.6312 ts=0.0000 mix=1.6312 z=1.51/th=1.38 expl=0.000 SURP=1
+[ANOMALY] step=58 err=1.6312 z=1.506 z_thr=1.384 ema=0.0723 sig=1.0354 ratio=8.7 plas_rms=0.0162 plas_clp=0.00 clip_frac~0.12 fatigue=0.26 lr_raw=1.471 lr_eff=1.417 HIPP bank=ELEVATED sim=-0.007 chi=0.049 write=0 status=CALIBRATING | Thermo E=0.34 | text=''
+[DEMO] t=000059 raw=0.3207 ts=0.0000 mix=0.3207 z=0.24/th=1.38 expl=0.000 SURP=0
+[DEMO] t=000060 raw=0.8297 ts=0.0000 mix=0.8297 z=0.77/th=1.38 expl=0.000 SURP=0
+[DEBUG] step=60 z=0.8 status=GREEN emit=True
+[DEMO] t=000061 raw=0.9618 ts=0.0000 mix=0.9618 z=0.92/th=1.38 expl=0.000 SURP=0
+[DEMO] t=000062 raw=0.5017 ts=0.0000 mix=0.5017 z=0.46/th=1.38 expl=0.000 SURP=0
+[DEMO] t=000063 raw=0.6709 ts=0.0000 mix=0.6709 z=0.67/th=1.38 expl=0.000 SURP=0
+[DEMO] t=000064 raw=1.9706 ts=0.0000 mix=1.9706 z=2.02/th=1.37 expl=0.000 SURP=1
+[ANOMALY] step=64 err=1.9706 z=2.022 z_thr=1.374 ema=0.0771 sig=0.9363 ratio=11.5 plas_rms=0.0347 plas_clp=0.00 clip_frac~0.06 fatigue=0.25 lr_raw=1.467 lr_eff=1.411 HIPP bank=ELEVATED sim=+0.007 chi=0.051 write=0 status=CALIBRATING | Thermo E=0.34 | text=''
+[DEMO] t=000065 raw=0.2777 ts=0.0000 mix=0.2777 z=0.22/th=1.37 expl=0.000 SURP=0
+[DEMO] t=000066 raw=1.5679 ts=0.0000 mix=1.5679 z=1.59/th=1.37 expl=0.000 SURP=1
+[ANOMALY] step=66 err=1.5679 z=1.590 z_thr=1.370 ema=0.0788 sig=0.9363 ratio=10.9 plas_rms=0.0248 plas_clp=0.00 clip_frac~0.08 fatigue=0.27 lr_raw=1.463 lr_eff=1.410 HIPP bank=ELEVATED sim=-0.007 chi=0.049 write=0 status=CALIBRATING | Thermo E=0.35 | text=''
+[DEMO] t=000067 raw=2.5224 ts=0.0000 mix=2.5224 z=2.50/th=1.37 expl=0.000 SURP=1
+[ANOMALY] step=67 err=2.5224 z=2.497 z_thr=1.368 ema=0.0813 sig=0.9778 ratio=9.9 plas_rms=0.0340 plas_clp=0.00 clip_frac~0.06 fatigue=0.29 lr_raw=1.459 lr_eff=1.406 HIPP bank=ELEVATED sim=-0.007 chi=0.049 write=0 status=CALIBRATING | Thermo E=0.50 | text=''
+[DEMO] t=000068 raw=0.8152 ts=0.0000 mix=0.8152 z=0.78/th=1.37 expl=0.000 SURP=0
+[DEMO] t=000069 raw=1.0527 ts=0.0000 mix=1.0527 z=1.09/th=1.37 expl=0.000 SURP=0
+[DEMO] t=000070 raw=0.1348 ts=0.0000 mix=0.1348 z=0.06/th=1.36 expl=0.000 SURP=0
+[DEBUG] step=70 z=0.1 status=GREEN emit=True
+[DEMO] t=000071 raw=2.7325 ts=0.0000 mix=2.7325 z=2.93/th=1.36 expl=0.000 SURP=1
+[ANOMALY] step=71 err=2.7325 z=2.930 z_thr=1.362 ema=0.0857 sig=0.9033 ratio=10.6 plas_rms=0.0352 plas_clp=0.00 clip_frac~0.06 fatigue=0.29 lr_raw=1.455 lr_eff=1.399 HIPP bank=ELEVATED sim=+0.007 chi=0.051 write=0 status=CALIBRATING | Thermo E=0.58 | text=''
+[DEMO] t=000072 raw=2.2108 ts=0.0000 mix=2.2108 z=2.26/th=1.36 expl=0.000 SURP=1
+[ANOMALY] step=72 err=2.2108 z=2.260 z_thr=1.360 ema=0.0878 sig=0.9392 ratio=9.9 plas_rms=0.0283 plas_clp=0.00 clip_frac~0.07 fatigue=0.31 lr_raw=1.451 lr_eff=1.395 HIPP bank=ELEVATED sim=+0.007 chi=0.051 write=0 status=CALIBRATING | Thermo E=0.68 | text=''
+[DEMO] t=000073 raw=0.5575 ts=0.0000 mix=0.5575 z=0.52/th=1.36 expl=0.000 SURP=0
+[DEMO] t=000074 raw=0.9078 ts=0.0000 mix=0.9078 z=0.96/th=1.36 expl=0.000 SURP=0
+[DEMO] t=000075 raw=0.5153 ts=0.0000 mix=0.5153 z=0.50/th=1.35 expl=0.000 SURP=0
+[DEMO] t=000076 raw=2.3262 ts=0.0000 mix=2.3262 z=2.62/th=1.35 expl=0.000 SURP=1
+[ANOMALY] step=76 err=2.3262 z=2.615 z_thr=1.353 ema=0.0918 sig=0.8544 ratio=10.4 plas_rms=0.0349 plas_clp=0.00 clip_frac~0.06 fatigue=0.32 lr_raw=1.447 lr_eff=1.391 HIPP bank=ELEVATED sim=+0.007 chi=0.051 write=0 status=CALIBRATING | Thermo E=0.66 | text=''
+[DEMO] t=000077 raw=0.2921 ts=0.0000 mix=0.2921 z=0.22/th=1.35 expl=0.000 SURP=0
+[DEMO] t=000078 raw=1.3443 ts=0.0000 mix=1.3443 z=1.46/th=1.35 expl=0.000 SURP=1
+[ANOMALY] step=78 err=1.3443 z=1.464 z_thr=1.350 ema=0.0932 sig=0.8544 ratio=10.2 plas_rms=0.0212 plas_clp=0.00 clip_frac~0.09 fatigue=0.33 lr_raw=1.443 lr_eff=1.390 HIPP bank=ELEVATED sim=-0.007 chi=0.049 write=0 status=CALIBRATING | Thermo E=0.60 | text=''
+[DEMO] t=000079 raw=0.8262 ts=0.0000 mix=0.8262 z=0.86/th=1.35 expl=0.000 SURP=0
+[DEMO] t=000080 raw=0.4710 ts=0.0000 mix=0.4710 z=0.44/th=1.35 expl=0.000 SURP=0
+[DEBUG] step=80 z=0.4 status=GREEN emit=True
+[DEMO] t=000081 raw=1.1617 ts=0.0000 mix=1.1617 z=1.25/th=1.34 expl=0.000 SURP=0
+[DEMO] t=000082 raw=0.6246 ts=0.0000 mix=0.6246 z=0.63/th=1.34 expl=0.000 SURP=0
+[DEMO] t=000083 raw=2.3360 ts=0.0000 mix=2.3360 z=2.63/th=1.34 expl=0.000 SURP=1
+[ANOMALY] step=83 err=2.3360 z=2.628 z_thr=1.342 ema=0.0982 sig=0.8515 ratio=10.9 plas_rms=0.0208 plas_clp=0.00 clip_frac~0.10 fatigue=0.33 lr_raw=1.439 lr_eff=1.384 HIPP bank=ELEVATED sim=+0.007 chi=0.051 write=0 status=CALIBRATING | Thermo E=1.74 | text=''
+[DEMO] t=000084 raw=0.7927 ts=0.0000 mix=0.7927 z=0.82/th=1.34 expl=0.000 SURP=0
+[DEMO] t=000085 raw=1.7796 ts=0.0000 mix=1.7796 z=1.97/th=1.34 expl=0.000 SURP=1
+[ANOMALY] step=85 err=1.7796 z=1.972 z_thr=1.338 ema=0.1005 sig=0.8515 ratio=10.7 plas_rms=0.0124 plas_clp=0.00 clip_frac~0.16 fatigue=0.35 lr_raw=1.435 lr_eff=1.382 HIPP bank=ELEVATED sim=-0.007 chi=0.049 write=0 status=CALIBRATING | Thermo E=1.88 | text=''
+[DEMO] t=000086 raw=2.9310 ts=0.0000 mix=2.9310 z=3.31/th=1.34 expl=0.000 SURP=1
+[ANOMALY] step=86 err=2.9310 z=3.310 z_thr=1.337 ema=0.1034 sig=0.8544 ratio=10.2 plas_rms=0.0259 plas_clp=0.00 clip_frac~0.08 fatigue=0.37 lr_raw=1.431 lr_eff=1.376 HIPP bank=ELEVATED sim=+0.007 chi=0.051 write=0 status=CALIBRATING | Thermo E=2.12 | text=''
+[DEMO] t=000087 raw=0.1238 ts=0.0000 mix=0.1238 z=0.02/th=1.34 expl=0.000 SURP=0
+[DEMO] t=000088 raw=2.3723 ts=0.0000 mix=2.3723 z=2.60/th=1.33 expl=0.000 SURP=1
+[ANOMALY] step=88 err=2.3723 z=2.601 z_thr=1.334 ema=0.1057 sig=0.8715 ratio=10.0 plas_rms=0.0146 plas_clp=0.00 clip_frac~0.14 fatigue=0.38 lr_raw=1.427 lr_eff=1.375 HIPP bank=ELEVATED sim=-0.007 chi=0.049 write=0 status=CALIBRATING | Thermo E=2.21 | text=''
+[DEMO] t=000089 raw=2.0778 ts=0.0000 mix=2.0778 z=2.14/th=1.33 expl=0.000 SURP=1
+[ANOMALY] step=89 err=2.0778 z=2.143 z_thr=1.332 ema=0.1076 sig=0.9195 ratio=9.7 plas_rms=0.0174 plas_clp=0.00 clip_frac~0.12 fatigue=0.40 lr_raw=1.422 lr_eff=1.371 HIPP bank=ELEVATED sim=-0.007 chi=0.049 write=0 status=CALIBRATING | Thermo E=2.30 | text=''
+[DEMO] t=000090 raw=0.5153 ts=0.0000 mix=0.5153 z=0.47/th=1.33 expl=0.000 SURP=0
+[DEBUG] step=90 z=0.5 status=GREEN emit=True
+[DEMO] t=000091 raw=0.9038 ts=0.0000 mix=0.9038 z=0.92/th=1.33 expl=0.000 SURP=0
+[DEMO] t=000092 raw=0.0877 ts=0.0000 mix=0.0877 z=0.02/th=1.33 expl=0.000 SURP=0
+[DEMO] t=000093 raw=0.3489 ts=0.0000 mix=0.3489 z=0.27/th=1.33 expl=0.000 SURP=0
+[DEMO] t=000094 raw=1.6080 ts=0.0000 mix=1.6080 z=1.74/th=1.32 expl=0.000 SURP=1
+[ANOMALY] step=94 err=1.6080 z=1.736 z_thr=1.324 ema=0.1106 sig=0.8625 ratio=10.2 plas_rms=0.0059 plas_clp=0.00 clip_frac~0.34 fatigue=0.40 lr_raw=1.419 lr_eff=1.367 HIPP bank=ELEVATED sim=-0.007 chi=0.049 write=0 status=CALIBRATING | Thermo E=2.21 | text=''
+[DEMO] t=000095 raw=0.9849 ts=0.0000 mix=0.9849 z=1.01/th=1.32 expl=0.000 SURP=0
+[DEMO] t=000096 raw=2.3794 ts=0.0000 mix=2.3794 z=2.63/th=1.32 expl=0.000 SURP=1
+[ANOMALY] step=96 err=2.3794 z=2.627 z_thr=1.321 ema=0.1137 sig=0.8625 ratio=10.1 plas_rms=0.0250 plas_clp=0.00 clip_frac~0.08 fatigue=0.42 lr_raw=1.415 lr_eff=1.361 HIPP bank=ELEVATED sim=+0.007 chi=0.051 write=0 status=CALIBRATING | Thermo E=2.33 | text=''
+[DEMO] t=000097 raw=1.2416 ts=0.0000 mix=1.2416 z=1.31/th=1.32 expl=0.000 SURP=0
+[DEMO] t=000098 raw=3.6584 ts=0.0000 mix=3.6584 z=4.06/th=1.32 expl=0.000 SURP=1
+[ANOMALY] step=98 err=3.6584 z=4.062 z_thr=1.318 ema=0.1184 sig=0.8715 ratio=10.0 plas_rms=0.0210 plas_clp=0.00 clip_frac~0.10 fatigue=0.43 lr_raw=1.411 lr_eff=1.357 HIPP bank=ELEVATED sim=+0.007 chi=0.051 write=1 status=CALIBRATING | Thermo E=2.62 | text=''
+[DEMO] t=000099 raw=2.5019 ts=0.0000 mix=2.5019 z=2.59/th=1.32 expl=0.000 SURP=1
+[ANOMALY] step=99 err=2.5019 z=2.590 z_thr=1.317 ema=0.1208 sig=0.9195 ratio=9.7 plas_rms=0.0199 plas_clp=0.00 clip_frac~0.19 fatigue=0.45 lr_raw=1.407 lr_eff=0.753 HIPP bank=ELEVATED sim=+0.841 chi=0.620 write=0 status=GREEN: NOMINAL | Thermo E=2.72 | text=''
+[DEMO] t=000100 raw=1.8926 ts=0.0000 mix=1.8926 z=1.85/th=1.32 expl=0.000 SURP=1
+[DEBUG] step=100 z=1.9 status=AMBER emit=True
+[ANOMALY] step=100 err=1.8926 z=1.853 z_thr=1.315 ema=0.1225 sig=0.9555 ratio=9.4 plas_rms=0.0197 plas_clp=0.00 clip_frac~0.10 fatigue=0.47 lr_raw=1.403 lr_eff=1.398 HIPP bank=ELEVATED sim=-0.785 chi=0.005 write=0 status=GREEN: NOMINAL | Thermo E=2.73 | text=''
+[DEMO] t=000101 raw=1.8418 ts=0.0000 mix=1.8418 z=1.77/th=1.31 expl=0.000 SURP=1
+[ANOMALY] step=101 err=1.8418 z=1.765 z_thr=1.314 ema=0.1242 sig=0.9731 ratio=9.1 plas_rms=0.0145 plas_clp=0.00 clip_frac~0.21 fatigue=0.49 lr_raw=1.399 lr_eff=0.907 HIPP bank=ELEVATED sim=+0.747 chi=0.468 write=0 status=GREEN: NOMINAL | Thermo E=2.73 | text=''
+[DEMO] t=000102 raw=1.2896 ts=0.0000 mix=1.2896 z=1.19/th=1.31 expl=0.000 SURP=0
+[DEMO] t=000103 raw=0.4709 ts=0.0000 mix=0.4709 z=0.35/th=1.31 expl=0.000 SURP=0
+[DEMO] t=000104 raw=0.9803 ts=0.0000 mix=0.9803 z=0.89/th=1.31 expl=0.000 SURP=0
+[DEMO] t=000105 raw=1.0697 ts=0.0000 mix=1.0697 z=1.02/th=1.31 expl=0.000 SURP=0
+[DEMO] t=000106 raw=1.8296 ts=0.0000 mix=1.8296 z=1.78/th=1.31 expl=0.000 SURP=1
+[ANOMALY] step=106 err=1.8296 z=1.780 z_thr=1.306 ema=0.1293 sig=0.9555 ratio=9.6 plas_rms=0.0065 plas_clp=0.00 clip_frac~0.31 fatigue=0.49 lr_raw=1.395 lr_eff=1.387 HIPP bank=ELEVATED sim=-0.593 chi=0.008 write=0 status=GREEN: NOMINAL | Thermo E=2.41 | text=''
+[DEMO] t=000107 raw=0.7944 ts=0.0000 mix=0.7944 z=0.72/th=1.30 expl=0.000 SURP=0
+[DEMO] t=000108 raw=0.9115 ts=0.0000 mix=0.9115 z=0.88/th=1.30 expl=0.000 SURP=0
+[DEMO] t=000109 raw=3.6827 ts=0.0000 mix=3.6827 z=3.83/th=1.30 expl=0.000 SURP=1
+[ANOMALY] step=109 err=3.6827 z=3.825 z_thr=1.302 ema=0.1343 sig=0.9276 ratio=9.7 plas_rms=0.0169 plas_clp=0.00 clip_frac~0.14 fatigue=0.50 lr_raw=1.392 lr_eff=1.151 HIPP bank=ELEVATED sim=+0.512 chi=0.231 write=0 status=GREEN: NOMINAL | Thermo E=2.49 | text=''
+[DEMO] t=000110 raw=2.5576 ts=0.0000 mix=2.5576 z=2.53/th=1.30 expl=0.000 SURP=1
+[DEBUG] step=110 z=2.5 status=AMBER emit=True
+[ANOMALY] step=110 err=2.5576 z=2.534 z_thr=1.300 ema=0.1367 sig=0.9555 ratio=9.4 plas_rms=0.0198 plas_clp=0.00 clip_frac~0.12 fatigue=0.52 lr_raw=1.388 lr_eff=1.150 HIPP bank=ELEVATED sim=+0.508 chi=0.229 write=0 status=GREEN: NOMINAL | Thermo E=2.56 | text=''
+[DEMO] t=000111 raw=0.8719 ts=0.0000 mix=0.8719 z=0.79/th=1.30 expl=0.000 SURP=0
+[DEMO] t=000112 raw=0.1254 ts=0.0000 mix=0.1254 z=0.01/th=1.30 expl=0.000 SURP=0
+[DEMO] t=000113 raw=1.6437 ts=0.0000 mix=1.6437 z=1.62/th=1.30 expl=0.000 SURP=1
+[ANOMALY] step=113 err=1.6437 z=1.622 z_thr=1.296 ema=0.1389 sig=0.9276 ratio=9.5 plas_rms=0.0075 plas_clp=0.00 clip_frac~0.27 fatigue=0.53 lr_raw=1.384 lr_eff=1.372 HIPP bank=ELEVATED sim=-0.481 chi=0.012 write=0 status=GREEN: NOMINAL | Thermo E=2.32 | text=''
+[DEMO] t=000114 raw=3.0692 ts=0.0000 mix=3.0692 z=3.06/th=1.29 expl=0.000 SURP=1
+[ANOMALY] step=114 err=3.0692 z=3.064 z_thr=1.295 ema=0.1418 sig=0.9555 ratio=9.3 plas_rms=0.0233 plas_clp=0.00 clip_frac~0.10 fatigue=0.55 lr_raw=1.380 lr_eff=1.167 HIPP bank=ELEVATED sim=+0.472 chi=0.205 write=0 status=GREEN: NOMINAL | Thermo E=2.47 | text=''
+[DEMO] t=000115 raw=2.3470 ts=0.0000 mix=2.3470 z=2.26/th=1.29 expl=0.000 SURP=1
+[ANOMALY] step=115 err=2.3470 z=2.264 z_thr=1.293 ema=0.1440 sig=0.9731 ratio=9.1 plas_rms=0.0179 plas_clp=0.00 clip_frac~0.13 fatigue=0.57 lr_raw=1.376 lr_eff=1.176 HIPP bank=ELEVATED sim=+0.453 chi=0.194 write=0 status=GREEN: NOMINAL | Thermo E=2.51 | text=''
+[DEMO] t=000116 raw=0.7578 ts=0.0000 mix=0.7578 z=0.64/th=1.29 expl=0.000 SURP=0
+[DEMO] t=000117 raw=0.6915 ts=0.0000 mix=0.6915 z=0.59/th=1.29 expl=0.000 SURP=0
+[DEMO] t=000118 raw=0.5488 ts=0.0000 mix=0.5488 z=0.45/th=1.29 expl=0.000 SURP=0
+[DEMO] t=000119 raw=1.7005 ts=0.0000 mix=1.7005 z=1.72/th=1.29 expl=0.000 SURP=1
+[ANOMALY] step=119 err=1.7005 z=1.717 z_thr=1.288 ema=0.1472 sig=0.9049 ratio=9.3 plas_rms=0.0077 plas_clp=0.00 clip_frac~0.27 fatigue=0.58 lr_raw=1.373 lr_eff=1.357 HIPP bank=ELEVATED sim=-0.391 chi=0.015 write=0 status=GREEN: NOMINAL | Thermo E=2.22 | text=''
+[DEMO] t=000120 raw=2.1024 ts=0.0000 mix=2.1024 z=2.08/th=1.29 expl=0.000 SURP=1
+[DEBUG] step=120 z=2.1 status=AMBER emit=True
+[ANOMALY] step=120 err=2.1024 z=2.080 z_thr=1.287 ema=0.1491 sig=0.9392 ratio=9.2 plas_rms=0.0160 plas_clp=0.00 clip_frac~0.15 fatigue=0.60 lr_raw=1.369 lr_eff=1.201 HIPP bank=ELEVATED sim=+0.396 chi=0.163 write=0 status=GREEN: NOMINAL | Thermo E=2.27 | text=''
+[DEMO] t=000121 raw=0.4974 ts=0.0000 mix=0.4974 z=0.38/th=1.29 expl=0.000 SURP=0
+[DEMO] t=000122 raw=1.8117 ts=0.0000 mix=1.8117 z=1.76/th=1.28 expl=0.000 SURP=1
+[ANOMALY] step=122 err=1.8117 z=1.756 z_thr=1.284 ema=0.1511 sig=0.9456 ratio=9.1 plas_rms=0.0098 plas_clp=0.00 clip_frac~0.24 fatigue=0.61 lr_raw=1.365 lr_eff=1.206 HIPP bank=ELEVATED sim=+0.380 chi=0.156 write=0 status=GREEN: NOMINAL | Thermo E=2.21 | text=''
+[DEMO] t=000123 raw=0.0900 ts=0.0000 mix=0.0900 z=0.07/th=1.28 expl=0.000 SURP=0
+[DEMO] t=000124 raw=0.1670 ts=0.0000 mix=0.1670 z=0.02/th=1.28 expl=0.000 SURP=0
+[DEMO] t=000125 raw=1.1917 ts=0.0000 mix=1.1917 z=1.12/th=1.28 expl=0.000 SURP=0
+[DEMO] t=000126 raw=2.7798 ts=0.0000 mix=2.7798 z=2.75/th=1.28 expl=0.000 SURP=1
+[ANOMALY] step=126 err=2.7798 z=2.747 z_thr=1.278 ema=0.1547 sig=0.9555 ratio=9.3 plas_rms=0.0104 plas_clp=0.00 clip_frac~0.20 fatigue=0.62 lr_raw=1.362 lr_eff=1.344 HIPP bank=ELEVATED sim=-0.355 chi=0.017 write=0 status=GREEN: NOMINAL | Thermo E=2.17 | text=''
+[DEMO] t=000127 raw=3.0152 ts=0.0000 mix=3.0152 z=2.93/th=1.28 expl=0.000 SURP=1
+[ANOMALY] step=127 err=3.0152 z=2.933 z_thr=1.277 ema=0.1576 sig=0.9743 ratio=9.1 plas_rms=0.0229 plas_clp=0.00 clip_frac~0.10 fatigue=0.64 lr_raw=1.358 lr_eff=1.219 HIPP bank=ELEVATED sim=+0.337 chi=0.137 write=0 status=GREEN: NOMINAL | Thermo E=2.32 | text=''
+[DEMO] t=000128 raw=2.3868 ts=0.0000 mix=2.3868 z=2.26/th=1.28 expl=0.000 SURP=1
+[ANOMALY] step=128 err=2.3868 z=2.261 z_thr=1.276 ema=0.1598 sig=0.9850 ratio=9.0 plas_rms=0.0181 plas_clp=0.00 clip_frac~0.13 fatigue=0.66 lr_raw=1.354 lr_eff=1.212 HIPP bank=ELEVATED sim=+0.345 chi=0.140 write=0 status=GREEN: NOMINAL | Thermo E=2.39 | text=''
+[DEMO] t=000129 raw=1.6857 ts=0.0000 mix=1.6857 z=1.54/th=1.27 expl=0.000 SURP=1
+[ANOMALY] step=129 err=1.6857 z=1.537 z_thr=1.275 ema=0.1614 sig=0.9919 ratio=8.8 plas_rms=0.0127 plas_clp=0.00 clip_frac~0.18 fatigue=0.68 lr_raw=1.350 lr_eff=1.212 HIPP bank=ELEVATED sim=+0.335 chi=0.136 write=0 status=GREEN: NOMINAL | Thermo E=2.36 | text=''
+[DEMO] t=000130 raw=1.6026 ts=0.0000 mix=1.6026 z=1.44/th=1.27 expl=0.000 SURP=1
+[DEBUG] step=130 z=1.4 status=AMBER emit=True
+[ANOMALY] step=130 err=1.6026 z=1.441 z_thr=1.273 ema=0.1628 sig=0.9991 ratio=8.7 plas_rms=0.0121 plas_clp=0.00 clip_frac~0.61 fatigue=0.70 lr_raw=0.350 lr_eff=0.345 HIPP bank=ELEVATED sim=-0.333 chi=0.018 write=0 status=GREEN: NOMINAL | Thermo E=2.33 | text=''
+[DEMO] t=000131 raw=2.5938 ts=0.0000 mix=2.5938 z=2.43/th=1.27 expl=0.000 SURP=1
+[ANOMALY] step=131 err=2.5938 z=2.426 z_thr=1.272 ema=0.1652 sig=1.0010 ratio=8.6 plas_rms=0.0196 plas_clp=0.00 clip_frac~0.41 fatigue=0.72 lr_raw=0.350 lr_eff=0.345 HIPP bank=ELEVATED sim=-0.331 chi=0.018 write=0 status=GREEN: NOMINAL | Thermo E=2.41 | text=''
+[DEMO] t=000132 raw=2.3538 ts=0.0000 mix=2.3538 z=2.18/th=1.27 expl=0.000 SURP=1
+[ANOMALY] step=132 err=2.3538 z=2.180 z_thr=1.271 ema=0.1674 sig=1.0030 ratio=8.5 plas_rms=0.0180 plas_clp=0.00 clip_frac~0.48 fatigue=0.74 lr_raw=0.350 lr_eff=0.316 HIPP bank=ELEVATED sim=+0.319 chi=0.130 write=0 status=GREEN: NOMINAL | Thermo E=2.46 | text=''
+[DEMO] t=000133 raw=2.3798 ts=0.0000 mix=2.3798 z=2.16/th=1.27 expl=0.000 SURP=1
+[ANOMALY] step=133 err=2.3798 z=2.164 z_thr=1.270 ema=0.1696 sig=1.0211 ratio=8.3 plas_rms=0.0180 plas_clp=0.00 clip_frac~0.47 fatigue=0.76 lr_raw=0.350 lr_eff=0.317 HIPP bank=ELEVATED sim=+0.314 chi=0.128 write=0 status=GREEN: NOMINAL | Thermo E=2.50 | text=''
+[DEMO] t=000134 raw=2.6812 ts=0.0000 mix=2.6812 z=2.39/th=1.27 expl=0.000 SURP=1
+[ANOMALY] step=134 err=2.6812 z=2.385 z_thr=1.268 ema=0.1721 sig=1.0518 ratio=8.2 plas_rms=0.0202 plas_clp=0.00 clip_frac~0.40 fatigue=0.78 lr_raw=0.350 lr_eff=0.345 HIPP bank=ELEVATED sim=-0.310 chi=0.020 write=0 status=GREEN: NOMINAL | Thermo E=2.56 | text=''
+[DEMO] t=000135 raw=0.0782 ts=0.0000 mix=0.0782 z=0.09/th=1.27 expl=0.000 SURP=0
+[DEMO] t=000136 raw=2.3599 ts=0.0000 mix=2.3599 z=2.08/th=1.27 expl=0.000 SURP=1
+[ANOMALY] step=136 err=2.3599 z=2.078 z_thr=1.266 ema=0.1742 sig=1.0519 ratio=8.2 plas_rms=0.0130 plas_clp=0.00 clip_frac~0.58 fatigue=0.80 lr_raw=0.350 lr_eff=0.344 HIPP bank=ELEVATED sim=-0.282 chi=0.021 write=0 status=GREEN: NOMINAL | Thermo E=2.48 | text=''
+[DEMO] t=000137 raw=2.0278 ts=0.0000 mix=2.0278 z=1.73/th=1.26 expl=0.000 SURP=1
+[ANOMALY] step=137 err=2.0278 z=1.728 z_thr=1.265 ema=0.1761 sig=1.0714 ratio=8.1 plas_rms=0.0154 plas_clp=0.00 clip_frac~0.54 fatigue=0.82 lr_raw=0.350 lr_eff=0.320 HIPP bank=ELEVATED sim=+0.282 chi=0.116 write=0 status=GREEN: NOMINAL | Thermo E=2.47 | text=''
+[DEMO] t=000138 raw=1.7211 ts=0.0000 mix=1.7211 z=1.44/th=1.26 expl=0.000 SURP=1
+[ANOMALY] step=138 err=1.7211 z=1.438 z_thr=1.264 ema=0.1776 sig=1.0737 ratio=8.0 plas_rms=0.0130 plas_clp=0.00 clip_frac~0.61 fatigue=0.84 lr_raw=0.350 lr_eff=0.322 HIPP bank=ELEVATED sim=+0.260 chi=0.108 write=0 status=GREEN: NOMINAL | Thermo E=2.42 | text=''
+[DEMO] t=000139 raw=1.6297 ts=0.0000 mix=1.6297 z=1.35/th=1.26 expl=0.000 SURP=1
+[ANOMALY] step=139 err=1.6297 z=1.349 z_thr=1.262 ema=0.1791 sig=1.0753 ratio=7.9 plas_rms=0.0165 plas_clp=0.00 clip_frac~0.48 fatigue=0.86 lr_raw=0.350 lr_eff=0.344 HIPP bank=ELEVATED sim=-0.252 chi=0.023 write=0 status=GREEN: NOMINAL | Thermo E=2.37 | text=''
+[DEMO] t=000140 raw=0.0394 ts=0.0000 mix=0.0394 z=0.13/th=1.26 expl=0.000 SURP=0
+[DEBUG] step=140 z=0.1 status=AMBER emit=True
+[DEMO] t=000141 raw=0.5299 ts=0.0000 mix=0.5299 z=0.33/th=1.26 expl=0.000 SURP=0
+[DEMO] t=000142 raw=0.0261 ts=0.0000 mix=0.0261 z=0.15/th=1.26 expl=0.000 SURP=0
+[DEMO] t=000143 raw=2.3336 ts=0.0000 mix=2.3336 z=2.01/th=1.26 expl=0.000 SURP=1
+[ANOMALY] step=143 err=2.3336 z=2.009 z_thr=1.258 ema=0.1813 sig=1.0714 ratio=8.1 plas_rms=0.0091 plas_clp=0.00 clip_frac~0.74 fatigue=0.86 lr_raw=0.350 lr_eff=0.325 HIPP bank=ELEVATED sim=+0.211 chi=0.094 write=0 status=GREEN: NOMINAL | Thermo E=2.16 | text=''
+[DEMO] t=000144 raw=0.6507 ts=0.0000 mix=0.6507 z=0.45/th=1.26 expl=0.000 SURP=0
+[DEMO] t=000145 raw=1.8727 ts=0.0000 mix=1.8727 z=1.59/th=1.26 expl=0.000 SURP=1
+[ANOMALY] step=145 err=1.8727 z=1.590 z_thr=1.255 ema=0.1835 sig=1.0628 ratio=8.1 plas_rms=0.0102 plas_clp=0.00 clip_frac~0.68 fatigue=0.88 lr_raw=0.350 lr_eff=0.343 HIPP bank=ELEVATED sim=-0.207 chi=0.027 write=0 status=GREEN: NOMINAL | Thermo E=2.10 | text=''
+[DEMO] t=000146 raw=0.3535 ts=0.0000 mix=0.3535 z=0.16/th=1.25 expl=0.000 SURP=0
+[DEMO] t=000147 raw=1.3525 ts=0.0000 mix=1.3525 z=1.10/th=1.25 expl=0.000 SURP=0
+[DEMO] t=000148 raw=0.8985 ts=0.0000 mix=0.8985 z=0.68/th=1.25 expl=0.000 SURP=0
+[DEMO] t=000149 raw=0.7303 ts=0.0000 mix=0.7303 z=0.53/th=1.25 expl=0.000 SURP=0
+[DEMO] t=000150 raw=2.7989 ts=0.0000 mix=2.7989 z=2.48/th=1.25 expl=0.000 SURP=1
+[DEBUG] step=150 z=2.5 status=AMBER emit=True
+[ANOMALY] step=150 err=2.7989 z=2.482 z_thr=1.250 ema=0.1887 sig=1.0518 ratio=8.3 plas_rms=0.0099 plas_clp=0.00 clip_frac~0.71 fatigue=0.88 lr_raw=0.350 lr_eff=0.326 HIPP bank=ELEVATED sim=+0.207 chi=0.093 write=0 status=GREEN: NOMINAL | Thermo E=2.03 | text=''
+[DEMO] t=000151 raw=0.1950 ts=0.0000 mix=0.1950 z=0.01/th=1.25 expl=0.000 SURP=0
+[DEMO] t=000152 raw=0.9514 ts=0.0000 mix=0.9514 z=0.75/th=1.25 expl=0.000 SURP=0
+[DEMO] t=000153 raw=0.5022 ts=0.0000 mix=0.5022 z=0.31/th=1.25 expl=0.000 SURP=0
+[DEMO] t=000154 raw=2.6204 ts=0.0000 mix=2.6204 z=2.38/th=1.25 expl=0.000 SURP=1
+[ANOMALY] step=154 err=2.6204 z=2.375 z_thr=1.245 ema=0.1922 sig=1.0224 ratio=8.5 plas_rms=0.0099 plas_clp=0.00 clip_frac~0.69 fatigue=0.88 lr_raw=0.350 lr_eff=0.342 HIPP bank=ELEVATED sim=-0.154 chi=0.031 write=0 status=GREEN: NOMINAL | Thermo E=1.99 | text=''
+[DEMO] t=000155 raw=1.3611 ts=0.0000 mix=1.3611 z=1.14/th=1.24 expl=0.000 SURP=0
+[DEMO] t=000156 raw=0.7391 ts=0.0000 mix=0.7391 z=0.53/th=1.24 expl=0.000 SURP=0
+[DEMO] t=000157 raw=0.5918 ts=0.0000 mix=0.5918 z=0.39/th=1.24 expl=0.000 SURP=0
+[DEMO] t=000158 raw=1.4011 ts=0.0000 mix=1.4011 z=1.19/th=1.24 expl=0.000 SURP=0
+[DEMO] t=000159 raw=1.3922 ts=0.0000 mix=1.3922 z=1.18/th=1.24 expl=0.000 SURP=0
+[DEMO] t=000160 raw=2.1090 ts=0.0000 mix=2.1090 z=1.84/th=1.24 expl=0.000 SURP=1
+[DEBUG] step=160 z=1.8 status=AMBER emit=True
+[ANOMALY] step=160 err=2.1090 z=1.844 z_thr=1.239 ema=0.1986 sig=1.0360 ratio=8.8 plas_rms=0.0070 plas_clp=0.00 clip_frac~0.81 fatigue=0.88 lr_raw=0.350 lr_eff=0.341 HIPP bank=ELEVATED sim=-0.134 chi=0.033 write=0 status=GREEN: NOMINAL | Thermo E=1.89 | text=''
+[DEMO] t=000161 raw=1.4869 ts=0.0000 mix=1.4869 z=1.23/th=1.24 expl=0.000 SURP=0
+[DEMO] t=000162 raw=0.7711 ts=0.0000 mix=0.7711 z=0.55/th=1.24 expl=0.000 SURP=0
+[DEMO] t=000163 raw=2.9644 ts=0.0000 mix=2.9644 z=2.64/th=1.24 expl=0.000 SURP=1
+[ANOMALY] step=163 err=2.9644 z=2.638 z_thr=1.236 ema=0.2032 sig=1.0466 ratio=8.8 plas_rms=0.0130 plas_clp=0.00 clip_frac~0.59 fatigue=0.89 lr_raw=0.350 lr_eff=0.330 HIPP bank=ELEVATED sim=+0.140 chi=0.076 write=0 status=GREEN: NOMINAL | Thermo E=1.99 | text=''
+[DEMO] t=000164 raw=2.0802 ts=0.0000 mix=2.0802 z=1.77/th=1.23 expl=0.000 SURP=1
+[DEMO] t=000165 raw=2.4695 ts=0.0000 mix=2.4695 z=2.12/th=1.23 expl=0.000 SURP=1
+[DEMO] t=000166 raw=1.3940 ts=0.0000 mix=1.3940 z=1.12/th=1.23 expl=0.000 SURP=0
+[DEMO] t=000167 raw=0.9588 ts=0.0000 mix=0.9588 z=0.71/th=1.23 expl=0.000 SURP=0
+[DEMO] t=000168 raw=0.4144 ts=0.0000 mix=0.4144 z=0.19/th=1.23 expl=0.000 SURP=0
+[DEMO] t=000169 raw=0.8504 ts=0.0000 mix=0.8504 z=0.61/th=1.23 expl=0.000 SURP=0
+[DEMO] t=000170 raw=2.4142 ts=0.0000 mix=2.4142 z=2.08/th=1.23 expl=0.000 SURP=1
+[DEBUG] step=170 z=2.1 status=AMBER emit=True
+[DEMO] t=000171 raw=0.1820 ts=0.0000 mix=0.1820 z=0.03/th=1.23 expl=0.000 SURP=0
+[DEMO] t=000172 raw=0.6901 ts=0.0000 mix=0.6901 z=0.46/th=1.23 expl=0.000 SURP=0
+[DEMO] t=000173 raw=0.1589 ts=0.0000 mix=0.1589 z=0.05/th=1.23 expl=0.000 SURP=0
+[DEMO] t=000174 raw=1.0395 ts=0.0000 mix=1.0395 z=0.82/th=1.22 expl=0.000 SURP=0
+[DEMO] t=000175 raw=2.1132 ts=0.0000 mix=2.1132 z=1.86/th=1.22 expl=0.000 SURP=1
+[DEMO] t=000176 raw=2.0788 ts=0.0000 mix=2.0788 z=1.77/th=1.22 expl=0.000 SURP=1
+[DEMO] t=000177 raw=0.2051 ts=0.0000 mix=0.2051 z=0.01/th=1.22 expl=0.000 SURP=0
+[DEMO] t=000178 raw=0.2096 ts=0.0000 mix=0.2096 z=0.01/th=1.22 expl=0.000 SURP=0
+[DEMO] t=000179 raw=0.3794 ts=0.0000 mix=0.3794 z=0.16/th=1.22 expl=0.000 SURP=0
+[DEMO] t=000180 raw=1.6915 ts=0.0000 mix=1.6915 z=1.44/th=1.22 expl=0.000 SURP=1
+[DEBUG] step=180 z=1.4 status=AMBER emit=True
+[DEMO] t=000181 raw=0.9989 ts=0.0000 mix=0.9989 z=0.76/th=1.22 expl=0.000 SURP=0
+[DEMO] t=000182 raw=2.6739 ts=0.0000 mix=2.6739 z=2.40/th=1.22 expl=0.000 SURP=1
+[DEMO] t=000183 raw=2.7083 ts=0.0000 mix=2.7083 z=2.40/th=1.21 expl=0.000 SURP=1
+[DEMO] t=000184 raw=0.6461 ts=0.0000 mix=0.6461 z=0.41/th=1.21 expl=0.000 SURP=0
+[DEMO] t=000185 raw=1.0650 ts=0.0000 mix=1.0650 z=0.82/th=1.21 expl=0.000 SURP=0
+[DEMO] t=000186 raw=1.8502 ts=0.0000 mix=1.8502 z=1.59/th=1.21 expl=0.000 SURP=1
+[DEMO] t=000187 raw=1.9648 ts=0.0000 mix=1.9648 z=1.69/th=1.21 expl=0.000 SURP=1
+[DEMO] t=000188 raw=1.8139 ts=0.0000 mix=1.8139 z=1.51/th=1.21 expl=0.000 SURP=1
+[DEMO] t=000189 raw=0.0099 ts=0.0000 mix=0.0099 z=0.21/th=1.21 expl=0.000 SURP=0
+[DEMO] t=000190 raw=0.1338 ts=0.0000 mix=0.1338 z=0.09/th=1.21 expl=0.000 SURP=0
+[DEBUG] step=190 z=0.1 status=AMBER emit=True
+[DEMO] t=000191 raw=0.1675 ts=0.0000 mix=0.1675 z=0.06/th=1.21 expl=0.000 SURP=0
+[DEMO] t=000192 raw=0.7976 ts=0.0000 mix=0.7976 z=0.56/th=1.21 expl=0.000 SURP=0
+[DEMO] t=000193 raw=2.5287 ts=0.0000 mix=2.5287 z=2.25/th=1.21 expl=0.000 SURP=1
+[DEMO] t=000194 raw=0.7222 ts=0.0000 mix=0.7222 z=0.48/th=1.20 expl=0.000 SURP=0
+[DEMO] t=000195 raw=1.6413 ts=0.0000 mix=1.6413 z=1.38/th=1.20 expl=0.000 SURP=1
+[DEMO] t=000196 raw=0.5527 ts=0.0000 mix=0.5527 z=0.31/th=1.20 expl=0.000 SURP=0
+[DEMO] t=000197 raw=0.7615 ts=0.0000 mix=0.7615 z=0.53/th=1.20 expl=0.000 SURP=0
+[DEMO] t=000198 raw=2.0029 ts=0.0000 mix=2.0029 z=1.74/th=1.20 expl=0.000 SURP=1
+[DEMO] t=000199 raw=0.5589 ts=0.0000 mix=0.5589 z=0.32/th=1.20 expl=0.000 SURP=0
+[DEMO] t=000200 raw=1.2718 ts=0.0000 mix=1.2718 z=1.02/th=1.20 expl=0.000 SURP=0
+[DEBUG] step=200 z=1.0 status=AMBER emit=True
+[DEMO] t=000201 raw=0.2767 ts=0.0000 mix=0.2767 z=0.04/th=1.20 expl=0.000 SURP=0
+[DEMO] t=000202 raw=0.5314 ts=0.0000 mix=0.5314 z=0.29/th=1.20 expl=0.000 SURP=0
+[DEMO] t=000203 raw=1.8152 ts=0.0000 mix=1.8152 z=1.58/th=1.20 expl=0.000 SURP=1
+[DEMO] t=000204 raw=0.8260 ts=0.0000 mix=0.8260 z=0.59/th=1.20 expl=0.000 SURP=0
+[DEMO] t=000205 raw=2.2344 ts=0.0000 mix=2.2344 z=2.00/th=1.19 expl=0.000 SURP=1
+[DEMO] t=000206 raw=0.7839 ts=0.0000 mix=0.7839 z=0.55/th=1.19 expl=0.000 SURP=0
+[DEMO] t=000207 raw=2.6585 ts=0.0000 mix=2.6585 z=2.42/th=1.19 expl=0.000 SURP=1
+[DEMO] t=000208 raw=0.3214 ts=0.0000 mix=0.3214 z=0.08/th=1.19 expl=0.000 SURP=0
+[DEMO] t=000209 raw=1.4578 ts=0.0000 mix=1.4578 z=1.21/th=1.19 expl=0.000 SURP=1
+[DEMO] t=000210 raw=1.6767 ts=0.0000 mix=1.6767 z=1.43/th=1.19 expl=0.000 SURP=1
+[DEBUG] step=210 z=1.4 status=AMBER emit=True
+[DEMO] t=000211 raw=1.5942 ts=0.0000 mix=1.5942 z=1.34/th=1.19 expl=0.000 SURP=1
+[DEMO] t=000212 raw=0.5609 ts=0.0000 mix=0.5609 z=0.31/th=1.19 expl=0.000 SURP=0
+[DEMO] t=000213 raw=0.7298 ts=0.0000 mix=0.7298 z=0.48/th=1.19 expl=0.000 SURP=0
+[DEMO] t=000214 raw=1.5912 ts=0.0000 mix=1.5912 z=1.36/th=1.19 expl=0.000 SURP=1
+[DEMO] t=000215 raw=1.8760 ts=0.0000 mix=1.8760 z=1.63/th=1.19 expl=0.000 SURP=1
+[DEMO] t=000216 raw=0.9106 ts=0.0000 mix=0.9106 z=0.67/th=1.19 expl=0.000 SURP=0
+[DEMO] t=000217 raw=0.0500 ts=0.0000 mix=0.0500 z=0.21/th=1.18 expl=0.000 SURP=0
+[DEMO] t=000218 raw=3.2230 ts=0.0000 mix=3.2230 z=2.97/th=1.18 expl=0.000 SURP=1
+[DEMO] t=000219 raw=1.7760 ts=0.0000 mix=1.7760 z=1.53/th=1.18 expl=0.000 SURP=1
+[DEMO] t=000220 raw=0.9396 ts=0.0000 mix=0.9396 z=0.69/th=1.18 expl=0.000 SURP=0
+[DEBUG] step=220 z=0.7 status=AMBER emit=True
+[DEMO] t=000221 raw=0.2145 ts=0.0000 mix=0.2145 z=0.05/th=1.18 expl=0.000 SURP=0
+[DEMO] t=000222 raw=0.0024 ts=0.0000 mix=0.0024 z=0.26/th=1.18 expl=0.000 SURP=0
+[DEMO] t=000223 raw=0.3966 ts=0.0000 mix=0.3966 z=0.14/th=1.18 expl=0.000 SURP=0
+[DEMO] t=000224 raw=2.7699 ts=0.0000 mix=2.7699 z=2.55/th=1.18 expl=0.000 SURP=1
+[DEMO] t=000225 raw=0.7823 ts=0.0000 mix=0.7823 z=0.53/th=1.18 expl=0.000 SURP=0
+[DEMO] t=000226 raw=0.2690 ts=0.0000 mix=0.2690 z=0.01/th=1.18 expl=0.000 SURP=0
+[DEMO] t=000227 raw=2.2849 ts=0.0000 mix=2.2849 z=2.04/th=1.18 expl=0.000 SURP=1
+[DEMO] t=000228 raw=2.0438 ts=0.0000 mix=2.0438 z=1.79/th=1.18 expl=0.000 SURP=1
+[DEMO] t=000229 raw=2.6975 ts=0.0000 mix=2.6975 z=2.43/th=1.17 expl=0.000 SURP=1
+[DEMO] t=000230 raw=2.5086 ts=0.0000 mix=2.5086 z=2.20/th=1.17 expl=0.000 SURP=1
+[DEBUG] step=230 z=2.2 status=AMBER emit=True
+[DEMO] t=000231 raw=1.5096 ts=0.0000 mix=1.5096 z=1.22/th=1.17 expl=0.000 SURP=1
+[DEMO] t=000232 raw=1.0563 ts=0.0000 mix=1.0563 z=0.77/th=1.17 expl=0.000 SURP=0
+[DEMO] t=000233 raw=1.5818 ts=0.0000 mix=1.5818 z=1.30/th=1.17 expl=0.000 SURP=1
+[DEMO] t=000234 raw=0.1592 ts=0.0000 mix=0.1592 z=0.11/th=1.17 expl=0.000 SURP=0
+[DEMO] t=000235 raw=1.8386 ts=0.0000 mix=1.8386 z=1.55/th=1.17 expl=0.000 SURP=1
+[DEMO] t=000236 raw=2.8348 ts=0.0000 mix=2.8348 z=2.53/th=1.17 expl=0.000 SURP=1
+[DEMO] t=000237 raw=1.0580 ts=0.0000 mix=1.0580 z=0.77/th=1.17 expl=0.000 SURP=0
+[DEMO] t=000238 raw=0.8932 ts=0.0000 mix=0.8932 z=0.61/th=1.17 expl=0.000 SURP=0
+[DEMO] t=000239 raw=0.1751 ts=0.0000 mix=0.1751 z=0.11/th=1.17 expl=0.000 SURP=0
+[DEMO] t=000240 raw=0.1008 ts=0.0000 mix=0.1008 z=0.18/th=1.17 expl=0.000 SURP=0
+[DEBUG] step=240 z=0.2 status=AMBER emit=True
+[DEMO] t=000241 raw=0.8140 ts=0.0000 mix=0.8140 z=0.54/th=1.17 expl=0.000 SURP=0
+[DEMO] t=000242 raw=0.0995 ts=0.0000 mix=0.0995 z=0.18/th=1.17 expl=0.000 SURP=0
+[DEMO] t=000243 raw=1.2971 ts=0.0000 mix=1.2971 z=1.02/th=1.16 expl=0.000 SURP=0
+[DEMO] t=000244 raw=1.2235 ts=0.0000 mix=1.2235 z=0.95/th=1.16 expl=0.000 SURP=0
+[DEMO] t=000245 raw=1.6984 ts=0.0000 mix=1.6984 z=1.42/th=1.16 expl=0.000 SURP=1
+[DEMO] t=000246 raw=1.3787 ts=0.0000 mix=1.3787 z=1.09/th=1.16 expl=0.000 SURP=0
+[DEMO] t=000247 raw=0.5203 ts=0.0000 mix=0.5203 z=0.24/th=1.16 expl=0.000 SURP=0
+[DEMO] t=000248 raw=0.3559 ts=0.0000 mix=0.3559 z=0.07/th=1.16 expl=0.000 SURP=0
+[DEMO] t=000249 raw=0.9714 ts=0.0000 mix=0.9714 z=0.69/th=1.16 expl=0.000 SURP=0
+[DEMO] t=000250 raw=0.5265 ts=0.0000 mix=0.5265 z=0.24/th=1.16 expl=0.000 SURP=0
+[DEBUG] step=250 z=0.2 status=AMBER emit=True
+[DEMO] t=000251 raw=1.5744 ts=0.0000 mix=1.5744 z=1.31/th=1.16 expl=0.000 SURP=1
+[DEMO] t=000252 raw=2.6373 ts=0.0000 mix=2.6373 z=2.40/th=1.16 expl=0.000 SURP=1
+[DEMO] t=000253 raw=0.0928 ts=0.0000 mix=0.0928 z=0.20/th=1.16 expl=0.000 SURP=0
+[DEMO] t=000254 raw=2.3282 ts=0.0000 mix=2.3282 z=2.07/th=1.16 expl=0.000 SURP=1
+[DEMO] t=000255 raw=2.4776 ts=0.0000 mix=2.4776 z=2.19/th=1.16 expl=0.000 SURP=1
+[DEMO] t=000256 raw=2.9713 ts=0.0000 mix=2.9713 z=2.68/th=1.16 expl=0.000 SURP=1
+[DEMO] t=000257 raw=1.7952 ts=0.0000 mix=1.7952 z=1.50/th=1.16 expl=0.000 SURP=1
+[DEMO] t=000258 raw=1.2000 ts=0.0000 mix=1.2000 z=0.90/th=1.15 expl=0.000 SURP=0
+[DEMO] t=000259 raw=0.6319 ts=0.0000 mix=0.6319 z=0.33/th=1.15 expl=0.000 SURP=0
+[DEMO] t=000260 raw=1.6933 ts=0.0000 mix=1.6933 z=1.40/th=1.15 expl=0.000 SURP=1
+[DEBUG] step=260 z=1.4 status=AMBER emit=True
+[DEMO] t=000261 raw=0.4063 ts=0.0000 mix=0.4063 z=0.11/th=1.15 expl=0.000 SURP=0
+[DEMO] t=000262 raw=1.3436 ts=0.0000 mix=1.3436 z=1.05/th=1.15 expl=0.000 SURP=0
+[DEMO] t=000263 raw=1.1229 ts=0.0000 mix=1.1229 z=0.83/th=1.15 expl=0.000 SURP=0
+[DEMO] t=000264 raw=1.1570 ts=0.0000 mix=1.1570 z=0.87/th=1.15 expl=0.000 SURP=0
+[DEMO] t=000265 raw=0.5340 ts=0.0000 mix=0.5340 z=0.23/th=1.15 expl=0.000 SURP=0
+[DEMO] t=000266 raw=0.0210 ts=0.0000 mix=0.0210 z=0.29/th=1.15 expl=0.000 SURP=0
+[DEMO] t=000267 raw=2.0306 ts=0.0000 mix=2.0306 z=1.75/th=1.15 expl=0.000 SURP=1
+[DEMO] t=000268 raw=0.2123 ts=0.0000 mix=0.2123 z=0.09/th=1.15 expl=0.000 SURP=0
+[DEMO] t=000269 raw=0.2811 ts=0.0000 mix=0.2811 z=0.02/th=1.15 expl=0.000 SURP=0
+[DEMO] t=000270 raw=0.7061 ts=0.0000 mix=0.7061 z=0.41/th=1.15 expl=0.000 SURP=0
+[DEBUG] step=270 z=0.4 status=AMBER emit=True
+[DEMO] t=000271 raw=2.1084 ts=0.0000 mix=2.1084 z=1.84/th=1.15 expl=0.000 SURP=1
+[DEMO] t=000272 raw=0.3462 ts=0.0000 mix=0.3462 z=0.04/th=1.15 expl=0.000 SURP=0
+[DEMO] t=000273 raw=1.7074 ts=0.0000 mix=1.7074 z=1.43/th=1.15 expl=0.000 SURP=1
+[DEMO] t=000274 raw=2.9902 ts=0.0000 mix=2.9902 z=2.72/th=1.14 expl=0.000 SURP=1
+[DEMO] t=000275 raw=2.5727 ts=0.0000 mix=2.5727 z=2.27/th=1.14 expl=0.000 SURP=1
+[DEMO] t=000276 raw=2.1126 ts=0.0000 mix=2.1126 z=1.80/th=1.14 expl=0.000 SURP=1
+[DEMO] t=000277 raw=0.8267 ts=0.0000 mix=0.8267 z=0.51/th=1.14 expl=0.000 SURP=0
+[DEMO] t=000278 raw=0.6932 ts=0.0000 mix=0.6932 z=0.38/th=1.14 expl=0.000 SURP=0
+[DEMO] t=000279 raw=1.1587 ts=0.0000 mix=1.1587 z=0.86/th=1.14 expl=0.000 SURP=0
+[DEMO] t=000280 raw=1.7900 ts=0.0000 mix=1.7900 z=1.50/th=1.14 expl=0.000 SURP=1
+[DEBUG] step=280 z=1.5 status=AMBER emit=True
+[DEMO] t=000281 raw=1.5876 ts=0.0000 mix=1.5876 z=1.29/th=1.14 expl=0.000 SURP=1
+[DEMO] t=000282 raw=1.2240 ts=0.0000 mix=1.2240 z=0.92/th=1.14 expl=0.000 SURP=0
+[DEMO] t=000283 raw=0.6613 ts=0.0000 mix=0.6613 z=0.35/th=1.14 expl=0.000 SURP=0
+[DEMO] t=000284 raw=0.6026 ts=0.0000 mix=0.6026 z=0.29/th=1.14 expl=0.000 SURP=0
+[DEMO] t=000285 raw=2.8503 ts=0.0000 mix=2.8503 z=2.58/th=1.14 expl=0.000 SURP=1
+[DEMO] t=000286 raw=1.9440 ts=0.0000 mix=1.9440 z=1.65/th=1.14 expl=0.000 SURP=1
+[DEMO] t=000287 raw=2.2069 ts=0.0000 mix=2.2069 z=1.90/th=1.14 expl=0.000 SURP=1
+[DEMO] t=000288 raw=0.3428 ts=0.0000 mix=0.3428 z=0.02/th=1.14 expl=0.000 SURP=0
+[DEMO] t=000289 raw=1.1643 ts=0.0000 mix=1.1643 z=0.85/th=1.14 expl=0.000 SURP=0
+[DEMO] t=000290 raw=1.5979 ts=0.0000 mix=1.5979 z=1.29/th=1.14 expl=0.000 SURP=1
+[DEBUG] step=290 z=1.3 status=AMBER emit=True
+[DEMO] t=000291 raw=2.3788 ts=0.0000 mix=2.3788 z=2.07/th=1.14 expl=0.000 SURP=1
+[DEMO] t=000292 raw=1.2690 ts=0.0000 mix=1.2690 z=0.95/th=1.13 expl=0.000 SURP=0
+[DEMO] t=000293 raw=0.9004 ts=0.0000 mix=0.9004 z=0.58/th=1.13 expl=0.000 SURP=0
+[DEMO] t=000294 raw=0.5846 ts=0.0000 mix=0.5846 z=0.26/th=1.13 expl=0.000 SURP=0
+[DEMO] t=000295 raw=0.7848 ts=0.0000 mix=0.7848 z=0.46/th=1.13 expl=0.000 SURP=0
+[DEMO] t=000296 raw=0.0838 ts=0.0000 mix=0.0838 z=0.25/th=1.13 expl=0.000 SURP=0
+[DEMO] t=000297 raw=2.3807 ts=0.0000 mix=2.3807 z=2.08/th=1.13 expl=0.000 SURP=1
+[DEMO] t=000298 raw=1.3864 ts=0.0000 mix=1.3864 z=1.07/th=1.13 expl=0.000 SURP=0
+[DEMO] t=000299 raw=0.6735 ts=0.0000 mix=0.6735 z=0.34/th=1.13 expl=0.000 SURP=0
+[DEMO] t=000300 raw=3.0953 ts=0.0000 mix=3.0953 z=2.80/th=1.13 expl=0.000 SURP=1
+[DEBUG] step=300 z=2.8 status=AMBER emit=True
+[DEMO] t=000301 raw=0.5927 ts=0.0000 mix=0.5927 z=0.26/th=1.13 expl=0.000 SURP=0
+[DEMO] t=000302 raw=2.1818 ts=0.0000 mix=2.1818 z=1.87/th=1.13 expl=0.000 SURP=1
+[DEMO] t=000303 raw=0.3231 ts=0.0000 mix=0.3231 z=0.02/th=1.13 expl=0.000 SURP=0
+[DEMO] t=000304 raw=1.5970 ts=0.0000 mix=1.5970 z=1.28/th=1.13 expl=0.000 SURP=1
+[DEMO] t=000305 raw=1.7702 ts=0.0000 mix=1.7702 z=1.45/th=1.13 expl=0.000 SURP=1
+[DEMO] t=000306 raw=0.1281 ts=0.0000 mix=0.1281 z=0.22/th=1.13 expl=0.000 SURP=0
+[DEMO] t=000307 raw=2.0192 ts=0.0000 mix=2.0192 z=1.70/th=1.13 expl=0.000 SURP=1
+[DEMO] t=000308 raw=1.7046 ts=0.0000 mix=1.7046 z=1.38/th=1.13 expl=0.000 SURP=1
+[DEMO] t=000309 raw=1.6964 ts=0.0000 mix=1.6964 z=1.36/th=1.13 expl=0.000 SURP=1
+[DEMO] t=000310 raw=0.6082 ts=0.0000 mix=0.6082 z=0.26/th=1.13 expl=0.000 SURP=0
+[DEBUG] step=310 z=0.3 status=AMBER emit=True
+[DEMO] t=000311 raw=2.2757 ts=0.0000 mix=2.2757 z=1.94/th=1.13 expl=0.000 SURP=1
+[DEMO] t=000312 raw=1.4958 ts=0.0000 mix=1.4958 z=1.15/th=1.13 expl=0.000 SURP=1
+[DEMO] t=000313 raw=1.9253 ts=0.0000 mix=1.9253 z=1.56/th=1.13 expl=0.000 SURP=1
+[DEMO] t=000314 raw=2.1882 ts=0.0000 mix=2.1882 z=1.79/th=1.12 expl=0.000 SURP=1
+[DEMO] t=000315 raw=2.3810 ts=0.0000 mix=2.3810 z=1.98/th=1.12 expl=0.000 SURP=1
+[DEMO] t=000316 raw=0.7392 ts=0.0000 mix=0.7392 z=0.37/th=1.12 expl=0.000 SURP=0
+[DEMO] t=000317 raw=0.5401 ts=0.0000 mix=0.5401 z=0.18/th=1.12 expl=0.000 SURP=0
+[DEMO] t=000318 raw=1.8890 ts=0.0000 mix=1.8890 z=1.51/th=1.12 expl=0.000 SURP=1
+[DEMO] t=000319 raw=2.8045 ts=0.0000 mix=2.8045 z=2.40/th=1.12 expl=0.000 SURP=1
+[DEMO] t=000320 raw=2.0195 ts=0.0000 mix=2.0195 z=1.62/th=1.12 expl=0.000 SURP=1
+[DEBUG] step=320 z=1.6 status=AMBER emit=True
+[DEMO] t=000321 raw=2.2309 ts=0.0000 mix=2.2309 z=1.82/th=1.12 expl=0.000 SURP=1
+[DEMO] t=000322 raw=1.0112 ts=0.0000 mix=1.0112 z=0.63/th=1.12 expl=0.000 SURP=0
+[DEMO] t=000323 raw=1.3726 ts=0.0000 mix=1.3726 z=0.99/th=1.12 expl=0.000 SURP=0
+[DEMO] t=000324 raw=3.3828 ts=0.0000 mix=3.3828 z=2.94/th=1.12 expl=0.000 SURP=1
+[DEMO] t=000325 raw=1.0817 ts=0.0000 mix=1.0817 z=0.70/th=1.12 expl=0.000 SURP=0
+[DEMO] t=000326 raw=1.1400 ts=0.0000 mix=1.1400 z=0.76/th=1.12 expl=0.000 SURP=0
+[DEMO] t=000327 raw=2.1937 ts=0.0000 mix=2.1937 z=1.79/th=1.12 expl=0.000 SURP=1
+[DEMO] t=000328 raw=1.0004 ts=0.0000 mix=1.0004 z=0.62/th=1.12 expl=0.000 SURP=0
+[DEMO] t=000329 raw=1.2330 ts=0.0000 mix=1.2330 z=0.85/th=1.12 expl=0.000 SURP=0
+[DEMO] t=000330 raw=0.0788 ts=0.0000 mix=0.0788 z=0.29/th=1.12 expl=0.000 SURP=0
+[DEBUG] step=330 z=0.3 status=AMBER emit=True
+[DEMO] t=000331 raw=2.0239 ts=0.0000 mix=2.0239 z=1.62/th=1.12 expl=0.000 SURP=1
+[DEMO] t=000332 raw=1.2650 ts=0.0000 mix=1.2650 z=0.87/th=1.12 expl=0.000 SURP=0
+[DEMO] t=000333 raw=2.5323 ts=0.0000 mix=2.5323 z=2.10/th=1.12 expl=0.000 SURP=1
+[DEMO] t=000334 raw=2.2018 ts=0.0000 mix=2.2018 z=1.77/th=1.12 expl=0.000 SURP=1
+[DEMO] t=000335 raw=1.6822 ts=0.0000 mix=1.6822 z=1.27/th=1.12 expl=0.000 SURP=1
+[DEMO] t=000336 raw=1.2810 ts=0.0000 mix=1.2810 z=0.88/th=1.12 expl=0.000 SURP=0
+[DEMO] t=000337 raw=1.2587 ts=0.0000 mix=1.2587 z=0.86/th=1.12 expl=0.000 SURP=0
+[DEMO] t=000338 raw=0.6591 ts=0.0000 mix=0.6591 z=0.27/th=1.12 expl=0.000 SURP=0
+[DEMO] t=000339 raw=1.0696 ts=0.0000 mix=1.0696 z=0.67/th=1.12 expl=0.000 SURP=0
+[DEMO] t=000340 raw=1.2658 ts=0.0000 mix=1.2658 z=0.87/th=1.12 expl=0.000 SURP=0
+[DEBUG] step=340 z=0.9 status=AMBER emit=True
+[DEMO] t=000341 raw=1.8087 ts=0.0000 mix=1.8087 z=1.40/th=1.12 expl=0.000 SURP=1
+[DEMO] t=000342 raw=1.8639 ts=0.0000 mix=1.8639 z=1.46/th=1.12 expl=0.000 SURP=1
+[DEMO] t=000343 raw=1.1593 ts=0.0000 mix=1.1593 z=0.76/th=1.12 expl=0.000 SURP=0
+[DEMO] t=000344 raw=0.3523 ts=0.0000 mix=0.3523 z=0.04/th=1.11 expl=0.000 SURP=0
+[DEMO] t=000345 raw=2.6535 ts=0.0000 mix=2.6535 z=2.23/th=1.11 expl=0.000 SURP=1
+[DEMO] t=000346 raw=2.6981 ts=0.0000 mix=2.6981 z=2.27/th=1.11 expl=0.000 SURP=1
+[DEMO] t=000347 raw=1.3039 ts=0.0000 mix=1.3039 z=0.89/th=1.11 expl=0.000 SURP=0
+[DEMO] t=000348 raw=0.7817 ts=0.0000 mix=0.7817 z=0.38/th=1.11 expl=0.000 SURP=0
+[DEMO] t=000349 raw=0.6865 ts=0.0000 mix=0.6865 z=0.29/th=1.11 expl=0.000 SURP=0
+[DEMO] t=000350 raw=2.2741 ts=0.0000 mix=2.2741 z=1.85/th=1.11 expl=0.000 SURP=1
+[DEBUG] step=350 z=1.9 status=AMBER emit=True
+[DEMO] t=000351 raw=0.7586 ts=0.0000 mix=0.7586 z=0.36/th=1.11 expl=0.000 SURP=0
+[DEMO] t=000352 raw=1.4423 ts=0.0000 mix=1.4423 z=1.03/th=1.11 expl=0.000 SURP=0
+[DEMO] t=000353 raw=3.2011 ts=0.0000 mix=3.2011 z=2.74/th=1.11 expl=0.000 SURP=1
+[DEMO] t=000354 raw=2.1375 ts=0.0000 mix=2.1375 z=1.68/th=1.11 expl=0.000 SURP=1
+[DEMO] t=000355 raw=2.6598 ts=0.0000 mix=2.6598 z=2.17/th=1.11 expl=0.000 SURP=1
+[DEMO] t=000356 raw=1.8518 ts=0.0000 mix=1.8518 z=1.39/th=1.11 expl=0.000 SURP=1
+[DEMO] t=000357 raw=2.4194 ts=0.0000 mix=2.4194 z=1.93/th=1.11 expl=0.000 SURP=1
+[DEMO] t=000358 raw=3.0118 ts=0.0000 mix=3.0118 z=2.49/th=1.11 expl=0.000 SURP=1
+[DEMO] t=000359 raw=0.7987 ts=0.0000 mix=0.7987 z=0.37/th=1.11 expl=0.000 SURP=0
+[DEMO] t=000360 raw=0.7908 ts=0.0000 mix=0.7908 z=0.36/th=1.11 expl=0.000 SURP=0
+[DEBUG] step=360 z=0.4 status=AMBER emit=True
+[DEMO] t=000361 raw=0.2440 ts=0.0000 mix=0.2440 z=0.16/th=1.11 expl=0.000 SURP=0
+[DEMO] t=000362 raw=0.0020 ts=0.0000 mix=0.0020 z=0.40/th=1.11 expl=0.000 SURP=0
+[DEMO] t=000363 raw=0.4311 ts=0.0000 mix=0.4311 z=0.02/th=1.11 expl=0.000 SURP=0
+[DEMO] t=000364 raw=0.2986 ts=0.0000 mix=0.2986 z=0.11/th=1.11 expl=0.000 SURP=0
+[DEMO] t=000365 raw=0.1035 ts=0.0000 mix=0.1035 z=0.30/th=1.11 expl=0.000 SURP=0
+[DEMO] t=000366 raw=1.8283 ts=0.0000 mix=1.8283 z=1.39/th=1.11 expl=0.000 SURP=1
+[DEMO] t=000367 raw=1.1090 ts=0.0000 mix=1.1090 z=0.68/th=1.11 expl=0.000 SURP=0
+[DEMO] t=000368 raw=2.8714 ts=0.0000 mix=2.8714 z=2.40/th=1.11 expl=0.000 SURP=1
+[DEMO] t=000369 raw=2.7168 ts=0.0000 mix=2.7168 z=2.23/th=1.11 expl=0.000 SURP=1
+[DEMO] t=000370 raw=0.2658 ts=0.0000 mix=0.2658 z=0.15/th=1.11 expl=0.000 SURP=0
+[DEBUG] step=370 z=0.1 status=AMBER emit=True
+[DEMO] t=000371 raw=1.3307 ts=0.0000 mix=1.3307 z=0.88/th=1.11 expl=0.000 SURP=0
+[DEMO] t=000372 raw=0.3517 ts=0.0000 mix=0.3517 z=0.07/th=1.11 expl=0.000 SURP=0
+[DEMO] t=000373 raw=0.9646 ts=0.0000 mix=0.9646 z=0.53/th=1.11 expl=0.000 SURP=0
+[DEMO] t=000374 raw=0.6036 ts=0.0000 mix=0.6036 z=0.18/th=1.11 expl=0.000 SURP=0
+[DEMO] t=000375 raw=2.2089 ts=0.0000 mix=2.2089 z=1.75/th=1.11 expl=0.000 SURP=1
+[DEMO] t=000376 raw=1.7604 ts=0.0000 mix=1.7604 z=1.31/th=1.11 expl=0.000 SURP=1
+[DEMO] t=000377 raw=0.4987 ts=0.0000 mix=0.4987 z=0.07/th=1.11 expl=0.000 SURP=0
+[DEMO] t=000378 raw=0.6779 ts=0.0000 mix=0.6779 z=0.25/th=1.11 expl=0.000 SURP=0
+[DEMO] t=000379 raw=1.4574 ts=0.0000 mix=1.4574 z=1.02/th=1.11 expl=0.000 SURP=0
+[DEMO] t=000380 raw=0.4234 ts=0.0000 mix=0.4234 z=0.00/th=1.11 expl=0.000 SURP=0
+[DEBUG] step=380 z=0.0 status=AMBER emit=True
+[DEMO] t=000381 raw=0.6738 ts=0.0000 mix=0.6738 z=0.25/th=1.11 expl=0.000 SURP=0
+[DEMO] t=000382 raw=0.6916 ts=0.0000 mix=0.6916 z=0.26/th=1.11 expl=0.000 SURP=0
+[DEMO] t=000383 raw=0.1475 ts=0.0000 mix=0.1475 z=0.28/th=1.11 expl=0.000 SURP=0
+[DEMO] t=000384 raw=0.0814 ts=0.0000 mix=0.0814 z=0.34/th=1.11 expl=0.000 SURP=0
+[DEMO] t=000385 raw=0.5192 ts=0.0000 mix=0.5192 z=0.09/th=1.11 expl=0.000 SURP=0
+[DEMO] t=000386 raw=1.2694 ts=0.0000 mix=1.2694 z=0.84/th=1.11 expl=0.000 SURP=0
+[DEMO] t=000387 raw=0.0176 ts=0.0000 mix=0.0176 z=0.40/th=1.11 expl=0.000 SURP=0
+[DEMO] t=000388 raw=2.2959 ts=0.0000 mix=2.2959 z=1.84/th=1.11 expl=0.000 SURP=1
+[DEMO] t=000389 raw=0.6249 ts=0.0000 mix=0.6249 z=0.20/th=1.11 expl=0.000 SURP=0
+[DEMO] t=000390 raw=1.8562 ts=0.0000 mix=1.8562 z=1.42/th=1.11 expl=0.000 SURP=1
+[DEBUG] step=390 z=1.4 status=AMBER emit=True
+[DEMO] t=000391 raw=0.2948 ts=0.0000 mix=0.2948 z=0.13/th=1.11 expl=0.000 SURP=0
+[DEMO] t=000392 raw=0.8434 ts=0.0000 mix=0.8434 z=0.41/th=1.11 expl=0.000 SURP=0
+[DEMO] t=000393 raw=0.6945 ts=0.0000 mix=0.6945 z=0.27/th=1.11 expl=0.000 SURP=0
+[DEMO] t=000394 raw=3.7161 ts=0.0000 mix=3.7161 z=3.28/th=1.10 expl=0.000 SURP=1
+[DEMO] t=000395 raw=1.2867 ts=0.0000 mix=1.2867 z=0.85/th=1.10 expl=0.000 SURP=0
+[DEMO] t=000396 raw=0.5752 ts=0.0000 mix=0.5752 z=0.14/th=1.10 expl=0.000 SURP=0
+[DEMO] t=000397 raw=0.2334 ts=0.0000 mix=0.2334 z=0.20/th=1.10 expl=0.000 SURP=0
+[DEMO] t=000398 raw=0.6545 ts=0.0000 mix=0.6545 z=0.22/th=1.10 expl=0.000 SURP=0
+[DEMO] t=000399 raw=0.1440 ts=0.0000 mix=0.1440 z=0.29/th=1.10 expl=0.000 SURP=0
+[DEMO] t=000400 raw=0.0991 ts=0.0000 mix=0.0991 z=0.33/th=1.10 expl=0.000 SURP=0
+[DEBUG] step=400 z=0.3 status=AMBER emit=True
+[DEMO] t=000401 raw=0.7310 ts=0.0000 mix=0.7310 z=0.30/th=1.10 expl=0.000 SURP=0
+[DEMO] t=000402 raw=0.1622 ts=0.0000 mix=0.1622 z=0.27/th=1.10 expl=0.000 SURP=0
+[DEMO] t=000403 raw=1.4960 ts=0.0000 mix=1.4960 z=1.07/th=1.10 expl=0.000 SURP=0
+[DEMO] t=000404 raw=0.3560 ts=0.0000 mix=0.3560 z=0.08/th=1.10 expl=0.000 SURP=0
+[DEMO] t=000405 raw=1.5258 ts=0.0000 mix=1.5258 z=1.10/th=1.10 expl=0.000 SURP=0
+[DEMO] t=000406 raw=1.8459 ts=0.0000 mix=1.8459 z=1.42/th=1.10 expl=0.000 SURP=1
+[DEMO] t=000407 raw=1.2269 ts=0.0000 mix=1.2269 z=0.79/th=1.10 expl=0.000 SURP=0
+[DEMO] t=000408 raw=0.8482 ts=0.0000 mix=0.8482 z=0.41/th=1.10 expl=0.000 SURP=0
+[DEMO] t=000409 raw=0.4772 ts=0.0000 mix=0.4772 z=0.04/th=1.10 expl=0.000 SURP=0
+[DEMO] t=000410 raw=3.0913 ts=0.0000 mix=3.0913 z=2.67/th=1.10 expl=0.000 SURP=1
+[DEBUG] step=410 z=2.7 status=AMBER emit=True
+[DEMO] t=000411 raw=1.9758 ts=0.0000 mix=1.9758 z=1.53/th=1.10 expl=0.000 SURP=1
+[DEMO] t=000412 raw=1.2943 ts=0.0000 mix=1.2943 z=0.86/th=1.10 expl=0.000 SURP=0
+[DEMO] t=000413 raw=1.2289 ts=0.0000 mix=1.2289 z=0.79/th=1.10 expl=0.000 SURP=0
+[DEMO] t=000414 raw=1.4915 ts=0.0000 mix=1.4915 z=1.06/th=1.10 expl=0.000 SURP=0
+[DEMO] t=000415 raw=2.4286 ts=0.0000 mix=2.4286 z=2.00/th=1.10 expl=0.000 SURP=1
+[DEMO] t=000416 raw=0.5253 ts=0.0000 mix=0.5253 z=0.08/th=1.10 expl=0.000 SURP=0
+[DEMO] t=000417 raw=0.7260 ts=0.0000 mix=0.7260 z=0.28/th=1.10 expl=0.000 SURP=0
+[DEMO] t=000418 raw=2.8330 ts=0.0000 mix=2.8330 z=2.40/th=1.10 expl=0.000 SURP=1
+[DEMO] t=000419 raw=1.9810 ts=0.0000 mix=1.9810 z=1.53/th=1.10 expl=0.000 SURP=1
+[DEMO] t=000420 raw=0.2250 ts=0.0000 mix=0.2250 z=0.22/th=1.10 expl=0.000 SURP=0
+[DEBUG] step=420 z=0.2 status=AMBER emit=True
+[DEMO] t=000421 raw=1.2835 ts=0.0000 mix=1.2835 z=0.83/th=1.10 expl=0.000 SURP=0
+[DEMO] t=000422 raw=0.4796 ts=0.0000 mix=0.4796 z=0.03/th=1.10 expl=0.000 SURP=0
+[DEMO] t=000423 raw=1.4914 ts=0.0000 mix=1.4914 z=1.04/th=1.10 expl=0.000 SURP=0
+[DEMO] t=000424 raw=0.3385 ts=0.0000 mix=0.3385 z=0.11/th=1.10 expl=0.000 SURP=0
+[DEMO] t=000425 raw=0.6979 ts=0.0000 mix=0.6979 z=0.25/th=1.10 expl=0.000 SURP=0
+[DEMO] t=000426 raw=1.2946 ts=0.0000 mix=1.2946 z=0.85/th=1.10 expl=0.000 SURP=0
+[DEMO] t=000427 raw=2.1613 ts=0.0000 mix=2.1613 z=1.71/th=1.10 expl=0.000 SURP=1
+[DEMO] t=000428 raw=2.6304 ts=0.0000 mix=2.6304 z=2.17/th=1.10 expl=0.000 SURP=1
+[DEMO] t=000429 raw=2.2750 ts=0.0000 mix=2.2750 z=1.80/th=1.10 expl=0.000 SURP=1
+[DEMO] t=000430 raw=1.6285 ts=0.0000 mix=1.6285 z=1.16/th=1.10 expl=0.000 SURP=1
+[DEBUG] step=430 z=1.2 status=AMBER emit=True
+[DEMO] t=000431 raw=0.6170 ts=0.0000 mix=0.6170 z=0.16/th=1.10 expl=0.000 SURP=0
+[DEMO] t=000432 raw=0.7756 ts=0.0000 mix=0.7756 z=0.32/th=1.10 expl=0.000 SURP=0
+[DEMO] t=000433 raw=3.4891 ts=0.0000 mix=3.4891 z=3.02/th=1.10 expl=0.000 SURP=1
+[DEMO] t=000434 raw=0.4449 ts=0.0000 mix=0.4449 z=0.02/th=1.10 expl=0.000 SURP=0
+[DEMO] t=000435 raw=2.0939 ts=0.0000 mix=2.0939 z=1.61/th=1.10 expl=0.000 SURP=1
+[DEMO] t=000436 raw=0.6403 ts=0.0000 mix=0.6403 z=0.17/th=1.10 expl=0.000 SURP=0
+[DEMO] t=000437 raw=1.0155 ts=0.0000 mix=1.0155 z=0.55/th=1.10 expl=0.000 SURP=0
+[DEMO] t=000438 raw=0.5061 ts=0.0000 mix=0.5061 z=0.04/th=1.10 expl=0.000 SURP=0
+[DEMO] t=000439 raw=2.5065 ts=0.0000 mix=2.5065 z=2.02/th=1.10 expl=0.000 SURP=1
+[DEMO] t=000440 raw=1.0152 ts=0.0000 mix=1.0152 z=0.55/th=1.10 expl=0.000 SURP=0
+[DEBUG] step=440 z=0.5 status=AMBER emit=True
+[DEMO] t=000441 raw=2.7677 ts=0.0000 mix=2.7677 z=2.28/th=1.10 expl=0.000 SURP=1
+[DEMO] t=000442 raw=0.2334 ts=0.0000 mix=0.2334 z=0.23/th=1.10 expl=0.000 SURP=0
+[DEMO] t=000443 raw=2.0801 ts=0.0000 mix=2.0801 z=1.58/th=1.10 expl=0.000 SURP=1
+[DEMO] t=000444 raw=1.2855 ts=0.0000 mix=1.2855 z=0.80/th=1.10 expl=0.000 SURP=0
+[DEMO] t=000445 raw=0.2386 ts=0.0000 mix=0.2386 z=0.23/th=1.10 expl=0.000 SURP=0
+[DEMO] t=000446 raw=0.4334 ts=0.0000 mix=0.4334 z=0.04/th=1.10 expl=0.000 SURP=0
+[DEMO] t=000447 raw=0.7160 ts=0.0000 mix=0.7160 z=0.24/th=1.10 expl=0.000 SURP=0
+[DEMO] t=000448 raw=1.1829 ts=0.0000 mix=1.1829 z=0.70/th=1.10 expl=0.000 SURP=0
+[DEMO] t=000449 raw=0.4716 ts=0.0000 mix=0.4716 z=0.00/th=1.10 expl=0.000 SURP=0
+[DEMO] t=000450 raw=1.2633 ts=0.0000 mix=1.2633 z=0.78/th=1.10 expl=0.000 SURP=0
+[DEBUG] step=450 z=0.8 status=AMBER emit=True
+[DEMO] t=000451 raw=0.1732 ts=0.0000 mix=0.1732 z=0.30/th=1.10 expl=0.000 SURP=0
+[DEMO] t=000452 raw=1.0735 ts=0.0000 mix=1.0735 z=0.60/th=1.10 expl=0.000 SURP=0
+[DEMO] t=000453 raw=1.7831 ts=0.0000 mix=1.7831 z=1.30/th=1.10 expl=0.000 SURP=1
+[DEMO] t=000454 raw=1.6485 ts=0.0000 mix=1.6485 z=1.17/th=1.10 expl=0.000 SURP=1
+[DEMO] t=000455 raw=0.8704 ts=0.0000 mix=0.8704 z=0.39/th=1.10 expl=0.000 SURP=0
+[DEMO] t=000456 raw=0.3833 ts=0.0000 mix=0.3833 z=0.09/th=1.10 expl=0.000 SURP=0
+[DEMO] t=000457 raw=0.2451 ts=0.0000 mix=0.2451 z=0.23/th=1.10 expl=0.000 SURP=0
+[DEMO] t=000458 raw=0.9046 ts=0.0000 mix=0.9046 z=0.43/th=1.10 expl=0.000 SURP=0
+[DEMO] t=000459 raw=0.9436 ts=0.0000 mix=0.9436 z=0.47/th=1.10 expl=0.000 SURP=0
+[DEMO] t=000460 raw=1.9250 ts=0.0000 mix=1.9250 z=1.47/th=1.10 expl=0.000 SURP=1
+[DEBUG] step=460 z=1.5 status=AMBER emit=True
+[DEMO] t=000461 raw=0.1219 ts=0.0000 mix=0.1219 z=0.36/th=1.10 expl=0.000 SURP=0
+[DEMO] t=000462 raw=0.2249 ts=0.0000 mix=0.2249 z=0.26/th=1.10 expl=0.000 SURP=0
+[DEMO] t=000463 raw=0.1321 ts=0.0000 mix=0.1321 z=0.35/th=1.10 expl=0.000 SURP=0
+[DEMO] t=000464 raw=1.3361 ts=0.0000 mix=1.3361 z=0.87/th=1.10 expl=0.000 SURP=0
+[DEMO] t=000465 raw=0.8583 ts=0.0000 mix=0.8583 z=0.38/th=1.10 expl=0.000 SURP=0
+[DEMO] t=000466 raw=0.3041 ts=0.0000 mix=0.3041 z=0.18/th=1.10 expl=0.000 SURP=0
+[DEMO] t=000467 raw=2.2019 ts=0.0000 mix=2.2019 z=1.74/th=1.10 expl=0.000 SURP=1
+[DEMO] t=000468 raw=1.7677 ts=0.0000 mix=1.7677 z=1.31/th=1.10 expl=0.000 SURP=1
+[DEMO] t=000469 raw=2.2261 ts=0.0000 mix=2.2261 z=1.77/th=1.10 expl=0.000 SURP=1
+[DEMO] t=000470 raw=0.1822 ts=0.0000 mix=0.1822 z=0.31/th=1.10 expl=0.000 SURP=0
+[DEBUG] step=470 z=0.3 status=AMBER emit=True
+[DEMO] t=000471 raw=0.6097 ts=0.0000 mix=0.6097 z=0.13/th=1.10 expl=0.000 SURP=0
+[DEMO] t=000472 raw=0.0163 ts=0.0000 mix=0.0163 z=0.47/th=1.10 expl=0.000 SURP=0
+[DEMO] t=000473 raw=0.9985 ts=0.0000 mix=0.9985 z=0.52/th=1.10 expl=0.000 SURP=0
+[DEMO] t=000474 raw=0.0048 ts=0.0000 mix=0.0048 z=0.49/th=1.10 expl=0.000 SURP=0
+[DEMO] t=000475 raw=2.3217 ts=0.0000 mix=2.3217 z=1.85/th=1.10 expl=0.000 SURP=1
+[DEMO] t=000476 raw=0.3740 ts=0.0000 mix=0.3740 z=0.11/th=1.10 expl=0.000 SURP=0
+[DEMO] t=000477 raw=1.1180 ts=0.0000 mix=1.1180 z=0.64/th=1.10 expl=0.000 SURP=0
+[DEMO] t=000478 raw=1.1270 ts=0.0000 mix=1.1270 z=0.65/th=1.10 expl=0.000 SURP=0
+[DEMO] t=000479 raw=0.7611 ts=0.0000 mix=0.7611 z=0.28/th=1.10 expl=0.000 SURP=0
+[DEMO] t=000480 raw=0.6355 ts=0.0000 mix=0.6355 z=0.15/th=1.10 expl=0.000 SURP=0
+[DEBUG] step=480 z=0.2 status=AMBER emit=True
+[DEMO] t=000481 raw=1.3705 ts=0.0000 mix=1.3705 z=0.90/th=1.10 expl=0.000 SURP=0
+[DEMO] t=000482 raw=0.6438 ts=0.0000 mix=0.6438 z=0.16/th=1.10 expl=0.000 SURP=0
+[DEMO] t=000483 raw=1.5275 ts=0.0000 mix=1.5275 z=1.06/th=1.10 expl=0.000 SURP=0
+[DEMO] t=000484 raw=1.9868 ts=0.0000 mix=1.9868 z=1.53/th=1.10 expl=0.000 SURP=1
+[DEMO] t=000485 raw=1.9891 ts=0.0000 mix=1.9891 z=1.53/th=1.10 expl=0.000 SURP=1
+[DEMO] t=000486 raw=1.3063 ts=0.0000 mix=1.3063 z=0.83/th=1.10 expl=0.000 SURP=0
+[DEMO] t=000487 raw=0.4561 ts=0.0000 mix=0.4561 z=0.04/th=1.10 expl=0.000 SURP=0
+[DEMO] t=000488 raw=0.7293 ts=0.0000 mix=0.7293 z=0.24/th=1.10 expl=0.000 SURP=0
+[DEMO] t=000489 raw=0.3638 ts=0.0000 mix=0.3638 z=0.13/th=1.10 expl=0.000 SURP=0
+[DEMO] t=000490 raw=2.3618 ts=0.0000 mix=2.3618 z=1.91/th=1.10 expl=0.000 SURP=1
+[DEBUG] step=490 z=1.9 status=AMBER emit=True
+[DEMO] t=000491 raw=1.9134 ts=0.0000 mix=1.9134 z=1.44/th=1.10 expl=0.000 SURP=1
+[DEMO] t=000492 raw=0.0366 ts=0.0000 mix=0.0366 z=0.47/th=1.10 expl=0.000 SURP=0
+[DEMO] t=000493 raw=2.5987 ts=0.0000 mix=2.5987 z=2.13/th=1.10 expl=0.000 SURP=1
+[DEMO] t=000494 raw=0.3361 ts=0.0000 mix=0.3361 z=0.16/th=1.10 expl=0.000 SURP=0
+[DEMO] t=000495 raw=1.5246 ts=0.0000 mix=1.5246 z=1.04/th=1.10 expl=0.000 SURP=0
+[DEMO] t=000496 raw=0.2271 ts=0.0000 mix=0.2271 z=0.28/th=1.10 expl=0.000 SURP=0
+[DEMO] t=000497 raw=0.7454 ts=0.0000 mix=0.7454 z=0.25/th=1.10 expl=0.000 SURP=0
+[DEMO] t=000498 raw=0.6750 ts=0.0000 mix=0.6750 z=0.18/th=1.10 expl=0.000 SURP=0
+[DEMO] t=000499 raw=1.2416 ts=0.0000 mix=1.2416 z=0.76/th=1.10 expl=0.000 SURP=0
+[DEMO] t=000500 raw=1.5487 ts=0.0000 mix=1.5487 z=1.07/th=1.10 expl=0.000 SURP=0
+[DEBUG] step=500 z=1.1 status=AMBER emit=True
+[DEMO] t=000501 raw=1.6237 ts=0.0000 mix=1.6237 z=1.14/th=1.10 expl=0.000 SURP=1
+[DEMO] t=000502 raw=0.9191 ts=0.0000 mix=0.9191 z=0.43/th=1.10 expl=0.000 SURP=0
+[DEMO] t=000503 raw=0.6723 ts=0.0000 mix=0.6723 z=0.17/th=1.10 expl=0.000 SURP=0
+[DEMO] t=000504 raw=1.0335 ts=0.0000 mix=1.0335 z=0.55/th=1.10 expl=0.000 SURP=0
+[DEMO] t=000505 raw=2.3182 ts=0.0000 mix=2.3182 z=1.86/th=1.10 expl=0.000 SURP=1
+[DEMO] t=000506 raw=0.9997 ts=0.0000 mix=0.9997 z=0.51/th=1.10 expl=0.000 SURP=0
+[DEMO] t=000507 raw=0.8517 ts=0.0000 mix=0.8517 z=0.36/th=1.10 expl=0.000 SURP=0
+[DEMO] t=000508 raw=1.3728 ts=0.0000 mix=1.3728 z=0.89/th=1.09 expl=0.000 SURP=0
+[DEMO] t=000509 raw=0.3981 ts=0.0000 mix=0.3981 z=0.11/th=1.09 expl=0.000 SURP=0
+[DEMO] t=000510 raw=0.5476 ts=0.0000 mix=0.5476 z=0.04/th=1.09 expl=0.000 SURP=0
+[DEBUG] step=510 z=0.0 status=AMBER emit=True
+[DEMO] t=000511 raw=0.0782 ts=0.0000 mix=0.0782 z=0.44/th=1.09 expl=0.000 SURP=0
+[DEMO] t=000512 raw=2.3294 ts=0.0000 mix=2.3294 z=1.87/th=1.09 expl=0.000 SURP=1
+[DEMO] t=000513 raw=0.5326 ts=0.0000 mix=0.5326 z=0.03/th=1.09 expl=0.000 SURP=0
+[DEMO] t=000514 raw=1.6251 ts=0.0000 mix=1.6251 z=1.15/th=1.09 expl=0.000 SURP=1
+[DEMO] t=000515 raw=1.5223 ts=0.0000 mix=1.5223 z=1.04/th=1.09 expl=0.000 SURP=0
+[DEMO] t=000516 raw=0.7118 ts=0.0000 mix=0.7118 z=0.21/th=1.09 expl=0.000 SURP=0
+[DEMO] t=000517 raw=2.7350 ts=0.0000 mix=2.7350 z=2.29/th=1.09 expl=0.000 SURP=1
+[DEMO] t=000518 raw=1.1974 ts=0.0000 mix=1.1974 z=0.70/th=1.09 expl=0.000 SURP=0
+[DEMO] t=000519 raw=0.2767 ts=0.0000 mix=0.2767 z=0.24/th=1.09 expl=0.000 SURP=0
+[DEMO] t=000520 raw=1.1466 ts=0.0000 mix=1.1466 z=0.65/th=1.09 expl=0.000 SURP=0
+[DEBUG] step=520 z=0.7 status=AMBER emit=True
+[DEMO] t=000521 raw=0.4458 ts=0.0000 mix=0.4458 z=0.07/th=1.09 expl=0.000 SURP=0
+[DEMO] t=000522 raw=1.2404 ts=0.0000 mix=1.2404 z=0.75/th=1.09 expl=0.000 SURP=0
+[DEMO] t=000523 raw=1.0077 ts=0.0000 mix=1.0077 z=0.51/th=1.09 expl=0.000 SURP=0
+[DEMO] t=000524 raw=1.1547 ts=0.0000 mix=1.1547 z=0.66/th=1.09 expl=0.000 SURP=0
+[DEMO] t=000525 raw=1.9871 ts=0.0000 mix=1.9871 z=1.52/th=1.09 expl=0.000 SURP=1
+[DEMO] t=000526 raw=2.5624 ts=0.0000 mix=2.5624 z=2.10/th=1.09 expl=0.000 SURP=1
+[DEMO] t=000527 raw=1.8991 ts=0.0000 mix=1.8991 z=1.42/th=1.09 expl=0.000 SURP=1
+[DEMO] t=000528 raw=2.4602 ts=0.0000 mix=2.4602 z=1.99/th=1.09 expl=0.000 SURP=1
+[DEMO] t=000529 raw=0.1377 ts=0.0000 mix=0.1377 z=0.40/th=1.09 expl=0.000 SURP=0
+[DEMO] t=000530 raw=1.3874 ts=0.0000 mix=1.3874 z=0.89/th=1.09 expl=0.000 SURP=0
+[DEBUG] step=530 z=0.9 status=AMBER emit=True
+[DEMO] t=000531 raw=0.1675 ts=0.0000 mix=0.1675 z=0.37/th=1.09 expl=0.000 SURP=0
+[DEMO] t=000532 raw=0.9794 ts=0.0000 mix=0.9794 z=0.47/th=1.09 expl=0.000 SURP=0
+[DEMO] t=000533 raw=0.8526 ts=0.0000 mix=0.8526 z=0.34/th=1.09 expl=0.000 SURP=0
+[DEMO] t=000534 raw=1.0549 ts=0.0000 mix=1.0549 z=0.55/th=1.09 expl=0.000 SURP=0
+[DEMO] t=000535 raw=0.2608 ts=0.0000 mix=0.2608 z=0.27/th=1.09 expl=0.000 SURP=0
+[DEMO] t=000536 raw=1.3567 ts=0.0000 mix=1.3567 z=0.86/th=1.09 expl=0.000 SURP=0
+[DEMO] t=000537 raw=1.0840 ts=0.0000 mix=1.0840 z=0.58/th=1.09 expl=0.000 SURP=0
+[DEMO] t=000538 raw=1.0356 ts=0.0000 mix=1.0356 z=0.53/th=1.09 expl=0.000 SURP=0
+[DEMO] t=000539 raw=1.7682 ts=0.0000 mix=1.7682 z=1.28/th=1.10 expl=0.000 SURP=1
+[DEMO] t=000540 raw=2.6294 ts=0.0000 mix=2.6294 z=2.17/th=1.10 expl=0.000 SURP=1
+[DEBUG] step=540 z=2.2 status=AMBER emit=True
+[DEMO] t=000541 raw=2.9921 ts=0.0000 mix=2.9921 z=2.54/th=1.10 expl=0.000 SURP=1
+[DEMO] t=000542 raw=2.1001 ts=0.0000 mix=2.1001 z=1.61/th=1.10 expl=0.000 SURP=1
+[DEMO] t=000543 raw=2.0403 ts=0.0000 mix=2.0403 z=1.55/th=1.10 expl=0.000 SURP=1
+[DEMO] t=000544 raw=0.0600 ts=0.0000 mix=0.0600 z=0.49/th=1.10 expl=0.000 SURP=0
+[DEMO] t=000545 raw=0.7337 ts=0.0000 mix=0.7337 z=0.21/th=1.10 expl=0.000 SURP=0
+[DEMO] t=000546 raw=2.4008 ts=0.0000 mix=2.4008 z=1.92/th=1.10 expl=0.000 SURP=1
+[DEMO] t=000547 raw=0.0992 ts=0.0000 mix=0.0992 z=0.45/th=1.10 expl=0.000 SURP=0
+[DEMO] t=000548 raw=1.9445 ts=0.0000 mix=1.9445 z=1.45/th=1.10 expl=0.000 SURP=1
+[DEMO] t=000549 raw=2.1143 ts=0.0000 mix=2.1143 z=1.62/th=1.10 expl=0.000 SURP=1
+[DEMO] t=000550 raw=1.6412 ts=0.0000 mix=1.6412 z=1.13/th=1.10 expl=0.000 SURP=1
+[DEBUG] step=550 z=1.1 status=AMBER emit=True
+[DEMO] t=000551 raw=0.8845 ts=0.0000 mix=0.8845 z=0.35/th=1.10 expl=0.000 SURP=0
+[DEMO] t=000552 raw=1.5368 ts=0.0000 mix=1.5368 z=1.02/th=1.10 expl=0.000 SURP=0
+[DEMO] t=000553 raw=1.7375 ts=0.0000 mix=1.7375 z=1.23/th=1.10 expl=0.000 SURP=1
+[DEMO] t=000554 raw=1.5814 ts=0.0000 mix=1.5814 z=1.07/th=1.10 expl=0.000 SURP=0
+[DEMO] t=000555 raw=0.2233 ts=0.0000 mix=0.2233 z=0.33/th=1.10 expl=0.000 SURP=0
+[DEMO] t=000556 raw=2.3917 ts=0.0000 mix=2.3917 z=1.90/th=1.10 expl=0.000 SURP=1
+[DEMO] t=000557 raw=2.9659 ts=0.0000 mix=2.9659 z=2.48/th=1.10 expl=0.000 SURP=1
+[DEMO] t=000558 raw=1.7341 ts=0.0000 mix=1.7341 z=1.22/th=1.10 expl=0.000 SURP=1
+[DEMO] t=000559 raw=1.0054 ts=0.0000 mix=1.0054 z=0.47/th=1.10 expl=0.000 SURP=0
+[DEMO] t=000560 raw=0.4436 ts=0.0000 mix=0.4436 z=0.11/th=1.10 expl=0.000 SURP=0
+[DEBUG] step=560 z=0.1 status=AMBER emit=True
+[DEMO] t=000561 raw=0.8414 ts=0.0000 mix=0.8414 z=0.30/th=1.10 expl=0.000 SURP=0
+[DEMO] t=000562 raw=0.1219 ts=0.0000 mix=0.1219 z=0.44/th=1.10 expl=0.000 SURP=0
+[DEMO] t=000563 raw=1.0329 ts=0.0000 mix=1.0329 z=0.50/th=1.10 expl=0.000 SURP=0
+[DEMO] t=000564 raw=1.6267 ts=0.0000 mix=1.6267 z=1.11/th=1.10 expl=0.000 SURP=1
+[DEMO] t=000565 raw=0.9424 ts=0.0000 mix=0.9424 z=0.40/th=1.10 expl=0.000 SURP=0
+[DEMO] t=000566 raw=0.4836 ts=0.0000 mix=0.4836 z=0.07/th=1.10 expl=0.000 SURP=0
+[DEMO] t=000567 raw=1.5034 ts=0.0000 mix=1.5034 z=0.98/th=1.10 expl=0.000 SURP=0
+[DEMO] t=000568 raw=0.3486 ts=0.0000 mix=0.3486 z=0.21/th=1.10 expl=0.000 SURP=0
+[DEMO] t=000569 raw=0.6970 ts=0.0000 mix=0.6970 z=0.15/th=1.10 expl=0.000 SURP=0
+[DEMO] t=000570 raw=0.0244 ts=0.0000 mix=0.0244 z=0.54/th=1.10 expl=0.000 SURP=0
+[DEBUG] step=570 z=0.5 status=AMBER emit=True
+[DEMO] t=000571 raw=1.4674 ts=0.0000 mix=1.4674 z=0.94/th=1.10 expl=0.000 SURP=0
+[DEMO] t=000572 raw=0.0907 ts=0.0000 mix=0.0907 z=0.47/th=1.10 expl=0.000 SURP=0
+[DEMO] t=000573 raw=1.2304 ts=0.0000 mix=1.2304 z=0.70/th=1.10 expl=0.000 SURP=0
+[DEMO] t=000574 raw=2.5671 ts=0.0000 mix=2.5671 z=2.07/th=1.10 expl=0.000 SURP=1
+[DEMO] t=000575 raw=1.0230 ts=0.0000 mix=1.0230 z=0.48/th=1.10 expl=0.000 SURP=0
+[DEMO] t=000576 raw=0.6036 ts=0.0000 mix=0.6036 z=0.05/th=1.10 expl=0.000 SURP=0
+[DEMO] t=000577 raw=0.1339 ts=0.0000 mix=0.1339 z=0.43/th=1.10 expl=0.000 SURP=0
+[DEMO] t=000578 raw=0.8265 ts=0.0000 mix=0.8265 z=0.28/th=1.10 expl=0.000 SURP=0
+[DEMO] t=000579 raw=0.4371 ts=0.0000 mix=0.4371 z=0.12/th=1.10 expl=0.000 SURP=0
+[DEMO] t=000580 raw=2.0367 ts=0.0000 mix=2.0367 z=1.53/th=1.10 expl=0.000 SURP=1
+[DEBUG] step=580 z=1.5 status=AMBER emit=True
+[DEMO] t=000581 raw=1.7422 ts=0.0000 mix=1.7422 z=1.22/th=1.10 expl=0.000 SURP=1
+[DEMO] t=000582 raw=1.3476 ts=0.0000 mix=1.3476 z=0.82/th=1.10 expl=0.000 SURP=0
+[DEMO] t=000583 raw=1.0507 ts=0.0000 mix=1.0507 z=0.51/th=1.10 expl=0.000 SURP=0
+[DEMO] t=000584 raw=1.8315 ts=0.0000 mix=1.8315 z=1.31/th=1.10 expl=0.000 SURP=1
+[DEMO] t=000585 raw=2.2588 ts=0.0000 mix=2.2588 z=1.75/th=1.10 expl=0.000 SURP=1
+[DEMO] t=000586 raw=0.7536 ts=0.0000 mix=0.7536 z=0.20/th=1.10 expl=0.000 SURP=0
+[DEMO] t=000587 raw=0.0878 ts=0.0000 mix=0.0878 z=0.49/th=1.10 expl=0.000 SURP=0
+[DEMO] t=000588 raw=0.1450 ts=0.0000 mix=0.1450 z=0.43/th=1.10 expl=0.000 SURP=0
+[DEMO] t=000589 raw=0.5287 ts=0.0000 mix=0.5287 z=0.03/th=1.10 expl=0.000 SURP=0
+[DEMO] t=000590 raw=1.2502 ts=0.0000 mix=1.2502 z=0.71/th=1.10 expl=0.000 SURP=0
+[DEBUG] step=590 z=0.7 status=AMBER emit=True
+[DEMO] t=000591 raw=2.5072 ts=0.0000 mix=2.5072 z=2.01/th=1.10 expl=0.000 SURP=1
+[DEMO] t=000592 raw=1.8792 ts=0.0000 mix=1.8792 z=1.35/th=1.10 expl=0.000 SURP=1
+[DEMO] t=000593 raw=1.6725 ts=0.0000 mix=1.6725 z=1.14/th=1.10 expl=0.000 SURP=1
+[DEMO] t=000594 raw=1.0604 ts=0.0000 mix=1.0604 z=0.51/th=1.10 expl=0.000 SURP=0
+[DEMO] t=000595 raw=1.9599 ts=0.0000 mix=1.9599 z=1.44/th=1.10 expl=0.000 SURP=1
+[DEMO] t=000596 raw=0.4807 ts=0.0000 mix=0.4807 z=0.09/th=1.10 expl=0.000 SURP=0
+[DEMO] t=000597 raw=1.3033 ts=0.0000 mix=1.3033 z=0.76/th=1.10 expl=0.000 SURP=0
+[DEMO] t=000598 raw=3.4922 ts=0.0000 mix=3.4922 z=3.01/th=1.10 expl=0.000 SURP=1
+[DEMO] t=000599 raw=2.5064 ts=0.0000 mix=2.5064 z=1.99/th=1.10 expl=0.000 SURP=1
+[DEMO] t=000600 raw=2.6973 ts=0.0000 mix=2.6973 z=2.18/th=1.10 expl=0.000 SURP=1
+[DEBUG] step=600 z=2.2 status=AMBER emit=True
+[DEMO] t=000601 raw=1.1112 ts=0.0000 mix=1.1112 z=0.55/th=1.10 expl=0.000 SURP=0
+[DEMO] t=000602 raw=0.1727 ts=0.0000 mix=0.1727 z=0.41/th=1.10 expl=0.000 SURP=0
+[DEMO] t=000603 raw=1.2820 ts=0.0000 mix=1.2820 z=0.73/th=1.10 expl=0.000 SURP=0
+[DEMO] t=000604 raw=0.7811 ts=0.0000 mix=0.7811 z=0.21/th=1.10 expl=0.000 SURP=0
+[DEMO] t=000605 raw=0.3601 ts=0.0000 mix=0.3601 z=0.22/th=1.10 expl=0.000 SURP=0
+[DEMO] t=000606 raw=0.3824 ts=0.0000 mix=0.3824 z=0.20/th=1.10 expl=0.000 SURP=0
+[DEMO] t=000607 raw=1.3927 ts=0.0000 mix=1.3927 z=0.84/th=1.10 expl=0.000 SURP=0
+[DEMO] t=000608 raw=2.3442 ts=0.0000 mix=2.3442 z=1.82/th=1.10 expl=0.000 SURP=1
+[DEMO] t=000609 raw=0.9883 ts=0.0000 mix=0.9883 z=0.42/th=1.10 expl=0.000 SURP=0
+[DEMO] t=000610 raw=1.4226 ts=0.0000 mix=1.4226 z=0.87/th=1.10 expl=0.000 SURP=0
+[DEBUG] step=610 z=0.9 status=AMBER emit=True
+[DEMO] t=000611 raw=0.1325 ts=0.0000 mix=0.1325 z=0.46/th=1.10 expl=0.000 SURP=0
+[DEMO] t=000612 raw=0.8617 ts=0.0000 mix=0.8617 z=0.29/th=1.10 expl=0.000 SURP=0
+[DEMO] t=000613 raw=0.2089 ts=0.0000 mix=0.2089 z=0.38/th=1.10 expl=0.000 SURP=0
+[DEMO] t=000614 raw=0.6638 ts=0.0000 mix=0.6638 z=0.09/th=1.10 expl=0.000 SURP=0
+[DEMO] t=000615 raw=0.1439 ts=0.0000 mix=0.1439 z=0.45/th=1.10 expl=0.000 SURP=0
+[DEMO] t=000616 raw=1.2166 ts=0.0000 mix=1.2166 z=0.66/th=1.10 expl=0.000 SURP=0
+[DEMO] t=000617 raw=0.5729 ts=0.0000 mix=0.5729 z=0.01/th=1.10 expl=0.000 SURP=0
+[DEMO] t=000618 raw=1.4819 ts=0.0000 mix=1.4819 z=0.93/th=1.10 expl=0.000 SURP=0
+[DEMO] t=000619 raw=0.8129 ts=0.0000 mix=0.8129 z=0.24/th=1.10 expl=0.000 SURP=0
+[DEMO] t=000620 raw=0.7693 ts=0.0000 mix=0.7693 z=0.20/th=1.10 expl=0.000 SURP=0
+[DEBUG] step=620 z=0.2 status=AMBER emit=True
+[DEMO] t=000621 raw=1.3090 ts=0.0000 mix=1.3090 z=0.76/th=1.11 expl=0.000 SURP=0
+[DEMO] t=000622 raw=0.7147 ts=0.0000 mix=0.7147 z=0.14/th=1.11 expl=0.000 SURP=0
+[DEMO] t=000623 raw=0.9132 ts=0.0000 mix=0.9132 z=0.35/th=1.11 expl=0.000 SURP=0
+[DEMO] t=000624 raw=1.0478 ts=0.0000 mix=1.0478 z=0.49/th=1.11 expl=0.000 SURP=0
+[DEMO] t=000625 raw=1.6872 ts=0.0000 mix=1.6872 z=1.16/th=1.11 expl=0.000 SURP=1
+[DEMO] t=000626 raw=1.4672 ts=0.0000 mix=1.4672 z=0.93/th=1.11 expl=0.000 SURP=0
+[DEMO] t=000627 raw=1.3458 ts=0.0000 mix=1.3458 z=0.81/th=1.11 expl=0.000 SURP=0
+[DEMO] t=000628 raw=0.1800 ts=0.0000 mix=0.1800 z=0.43/th=1.11 expl=0.000 SURP=0
+[DEMO] t=000629 raw=1.6021 ts=0.0000 mix=1.6021 z=1.08/th=1.11 expl=0.000 SURP=0
+[DEMO] t=000630 raw=3.0409 ts=0.0000 mix=3.0409 z=2.59/th=1.11 expl=0.000 SURP=1
+[DEBUG] step=630 z=2.6 status=AMBER emit=True
+[DEMO] t=000631 raw=0.3663 ts=0.0000 mix=0.3663 z=0.23/th=1.11 expl=0.000 SURP=0
+[DEMO] t=000632 raw=1.8803 ts=0.0000 mix=1.8803 z=1.36/th=1.11 expl=0.000 SURP=1
+[DEMO] t=000633 raw=0.4789 ts=0.0000 mix=0.4789 z=0.12/th=1.11 expl=0.000 SURP=0
+[DEMO] t=000634 raw=1.9677 ts=0.0000 mix=1.9677 z=1.43/th=1.11 expl=0.000 SURP=1
+[DEMO] t=000635 raw=1.3616 ts=0.0000 mix=1.3616 z=0.81/th=1.11 expl=0.000 SURP=0
+[DEMO] t=000636 raw=1.6082 ts=0.0000 mix=1.6082 z=1.07/th=1.11 expl=0.000 SURP=0
+[DEMO] t=000637 raw=1.7191 ts=0.0000 mix=1.7191 z=1.18/th=1.11 expl=0.000 SURP=1
+[DEMO] t=000638 raw=0.7094 ts=0.0000 mix=0.7094 z=0.12/th=1.11 expl=0.000 SURP=0
+[DEMO] t=000639 raw=0.8453 ts=0.0000 mix=0.8453 z=0.27/th=1.11 expl=0.000 SURP=0
+[DEMO] t=000640 raw=2.9877 ts=0.0000 mix=2.9877 z=2.51/th=1.11 expl=0.000 SURP=1
+[DEBUG] step=640 z=2.5 status=AMBER emit=True
+[DEMO] t=000641 raw=0.0994 ts=0.0000 mix=0.0994 z=0.52/th=1.11 expl=0.000 SURP=0
+[DEMO] t=000642 raw=0.7378 ts=0.0000 mix=0.7378 z=0.15/th=1.11 expl=0.000 SURP=0
+[DEMO] t=000643 raw=2.4553 ts=0.0000 mix=2.4553 z=1.96/th=1.11 expl=0.000 SURP=1
+[DEMO] t=000644 raw=2.2053 ts=0.0000 mix=2.2053 z=1.69/th=1.11 expl=0.000 SURP=1
+[DEMO] t=000645 raw=0.1400 ts=0.0000 mix=0.1400 z=0.48/th=1.11 expl=0.000 SURP=0
+[DEMO] t=000646 raw=1.6723 ts=0.0000 mix=1.6723 z=1.13/th=1.11 expl=0.000 SURP=1
+[DEMO] t=000647 raw=0.2644 ts=0.0000 mix=0.2644 z=0.35/th=1.11 expl=0.000 SURP=0
+[DEMO] t=000648 raw=0.7208 ts=0.0000 mix=0.7208 z=0.13/th=1.11 expl=0.000 SURP=0
+[DEMO] t=000649 raw=0.6367 ts=0.0000 mix=0.6367 z=0.04/th=1.11 expl=0.000 SURP=0
+[DEMO] t=000650 raw=1.7445 ts=0.0000 mix=1.7445 z=1.21/th=1.11 expl=0.000 SURP=1
+[DEBUG] step=650 z=1.2 status=AMBER emit=True
+[DEMO] t=000651 raw=2.2207 ts=0.0000 mix=2.2207 z=1.70/th=1.11 expl=0.000 SURP=1
+[DEMO] t=000652 raw=2.7883 ts=0.0000 mix=2.7883 z=2.30/th=1.11 expl=0.000 SURP=1
+[DEMO] t=000653 raw=0.1603 ts=0.0000 mix=0.1603 z=0.46/th=1.11 expl=0.000 SURP=0
+[DEMO] t=000654 raw=1.7687 ts=0.0000 mix=1.7687 z=1.22/th=1.11 expl=0.000 SURP=1
+[DEMO] t=000655 raw=0.9585 ts=0.0000 mix=0.9585 z=0.37/th=1.11 expl=0.000 SURP=0
+[DEMO] t=000656 raw=0.1632 ts=0.0000 mix=0.1632 z=0.47/th=1.11 expl=0.000 SURP=0
+[DEMO] t=000657 raw=0.3887 ts=0.0000 mix=0.3887 z=0.23/th=1.11 expl=0.000 SURP=0
+[DEMO] t=000658 raw=2.7864 ts=0.0000 mix=2.7864 z=2.27/th=1.11 expl=0.000 SURP=1
+[DEMO] t=000659 raw=1.5367 ts=0.0000 mix=1.5367 z=0.97/th=1.11 expl=0.000 SURP=0
+[DEMO] t=000660 raw=0.6522 ts=0.0000 mix=0.6522 z=0.05/th=1.11 expl=0.000 SURP=0
+[DEBUG] step=660 z=0.0 status=AMBER emit=True
+[DEMO] t=000661 raw=0.1136 ts=0.0000 mix=0.1136 z=0.52/th=1.11 expl=0.000 SURP=0
+[DEMO] t=000662 raw=2.9511 ts=0.0000 mix=2.9511 z=2.43/th=1.11 expl=0.000 SURP=1
+[DEMO] t=000663 raw=2.4886 ts=0.0000 mix=2.4886 z=1.94/th=1.11 expl=0.000 SURP=1
+[DEMO] t=000664 raw=1.4082 ts=0.0000 mix=1.4082 z=0.82/th=1.11 expl=0.000 SURP=0
+[DEMO] t=000665 raw=0.5452 ts=0.0000 mix=0.5452 z=0.07/th=1.11 expl=0.000 SURP=0
+[DEMO] t=000666 raw=1.4785 ts=0.0000 mix=1.4785 z=0.91/th=1.11 expl=0.000 SURP=0
+[DEMO] t=000667 raw=1.5255 ts=0.0000 mix=1.5255 z=0.96/th=1.11 expl=0.000 SURP=0
+[DEMO] t=000668 raw=0.0539 ts=0.0000 mix=0.0539 z=0.59/th=1.11 expl=0.000 SURP=0
+[DEMO] t=000669 raw=0.1905 ts=0.0000 mix=0.1905 z=0.44/th=1.11 expl=0.000 SURP=0
+[DEMO] t=000670 raw=0.0270 ts=0.0000 mix=0.0270 z=0.61/th=1.12 expl=0.000 SURP=0
+[DEBUG] step=670 z=0.6 status=AMBER emit=True
+[DEMO] t=000671 raw=2.1460 ts=0.0000 mix=2.1460 z=1.59/th=1.12 expl=0.000 SURP=1
+[DEMO] t=000672 raw=2.2269 ts=0.0000 mix=2.2269 z=1.67/th=1.12 expl=0.000 SURP=1
+[DEMO] t=000673 raw=1.8097 ts=0.0000 mix=1.8097 z=1.23/th=1.12 expl=0.000 SURP=1
+[DEMO] t=000674 raw=0.2630 ts=0.0000 mix=0.2630 z=0.37/th=1.12 expl=0.000 SURP=0
+[DEMO] t=000675 raw=0.2159 ts=0.0000 mix=0.2159 z=0.41/th=1.12 expl=0.000 SURP=0
+[DEMO] t=000676 raw=0.9318 ts=0.0000 mix=0.9318 z=0.33/th=1.12 expl=0.000 SURP=0
+[DEMO] t=000677 raw=2.0352 ts=0.0000 mix=2.0352 z=1.46/th=1.12 expl=0.000 SURP=1
+[DEMO] t=000678 raw=2.7215 ts=0.0000 mix=2.7215 z=2.17/th=1.12 expl=0.000 SURP=1
+[DEMO] t=000679 raw=2.3459 ts=0.0000 mix=2.3459 z=1.78/th=1.12 expl=0.000 SURP=1
+[DEMO] t=000680 raw=0.4087 ts=0.0000 mix=0.4087 z=0.22/th=1.12 expl=0.000 SURP=0
+[DEBUG] step=680 z=0.2 status=AMBER emit=True
+[DEMO] t=000681 raw=2.1595 ts=0.0000 mix=2.1595 z=1.58/th=1.12 expl=0.000 SURP=1
+[DEMO] t=000682 raw=1.5236 ts=0.0000 mix=1.5236 z=0.93/th=1.12 expl=0.000 SURP=0
+[DEMO] t=000683 raw=1.9220 ts=0.0000 mix=1.9220 z=1.33/th=1.12 expl=0.000 SURP=1
+[DEMO] t=000684 raw=1.8690 ts=0.0000 mix=1.8690 z=1.28/th=1.12 expl=0.000 SURP=1
+[DEMO] t=000685 raw=0.9986 ts=0.0000 mix=0.9986 z=0.38/th=1.12 expl=0.000 SURP=0
+[DEMO] t=000686 raw=0.6219 ts=0.0000 mix=0.6219 z=0.01/th=1.12 expl=0.000 SURP=0
+[DEMO] t=000687 raw=0.0224 ts=0.0000 mix=0.0224 z=0.62/th=1.12 expl=0.000 SURP=0
+[DEMO] t=000688 raw=0.3602 ts=0.0000 mix=0.3602 z=0.27/th=1.12 expl=0.000 SURP=0
+[DEMO] t=000689 raw=1.0262 ts=0.0000 mix=1.0262 z=0.41/th=1.12 expl=0.000 SURP=0
+[DEMO] t=000690 raw=0.8280 ts=0.0000 mix=0.8280 z=0.21/th=1.12 expl=0.000 SURP=0
+[DEBUG] step=690 z=0.2 status=AMBER emit=True
+[DEMO] t=000691 raw=1.1453 ts=0.0000 mix=1.1453 z=0.54/th=1.12 expl=0.000 SURP=0
+[DEMO] t=000692 raw=2.4199 ts=0.0000 mix=2.4199 z=1.85/th=1.12 expl=0.000 SURP=1
+[DEMO] t=000693 raw=2.9856 ts=0.0000 mix=2.9856 z=2.43/th=1.12 expl=0.000 SURP=1
+[DEMO] t=000694 raw=1.4924 ts=0.0000 mix=1.4924 z=0.89/th=1.12 expl=0.000 SURP=0
+[DEMO] t=000695 raw=1.0247 ts=0.0000 mix=1.0247 z=0.40/th=1.12 expl=0.000 SURP=0
+[DEMO] t=000696 raw=1.2771 ts=0.0000 mix=1.2771 z=0.66/th=1.12 expl=0.000 SURP=0
+[DEMO] t=000697 raw=1.1515 ts=0.0000 mix=1.1515 z=0.53/th=1.12 expl=0.000 SURP=0
+[DEMO] t=000698 raw=0.1632 ts=0.0000 mix=0.1632 z=0.49/th=1.12 expl=0.000 SURP=0
+[DEMO] t=000699 raw=0.6054 ts=0.0000 mix=0.6054 z=0.03/th=1.12 expl=0.000 SURP=0
+[DEMO] t=000700 raw=0.5906 ts=0.0000 mix=0.5906 z=0.04/th=1.12 expl=0.000 SURP=0
+[DEBUG] step=700 z=0.0 status=AMBER emit=True
+[DEMO] t=000701 raw=1.0989 ts=0.0000 mix=1.0989 z=0.49/th=1.12 expl=0.000 SURP=0
+[DEMO] t=000702 raw=0.4577 ts=0.0000 mix=0.4577 z=0.18/th=1.12 expl=0.000 SURP=0
+[DEMO] t=000703 raw=1.9190 ts=0.0000 mix=1.9190 z=1.34/th=1.13 expl=0.000 SURP=1
+[DEMO] t=000704 raw=0.9594 ts=0.0000 mix=0.9594 z=0.34/th=1.13 expl=0.000 SURP=0
+[DEMO] t=000705 raw=0.0439 ts=0.0000 mix=0.0439 z=0.62/th=1.13 expl=0.000 SURP=0
+[DEMO] t=000706 raw=2.4248 ts=0.0000 mix=2.4248 z=1.86/th=1.13 expl=0.000 SURP=1
+[DEMO] t=000707 raw=1.0571 ts=0.0000 mix=1.0571 z=0.44/th=1.13 expl=0.000 SURP=0
+[DEMO] t=000708 raw=0.3805 ts=0.0000 mix=0.3805 z=0.27/th=1.13 expl=0.000 SURP=0
+[DEMO] t=000709 raw=1.3756 ts=0.0000 mix=1.3756 z=0.77/th=1.13 expl=0.000 SURP=0
+[DEMO] t=000710 raw=1.5490 ts=0.0000 mix=1.5490 z=0.95/th=1.13 expl=0.000 SURP=0
+[DEBUG] step=710 z=1.0 status=AMBER emit=True
+[DEMO] t=000711 raw=1.3668 ts=0.0000 mix=1.3668 z=0.76/th=1.13 expl=0.000 SURP=0
+[DEMO] t=000712 raw=2.4385 ts=0.0000 mix=2.4385 z=1.87/th=1.13 expl=0.000 SURP=1
+[DEMO] t=000713 raw=0.0815 ts=0.0000 mix=0.0815 z=0.58/th=1.13 expl=0.000 SURP=0
+[DEMO] t=000714 raw=0.1721 ts=0.0000 mix=0.1721 z=0.49/th=1.13 expl=0.000 SURP=0
+[DEMO] t=000715 raw=2.1824 ts=0.0000 mix=2.1824 z=1.60/th=1.13 expl=0.000 SURP=1
+[DEMO] t=000716 raw=1.9387 ts=0.0000 mix=1.9387 z=1.34/th=1.13 expl=0.000 SURP=1
+[DEMO] t=000717 raw=0.5308 ts=0.0000 mix=0.5308 z=0.12/th=1.13 expl=0.000 SURP=0
+[DEMO] t=000718 raw=0.1161 ts=0.0000 mix=0.1161 z=0.55/th=1.13 expl=0.000 SURP=0
+[DEMO] t=000719 raw=0.2430 ts=0.0000 mix=0.2430 z=0.41/th=1.13 expl=0.000 SURP=0
+[DEMO] t=000720 raw=0.5207 ts=0.0000 mix=0.5207 z=0.13/th=1.13 expl=0.000 SURP=0
+[DEBUG] step=720 z=0.1 status=AMBER emit=True
+[DEMO] t=000721 raw=3.1997 ts=0.0000 mix=3.1997 z=2.66/th=1.13 expl=0.000 SURP=1
+[DEMO] t=000722 raw=1.8596 ts=0.0000 mix=1.8596 z=1.26/th=1.13 expl=0.000 SURP=1
+[DEMO] t=000723 raw=0.1377 ts=0.0000 mix=0.1377 z=0.52/th=1.13 expl=0.000 SURP=0
+[DEMO] t=000724 raw=2.2932 ts=0.0000 mix=2.2932 z=1.68/th=1.13 expl=0.000 SURP=1
+[DEMO] t=000725 raw=2.1845 ts=0.0000 mix=2.1845 z=1.57/th=1.13 expl=0.000 SURP=1
+[DEMO] t=000726 raw=0.0868 ts=0.0000 mix=0.0868 z=0.57/th=1.13 expl=0.000 SURP=0
+[DEMO] t=000727 raw=0.8406 ts=0.0000 mix=0.8406 z=0.20/th=1.13 expl=0.000 SURP=0
+[DEMO] t=000728 raw=3.0950 ts=0.0000 mix=3.0950 z=2.49/th=1.13 expl=0.000 SURP=1
+[DEMO] t=000729 raw=0.9420 ts=0.0000 mix=0.9420 z=0.30/th=1.13 expl=0.000 SURP=0
+[DEMO] t=000730 raw=0.3652 ts=0.0000 mix=0.3652 z=0.29/th=1.13 expl=0.000 SURP=0
+[DEBUG] step=730 z=0.3 status=AMBER emit=True
+[DEMO] t=000731 raw=0.7348 ts=0.0000 mix=0.7348 z=0.09/th=1.13 expl=0.000 SURP=0
+[DEMO] t=000732 raw=2.1862 ts=0.0000 mix=2.1862 z=1.56/th=1.13 expl=0.000 SURP=1
+[DEMO] t=000733 raw=2.5552 ts=0.0000 mix=2.5552 z=1.93/th=1.14 expl=0.000 SURP=1
+[DEMO] t=000734 raw=0.2911 ts=0.0000 mix=0.2911 z=0.37/th=1.14 expl=0.000 SURP=0
+[DEMO] t=000735 raw=0.4266 ts=0.0000 mix=0.4266 z=0.23/th=1.14 expl=0.000 SURP=0
+[DEMO] t=000736 raw=0.1906 ts=0.0000 mix=0.1906 z=0.47/th=1.14 expl=0.000 SURP=0
+[DEMO] t=000737 raw=2.0718 ts=0.0000 mix=2.0718 z=1.44/th=1.14 expl=0.000 SURP=1
+[DEMO] t=000738 raw=0.3813 ts=0.0000 mix=0.3813 z=0.28/th=1.14 expl=0.000 SURP=0
+[DEMO] t=000739 raw=0.4333 ts=0.0000 mix=0.4333 z=0.23/th=1.14 expl=0.000 SURP=0
+[DEMO] t=000740 raw=1.4996 ts=0.0000 mix=1.4996 z=0.86/th=1.14 expl=0.000 SURP=0
+[DEBUG] step=740 z=0.9 status=AMBER emit=True
+[DEMO] t=000741 raw=2.5061 ts=0.0000 mix=2.5061 z=1.88/th=1.14 expl=0.000 SURP=1
+[DEMO] t=000742 raw=1.0257 ts=0.0000 mix=1.0257 z=0.38/th=1.14 expl=0.000 SURP=0
+[DEMO] t=000743 raw=0.9427 ts=0.0000 mix=0.9427 z=0.29/th=1.14 expl=0.000 SURP=0
+[DEMO] t=000744 raw=1.3033 ts=0.0000 mix=1.3033 z=0.66/th=1.14 expl=0.000 SURP=0
+[DEMO] t=000745 raw=2.3309 ts=0.0000 mix=2.3309 z=1.70/th=1.14 expl=0.000 SURP=1
+[DEMO] t=000746 raw=1.1913 ts=0.0000 mix=1.1913 z=0.54/th=1.14 expl=0.000 SURP=0
+[DEMO] t=000747 raw=0.2771 ts=0.0000 mix=0.2771 z=0.39/th=1.14 expl=0.000 SURP=0
+[DEMO] t=000748 raw=0.8508 ts=0.0000 mix=0.8508 z=0.20/th=1.14 expl=0.000 SURP=0
+[DEMO] t=000749 raw=1.6243 ts=0.0000 mix=1.6243 z=0.98/th=1.14 expl=0.000 SURP=0
+[DEMO] t=000750 raw=1.5504 ts=0.0000 mix=1.5504 z=0.90/th=1.14 expl=0.000 SURP=0
+[DEBUG] step=750 z=0.9 status=AMBER emit=True
+[DEMO] t=000751 raw=1.7177 ts=0.0000 mix=1.7177 z=1.07/th=1.14 expl=0.000 SURP=0
+[DEMO] t=000752 raw=1.3782 ts=0.0000 mix=1.3782 z=0.73/th=1.14 expl=0.000 SURP=0
+[DEMO] t=000753 raw=0.5721 ts=0.0000 mix=0.5721 z=0.09/th=1.14 expl=0.000 SURP=0
+[DEMO] t=000754 raw=1.7626 ts=0.0000 mix=1.7626 z=1.12/th=1.14 expl=0.000 SURP=0
+[DEMO] t=000755 raw=0.4402 ts=0.0000 mix=0.4402 z=0.23/th=1.14 expl=0.000 SURP=0
+[DEMO] t=000756 raw=1.1178 ts=0.0000 mix=1.1178 z=0.46/th=1.14 expl=0.000 SURP=0
+[DEMO] t=000757 raw=1.6945 ts=0.0000 mix=1.6945 z=1.06/th=1.14 expl=0.000 SURP=0
+[DEMO] t=000758 raw=2.7121 ts=0.0000 mix=2.7121 z=2.08/th=1.14 expl=0.000 SURP=1
+[DEMO] t=000759 raw=1.3138 ts=0.0000 mix=1.3138 z=0.66/th=1.15 expl=0.000 SURP=0
+[DEMO] t=000760 raw=0.9250 ts=0.0000 mix=0.9250 z=0.27/th=1.15 expl=0.000 SURP=0
+[DEBUG] step=760 z=0.3 status=AMBER emit=True
+[DEMO] t=000761 raw=0.1094 ts=0.0000 mix=0.1094 z=0.57/th=1.15 expl=0.000 SURP=0
+[DEMO] t=000762 raw=0.6845 ts=0.0000 mix=0.6845 z=0.02/th=1.15 expl=0.000 SURP=0
+[DEMO] t=000763 raw=2.0486 ts=0.0000 mix=2.0486 z=1.42/th=1.15 expl=0.000 SURP=1
+[DEMO] t=000764 raw=0.2168 ts=0.0000 mix=0.2168 z=0.46/th=1.15 expl=0.000 SURP=0
+[DEMO] t=000765 raw=1.4277 ts=0.0000 mix=1.4277 z=0.78/th=1.15 expl=0.000 SURP=0
+[DEMO] t=000766 raw=0.5075 ts=0.0000 mix=0.5075 z=0.17/th=1.15 expl=0.000 SURP=0
+[DEMO] t=000767 raw=1.0426 ts=0.0000 mix=1.0426 z=0.39/th=1.15 expl=0.000 SURP=0
+[DEMO] t=000768 raw=2.1874 ts=0.0000 mix=2.1874 z=1.57/th=1.15 expl=0.000 SURP=1
+[DEMO] t=000769 raw=3.0240 ts=0.0000 mix=3.0240 z=2.42/th=1.15 expl=0.000 SURP=1
+[DEMO] t=000770 raw=0.7023 ts=0.0000 mix=0.7023 z=0.03/th=1.15 expl=0.000 SURP=0
+[DEBUG] step=770 z=0.0 status=AMBER emit=True
+[DEMO] t=000771 raw=1.4969 ts=0.0000 mix=1.4969 z=0.86/th=1.15 expl=0.000 SURP=0
+[DEMO] t=000772 raw=1.8455 ts=0.0000 mix=1.8455 z=1.22/th=1.15 expl=0.000 SURP=1
+[DEMO] t=000773 raw=0.8817 ts=0.0000 mix=0.8817 z=0.21/th=1.15 expl=0.000 SURP=0
+[DEMO] t=000774 raw=1.1398 ts=0.0000 mix=1.1398 z=0.48/th=1.15 expl=0.000 SURP=0
+[DEMO] t=000775 raw=0.3741 ts=0.0000 mix=0.3741 z=0.31/th=1.15 expl=0.000 SURP=0
+[DEMO] t=000776 raw=3.6824 ts=0.0000 mix=3.6824 z=3.12/th=1.15 expl=0.000 SURP=1
+[DEMO] t=000777 raw=2.4407 ts=0.0000 mix=2.4407 z=1.81/th=1.15 expl=0.000 SURP=1
+[DEMO] t=000778 raw=0.4624 ts=0.0000 mix=0.4624 z=0.22/th=1.15 expl=0.000 SURP=0
+[DEMO] t=000779 raw=2.4025 ts=0.0000 mix=2.4025 z=1.75/th=1.15 expl=0.000 SURP=1
+[DEMO] t=000780 raw=2.0378 ts=0.0000 mix=2.0378 z=1.38/th=1.15 expl=0.000 SURP=1
+[DEBUG] step=780 z=1.4 status=AMBER emit=True
+[DEMO] t=000781 raw=0.1327 ts=0.0000 mix=0.1327 z=0.56/th=1.15 expl=0.000 SURP=0
+[DEMO] t=000782 raw=1.0812 ts=0.0000 mix=1.0812 z=0.41/th=1.15 expl=0.000 SURP=0
+[DEMO] t=000783 raw=0.0507 ts=0.0000 mix=0.0507 z=0.64/th=1.15 expl=0.000 SURP=0
+[DEMO] t=000784 raw=1.0667 ts=0.0000 mix=1.0667 z=0.39/th=1.16 expl=0.000 SURP=0
+[DEMO] t=000785 raw=2.2064 ts=0.0000 mix=2.2064 z=1.55/th=1.16 expl=0.000 SURP=1
+[DEMO] t=000786 raw=2.3377 ts=0.0000 mix=2.3377 z=1.68/th=1.16 expl=0.000 SURP=1
+[DEMO] t=000787 raw=2.2595 ts=0.0000 mix=2.2595 z=1.60/th=1.16 expl=0.000 SURP=1
+[DEMO] t=000788 raw=0.2743 ts=0.0000 mix=0.2743 z=0.42/th=1.16 expl=0.000 SURP=0
+[DEMO] t=000789 raw=1.2667 ts=0.0000 mix=1.2667 z=0.59/th=1.16 expl=0.000 SURP=0
+[DEMO] t=000790 raw=1.6575 ts=0.0000 mix=1.6575 z=0.99/th=1.16 expl=0.000 SURP=0
+[DEBUG] step=790 z=1.0 status=AMBER emit=True
+[DEMO] t=000791 raw=0.6515 ts=0.0000 mix=0.6515 z=0.04/th=1.16 expl=0.000 SURP=0
+[DEMO] t=000792 raw=1.3829 ts=0.0000 mix=1.3829 z=0.71/th=1.16 expl=0.000 SURP=0
+[DEMO] t=000793 raw=1.2886 ts=0.0000 mix=1.2886 z=0.61/th=1.16 expl=0.000 SURP=0
+[DEMO] t=000794 raw=1.8789 ts=0.0000 mix=1.8789 z=1.22/th=1.16 expl=0.000 SURP=1
+[DEMO] t=000795 raw=1.7096 ts=0.0000 mix=1.7096 z=1.05/th=1.16 expl=0.000 SURP=0
+[DEMO] t=000796 raw=0.2573 ts=0.0000 mix=0.2573 z=0.45/th=1.16 expl=0.000 SURP=0
+[DEMO] t=000797 raw=2.5920 ts=0.0000 mix=2.5920 z=1.95/th=1.16 expl=0.000 SURP=1
+[DEMO] t=000798 raw=0.3676 ts=0.0000 mix=0.3676 z=0.33/th=1.16 expl=0.000 SURP=0
+[DEMO] t=000799 raw=1.6232 ts=0.0000 mix=1.6232 z=0.95/th=1.16 expl=0.000 SURP=0
+[DEMO] t=000800 raw=1.4487 ts=0.0000 mix=1.4487 z=0.77/th=1.16 expl=0.000 SURP=0
+[DEBUG] step=800 z=0.8 status=AMBER emit=True
+[DEMO] t=000801 raw=1.3761 ts=0.0000 mix=1.3761 z=0.70/th=1.16 expl=0.000 SURP=0
+[DEMO] t=000802 raw=0.0646 ts=0.0000 mix=0.0646 z=0.65/th=1.16 expl=0.000 SURP=0
+[DEMO] t=000803 raw=2.1171 ts=0.0000 mix=2.1171 z=1.46/th=1.16 expl=0.000 SURP=1
+[DEMO] t=000804 raw=1.2243 ts=0.0000 mix=1.2243 z=0.54/th=1.16 expl=0.000 SURP=0
+[DEMO] t=000805 raw=0.4460 ts=0.0000 mix=0.4460 z=0.26/th=1.16 expl=0.000 SURP=0
+[DEMO] t=000806 raw=0.9079 ts=0.0000 mix=0.9079 z=0.22/th=1.17 expl=0.000 SURP=0
+[DEMO] t=000807 raw=2.0709 ts=0.0000 mix=2.0709 z=1.41/th=1.17 expl=0.000 SURP=1
+[DEMO] t=000808 raw=0.5086 ts=0.0000 mix=0.5086 z=0.19/th=1.17 expl=0.000 SURP=0
+[DEMO] t=000809 raw=0.6323 ts=0.0000 mix=0.6323 z=0.07/th=1.17 expl=0.000 SURP=0
+[DEMO] t=000810 raw=0.4081 ts=0.0000 mix=0.4081 z=0.30/th=1.17 expl=0.000 SURP=0
+[DEBUG] step=810 z=0.3 status=AMBER emit=True
+[DEMO] t=000811 raw=0.0407 ts=0.0000 mix=0.0407 z=0.67/th=1.17 expl=0.000 SURP=0
+[DEMO] t=000812 raw=0.5268 ts=0.0000 mix=0.5268 z=0.17/th=1.17 expl=0.000 SURP=0
+[DEMO] t=000813 raw=0.2343 ts=0.0000 mix=0.2343 z=0.47/th=1.17 expl=0.000 SURP=0
+[DEMO] t=000814 raw=0.5313 ts=0.0000 mix=0.5313 z=0.17/th=1.17 expl=0.000 SURP=0
+[DEMO] t=000815 raw=0.9531 ts=0.0000 mix=0.9531 z=0.26/th=1.17 expl=0.000 SURP=0
+[DEMO] t=000816 raw=0.2493 ts=0.0000 mix=0.2493 z=0.46/th=1.17 expl=0.000 SURP=0
+[DEMO] t=000817 raw=3.8067 ts=0.0000 mix=3.8067 z=3.17/th=1.17 expl=0.000 SURP=1
+[DEMO] t=000818 raw=0.8878 ts=0.0000 mix=0.8878 z=0.19/th=1.17 expl=0.000 SURP=0
+[DEMO] t=000819 raw=0.5051 ts=0.0000 mix=0.5051 z=0.20/th=1.17 expl=0.000 SURP=0
+[DEMO] t=000820 raw=1.1019 ts=0.0000 mix=1.1019 z=0.41/th=1.17 expl=0.000 SURP=0
+[DEBUG] step=820 z=0.4 status=AMBER emit=True
+[DEMO] t=000821 raw=1.1469 ts=0.0000 mix=1.1469 z=0.46/th=1.17 expl=0.000 SURP=0
+[DEMO] t=000822 raw=0.3145 ts=0.0000 mix=0.3145 z=0.40/th=1.17 expl=0.000 SURP=0
+[DEMO] t=000823 raw=1.0235 ts=0.0000 mix=1.0235 z=0.33/th=1.17 expl=0.000 SURP=0
+[DEMO] t=000824 raw=1.7052 ts=0.0000 mix=1.7052 z=1.03/th=1.17 expl=0.000 SURP=0
+[DEMO] t=000825 raw=0.6554 ts=0.0000 mix=0.6554 z=0.05/th=1.17 expl=0.000 SURP=0
+[DEMO] t=000826 raw=2.6025 ts=0.0000 mix=2.6025 z=1.96/th=1.17 expl=0.000 SURP=1
+[DEMO] t=000827 raw=0.3020 ts=0.0000 mix=0.3020 z=0.41/th=1.17 expl=0.000 SURP=0
+[DEMO] t=000828 raw=0.8090 ts=0.0000 mix=0.8090 z=0.11/th=1.17 expl=0.000 SURP=0
+[DEMO] t=000829 raw=2.3393 ts=0.0000 mix=2.3393 z=1.69/th=1.18 expl=0.000 SURP=1
+[DEMO] t=000830 raw=1.9849 ts=0.0000 mix=1.9849 z=1.31/th=1.18 expl=0.000 SURP=1
+[DEBUG] step=830 z=1.3 status=AMBER emit=True
+[DEMO] t=000831 raw=0.5795 ts=0.0000 mix=0.5795 z=0.13/th=1.18 expl=0.000 SURP=0
+[DEMO] t=000832 raw=0.1711 ts=0.0000 mix=0.1711 z=0.55/th=1.18 expl=0.000 SURP=0
+[DEMO] t=000833 raw=0.6371 ts=0.0000 mix=0.6371 z=0.07/th=1.18 expl=0.000 SURP=0
+[DEMO] t=000834 raw=0.7328 ts=0.0000 mix=0.7328 z=0.03/th=1.18 expl=0.000 SURP=0
+[DEMO] t=000835 raw=0.8801 ts=0.0000 mix=0.8801 z=0.18/th=1.18 expl=0.000 SURP=0
+[DEMO] t=000836 raw=0.3530 ts=0.0000 mix=0.3530 z=0.37/th=1.18 expl=0.000 SURP=0
+[DEMO] t=000837 raw=2.2175 ts=0.0000 mix=2.2175 z=1.58/th=1.18 expl=0.000 SURP=1
+[DEMO] t=000838 raw=0.1509 ts=0.0000 mix=0.1509 z=0.58/th=1.18 expl=0.000 SURP=0
+[DEMO] t=000839 raw=0.6814 ts=0.0000 mix=0.6814 z=0.03/th=1.18 expl=0.000 SURP=0
+[DEMO] t=000840 raw=0.6322 ts=0.0000 mix=0.6322 z=0.08/th=1.18 expl=0.000 SURP=0
+[DEBUG] step=840 z=0.1 status=AMBER emit=True
+[DEMO] t=000841 raw=1.2847 ts=0.0000 mix=1.2847 z=0.60/th=1.18 expl=0.000 SURP=0
+[DEMO] t=000842 raw=0.7762 ts=0.0000 mix=0.7762 z=0.07/th=1.18 expl=0.000 SURP=0
+[DEMO] t=000843 raw=2.3787 ts=0.0000 mix=2.3787 z=1.74/th=1.18 expl=0.000 SURP=1
+[DEMO] t=000844 raw=0.4070 ts=0.0000 mix=0.4070 z=0.31/th=1.18 expl=0.000 SURP=0
+[DEMO] t=000845 raw=1.2210 ts=0.0000 mix=1.2210 z=0.53/th=1.18 expl=0.000 SURP=0
+[DEMO] t=000846 raw=0.4626 ts=0.0000 mix=0.4626 z=0.26/th=1.18 expl=0.000 SURP=0
+[DEMO] t=000847 raw=0.2449 ts=0.0000 mix=0.2449 z=0.48/th=1.18 expl=0.000 SURP=0
+[DEMO] t=000848 raw=0.9113 ts=0.0000 mix=0.9113 z=0.21/th=1.18 expl=0.000 SURP=0
+[DEMO] t=000849 raw=1.1836 ts=0.0000 mix=1.1836 z=0.50/th=1.18 expl=0.000 SURP=0
+[DEMO] t=000850 raw=1.8260 ts=0.0000 mix=1.8260 z=1.16/th=1.18 expl=0.000 SURP=0
+[DEBUG] step=850 z=1.2 status=AMBER emit=True
+[DEMO] t=000851 raw=2.7661 ts=0.0000 mix=2.7661 z=2.14/th=1.19 expl=0.000 SURP=1
+[DEMO] t=000852 raw=1.8593 ts=0.0000 mix=1.8593 z=1.19/th=1.19 expl=0.000 SURP=1
+[DEMO] t=000853 raw=1.4382 ts=0.0000 mix=1.4382 z=0.76/th=1.19 expl=0.000 SURP=0
+[DEMO] t=000854 raw=0.6230 ts=0.0000 mix=0.6230 z=0.09/th=1.19 expl=0.000 SURP=0
+[DEMO] t=000855 raw=1.7425 ts=0.0000 mix=1.7425 z=1.07/th=1.19 expl=0.000 SURP=0
+[DEMO] t=000856 raw=2.0340 ts=0.0000 mix=2.0340 z=1.37/th=1.19 expl=0.000 SURP=1
+[DEMO] t=000857 raw=0.3249 ts=0.0000 mix=0.3249 z=0.41/th=1.19 expl=0.000 SURP=0
+[DEMO] t=000858 raw=1.6364 ts=0.0000 mix=1.6364 z=0.96/th=1.19 expl=0.000 SURP=0
+[DEMO] t=000859 raw=1.1642 ts=0.0000 mix=1.1642 z=0.47/th=1.19 expl=0.000 SURP=0
+[DEMO] t=000860 raw=1.9781 ts=0.0000 mix=1.9781 z=1.30/th=1.19 expl=0.000 SURP=1
+[DEBUG] step=860 z=1.3 status=AMBER emit=True
+[DEMO] t=000861 raw=0.5865 ts=0.0000 mix=0.5865 z=0.14/th=1.19 expl=0.000 SURP=0
+[DEMO] t=000862 raw=0.9322 ts=0.0000 mix=0.9322 z=0.22/th=1.19 expl=0.000 SURP=0
+[DEMO] t=000863 raw=1.4009 ts=0.0000 mix=1.4009 z=0.71/th=1.19 expl=0.000 SURP=0
+[DEMO] t=000864 raw=2.7748 ts=0.0000 mix=2.7748 z=2.13/th=1.19 expl=0.000 SURP=1
+[DEMO] t=000865 raw=1.9295 ts=0.0000 mix=1.9295 z=1.25/th=1.19 expl=0.000 SURP=1
+[DEMO] t=000866 raw=1.1402 ts=0.0000 mix=1.1402 z=0.43/th=1.19 expl=0.000 SURP=0
+[DEMO] t=000867 raw=0.6770 ts=0.0000 mix=0.6770 z=0.05/th=1.19 expl=0.000 SURP=0
+[DEMO] t=000868 raw=1.9949 ts=0.0000 mix=1.9949 z=1.32/th=1.19 expl=0.000 SURP=1
+[DEMO] t=000869 raw=0.5967 ts=0.0000 mix=0.5967 z=0.13/th=1.19 expl=0.000 SURP=0
+[DEMO] t=000870 raw=0.8241 ts=0.0000 mix=0.8241 z=0.10/th=1.19 expl=0.000 SURP=0
+[DEBUG] step=870 z=0.1 status=AMBER emit=True
+[DEMO] t=000871 raw=2.1225 ts=0.0000 mix=2.1225 z=1.45/th=1.19 expl=0.000 SURP=1
+[DEMO] t=000872 raw=1.8198 ts=0.0000 mix=1.8198 z=1.13/th=1.19 expl=0.000 SURP=0
+[DEMO] t=000873 raw=1.1427 ts=0.0000 mix=1.1427 z=0.43/th=1.20 expl=0.000 SURP=0
+[DEMO] t=000874 raw=1.9514 ts=0.0000 mix=1.9514 z=1.27/th=1.20 expl=0.000 SURP=1
+[DEMO] t=000875 raw=0.0491 ts=0.0000 mix=0.0491 z=0.70/th=1.20 expl=0.000 SURP=0
+[DEMO] t=000876 raw=2.1048 ts=0.0000 mix=2.1048 z=1.42/th=1.20 expl=0.000 SURP=1
+[DEMO] t=000877 raw=2.1472 ts=0.0000 mix=2.1472 z=1.46/th=1.20 expl=0.000 SURP=1
+[DEMO] t=000878 raw=2.3104 ts=0.0000 mix=2.3104 z=1.62/th=1.20 expl=0.000 SURP=1
+[DEMO] t=000879 raw=0.3261 ts=0.0000 mix=0.3261 z=0.42/th=1.20 expl=0.000 SURP=0
+[DEMO] t=000880 raw=1.4573 ts=0.0000 mix=1.4573 z=0.75/th=1.20 expl=0.000 SURP=0
+[DEBUG] step=880 z=0.7 status=AMBER emit=True
+[DEMO] t=000881 raw=0.3891 ts=0.0000 mix=0.3891 z=0.35/th=1.20 expl=0.000 SURP=0
+[DEMO] t=000882 raw=0.1616 ts=0.0000 mix=0.1616 z=0.58/th=1.20 expl=0.000 SURP=0
+[DEMO] t=000883 raw=1.9748 ts=0.0000 mix=1.9748 z=1.27/th=1.20 expl=0.000 SURP=1
+[DEMO] t=000884 raw=2.0077 ts=0.0000 mix=2.0077 z=1.30/th=1.20 expl=0.000 SURP=1
+[DEMO] t=000885 raw=0.0820 ts=0.0000 mix=0.0820 z=0.66/th=1.20 expl=0.000 SURP=0
+[DEMO] t=000886 raw=0.5435 ts=0.0000 mix=0.5435 z=0.19/th=1.20 expl=0.000 SURP=0
+[DEMO] t=000887 raw=0.5273 ts=0.0000 mix=0.5273 z=0.21/th=1.20 expl=0.000 SURP=0
+[DEMO] t=000888 raw=1.1170 ts=0.0000 mix=1.1170 z=0.39/th=1.20 expl=0.000 SURP=0
+[DEMO] t=000889 raw=0.2686 ts=0.0000 mix=0.2686 z=0.48/th=1.20 expl=0.000 SURP=0
+[DEMO] t=000890 raw=0.4667 ts=0.0000 mix=0.4667 z=0.27/th=1.20 expl=0.000 SURP=0
+[DEBUG] step=890 z=0.3 status=AMBER emit=True
+[DEMO] t=000891 raw=0.6201 ts=0.0000 mix=0.6201 z=0.12/th=1.20 expl=0.000 SURP=0
+[DEMO] t=000892 raw=1.3909 ts=0.0000 mix=1.3909 z=0.68/th=1.21 expl=0.000 SURP=0
+[DEMO] t=000893 raw=1.8630 ts=0.0000 mix=1.8630 z=1.16/th=1.21 expl=0.000 SURP=0
+[DEMO] t=000894 raw=1.7661 ts=0.0000 mix=1.7661 z=1.06/th=1.21 expl=0.000 SURP=0
+[DEMO] t=000895 raw=0.7942 ts=0.0000 mix=0.7942 z=0.06/th=1.21 expl=0.000 SURP=0
+[DEMO] t=000896 raw=0.0405 ts=0.0000 mix=0.0405 z=0.71/th=1.21 expl=0.000 SURP=0
+[DEMO] t=000897 raw=1.0571 ts=0.0000 mix=1.0571 z=0.33/th=1.21 expl=0.000 SURP=0
+[DEMO] t=000898 raw=0.6233 ts=0.0000 mix=0.6233 z=0.12/th=1.21 expl=0.000 SURP=0
+[DEMO] t=000899 raw=0.2161 ts=0.0000 mix=0.2161 z=0.54/th=1.21 expl=0.000 SURP=0
+[DEMO] t=000900 raw=1.9717 ts=0.0000 mix=1.9717 z=1.28/th=1.21 expl=0.000 SURP=1
+[DEBUG] step=900 z=1.3 status=AMBER emit=True
+[DEMO] t=000901 raw=1.6026 ts=0.0000 mix=1.6026 z=0.90/th=1.21 expl=0.000 SURP=0
+[DEMO] t=000902 raw=2.0992 ts=0.0000 mix=2.0992 z=1.40/th=1.21 expl=0.000 SURP=1
+[DEMO] t=000903 raw=0.0312 ts=0.0000 mix=0.0312 z=0.73/th=1.21 expl=0.000 SURP=0
+[DEMO] t=000904 raw=1.5370 ts=0.0000 mix=1.5370 z=0.82/th=1.21 expl=0.000 SURP=0
+[DEMO] t=000905 raw=0.2741 ts=0.0000 mix=0.2741 z=0.48/th=1.21 expl=0.000 SURP=0
+[DEMO] t=000906 raw=0.3162 ts=0.0000 mix=0.3162 z=0.43/th=1.21 expl=0.000 SURP=0
+[DEMO] t=000907 raw=0.7311 ts=0.0000 mix=0.7311 z=0.01/th=1.21 expl=0.000 SURP=0
+[DEMO] t=000908 raw=2.9367 ts=0.0000 mix=2.9367 z=2.27/th=1.21 expl=0.000 SURP=1
+[DEMO] t=000909 raw=0.6888 ts=0.0000 mix=0.6888 z=0.05/th=1.21 expl=0.000 SURP=0
+[DEMO] t=000910 raw=0.0656 ts=0.0000 mix=0.0656 z=0.70/th=1.21 expl=0.000 SURP=0
+[DEBUG] step=910 z=0.7 status=AMBER emit=True
+[DEMO] t=000911 raw=2.0848 ts=0.0000 mix=2.0848 z=1.39/th=1.22 expl=0.000 SURP=1
+[DEMO] t=000912 raw=1.6570 ts=0.0000 mix=1.6570 z=0.95/th=1.22 expl=0.000 SURP=0
+[DEMO] t=000913 raw=1.3931 ts=0.0000 mix=1.3931 z=0.67/th=1.22 expl=0.000 SURP=0
+[DEMO] t=000914 raw=0.2150 ts=0.0000 mix=0.2150 z=0.54/th=1.22 expl=0.000 SURP=0
+[DEMO] t=000915 raw=1.0396 ts=0.0000 mix=1.0396 z=0.31/th=1.22 expl=0.000 SURP=0
+[DEMO] t=000916 raw=0.6783 ts=0.0000 mix=0.6783 z=0.06/th=1.22 expl=0.000 SURP=0
+[DEMO] t=000917 raw=0.5221 ts=0.0000 mix=0.5221 z=0.23/th=1.22 expl=0.000 SURP=0
+[DEMO] t=000918 raw=0.6581 ts=0.0000 mix=0.6581 z=0.09/th=1.22 expl=0.000 SURP=0
+[DEMO] t=000919 raw=0.6640 ts=0.0000 mix=0.6640 z=0.08/th=1.22 expl=0.000 SURP=0
+[DEMO] t=000920 raw=0.0636 ts=0.0000 mix=0.0636 z=0.70/th=1.22 expl=0.000 SURP=0
+[DEBUG] step=920 z=0.7 status=AMBER emit=True
+[DEMO] t=000921 raw=0.7793 ts=0.0000 mix=0.7793 z=0.04/th=1.22 expl=0.000 SURP=0
+[DEMO] t=000922 raw=0.4668 ts=0.0000 mix=0.4668 z=0.28/th=1.22 expl=0.000 SURP=0
+[DEMO] t=000923 raw=1.8058 ts=0.0000 mix=1.8058 z=1.10/th=1.22 expl=0.000 SURP=0
+[DEMO] t=000924 raw=0.3074 ts=0.0000 mix=0.3074 z=0.45/th=1.22 expl=0.000 SURP=0
+[DEMO] t=000925 raw=1.8322 ts=0.0000 mix=1.8322 z=1.13/th=1.22 expl=0.000 SURP=0
+[DEMO] t=000926 raw=0.2501 ts=0.0000 mix=0.2501 z=0.51/th=1.22 expl=0.000 SURP=0
+[DEMO] t=000927 raw=0.3576 ts=0.0000 mix=0.3576 z=0.40/th=1.22 expl=0.000 SURP=0
+[DEMO] t=000928 raw=0.4667 ts=0.0000 mix=0.4667 z=0.28/th=1.22 expl=0.000 SURP=0
+[DEMO] t=000929 raw=2.6692 ts=0.0000 mix=2.6692 z=1.99/th=1.22 expl=0.000 SURP=1
+[DEMO] t=000930 raw=1.1420 ts=0.0000 mix=1.1420 z=0.41/th=1.22 expl=0.000 SURP=0
+[DEBUG] step=930 z=0.4 status=AMBER emit=True
+[DEMO] t=000931 raw=1.4361 ts=0.0000 mix=1.4361 z=0.72/th=1.23 expl=0.000 SURP=0
+[DEMO] t=000932 raw=0.4623 ts=0.0000 mix=0.4623 z=0.29/th=1.23 expl=0.000 SURP=0
+[DEMO] t=000933 raw=1.1474 ts=0.0000 mix=1.1474 z=0.42/th=1.23 expl=0.000 SURP=0
+[DEMO] t=000934 raw=0.5167 ts=0.0000 mix=0.5167 z=0.23/th=1.23 expl=0.000 SURP=0
+[DEMO] t=000935 raw=2.3433 ts=0.0000 mix=2.3433 z=1.66/th=1.23 expl=0.000 SURP=1
+[DEMO] t=000936 raw=0.0314 ts=0.0000 mix=0.0314 z=0.74/th=1.23 expl=0.000 SURP=0
+[DEMO] t=000937 raw=2.1987 ts=0.0000 mix=2.1987 z=1.51/th=1.23 expl=0.000 SURP=1
+[DEMO] t=000938 raw=1.1973 ts=0.0000 mix=1.1973 z=0.47/th=1.23 expl=0.000 SURP=0
+[DEMO] t=000939 raw=1.5886 ts=0.0000 mix=1.5886 z=0.87/th=1.23 expl=0.000 SURP=0
+[DEMO] t=000940 raw=1.0621 ts=0.0000 mix=1.0621 z=0.33/th=1.23 expl=0.000 SURP=0
+[DEBUG] step=940 z=0.3 status=AMBER emit=True
+[DEMO] t=000941 raw=0.9808 ts=0.0000 mix=0.9808 z=0.24/th=1.23 expl=0.000 SURP=0
+[DEMO] t=000942 raw=0.7658 ts=0.0000 mix=0.7658 z=0.02/th=1.23 expl=0.000 SURP=0
+[DEMO] t=000943 raw=0.4405 ts=0.0000 mix=0.4405 z=0.32/th=1.23 expl=0.000 SURP=0
+[DEMO] t=000944 raw=1.7784 ts=0.0000 mix=1.7784 z=1.07/th=1.23 expl=0.000 SURP=0
+[DEMO] t=000945 raw=2.9648 ts=0.0000 mix=2.9648 z=2.30/th=1.23 expl=0.000 SURP=1
+[DEMO] t=000946 raw=2.4141 ts=0.0000 mix=2.4141 z=1.72/th=1.23 expl=0.000 SURP=1
+[DEMO] t=000947 raw=2.4652 ts=0.0000 mix=2.4652 z=1.77/th=1.23 expl=0.000 SURP=1
+[DEMO] t=000948 raw=2.5992 ts=0.0000 mix=2.5992 z=1.91/th=1.23 expl=0.000 SURP=1
+[DEMO] t=000949 raw=1.6239 ts=0.0000 mix=1.6239 z=0.90/th=1.23 expl=0.000 SURP=0
+[DEMO] t=000950 raw=0.9088 ts=0.0000 mix=0.9088 z=0.16/th=1.23 expl=0.000 SURP=0
+[DEBUG] step=950 z=0.2 status=AMBER emit=True
+[DEMO] t=000951 raw=1.2675 ts=0.0000 mix=1.2675 z=0.53/th=1.24 expl=0.000 SURP=0
+[DEMO] t=000952 raw=0.4005 ts=0.0000 mix=0.4005 z=0.37/th=1.24 expl=0.000 SURP=0
+[DEMO] t=000953 raw=1.8849 ts=0.0000 mix=1.8849 z=1.17/th=1.24 expl=0.000 SURP=0
+[DEMO] t=000954 raw=0.5907 ts=0.0000 mix=0.5907 z=0.17/th=1.24 expl=0.000 SURP=0
+[DEMO] t=000955 raw=0.0835 ts=0.0000 mix=0.0835 z=0.70/th=1.24 expl=0.000 SURP=0
+[DEMO] t=000956 raw=2.4549 ts=0.0000 mix=2.4549 z=1.76/th=1.24 expl=0.000 SURP=1
+[DEMO] t=000957 raw=1.2887 ts=0.0000 mix=1.2887 z=0.55/th=1.24 expl=0.000 SURP=0
+[DEMO] t=000958 raw=0.7302 ts=0.0000 mix=0.7302 z=0.03/th=1.24 expl=0.000 SURP=0
+[DEMO] t=000959 raw=1.8438 ts=0.0000 mix=1.8438 z=1.12/th=1.24 expl=0.000 SURP=0
+[DEMO] t=000960 raw=1.7587 ts=0.0000 mix=1.7587 z=1.03/th=1.24 expl=0.000 SURP=0
+[DEBUG] step=960 z=1.0 status=AMBER emit=True
+[DEMO] t=000961 raw=1.1962 ts=0.0000 mix=1.1962 z=0.45/th=1.24 expl=0.000 SURP=0
+[DEMO] t=000962 raw=2.3902 ts=0.0000 mix=2.3902 z=1.68/th=1.24 expl=0.000 SURP=1
+[DEMO] t=000963 raw=2.3674 ts=0.0000 mix=2.3674 z=1.66/th=1.24 expl=0.000 SURP=1
+[DEMO] t=000964 raw=2.5001 ts=0.0000 mix=2.5001 z=1.78/th=1.24 expl=0.000 SURP=1
+[DEMO] t=000965 raw=1.2027 ts=0.0000 mix=1.2027 z=0.45/th=1.24 expl=0.000 SURP=0
+[DEMO] t=000966 raw=2.2617 ts=0.0000 mix=2.2617 z=1.53/th=1.24 expl=0.000 SURP=1
+[DEMO] t=000967 raw=2.8915 ts=0.0000 mix=2.8915 z=2.17/th=1.24 expl=0.000 SURP=1
+[DEMO] t=000968 raw=0.8037 ts=0.0000 mix=0.8037 z=0.03/th=1.24 expl=0.000 SURP=0
+[DEMO] t=000969 raw=2.6858 ts=0.0000 mix=2.6858 z=1.95/th=1.25 expl=0.000 SURP=1
+[DEMO] t=000970 raw=1.7308 ts=0.0000 mix=1.7308 z=0.98/th=1.25 expl=0.000 SURP=0
+[DEBUG] step=970 z=1.0 status=AMBER emit=True
+[DEMO] t=000971 raw=1.9272 ts=0.0000 mix=1.9272 z=1.18/th=1.25 expl=0.000 SURP=0
+[DEMO] t=000972 raw=1.6643 ts=0.0000 mix=1.6643 z=0.91/th=1.25 expl=0.000 SURP=0
+[DEMO] t=000973 raw=2.0844 ts=0.0000 mix=2.0844 z=1.33/th=1.25 expl=0.000 SURP=1
+[DEMO] t=000974 raw=1.7592 ts=0.0000 mix=1.7592 z=1.00/th=1.25 expl=0.000 SURP=0
+[DEMO] t=000975 raw=1.1865 ts=0.0000 mix=1.1865 z=0.42/th=1.25 expl=0.000 SURP=0
+[DEMO] t=000976 raw=2.6081 ts=0.0000 mix=2.6081 z=1.86/th=1.25 expl=0.000 SURP=1
+[DEMO] t=000977 raw=2.5320 ts=0.0000 mix=2.5320 z=1.78/th=1.25 expl=0.000 SURP=1
+[DEMO] t=000978 raw=1.1810 ts=0.0000 mix=1.1810 z=0.41/th=1.25 expl=0.000 SURP=0
+[DEMO] t=000979 raw=0.2746 ts=0.0000 mix=0.2746 z=0.51/th=1.25 expl=0.000 SURP=0
+[DEMO] t=000980 raw=2.3653 ts=0.0000 mix=2.3653 z=1.61/th=1.25 expl=0.000 SURP=1
+[DEBUG] step=980 z=1.6 status=AMBER emit=True
+[DEMO] t=000981 raw=2.4850 ts=0.0000 mix=2.4850 z=1.73/th=1.25 expl=0.000 SURP=1
+[DEMO] t=000982 raw=2.2577 ts=0.0000 mix=2.2577 z=1.49/th=1.25 expl=0.000 SURP=1
+[DEMO] t=000983 raw=0.0248 ts=0.0000 mix=0.0248 z=0.77/th=1.25 expl=0.000 SURP=0
+[DEMO] t=000984 raw=1.3511 ts=0.0000 mix=1.3511 z=0.57/th=1.25 expl=0.000 SURP=0
+[DEMO] t=000985 raw=1.7488 ts=0.0000 mix=1.7488 z=0.98/th=1.25 expl=0.000 SURP=0
+[DEMO] t=000986 raw=2.7740 ts=0.0000 mix=2.7740 z=2.01/th=1.26 expl=0.000 SURP=1
+[DEMO] t=000987 raw=0.4732 ts=0.0000 mix=0.4732 z=0.32/th=1.26 expl=0.000 SURP=0
+[DEMO] t=000988 raw=1.1424 ts=0.0000 mix=1.1424 z=0.36/th=1.26 expl=0.000 SURP=0
+[DEMO] t=000989 raw=2.1043 ts=0.0000 mix=2.1043 z=1.33/th=1.26 expl=0.000 SURP=1
+[DEMO] t=000990 raw=0.1985 ts=0.0000 mix=0.1985 z=0.60/th=1.26 expl=0.000 SURP=0
+[DEBUG] step=990 z=0.6 status=AMBER emit=True
+[DEMO] t=000991 raw=1.9844 ts=0.0000 mix=1.9844 z=1.21/th=1.26 expl=0.000 SURP=0
+[DEMO] t=000992 raw=0.0601 ts=0.0000 mix=0.0601 z=0.74/th=1.26 expl=0.000 SURP=0
+[DEMO] t=000993 raw=0.1425 ts=0.0000 mix=0.1425 z=0.65/th=1.26 expl=0.000 SURP=0
+[DEMO] t=000994 raw=2.9643 ts=0.0000 mix=2.9643 z=2.20/th=1.26 expl=0.000 SURP=1
+[DEMO] t=000995 raw=2.8588 ts=0.0000 mix=2.8588 z=2.09/th=1.26 expl=0.000 SURP=1
+[DEMO] t=000996 raw=0.4870 ts=0.0000 mix=0.4870 z=0.31/th=1.26 expl=0.000 SURP=0
+[DEMO] t=000997 raw=0.1119 ts=0.0000 mix=0.1119 z=0.69/th=1.26 expl=0.000 SURP=0
+[DEMO] t=000998 raw=2.6409 ts=0.0000 mix=2.6409 z=1.87/th=1.26 expl=0.000 SURP=1
+[DEMO] t=000999 raw=1.5297 ts=0.0000 mix=1.5297 z=0.74/th=1.26 expl=0.000 SURP=0
+[DEMO] t=001000 raw=54.3368 ts=0.0000 mix=54.3368 z=54.02/th=1.26 expl=0.000 SURP=1
+[DEBUG] step=1000 z=54.0 status=AMBER emit=True
+[DEMO] t=001001 raw=39.7084 ts=0.0000 mix=39.7084 z=39.19/th=1.26 expl=0.000 SURP=1
+[DEMO] t=001002 raw=30.7832 ts=0.0000 mix=30.7832 z=30.06/th=1.27 expl=0.000 SURP=1
+[DEMO] t=001003 raw=3.0497 ts=0.0000 mix=3.0497 z=2.14/th=1.27 expl=0.000 SURP=1
+[DEMO] t=001004 raw=5.6462 ts=0.0000 mix=5.6462 z=4.73/th=1.27 expl=0.000 SURP=1
+[DEMO] t=001005 raw=5.2140 ts=0.0000 mix=5.2140 z=4.29/th=1.27 expl=0.000 SURP=1
+[DEMO] t=001006 raw=2.3511 ts=0.0000 mix=2.3511 z=1.42/th=1.27 expl=0.000 SURP=1
+[DEMO] t=001007 raw=1.0996 ts=0.0000 mix=1.0996 z=0.17/th=1.27 expl=0.000 SURP=0
+[DEMO] t=001008 raw=4.9231 ts=0.0000 mix=4.9231 z=4.00/th=1.27 expl=0.000 SURP=1
+[DEMO] t=001009 raw=7.0049 ts=0.0000 mix=7.0049 z=6.08/th=1.27 expl=0.000 SURP=1
+[DEMO] t=001010 raw=4.3278 ts=0.0000 mix=4.3278 z=3.39/th=1.27 expl=0.000 SURP=1
+[DEBUG] step=1010 z=3.4 status=AMBER emit=True
+[DEMO] t=001011 raw=1.6162 ts=0.0000 mix=1.6162 z=0.67/th=1.27 expl=0.000 SURP=0
+[DEMO] t=001012 raw=3.6964 ts=0.0000 mix=3.6964 z=2.75/th=1.27 expl=0.000 SURP=1
+[DEMO] t=001013 raw=1.9601 ts=0.0000 mix=1.9601 z=1.01/th=1.27 expl=0.000 SURP=0
+[DEMO] t=001014 raw=8.2441 ts=0.0000 mix=8.2441 z=7.28/th=1.27 expl=0.000 SURP=1
+[DEMO] t=001015 raw=8.1071 ts=0.0000 mix=8.1071 z=7.11/th=1.27 expl=0.000 SURP=1
+[DEMO] t=001016 raw=3.8097 ts=0.0000 mix=3.8097 z=2.83/th=1.28 expl=0.000 SURP=1
+[DEMO] t=001017 raw=0.7376 ts=0.0000 mix=0.7376 z=0.23/th=1.28 expl=0.000 SURP=0
+[DEMO] t=001018 raw=0.9796 ts=0.0000 mix=0.9796 z=0.01/th=1.28 expl=0.000 SURP=0
+[DEMO] t=001019 raw=0.1108 ts=0.0000 mix=0.1108 z=0.85/th=1.28 expl=0.000 SURP=0
+[DEMO] t=001020 raw=2.1132 ts=0.0000 mix=2.1132 z=1.15/th=1.28 expl=0.000 SURP=0
+[DEBUG] step=1020 z=1.1 status=AMBER emit=True
+[DEMO] t=001021 raw=2.8400 ts=0.0000 mix=2.8400 z=1.87/th=1.28 expl=0.000 SURP=1
+[DEMO] t=001022 raw=4.8511 ts=0.0000 mix=4.8511 z=3.86/th=1.28 expl=0.000 SURP=1
+[DEMO] t=001023 raw=4.2230 ts=0.0000 mix=4.2230 z=3.23/th=1.28 expl=0.000 SURP=1
+[DEMO] t=001024 raw=2.0617 ts=0.0000 mix=2.0617 z=1.08/th=1.28 expl=0.000 SURP=0
+[DEMO] t=001025 raw=4.5153 ts=0.0000 mix=4.5153 z=3.50/th=1.28 expl=0.000 SURP=1
+[DEMO] t=001026 raw=2.0888 ts=0.0000 mix=2.0888 z=1.10/th=1.28 expl=0.000 SURP=0
+[DEMO] t=001027 raw=3.4688 ts=0.0000 mix=3.4688 z=2.46/th=1.28 expl=0.000 SURP=1
+[DEMO] t=001028 raw=1.3693 ts=0.0000 mix=1.3693 z=0.38/th=1.29 expl=0.000 SURP=0
+[DEMO] t=001029 raw=0.9972 ts=0.0000 mix=0.9972 z=0.01/th=1.29 expl=0.000 SURP=0
+[DEMO] t=001030 raw=0.6784 ts=0.0000 mix=0.6784 z=0.30/th=1.29 expl=0.000 SURP=0
+[DEBUG] step=1030 z=0.3 status=AMBER emit=True
+[DEMO] t=001031 raw=1.2698 ts=0.0000 mix=1.2698 z=0.28/th=1.29 expl=0.000 SURP=0
+[DEMO] t=001032 raw=2.1758 ts=0.0000 mix=2.1758 z=1.18/th=1.29 expl=0.000 SURP=0
+[DEMO] t=001033 raw=0.0626 ts=0.0000 mix=0.0626 z=0.91/th=1.29 expl=0.000 SURP=0
+[DEMO] t=001034 raw=0.9115 ts=0.0000 mix=0.9115 z=0.07/th=1.29 expl=0.000 SURP=0
+[DEMO] t=001035 raw=2.2893 ts=0.0000 mix=2.2893 z=1.29/th=1.29 expl=0.000 SURP=1
+[DEMO] t=001036 raw=0.7240 ts=0.0000 mix=0.7240 z=0.26/th=1.29 expl=0.000 SURP=0
+[DEMO] t=001037 raw=0.9488 ts=0.0000 mix=0.9488 z=0.04/th=1.29 expl=0.000 SURP=0
+[DEMO] t=001038 raw=0.0219 ts=0.0000 mix=0.0219 z=0.95/th=1.29 expl=0.000 SURP=0
+[DEMO] t=001039 raw=0.4657 ts=0.0000 mix=0.4657 z=0.51/th=1.29 expl=0.000 SURP=0
+[DEMO] t=001040 raw=1.5110 ts=0.0000 mix=1.5110 z=0.52/th=1.29 expl=0.000 SURP=0
+[DEBUG] step=1040 z=0.5 status=AMBER emit=True
+[DEMO] t=001041 raw=0.6864 ts=0.0000 mix=0.6864 z=0.29/th=1.30 expl=0.000 SURP=0
+[DEMO] t=001042 raw=0.3758 ts=0.0000 mix=0.3758 z=0.60/th=1.30 expl=0.000 SURP=0
+[DEMO] t=001043 raw=0.5874 ts=0.0000 mix=0.5874 z=0.39/th=1.30 expl=0.000 SURP=0
+[DEMO] t=001044 raw=0.9941 ts=0.0000 mix=0.9941 z=0.01/th=1.30 expl=0.000 SURP=0
+[DEMO] t=001045 raw=0.1684 ts=0.0000 mix=0.1684 z=0.81/th=1.30 expl=0.000 SURP=0
+[DEMO] t=001046 raw=0.1952 ts=0.0000 mix=0.1952 z=0.78/th=1.30 expl=0.000 SURP=0
+[DEMO] t=001047 raw=0.4883 ts=0.0000 mix=0.4883 z=0.49/th=1.30 expl=0.000 SURP=0
+[DEMO] t=001048 raw=0.3486 ts=0.0000 mix=0.3486 z=0.63/th=1.30 expl=0.000 SURP=0
+[DEMO] t=001049 raw=0.5275 ts=0.0000 mix=0.5275 z=0.45/th=1.30 expl=0.000 SURP=0
+[DEMO] t=001050 raw=0.5419 ts=0.0000 mix=0.5419 z=0.44/th=1.30 expl=0.000 SURP=0
+[DEBUG] step=1050 z=0.4 status=AMBER emit=True
+[DEMO] t=001051 raw=0.3747 ts=0.0000 mix=0.3747 z=0.60/th=1.30 expl=0.000 SURP=0
+[DEMO] t=001052 raw=0.1158 ts=0.0000 mix=0.1158 z=0.86/th=1.30 expl=0.000 SURP=0
+[DEMO] t=001053 raw=0.0407 ts=0.0000 mix=0.0407 z=0.93/th=1.31 expl=0.000 SURP=0
+[DEMO] t=001054 raw=0.4754 ts=0.0000 mix=0.4754 z=0.50/th=1.31 expl=0.000 SURP=0
+[DEMO] t=001055 raw=0.8781 ts=0.0000 mix=0.8781 z=0.10/th=1.31 expl=0.000 SURP=0
+[DEMO] t=001056 raw=0.2999 ts=0.0000 mix=0.2999 z=0.67/th=1.31 expl=0.000 SURP=0
+[DEMO] t=001057 raw=0.3913 ts=0.0000 mix=0.3913 z=0.58/th=1.31 expl=0.000 SURP=0
+[DEMO] t=001058 raw=0.0303 ts=0.0000 mix=0.0303 z=0.94/th=1.31 expl=0.000 SURP=0
+[DEMO] t=001059 raw=0.2016 ts=0.0000 mix=0.2016 z=0.77/th=1.31 expl=0.000 SURP=0
+[DEMO] t=001060 raw=0.0370 ts=0.0000 mix=0.0370 z=0.93/th=1.31 expl=0.000 SURP=0
+[DEBUG] step=1060 z=0.9 status=AMBER emit=True
+[DEMO] t=001061 raw=1.2884 ts=0.0000 mix=1.2884 z=0.31/th=1.31 expl=0.000 SURP=0
+[DEMO] t=001062 raw=1.2324 ts=0.0000 mix=1.2324 z=0.26/th=1.31 expl=0.000 SURP=0
+[DEMO] t=001063 raw=0.3746 ts=0.0000 mix=0.3746 z=0.59/th=1.31 expl=0.000 SURP=0
+[DEMO] t=001064 raw=0.8800 ts=0.0000 mix=0.8800 z=0.09/th=1.31 expl=0.000 SURP=0
+[DEMO] t=001065 raw=0.3566 ts=0.0000 mix=0.3566 z=0.61/th=1.31 expl=0.000 SURP=0
+[DEMO] t=001066 raw=0.3670 ts=0.0000 mix=0.3670 z=0.60/th=1.32 expl=0.000 SURP=0
+[DEMO] t=001067 raw=0.5167 ts=0.0000 mix=0.5167 z=0.45/th=1.32 expl=0.000 SURP=0
+[DEMO] t=001068 raw=0.4975 ts=0.0000 mix=0.4975 z=0.47/th=1.32 expl=0.000 SURP=0
+[DEMO] t=001069 raw=0.2048 ts=0.0000 mix=0.2048 z=0.76/th=1.32 expl=0.000 SURP=0
+[DEMO] t=001070 raw=0.8291 ts=0.0000 mix=0.8291 z=0.14/th=1.32 expl=0.000 SURP=0
+[DEBUG] step=1070 z=0.1 status=AMBER emit=True
+[DEMO] t=001071 raw=0.1881 ts=0.0000 mix=0.1881 z=0.77/th=1.32 expl=0.000 SURP=0
+[DEMO] t=001072 raw=0.8338 ts=0.0000 mix=0.8338 z=0.13/th=1.32 expl=0.000 SURP=0
+[DEMO] t=001073 raw=1.5601 ts=0.0000 mix=1.5601 z=0.59/th=1.32 expl=0.000 SURP=0
+[DEMO] t=001074 raw=0.5345 ts=0.0000 mix=0.5345 z=0.43/th=1.32 expl=0.000 SURP=0
+[DEMO] t=001075 raw=0.1042 ts=0.0000 mix=0.1042 z=0.86/th=1.32 expl=0.000 SURP=0
+[DEMO] t=001076 raw=0.4029 ts=0.0000 mix=0.4029 z=0.56/th=1.32 expl=0.000 SURP=0
+[DEMO] t=001077 raw=0.2508 ts=0.0000 mix=0.2508 z=0.71/th=1.32 expl=0.000 SURP=0
+[DEMO] t=001078 raw=0.2417 ts=0.0000 mix=0.2417 z=0.72/th=1.32 expl=0.000 SURP=0
+[DEMO] t=001079 raw=0.3450 ts=0.0000 mix=0.3450 z=0.62/th=1.32 expl=0.000 SURP=0
+[DEMO] t=001080 raw=0.3106 ts=0.0000 mix=0.3106 z=0.65/th=1.33 expl=0.000 SURP=0
+[DEBUG] step=1080 z=0.6 status=AMBER emit=True
+[DEMO] t=001081 raw=0.7104 ts=0.0000 mix=0.7104 z=0.25/th=1.33 expl=0.000 SURP=0
+[DEMO] t=001082 raw=0.5720 ts=0.0000 mix=0.5720 z=0.39/th=1.33 expl=0.000 SURP=0
+[DEMO] t=001083 raw=0.3616 ts=0.0000 mix=0.3616 z=0.59/th=1.33 expl=0.000 SURP=0
+[DEMO] t=001084 raw=0.2966 ts=0.0000 mix=0.2966 z=0.66/th=1.33 expl=0.000 SURP=0
+[DEMO] t=001085 raw=0.5425 ts=0.0000 mix=0.5425 z=0.41/th=1.33 expl=0.000 SURP=0
+[DEMO] t=001086 raw=0.0157 ts=0.0000 mix=0.0157 z=0.93/th=1.33 expl=0.000 SURP=0
+[DEMO] t=001087 raw=0.3508 ts=0.0000 mix=0.3508 z=0.60/th=1.33 expl=0.000 SURP=0
+[DEMO] t=001088 raw=0.7413 ts=0.0000 mix=0.7413 z=0.22/th=1.33 expl=0.000 SURP=0
+[DEMO] t=001089 raw=0.7677 ts=0.0000 mix=0.7677 z=0.19/th=1.33 expl=0.000 SURP=0
+[DEMO] t=001090 raw=0.0606 ts=0.0000 mix=0.0606 z=0.89/th=1.33 expl=0.000 SURP=0
+[DEBUG] step=1090 z=0.9 status=AMBER emit=True
+[DEMO] t=001091 raw=0.9553 ts=0.0000 mix=0.9553 z=0.00/th=1.33 expl=0.000 SURP=0
+[DEMO] t=001092 raw=0.1228 ts=0.0000 mix=0.1228 z=0.83/th=1.33 expl=0.000 SURP=0
+[DEMO] t=001093 raw=0.4378 ts=0.0000 mix=0.4378 z=0.52/th=1.33 expl=0.000 SURP=0
+[DEMO] t=001094 raw=0.1217 ts=0.0000 mix=0.1217 z=0.83/th=1.34 expl=0.000 SURP=0
+[DEMO] t=001095 raw=0.0586 ts=0.0000 mix=0.0586 z=0.89/th=1.34 expl=0.000 SURP=0
+[DEMO] t=001096 raw=0.2526 ts=0.0000 mix=0.2526 z=0.70/th=1.34 expl=0.000 SURP=0
+[DEMO] t=001097 raw=0.1880 ts=0.0000 mix=0.1880 z=0.76/th=1.34 expl=0.000 SURP=0
+[DEMO] t=001098 raw=0.1491 ts=0.0000 mix=0.1491 z=0.80/th=1.34 expl=0.000 SURP=0
+[DEMO] t=001099 raw=0.0968 ts=0.0000 mix=0.0968 z=0.85/th=1.34 expl=0.000 SURP=0
+
+========================================
+SENTINEL SUMMARY (UNIFIED STREAM)
+========================================
+Total frames seen             : 1100
+Frames processed (post warmup): 1050
+Surprises                     : 336 (32.00% of frames)
+Final approx abs threshold    : 2.29465
+Final err range               : min=0.0000 max=54.3368
+Final z_thresh                : 1.33967
+Final ema_err                 : 0.9521, final sigma: 1.0027
+Synaptic hash (initial→final) : 9c6d0a8c9cfd7164 → a0015e1ee6df8376
+
+========================================
+EIDOS SENTINEL PLAIN-LANGUAGE REPORT
+========================================
+Session overview
+----------------
+- Frames processed (post-warmup): 1050
+- Surprises: 336 (32.00% of frames)
+- Error range: min=0.0000, max=54.3368
+- Final approx absolute surprise threshold: 2.29465
+- Final z-threshold in surprise space: 1.340
+- Final residual baseline: ema_err=0.9521, sigma=1.0027
+
+Sentinel regimes observed
+--------------------------
+- CALIBRATING: 4.7% of post-warmup frames
+- GREEN: 95.3% of post-warmup frames
+
+Geometry and spectrum
+----------------------
+- Average eigen dominance ≈ 0.60.
+- Spectral entropy ~0.88 (high): broadband/noisy.
+
+Hippocampus (episodic memory)
+-----------------------------
+- Mean recall similarity ≈ 0.045 (range ~[-1,1]).
+- Mean familiarity χ ≈ 0.024 (0..1).
+- Writes performed: 9
+
+Anomaly highlights
+------------------
+- Cluster 0: steps 98–98 (n=1), max z≈4.06, generic numeric/vector data. Example: ''
+- Cluster 1: steps 109–109 (n=1), max z≈3.83, generic numeric/vector data. Example: ''
+- Cluster 2: steps 86–86 (n=1), max z≈3.31, generic numeric/vector data. Example: ''
+- Cluster 3: steps 114–114 (n=1), max z≈3.06, generic numeric/vector data. Example: ''
+- Cluster 4: steps 127–127 (n=1), max z≈2.93, generic numeric/vector data. Example: ''
+- Cluster 5: steps 71–71 (n=1), max z≈2.93, generic numeric/vector data. Example: ''
+
+Plain-language summary
+----------------------
+The engine stayed mostly stable, but encountered distinct segments that deviated from expectation and forced sharper internal adjustment.
+Hippocampus tracked whether spikes were novel vs. recurrent; recurrent episodes inhibited learning to reduce 'relearning the same surprise'.
+
+Reservoir checkpoint saved: C:\Users\roland\eidos_artifacts_forecast\reservoir_checkpoints/dhoogla_cicids2017__WebAttacks-Thursday-no-metadata_parquet\20260120_215227_reservoir_checkpoint_dhoogla_cicids2017__WebAttacks-Thursday-no-metadata_parquet.pt
+Hippocampus snapshot saved: C:\Users\roland\eidos_artifacts_forecast\hippocampus/dhoogla_cicids2017__WebAttacks-Thursday-no-metadata_parquet\20260120_215227_hippocampus_snapshot_dhoogla_cicids2017__WebAttacks-Thursday-no-metadata_parquet.pt
+
+Reservoir geometry artifacts:
+  Raw states   : C:\Users\roland\eidos_artifacts_forecast\reservoir_geometry/dhoogla_cicids2017__WebAttacks-Thursday-no-metadata_parquet\20260120_215227_reservoir_states_dhoogla_cicids2017__WebAttacks-Thursday-no-metadata_parquet.npy
+  Geometry JSON: C:\Users\roland\eidos_artifacts_forecast\reservoir_geometry/dhoogla_cicids2017__WebAttacks-Thursday-no-metadata_parquet\20260120_215227_reservoir_geom_dhoogla_cicids2017__WebAttacks-Thursday-no-metadata_parquet.json
+
+Top-K surprise artifacts:
+  JSON : C:\Users\roland\eidos_artifacts_forecast\sentinel_forensics/dhoogla_cicids2017__WebAttacks-Thursday-no-metadata_parquet\20260120_215227_top_100_surprises_dhoogla_cicids2017__WebAttacks-Thursday-no-metadata_parquet.json
+  TEXT : C:\Users\roland\eidos_artifacts_forecast\sentinel_forensics/dhoogla_cicids2017__WebAttacks-Thursday-no-metadata_parquet\20260120_215227_top_100_surprises_text_dhoogla_cicids2017__WebAttacks-Thursday-no-metadata_parquet.txt
+
+Compression summary (bicameral V6 prototype):
+  Raw bytes (float64 frames): 537600
+  Compressed bytes          : 45498
+  Global ratio              : 11.82x
+  Compressed stream artifact: C:\Users\roland\eidos_artifacts_forecast\compression/dhoogla_cicids2017__WebAttacks-Thursday-no-metadata_parquet\20260120_215227_bicameral_stream_dhoogla_cicids2017__WebAttacks-Thursday-no-metadata_parquet.bin
+  Codec meta artifact       : C:\Users\roland\eidos_artifacts_forecast\compression/dhoogla_cicids2017__WebAttacks-Thursday-no-metadata_parquet\20260120_215227_bicameral_stream_meta_dhoogla_cicids2017__WebAttacks-Thursday-no-metadata_parquet.json
+Test 2 Complete
+Verifying artifacts...
+PASS: C:\Users\roland\eidos_artifacts_forecast\incident_cards.jsonl exists.
+  Incident Cards Generated: 998
+PASS: C:\Users\roland\eidos_artifacts_forecast\forecast.jsonl exists.
+  Forecasts Generated: 110
+  Sample Card Keys: ['incident_id', 'domain', 'regime', 'severity', 'step', 'ts', 'summary', 'hypotheses', 'evidence', 'similar_episodes', 'invariant', 'forecast', 'actions', 'confidence']
+  Sample Card Evidence: dict_keys(['drivers', 'entities', 'exemplars', 'baseline'])

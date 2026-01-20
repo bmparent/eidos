@@ -1,0 +1,30 @@
+# Eidos Brain Default Configuration
+
+# Data Source Configuration
+source_type: "LOCAL" # LOCAL, DRIVE, KAGGLE, STREAM
+artifact_root: "eidos_artifacts_output"
+
+# Engine Parameters (Overrides defaults in engine code)
+engine_config:
+  steps: 60000
+  reservoir: 2000
+  spectral_radius: 1.27
+  leak_rate: 0.01
+  input_scaling: 0.30
+  forgetting: 0.99
+  
+  # Hippocampus
+  hippocampus_dim: 10000
+  hippocampus_write_on_surprise: true
+  
+  # Thermodynamics
+  thermo_enabled: true
+
+# Source Specifics
+source_params:
+  local:
+    mode: "ARCHIVE"
+    target: "/content"
+  stream:
+    kind: "URL"
+    url: "https://example.com/stream"

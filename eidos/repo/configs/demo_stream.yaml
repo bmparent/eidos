@@ -1,0 +1,11 @@
+# Demo Stream Config
+source_type: "STREAM"
+artifact_root: "./demo_artifacts_stream"
+
+source_params:
+  stream:
+    kind: "URL"
+    url: "http://localhost:8000/stream" # Points to local demo streamer
+
+engine_config:
+  steps: 5000
