@@ -55,7 +55,10 @@ otherwise /content/eidos_artifacts).
 
 import os
 import sys
-from typing import Dict, Any
+import copy
+import json
+from pathlib import Path
+from typing import Dict, Any, Optional
 
 # =============================================================================
 # USER CONFIG – EDIT THESE BETWEEN RUNS (NO HARDCODED AEP)
@@ -69,6 +72,9 @@ from typing import Dict, Any
 DATA_SOURCE_TYPE = os.environ.get("EIDOS_DATA_SOURCE_TYPE", "LOCAL")
 
 PROFILE_LABEL = os.environ.get("EIDOS_PROFILE_LABEL", "dhoogla/cicids2017::WebAttacks-Thursday-no-metadata.parquet")
+
+# Optional: Apply a tuned domain profile ("cyber", "finance", "healthcare")
+DOMAIN_PROFILE = os.environ.get("EIDOS_DOMAIN_PROFILE", "").strip() or None
 
 # ---- Fixed frame dimensionality for the engine ------------------------------
 FEATURES = int(os.environ.get("EIDOS_FEATURES", 64))
@@ -359,6 +365,44 @@ EIDOS_BRAIN_CONFIG = {
     "forecast_similarity_temperature": 6.0,
 }
 
+DEFAULT_PROFILES: Dict[str, Dict[str, Any]] = {
+    "cyber": {},
+    "finance": {},
+    "healthcare": {},
+}
+
+
+def _deep_update_config(base: Dict[str, Any], updates: Dict[str, Any]) -> Dict[str, Any]:
+    for key, value in (updates or {}).items():
+        if isinstance(value, dict) and isinstance(base.get(key), dict):
+            _deep_update_config(base[key], value)
+        else:
+            base[key] = value
+    return base
+
+
+def _load_profiles() -> Dict[str, Dict[str, Any]]:
+    profiles = copy.deepcopy(DEFAULT_PROFILES)
+    try:
+        base_dir = Path(__file__).resolve().parent
+    except NameError:
+        base_dir = Path(os.getcwd())
+    artifacts_dir = base_dir / "artifacts"
+    for domain in profiles:
+        path = artifacts_dir / f"best_profile_{domain}.json"
+        if path.exists():
+            try:
+                with open(path, "r", encoding="utf-8") as f:
+                    data = json.load(f)
+                if isinstance(data, dict):
+                    profiles[domain] = data
+            except Exception as exc:
+                print(f"!!! Failed to load profile {path}: {exc}")
+    return profiles
+
+
+PROFILES = _load_profiles()
+
 def validate_config(conf: Dict[str, Any]) -> None:
     """Ensure configuration sanity."""
     required_keys = ["steps", "reservoir", "spectral_radius", "hippocampus_dim"]
@@ -377,13 +421,25 @@ def validate_config(conf: Dict[str, Any]) -> None:
     if dims < 100: raise ValueError("hippocampus_dim too small (<100)")
 
 
+def _apply_domain_profile(profile_name: Optional[str]) -> None:
+    if not profile_name:
+        return
+    key = str(profile_name).strip().lower()
+    profile = PROFILES.get(key)
+    if profile is None:
+        print(f"!!! DOMAIN_PROFILE '{profile_name}' not found. Available: {sorted(PROFILES.keys())}")
+        return
+    print(f">>> Applying domain profile: {key}")
+    _deep_update_config(EIDOS_BRAIN_CONFIG, profile)
+    EIDOS_BRAIN_CONFIG["domain"] = key
+
+
 # =============================================================================
 # IMPORTS & PHYSICS INITIALIZATION
 # =============================================================================
 
 import os
 import sys
-import json
 import math
 import time
 import socket
@@ -401,7 +457,6 @@ import struct
 import numpy as np
 import torch
 import pandas as pd
-from pathlib import Path
 import re  # PATCH: needed by tokenize_smiles()
 
 # Patch A0: Optional parser checks
@@ -3908,11 +3963,25 @@ def run_sentinel_stream(
     max_geom_samples: int = 4000,
     top_k_surprises: int = 100,
     save_surprise_artifacts: bool = True,
+    return_results: bool = False,
+    return_step_rows: bool = False,
+    return_top_surprises: bool = False,
+    seed: Optional[int] = None,
 ):
     print(">>> INITIALIZING SENTINEL V2.2 (UNIFIED STREAM)...")
 
     # [HARDENING] Determinism
-    if (gseed := EIDOS_BRAIN_CONFIG.get("global_seed")) is not None:
+    if seed is not None:
+        print(f">>> Determinism: Pinning seed={seed}")
+        np.random.seed(seed)
+        torch.manual_seed(seed)
+        if torch.cuda.is_available():
+            torch.cuda.manual_seed_all(seed)
+        if EIDOS_BRAIN_CONFIG.get("deterministic_cuda", False):
+            torch.use_deterministic_algorithms(True)
+            torch.backends.cudnn.deterministic = True
+            torch.backends.cudnn.benchmark = False
+    elif (gseed := EIDOS_BRAIN_CONFIG.get("global_seed")) is not None:
         print(f">>> Determinism: Pinning global_seed={gseed}")
         np.random.seed(gseed)
         torch.manual_seed(gseed)
@@ -4814,6 +4883,10 @@ def run_sentinel_stream(
         if total_frames_seen >= est_frames:
             break
 
+    summary: Optional[Dict[str, Any]] = None
+    report_text: Optional[str] = None
+    top_sorted: Optional[List[Dict[str, Any]]] = None
+
     final_hash = right_brain.get_synaptic_hash()
     continuity_hash = None
     reservoir_state_hash = None
@@ -4949,8 +5022,10 @@ def run_sentinel_stream(
         except Exception as e:
             print(f"[GEOMETRY] Error while building geometry artifacts: {e}")
 
-    if save_surprise_artifacts and top_surprises:
+    if top_surprises:
         top_sorted = sorted(top_surprises, key=lambda r: r["best_err"], reverse=True)
+
+    if save_surprise_artifacts and top_sorted:
 
         json_path = store_memory_artifact(
             top_sorted,
@@ -5021,6 +5096,47 @@ def run_sentinel_stream(
 
         print(f"  Compressed stream artifact: {comp_path}")
         print(f"  Codec meta artifact       : {meta_path}")
+
+    if return_results:
+        return {
+            "summary": summary,
+            "report_text": report_text,
+            "step_rows": recorder.step_rows if return_step_rows else None,
+            "top_surprises": top_sorted if return_top_surprises else None,
+            "config": copy.deepcopy(EIDOS_BRAIN_CONFIG),
+        }
+    return None
+
+# =============================================================================
+# SINGLE-RUN HELPER (PROGRAMMATIC TUNING)
+# =============================================================================
+
+def run_stream_once(
+    gen_factory: Callable[[], Any],
+    est_frames: int,
+    features: int,
+    profile_label: str,
+    session_label: str,
+    cfg_overrides: Dict[str, Any],
+    **kwargs,
+) -> Dict[str, Any]:
+    global EIDOS_BRAIN_CONFIG
+    original_config = EIDOS_BRAIN_CONFIG
+    tuned_config = copy.deepcopy(EIDOS_BRAIN_CONFIG)
+    _deep_update_config(tuned_config, cfg_overrides or {})
+    EIDOS_BRAIN_CONFIG = tuned_config
+    try:
+        return run_sentinel_stream(
+            gen_factory=gen_factory,
+            est_frames=est_frames,
+            features=features,
+            profile_label=profile_label,
+            session_label=session_label,
+            return_results=True,
+            **kwargs,
+        )
+    finally:
+        EIDOS_BRAIN_CONFIG = original_config
 
 # =============================================================================
 # HIGH-LEVEL ENTRYPOINT (ONLY 4 DATA SOURCE TYPES)
@@ -5164,6 +5280,7 @@ def _stream_gcs_generator(project_id: str, bucket_name: str, prefix: str, featur
 def run_eidos_sentinel():
     # Patch 2: Preflight
     _preflight_inputs()
+    _apply_domain_profile(DOMAIN_PROFILE)
 
     import hashlib
     from pathlib import Path

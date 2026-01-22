@@ -1,0 +1,18 @@
+{
+  "datasets": [
+    {
+      "kind": "kaggle",
+      "id": "uciml/pima-indians-diabetes-database",
+      "file": "diabetes.csv",
+      "label_col": "Outcome",
+      "name": "pima_diabetes"
+    },
+    {
+      "kind": "kaggle",
+      "id": "fedesoriano/stroke-prediction-dataset",
+      "file": "healthcare-dataset-stroke-data.csv",
+      "label_col": "stroke",
+      "name": "stroke_prediction"
+    }
+  ]
+}

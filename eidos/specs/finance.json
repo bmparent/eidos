@@ -1,0 +1,18 @@
+{
+  "datasets": [
+    {
+      "kind": "kaggle",
+      "id": "mlg-ulb/creditcardfraud",
+      "file": "creditcard.csv",
+      "label_col": "Class",
+      "name": "creditcardfraud"
+    },
+    {
+      "kind": "kaggle",
+      "id": "nelgiriyewithana/credit-card-fraud-detection-dataset-2023",
+      "file": "creditcard_2023.csv",
+      "label_col": "Class",
+      "name": "creditcard_2023"
+    }
+  ]
+}

@@ -1,0 +1,9 @@
+{
+  "datasets": [
+    {
+      "kind": "synthetic",
+      "name": "synthetic_smoke",
+      "steps": 1200
+    }
+  ]
+}
