@@ -1925,6 +1925,10 @@ class SessionRecorder:
         spec_flatness: Optional[float],
         status: str,
         text: str,
+        timestamp: Optional[float] = None,
+        context_meta: Optional[Dict[str, Any]] = None,
+        synaptic_hash_current: Optional[str] = None,
+        abs_threshold: Optional[float] = None,
 
         hipp_bank: Optional[str] = None,
         hipp_sim: Optional[float] = None,
@@ -1939,12 +1943,58 @@ class SessionRecorder:
         vector: Optional[np.ndarray] = None, # Fix 7: Store vector for clustering
         attrib: Optional[Dict[str, Any]] = None, # Patch B0: Attribution payload
     ) -> None:
+        window_rows = self.step_rows[-200:] if self.step_rows else []
+        err_vals = [row["best_err"] for row in window_rows if row.get("best_err") is not None]
+        recent_err_mean = float(np.mean(err_vals)) if err_vals else None
+        recent_err_std = float(np.std(err_vals)) if err_vals else None
+
+        context_meta = context_meta or {}
+        attrib = attrib or {}
+        fingerprint_topk = []
+        if attrib.get("topk_features"):
+            fingerprint_topk = attrib["topk_features"]
+
+        baseline_stats = {
+            "norm_mean_head": context_meta.get("norm_mean_head"),
+            "norm_std_head": context_meta.get("norm_std_head"),
+            "ema_err": float(ema_err),
+            "sigma": float(sigma),
+        }
+
+        evidence_paths = {
+            "report": os.path.join(self.session_dir, "report.txt"),
+            "steps_csv": os.path.join(self.session_dir, "steps.csv"),
+            "anomalies_jsonl": os.path.join(self.session_dir, "anomalies.jsonl"),
+            "summary_json": os.path.join(self.session_dir, "summary.json"),
+            "clusters_json": os.path.join(self.session_dir, "clusters.json"),
+            "session_meta": os.path.join(self.session_dir, "session_meta.json"),
+        }
+
         self.anomalies.append(
             {
+                "session_id": self.session_id,
+                "run_version": self.meta.get("engine_version"),
+                "config_hash": self.meta.get("config_hash"),
+                "synaptic_hash_initial": self.meta.get("synaptic_hash_initial"),
+                "synaptic_hash_current": synaptic_hash_current,
+                "t": step,
+                "timestamp": float(timestamp) if timestamp is not None else time.time(),
+                "source": {
+                    "dataset": context_meta.get("dataset"),
+                    "path": context_meta.get("path") or context_meta.get("source"),
+                    "row": context_meta.get("row"),
+                    "offset": context_meta.get("offset"),
+                    "snippet": context_meta.get("snippet") or context_meta.get("text"),
+                    "stream_id": context_meta.get("stream_id"),
+                },
                 "step": step,
                 "err": float(best_err),
                 "z": float(z_score),
                 "z_thresh_eff": float(eff_z_thresh),
+                "thresholds": {
+                    "z_thresh_eff": float(eff_z_thresh),
+                    "abs_threshold": None if abs_threshold is None else float(abs_threshold),
+                },
                 "ema_err": float(ema_err),
                 "sigma": float(sigma),
                 "ratio": float(ratio),
@@ -1955,6 +2005,12 @@ class SessionRecorder:
                 "spec_flatness": None if spec_flatness is None else float(spec_flatness),
                 "status": status,
                 "text": text,
+                "baseline": baseline_stats,
+                "recent_window": {
+                    "window": len(err_vals),
+                    "err_mean": recent_err_mean,
+                    "err_std": recent_err_std,
+                },
 
                 "hipp_bank": hipp_bank,
                 "hipp_sim": None if hipp_sim is None else float(hipp_sim),
@@ -1968,6 +2024,8 @@ class SessionRecorder:
                 "thermo_lambda": None if thermo_lambda is None else float(thermo_lambda),
                 "vector": vector.copy() if vector is not None else None,
                 "attrib": attrib, # Patch B0
+                "fingerprint_topk": fingerprint_topk,
+                "evidence_paths": evidence_paths,
             }
         )
 
@@ -3828,6 +3886,11 @@ def run_sentinel_stream(
     frames_for_compression = 0
 
     initial_hash = right_brain.get_synaptic_hash()
+    try:
+        from eidos_brain.utils.provenance import get_config_hash
+        config_hash = get_config_hash(EIDOS_BRAIN_CONFIG)
+    except Exception:
+        config_hash = "UNKNOWN"
 
     total_frames_seen = 0
     frames_processed = 0
@@ -3856,6 +3919,8 @@ def run_sentinel_stream(
         "data_root": EIDOS_DATA_ROOT,
         "mode": session_label,
         "code_hash": CODE_HASH,
+        "engine_version": ENGINE_VERSION,
+        "config_hash": config_hash,
         "container_id": os.environ.get("HOSTNAME", "UNKNOWN"),
         "synaptic_hash_initial": initial_hash,
         "hippocampus": {
@@ -4321,6 +4386,10 @@ def run_sentinel_stream(
                 spec_flatness=spec_flatness,
                 status=status,
                 text=snippet,
+                timestamp=time.time(),
+                context_meta=meta if isinstance(meta, dict) else {},
+                synaptic_hash_current=right_brain.get_synaptic_hash(),
+                abs_threshold=current_threshold,
 
                 hipp_bank=hipp_bank,
                 hipp_sim=hipp_sim,
@@ -4342,6 +4411,9 @@ def run_sentinel_stream(
             break
 
     final_hash = right_brain.get_synaptic_hash()
+    continuity_hash = None
+    reservoir_state_hash = None
+    reservoir_weights_hash = None
 
     if frames_processed > 0:
         surprise_rate = surprises / frames_processed * 100.0
@@ -4359,6 +4431,21 @@ def run_sentinel_stream(
         print(f"Final ema_err                 : {ema_err:.4f}, final sigma: {sigma:.4f}")
         print(f"Synaptic hash (initial→final) : {initial_hash} → {final_hash}")
 
+        def _hash_tensor(t: torch.Tensor) -> str:
+            arr = t.detach().cpu().numpy()
+            return hashlib.sha256(arr.tobytes()).hexdigest()
+
+        reservoir_state_hash = _hash_tensor(right_brain.state)
+        reservoir_weights_hash = _hash_tensor(right_brain.W_out)
+        continuity_material = f"{config_hash}:{reservoir_state_hash}:{reservoir_weights_hash}:{final_hash}"
+        continuity_hash = hashlib.sha256(continuity_material.encode("utf-8")).hexdigest()
+        expected_continuity = EIDOS_BRAIN_CONFIG.get("continuity_expected_hash")
+        continuity_match = None
+        if expected_continuity:
+            continuity_match = (expected_continuity == continuity_hash)
+            if not continuity_match:
+                print("!!! CONTINUITY HASH MISMATCH: expected != observed")
+
         summary = {
             "frames_processed": frames_processed,
             "surprises": surprises,
@@ -4371,6 +4458,12 @@ def run_sentinel_stream(
             "err_max": err_max,
             "synaptic_hash_initial": initial_hash,
             "synaptic_hash_final": final_hash,
+            "config_hash": config_hash,
+            "continuity_hash": continuity_hash,
+            "continuity_expected_hash": expected_continuity,
+            "continuity_match": continuity_match,
+            "reservoir_state_hash": reservoir_state_hash,
+            "reservoir_weights_hash": reservoir_weights_hash,
             "hippocampus_write_counts": hippocampus.write_counts,
         }
 
@@ -4405,6 +4498,7 @@ def run_sentinel_stream(
         print(f"\nReservoir checkpoint saved: {ckpt_path}")
     except Exception as e:
         print(f"[CHECKPOINT] Failed to save reservoir checkpoint: {e}")
+        ckpt_path = None
 
     try:
         hip_snap = hippocampus.snapshot()
@@ -4417,6 +4511,32 @@ def run_sentinel_stream(
         print(f"Hippocampus snapshot saved: {hip_path}")
     except Exception as e:
         print(f"[HIPPOCAMPUS] Failed to save hippocampus snapshot: {e}")
+        hip_path = None
+
+    try:
+        state_capsule = {
+            "session_id": recorder.session_id,
+            "engine_version": ENGINE_VERSION,
+            "config_hash": config_hash,
+            "synaptic_hash_initial": initial_hash,
+            "synaptic_hash_final": final_hash,
+            "continuity_hash": continuity_hash,
+            "reservoir_state_hash": reservoir_state_hash,
+            "reservoir_weights_hash": reservoir_weights_hash,
+            "gate_state": {
+                "z_thresh": z_thresh,
+                "ema_err": ema_err,
+                "sigma": sigma,
+                "surprise_ema": surprise_ema,
+                "fatigue": fatigue,
+            },
+            "checkpoint_path": ckpt_path,
+            "hippocampus_snapshot_path": hip_path,
+        }
+        capsule_path = os.path.join(recorder.session_dir, "state_capsule.json")
+        hive_store.put(capsule_path, json_dumps_safe(state_capsule, indent=2), "application/json")
+    except Exception as e:
+        print(f"[CONTINUITY] Failed to write state capsule: {e}")
 
     if sample_geometry and state_samples:
         try:

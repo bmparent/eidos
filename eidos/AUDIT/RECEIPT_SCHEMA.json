@@ -1,0 +1,96 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Eidos Receipt Bundle",
+  "type": "object",
+  "required": [
+    "session_id",
+    "run_version",
+    "config_hash",
+    "synaptic_hash_initial",
+    "synaptic_hash_current",
+    "t",
+    "timestamp",
+    "source",
+    "err",
+    "ema_err",
+    "sigma",
+    "z",
+    "thresholds",
+    "attrib",
+    "fingerprint_topk",
+    "baseline",
+    "recent_window",
+    "evidence_paths"
+  ],
+  "properties": {
+    "session_id": {"type": "string"},
+    "run_version": {"type": ["string", "null"]},
+    "config_hash": {"type": ["string", "null"]},
+    "synaptic_hash_initial": {"type": ["string", "null"]},
+    "synaptic_hash_current": {"type": ["string", "null"]},
+    "t": {"type": "integer"},
+    "timestamp": {"type": "number"},
+    "source": {
+      "type": "object",
+      "properties": {
+        "dataset": {"type": ["string", "null"]},
+        "path": {"type": ["string", "null"]},
+        "row": {"type": ["integer", "null"]},
+        "offset": {"type": ["integer", "null"]},
+        "snippet": {"type": ["string", "null"]},
+        "stream_id": {"type": ["string", "null"]}
+      }
+    },
+    "err": {"type": "number"},
+    "ema_err": {"type": "number"},
+    "sigma": {"type": "number"},
+    "z": {"type": "number"},
+    "thresholds": {
+      "type": "object",
+      "properties": {
+        "z_thresh_eff": {"type": "number"},
+        "abs_threshold": {"type": ["number", "null"]}
+      }
+    },
+    "attrib": {
+      "type": "object",
+      "properties": {
+        "topk_features": {"type": "array"},
+        "energy_L1": {"type": ["number", "null"]},
+        "energy_L2": {"type": ["number", "null"]}
+      }
+    },
+    "fingerprint_topk": {
+      "type": "array",
+      "items": {"type": "object"}
+    },
+    "baseline": {
+      "type": "object",
+      "properties": {
+        "norm_mean_head": {"type": ["array", "null"]},
+        "norm_std_head": {"type": ["array", "null"]},
+        "ema_err": {"type": "number"},
+        "sigma": {"type": "number"}
+      }
+    },
+    "recent_window": {
+      "type": "object",
+      "properties": {
+        "window": {"type": "integer"},
+        "err_mean": {"type": ["number", "null"]},
+        "err_std": {"type": ["number", "null"]}
+      }
+    },
+    "evidence_paths": {
+      "type": "object",
+      "properties": {
+        "report": {"type": "string"},
+        "steps_csv": {"type": "string"},
+        "anomalies_jsonl": {"type": "string"},
+        "summary_json": {"type": "string"},
+        "clusters_json": {"type": "string"},
+        "session_meta": {"type": "string"}
+      }
+    }
+  }
+}
