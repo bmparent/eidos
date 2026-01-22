@@ -1,0 +1,16 @@
+{
+  "sigma_k": 1.1144624340609357,
+  "target_surprise": 0.2515821342928252,
+  "ema_alpha": 0.002472841541484021,
+  "warmup_cap": 2963,
+  "spectral_radius": 1.775788463196263,
+  "leak_rate": 0.3692479352052168,
+  "input_scaling": 0.4507843245619566,
+  "forgetting": 0.9532423010011892,
+  "weight_decay": 5.302842829460644e-05,
+  "reservoir": 1900,
+  "hippocampus_sim_theta": 0.4396149980604702,
+  "hippocampus_write_z_thresh": 3.009347590260939,
+  "hippocampus_freeze_strength": 0.4857058498614038,
+  "hippocampus_compute_on_surprise_only": false
+}

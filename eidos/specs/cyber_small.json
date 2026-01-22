@@ -1,0 +1,9 @@
+{
+  "datasets": [
+    {
+      "kind": "local",
+      "path": "specs/cyber_small.csv",
+      "name": "incident_small"
+    }
+  ]
+}
