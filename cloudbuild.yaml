@@ -1,0 +1,56 @@
+# cloudbuild.yaml
+# ============================================================
+# Cloud Build Pipeline for Eidos Brain
+# ============================================================
+
+substitutions:
+  _REGION: us-central1
+  _ENVIRONMENT: demo
+
+steps:
+  # Step 1: Run tests
+  - name: 'python:3.11-slim'
+    id: 'test'
+    entrypoint: 'bash'
+    args:
+      - '-c'
+      - |
+        pip install pytest numpy pandas torch -q
+        cd eidos
+        python -m py_compile EIDOS_BRAIN_UNIFIED_v0_4.7.02.py
+        echo "Syntax check passed!"
+
+  # Step 2: Build Docker image
+  - name: 'gcr.io/cloud-builders/docker'
+    id: 'build'
+    args:
+      - 'build'
+      - '-t'
+      - 'gcr.io/$PROJECT_ID/eidos-brain:$COMMIT_SHA'
+      - '-t'
+      - 'gcr.io/$PROJECT_ID/eidos-brain:latest'
+      - '-t'
+      - 'gcr.io/$PROJECT_ID/eidos-brain:${_ENVIRONMENT}'
+      - '.'
+
+  # Step 3: Push to Container Registry
+  - name: 'gcr.io/cloud-builders/docker'
+    id: 'push'
+    args:
+      - 'push'
+      - 'gcr.io/$PROJECT_ID/eidos-brain:$COMMIT_SHA'
+
+  - name: 'gcr.io/cloud-builders/docker'
+    id: 'push-latest'
+    args:
+      - 'push'
+      - 'gcr.io/$PROJECT_ID/eidos-brain:latest'
+
+images:
+  - 'gcr.io/$PROJECT_ID/eidos-brain:$COMMIT_SHA'
+  - 'gcr.io/$PROJECT_ID/eidos-brain:latest'
+
+options:
+  logging: CLOUD_LOGGING_ONLY
+
+timeout: 1200s
