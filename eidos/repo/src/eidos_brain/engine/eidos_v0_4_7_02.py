@@ -1252,7 +1252,16 @@ class RLS_Reservoir:
         self.state = torch.zeros(n_reservoir, device=device)
         self.W_out = torch.zeros(n_inputs, n_reservoir, device=device)
 
-        self.P = torch.eye(n_reservoir, device=device) / 0.001
+        # CPU Precision Hardening: P matrix in FP64 to prevent
+        # accumulated rounding error in the RLS covariance path.
+        # On CPU, FP32 rank-1 updates to a 2000x2000 matrix drift
+        # asymmetric and ill-conditioned after thousands of steps.
+        self.P = torch.eye(n_reservoir, device=device, dtype=torch.float64) / 0.001
+
+        # Periodic rejuvenation: soft-reset P every N adapt steps
+        # to bound condition number growth. RLS re-converges in ~200 steps.
+        self._adapt_step = 0
+        self._rejuvenate_every = int(EIDOS_BRAIN_CONFIG.get("rls_rejuvenate_every", 5000))
 
         self.last_raw_delta_norm = 0.0
         self.last_raw_delta_rms = 0.0
@@ -1423,14 +1432,27 @@ class RLS_Reservoir:
         y = torch.matmul(self.W_out, r)
         e = target - y
 
-        Pr = torch.matmul(self.P, r)
-        rPr = torch.dot(r, Pr)
+        # CPU Precision Hardening: promote state vector to FP64 for
+        # the gain computation path. P is already FP64.
+        r64 = r.to(torch.float64)
+        Pr = torch.matmul(self.P, r64)
+        rPr = torch.dot(r64, Pr)
         gain_k = Pr / (self.forgetting + rPr + 1e-6)
 
-        # Leap 0.6: Numerical stability guardrails
+        # Leap 0.6: Numerical stability guardrails (all in FP64)
         self.P = (self.P - torch.outer(gain_k, Pr)) / self.forgetting
         self.P = 0.5 * (self.P + self.P.T) # Keep symmetric
         self.P.diagonal().add_(1e-12)      # Ridge (in-place, no new tensor)
+
+        # Periodic rejuvenation: soft-reset P to bounded condition
+        self._adapt_step += 1
+        if self._rejuvenate_every > 0 and self._adapt_step % self._rejuvenate_every == 0:
+            n = self.P.shape[0]
+            self.P = torch.eye(n, device=device, dtype=torch.float64) / 0.001
+            print(f"    [RLS] P-matrix rejuvenated at step {self._adapt_step}")
+
+        # Convert gain_k back to engine precision for weight update
+        gain_k = gain_k.to(e.dtype)
 
         weight_update = torch.outer(e, gain_k)
 
