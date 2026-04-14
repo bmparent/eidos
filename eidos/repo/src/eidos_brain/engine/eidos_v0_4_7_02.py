@@ -4182,7 +4182,11 @@ def run_sentinel_stream(
         # We use sigma_rob from above
         sigma_ok = sigma > 0.001 # Simple floor
 
-        novel_enough = (1.0 - hipp_sim > n_min)
+        # [HARDENING] Safe novelty check
+        if hipp_sim is None:
+            novel_enough = False
+        else:
+            novel_enough = (1.0 - hipp_sim > n_min)
         allow_write = bank_empty or novel_enough
 
         if is_surprise and (z_score > z_write_config) and allow_write and sigma_ok:
@@ -4223,7 +4227,7 @@ def run_sentinel_stream(
                 "z_thresh_eff": float(eff_z_thresh),
                 "meta": meta,
                 "hipp_bank": hipp_bank,
-                "hipp_sim": float(hipp_sim),
+                "hipp_sim": None if hipp_sim is None else float(hipp_sim),
                 "hipp_chi": float(hipp_chi),
                 "hipp_write": bool(wrote_hipp),
                 "attrib": attrib, # Patch C0
@@ -4331,7 +4335,7 @@ def run_sentinel_stream(
                 f"Plas(rms): {plasticity_raw:7.4f} | "
                 f"Plas(clp): {plasticity_clipped:7.2f} | "
                 f"fatigue={fatigue:.2f} surprEMA={surprise_ema:.3f} lr_raw={lr_scale_raw:.3f} lr_eff={lr_scale_eff:.3f} | "
-                f"HIPP bank={hipp_bank} sim={hipp_sim:+.3f} chi={hipp_chi:.3f} write={int(wrote_hipp)} | "
+                f"HIPP bank={hipp_bank} sim={hipp_sim if hipp_sim is None else f'{hipp_sim:+.3f}'} chi={hipp_chi:.3f} write={int(wrote_hipp)} | "
                 f"Dom: {dom_display} | Hs: {Hs_display} | {status} | "
                 f"Thermo: E={thermo_energy:.2f} rho={thermo_rho:.2f} T={thermo_temp:.2f} lam={thermo_lambda:.4f}"
             )
@@ -4389,7 +4393,7 @@ def run_sentinel_stream(
                 f"ema={ema_err:.4f} sig={sigma:.4f} ratio={global_ratio:.1f} "
                 f"plas_rms={plasticity_raw:.4f} plas_clp={plasticity_clipped:.2f} clip_frac~{clip_frac:.2f} "
                 f"fatigue={fatigue:.2f} lr_raw={lr_scale_raw:.3f} lr_eff={lr_scale_eff:.3f} "
-                f"HIPP bank={hipp_bank} sim={hipp_sim:+.3f} chi={hipp_chi:.3f} write={int(wrote_hipp)} "
+                f"HIPP bank={hipp_bank} sim={hipp_sim if hipp_sim is None else f'{hipp_sim:+.3f}'} chi={hipp_chi:.3f} write={int(wrote_hipp)} "
                 f"status={status} | Thermo E={thermo_energy:.2f} | text='{snippet}'"
             )
 
