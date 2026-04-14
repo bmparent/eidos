@@ -170,6 +170,15 @@ STREAM_URL = None
 STREAM_URL_HEADERS = {}        # e.g. {"Authorization": "Bearer ..."}
 STREAM_URL_TIMEOUT = (10, 60)  # (connect, read) seconds for http(s) streaming
 
+# ---- [HARDENING] Stream SSRF Allowlist ----------------------------------
+# Comma-separated glob patterns for allowed stream URLs/IPs.
+# If set, stream_live_frames will reject endpoints that don't match.
+# Empty string = no restriction (legacy behavior, NOT recommended in production).
+# Examples:
+#   EIDOS_STREAM_ALLOWLIST="https://*.example.com/*,wss://*.myapp.io/*"
+#   EIDOS_STREAM_ALLOWLIST="tcp://10.0.0.*:*,tcp://192.168.1.*:*"
+STREAM_ALLOWLIST = os.getenv("EIDOS_STREAM_ALLOWLIST", "")
+
 # ---- IP streaming (STREAM_KIND="IP") ----------------------------------------
 # Endpoint format:
 #   "tcp://HOST:PORT"
@@ -218,6 +227,7 @@ _RUNTIME_DEFAULTS = {
     "STREAM_URL": STREAM_URL,
     "STREAM_URL_HEADERS": deepcopy(STREAM_URL_HEADERS),
     "STREAM_URL_TIMEOUT": STREAM_URL_TIMEOUT,
+    "stream_allowlist": STREAM_ALLOWLIST,  # [HARDENING] SSRF allowlist
     "STREAM_IP_ENDPOINT": STREAM_IP_ENDPOINT,
     "KAGGLE_DATASET_ID": KAGGLE_DATASET_ID,
     "KAGGLE_FILE_NAME": KAGGLE_FILE_NAME,
@@ -2007,7 +2017,7 @@ class SessionRecorder:
                     "path": context_meta.get("path") or context_meta.get("source"),
                     "row": context_meta.get("row"),
                     "offset": context_meta.get("offset"),
-                    "snippet": context_meta.get("snippet") or context_meta.get("text"),
+                    "snippet": _redact_snippet(context_meta.get("snippet") or context_meta.get("text") or ""),
                     "stream_id": context_meta.get("stream_id"),
                 },
                 "step": step,
@@ -3515,13 +3525,78 @@ def _try_parse_numeric_list_from_line(line: str) -> Optional[np.ndarray]:
 
     return None
 
+# =============================================================================
+# [HARDENING] SSRF ALLOWLIST VALIDATION
+# =============================================================================
+def _validate_stream_endpoint(endpoint: str) -> None:
+    ""Validate a stream endpoint against the SSRF allowlist.
+    Raises ValueError if the endpoint is blocked.""
+    import fnmatch
+    allowlist_raw = STREAM_ALLOWLIST or EIDOS_BRAIN_CONFIG.get("stream_allowlist", "")
+    if not allowlist_raw:
+        return  # No restriction configured
+    patterns = [p.strip() for p in allowlist_raw.split(",") if p.strip()]
+    if not patterns:
+        return
+    for pattern in patterns:
+        if fnmatch.fnmatch(endpoint, pattern):
+            return
+    raise ValueError(
+        f"[SSRF BLOCKED] Stream endpoint {endpoint!r} does not match any allowed pattern. "
+        f"Allowlist: {patterns}. Set EIDOS_STREAM_ALLOWLIST env var to configure."
+    )
+
+# =============================================================================
+# [HARDENING] NETWORK RETRY WITH EXPONENTIAL BACKOFF
+# =============================================================================
+def _retry_with_backoff(fn, max_retries: int = 3, base_delay: float = 1.0, max_delay: float = 30.0):
+    ""Retry a callable with bounded exponential backoff.
+    Returns the result of fn() on success, raises last exception on exhaustion.""
+    import random
+    last_exc = None
+    for attempt in range(max_retries + 1):
+        try:
+            return fn()
+        except (ConnectionError, TimeoutError, OSError) as e:
+            last_exc = e
+            if attempt == max_retries:
+                break
+            delay = min(max_delay, base_delay * (2 ** attempt)) + random.uniform(0, 0.5)
+            print(f"[RETRY] Attempt {attempt+1}/{max_retries} failed: {e}. Retrying in {delay:.1f}s...")
+            time.sleep(delay)
+    raise last_exc
+
+# =============================================================================
+# [HARDENING] SNIPPET REDACTION (secrets scrubbing before persistence)
+# =============================================================================
+_REDACT_PATTERNS = [
+    (re.compile(r'(?i)(bearer\s+)[A-Za-z0-9\-._~+/]+=*'), r'\1[REDACTED]'),
+    (re.compile(r'(?i)(api[_-]?key|token|secret|password|passwd|authorization)["\s:=]+["\']?[A-Za-z0-9\-._~+/]{8,}'), r'\1=[REDACTED]'),
+    (re.compile(r'(?i)(aws_secret_access_key|aws_access_key_id)["\s:=]+[A-Za-z0-9/+=]{16,}'), r'\1=[REDACTED]'),
+    (re.compile(r'ghp_[A-Za-z0-9]{36,}'), '[REDACTED_GH_TOKEN]'),
+    (re.compile(r'sk-[A-Za-z0-9]{20,}'), '[REDACTED_SK_KEY]'),
+    (re.compile(r'-----BEGIN[A-Z ]*PRIVATE KEY-----[\s\S]*?-----END[A-Z ]*PRIVATE KEY-----'), '[REDACTED_PRIVATE_KEY]'),
+]
+
+def _redact_snippet(text: str) -> str:
+    ""Scrub potential secrets from text before persisting to anomaly receipts.""
+    if not text:
+        return text
+    for pattern, replacement in _REDACT_PATTERNS:
+        text = pattern.sub(replacement, text)
+    return text
+
 def stream_http_lines(url: str, headers: Dict[str, str], timeout: Tuple[int, int]) -> Iterator[str]:
     try:
         import requests  # type: ignore
     except ImportError as e:
         raise ImportError("requests is required for http(s) streaming in Colab (usually already installed).") from e
 
-    with requests.get(url, headers=headers, stream=True, timeout=timeout) as r:
+    # [HARDENING] Retry with backoff for transient network failures
+    response = _retry_with_backoff(
+        lambda: requests.get(url, headers=headers, stream=True, timeout=timeout)
+    )
+    with response as r:
         r.raise_for_status()
         for raw in r.iter_lines(decode_unicode=True):
             if raw is None:
@@ -3630,6 +3705,7 @@ def stream_live_frames(
     if kind_u == "URL":
         if not url:
             raise ValueError("STREAM_URL must be set when STREAM_KIND='URL'.")
+        _validate_stream_endpoint(url)  # [HARDENING] SSRF allowlist check
 
         if url.lower().startswith(("ws://", "wss://")):
             _require_websockets()
@@ -3680,7 +3756,7 @@ def stream_live_frames(
                         "stream_kind": "ws",
                         "source": url,
                         "idx": count,
-                        "snippet": _clean_snippet(line, 160)
+                        "snippet": _redact_snippet(_clean_snippet(line, 160))
                     }
                     meta.update(meta_extra)
                     out, meta = _handle_vector(vec, meta)
@@ -3721,7 +3797,7 @@ def stream_live_frames(
                     "stream_kind": "http",
                     "source": url,
                     "idx": count,
-                    "snippet": _clean_snippet(line, 160)
+                    "snippet": _redact_snippet(_clean_snippet(line, 160))
                 }
                 meta.update(meta_extra)
                 out, meta = _handle_vector(vec, meta)
@@ -3731,6 +3807,7 @@ def stream_live_frames(
     elif kind_u == "IP":
         if not ip_endpoint:
             raise ValueError("STREAM_IP_ENDPOINT must be set when STREAM_KIND='IP'.")
+        _validate_stream_endpoint(ip_endpoint)  # [HARDENING] SSRF allowlist check
         proto, host, port = _parse_ip_endpoint(ip_endpoint)
 
         line_iter = stream_tcp_lines(host, port) if proto == "tcp" else stream_udp_lines(host, port)
@@ -3762,7 +3839,7 @@ def stream_live_frames(
                 "stream_kind": proto,
                 "source": f"{proto}://{host}:{port}",
                 "idx": count,
-                "snippet": _clean_snippet(line, 160)
+                "snippet": _redact_snippet(_clean_snippet(line, 160))
             }
             meta.update(meta_extra)
             out, meta = _handle_vector(vec, meta)
