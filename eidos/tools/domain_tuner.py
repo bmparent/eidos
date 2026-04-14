@@ -35,7 +35,10 @@ class DatasetBundle:
 
 def load_engine_module() -> Any:
     repo_root = Path(__file__).resolve().parents[1]
-    engine_path = repo_root / "EIDOS_BRAIN_UNIFIED_v0_4.7.02.py"
+    # Prefer the refactored engine (contains all hardening patches)
+    refactored_path = repo_root / "repo" / "src" / "eidos_brain" / "engine" / "eidos_v0_4_7_02.py"
+    monolith_path = repo_root / "EIDOS_BRAIN_UNIFIED_v0_4.7.02.py"
+    engine_path = refactored_path if refactored_path.exists() else monolith_path
     spec = importlib.util.spec_from_file_location("eidos_engine", engine_path)
     if spec is None or spec.loader is None:
         raise RuntimeError(f"Failed to load engine at {engine_path}")

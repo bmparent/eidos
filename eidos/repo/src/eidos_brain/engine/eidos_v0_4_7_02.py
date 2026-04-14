@@ -1236,6 +1236,7 @@ class RLS_Reservoir:
         weight_decay: float = 5e-4,
     ):
         self.n_inputs = n_inputs
+        self.device = device  # Expose module-level device for external access
         self.leak_rate = leak_rate
         self.forgetting = forgetting
         self.weight_decay = weight_decay

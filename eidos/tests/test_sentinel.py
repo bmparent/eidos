@@ -1,4 +1,5 @@
 import pytest
+import numpy as np
 
 class TestSentinel:
     @pytest.fixture
@@ -9,23 +10,38 @@ class TestSentinel:
         assert sentinel.analyze() == "CALIBRATING"
 
     def test_nominal_transition(self, sentinel):
+        # Fill window (10 frames) then a few more to stabilize
         for _ in range(15):
              sentinel.update(
                 ratio=5.0, plasticity=0.01, eigen_dominance=0.1, 
                 surprise_score=0.5, error_norm=0.1, error_rms=0.01
             )
-        assert sentinel.analyze() == "NOMINAL"
+        status = sentinel.analyze()
+        # SentinelMonitor returns "GREEN: NOMINAL" for healthy state
+        assert status.startswith("GREEN"), f"Expected GREEN state, got: {status}"
         
-    def test_red_state(self, sentinel):
-        # Fill buffer (exit calibration)
-        for _ in range(40):
+    def test_amber_state(self, sentinel):
+        """High plasticity should trigger AMBER."""
+        # Fill buffer to exit calibration
+        for _ in range(15):
              sentinel.update(ratio=5.0, plasticity=0.01, eigen_dominance=0.1)
         
-        # Inject chaos (Plasticity Fever) - Fill the window
-        for _ in range(60):
+        # Inject high plasticity to fill the window
+        for _ in range(15):
             sentinel.update(
-                ratio=0.5, plasticity=200.0, eigen_dominance=0.9,
+                ratio=5.0, plasticity=200.0, eigen_dominance=0.1,
                 surprise_score=5.0
             )
         status = sentinel.analyze()
-        assert "RED" in status or "AMBER" in status
+        assert "AMBER" in status or "RED" in status, f"Expected AMBER/RED, got: {status}"
+
+    def test_red_representation_collapse(self, sentinel):
+        """High ratio + high eigen dominance + low plasticity = RED collapse."""
+        # Fill buffer to exit calibration with extreme collapse metrics
+        for _ in range(15):
+            sentinel.update(
+                ratio=200.0, plasticity=1.0, eigen_dominance=0.99,
+                state_entropy=0.8  # Not collapsed entropy, so geo_ok=True
+            )
+        status = sentinel.analyze()
+        assert "RED" in status, f"Expected RED, got: {status}"

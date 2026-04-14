@@ -5,7 +5,7 @@ Defines the standard HiveEventV1 schema for all Eidos Brain events.
 """
 
 from dataclasses import dataclass, field, asdict
-from datetime import datetime
+from datetime import datetime, timezone
 from typing import Dict, Any, List, Optional
 import json
 
@@ -25,7 +25,7 @@ class HiveEventV1:
                source: str = "UNKNOWN", artifacts: List[str] = None):
         return cls(
             event_type=event_type,
-            ts=datetime.utcnow().isoformat() + "Z",
+            ts=datetime.now(timezone.utc).isoformat().replace("+00:00", "Z"),
             session_id=session_id,
             engine_version="0.4.7.02", # In real app, import VERSION
             engine_hash="UNKNOWN", # Should be passed in or resolved
