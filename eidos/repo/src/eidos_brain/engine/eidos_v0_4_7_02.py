@@ -766,15 +766,21 @@ def websocket_lines_to_queue(url: str, headers: Dict[str, str], out_q: "queue.Qu
         loop.close()
 
 def estimate_spectral_radius_power_iter(W: torch.Tensor, iters: int = 50) -> float:
-    # Estimates max |λ| for W via power iteration on W^T W
-    # rho(W) ≈ sqrt(λ_max(W^T W))
+    # BUG-03 FIX: Estimates spectral radius ρ(W) = max|λ_i| via direct
+    # power iteration on W. Previous version iterated on WᵀW which gives
+    # σ_max (largest singular value), not ρ. For non-symmetric W,
+    # σ_max ≥ ρ, causing systematic over-damping of the reservoir.
     v = torch.randn(W.shape[0], device=W.device, dtype=W.dtype)
     v = v / (torch.linalg.norm(v) + 1e-12)
+    rho_est = 1.0
     for _ in range(iters):
-        v = W.T @ (W @ v)
-        v = v / (torch.linalg.norm(v) + 1e-12)
-    Rayleigh = torch.dot(v, (W.T @ (W @ v)))
-    return float(torch.sqrt(torch.clamp(Rayleigh, min=1e-12)).item())
+        Wv = W @ v
+        norm_Wv = torch.linalg.norm(Wv)
+        if norm_Wv < 1e-12:
+            return 0.0
+        rho_est = float(norm_Wv.item())
+        v = Wv / norm_Wv
+    return rho_est
 
 def cosine_sim(a: torch.Tensor, b: torch.Tensor) -> float:
     a = a.flatten()
@@ -976,8 +982,11 @@ class AutoProjector:
         # n > D: projection
         if n not in self.proj_cache:
             rng = np.random.RandomState(self.seed + n)
+            # BUG-02 FIX: Scale by 1/√n to preserve expected vector norms
+            # (Johnson-Lindenstrauss guarantee). Without this, projecting
+            # from 1000D to 64D inflates norms by ~√1000/√64 ≈ 4x.
             # shape (n, D)
-            self.proj_cache[n] = rng.randn(n, self.D).astype(np.float64)
+            self.proj_cache[n] = (rng.randn(n, self.D) / np.sqrt(n)).astype(np.float64)
         return v @ self.proj_cache[n]
 
 def embed_line_to_vec(text: str, features: int = 64) -> np.ndarray:
@@ -1187,9 +1196,12 @@ class HippocampusHDC:
 
         sim = float((hx_hat.to(torch.float32) * h_x.to(torch.float32)).mean().item())
 
-        # Fix 2.3: Replace sigmoid chi with exponential familiarity
-        # chi = _sigmoid(self.sim_kappa * (sim - self.sim_theta))
-        dist = max(0.0, 1.0 - sim)
+        # PHYS-04 FIX: Removed max(0,...) floor on distance. Previously,
+        # anti-correlated patterns (sim < 0) produced the same familiarity
+        # as uncorrelated (sim = 0) because max(0, 1-sim) floored at 0.
+        # An anti-correlated recall (sim = -0.5, dist = 1.5) should produce
+        # LOWER familiarity than uncorrelated (sim = 0, dist = 1.0).
+        dist = 1.0 - sim  # dist in [0, 2] since sim in [-1, 1]
         chi = math.exp(-self.beta * dist)
 
         self.last_bank_used = bank
@@ -1324,14 +1336,23 @@ class RLS_Reservoir:
         self.last_clipped_delta_rms = 0.0
         self.last_clip_ratio = 0.0
         self.last_was_clipped = False
+        self._listen_step = 0  # BUG-04: Counter for periodic quantization
 
     def listen(self, u: torch.Tensor) -> None:
-        u = orch_or_collapse(u)
+        # BUG-04 FIX: Removed per-step orch_or_collapse from the hot path.
+        # The original design quantized BOTH the input and the new state on
+        # every single frame. Over 60K+ recurrent steps, rounding to 5 decimal
+        # places compounds multiplicatively, destroying the fine-grained state
+        # differences the reservoir needs for long-range temporal memory.
+        # Now applied as a periodic regularization pulse every 100 steps.
 
         # Leap 3: Noise injection (Temperature)
+        # PHYS-09 FIX: Normalize noise by √dim so ||noise|| ≈ temperature
+        # regardless of reservoir size. Without this, a 2000-dim reservoir
+        # gets ||noise|| ≈ 45*T, which destroys state at temp_max=5.0.
         noise = 0.0
         if self.thermo_enabled and self.temperature > 1e-6:
-             noise = self.temperature * torch.randn_like(self.state)
+             noise = (self.temperature / math.sqrt(self.state.shape[0])) * torch.randn_like(self.state)
 
         pre = torch.matmul(self.W_in, u) + torch.matmul(self.W_res, self.state) + noise
 
@@ -1340,7 +1361,11 @@ class RLS_Reservoir:
         # alpha is strictly vector or scalar, broadcasting handles it
         new_state = (1.0 - self.alpha) * self.state + self.alpha * torch.tanh(pre)
 
-        self.state = orch_or_collapse(new_state)
+        self._listen_step += 1
+        if self._listen_step % 100 == 0:
+            new_state = orch_or_collapse(new_state)
+
+        self.state = new_state
 
     def update_thermodynamics(self, metrics: Dict[str, float]) -> Dict[str, float]:
         """
@@ -1350,36 +1375,38 @@ class RLS_Reservoir:
             return {}
 
         # 1. Calculate Energy
-        # E_t = a*eps + b*s + c*(D - D*)+ + d*(H* - H)+
+        # PHYS-01 FIX: Normalize each term to approximately [0,1] before
+        # weighting. Previously, eps (error RMS, scale ~0.01-100) was summed
+        # with dominance excess (scale ~[0,1]) and entropy deficit (scale ~[0,1]),
+        # causing the controller to be dominated by whichever had the largest
+        # natural scale.
         coeffs = EIDOS_BRAIN_CONFIG["thermo_energy_coeffs"]
         targets = EIDOS_BRAIN_CONFIG["thermo_targets"]
 
-        # Fix 8: Use RMS error for dimension invariance
-        # eps = metrics.get("error_norm", 0.0)
         eps = metrics.get("error_rms", 0.0)
-
-        surp = metrics.get("surprise_score", 0.0) # z-score
+        surp = metrics.get("surprise_score", 0.0)
         dom = metrics.get("dominance", 0.0)
         ent = metrics.get("state_entropy", 1.0)
 
-        # Heuristic normalization
-        eps_term = coeffs["epsilon"] * eps
-        surp_term = coeffs["surprise"] * max(0, surp - 1.0) # Only penalize high surprise
+        # Normalize each term to ~[0,1] using sigmoid squashing.
+        # eps: typical range [0, 10], center at 1.0
+        eps_norm = 1.0 / (1.0 + math.exp(-(eps - 1.0)))
+        # surprise z-score: typical range [0, 10], penalize > 1.0
+        surp_norm = (1.0 / (1.0 + math.exp(-(surp - 1.0)))) if surp > 1.0 else 0.0
+        # dominance excess above target (already ~[0,1])
+        dom_norm = max(0.0, dom - targets["dominance"])
+        # entropy deficit below target (already ~[0,1])
+        ent_norm = max(0.0, targets["entropy"] - ent)
 
-        # Only penalize dominance/entropy if they are valid (not 0.0/1.0 defaults if missing)
-        # The guide says: "if entropy/dominance are None, omit their penalty terms."
-        # metrics dict has 0.0/1.0 defaults if missing in the caller, let's check if we can detect 'missing'.
-        # The caller (sentinel.last_metrics) sets them to 0.0/1.0 if None.
-        # We'll assume if dom == 0.0 and ent == 1.0 it might be early.
-        # But let's just apply the formula.
-
-        dom_term = coeffs["dominance"] * max(0, dom - targets["dominance"])
-        ent_term = coeffs["entropy"] * max(0, targets["entropy"] - ent)
+        eps_term = coeffs["epsilon"] * eps_norm
+        surp_term = coeffs["surprise"] * surp_norm
+        dom_term = coeffs["dominance"] * dom_norm
+        ent_term = coeffs["entropy"] * ent_norm
 
         energy = eps_term + surp_term + dom_term + ent_term
         self.energy_ema = 0.9 * self.energy_ema + 0.1 * energy
 
-        E_star = 0.5 # Target energy (arbitrary heuristic for now)
+        E_star = 0.5 # Target energy
         delta_E = self.energy_ema - E_star
 
         # 2. Pressure Control (Spectral Radius rho)
@@ -1493,8 +1520,13 @@ class RLS_Reservoir:
 
         self.W_out += weight_update
 
-        if self.weight_decay > 0.0:
-            self.W_out *= (1.0 - self.weight_decay)
+        # PHYS-03 FIX: Removed explicit weight decay. The RLS forgetting
+        # factor (lambda) already provides exponential discounting of old
+        # observations via the P-matrix update: P = (P - outer(k, Pr))/lambda.
+        # Adding weight decay on top creates double exponential forgetting:
+        # old weights decay as lambda^(-n) * (1-wd)^n, making the readout
+        # pathologically myopic. The P-matrix ridge term (diagonal += 1e-12)
+        # already provides sufficient L2 regularization.
 
         clipped_norm = torch.norm(weight_update).item()
         clipped_rms = clipped_norm / (math.sqrt(N) + 1e-12)
@@ -1525,12 +1557,17 @@ class NewtonianPredictor:
         return orch_or_collapse(pred)
 
     def update(self, current_pos: torch.Tensor) -> None:
+        # BUG-01 FIX: Apply EMA smoothing to velocity and acceleration.
+        # The raw discrete second derivative (acc = Δvel) amplifies
+        # high-frequency noise on non-smooth signals, making the
+        # "left brain" predictor a noise amplifier rather than a
+        # physics-based interpolator.
         current_pos = orch_or_collapse(current_pos)
-        new_vel = current_pos - self.pos
-        new_acc = new_vel - self.vel
+        raw_vel = current_pos - self.pos
+        raw_acc = raw_vel - self.vel
         self.pos = current_pos
-        self.vel = orch_or_collapse(new_vel)
-        self.acc = orch_or_collapse(new_acc)
+        self.vel = orch_or_collapse(0.7 * self.vel + 0.3 * raw_vel)
+        self.acc = orch_or_collapse(0.9 * self.acc + 0.1 * raw_acc)
 
 # =============================================================================
 # GEOMETRY / EIGEN / SPECTRAL MONITORS
@@ -4331,7 +4368,7 @@ def run_sentinel_stream(
                 f"Plas(rms): {plasticity_raw:7.4f} | "
                 f"Plas(clp): {plasticity_clipped:7.2f} | "
                 f"fatigue={fatigue:.2f} surprEMA={surprise_ema:.3f} lr_raw={lr_scale_raw:.3f} lr_eff={lr_scale_eff:.3f} | "
-                f"HIPP bank={hipp_bank} sim={hipp_sim:+.3f} chi={hipp_chi:.3f} write={int(wrote_hipp)} | "
+                f"HIPP bank={hipp_bank} sim={hipp_sim if hipp_sim is not None else 0.0:+.3f} chi={hipp_chi:.3f} write={int(wrote_hipp)} | "
                 f"Dom: {dom_display} | Hs: {Hs_display} | {status} | "
                 f"Thermo: E={thermo_energy:.2f} rho={thermo_rho:.2f} T={thermo_temp:.2f} lam={thermo_lambda:.4f}"
             )
@@ -4389,7 +4426,7 @@ def run_sentinel_stream(
                 f"ema={ema_err:.4f} sig={sigma:.4f} ratio={global_ratio:.1f} "
                 f"plas_rms={plasticity_raw:.4f} plas_clp={plasticity_clipped:.2f} clip_frac~{clip_frac:.2f} "
                 f"fatigue={fatigue:.2f} lr_raw={lr_scale_raw:.3f} lr_eff={lr_scale_eff:.3f} "
-                f"HIPP bank={hipp_bank} sim={hipp_sim:+.3f} chi={hipp_chi:.3f} write={int(wrote_hipp)} "
+                f"HIPP bank={hipp_bank} sim={hipp_sim if hipp_sim is not None else 0.0:+.3f} chi={hipp_chi:.3f} write={int(wrote_hipp)} "
                 f"status={status} | Thermo E={thermo_energy:.2f} | text='{snippet}'"
             )
 
@@ -5227,7 +5264,12 @@ def run_eidos_sentinel():
                          # Assume numeric if not text embed?
                          pass
 
-            return stream_live_frames(
+            # BUG-12 FIX: Use 'yield from' instead of 'return'. Because this
+            # function contains 'yield' (in the NL connector branch above),
+            # Python treats it as a generator function. A bare 'return value'
+            # in a generator sets StopIteration.value, which the caller never
+            # reads — so the normal STREAM path silently produced zero frames.
+            yield from stream_live_frames(
                 features=feats,
                 kind=STREAM_KIND,
                 url=STREAM_URL,
