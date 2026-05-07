@@ -569,10 +569,13 @@ print(f">>> ENGINE HASH: {CODE_HASH}")
 # ROOT PATHS – ALL ARTIFACTS GO TO ARTIFACT_ROOT (Drive if present else local)
 # =============================================================================
 
-def _resolve_artifact_root(preferred: str) -> str:
+def _resolve_artifact_root(preferred: str, create_preferred: bool = False) -> str:
     preferred = preferred or ""
     # If drive isn't mounted, /content/drive often doesn't exist
     if preferred and os.path.isdir(preferred):
+        return preferred
+    if preferred and create_preferred:
+        os.makedirs(preferred, exist_ok=True)
         return preferred
     fallback = "/content/eidos_artifacts"
     os.makedirs(fallback, exist_ok=True)
@@ -3529,8 +3532,8 @@ def _try_parse_numeric_list_from_line(line: str) -> Optional[np.ndarray]:
 # [HARDENING] SSRF ALLOWLIST VALIDATION
 # =============================================================================
 def _validate_stream_endpoint(endpoint: str) -> None:
-    ""Validate a stream endpoint against the SSRF allowlist.
-    Raises ValueError if the endpoint is blocked.""
+    """Validate a stream endpoint against the SSRF allowlist.
+    Raises ValueError if the endpoint is blocked."""
     import fnmatch
     allowlist_raw = STREAM_ALLOWLIST or EIDOS_BRAIN_CONFIG.get("stream_allowlist", "")
     if not allowlist_raw:
@@ -3550,8 +3553,8 @@ def _validate_stream_endpoint(endpoint: str) -> None:
 # [HARDENING] NETWORK RETRY WITH EXPONENTIAL BACKOFF
 # =============================================================================
 def _retry_with_backoff(fn, max_retries: int = 3, base_delay: float = 1.0, max_delay: float = 30.0):
-    ""Retry a callable with bounded exponential backoff.
-    Returns the result of fn() on success, raises last exception on exhaustion.""
+    """Retry a callable with bounded exponential backoff.
+    Returns the result of fn() on success, raises last exception on exhaustion."""
     import random
     last_exc = None
     for attempt in range(max_retries + 1):
@@ -3579,7 +3582,7 @@ _REDACT_PATTERNS = [
 ]
 
 def _redact_snippet(text: str) -> str:
-    ""Scrub potential secrets from text before persisting to anomaly receipts.""
+    """Scrub potential secrets from text before persisting to anomaly receipts."""
     if not text:
         return text
     for pattern, replacement in _REDACT_PATTERNS:
@@ -4927,7 +4930,7 @@ def _apply_runtime_config(config: Dict[str, Any]) -> None:
 
     if "artifact_root" in config and config["artifact_root"]:
         ARTIFACT_ROOT_PREFERRED = config["artifact_root"]
-        EIDOS_DATA_ROOT = _resolve_artifact_root(ARTIFACT_ROOT_PREFERRED)
+        EIDOS_DATA_ROOT = _resolve_artifact_root(ARTIFACT_ROOT_PREFERRED, create_preferred=True)
         os.makedirs(EIDOS_DATA_ROOT, exist_ok=True)
         EIDOS_ARCHIVE_ROOT = os.path.join(EIDOS_DATA_ROOT, "eidos_brain_archive")
         os.makedirs(EIDOS_ARCHIVE_ROOT, exist_ok=True)
