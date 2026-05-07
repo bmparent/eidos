@@ -53,12 +53,14 @@ class ResidualFirstCodec:
         feature_names: Sequence[str] | None = None,
         source_id: str = "unknown",
         store_prediction_on_anomalies: bool = True,
+        store_prediction_on_tokens: bool = False,
     ) -> None:
         self.policy = policy if isinstance(policy, CompressionPolicy) else CompressionPolicy(policy)
         self.predictor = predictor
         self.feature_names = list(feature_names or [])
         self.source_id = source_id
         self.store_prediction_on_anomalies = bool(store_prediction_on_anomalies)
+        self.store_prediction_on_tokens = bool(store_prediction_on_tokens)
         self._encoder_last: np.ndarray | None = None
         self._decoder_last: np.ndarray | None = None
         self._next_frame_id = 0
@@ -113,6 +115,8 @@ class ResidualFirstCodec:
             "quantization_scale": decision.quantization_scale,
             "feature_names": feature_names,
             "top_drivers": top_drivers,
+            "sentinel_metrics": _jsonable(meta.get("sentinel_metrics", {})),
+            "hdc_metrics": _jsonable(meta.get("hdc_metrics", {})),
             "policy_reason": decision.reason,
             "payload": payload,
         }
@@ -129,7 +133,12 @@ class ResidualFirstCodec:
         return frame
 
     def _predict_for_encode(self, frame: np.ndarray, metadata: Mapping[str, Any]) -> np.ndarray:
-        prediction = self._external_prediction(frame, metadata)
+        explicit_prediction = metadata.get("prediction", metadata.get("prediction_frame"))
+        prediction = (
+            _as_vector(explicit_prediction)
+            if explicit_prediction is not None
+            else self._external_prediction(frame, metadata)
+        )
         if prediction is None:
             prediction = self._encoder_last if self._encoder_last is not None else np.zeros_like(frame)
         prediction = np.asarray(prediction, dtype=np.float64).reshape(-1)
@@ -185,7 +194,10 @@ class ResidualFirstCodec:
         metadata: Mapping[str, Any],
     ) -> Token:
         if decision.allow_null:
-            return {"type": "reference_or_null", "reference": "previous_prediction"}
+            payload: Token = {"type": "reference_or_null", "reference": "previous_prediction"}
+            if self.store_prediction_on_tokens:
+                payload["prediction"] = prediction.astype(float).tolist()
+            return payload
 
         if decision.preserve_raw_frame:
             payload = {
@@ -205,6 +217,8 @@ class ResidualFirstCodec:
         scale = max(float(decision.quantization_scale), 1e-12)
         quantized = np.rint(residual / scale).astype(np.int64)
         payload = {"type": "quantized_residual", "q_residual": quantized.tolist()}
+        if self.store_prediction_on_tokens:
+            payload["prediction"] = prediction.astype(float).tolist()
         if decision.preserve_feature_structure:
             payload["residual"] = residual.astype(float).tolist()
             payload["type"] = decision.mode

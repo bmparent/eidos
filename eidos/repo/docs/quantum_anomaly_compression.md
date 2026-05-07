@@ -14,6 +14,8 @@ It is not a magic quantum detector. For classical systems, the adapters look for
 - `eidos_brain.adapters.crypto_agility_adapter` converts defensive crypto-agility events into fixed-dimensional Eidos frames.
 - `eidos_brain.adapters.binary_river_adapter` converts byte windows into entropy, sketch, and header-marker features.
 - `eidos_brain.benchmarks.quantum_compression_benchmark` compares Eidos against conventional compression and anomaly baselines.
+- The live Eidos run loop now emits `ResidualFirstCodec` token streams using the engine's real consensus
+  predictor, Sentinel status/metrics, and hippocampus familiarity/write metrics.
 
 ## Compression Policy
 
@@ -63,6 +65,39 @@ Synthetic scenarios include:
 - crypto downgrade/exfiltration risk stream
 - binary river high-entropy blob stream
 
+## Live Run Artifacts
+
+During `run_session`, the residual codec writes artifacts under:
+
+```text
+compression/<profile>/
+```
+
+The live token metadata records:
+
+- `prediction_source = live_eidos_consensus_best_pred`
+- `sentinel_source = live_sentinel_analyze`
+- `hdc_source = live_hippocampus_metrics`
+- writer summaries for JSONL and packed streams, including `tokens_written`, `bytes_written`, `chunks_written`,
+  first/last frame ids, anomaly capsule counts, and mode distributions
+- mode and Sentinel status distributions
+- packed token bytes and compression ratio
+- reconstruction RMSE when prediction storage is enabled
+
+Residual token artifacts are streamed incrementally instead of accumulated in memory. The default config flushes every
+512 tokens or 1 MiB:
+
+```python
+{
+    "residual_codec_flush_every_tokens": 512,
+    "residual_codec_flush_every_bytes": 1_048_576,
+}
+```
+
+The default config stores per-token predictions so JSONL tokens can be replayed offline. Deployments that prefer smaller
+token streams can set `residual_codec_store_prediction` to `False` and reconstruct only with a matching model replay
+path.
+
 ## Interpreting Metrics
 
 - `compression_ratio`: raw feature bytes divided by emitted or packed bytes. Higher is smaller output.
@@ -76,7 +111,8 @@ Synthetic scenarios include:
 ## Known Limitations
 
 - The benchmark uses deterministic synthetic telemetry, not calibrated production quantum hardware or enterprise network data.
-- The Sentinel integration in the benchmark is a lightweight proxy. Production use should connect the codec to the live Eidos reservoir/Sentinel outputs.
+- The standalone benchmark still uses a lightweight Sentinel proxy; live `run_session` artifacts use the real Eidos
+  consensus predictor, Sentinel outputs, and HDC metrics.
 - Conventional compression baselines operate over feature-frame bytes, not every possible raw source representation.
 - The crypto-agility adapter is defensive monitoring only and does not perform exploit generation, key recovery, traffic interception, or offensive analysis.
 - FFmpeg support depends on external `ffmpeg` and `ffprobe` binaries being present on `PATH`.
