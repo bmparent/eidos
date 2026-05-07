@@ -11,6 +11,7 @@ from .entropy_pack import (
 )
 from .policy import CompressionDecision, CompressionPolicy, CompressionPolicyConfig, CompressionRule
 from .residual_codec import ResidualFirstCodec, anomaly_preservation_score, reconstruction_error
+from .stream_writer import InMemoryTokenWriter, JSONLTokenWriter, NullTokenWriter, PackedTokenWriter
 
 __all__ = [
     "CompressionDecision",
@@ -20,6 +21,10 @@ __all__ = [
     "OptionalCodecUnavailable",
     "PackedTokenStream",
     "ResidualFirstCodec",
+    "InMemoryTokenWriter",
+    "JSONLTokenWriter",
+    "NullTokenWriter",
+    "PackedTokenWriter",
     "anomaly_preservation_score",
     "available_packers",
     "pack_tokens",

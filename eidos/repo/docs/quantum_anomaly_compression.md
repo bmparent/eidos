@@ -78,13 +78,25 @@ The live token metadata records:
 - `prediction_source = live_eidos_consensus_best_pred`
 - `sentinel_source = live_sentinel_analyze`
 - `hdc_source = live_hippocampus_metrics`
+- writer summaries for JSONL and packed streams, including `tokens_written`, `bytes_written`, `chunks_written`,
+  first/last frame ids, anomaly capsule counts, and mode distributions
 - mode and Sentinel status distributions
 - packed token bytes and compression ratio
 - reconstruction RMSE when prediction storage is enabled
 
-The default config stores per-token predictions so JSONL tokens can be replayed offline. Deployments that prefer
-smaller token streams can set `residual_codec_store_prediction` to `False` and reconstruct only with a matching model
-replay path.
+Residual token artifacts are streamed incrementally instead of accumulated in memory. The default config flushes every
+512 tokens or 1 MiB:
+
+```python
+{
+    "residual_codec_flush_every_tokens": 512,
+    "residual_codec_flush_every_bytes": 1_048_576,
+}
+```
+
+The default config stores per-token predictions so JSONL tokens can be replayed offline. Deployments that prefer smaller
+token streams can set `residual_codec_store_prediction` to `False` and reconstruct only with a matching model replay
+path.
 
 ## Interpreting Metrics
 

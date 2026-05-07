@@ -339,6 +339,8 @@ EIDOS_BRAIN_CONFIG = {
     "residual_codec_packer": "gzip",
     "residual_codec_store_jsonl": True,
     "residual_codec_store_prediction": True,
+    "residual_codec_flush_every_tokens": 512,
+    "residual_codec_flush_every_bytes": 1_048_576,
     "residual_codec_policy": {},
 
     # NEW (Leap I Patch B0)
@@ -909,6 +911,43 @@ def store_memory_artifact(
         pass
 
     return path
+
+def new_artifact_path(*, label: str = "artifact", subdir: str = "misc", ext: str = "bin") -> str:
+    """Reserve a timestamped local artifact path for streaming writers."""
+    ts = datetime.now(timezone.utc).strftime("%Y%m%d_%H%M%S")
+    slug = _safe_slug(label)
+    base_dir = os.path.join(EIDOS_DATA_ROOT, subdir)
+    os.makedirs(base_dir, exist_ok=True)
+    return os.path.join(base_dir, f"{ts}_{slug}.{ext}")
+
+def register_existing_artifact(
+    path: str,
+    *,
+    label: str = "artifact",
+    subdir: str = "misc",
+    kind: str = "stream",
+    content_type: str = "application/octet-stream",
+) -> str:
+    """Register an artifact already written to disk, uploading it for GCS backends."""
+    stored_path = path
+    if HIVE_BACKEND == "GCS" and hasattr(hive_store, "_blob") and getattr(hive_store, "client", None):
+        blob = hive_store._blob(path)
+        blob.upload_from_filename(path, content_type=content_type)
+        stored_path = f"gs://{blob.bucket.name}/{blob.name}"
+
+    try:
+        manifest_path = os.path.join(EIDOS_DATA_ROOT, "manifest.jsonl")
+        rec = {
+            "ts": datetime.now(timezone.utc).strftime("%Y%m%d_%H%M%S"),
+            "label": label,
+            "subdir": subdir,
+            "kind": kind,
+            "path": stored_path,
+        }
+        hive_store.append_line(manifest_path, json.dumps(rec))
+    except Exception:
+        pass
+    return stored_path
 
 def quantize_to_int16(vec: torch.Tensor, scale: float = 512.0) -> np.ndarray:
     """Quantize a 1D float64 tensor to int16 with a fixed scale."""
@@ -3997,24 +4036,28 @@ def run_sentinel_stream(
     residual_codec_enabled = bool(EIDOS_BRAIN_CONFIG.get("residual_codec_enabled", True))
     residual_codec = None
     residual_decoder = None
-    residual_tokens: List[Dict[str, Any]] = []
+    residual_jsonl_writer = None
+    residual_packed_writer = None
+    residual_jsonl_path = None
+    residual_packed_path = None
+    residual_packer = str(EIDOS_BRAIN_CONFIG.get("residual_codec_packer", "gzip")).lower()
     residual_mode_counts: Counter = Counter()
     residual_status_counts: Counter = Counter()
     residual_reconstruction_sse = 0.0
     residual_reconstruction_values = 0
-    residual_tokens_to_jsonl = None
-    residual_pack_tokens = None
-    residual_codec_optional_error = None
     if residual_codec_enabled:
         try:
             from eidos_brain.compression import (
+                JSONLTokenWriter,
                 OptionalCodecUnavailable,
+                PackedTokenWriter,
                 ResidualFirstCodec,
-                pack_tokens as _pack_tokens,
-                tokens_to_jsonl as _tokens_to_jsonl,
             )
 
             store_prediction = bool(EIDOS_BRAIN_CONFIG.get("residual_codec_store_prediction", True))
+            flush_every = int(EIDOS_BRAIN_CONFIG.get("residual_codec_flush_every_tokens", 512))
+            flush_bytes = int(EIDOS_BRAIN_CONFIG.get("residual_codec_flush_every_bytes", 1_048_576))
+            residual_subdir = f"compression/{_safe_slug(profile_label)}"
             residual_codec = ResidualFirstCodec(
                 policy=EIDOS_BRAIN_CONFIG.get("residual_codec_policy", {}),
                 source_id=f"{session_label}:{profile_label}",
@@ -4025,11 +4068,56 @@ def run_sentinel_stream(
                 source_id=f"{session_label}:{profile_label}",
                 store_prediction_on_tokens=store_prediction,
             )
-            residual_tokens_to_jsonl = _tokens_to_jsonl
-            residual_pack_tokens = _pack_tokens
-            residual_codec_optional_error = OptionalCodecUnavailable
+            if bool(EIDOS_BRAIN_CONFIG.get("residual_codec_store_jsonl", True)):
+                residual_jsonl_path = new_artifact_path(
+                    label=f"residual_tokens_{profile_label}",
+                    subdir=residual_subdir,
+                    ext="jsonl",
+                )
+                residual_jsonl_writer = JSONLTokenWriter(
+                    residual_jsonl_path,
+                    flush_every=flush_every,
+                    flush_bytes=flush_bytes,
+                )
+                residual_jsonl_writer.open()
+
+            ext_by_codec = {"gzip": "gz", "lzma": "xz", "zstd": "zst", "binary": "bin", "jsonl": "jsonl"}
+            residual_packed_path = new_artifact_path(
+                label=f"residual_tokens_{residual_packer}_{profile_label}",
+                subdir=residual_subdir,
+                ext=ext_by_codec.get(residual_packer, "bin"),
+            )
+            try:
+                residual_packed_writer = PackedTokenWriter(
+                    residual_packed_path,
+                    codec=residual_packer,
+                    flush_every=flush_every,
+                    flush_bytes=flush_bytes,
+                )
+                residual_packed_writer.open()
+            except OptionalCodecUnavailable:
+                print(f"[RESIDUAL_CODEC] Optional packer '{residual_packer}' unavailable; falling back to gzip.")
+                residual_packer = "gzip"
+                residual_packed_path = new_artifact_path(
+                    label=f"residual_tokens_{residual_packer}_{profile_label}",
+                    subdir=residual_subdir,
+                    ext="gz",
+                )
+                residual_packed_writer = PackedTokenWriter(
+                    residual_packed_path,
+                    codec=residual_packer,
+                    flush_every=flush_every,
+                    flush_bytes=flush_bytes,
+                )
+                residual_packed_writer.open()
         except Exception as e:
             print(f"[RESIDUAL_CODEC] Disabled: failed to initialize residual codec: {e}")
+            for writer in (residual_jsonl_writer, residual_packed_writer):
+                try:
+                    if writer is not None:
+                        writer.finalize()
+                except Exception:
+                    pass
             residual_codec_enabled = False
 
     initial_hash = right_brain.get_synaptic_hash()
@@ -4539,7 +4627,10 @@ def run_sentinel_stream(
                     ),
                 },
             )
-            residual_tokens.append(token)
+            if residual_jsonl_writer is not None:
+                residual_jsonl_writer.write(token)
+            if residual_packed_writer is not None:
+                residual_packed_writer.write(token)
             residual_mode_counts[token.get("compression_mode", "unknown")] += 1
             residual_status_counts[token.get("sentinel_status", "unknown")] += 1
             if residual_decoder is not None and EIDOS_BRAIN_CONFIG.get("residual_codec_store_prediction", True):
@@ -4866,41 +4957,48 @@ def run_sentinel_stream(
         print(f"  Compressed stream artifact: {comp_path}")
         print(f"  Codec meta artifact       : {meta_path}")
 
-    if residual_codec_enabled and residual_tokens and residual_tokens_to_jsonl is not None and residual_pack_tokens is not None:
-        jsonl_bytes = residual_tokens_to_jsonl(residual_tokens)
-        packer = str(EIDOS_BRAIN_CONFIG.get("residual_codec_packer", "gzip")).lower()
-        try:
-            packed_tokens = residual_pack_tokens(residual_tokens, codec=packer)
-        except Exception as e:
-            if residual_codec_optional_error is not None and isinstance(e, residual_codec_optional_error):
-                print(f"[RESIDUAL_CODEC] Optional packer '{packer}' unavailable; falling back to gzip.")
-                packer = "gzip"
-                packed_tokens = residual_pack_tokens(residual_tokens, codec=packer)
-            else:
-                raise
-
-        ext_by_codec = {"gzip": "gz", "lzma": "xz", "zstd": "zst", "binary": "bin", "jsonl": "jsonl"}
-        residual_jsonl_path = None
-        if bool(EIDOS_BRAIN_CONFIG.get("residual_codec_store_jsonl", True)):
-            residual_jsonl_path = store_memory_artifact(
-                jsonl_bytes.decode("utf-8"),
+    if residual_codec_enabled and residual_packed_writer is not None:
+        residual_subdir = f"compression/{_safe_slug(profile_label)}"
+        residual_jsonl_summary = None
+        if residual_jsonl_writer is not None:
+            residual_jsonl_summary = residual_jsonl_writer.finalize()
+            residual_jsonl_path = register_existing_artifact(
+                residual_jsonl_summary["path"],
                 label=f"residual_tokens_{profile_label}",
-                subdir=f"compression/{_safe_slug(profile_label)}",
-                ext="jsonl",
+                subdir=residual_subdir,
+                kind="jsonl_stream",
+                content_type="application/x-ndjson",
             )
+            residual_jsonl_summary["path"] = residual_jsonl_path
 
-        residual_packed_path = store_memory_artifact(
-            packed_tokens.data,
-            label=f"residual_tokens_{packer}_{profile_label}",
-            subdir=f"compression/{_safe_slug(profile_label)}",
-            ext=ext_by_codec.get(packer, "bin"),
+        residual_packed_summary = residual_packed_writer.finalize()
+        packed_content_type = "application/octet-stream"
+        if residual_packer == "gzip":
+            packed_content_type = "application/gzip"
+        elif residual_packer == "lzma":
+            packed_content_type = "application/x-xz"
+        elif residual_packer == "zstd":
+            packed_content_type = "application/zstd"
+        elif residual_packer == "jsonl":
+            packed_content_type = "application/x-ndjson"
+        residual_packed_path = register_existing_artifact(
+            residual_packed_summary["path"],
+            label=f"residual_tokens_{residual_packer}_{profile_label}",
+            subdir=residual_subdir,
+            kind=f"{residual_packer}_token_stream",
+            content_type=packed_content_type,
         )
+        residual_packed_summary["path"] = residual_packed_path
 
         residual_reconstruction_rmse = None
         if residual_reconstruction_values > 0:
             residual_reconstruction_rmse = math.sqrt(residual_reconstruction_sse / residual_reconstruction_values)
-        residual_token_bytes = len(jsonl_bytes)
-        residual_packed_bytes = len(packed_tokens.data)
+        residual_token_bytes = (
+            residual_jsonl_summary["bytes_written"]
+            if residual_jsonl_summary is not None
+            else residual_packed_summary.get("input_bytes", 0)
+        )
+        residual_packed_bytes = residual_packed_summary["bytes_written"]
         residual_ratio = raw_bytes_total / max(1, residual_packed_bytes)
 
         residual_meta = {
@@ -4908,8 +5006,8 @@ def run_sentinel_stream(
             "prediction_source": "live_eidos_consensus_best_pred",
             "sentinel_source": "live_sentinel_analyze",
             "hdc_source": "live_hippocampus_metrics",
-            "packer": packer,
-            "frames": len(residual_tokens),
+            "packer": residual_packer,
+            "frames": residual_packed_summary["tokens_written"],
             "features": features,
             "raw_bytes_total": raw_bytes_total,
             "token_jsonl_bytes": residual_token_bytes,
@@ -4918,10 +5016,9 @@ def run_sentinel_stream(
             "reconstruction_rmse": residual_reconstruction_rmse,
             "mode_distribution": dict(residual_mode_counts),
             "sentinel_status_distribution": dict(residual_status_counts),
-            "anomaly_capsule_count": int(
-                residual_mode_counts.get("anomaly_capsule", 0)
-                + residual_mode_counts.get("raw_frame_plus_full_context", 0)
-            ),
+            "anomaly_capsule_count": int(residual_packed_summary["anomaly_capsule_count"]),
+            "jsonl_writer": residual_jsonl_summary,
+            "packed_writer": residual_packed_summary,
             "stores_prediction_for_offline_reconstruction": bool(
                 EIDOS_BRAIN_CONFIG.get("residual_codec_store_prediction", True)
             ),
@@ -4938,8 +5035,9 @@ def run_sentinel_stream(
         print("\nResidual-first compression summary (live Eidos predictor/Sentinel/HDC):")
         print(f"  Raw bytes (float64 frames): {raw_bytes_total}")
         print(f"  Token JSONL bytes         : {residual_token_bytes}")
-        print(f"  Packed bytes ({packer})       : {residual_packed_bytes}")
+        print(f"  Packed bytes ({residual_packer})       : {residual_packed_bytes}")
         print(f"  Packed ratio              : {residual_ratio:.2f}x")
+        print(f"  Token chunks flushed      : {residual_packed_summary['chunks_written']}")
         if residual_reconstruction_rmse is not None:
             print(f"  Reconstruction RMSE       : {residual_reconstruction_rmse:.6f}")
         if residual_jsonl_path:

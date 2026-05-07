@@ -46,6 +46,10 @@ def test_live_run_emits_residual_codec_tokens_with_real_metrics(tmp_path):
     assert meta["hdc_source"] == "live_hippocampus_metrics"
     assert meta["reconstruction_rmse"] is not None
     assert meta["reconstruction_rmse"] < 0.05
+    assert meta["frames"] == meta["packed_writer"]["tokens_written"]
+    assert meta["packed_writer"]["chunks_written"] >= 1
+    assert meta["packed_writer"]["bytes_written"] == meta["packed_bytes"]
+    assert meta["jsonl_writer"]["tokens_written"] == meta["frames"]
 
     first_line = jsonl_paths[-1].read_text(encoding="utf-8").splitlines()[0]
     token = json.loads(first_line)
