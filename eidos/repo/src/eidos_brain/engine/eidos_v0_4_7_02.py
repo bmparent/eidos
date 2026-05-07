@@ -334,6 +334,12 @@ EIDOS_BRAIN_CONFIG = {
     "thermo_lambda_eta": 1e-5,
     "thermo_energy_coeffs": {"epsilon": 1.0, "surprise": 1.0, "dominance": 2.0, "entropy": 2.0},
     "thermo_targets": {"dominance": 0.2, "entropy": 0.8}, # Targets for regulation
+    # Residual-first anomaly-preserving compression artifacts.
+    "residual_codec_enabled": True,
+    "residual_codec_packer": "gzip",
+    "residual_codec_store_jsonl": True,
+    "residual_codec_store_prediction": True,
+    "residual_codec_policy": {},
 
     # NEW (Leap I Patch B0)
     "hippocampus_encoder": "SIMHASH",
@@ -3988,6 +3994,44 @@ def run_sentinel_stream(
     compressed_bytes_total = 0
     frames_for_compression = 0
 
+    residual_codec_enabled = bool(EIDOS_BRAIN_CONFIG.get("residual_codec_enabled", True))
+    residual_codec = None
+    residual_decoder = None
+    residual_tokens: List[Dict[str, Any]] = []
+    residual_mode_counts: Counter = Counter()
+    residual_status_counts: Counter = Counter()
+    residual_reconstruction_sse = 0.0
+    residual_reconstruction_values = 0
+    residual_tokens_to_jsonl = None
+    residual_pack_tokens = None
+    residual_codec_optional_error = None
+    if residual_codec_enabled:
+        try:
+            from eidos_brain.compression import (
+                OptionalCodecUnavailable,
+                ResidualFirstCodec,
+                pack_tokens as _pack_tokens,
+                tokens_to_jsonl as _tokens_to_jsonl,
+            )
+
+            store_prediction = bool(EIDOS_BRAIN_CONFIG.get("residual_codec_store_prediction", True))
+            residual_codec = ResidualFirstCodec(
+                policy=EIDOS_BRAIN_CONFIG.get("residual_codec_policy", {}),
+                source_id=f"{session_label}:{profile_label}",
+                store_prediction_on_tokens=store_prediction,
+            )
+            residual_decoder = ResidualFirstCodec(
+                policy=EIDOS_BRAIN_CONFIG.get("residual_codec_policy", {}),
+                source_id=f"{session_label}:{profile_label}",
+                store_prediction_on_tokens=store_prediction,
+            )
+            residual_tokens_to_jsonl = _tokens_to_jsonl
+            residual_pack_tokens = _pack_tokens
+            residual_codec_optional_error = OptionalCodecUnavailable
+        except Exception as e:
+            print(f"[RESIDUAL_CODEC] Disabled: failed to initialize residual codec: {e}")
+            residual_codec_enabled = False
+
     initial_hash = right_brain.get_synaptic_hash()
     try:
         from eidos_brain.utils.provenance import get_config_hash
@@ -4407,6 +4451,103 @@ def run_sentinel_stream(
         thermo_temp = thermo_stats.get("thermo_temp", right_brain.temperature)
         thermo_lambda = thermo_stats.get("thermo_lambda", right_brain.forgetting)
 
+        if residual_codec_enabled and residual_codec is not None:
+            meta_dict = meta if isinstance(meta, dict) else {}
+            feature_names = _feature_names_from_meta(meta_dict, features)
+            top_drivers = None
+            if attrib and isinstance(attrib.get("topk_features"), list):
+                top_drivers = [
+                    {
+                        "feature": item.get("name", f"f{item.get('idx', 0)}"),
+                        "index": int(item.get("idx", 0)),
+                        "residual": float(item.get("res", 0.0)),
+                        "abs_residual": float(item.get("abs", 0.0)),
+                    }
+                    for item in attrib["topk_features"][:5]
+                ]
+
+            status_color = _status_color(status)
+            model_state_summary = {
+                "reservoir_state_norm": float(torch.linalg.norm(right_brain.state).item()),
+                "readout_norm": float(torch.linalg.norm(right_brain.W_out).item()),
+                "thermo_rho": float(thermo_rho),
+                "thermo_temp": float(thermo_temp),
+                "thermo_lambda": float(thermo_lambda),
+            }
+            if status_color in {"VIOLET", "AMBER", "RED"} or is_surprise:
+                model_state_summary["synaptic_hash"] = right_brain.get_synaptic_hash()
+
+            sentinel_metrics = dict(sentinel.last_metrics or {})
+            hdc_metrics = {
+                "bank": hipp_bank,
+                "similarity": None if hipp_sim is None else float(hipp_sim),
+                "familiarity": float(hipp_chi),
+                "write": bool(wrote_hipp),
+            }
+            sentinel_metrics.update(
+                {
+                    "is_surprise": bool(is_surprise),
+                    "eff_z_thresh": float(eff_z_thresh),
+                    "ema_err": float(ema_err),
+                    "sigma": float(sigma),
+                    "global_bicameral_ratio": float(global_ratio),
+                    "eigen_dominance": None if eigen_dom is None else float(eigen_dom),
+                    "state_entropy": None if state_entropy is None else float(state_entropy),
+                    "spectral_entropy": None if spec_entropy is None else float(spec_entropy),
+                    "spectral_flatness": None if spec_flatness is None else float(spec_flatness),
+                    "thermo_energy": float(thermo_energy),
+                    "thermo_rho": float(thermo_rho),
+                    "thermo_temp": float(thermo_temp),
+                    "thermo_lambda": float(thermo_lambda),
+                    "hdc_bank": hdc_metrics["bank"],
+                    "hdc_similarity": hdc_metrics["similarity"],
+                    "hdc_familiarity": hdc_metrics["familiarity"],
+                    "hdc_write": hdc_metrics["write"],
+                    "lr_scale_raw": float(lr_scale_raw),
+                    "lr_scale_eff": float(lr_scale_eff),
+                }
+            )
+
+            frame_for_codec = frame.detach().cpu().numpy().astype(np.float64, copy=False)
+            token = residual_codec.encode_frame(
+                frame_for_codec,
+                {
+                    "frame_id": int(i),
+                    "timestamp": meta_dict.get("timestamp", meta_dict.get("ts", time.time())),
+                    "source_id": meta_dict.get("source_id")
+                    or meta_dict.get("source")
+                    or meta_dict.get("path")
+                    or session_label,
+                    "prediction": best_pred.detach().cpu().numpy().astype(np.float64, copy=False),
+                    "surprise_z": float(z_score),
+                    "sentinel_status": status,
+                    "sentinel_regime": status_color or status,
+                    "feature_names": feature_names,
+                    "top_drivers": top_drivers,
+                    "sentinel_metrics": json_sanitize(sentinel_metrics, max_elems=128),
+                    "hdc_metrics": json_sanitize(hdc_metrics, max_elems=128),
+                    "model_state_summary": json_sanitize(model_state_summary, max_elems=128),
+                    "replay_context": json_sanitize(
+                        {
+                            "session_id": recorder.session_id,
+                            "session_label": session_label,
+                            "profile_label": profile_label,
+                            "source_meta": meta_dict,
+                            "attrib": attrib,
+                        },
+                        max_elems=128,
+                    ),
+                },
+            )
+            residual_tokens.append(token)
+            residual_mode_counts[token.get("compression_mode", "unknown")] += 1
+            residual_status_counts[token.get("sentinel_status", "unknown")] += 1
+            if residual_decoder is not None and EIDOS_BRAIN_CONFIG.get("residual_codec_store_prediction", True):
+                decoded = residual_decoder.decode_token(token)
+                residual = decoded - frame_for_codec
+                residual_reconstruction_sse += float(np.sum(residual ** 2))
+                residual_reconstruction_values += int(residual.size)
+
         if i % 2000 == 0:
             dom_display = "NaN" if eigen_dom is None else f"{eigen_dom:.2f}"
             Hs_display = "NaN" if spec_entropy is None else f"{spec_entropy:.2f}"
@@ -4724,6 +4865,87 @@ def run_sentinel_stream(
 
         print(f"  Compressed stream artifact: {comp_path}")
         print(f"  Codec meta artifact       : {meta_path}")
+
+    if residual_codec_enabled and residual_tokens and residual_tokens_to_jsonl is not None and residual_pack_tokens is not None:
+        jsonl_bytes = residual_tokens_to_jsonl(residual_tokens)
+        packer = str(EIDOS_BRAIN_CONFIG.get("residual_codec_packer", "gzip")).lower()
+        try:
+            packed_tokens = residual_pack_tokens(residual_tokens, codec=packer)
+        except Exception as e:
+            if residual_codec_optional_error is not None and isinstance(e, residual_codec_optional_error):
+                print(f"[RESIDUAL_CODEC] Optional packer '{packer}' unavailable; falling back to gzip.")
+                packer = "gzip"
+                packed_tokens = residual_pack_tokens(residual_tokens, codec=packer)
+            else:
+                raise
+
+        ext_by_codec = {"gzip": "gz", "lzma": "xz", "zstd": "zst", "binary": "bin", "jsonl": "jsonl"}
+        residual_jsonl_path = None
+        if bool(EIDOS_BRAIN_CONFIG.get("residual_codec_store_jsonl", True)):
+            residual_jsonl_path = store_memory_artifact(
+                jsonl_bytes.decode("utf-8"),
+                label=f"residual_tokens_{profile_label}",
+                subdir=f"compression/{_safe_slug(profile_label)}",
+                ext="jsonl",
+            )
+
+        residual_packed_path = store_memory_artifact(
+            packed_tokens.data,
+            label=f"residual_tokens_{packer}_{profile_label}",
+            subdir=f"compression/{_safe_slug(profile_label)}",
+            ext=ext_by_codec.get(packer, "bin"),
+        )
+
+        residual_reconstruction_rmse = None
+        if residual_reconstruction_values > 0:
+            residual_reconstruction_rmse = math.sqrt(residual_reconstruction_sse / residual_reconstruction_values)
+        residual_token_bytes = len(jsonl_bytes)
+        residual_packed_bytes = len(packed_tokens.data)
+        residual_ratio = raw_bytes_total / max(1, residual_packed_bytes)
+
+        residual_meta = {
+            "codec": "ResidualFirstCodec",
+            "prediction_source": "live_eidos_consensus_best_pred",
+            "sentinel_source": "live_sentinel_analyze",
+            "hdc_source": "live_hippocampus_metrics",
+            "packer": packer,
+            "frames": len(residual_tokens),
+            "features": features,
+            "raw_bytes_total": raw_bytes_total,
+            "token_jsonl_bytes": residual_token_bytes,
+            "packed_bytes": residual_packed_bytes,
+            "compression_ratio": residual_ratio,
+            "reconstruction_rmse": residual_reconstruction_rmse,
+            "mode_distribution": dict(residual_mode_counts),
+            "sentinel_status_distribution": dict(residual_status_counts),
+            "anomaly_capsule_count": int(
+                residual_mode_counts.get("anomaly_capsule", 0)
+                + residual_mode_counts.get("raw_frame_plus_full_context", 0)
+            ),
+            "stores_prediction_for_offline_reconstruction": bool(
+                EIDOS_BRAIN_CONFIG.get("residual_codec_store_prediction", True)
+            ),
+            "jsonl_path": residual_jsonl_path,
+            "packed_path": residual_packed_path,
+        }
+        residual_meta_path = store_memory_artifact(
+            residual_meta,
+            label=f"residual_tokens_meta_{profile_label}",
+            subdir=f"compression/{_safe_slug(profile_label)}",
+            ext="json",
+        )
+
+        print("\nResidual-first compression summary (live Eidos predictor/Sentinel/HDC):")
+        print(f"  Raw bytes (float64 frames): {raw_bytes_total}")
+        print(f"  Token JSONL bytes         : {residual_token_bytes}")
+        print(f"  Packed bytes ({packer})       : {residual_packed_bytes}")
+        print(f"  Packed ratio              : {residual_ratio:.2f}x")
+        if residual_reconstruction_rmse is not None:
+            print(f"  Reconstruction RMSE       : {residual_reconstruction_rmse:.6f}")
+        if residual_jsonl_path:
+            print(f"  Token JSONL artifact      : {residual_jsonl_path}")
+        print(f"  Packed token artifact     : {residual_packed_path}")
+        print(f"  Codec meta artifact       : {residual_meta_path}")
 
 # =============================================================================
 # HIGH-LEVEL ENTRYPOINT (ONLY 4 DATA SOURCE TYPES)
