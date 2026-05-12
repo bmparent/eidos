@@ -1,0 +1,148 @@
+{
+  "baselines": {
+    "compression": [],
+    "detection": [],
+    "skipped": [
+      {
+        "name": "baseline_compression_ratio",
+        "reason": "Week 1 runner records Eidos ratio only; external compression baselines are scheduled for later proof work."
+      },
+      {
+        "name": "detection_ground_truth_metrics",
+        "reason": "One or more scenarios did not provide labels, so anomaly precision/recall/f1 are blank for those rows."
+      }
+    ]
+  },
+  "benchmark": {
+    "frames": 1200,
+    "scenario_list": [
+      "synthetic_smoke"
+    ],
+    "seed": 42,
+    "suite": "smoke"
+  },
+  "config_hash_sha256": "b29aae8afac95ba63408ce04c8f90fc4e8885f1b5258c9d275dffd0a6e16b5ab",
+  "engine": {
+    "code_hash_sha256": "37290fda40bec3f68b4b50e35ce201bd25b3054480b6fc5dc3628a7fe7e68f0b",
+    "module": "EIDOS_BRAIN_UNIFIED_v0_4.7.02.py",
+    "parameters": {
+      "demo_enable": false,
+      "demo_every": 25,
+      "demo_out_csv": "demo_trace_seal.csv",
+      "demo_plot_matplotlib": false,
+      "demo_window": 400,
+      "demo_write_csv": true,
+      "deterministic_cuda": false,
+      "domain": "generic",
+      "ema_alpha": 0.001,
+      "epochs": 3,
+      "forecast_emit_every": 10,
+      "forecast_enabled": false,
+      "forecast_horizon_steps": [
+        10,
+        30,
+        100
+      ],
+      "forecast_min_conf": 0.35,
+      "forecast_mode": "risk",
+      "forecast_similarity_temperature": 6.0,
+      "forecast_traj_window": 30,
+      "forgetting": 0.99,
+      "fractal_bands": 1,
+      "hipp_bank_by_color": {
+        "AMBER": "ELEVATED",
+        "BLUE": "NOVEL",
+        "GREEN": "NOMINAL",
+        "RED": "INCIDENT",
+        "UNK": "MISC",
+        "VIOLET": "RARE"
+      },
+      "hippocampus_bank_by_regime": true,
+      "hippocampus_compute_on_surprise_only": true,
+      "hippocampus_decay_gamma": 0.99995,
+      "hippocampus_dim": 10000,
+      "hippocampus_encoder": "SIMHASH",
+      "hippocampus_familiarity_beta": 3.0,
+      "hippocampus_freeze_floor": 0.1,
+      "hippocampus_freeze_strength": 0.75,
+      "hippocampus_log_every": 2000,
+      "hippocampus_r_proj_dim": 256,
+      "hippocampus_seed": 1337,
+      "hippocampus_sim_kappa": 30.0,
+      "hippocampus_sim_theta": 0.1,
+      "hippocampus_write_novelty_gate": 0.002,
+      "hippocampus_write_on_green": false,
+      "hippocampus_write_on_surprise": true,
+      "hippocampus_write_weight_base": 1.0,
+      "hippocampus_write_weight_max": 6.0,
+      "hippocampus_write_z_thresh": 4.0,
+      "incident_cards_enabled": true,
+      "incident_emit_on": [
+        "AMBER",
+        "RED"
+      ],
+      "incident_min_gap_steps": 25,
+      "input_scaling": 0.3,
+      "leak_q": 10.0,
+      "leak_rate": 0.01,
+      "leak_rate_base": 0.5,
+      "mode": "detect",
+      "plasticity_fatigue_down": 0.005,
+      "plasticity_fatigue_up": 0.02,
+      "plasticity_max_scale": 2.0,
+      "plasticity_min_scale": 0.2,
+      "plasticity_red_cooldown": 50,
+      "plasticity_rest_scale": 0.35,
+      "plasticity_rest_threshold": 0.7,
+      "plasticity_surprise_alpha": 0.001,
+      "plasticity_thermostat_gain": 3.0,
+      "precision": "float32",
+      "procedural_actions": "default",
+      "procedural_enabled": true,
+      "procedural_min_similarity": 0.35,
+      "procedural_policy": "recommend",
+      "procedural_reward_horizon": 150,
+      "reservoir": 2000,
+      "sigma_k": 1.5,
+      "spectral_radius": 1.27,
+      "steps": 60000,
+      "target_surprise": 0.15,
+      "thermo_enabled": true,
+      "thermo_energy_coeffs": {
+        "dominance": 2.0,
+        "entropy": 2.0,
+        "epsilon": 1.0,
+        "surprise": 1.0
+      },
+      "thermo_lambda_eta": 1e-05,
+      "thermo_lambda_limits": [
+        0.97,
+        0.9995
+      ],
+      "thermo_rho_eta": 0.0002,
+      "thermo_rho_limits": [
+        0.7,
+        1.6
+      ],
+      "thermo_targets": {
+        "dominance": 0.2,
+        "entropy": 0.8
+      },
+      "thermo_temp_beta": 0.95,
+      "thermo_temp_max": 5.0,
+      "trace_seal_decay": 0.995,
+      "trace_seal_diag_every": 2000,
+      "trace_seal_eig_floor": 1e-06,
+      "trace_seal_enabled": false,
+      "trace_seal_mix": 1.0,
+      "trace_seal_rank": 4,
+      "trace_seal_recalc_every": 250,
+      "trace_seal_sigma_taper": "none",
+      "trace_seal_update_on_surprise": false,
+      "use_tf32": true,
+      "warmup_cap": 2000,
+      "weight_decay": 0.0005
+    },
+    "version": "0.4.7.02"
+  }
+}

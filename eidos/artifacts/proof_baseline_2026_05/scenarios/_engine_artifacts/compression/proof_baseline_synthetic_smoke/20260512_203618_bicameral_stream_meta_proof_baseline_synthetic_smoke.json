@@ -1,0 +1,9 @@
+{
+  "features": 64,
+  "scale": 512.0,
+  "frames": 1080,
+  "raw_bytes_total": 552960,
+  "compressed_bytes": 75296,
+  "ratio": 7.3438164045898855,
+  "codec": "flag:uint8; flag==0 -> no payload; flag==1 -> quantized int16 payload (features x int16); flag==2 -> raw float32 payload (features x float32)"
+}
