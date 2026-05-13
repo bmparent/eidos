@@ -1,66 +1,29 @@
-# Eidos Life Engine
+# Eidos Life v0.2 — Living Stream Lab
 
-A self-contained Three.js Game of Life experiment where an Eidos-inspired monitor acts as the **life engine**.
+Experiment-only Three.js + Game of Life sandbox that adds an Eidos-style monitor, regime controller, novelty memory, organism tracking, and telemetry receipts.
 
-## Concept
+## What v0.2 adds
+- Modular ES modules in `src/` (engine, monitor, memory, scenarios, visualization, app).
+- Multi-state typed-array cells (`alive`, `age`, `energy`, `species`, `memory`, `stress`) and invisible fields (energy/signal/anomaly/memory residue).
+- Regime-driven adaptive rules (`CALIBRATING`, `GREEN`, `AMBER`, `RED`, `BLUE`, `VIOLET`).
+- Pattern memory fingerprints + approximate known pattern tags.
+- Approximate organism clustering with centroid/mass/threat stats.
+- Telemetry recorder with browser export bundle: `{ manifest, summary, telemetry, interestingEvents }`.
+- HUD toggles for surprise/memory/energy/outlines and a compact regime timeline strip.
+- Disabled `EidosBackendBridge` stub for future backend integration.
 
-The world is a Conway-style cellular automaton. Each generation is treated as a streaming frame. The Eidos layer watches that stream and computes a small set of brain-like operating metrics:
-
-- **surprise** — how much the grid changed from the previous frame
-- **entropy** — how alive/dead and balanced the grid is
-- **plasticity** — how aggressively the world should adapt or explore
-- **compression** — an approximate RLE-style compressibility score
-- **novelty** — how different the current grid fingerprint is from recent memory
-- **collapse risk** — whether the world is freezing, dying, or saturating
-
-The resulting regime color changes the rules of life:
-
-- **GREEN** — close to normal Conway B3/S23 behavior
-- **AMBER** — higher exploration/mutation during unstable dynamics
-- **RED** — collapse protection; low-energy reseeding prevents dead worlds
-- **BLUE** — novel but controlled geometry
-- **VIOLET** — rare/high-novelty geometry with more exploratory pressure
-- **CALIBRATING** — early warmup period
-
-## Run locally
-
-From the repo root:
-
+## Run browser demo
 ```bash
 python -m http.server 5173
 ```
+Open: `http://localhost:5173/experiments/eidos-life/`
 
-Then open:
-
-```text
-http://localhost:5173/experiments/eidos-life/
+## Run tests
+```bash
+cd experiments/eidos-life
+npm test
 ```
 
-A static server is required because the demo uses ES modules/import maps.
+## Boundary with the real engine
 
-## Files
-
-```text
-experiments/eidos-life/
-  index.html   # standalone Three.js demo
-  README.md    # this file
-```
-
-## How this connects to Eidos Brain
-
-The repo’s proof plan describes Eidos Brain as a self-monitoring streaming intelligence codec that learns live streams, compresses predictable behavior, preserves meaningful anomalies, monitors its own internal state, and emits human-readable incident receipts. This demo is the visual version of that idea: the automaton is the stream, the Eidos layer is the self-monitor, and the regime color decides how the living world adapts.
-
-## Next upgrade path
-
-This first version intentionally avoids touching the production Eidos benchmark/proof code. The clean next steps are:
-
-1. Split the Eidos life rules into `src/life-engine.js`.
-2. Add a Vite app wrapper for easier development and deployment.
-3. Add a JSON telemetry export so the demo emits the same style of receipts as the proof work.
-4. Bridge to the real Python Eidos engine through a local websocket service.
-5. Add scenario presets: stable oscillator, glider storm, collapse, noisy regime shift, and rare structure emergence.
-6. Add tests for rule transitions and metric ranges.
-
-## Product idea
-
-This can become the visual explanation layer for Eidos Brain: a living world where compression, anomaly preservation, sentinel regimes, and self-monitoring are immediately visible instead of abstract.
+This experiment does not modify the production Eidos Brain engine. It uses an Eidos-style monitor/controller loop to visualize the idea of a self-monitoring streaming intelligence codec. A future backend bridge may connect browser frames to the real Python engine, but that bridge is disabled by default and intentionally stubbed in this version.
