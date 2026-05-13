@@ -2326,7 +2326,7 @@ class SessionRecorder:
         # Patch R0: Ensure clusters is defined
         clusters = self._cluster_anomalies() if self.anomalies else []
 
-        lines: List[str] = []
+        lines: List[str] = ["SENTINEL SESSION REPORT", "=======================", ""]
 
         total_steps = len(self.step_rows)
         total_surprises = sum(1 for r in self.step_rows if r["is_surprise"])
@@ -2356,6 +2356,7 @@ class SessionRecorder:
         lines.append("----------------")
         lines.append(f"- Frames processed (post-warmup): {summary.get('frames_processed', total_steps)}")
         lines.append(f"- Surprises: {total_surprises} ({surprise_rate:.2f}% of frames)")
+        lines.append(f"- Surprise Rate: {surprise_rate:.2f}%")
         if err_min is not None and err_max is not None:
             lines.append(f"- Error range: min={err_min:.4f}, max={err_max:.4f}")
         if final_thresh is not None:
@@ -4794,15 +4795,21 @@ def run_sentinel_stream(
         if i % 2000 == 0:
             dom_display = "NaN" if eigen_dom is None else f"{eigen_dom:.2f}"
             Hs_display = "NaN" if spec_entropy is None else f"{spec_entropy:.2f}"
+            hipp_sim_display = "NaN" if hipp_sim is None else f"{hipp_sim:+.3f}"
+            hipp_chi_display = "NaN" if hipp_chi is None else f"{hipp_chi:.3f}"
+            thermo_energy_display = "NaN" if thermo_energy is None else f"{thermo_energy:.2f}"
+            thermo_rho_display = "NaN" if thermo_rho is None else f"{thermo_rho:.2f}"
+            thermo_temp_display = "NaN" if thermo_temp is None else f"{thermo_temp:.2f}"
+            thermo_lambda_display = "NaN" if thermo_lambda is None else f"{thermo_lambda:.4f}"
             print(
                 f"Frame {i:6d} | "
                 f"Ratio: {global_ratio:6.1f}x | "
                 f"Plas(rms): {plasticity_raw:7.4f} | "
                 f"Plas(clp): {plasticity_clipped:7.2f} | "
                 f"fatigue={fatigue:.2f} surprEMA={surprise_ema:.3f} lr_raw={lr_scale_raw:.3f} lr_eff={lr_scale_eff:.3f} | "
-                f"HIPP bank={hipp_bank} sim={hipp_sim:+.3f} chi={hipp_chi:.3f} write={int(wrote_hipp)} | "
+                f"HIPP bank={hipp_bank} sim={hipp_sim_display} chi={hipp_chi_display} write={int(wrote_hipp)} | "
                 f"Dom: {dom_display} | Hs: {Hs_display} | {status} | "
-                f"Thermo: E={thermo_energy:.2f} rho={thermo_rho:.2f} T={thermo_temp:.2f} lam={thermo_lambda:.4f}"
+                f"Thermo: E={thermo_energy_display} rho={thermo_rho_display} T={thermo_temp_display} lam={thermo_lambda_display}"
             )
 
         if (
@@ -4946,6 +4953,7 @@ def run_sentinel_stream(
                 print("!!! CONTINUITY HASH MISMATCH: expected != observed")
 
         summary = {
+            "total_frames": total_frames_seen,
             "frames_processed": frames_processed,
             "surprises": surprises,
             "surprise_rate": surprise_rate,

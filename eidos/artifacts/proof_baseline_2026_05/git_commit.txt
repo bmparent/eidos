@@ -1,0 +1,30 @@
+commit: a99f9751f04eb07f7086f32029057d8fe7c19390
+branch: main
+dirty: true
+
+git status --short:
+M EIDOS_BRAIN_UNIFIED_v0_4.7.02.py
+ M __pycache__/EIDOS_BRAIN_UNIFIED_v0_4.7.02.cpython-311.pyc
+?? __pycache__/eidos_domain_adapters.cpython-311.pyc
+?? __pycache__/eidos_forecast.cpython-311.pyc
+?? __pycache__/eidos_incident_cards.cpython-311.pyc
+?? __pycache__/eidos_procedural_memory.cpython-311.pyc
+?? benchmarks/
+?? docs/
+?? tests/__init__.py
+?? tests/__pycache__/__init__.cpython-311.pyc
+?? tests/__pycache__/conftest.cpython-311-pytest-7.3.1.pyc
+?? tests/__pycache__/scenarios.cpython-311.pyc
+?? tests/__pycache__/test_hippocampus.cpython-311-pytest-7.3.1.pyc
+?? tests/__pycache__/test_integration_stream.cpython-311-pytest-7.3.1.pyc
+?? tests/__pycache__/test_proof_artifacts.cpython-311-pytest-7.3.1.pyc
+?? tests/__pycache__/test_proof_baseline_runner.cpython-311-pytest-7.3.1.pyc
+?? tests/__pycache__/test_regressions.cpython-311-pytest-7.3.1.pyc
+?? tests/__pycache__/test_reservoir.cpython-311-pytest-7.3.1.pyc
+?? tests/__pycache__/test_sentinel.cpython-311-pytest-7.3.1.pyc
+?? tests/__pycache__/test_storage_backends.cpython-311-pytest-7.3.1.pyc
+?? tests/__pycache__/test_user_config.cpython-311-pytest-7.3.1.pyc
+?? tests/test_proof_artifacts.py
+?? tests/test_proof_baseline_runner.py
+?? tools/__pycache__/
+?? tools/run_proof_baseline.py

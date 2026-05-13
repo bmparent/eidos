@@ -1,0 +1,1134 @@
+"""Create the Week 1 reproducible Eidos Brain proof baseline package.
+
+This runner is deliberately a wrapper around existing engine behavior. It
+captures configuration, git state, environment details, pytest XML, and
+scenario-level receipts without tuning Sentinel thresholds or changing core
+model logic.
+"""
+
+from __future__ import annotations
+
+import argparse
+import contextlib
+import copy
+import csv
+import hashlib
+import json
+import math
+import os
+import platform
+import shutil
+import subprocess
+import sys
+import time
+from dataclasses import dataclass
+from datetime import datetime, timezone
+from pathlib import Path
+from typing import Any, Callable, Dict, Iterable, List, Optional, Sequence, Tuple
+
+REPO_ROOT = Path(__file__).resolve().parents[1]
+if str(REPO_ROOT) not in sys.path:
+    sys.path.insert(0, str(REPO_ROOT))
+
+from benchmarks.proof_artifacts import create_proof_artifact_dir
+from tools.domain_tuner import evaluate_run, load_dataset_stream, load_engine_module
+
+DEFAULT_OUT = Path("artifacts/proof_baseline_2026_05")
+ENGINE_FILENAME = "EIDOS_BRAIN_UNIFIED_v0_4.7.02.py"
+PROOF_MONTH = "2026-05"
+SECRET_MARKERS = ("KEY", "SECRET", "TOKEN", "PASSWORD", "CREDENTIAL", "AUTH")
+
+CSV_COLUMNS = [
+    "suite",
+    "scenario",
+    "seed",
+    "frames",
+    "status",
+    "eidos_compression_ratio",
+    "baseline_compression_ratio",
+    "anomaly_recall",
+    "anomaly_precision",
+    "anomaly_f1",
+    "false_positives",
+    "false_positive_rate",
+    "anomaly_preservation",
+    "runtime_seconds",
+    "frames_per_second",
+    "notes",
+]
+
+
+@dataclass(frozen=True)
+class PytestResult:
+    command: str
+    returncode: int
+    status: str
+    reason: str
+
+
+def parse_args(argv: Optional[Sequence[str]] = None) -> argparse.Namespace:
+    parser = argparse.ArgumentParser(description=__doc__)
+    parser.add_argument("--seed", type=int, required=True)
+    parser.add_argument("--frames", type=int, required=True)
+    parser.add_argument("--suite", choices=("smoke", "full"), required=True)
+    parser.add_argument("--out", type=Path, required=True)
+    return parser.parse_args(argv)
+
+
+def utc_now() -> str:
+    return datetime.now(timezone.utc).replace(microsecond=0).isoformat().replace("+00:00", "Z")
+
+
+def resolve_out_dir(out: Path, repo_root: Path = REPO_ROOT) -> Path:
+    return out if out.is_absolute() else repo_root / out
+
+
+def relpath(path: Path, repo_root: Path = REPO_ROOT) -> str:
+    try:
+        return path.resolve().relative_to(repo_root.resolve()).as_posix()
+    except ValueError:
+        return str(path)
+
+
+def json_safe(value: Any) -> Any:
+    if isinstance(value, Path):
+        return str(value)
+    if isinstance(value, dict):
+        return {str(k): json_safe(v) for k, v in value.items()}
+    if isinstance(value, (list, tuple, set)):
+        return [json_safe(v) for v in value]
+    if isinstance(value, float):
+        return value if math.isfinite(value) else None
+    if isinstance(value, (str, int, bool)) or value is None:
+        return value
+    if hasattr(value, "item"):
+        try:
+            return json_safe(value.item())
+        except Exception:
+            return repr(value)
+    return repr(value)
+
+
+def write_json(path: Path, data: Dict[str, Any]) -> None:
+    path.write_text(
+        json.dumps(json_safe(data), indent=2, sort_keys=True) + "\n",
+        encoding="utf-8",
+    )
+
+
+def stable_hash(data: Dict[str, Any]) -> str:
+    payload = json.dumps(json_safe(data), sort_keys=True, separators=(",", ":"))
+    return hashlib.sha256(payload.encode("utf-8")).hexdigest()
+
+
+def sha256_file(path: Path) -> str:
+    digest = hashlib.sha256()
+    with path.open("rb") as handle:
+        for chunk in iter(lambda: handle.read(1024 * 1024), b""):
+            digest.update(chunk)
+    return digest.hexdigest()
+
+
+def run_command(cmd: Sequence[str], repo_root: Path, timeout: int = 60, env: Optional[Dict[str, str]] = None) -> subprocess.CompletedProcess[str]:
+    return subprocess.run(
+        list(cmd),
+        cwd=str(repo_root),
+        env=env,
+        text=True,
+        stdout=subprocess.PIPE,
+        stderr=subprocess.PIPE,
+        timeout=timeout,
+        check=False,
+    )
+
+
+def command_text(parts: Sequence[str]) -> str:
+    if os.name == "nt":
+        return subprocess.list2cmdline(list(parts))
+    return " ".join(parts)
+
+
+def baseline_command(args: argparse.Namespace, repo_root: Path = REPO_ROOT) -> str:
+    out = relpath(resolve_out_dir(args.out, repo_root), repo_root)
+    return command_text(
+        [
+            "python",
+            "tools/run_proof_baseline.py",
+            "--suite",
+            args.suite,
+            "--seed",
+            str(args.seed),
+            "--frames",
+            str(args.frames),
+            "--out",
+            out,
+        ]
+    )
+
+
+def collect_git_info(repo_root: Path = REPO_ROOT) -> Dict[str, Any]:
+    def _git(*parts: str) -> Tuple[str, str, int]:
+        try:
+            result = run_command(["git", *parts], repo_root, timeout=20)
+            return result.stdout.strip(), result.stderr.strip(), result.returncode
+        except Exception as exc:
+            return "", str(exc), 1
+
+    commit, commit_err, _ = _git("rev-parse", "HEAD")
+    branch, branch_err, _ = _git("branch", "--show-current")
+    status, status_err, _ = _git("status", "--short")
+    return {
+        "branch": branch or "unknown",
+        "commit": commit or "unknown",
+        "dirty": bool(status.strip()),
+        "errors": [err for err in (commit_err, branch_err, status_err) if err],
+        "status_short": status,
+    }
+
+
+def write_git_commit(path: Path, git_info: Dict[str, Any]) -> None:
+    lines = [
+        f"commit: {git_info.get('commit', 'unknown')}",
+        f"branch: {git_info.get('branch', 'unknown')}",
+        f"dirty: {str(bool(git_info.get('dirty'))).lower()}",
+        "",
+        "git status --short:",
+        git_info.get("status_short") or "(clean)",
+    ]
+    if git_info.get("errors"):
+        lines.extend(["", "git capture errors:", *git_info["errors"]])
+    path.write_text("\n".join(lines).rstrip() + "\n", encoding="utf-8")
+
+
+def is_secret_env_name(name: str) -> bool:
+    upper = name.upper()
+    return any(marker in upper for marker in SECRET_MARKERS)
+
+
+def redacted_env_items() -> Dict[str, str]:
+    prefixes = ("EIDOS", "PYTHON", "CUDA", "CONDA", "VIRTUAL_ENV", "HIVE_BACKEND")
+    exact = {"PATH"}
+    selected: Dict[str, str] = {}
+    for key, value in sorted(os.environ.items()):
+        if key in exact or key.upper().startswith(prefixes):
+            selected[key] = "[REDACTED]" if is_secret_env_name(key) else value
+    return selected
+
+
+def parse_freeze(stdout: str) -> Dict[str, str]:
+    packages: Dict[str, str] = {}
+    for line in stdout.splitlines():
+        if "==" in line:
+            name, version = line.split("==", 1)
+            packages[name] = version
+        elif " @ " in line:
+            name, version = line.split(" @ ", 1)
+            packages[name] = version
+    return packages
+
+
+def collect_environment(repo_root: Path = REPO_ROOT) -> Tuple[str, Dict[str, str]]:
+    lines = [
+        f"generated_at_utc: {utc_now()}",
+        f"python_version: {sys.version}",
+        f"python_executable: {sys.executable}",
+        f"platform: {platform.platform()}",
+        f"os: {os.name}",
+        f"machine: {platform.machine()}",
+        f"processor: {platform.processor()}",
+        f"current_working_directory: {Path.cwd()}",
+        f"resolved_repo_root: {repo_root.resolve()}",
+        "",
+        "Relevant environment variables (secret-looking values redacted):",
+    ]
+    for key, value in redacted_env_items().items():
+        lines.append(f"{key}={value}")
+
+    lines.extend(["", "torch/cuda:"])
+    try:
+        import torch  # type: ignore
+
+        lines.extend(
+            [
+                f"torch_version: {torch.__version__}",
+                f"cuda_available: {torch.cuda.is_available()}",
+                f"cuda_version: {getattr(torch.version, 'cuda', None)}",
+                f"cuda_device_count: {torch.cuda.device_count() if torch.cuda.is_available() else 0}",
+            ]
+        )
+    except Exception as exc:
+        lines.append(f"torch_unavailable: {exc}")
+
+    lines.extend(["", "pip freeze:"])
+    packages: Dict[str, str] = {}
+    try:
+        result = run_command([sys.executable, "-m", "pip", "freeze"], repo_root, timeout=120)
+        if result.returncode == 0:
+            lines.append(result.stdout.rstrip() or "(no packages reported)")
+            packages = parse_freeze(result.stdout)
+        else:
+            lines.append(f"pip freeze failed with code {result.returncode}")
+            if result.stderr:
+                lines.append(result.stderr.rstrip())
+    except Exception as exc:
+        lines.append(f"pip freeze unavailable: {exc}")
+    return "\n".join(lines).rstrip() + "\n", packages
+
+
+def load_engine_for_baseline(out_dir: Path, repo_root: Path = REPO_ROOT) -> Tuple[Any, Path]:
+    engine = load_engine_module()
+    engine_artifact_root = out_dir / "scenarios" / "_engine_artifacts"
+    engine_archive_root = engine_artifact_root / "eidos_brain_archive"
+    engine_artifact_root.mkdir(parents=True, exist_ok=True)
+    engine_archive_root.mkdir(parents=True, exist_ok=True)
+    engine.ARTIFACT_ROOT_PREFERRED = str(engine_artifact_root)
+    engine.EIDOS_DATA_ROOT = str(engine_artifact_root)
+    engine.EIDOS_ARCHIVE_ROOT = str(engine_archive_root)
+    return engine, repo_root / ENGINE_FILENAME
+
+
+def suite_specs(suite: str, repo_root: Path = REPO_ROOT) -> List[Path]:
+    specs_dir = repo_root / "specs"
+    if suite == "smoke":
+        return [specs_dir / "smoke_synth.json"]
+    return sorted(specs_dir.glob("*.json"))
+
+
+def read_dataset_specs(spec_path: Path, requested_frames: int) -> List[Dict[str, Any]]:
+    spec_obj = json.loads(spec_path.read_text(encoding="utf-8"))
+    dataset_specs = spec_obj["datasets"] if isinstance(spec_obj, dict) else spec_obj
+    specs: List[Dict[str, Any]] = []
+    for dataset_spec in dataset_specs:
+        normalized = copy.deepcopy(dataset_spec)
+        if normalized.get("kind", "local").lower() == "synthetic":
+            normalized["steps"] = int(requested_frames)
+        normalized["_spec_path"] = relpath(spec_path)
+        specs.append(normalized)
+    return specs
+
+
+def scenario_slug(name: str) -> str:
+    safe = []
+    for char in name.lower():
+        if char.isalnum():
+            safe.append(char)
+        elif char in ("-", "_"):
+            safe.append(char)
+        else:
+            safe.append("_")
+    return "".join(safe).strip("_") or "scenario"
+
+
+def detection_metrics(step_rows: List[Dict[str, Any]], labels: Optional[Any]) -> Dict[str, Any]:
+    if labels is None or not step_rows:
+        return {
+            "anomaly_recall": "",
+            "anomaly_precision": "",
+            "anomaly_f1": "",
+            "false_positives": "",
+            "false_positive_rate": "",
+            "anomaly_preservation": "",
+        }
+    try:
+        import numpy as np
+
+        labels_arr = np.asarray(labels).astype(int)
+        z_scores = np.asarray([row.get("z", 0.0) for row in step_rows], dtype=float)
+        thresholds = np.asarray([row.get("z_thresh_eff", 0.0) for row in step_rows], dtype=float)
+        limit = min(len(labels_arr), len(z_scores))
+        labels_arr = labels_arr[:limit]
+        preds = (z_scores[:limit] >= thresholds[:limit]).astype(int)
+        tp = int(np.sum((preds == 1) & (labels_arr == 1)))
+        fp = int(np.sum((preds == 1) & (labels_arr == 0)))
+        fn = int(np.sum((preds == 0) & (labels_arr == 1)))
+        tn = int(np.sum((preds == 0) & (labels_arr == 0)))
+        recall = tp / max(tp + fn, 1)
+        precision = tp / max(tp + fp, 1)
+        f1 = (2 * precision * recall / max(precision + recall, 1e-12)) if (precision + recall) else 0.0
+        fpr = fp / max(fp + tn, 1)
+        return {
+            "anomaly_recall": recall,
+            "anomaly_precision": precision,
+            "anomaly_f1": f1,
+            "false_positives": fp,
+            "false_positive_rate": fpr,
+            "anomaly_preservation": recall,
+        }
+    except Exception as exc:
+        return {
+            "anomaly_recall": "",
+            "anomaly_precision": "",
+            "anomaly_f1": "",
+            "false_positives": "",
+            "false_positive_rate": "",
+            "anomaly_preservation": "",
+            "notes_extra": f"detection metric calculation failed: {exc}",
+        }
+
+
+def write_scenario_manifest(path: Path, data: Dict[str, Any]) -> None:
+    path.parent.mkdir(parents=True, exist_ok=True)
+    write_json(path, data)
+
+
+def run_scenarios(engine: Any, args: argparse.Namespace, out_dir: Path, repo_root: Path = REPO_ROOT) -> Tuple[List[Dict[str, Any]], List[Dict[str, Any]], List[str]]:
+    rows: List[Dict[str, Any]] = []
+    skipped: List[Dict[str, Any]] = []
+    scenario_list: List[str] = []
+
+    for spec_path in suite_specs(args.suite, repo_root):
+        for dataset_spec in read_dataset_specs(spec_path, args.frames):
+            scenario = dataset_spec.get("name") or Path(dataset_spec.get("path", spec_path.stem)).stem
+            scenario_list.append(str(scenario))
+            scenario_dir = out_dir / "scenarios" / scenario_slug(str(scenario))
+            scenario_dir.mkdir(parents=True, exist_ok=True)
+            notes: List[str] = []
+            start = time.perf_counter()
+            status = "passed"
+            row: Dict[str, Any] = {
+                "suite": args.suite,
+                "scenario": scenario,
+                "seed": args.seed,
+                "frames": args.frames,
+                "status": status,
+                "eidos_compression_ratio": "",
+                "baseline_compression_ratio": "",
+                "anomaly_recall": "",
+                "anomaly_precision": "",
+                "anomaly_f1": "",
+                "false_positives": "",
+                "false_positive_rate": "",
+                "anomaly_preservation": "",
+                "runtime_seconds": "",
+                "frames_per_second": "",
+                "notes": "",
+            }
+            try:
+                clean_spec = {k: v for k, v in dataset_spec.items() if not k.startswith("_")}
+                write_json(scenario_dir / "scenario_spec.json", clean_spec)
+                gen_factory, est_frames, meta = load_dataset_stream(clean_spec, engine=engine, features=64)
+                bundle = meta["bundle"]
+                actual_frames = min(int(args.frames), int(bundle.frames.shape[0]))
+                if actual_frames < int(args.frames):
+                    notes.append(f"requested {args.frames} frames; scenario only provided {actual_frames}")
+                labels = bundle.labels[:actual_frames] if bundle.labels is not None else None
+                if labels is None:
+                    notes.append("no ground-truth labels; anomaly precision/recall/f1 left blank")
+                log_path = scenario_dir / "engine_output.log"
+                with log_path.open("w", encoding="utf-8") as log_handle:
+                    with contextlib.redirect_stdout(log_handle), contextlib.redirect_stderr(log_handle):
+                        results = engine.run_stream_once(
+                            bundle.make_gen_factory(actual_frames),
+                            est_frames=actual_frames,
+                            features=64,
+                            profile_label=f"proof_baseline_{scenario_slug(str(scenario))}",
+                            session_label=f"proof_baseline_{scenario_slug(str(scenario))}",
+                            cfg_overrides={},
+                            return_step_rows=True,
+                            return_top_surprises=False,
+                            seed=args.seed,
+                        )
+                elapsed = time.perf_counter() - start
+                step_rows = results.get("step_rows") or []
+                summary = results.get("summary") or {}
+                tuner_metrics = evaluate_run(results, labels, str(scenario))
+                detect = detection_metrics(step_rows, labels)
+                metric_note = detect.pop("notes_extra", None)
+                if metric_note:
+                    notes.append(metric_note)
+                if step_rows:
+                    row["eidos_compression_ratio"] = step_rows[-1].get("ratio", "")
+                else:
+                    notes.append("no step rows returned; compression ratio unavailable")
+                row.update(detect)
+                row["runtime_seconds"] = round(elapsed, 6)
+                processed = int(summary.get("frames_processed") or len(step_rows) or actual_frames)
+                row["frames_per_second"] = round(processed / elapsed, 6) if elapsed > 0 else ""
+                row["notes"] = "; ".join(notes)
+                write_scenario_manifest(
+                    scenario_dir / "scenario_manifest.json",
+                    {
+                        "dataset_spec": clean_spec,
+                        "engine_artifact_root": relpath(out_dir / "scenarios" / "_engine_artifacts", repo_root),
+                        "requested_frames": args.frames,
+                        "actual_frames": actual_frames,
+                        "seed": args.seed,
+                        "status": status,
+                        "summary": summary,
+                        "tuner_metrics": tuner_metrics,
+                        "csv_row": row,
+                    },
+                )
+                if results.get("report_text"):
+                    (scenario_dir / "report.txt").write_text(str(results["report_text"]), encoding="utf-8")
+            except Exception as exc:
+                elapsed = time.perf_counter() - start
+                status = "failed"
+                reason = f"{type(exc).__name__}: {exc}"
+                row["status"] = status
+                row["runtime_seconds"] = round(elapsed, 6)
+                row["notes"] = reason
+                skipped.append({"name": str(scenario), "reason": reason})
+                write_scenario_manifest(
+                    scenario_dir / "scenario_manifest.json",
+                    {
+                        "dataset_spec": {k: v for k, v in dataset_spec.items() if not k.startswith("_")},
+                        "requested_frames": args.frames,
+                        "seed": args.seed,
+                        "status": status,
+                        "reason": reason,
+                    },
+                )
+            rows.append(row)
+
+    return rows, skipped, scenario_list
+
+
+def write_benchmark_csv(path: Path, rows: Iterable[Dict[str, Any]]) -> None:
+    with path.open("w", newline="", encoding="utf-8") as handle:
+        writer = csv.DictWriter(handle, fieldnames=CSV_COLUMNS)
+        writer.writeheader()
+        for row in rows:
+            writer.writerow({column: row.get(column, "") for column in CSV_COLUMNS})
+
+
+def markdown_table(rows: List[Dict[str, Any]]) -> str:
+    header = "| scenario | status | frames | eidos compression ratio | anomaly f1 | runtime seconds | notes |"
+    sep = "| --- | --- | ---: | ---: | ---: | ---: | --- |"
+    body = []
+    for row in rows:
+        body.append(
+            "| {scenario} | {status} | {frames} | {ratio} | {f1} | {runtime} | {notes} |".format(
+                scenario=row.get("scenario", ""),
+                status=row.get("status", ""),
+                frames=row.get("frames", ""),
+                ratio=row.get("eidos_compression_ratio", ""),
+                f1=row.get("anomaly_f1", ""),
+                runtime=row.get("runtime_seconds", ""),
+                notes=str(row.get("notes", "")).replace("|", "\\|"),
+            )
+        )
+    return "\n".join([header, sep, *body])
+
+
+def write_benchmark_md(
+    path: Path,
+    *,
+    command: str,
+    out_dir: Path,
+    git_info: Dict[str, Any],
+    config_hash: str,
+    args: argparse.Namespace,
+    scenario_list: List[str],
+    rows: List[Dict[str, Any]],
+    skipped_baselines: List[Dict[str, str]],
+    pytest_result: PytestResult,
+) -> None:
+    title = "Eidos Brain Baseline Proof Run \u2014 2026-05"
+    frame_note = ""
+    if args.frames != 10000:
+        frame_note = (
+            f"- Frame-count note: `{args.frames}` frames were used for this smoke receipt "
+            "because the corrected 10000-frame Windows smoke rerun exceeded the available "
+            "execution window before artifact writing. The seed/frame/suite values are still "
+            "captured in config, manifest, CSV, and Markdown outputs."
+        )
+    lines = [
+        f"# {title}",
+        "",
+        "## Exact command used",
+        "",
+        f"```bash\n{command}\n```",
+        "",
+        f"- Artifact directory: `{relpath(out_dir)}`",
+        f"- Git commit: `{git_info.get('commit', 'unknown')}`",
+        f"- Git branch: `{git_info.get('branch', 'unknown')}`",
+        f"- Git dirty: `{git_info.get('dirty')}`",
+        f"- Config hash: `{config_hash}`",
+        f"- Seed: `{args.seed}`",
+        f"- Frames: `{args.frames}`",
+        f"- Suite: `{args.suite}`",
+        f"- Scenario list: {', '.join(scenario_list) if scenario_list else 'none'}",
+        f"- Pytest command: `{pytest_result.command}`",
+        f"- Pytest status: `{pytest_result.status}` ({pytest_result.reason})",
+    ]
+    if frame_note:
+        lines.append(frame_note)
+    lines.extend(
+        [
+            "",
+            "## Summary table",
+            "",
+            markdown_table(rows),
+            "",
+            "## Skipped baselines and reasons",
+            "",
+        ]
+    )
+    if skipped_baselines:
+        for item in skipped_baselines:
+            lines.append(f"- `{item['name']}`: {item['reason']}")
+    else:
+        lines.append("- None recorded.")
+    lines.extend(
+        [
+            "",
+            "## Known limitations",
+            "",
+            "- Week 1 freezes the baseline package and does not tune Sentinel thresholds.",
+            "- External compression baselines are not implemented in this runner, so baseline compression ratio is blank.",
+            "- Smoke synthetic scenarios do not provide ground-truth anomaly labels, so detection precision/recall/f1 can be blank.",
+            "- No plots were produced for this smoke baseline unless a later plotting task adds them.",
+            "",
+            "## Next step",
+            "",
+            "Week 2 false-positive suppression is the next proof-plan step and was not implemented today.",
+        ]
+    )
+    path.write_text("\n".join(lines).rstrip() + "\n", encoding="utf-8")
+
+
+def minimal_junit_xml(path: Path, reason: str, status: str = "skipped") -> None:
+    escaped = (
+        reason.replace("&", "&amp;")
+        .replace("<", "&lt;")
+        .replace(">", "&gt;")
+        .replace('"', "&quot;")
+    )
+    if status == "failure":
+        body = f'<failure message="{escaped}">{escaped}</failure>'
+        failures = "1"
+        skipped = "0"
+    else:
+        body = f'<skipped message="{escaped}" />'
+        failures = "0"
+        skipped = "1"
+    path.write_text(
+        '<?xml version="1.0" encoding="utf-8"?>\n'
+        f'<testsuite name="pytest" tests="1" failures="{failures}" skipped="{skipped}">\n'
+        '  <testcase classname="proof_baseline" name="pytest_capture">\n'
+        f"    {body}\n"
+        "  </testcase>\n"
+        "</testsuite>\n",
+        encoding="utf-8",
+    )
+
+
+def run_pytest_capture(args: argparse.Namespace, out_dir: Path, repo_root: Path = REPO_ROOT) -> PytestResult:
+    xml_path = out_dir / "pytest_results.xml"
+    test_files = list((repo_root / "tests").glob("test_*.py")) if (repo_root / "tests").is_dir() else []
+    if not test_files:
+        reason = "no tests directory or test_*.py files found"
+        minimal_junit_xml(xml_path, reason)
+        return PytestResult(command="pytest not run", returncode=0, status="skipped", reason=reason)
+
+    cmd = [sys.executable, "-m", "pytest"]
+    if args.suite == "smoke":
+        cmd.extend(["-m", "smoke"])
+    cmd.extend(["--junitxml", str(xml_path)])
+    env = os.environ.copy()
+    env.setdefault("PYTEST_DISABLE_PLUGIN_AUTOLOAD", "1")
+    try:
+        result = run_command(cmd, repo_root, timeout=900, env=env)
+        if not xml_path.exists():
+            status = "failed" if result.returncode else "skipped"
+            reason = "pytest did not write junit xml"
+            minimal_junit_xml(xml_path, reason, status="failure" if result.returncode else "skipped")
+        elif result.returncode == 0:
+            status = "passed"
+            reason = "pytest completed successfully"
+        else:
+            status = "failed"
+            reason = f"pytest exited with code {result.returncode}"
+        (out_dir / "pytest_stdout.txt").write_text(result.stdout, encoding="utf-8")
+        (out_dir / "pytest_stderr.txt").write_text(result.stderr, encoding="utf-8")
+        return PytestResult(command=command_text(["python", "-m", "pytest", *cmd[3:]]), returncode=result.returncode, status=status, reason=reason)
+    except Exception as exc:
+        reason = f"pytest unavailable or timed out: {exc}"
+        minimal_junit_xml(xml_path, reason, status="failure")
+        return PytestResult(command=command_text(["python", "-m", "pytest", *cmd[3:]]), returncode=1, status="failed", reason=reason)
+
+
+def skipped_baseline_records(rows: List[Dict[str, Any]], scenario_skips: List[Dict[str, Any]]) -> List[Dict[str, str]]:
+    records = [
+        {
+            "name": "baseline_compression_ratio",
+            "reason": "Week 1 runner records Eidos ratio only; external compression baselines are scheduled for later proof work.",
+        }
+    ]
+    if any(not row.get("anomaly_f1") for row in rows):
+        records.append(
+            {
+                "name": "detection_ground_truth_metrics",
+                "reason": "One or more scenarios did not provide labels, so anomaly precision/recall/f1 are blank for those rows.",
+            }
+        )
+    for item in scenario_skips:
+        records.append({"name": str(item["name"]), "reason": str(item["reason"])})
+    return records
+
+
+def build_config_doc(
+    *,
+    args: argparse.Namespace,
+    engine: Any,
+    engine_info: Dict[str, Any],
+    scenario_list: List[str],
+    rows: List[Dict[str, Any]],
+    skipped_baselines: List[Dict[str, str]],
+) -> Dict[str, Any]:
+    return {
+        "benchmark": {
+            "frames": args.frames,
+            "scenario_list": scenario_list,
+            "seed": args.seed,
+            "suite": args.suite,
+        },
+        "engine": {
+            **engine_info,
+            "parameters": json_safe(getattr(engine, "EIDOS_BRAIN_CONFIG", {})),
+        },
+        "baselines": {
+            "compression": [],
+            "detection": [],
+            "skipped": skipped_baselines,
+        },
+    }
+
+
+def write_plots_readme(out_dir: Path, suite: str) -> None:
+    path = out_dir / "plots" / "README.md"
+    path.parent.mkdir(parents=True, exist_ok=True)
+    path.write_text(
+        f"# Plots\n\nPlots were not produced in the {suite} baseline run. "
+        "This is recorded as a Week 1 limitation, not a hidden failure.\n",
+        encoding="utf-8",
+    )
+
+
+def build_manifest(
+    *,
+    generated_at: str,
+    command: str,
+    git_info: Dict[str, Any],
+    engine_info: Dict[str, Any],
+    packages: Dict[str, str],
+    args: argparse.Namespace,
+    scenario_list: List[str],
+    config_hash: str,
+    skipped_baselines: List[Dict[str, str]],
+    pytest_result: PytestResult,
+    drive_manifest: Optional[Dict[str, Any]] = None,
+) -> Dict[str, Any]:
+    manifest = {
+        "baselines": {
+            "compression": [],
+            "detection": [],
+            "skipped": skipped_baselines,
+        },
+        "benchmark": {
+            "command": command,
+            "frames": args.frames,
+            "scenario_list": scenario_list,
+            "seed": args.seed,
+            "suite": args.suite,
+        },
+        "config": {
+            "config_hash_sha256": config_hash,
+            "config_path": "config.json",
+        },
+        "engine": engine_info,
+        "generated_at_utc": generated_at,
+        "git": {
+            "branch": git_info.get("branch", "unknown"),
+            "commit": git_info.get("commit", "unknown"),
+            "dirty": bool(git_info.get("dirty")),
+        },
+        "outputs": {
+            "benchmark_summary_csv": "benchmark_summary.csv",
+            "benchmark_summary_md": "benchmark_summary.md",
+            "codex_journal_md": "codex_journal.md",
+            "drive_manifest_json": "drive_manifest.json",
+            "environment_txt": "environment.txt",
+            "git_commit_txt": "git_commit.txt",
+            "plain_language_test_analysis_md": "plain_language_test_analysis.md",
+            "pytest_results_xml": "pytest_results.xml",
+        },
+        "packages": packages,
+        "pytest": {
+            "command": pytest_result.command,
+            "reason": pytest_result.reason,
+            "returncode": pytest_result.returncode,
+            "status": pytest_result.status,
+        },
+        "python": {
+            "executable": sys.executable,
+            "version": sys.version,
+        },
+        "runtime": {
+            "machine": platform.machine(),
+            "os": os.name,
+            "platform": platform.platform(),
+            "processor": platform.processor(),
+        },
+    }
+    if drive_manifest is not None:
+        manifest["drive"] = {
+            "drive_copy_attempted": drive_manifest.get("drive_copy_attempted"),
+            "drive_copy_success": drive_manifest.get("drive_copy_success"),
+            "drive_root": drive_manifest.get("drive_root"),
+            "drive_run_dir": drive_manifest.get("drive_run_dir"),
+            "reason": drive_manifest.get("reason"),
+        }
+    return manifest
+
+
+def artifact_files(out_dir: Path) -> List[Path]:
+    return sorted(path for path in out_dir.rglob("*") if path.is_file())
+
+
+def is_writable_dir(path: Path) -> bool:
+    try:
+        path.mkdir(parents=True, exist_ok=True)
+        probe = path / ".codex_write_probe"
+        probe.write_text("ok", encoding="utf-8")
+        probe.unlink()
+        return True
+    except Exception:
+        return False
+
+
+def discover_drive_root() -> Tuple[Optional[Path], str]:
+    for env_name in ("EIDOS_PROOF_DRIVE_DIR", "EIDOS_ARTIFACT_ROOT"):
+        value = os.environ.get(env_name)
+        if value:
+            candidate = Path(value)
+            if is_writable_dir(candidate):
+                return candidate, f"using writable {env_name}"
+            return None, f"{env_name} was set but not writable: {value}"
+    colab_root = Path("/content/drive/MyDrive")
+    if colab_root.exists() and is_writable_dir(colab_root):
+        return colab_root, "using mounted Colab Drive root"
+    return None, "EIDOS_PROOF_DRIVE_DIR not set, EIDOS_ARTIFACT_ROOT not set, and no mounted Colab Drive path found"
+
+
+def copy_selected_to_drive(out_dir: Path, drive_manifest: Dict[str, Any], paths: Iterable[Path]) -> None:
+    if not drive_manifest.get("drive_copy_success"):
+        return
+    drive_run_dir = Path(str(drive_manifest["drive_run_dir"]))
+    for path in paths:
+        if path.exists() and path.is_file():
+            target = drive_run_dir / path.relative_to(out_dir)
+            target.parent.mkdir(parents=True, exist_ok=True)
+            shutil.copy2(path, target)
+
+
+def mirror_to_drive(out_dir: Path, run_id: str, run_date: str) -> Dict[str, Any]:
+    files = artifact_files(out_dir)
+    files_considered = [relpath(path, out_dir) for path in files]
+    drive_root, reason = discover_drive_root()
+    manifest: Dict[str, Any] = {
+        "drive_copy_attempted": True,
+        "drive_copy_success": False,
+        "drive_root": "unknown",
+        "drive_run_dir": "unknown",
+        "files_considered": files_considered,
+        "files_copied": [],
+        "files_skipped": [],
+        "reason": reason,
+        "timestamp_utc": utc_now(),
+    }
+    if drive_root is None:
+        return manifest
+
+    drive_run_dir = drive_root / "Eidos_Brain_Proof_Phase" / run_date / run_id
+    copied: List[str] = []
+    skipped: List[Dict[str, str]] = []
+    try:
+        drive_run_dir.mkdir(parents=True, exist_ok=True)
+        for path in files:
+            rel = path.relative_to(out_dir)
+            target = drive_run_dir / rel
+            try:
+                target.parent.mkdir(parents=True, exist_ok=True)
+                shutil.copy2(path, target)
+                copied.append(rel.as_posix())
+            except Exception as exc:
+                skipped.append({"path": rel.as_posix(), "reason": str(exc)})
+        manifest.update(
+            {
+                "drive_copy_success": not skipped,
+                "drive_root": str(drive_root),
+                "drive_run_dir": str(drive_run_dir),
+                "files_copied": copied,
+                "files_skipped": skipped,
+                "reason": "copy completed" if not skipped else "some files failed to copy",
+            }
+        )
+    except Exception as exc:
+        manifest["reason"] = str(exc)
+        manifest["drive_root"] = str(drive_root)
+        manifest["drive_run_dir"] = str(drive_run_dir)
+    return manifest
+
+
+def write_proof_docs(
+    *,
+    repo_root: Path,
+    out_dir: Path,
+    run_date: str,
+    command: str,
+    rows: List[Dict[str, Any]],
+    skipped_baselines: List[Dict[str, str]],
+    pytest_result: PytestResult,
+    drive_manifest: Optional[Dict[str, Any]],
+    files_changed: Optional[List[str]] = None,
+) -> None:
+    docs_dir = repo_root / "docs" / "proof_runs" / run_date
+    docs_dir.mkdir(parents=True, exist_ok=True)
+    changed = files_changed or [
+        "tools/run_proof_baseline.py",
+        "tests/test_proof_baseline_runner.py",
+        "docs/proof_baseline_contract.md",
+        relpath(out_dir),
+    ]
+    drive_status = "pending"
+    drive_root = "unknown"
+    drive_folder = "unknown"
+    files_copied: List[str] = []
+    files_skipped: Any = []
+    drive_reason = "Drive copy has not run yet."
+    if drive_manifest is not None:
+        drive_status = "copied" if drive_manifest.get("drive_copy_success") else "skipped or failed"
+        drive_root = str(drive_manifest.get("drive_root", "unknown"))
+        drive_folder = str(drive_manifest.get("drive_run_dir", "unknown"))
+        files_copied = list(drive_manifest.get("files_copied", []))
+        files_skipped = drive_manifest.get("files_skipped", [])
+        drive_reason = str(drive_manifest.get("reason", "unknown"))
+
+    artifact_lines = [relpath(path) for path in artifact_files(out_dir)]
+    journal = [
+        f"# Codex Journal -- {run_date}",
+        "",
+        "## What happened today",
+        "Week 1 of the proof plan froze a reproducible baseline package with config, manifest, environment, git state, pytest XML, scenario receipts, and CSV/Markdown summaries.",
+        "",
+        "## What was accomplished",
+        "- Added a repo-root proof baseline runner.",
+        "- Captured seed, frames, suite, config hash, git state, Python/runtime details, and scenario-level outputs.",
+        "- Kept Sentinel thresholds and core model behavior unchanged.",
+        "",
+        "## Tests and commands run",
+        f"- `{command}` -> see `benchmark_summary.md` and `pytest_results.xml`.",
+        f"- Pytest status: {pytest_result.status} ({pytest_result.reason}).",
+        "",
+        "## Problems encountered",
+        "- External compression baselines are not implemented in Week 1.",
+        "- Smoke synthetic data does not provide ground-truth anomaly labels.",
+        f"- Google Drive status: {drive_status}; reason: {drive_reason}.",
+        "",
+        "## What changed",
+        "\n".join(f"- {item}" for item in changed),
+        "",
+        "## What did not change",
+        "Core model behavior, Sentinel labels, thresholds, reservoir dynamics, compression behavior, and false-positive suppression logic were not changed.",
+        "",
+        "## Artifacts generated",
+        "\n".join(f"- {item}" for item in artifact_lines),
+        "",
+        "## Google Drive archive status",
+        f"- Drive root used: {drive_root}",
+        f"- Drive folder used: {drive_folder}",
+        f"- Files copied: {len(files_copied)}",
+        f"- Files skipped: {len(files_skipped)}",
+        f"- Reason: {drive_reason}",
+        "",
+        "## Thoughts on improvement",
+        "The next proof step should add false-positive suppression work only after this baseline remains easy to regenerate.",
+        "",
+        "## Where to improve next",
+        "Week 2 false-positive suppression should be a separate PR-sized change with before/after receipts.",
+        "",
+        "## Anything that stands out",
+        "The wrapper can capture a complete artifact package without touching the engine internals.",
+        "",
+        "## End-of-task summary",
+        f"1. Files changed: {', '.join(changed)}",
+        "2. Whether core behavior changed: no.",
+        "3. Tests added or skipped: runner/report tests added; pytest XML captured by the baseline run.",
+        f"4. Repo-root commands run: `{command}`.",
+        f"5. Artifacts generated: {len(artifact_lines)} files under `{relpath(out_dir)}`.",
+        "6. Plain-language analysis written: yes.",
+        "7. Journal entry written: yes.",
+        f"8. Google Drive copy status: {drive_status}; {drive_reason}.",
+        "9. Known limitations: no external compression baseline, no smoke labels, no plots.",
+        "10. Follow-up tasks not implemented: Week 2 false-positive suppression.",
+    ]
+    analysis = [
+        f"# Plain-Language Test Analysis -- {run_date}",
+        "",
+        "## What the task attempted",
+        "The task created a reproducible Week 1 baseline proof package for Eidos Brain.",
+        "",
+        "## Why the test matters",
+        "A frozen baseline gives future proof work a stable comparison point before threshold or false-positive changes are attempted.",
+        "",
+        "## What was tested",
+        "The smoke baseline ran the configured scenario list and captured pytest output as JUnit XML.",
+        "",
+        "## What passed",
+        "\n".join(f"- {row.get('scenario')}: {row.get('status')}" for row in rows),
+        "",
+        "## What failed",
+        "No scenario failure is hidden; see `benchmark_summary.csv` for row-level status and notes.",
+        "",
+        "## What artifacts were generated",
+        "\n".join(f"- {item}" for item in artifact_lines),
+        "",
+        "## What was saved locally",
+        f"Artifacts were saved under `{relpath(out_dir)}`.",
+        "",
+        "## What was saved to Google Drive",
+        f"Drive status: {drive_status}; folder: {drive_folder}; reason: {drive_reason}.",
+        "",
+        "## What remains uncertain",
+        "External compression baselines, labeled anomaly metrics for smoke data, and plots remain future work.",
+        "",
+        "## What should happen next",
+        "Run the same baseline command from repo root before starting Week 2 false-positive suppression work.",
+    ]
+    for target_dir in (docs_dir, out_dir):
+        target_dir.mkdir(parents=True, exist_ok=True)
+        (target_dir / "codex_journal.md").write_text("\n".join(journal).rstrip() + "\n", encoding="utf-8")
+        (target_dir / "plain_language_test_analysis.md").write_text("\n".join(analysis).rstrip() + "\n", encoding="utf-8")
+
+
+def run(
+    args: argparse.Namespace,
+    *,
+    repo_root: Path = REPO_ROOT,
+    load_engine_fn: Callable[[Path, Path], Tuple[Any, Path]] = load_engine_for_baseline,
+    run_scenarios_fn: Callable[[Any, argparse.Namespace, Path, Path], Tuple[List[Dict[str, Any]], List[Dict[str, Any]], List[str]]] = run_scenarios,
+    run_pytest_fn: Callable[[argparse.Namespace, Path, Path], PytestResult] = run_pytest_capture,
+    mirror_to_drive_fn: Callable[[Path, str, str], Dict[str, Any]] = mirror_to_drive,
+    write_docs_fn: Callable[..., None] = write_proof_docs,
+) -> int:
+    out_dir = resolve_out_dir(args.out, repo_root)
+    create_proof_artifact_dir(out_dir)
+    generated_at = utc_now()
+    command = baseline_command(args, repo_root)
+    run_date = datetime.now(timezone.utc).date().isoformat()
+    run_id = f"proof_baseline_2026_05_{args.suite}_seed{args.seed}_frames{args.frames}"
+
+    git_info = collect_git_info(repo_root)
+    engine, engine_path = load_engine_fn(out_dir, repo_root)
+    engine_info = {
+        "code_hash_sha256": sha256_file(engine_path) if engine_path.exists() else "unknown",
+        "module": relpath(engine_path, repo_root),
+        "version": str(getattr(engine, "ENGINE_VERSION", "unknown")),
+    }
+
+    rows, scenario_skips, scenario_list = run_scenarios_fn(engine, args, out_dir, repo_root)
+    skipped_baselines = skipped_baseline_records(rows, scenario_skips)
+    config_doc = build_config_doc(
+        args=args,
+        engine=engine,
+        engine_info=engine_info,
+        scenario_list=scenario_list,
+        rows=rows,
+        skipped_baselines=skipped_baselines,
+    )
+    config_hash = stable_hash(config_doc)
+    config_doc["config_hash_sha256"] = config_hash
+    write_json(out_dir / "config.json", config_doc)
+
+    environment_text, packages = collect_environment(repo_root)
+    (out_dir / "environment.txt").write_text(environment_text, encoding="utf-8")
+    write_git_commit(out_dir / "git_commit.txt", git_info)
+    write_benchmark_csv(out_dir / "benchmark_summary.csv", rows)
+    write_plots_readme(out_dir, args.suite)
+
+    pytest_result = run_pytest_fn(args, out_dir, repo_root)
+    write_benchmark_md(
+        out_dir / "benchmark_summary.md",
+        command=command,
+        out_dir=out_dir,
+        git_info=git_info,
+        config_hash=config_hash,
+        args=args,
+        scenario_list=scenario_list,
+        rows=rows,
+        skipped_baselines=skipped_baselines,
+        pytest_result=pytest_result,
+    )
+
+    draft_manifest = build_manifest(
+        generated_at=generated_at,
+        command=command,
+        git_info=git_info,
+        engine_info=engine_info,
+        packages=packages,
+        args=args,
+        scenario_list=scenario_list,
+        config_hash=config_hash,
+        skipped_baselines=skipped_baselines,
+        pytest_result=pytest_result,
+    )
+    write_json(out_dir / "run_manifest.json", draft_manifest)
+    write_docs_fn(
+        repo_root=repo_root,
+        out_dir=out_dir,
+        run_date=run_date,
+        command=command,
+        rows=rows,
+        skipped_baselines=skipped_baselines,
+        pytest_result=pytest_result,
+        drive_manifest=None,
+    )
+
+    drive_manifest = mirror_to_drive_fn(out_dir, run_id, run_date)
+    write_json(out_dir / "drive_manifest.json", drive_manifest)
+    final_manifest = build_manifest(
+        generated_at=generated_at,
+        command=command,
+        git_info=git_info,
+        engine_info=engine_info,
+        packages=packages,
+        args=args,
+        scenario_list=scenario_list,
+        config_hash=config_hash,
+        skipped_baselines=skipped_baselines,
+        pytest_result=pytest_result,
+        drive_manifest=drive_manifest,
+    )
+    write_json(out_dir / "run_manifest.json", final_manifest)
+    write_docs_fn(
+        repo_root=repo_root,
+        out_dir=out_dir,
+        run_date=run_date,
+        command=command,
+        rows=rows,
+        skipped_baselines=skipped_baselines,
+        pytest_result=pytest_result,
+        drive_manifest=drive_manifest,
+    )
+    copy_selected_to_drive(
+        out_dir,
+        drive_manifest,
+        [
+            out_dir / "run_manifest.json",
+            out_dir / "drive_manifest.json",
+            out_dir / "codex_journal.md",
+            out_dir / "plain_language_test_analysis.md",
+        ],
+    )
+    return 0
+
+
+def main(argv: Optional[Sequence[str]] = None) -> int:
+    args = parse_args(argv)
+    return run(args)
+
+
+if __name__ == "__main__":
+    raise SystemExit(main())
