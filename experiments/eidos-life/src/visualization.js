@@ -81,10 +81,19 @@ const REGIME_CLASS = {
   VIOLET: 'violet',
 };
 
+function regimeColor(regime) {
+  if (regime === 'RED') return [255, 72, 90];
+  if (regime === 'AMBER') return [255, 180, 80];
+  if (regime === 'BLUE') return [84, 160, 255];
+  if (regime === 'VIOLET') return [210, 130, 255];
+  if (regime === 'CALIBRATING') return [120, 140, 165];
+  return [80, 255, 198];
+}
+
 export class LifeVisualization {
   constructor({ container, engine }) {
     this.engine = engine;
-    this.overlays = { surprise: true, memory: true, energy: false, outlines: true };
+    this.overlays = { surprise: true, memory: true, energy: false, outlines: true, prediction: true };
     this.cellStep = 0.15;
     this.cellSize = 0.108;
     this.boardWidth = engine.width * this.cellStep;
@@ -124,6 +133,8 @@ export class LifeVisualization {
     this.createCells();
     this.createOverlays();
     this.createOrganismOutlines();
+    this.createCentroidMarkers();
+    this.createPredictionSparks();
     this.createPulseMeshes();
     this.resize();
     this.applyRegime('CALIBRATING', { plasticity: 0, surprise: 0 });
@@ -210,12 +221,16 @@ export class LifeVisualization {
       memory: this.createFieldTexture(),
       energy: this.createFieldTexture(),
       surprise: this.createFieldTexture(),
+      prediction: this.createFieldTexture(),
+      regime: this.createFieldTexture(),
     };
 
     this.memoryOverlay = this.createOverlayPlane(this.fieldTextures.memory.texture, 0.026, 0.62);
     this.energyOverlay = this.createOverlayPlane(this.fieldTextures.energy.texture, 0.038, 0.5);
     this.surpriseOverlay = this.createOverlayPlane(this.fieldTextures.surprise.texture, 0.052, 0.58);
-    this.world.add(this.memoryOverlay, this.energyOverlay, this.surpriseOverlay);
+    this.predictionOverlay = this.createOverlayPlane(this.fieldTextures.prediction.texture, 0.066, 0.54);
+    this.regimeOverlay = this.createOverlayPlane(this.fieldTextures.regime.texture, 0.018, 0.26);
+    this.world.add(this.regimeOverlay, this.memoryOverlay, this.energyOverlay, this.surpriseOverlay, this.predictionOverlay);
   }
 
   createFieldTexture() {
@@ -267,6 +282,42 @@ export class LifeVisualization {
       })
     );
     this.world.add(this.organismLines);
+  }
+
+  createCentroidMarkers() {
+    this.maxCentroids = 128;
+    this.centroidMaterial = new THREE.MeshBasicMaterial({
+      color: 0xffffff,
+      transparent: true,
+      opacity: 0.95,
+      blending: THREE.AdditiveBlending,
+      depthWrite: false,
+    });
+    this.centroidMesh = new THREE.InstancedMesh(
+      new THREE.SphereGeometry(0.055, 10, 8),
+      this.centroidMaterial,
+      this.maxCentroids
+    );
+    this.centroidMesh.instanceMatrix.setUsage(THREE.DynamicDrawUsage);
+    this.world.add(this.centroidMesh);
+  }
+
+  createPredictionSparks() {
+    this.maxSparks = 80;
+    this.sparkMaterial = new THREE.MeshBasicMaterial({
+      color: 0xff58e8,
+      transparent: true,
+      opacity: 0.88,
+      blending: THREE.AdditiveBlending,
+      depthWrite: false,
+    });
+    this.sparkMesh = new THREE.InstancedMesh(
+      new THREE.IcosahedronGeometry(0.045, 1),
+      this.sparkMaterial,
+      this.maxSparks
+    );
+    this.sparkMesh.instanceMatrix.setUsage(THREE.DynamicDrawUsage);
+    this.world.add(this.sparkMesh);
   }
 
   createPulseMeshes() {
@@ -395,20 +446,24 @@ export class LifeVisualization {
     this.board.material.color.set(palette.board);
   }
 
-  render({ metrics, organisms = [] }) {
+  render({ metrics, organisms = [], prediction = null, localRegimes = null, genomeRegistry = null, selectedOrganism = null }) {
     if (!this.renderer) return;
 
     const delta = Math.min(this.clock.getDelta(), 0.05);
     this.updateCamera(delta);
     this.applyRegime(metrics.regime, metrics);
 
-    const aliveCount = this.updateLiveCells(metrics);
-    this.updateFieldOverlays(metrics);
-    this.updateOrganismOutlines(organisms, metrics);
+    const aliveCount = this.updateLiveCells(metrics, genomeRegistry);
+    this.updateFieldOverlays(metrics, prediction, localRegimes);
+    this.updateOrganismOutlines(organisms, metrics, selectedOrganism);
+    this.updateCentroidMarkers(organisms, selectedOrganism);
+    this.updatePredictionSparks(prediction);
     this.updatePulses(delta, metrics);
 
     this.cellMesh.count = aliveCount;
     this.glowMesh.count = aliveCount;
+    this.centroidMesh.instanceMatrix.needsUpdate = true;
+    this.sparkMesh.instanceMatrix.needsUpdate = true;
     this.cellMesh.instanceMatrix.needsUpdate = true;
     this.glowMesh.instanceMatrix.needsUpdate = true;
     if (this.cellMesh.instanceColor) this.cellMesh.instanceColor.needsUpdate = true;
@@ -416,8 +471,8 @@ export class LifeVisualization {
     this.renderer.render(this.scene, this.camera);
   }
 
-  updateLiveCells(metrics) {
-    const { alive, age, energy, species, memoryField, stress, width, size } = this.engine;
+  updateLiveCells(metrics, genomeRegistry = null) {
+    const { alive, age, energy, species, genomeId, memoryField, stress, width, size } = this.engine;
     const palette = REGIME_PALETTE[metrics.regime] || REGIME_PALETTE.GREEN;
     const regimeHeight = palette.height;
     const shimmer = metrics.regime === 'VIOLET' ? Math.sin(performance.now() * 0.008) * 0.16 : 0;
@@ -448,7 +503,8 @@ export class LifeVisualization {
       this.matrix.compose(this.position, this.rotation, this.scale);
       this.cellMesh.setMatrixAt(cursor, this.matrix);
 
-      const speciesHue = ((species[i] || 1) * 0.08 + 0.48) % 1;
+      const genome = genomeRegistry?.get?.(genomeId[i]);
+      const speciesHue = genome?.traits.colorHue ?? (((species[i] || 1) * 0.08 + 0.48) % 1);
       const light = clamp(0.48 + energyFactor * 0.25 + ageFactor * 0.14, 0.38, 0.82);
       this.speciesColor.setHSL(speciesHue, 0.82, light);
       this.color.set(palette.cell).lerp(this.speciesColor, 0.44);
@@ -468,25 +524,32 @@ export class LifeVisualization {
     return cursor;
   }
 
-  updateFieldOverlays(metrics) {
-    const { energy, memoryField, anomalyField, signalField, stress, width, height } = this.engine;
+  updateFieldOverlays(metrics, prediction = null, localRegimes = null) {
+    const { energy, nutrientField, wasteField, memoryField, anomalyField, signalField, stress, width, height } = this.engine;
     this.memoryOverlay.visible = this.overlays.memory;
     this.energyOverlay.visible = this.overlays.energy;
     this.surpriseOverlay.visible = this.overlays.surprise;
+    this.predictionOverlay.visible = this.overlays.prediction;
+    this.regimeOverlay.visible = this.overlays.surprise || this.overlays.memory;
     this.grid.visible = this.overlays.outlines;
 
     const memory = this.fieldTextures.memory.data;
     const energyData = this.fieldTextures.energy.data;
     const surprise = this.fieldTextures.surprise.data;
+    const predictionData = this.fieldTextures.prediction.data;
+    const regimeData = this.fieldTextures.regime.data;
 
     for (let y = 0; y < height; y++) {
       for (let x = 0; x < width; x++) {
         const source = y * width + x;
         const target = ((height - 1 - y) * width + x) * 4;
         const m = clamp01(memoryField[source]);
-        const e = clamp01(energy[source]);
-        const s = clamp01((anomalyField[source] || 0) * 1.6 + stress[source] * 0.9 + metrics.surprise * 0.8);
+        const e = clamp01((energy[source] + (nutrientField?.[source] || 0)) * 0.5);
+        const waste = clamp01(wasteField?.[source] || 0);
+        const s = clamp01((anomalyField[source] || 0) * 1.6 + stress[source] * 0.9 + waste * 0.9 + metrics.surprise * 0.8);
         const sig = clamp01(signalField[source] || 0);
+        const predicted = prediction?.predicted?.[source] || 0;
+        const error = clamp01(prediction?.errorField?.[source] || 0);
 
         memory[target] = 96 + m * 120;
         memory[target + 1] = 68 + sig * 80;
@@ -502,15 +565,29 @@ export class LifeVisualization {
         surprise[target + 1] = 56 + s * 120;
         surprise[target + 2] = metrics.regime === 'VIOLET' ? 255 : 72;
         surprise[target + 3] = s * 190;
+
+        predictionData[target] = error ? 255 : 70;
+        predictionData[target + 1] = predicted ? 210 : 40;
+        predictionData[target + 2] = predicted ? 255 : 180;
+        predictionData[target + 3] = clamp01(predicted * 0.38 + error * 0.9) * 170;
+
+        const localRegime = localRegimes?.regimeAtCell?.(x, y) || metrics.regime;
+        const [rr, rg, rb] = regimeColor(localRegime);
+        regimeData[target] = rr;
+        regimeData[target + 1] = rg;
+        regimeData[target + 2] = rb;
+        regimeData[target + 3] = localRegime === 'GREEN' ? 24 : 70;
       }
     }
 
     this.fieldTextures.memory.texture.needsUpdate = this.overlays.memory;
     this.fieldTextures.energy.texture.needsUpdate = this.overlays.energy;
     this.fieldTextures.surprise.texture.needsUpdate = this.overlays.surprise;
+    this.fieldTextures.prediction.texture.needsUpdate = this.overlays.prediction;
+    this.fieldTextures.regime.texture.needsUpdate = this.regimeOverlay.visible;
   }
 
-  updateOrganismOutlines(organisms, metrics) {
+  updateOrganismOutlines(organisms, metrics, selectedOrganism = null) {
     this.organismLines.visible = this.overlays.outlines;
     if (!this.overlays.outlines) return;
 
@@ -532,6 +609,7 @@ export class LifeVisualization {
       const novelty = clamp01(organism.noveltyScore || 0);
       this.color.set(metrics.regime === 'RED' ? 0xff6a4d : 0x7df3ff).lerp(this.stressColor.set(0xff4b69), threat);
       this.color.lerp(this.speciesColor.set(0xd694ff), novelty * 0.55);
+      if (selectedOrganism?.id === organism.id) this.color.set(0xffffff);
 
       vertex = this.addBoxLines(vertex, minX, maxX, minZ, maxZ, lift, top, this.color);
     }
@@ -539,6 +617,37 @@ export class LifeVisualization {
     this.organismGeometry.setDrawRange(0, vertex);
     this.organismGeometry.attributes.position.needsUpdate = true;
     this.organismGeometry.attributes.color.needsUpdate = true;
+  }
+
+  updateCentroidMarkers(organisms, selectedOrganism = null) {
+    const limit = Math.min(organisms.length, this.maxCentroids);
+    this.centroidMesh.count = limit;
+    for (let i = 0; i < limit; i++) {
+      const organism = organisms[i];
+      const px = this.left + organism.centroid.x * this.cellStep + this.cellStep / 2;
+      const pz = this.back + organism.centroid.y * this.cellStep + this.cellStep / 2;
+      const scale = selectedOrganism?.id === organism.id ? 2.4 : 1 + clamp01(organism.fitnessScore || 0) * 1.2;
+      this.position.set(px, 0.34 + clamp01(organism.mass / 80) * 0.7, pz);
+      this.scale.setScalar(scale);
+      this.matrix.compose(this.position, this.rotation, this.scale);
+      this.centroidMesh.setMatrixAt(i, this.matrix);
+    }
+  }
+
+  updatePredictionSparks(prediction = null) {
+    const sparks = this.overlays.prediction ? (prediction?.sparks || []) : [];
+    const limit = Math.min(sparks.length, this.maxSparks);
+    this.sparkMesh.count = limit;
+    for (let i = 0; i < limit; i++) {
+      const spark = sparks[i];
+      const px = this.left + spark.x * this.cellStep + this.cellStep / 2;
+      const pz = this.back + spark.y * this.cellStep + this.cellStep / 2;
+      const scale = 0.8 + (i % 5) * 0.16;
+      this.position.set(px, 0.55 + (i % 3) * 0.04, pz);
+      this.scale.setScalar(scale);
+      this.matrix.compose(this.position, this.rotation, this.scale);
+      this.sparkMesh.setMatrixAt(i, this.matrix);
+    }
   }
 
   addBoxLines(vertex, minX, maxX, minZ, maxZ, bottom, top, color) {

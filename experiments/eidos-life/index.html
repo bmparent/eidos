@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Eidos Life v0.2</title>
+<title>Eidos Life v0.4</title>
 <style>
 :root{color-scheme:dark;--bg:#050812;--panel:rgba(5,10,20,.78);--line:#244667;--text:#e8f6ff;--muted:#94aac4;--cyan:#7df3ff;--green:#76ffd0;--amber:#ffc15f;--red:#ff5d72;--blue:#72b7ff;--violet:#d191ff}
 *{box-sizing:border-box}
@@ -24,9 +24,18 @@ canvas{touch-action:none}
 .grid span{float:right;color:#f4fbff;font-variant-numeric:tabular-nums}
 .controls{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:6px;margin-top:10px}
 .controls.secondary{grid-template-columns:96px 1fr 28px}
+.controls.world{grid-template-columns:1fr 1fr 1fr}
 .toggles{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:6px 12px;margin-top:8px;font-size:12px;color:#d7e7f8}
 .toggles label{display:flex;align-items:center;gap:6px;min-width:0}
 .toggles input{accent-color:var(--cyan);width:13px;height:13px;margin:0}
+.miniPanel{margin-top:10px;padding-top:8px;border-top:1px solid rgba(125,243,255,.13)}
+.miniTitle{font-size:11px;line-height:1;color:#91bad4;text-transform:uppercase;margin-bottom:6px}
+.inspectGrid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:4px 12px;font-size:11px;color:#d6e9f7}
+.inspectGrid span{float:right;color:#fff;font-variant-numeric:tabular-nums}
+.eventFeed{display:grid;gap:5px;max-height:96px;overflow:hidden}
+.eventCard{font-size:11px;line-height:1.25;color:#dceeff;padding:6px;border-radius:6px;background:rgba(5,18,30,.66);border:1px solid rgba(125,243,255,.12)}
+.eventCard.medium{border-color:rgba(255,193,95,.36)}
+.eventCard.high{border-color:rgba(255,93,114,.48)}
 .timeline{display:grid;grid-template-columns:repeat(24,1fr);gap:3px;height:16px;margin-top:11px;padding:3px;border-radius:5px;background:rgba(2,7,13,.72);border:1px solid rgba(125,243,255,.12)}
 .timelineCell{min-width:0;border-radius:2px;background:rgba(78,101,124,.28);box-shadow:none}
 .timelineCell.calibrating{background:#6d8198}
@@ -47,7 +56,7 @@ canvas{touch-action:none}
 </head>
 <body>
 <div class="hud">
-  <strong>Eidos Life v0.2 / Living Stream Lab</strong>
+  <strong>Eidos Life v0.4 / Evolutionary World Layer</strong>
   <div id="generation">gen 0</div>
   <div class="regimeRow">Regime: <span id="regimeLabel">CALIBRATING</span></div>
   <div class="grid">
@@ -68,13 +77,53 @@ canvas{touch-action:none}
     <select id="scenarioSelect" aria-label="Scenario"></select>
     <span></span>
   </div>
+  <div class="controls world">
+    <select id="mutationSelect" aria-label="Mutation pressure">
+      <option value="adaptive">adaptive mut.</option>
+      <option value="low">low mut.</option>
+      <option value="medium">medium mut.</option>
+      <option value="high">high mut.</option>
+    </select>
+    <select id="interventionSelect" aria-label="Eidos intervention">
+      <option value="guardian">guardian</option>
+      <option value="passive">passive</option>
+      <option value="experimental">experimental</option>
+    </select>
+    <select id="speedSelect" aria-label="World speed">
+      <option value="1">normal</option>
+      <option value="2">fast</option>
+      <option value="4">faster</option>
+      <option value="0">slow</option>
+    </select>
+  </div>
   <div class="toggles">
+    <label><input id="toggleEvolution" type="checkbox" checked> evolution</label>
     <label><input id="toggleSurprise" type="checkbox" checked> surprise heatmap</label>
     <label><input id="toggleMemory" type="checkbox" checked> memory trails</label>
     <label><input id="toggleEnergy" type="checkbox"> energy field</label>
     <label><input id="toggleOutlines" type="checkbox" checked> organism outlines</label>
+    <label><input id="togglePrediction" type="checkbox" checked> prediction ghost</label>
   </div>
   <div class="timeline" id="timeline" aria-label="Regime timeline"></div>
+  <div class="miniPanel">
+    <div class="miniTitle">Selected Organism</div>
+    <div class="controls world">
+      <select id="inspectSelect" aria-label="Inspect organism">
+        <option value="largest">largest</option>
+        <option value="oldest">oldest</option>
+        <option value="newest">newest</option>
+        <option value="novel">most novel</option>
+      </select>
+      <button id="exportWorldBtn">Export World</button>
+      <button id="importWorldBtn">Import</button>
+      <input id="importWorldFile" type="file" accept="application/json" hidden>
+    </div>
+    <div class="inspectGrid" id="inspectPanel"></div>
+  </div>
+  <div class="miniPanel">
+    <div class="miniTitle">Event Feed</div>
+    <div class="eventFeed" id="eventFeed"></div>
+  </div>
 </div>
 <script type="module" src="./src/app.js"></script>
 </body>
