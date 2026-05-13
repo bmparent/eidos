@@ -1,9 +1,81 @@
-<!doctype html><html><head><meta charset='utf-8'/><meta name='viewport' content='width=device-width,initial-scale=1'/><title>Eidos Life v0.2</title>
-<style>body{margin:0;background:#060913;color:#e6f0ff;font-family:Inter,system-ui} .hud{position:fixed;left:14px;top:14px;z-index:10;background:rgba(8,13,23,.8);padding:12px;border-radius:12px;border:1px solid #2b3d62;width:380px} .grid{display:grid;grid-template-columns:repeat(2,1fr);gap:6px;font-size:13px}.timeline{margin-top:8px;font-size:11px;color:#a9bad8;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.controls{display:grid;grid-template-columns:repeat(3,1fr);gap:6px;margin-top:8px} .toggles{display:grid;grid-template-columns:repeat(2,1fr);gap:4px;font-size:12px}</style>
-<script type='importmap'>{"imports":{"three":"https://unpkg.com/three@0.160.0/build/three.module.js"}}</script></head>
-<body><div class='hud'><strong>Eidos Life v0.2 / Living Stream Lab</strong><div id='generation'>gen 0</div><div>Regime: <span id='regimeLabel'>CALIBRATING</span></div>
-<div class='grid'><div>Surprise <span id='surprise'>0</span></div><div>Entropy <span id='entropy'>0</span></div><div>Compression <span id='compression'>0</span></div><div>Plasticity <span id='plasticity'>0</span></div><div>Alive <span id='aliveRatio'>0</span></div><div>Organisms <span id='organisms'>0</span></div></div>
-<div class='controls'><button id='pauseBtn'>Pause</button><button id='seedBtn'>Seed</button><button id='pulseBtn'>Eidos Pulse</button></div><div class='controls'><button id='exportBtn'>Export Bundle</button><select id='scenarioSelect'></select><span></span></div>
-<div class='toggles'><label><input id='toggleSurprise' type='checkbox' checked/> surprise heatmap</label><label><input id='toggleMemory' type='checkbox' checked/> memory trails</label><label><input id='toggleEnergy' type='checkbox'/> energy field</label><label><input id='toggleOutlines' type='checkbox' checked/> organism outlines</label></div>
-<div class='timeline' id='timeline'></div></div>
-<script type='module' src='./src/app.js'></script></body></html>
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Eidos Life v0.2</title>
+<style>
+:root{color-scheme:dark;--bg:#050812;--panel:rgba(5,10,20,.78);--line:#244667;--text:#e8f6ff;--muted:#94aac4;--cyan:#7df3ff;--green:#76ffd0;--amber:#ffc15f;--red:#ff5d72;--blue:#72b7ff;--violet:#d191ff}
+*{box-sizing:border-box}
+html,body{width:100%;height:100%}
+body{margin:0;overflow:hidden;background:var(--bg);color:var(--text);font-family:Inter,ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif}
+button,select{font:600 12px/1.2 inherit;letter-spacing:0;color:var(--text)}
+button,select{height:30px;border:1px solid rgba(125,243,255,.28);background:rgba(7,18,32,.78);border-radius:6px;box-shadow:inset 0 0 18px rgba(125,243,255,.06);outline:none}
+button{cursor:pointer}
+button:hover,select:hover{border-color:rgba(125,243,255,.58);background:rgba(11,31,48,.9)}
+select{width:100%;padding:0 8px;color:#dff8ff}
+canvas{touch-action:none}
+.hud{position:fixed;left:14px;top:14px;z-index:10;width:min(406px,calc(100vw - 28px));padding:14px 12px 13px;border:1px solid rgba(125,180,255,.34);border-radius:8px;background:linear-gradient(180deg,rgba(7,12,24,.88),rgba(4,9,17,.78));box-shadow:0 18px 48px rgba(0,0,0,.42),inset 0 1px 0 rgba(255,255,255,.05);backdrop-filter:blur(14px)}
+.hud strong{display:block;font-size:15px;line-height:1.2;margin-bottom:6px;color:#f2fbff}
+#generation{font-size:14px;color:#c7dcf2;margin-bottom:3px}
+.regimeRow{font-size:13px;color:#dceeff;margin-bottom:6px}
+#regimeLabel{font-weight:800;color:var(--cyan);text-shadow:0 0 12px rgba(125,243,255,.48)}
+.grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:6px 16px;font-size:12px;color:#dcecff;margin-top:8px}
+.grid span{float:right;color:#f4fbff;font-variant-numeric:tabular-nums}
+.controls{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:6px;margin-top:10px}
+.controls.secondary{grid-template-columns:96px 1fr 28px}
+.toggles{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:6px 12px;margin-top:8px;font-size:12px;color:#d7e7f8}
+.toggles label{display:flex;align-items:center;gap:6px;min-width:0}
+.toggles input{accent-color:var(--cyan);width:13px;height:13px;margin:0}
+.timeline{display:grid;grid-template-columns:repeat(24,1fr);gap:3px;height:16px;margin-top:11px;padding:3px;border-radius:5px;background:rgba(2,7,13,.72);border:1px solid rgba(125,243,255,.12)}
+.timelineCell{min-width:0;border-radius:2px;background:rgba(78,101,124,.28);box-shadow:none}
+.timelineCell.calibrating{background:#6d8198}
+.timelineCell.green{background:var(--green);box-shadow:0 0 8px rgba(118,255,208,.45)}
+.timelineCell.amber{background:var(--amber);box-shadow:0 0 8px rgba(255,193,95,.45)}
+.timelineCell.red{background:var(--red);box-shadow:0 0 8px rgba(255,93,114,.55)}
+.timelineCell.blue{background:var(--blue);box-shadow:0 0 8px rgba(114,183,255,.45)}
+.timelineCell.violet{background:var(--violet);box-shadow:0 0 8px rgba(209,145,255,.5)}
+@media (max-width:520px){.hud{left:10px;top:10px;width:calc(100vw - 20px);padding:12px}.controls{grid-template-columns:repeat(3,minmax(0,1fr))}.controls.secondary{grid-template-columns:86px 1fr 20px}.grid,.toggles{font-size:11px;gap:5px 9px}button,select{font-size:11px}}
+</style>
+<script type="importmap">
+{
+  "imports": {
+    "three": "./vendor/three.module.js"
+  }
+}
+</script>
+</head>
+<body>
+<div class="hud">
+  <strong>Eidos Life v0.2 / Living Stream Lab</strong>
+  <div id="generation">gen 0</div>
+  <div class="regimeRow">Regime: <span id="regimeLabel">CALIBRATING</span></div>
+  <div class="grid">
+    <div>Surprise <span id="surprise">0</span></div>
+    <div>Entropy <span id="entropy">0</span></div>
+    <div>Compression <span id="compression">0</span></div>
+    <div>Plasticity <span id="plasticity">0</span></div>
+    <div>Alive <span id="aliveRatio">0</span></div>
+    <div>Organisms <span id="organisms">0</span></div>
+  </div>
+  <div class="controls">
+    <button id="pauseBtn">Pause</button>
+    <button id="seedBtn">Seed</button>
+    <button id="pulseBtn">Eidos Pulse</button>
+  </div>
+  <div class="controls secondary">
+    <button id="exportBtn">Export Bundle</button>
+    <select id="scenarioSelect" aria-label="Scenario"></select>
+    <span></span>
+  </div>
+  <div class="toggles">
+    <label><input id="toggleSurprise" type="checkbox" checked> surprise heatmap</label>
+    <label><input id="toggleMemory" type="checkbox" checked> memory trails</label>
+    <label><input id="toggleEnergy" type="checkbox"> energy field</label>
+    <label><input id="toggleOutlines" type="checkbox" checked> organism outlines</label>
+  </div>
+  <div class="timeline" id="timeline" aria-label="Regime timeline"></div>
+</div>
+<script type="module" src="./src/app.js"></script>
+</body>
+</html>
