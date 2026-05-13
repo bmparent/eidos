@@ -30,3 +30,13 @@ docker-compose up --build
 ```bash
 ./scripts/deploy_cloud_run.sh
 ```
+
+## Quantum-Aware Compression Benchmarks
+
+Eidos includes a defensive, anomaly-preserving compression benchmark for synthetic quantum telemetry, crypto-agility events, and binary byte-window streams.
+
+```bash
+python -m eidos_brain.benchmarks.quantum_compression_benchmark --output-dir artifacts/benchmarks
+```
+
+See [docs/quantum_anomaly_compression.md](docs/quantum_anomaly_compression.md) for scope, metrics, limitations, and interpretation guidance.
