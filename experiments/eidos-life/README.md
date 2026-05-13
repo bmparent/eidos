@@ -9,14 +9,43 @@ Experiment-only Three.js + Game of Life sandbox that adds an Eidos-style monitor
 - Pattern memory fingerprints + approximate known pattern tags.
 - Approximate organism clustering with centroid/mass/threat stats.
 - Telemetry recorder with browser export bundle: `{ manifest, summary, telemetry, interestingEvents }`.
-- HUD toggles for surprise/memory/energy/outlines and a compact regime timeline strip.
+- Three.js observatory renderer with instanced 3D live cells, translucent field overlays, organism boundary cages, regime lighting/fog, camera drag/zoom, and pulse rings.
+- HUD toggles for surprise/memory/energy/outlines and a compact visual regime timeline strip.
 - Disabled `EidosBackendBridge` stub for future backend integration.
 
-## Run browser demo
+## View the actual Three.js render locally
+
+From repo root:
+
 ```bash
 python -m http.server 5173
 ```
-Open: `http://localhost:5173/experiments/eidos-life/`
+
+Then open:
+
+```text
+http://localhost:5173/experiments/eidos-life/
+```
+
+Or from the experiment folder:
+
+```bash
+npm run serve
+```
+
+The page uses the real modular Three.js implementation in `src/app.js` and `src/visualization.js`.
+
+Drag the observatory canvas to orbit the scene, and use the mouse wheel or trackpad scroll to zoom.
+
+On Windows, if `python` is unavailable, use:
+
+```powershell
+py -m http.server 5173
+```
+
+## Three.js dependency
+
+The experiment vendors `three.module.js` under `vendor/` so the demo can run even when the CDN is unavailable. If you want to refresh it, use Three.js `0.160.0` to match the original implementation.
 
 ## Run tests
 ```bash
