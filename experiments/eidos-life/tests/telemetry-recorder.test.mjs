@@ -22,10 +22,11 @@ test('telemetry summary is compact and bounded', () => {
   assert.ok(summary.regimeTransitions.count > 0);
   assert.equal(summary.eventSummary.eventTypeCounts.organism_death, 500);
   const exported = t.exportSummary({ generation: 500 }, { runId: 'x' }, { finalWorldCompact: { generation: 500 } });
-  assert.ok(exported.telemetry_sample.length <= 200);
+  assert.ok(exported.telemetry_sample.length <= 500);
   assert.equal(exported.run_meta.runId, 'x');
   assert.equal(exported.final_world_compact.generation, 500);
   assert.equal(exported.final_world_compact.alive, undefined);
+  assert.ok(!('worldState' in exported));
 });
 
 test('scenario presets seed valid non-empty worlds', ()=>{

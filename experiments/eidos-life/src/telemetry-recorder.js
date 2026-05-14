@@ -116,7 +116,7 @@ export class TelemetryRecorder {
   exportSummary(worldState = null, runMeta = {}, extras = {}) {
     const summary = this.getSummary();
     return {
-      summary_export_version: '1.0',
+      summary_export_version: '1.1',
       exported_at: new Date().toISOString(),
       run_meta: runMeta,
       manifest: {
@@ -135,11 +135,11 @@ export class TelemetryRecorder {
       regime_counts: summary.regimeCounts,
       regime_transitions_compact: summary.regimeTransitions,
       event_summary: summary.eventSummary,
-      top_events_recent: this.events.slice(-20),
-      top_genomes: (this.evolution.genomes || []).slice(0, 20),
-      top_lineages: (this.evolution.lineages || []).slice(0, 20),
-      top_organisms: (this.evolution.organisms || []).slice(0, 20),
-      telemetry_sample: this.sampledRows.slice(-200),
+      top_events_recent: this.events.slice(-100),
+      top_genomes: (this.evolution.genomes || []).slice(0, 30),
+      top_lineages: (this.evolution.lineages || []).slice(0, 30),
+      top_organisms: (this.evolution.organisms || []).slice(0, 30),
+      telemetry_sample: this.sampledRows.slice(-500),
       world_state_reference: worldState ? { generation: worldState.generation, scenario: worldState.scenario } : null,
     };
   }
