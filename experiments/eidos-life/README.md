@@ -86,3 +86,16 @@ The telemetry export includes:
 ## Boundary with the real engine
 
 This experiment does not modify or prove the production Eidos Brain engine. It uses an Eidos-style monitor/controller loop as a browser-side experiment layer. A future backend bridge may connect browser frames to the real Python engine, but that bridge remains disabled by default and intentionally stubbed.
+
+## Long-run observation workflow (v0.4 harness hardening)
+
+- **Summary Export** provides a compact, analysis-friendly JSON with run metadata (`runId`, `runEpoch`, `totalGenerations`, `resetCount`), compact world stats, telemetry statistics, regime counts/transitions, and event aggregation.
+- **Export Bundle** is still available for deeper debugging, but it can become large over long runs.
+- **Recommended cadence**:
+  - Summary Export every **25,000** generations.
+  - Export World every **25,000–50,000** generations.
+  - Save checkpoints periodically (autosave every 5,000 generations + manual Save Checkpoint button).
+- `runEpoch` increments on detected/recorded resets, `totalGenerations` is monotonic for session-level accounting, and `resetCount` tracks all reset events in-session.
+- Checkpoints are stored in browser localStorage under `eidos-life:last-checkpoint` and `eidos-life:checkpoint-meta`.
+
+> This remains a browser-side experiment harness (v0.4), not production Eidos Brain proof.
