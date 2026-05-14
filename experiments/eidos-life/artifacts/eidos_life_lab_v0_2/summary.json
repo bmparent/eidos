@@ -1,0 +1,17 @@
+{
+  "total_generations": 1,
+  "seed": 4,
+  "config_hash": "cfg_8x8_4",
+  "start_population": 0,
+  "final_population": 4,
+  "births": 2,
+  "deaths": 6,
+  "mutations": 0,
+  "average_energy": 0.7041516751050949,
+  "average_health": 0.7010103911161423,
+  "average_mass": 2.151560589671135,
+  "average_phi": 1.0146916341036558,
+  "regime_counts": {},
+  "top_event_types": {},
+  "runtime_stats": {}
+}
