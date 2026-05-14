@@ -89,13 +89,20 @@ This experiment does not modify or prove the production Eidos Brain engine. It u
 
 ## Long-run observation workflow (v0.4 harness hardening)
 
-- **Summary Export** provides a compact, analysis-friendly JSON with run metadata (`runId`, `runEpoch`, `totalGenerations`, `resetCount`), compact world stats, telemetry statistics, regime counts/transitions, and event aggregation.
-- **Export Bundle** is still available for deeper debugging, but it can become large over long runs.
+- **Summary Export is the recommended long-run artifact.** It is compact and generated directly from summary methods (not from full bundle payloads).
+- **Export Bundle** is still available for deep debugging but can be very large on long runs.
+- **Autosave is metadata-only by default** every **5,000** generations (`CHECKPOINT_MODE_DEFAULT = "metadata_only"`). It stores run metadata, compact telemetry/world stats, and a warning that full world state is not autosaved.
+- **Manual Save Checkpoint** is explicit: it attempts a guarded local save only for smaller payloads and otherwise downloads a checkpoint JSON file.
 - **Recommended cadence**:
-  - Summary Export every **25,000** generations.
+  - Summary Export every **5,000–10,000** generations.
   - Export World every **25,000–50,000** generations.
-  - Save checkpoints periodically (autosave every 5,000 generations + manual Save Checkpoint button).
-- `runEpoch` increments on detected/recorded resets, `totalGenerations` is monotonic for session-level accounting, and `resetCount` tracks all reset events in-session.
-- Checkpoints are stored in browser localStorage under `eidos-life:last-checkpoint` and `eidos-life:checkpoint-meta`.
+  - Avoid Export Bundle unless specifically needed.
+- HUD run counters:
+  - `gen`: current engine generation.
+  - `total`: monotonic in-session generation counter.
+  - `epoch`: increments per detected or explicit reset/import/seed/scenario reset.
+  - `resets`: total reset events this session.
+- On full page reload, session counters may restart unless reloaded from saved state.
+- `RED` regime indicates collapse risk / sparse-risk pressure and does **not** inherently mean the world is dead.
 
 > This remains a browser-side experiment harness (v0.4), not production Eidos Brain proof.

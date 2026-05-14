@@ -20,6 +20,9 @@ const evolutionTelemetry = new EvolutionTelemetry();
 const predictionGhost = new PredictionGhost(engine.width, engine.height);
 const bridge = new EidosBackendBridge({ enabled: false });
 const settings = { evolutionEnabled: true, mutationPressure: 'adaptive', intervention: 'guardian', speed: 1, scenario: 'evolutionary_garden' };
+const AUTOSAVE_METADATA_INTERVAL = 5000;
+const FULL_CHECKPOINT_MAX_LOCALSTORAGE_BYTES = 1_000_000;
+const CHECKPOINT_MODE_DEFAULT = 'metadata_only';
 let organisms = [];
 let prediction = predictionGhost.compare(engine.alive, 0);
 let selectedOrganism = null;
@@ -119,6 +122,7 @@ function exportJson(filename, data) {
   anchor.click();
   URL.revokeObjectURL(anchor.href);
 }
+function setStatus(message) { ui('statusLine').textContent = message; }
 
 function worldState() {
   return engine.exportState({ scenario: settings.scenario, settings });
@@ -135,7 +139,18 @@ ui('pulseBtn').onclick = () => {
   viz.pulse({ x: 36, y: 36, power: 0.9 });
 };
 ui('exportBtn').onclick = () => exportJson('eidos-life-run-bundle.json', telemetry.exportBundle(worldState()));
-ui('summaryExportBtn').onclick = () => exportJson('eidos-life-summary.json', telemetry.exportSummary(worldState(), runState.exportMeta(), { settings: { ...settings }, finalWorldCompact: buildFinalWorldCompact() }));
+ui('summaryExportBtn').onclick = async () => {
+  setStatus('summary export: building...');
+  await new Promise(resolve => setTimeout(resolve, 0));
+  try {
+    const summary = telemetry.exportSummary(worldState(), runState.exportMeta(), { settings: { ...settings }, finalWorldCompact: buildFinalWorldCompact() });
+    exportJson('eidos-life-summary.json', summary);
+    setStatus('summary export: complete');
+  } catch (error) {
+    console.warn('summary export failed', error);
+    setStatus('summary export: failed, see console');
+  }
+};
 ui('exportWorldBtn').onclick = () => exportJson('eidos-life-world-state.json', worldState());
 ui('importWorldBtn').onclick = () => ui('importWorldFile').click();
 ui('importWorldFile').onchange = async event => {
@@ -179,15 +194,37 @@ function buildFinalWorldCompact() {
     liveAges.push(engine.age[i]); liveEnergy.push(engine.energy[i]); liveStress.push(engine.stress[i]); liveMemory.push(engine.memory[i]);
     q[(y>=engine.height/2)*2 + (x>=engine.width/2)]++;
   }
-  return { generation: engine.generation, totalGenerations: runState.totalGenerations, runEpoch: runState.runEpoch, resetCount: runState.resetCount, width: engine.width, height: engine.height, aliveCount, aliveDensity: aliveCount/total, activeGenomeCount: snap.activeGenomeCount, activeLineageCount: snap.activeLineageCount, genomeRegistrySize: engine.genomeRegistry.size, lineageRegistrySize: engine.lineageRegistry.size, oldestLiveCellAge: liveAges.length?Math.max(...liveAges):0, meanLiveAge: mean(liveAges), meanLiveEnergy: mean(liveEnergy), meanLiveStress: mean(liveStress), meanLiveMemory: mean(liveMemory), quadrantAliveCounts: q };
+  return { generation: engine.generation, totalGenerations: runState.totalGenerations, runEpoch: runState.runEpoch, resetCount: runState.resetCount, width: engine.width, height: engine.height, aliveCount, aliveDensity: aliveCount/total, activeGenomeCount: snap.activeGenomeCount, activeLineageCount: snap.activeLineageCount, genomeRegistrySize: engine.genomeRegistry.genomes.length, lineageRegistrySize: engine.genomeRegistry.lineages.length, nextGenomeId: engine.genomeRegistry.nextGenomeId, nextLineageId: engine.genomeRegistry.nextLineageId, oldestLiveCellAge: liveAges.length?Math.max(...liveAges):0, meanLiveAge: mean(liveAges), meanLiveEnergy: mean(liveEnergy), meanLiveStress: mean(liveStress), meanLiveMemory: mean(liveMemory), quadrantAliveCounts: q };
+}
+
+function saveMetadataCheckpoint(totalGeneration) {
+  const metadata = { checkpointMode: CHECKPOINT_MODE_DEFAULT, warning: 'full checkpoint not autosaved; use Save Checkpoint for manual full snapshot file export', runId: runState.runId, runEpoch: runState.runEpoch, totalGenerations: runState.totalGenerations, generation: engine.generation, resetCount: runState.resetCount, scenario: settings.scenario, settings: { ...settings }, timestamp: new Date().toISOString(), telemetryStats: telemetry.getSummary(), finalWorldCompact: buildFinalWorldCompact() };
+  try {
+    localStorage.setItem('eidos-life:checkpoint-meta', JSON.stringify(metadata));
+    setStatus(`checkpoint: metadata saved at total ${totalGeneration}`);
+  } catch (error) {
+    console.warn('metadata checkpoint failed', error);
+    setStatus('checkpoint: metadata save failed');
+  }
 }
 
 function saveCheckpoint() {
-  const checkpoint = { worldState: worldState(), runMeta: runState.exportMeta(), compact: buildFinalWorldCompact(), savedAt: new Date().toISOString() };
+  const checkpoint = { worldState: worldState(), runMeta: runState.exportMeta(), compact: buildFinalWorldCompact(), savedAt: new Date().toISOString(), mode: 'manual_full_checkpoint' };
+  const serialized = JSON.stringify(checkpoint);
+  if (serialized.length > FULL_CHECKPOINT_MAX_LOCALSTORAGE_BYTES) {
+    exportJson(`eidos-life-checkpoint-${runState.totalGenerations}.json`, checkpoint);
+    setStatus('checkpoint: skipped localStorage full save, downloaded file');
+    return;
+  }
   try {
-    localStorage.setItem('eidos-life:last-checkpoint', JSON.stringify(checkpoint.worldState));
-    localStorage.setItem('eidos-life:checkpoint-meta', JSON.stringify({ runMeta: checkpoint.runMeta, compact: checkpoint.compact, savedAt: checkpoint.savedAt }));
-  } catch (error) { telemetry.record({ generation: engine.generation, regime: monitor.timeline.at(-1)||'CALIBRATING', surprise:0, entropy:0, compressionRatio:0, novelty:0, collapseRisk:0, plasticity:0 }, [], { events:[{ type:'checkpoint_warning', severity:'medium', description:`Checkpoint save failed: ${error.message}` }] }); }
+    localStorage.setItem('eidos-life:last-checkpoint', serialized);
+    setStatus(`checkpoint: full saved locally (${serialized.length} bytes)`);
+  } catch (error) {
+    console.warn('full checkpoint localStorage save failed', error);
+    exportJson(`eidos-life-checkpoint-${runState.totalGenerations}.json`, checkpoint);
+    setStatus('checkpoint: local save failed, downloaded file');
+  }
+  saveMetadataCheckpoint(runState.totalGenerations);
 }
 
 function stepWorld() {
@@ -233,7 +270,7 @@ function stepWorld() {
 }
 
 function updateHud(row) {
-  ui('regimeLabel').textContent = row.regime;
+  ui('regimeLabel').textContent = row.regime === 'RED' && row.aliveRatio > 0 ? 'RED / sparse-risk' : row.regime;
   ui('generation').textContent = `gen ${engine.generation}`;
   ui('runMeta').textContent = `total ${runState.totalGenerations} / epoch ${runState.runEpoch} / resets ${runState.resetCount}`;
   ui('surprise').textContent = row.surprise.toFixed(3);
@@ -253,7 +290,7 @@ function tick() {
     let row = telemetry.rows[telemetry.rows.length - 1] || null;
     for (let i = 0; i < steps; i++) row = stepWorld();
     if (row) {
-      if (engine.generation > 0 && engine.generation % 5000 === 0) saveCheckpoint();
+      if (engine.generation > 0 && engine.generation % AUTOSAVE_METADATA_INTERVAL === 0) saveMetadataCheckpoint(runState.totalGenerations);
       updateHud(row);
       viz.render({ metrics: row, organisms, prediction, localRegimes: engine.localRegimes, genomeRegistry: engine.genomeRegistry, selectedOrganism });
     }

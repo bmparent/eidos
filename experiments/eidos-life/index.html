@@ -23,8 +23,10 @@ canvas{touch-action:none}
 .grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:6px 16px;font-size:12px;color:#dcecff;margin-top:8px}
 .grid span{float:right;color:#f4fbff;font-variant-numeric:tabular-nums}
 .controls{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:6px;margin-top:10px}
-.controls.secondary{grid-template-columns:96px 1fr 28px}
+.controls.exports{grid-template-columns:1fr 1fr}
 .controls.world{grid-template-columns:1fr 1fr 1fr}
+.controls.scenario{grid-template-columns:1fr}
+.statusLine{margin-top:8px;font-size:11px;color:#9fc3dd;min-height:14px}
 .toggles{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:6px 12px;margin-top:8px;font-size:12px;color:#d7e7f8}
 .toggles label{display:flex;align-items:center;gap:6px;min-width:0}
 .toggles input{accent-color:var(--cyan);width:13px;height:13px;margin:0}
@@ -73,11 +75,19 @@ canvas{touch-action:none}
     <button id="seedBtn">Seed</button>
     <button id="pulseBtn">Eidos Pulse</button>
   </div>
-  <div class="controls secondary">
+  <div class="controls exports">
     <button id="exportBtn">Export Bundle</button>
-    <select id="scenarioSelect" aria-label="Scenario"></select>
     <button id="summaryExportBtn">Summary Export</button>
   </div>
+  <div class="controls world">
+    <button id="exportWorldBtn">Export World</button>
+    <button id="importWorldBtn">Import</button>
+    <button id="saveCheckpointBtn">Save Checkpoint</button>
+  </div>
+  <div class="controls scenario">
+    <select id="scenarioSelect" aria-label="Scenario"></select>
+  </div>
+  <div id="statusLine" class="statusLine">status: ready</div>
   <div class="controls world">
     <select id="mutationSelect" aria-label="Mutation pressure">
       <option value="adaptive">adaptive mut.</option>
@@ -115,9 +125,6 @@ canvas{touch-action:none}
         <option value="newest">newest</option>
         <option value="novel">most novel</option>
       </select>
-      <button id="exportWorldBtn">Export World</button>
-      <button id="importWorldBtn">Import</button>
-      <button id="saveCheckpointBtn">Save Checkpoint</button>
       <input id="importWorldFile" type="file" accept="application/json" hidden>
     </div>
     <div class="inspectGrid" id="inspectPanel"></div>
