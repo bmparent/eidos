@@ -92,12 +92,12 @@ test('organism tracker persists identity and detects split/death', () => {
   engine.setAliveCell(engine.idx(4, 2), 1);
   for (let i=0;i<3;i++) tracker.update(engine.snapshot(), { regime: 'GREEN' }, engine.genomeRegistry);
   const splitSummary = tracker.getEventSummary(100);
-  assert.ok((splitSummary.candidateEventTypeCounts.organism_split || 0) > 0);
+  assert.ok((splitSummary.candidateEventCounts.organism_split || 0) > 0);
 
   engine.clear();
   for (let i=0;i<3;i++) tracker.update(engine.snapshot(), { regime: 'GREEN' }, engine.genomeRegistry);
   const deathSummary = tracker.getEventSummary(100);
-  assert.ok((deathSummary.candidateEventTypeCounts.organism_death || 0) > 0);
+  assert.ok((deathSummary.candidateEventCounts.organism_death || 0) > 0);
 });
 
 test('prediction ghost reports prediction error and spark positions', () => {

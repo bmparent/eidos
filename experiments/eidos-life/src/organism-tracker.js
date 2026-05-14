@@ -1,15 +1,21 @@
 const clamp01 = value => Math.max(0, Math.min(1, value));
 
 export class OrganismTracker {
-  constructor({ maxHistory = 48, splitConfirmFrames = 3, mergeConfirmFrames = 3, deathConfirmFrames = 3, eventCooldownFrames = 10 } = {}) {
+  constructor({ maxHistory = 48, splitConfirmFrames = 3, mergeConfirmFrames = 3, deathConfirmFrames = 3, birthConfirmFrames = 2, minConfirmedOrganismMass = 2, eventCooldownFrames = 25, birthCooldownFrames = 10, splitCooldownFrames = null, mergeCooldownFrames = null, deathCooldownFrames = null } = {}) {
     this.maxHistory = maxHistory;
     this.nextId = 1;
     this.active = new Map();
     this.dead = [];
     this.lastEvents = [];
     this.lineageGraph = new Map();
-    this.splitConfirmFrames = splitConfirmFrames; this.mergeConfirmFrames = mergeConfirmFrames; this.deathConfirmFrames = deathConfirmFrames; this.eventCooldownFrames = eventCooldownFrames;
-    this.candidates = new Map(); this.cooldowns = new Map(); this.candidateEventTypeCounts = {}; this.confirmedEventTypeCounts = {}; this.recentCandidateEvents=[];
+    this.splitConfirmFrames = splitConfirmFrames; this.mergeConfirmFrames = mergeConfirmFrames; this.deathConfirmFrames = deathConfirmFrames; this.birthConfirmFrames = birthConfirmFrames; this.minConfirmedOrganismMass = minConfirmedOrganismMass;
+    this.eventCooldownFrames = eventCooldownFrames;
+    this.birthCooldownFrames = birthCooldownFrames;
+    this.splitCooldownFrames = splitCooldownFrames ?? eventCooldownFrames;
+    this.mergeCooldownFrames = mergeCooldownFrames ?? eventCooldownFrames;
+    this.deathCooldownFrames = deathCooldownFrames ?? eventCooldownFrames;
+    this.candidates = new Map(); this.cooldowns = new Map(); this.candidateEventTypeCounts = {}; this.confirmedEventTypeCounts = {}; this.rawEventTypeCounts = {}; this.eventSuppressionCounts = {}; this.recentCandidateEvents=[]; this.recentRawEvents=[]; this.recentConfirmedEvents=[];
+    this.maxRecentRawEvents = 200; this.maxRecentConfirmedEvents = 200;
   }
 
   reset() {
@@ -17,7 +23,7 @@ export class OrganismTracker {
     this.active.clear();
     this.dead = [];
     this.lastEvents = [];
-    this.lineageGraph.clear(); this.candidates.clear(); this.cooldowns.clear();
+    this.lineageGraph.clear(); this.candidates.clear(); this.cooldowns.clear(); this.candidateEventTypeCounts = {}; this.confirmedEventTypeCounts = {}; this.rawEventTypeCounts = {}; this.eventSuppressionCounts = {}; this.recentCandidateEvents=[]; this.recentRawEvents=[]; this.recentConfirmedEvents=[];
   }
 
   update(snapshot, metrics = {}, genomeRegistry = null) {
@@ -84,16 +90,39 @@ export class OrganismTracker {
 
     this.active = nextActive;
     const confirmed=[];
+    const seenKeys = new Set(events.map(e => `${e.type}:${e.organismId}`));
+    for (const [key, info] of this.candidates) {
+      if (!seenKeys.has(key)) {
+        info.missFrames = (info.missFrames || 0) + 1;
+        if (info.missFrames > 1) this.candidates.delete(key);
+      }
+    }
     for (const e of events) {
+      this.rawEventTypeCounts[e.type] = (this.rawEventTypeCounts[e.type] || 0) + 1;
+      this.recentRawEvents.push(e);
+      if (this.recentRawEvents.length > this.maxRecentRawEvents) this.recentRawEvents.shift();
       const key = `${e.type}:${e.organismId}`;
-      const prev = this.candidates.get(key) || { frames: 0 };
+      const prev = this.candidates.get(key) || { frames: 0, missFrames: 0 };
       prev.frames += 1;
+      prev.missFrames = 0;
       this.candidates.set(key, prev);
       this.candidateEventTypeCounts[e.type] = (this.candidateEventTypeCounts[e.type] || 0) + 1;
       this.recentCandidateEvents.push(e); if (this.recentCandidateEvents.length>100) this.recentCandidateEvents.shift();
-      const need = e.type==='organism_split'?this.splitConfirmFrames:e.type==='organism_merge'?this.mergeConfirmFrames:e.type==='organism_death'?this.deathConfirmFrames:1;
+      const need = e.type==='organism_split'?this.splitConfirmFrames:e.type==='organism_merge'?this.mergeConfirmFrames:e.type==='organism_death'?this.deathConfirmFrames:e.type==='organism_birth'?this.birthConfirmFrames:1;
+      if (e.type === 'organism_birth' && e.mass < this.minConfirmedOrganismMass && prev.frames < this.birthConfirmFrames) {
+        this.eventSuppressionCounts.persistence_rejected = (this.eventSuppressionCounts.persistence_rejected || 0) + 1;
+        continue;
+      }
       const cooldownUntil = this.cooldowns.get(key) || -1;
-      if (prev.frames >= need && snapshot.generation >= cooldownUntil) { confirmed.push(e); this.confirmedEventTypeCounts[e.type]=(this.confirmedEventTypeCounts[e.type]||0)+1; this.cooldowns.set(key, snapshot.generation + this.eventCooldownFrames); }
+      if (prev.frames < need) {
+        this.eventSuppressionCounts.persistence_rejected = (this.eventSuppressionCounts.persistence_rejected || 0) + 1;
+        continue;
+      }
+      if (snapshot.generation < cooldownUntil) {
+        this.eventSuppressionCounts.cooldown_suppressed = (this.eventSuppressionCounts.cooldown_suppressed || 0) + 1;
+        continue;
+      }
+      confirmed.push(e); this.confirmedEventTypeCounts[e.type]=(this.confirmedEventTypeCounts[e.type]||0)+1; this.cooldowns.set(key, snapshot.generation + this.cooldownForType(e.type)); this.recentConfirmedEvents.push(e); if (this.recentConfirmedEvents.length > this.maxRecentConfirmedEvents) this.recentConfirmedEvents.shift();
     }
     this.lastEvents = confirmed;
     this.updateLineageGraph();
@@ -238,8 +267,17 @@ export class OrganismTracker {
   getEventSummary(totalGenerations = 0) {
     const per1k = {};
     const denom = Math.max(1, totalGenerations / 1000);
-    for (const [k,v] of Object.entries(this.confirmedEventTypeCounts)) per1k[`${k}_per_1k`] = v / denom;
-    return { confirmedEventTypeCounts: this.confirmedEventTypeCounts, candidateEventTypeCounts: this.candidateEventTypeCounts, eventRatesPer1kGenerations: per1k, recentConfirmedEvents: this.lastEvents.slice(-50), recentCandidateEvents: this.recentCandidateEvents.slice(-50) };
+    for (const [k,v] of Object.entries(this.rawEventTypeCounts)) per1k[`raw_${k}_per_1k`] = v / denom;
+    for (const [k,v] of Object.entries(this.confirmedEventTypeCounts)) per1k[`confirmed_${k}_per_1k`] = v / denom;
+    return { rawEventCounts: this.rawEventTypeCounts, confirmedEventCounts: this.confirmedEventTypeCounts, candidateEventCounts: this.candidateEventTypeCounts, eventSuppressionCounts: this.eventSuppressionCounts, eventRatesPer1kGenerations: per1k, recentConfirmedEvents: this.recentConfirmedEvents.slice(-50), recentRawEvents: this.recentRawEvents.slice(-50), recentCandidateEvents: this.recentCandidateEvents.slice(-50) };
+  }
+
+  cooldownForType(type) {
+    if (type === 'organism_birth') return this.birthCooldownFrames;
+    if (type === 'organism_split') return this.splitCooldownFrames;
+    if (type === 'organism_merge') return this.mergeCooldownFrames;
+    if (type === 'organism_death') return this.deathCooldownFrames;
+    return this.eventCooldownFrames;
   }
 
   exportState() {

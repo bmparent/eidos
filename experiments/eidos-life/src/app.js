@@ -200,18 +200,37 @@ for (const id of ['toggleSurprise', 'toggleMemory', 'toggleEnergy', 'toggleOutli
 
 function buildFinalWorldCompact() {
   const snap = engine.snapshot();
-  const aliveCount = snap.aliveCount;
   const total = engine.width * engine.height;
   const mean = (arr) => arr.length ? arr.reduce((a,b)=>a+b,0)/arr.length : 0;
   const liveAges=[]; const liveEnergy=[]; const liveStress=[]; const liveMemory=[];
   const q=[0,0,0,0];
+  const activeGenomes = new Set();
+  const activeLineages = new Set();
+  const lineageCounts = new Map();
+  const genomeCounts = new Map();
   for (let y=0;y<engine.height;y++) for (let x=0;x<engine.width;x++) {
     const i=y*engine.width+x; if (!engine.alive[i]) continue;
     liveAges.push(engine.age[i]); liveEnergy.push(engine.energy[i]); liveStress.push(engine.stress[i]); liveMemory.push(engine.memory[i]);
+    if (engine.genomeId[i]) { activeGenomes.add(engine.genomeId[i]); genomeCounts.set(engine.genomeId[i], (genomeCounts.get(engine.genomeId[i]) || 0) + 1); }
+    if (engine.lineageId[i]) { activeLineages.add(engine.lineageId[i]); lineageCounts.set(engine.lineageId[i], (lineageCounts.get(engine.lineageId[i]) || 0) + 1); }
     q[(y>=engine.height/2)*2 + (x>=engine.width/2)]++;
   }
-  return { generation: engine.generation, currentGeneration: engine.generation, totalGenerations: runState.totalGenerations, runEpoch: runState.runEpoch, resetCount: runState.resetCount, resetEvents: runState.resetEvents.slice(-20), highestObservedGeneration: runState.highestObservedGeneration, pageLoadId: runState.pageLoadId, continuityStatus: runState.continuityStatus, width: engine.width, height: engine.height, aliveCount, aliveDensity: aliveCount/total, activeGenomeCount: snap.activeGenomeCount, activeLineageCount: snap.activeLineageCount, genomeRegistrySize: engine.genomeRegistry.genomes.length, lineageRegistrySize: engine.genomeRegistry.lineages.length, nextGenomeId: engine.genomeRegistry.nextGenomeId, nextLineageId: engine.genomeRegistry.nextLineageId, oldestLiveCellAge: liveAges.length?Math.max(...liveAges):0, meanLiveAge: mean(liveAges), meanLiveEnergy: mean(liveEnergy), meanLiveStress: mean(liveStress), meanLiveMemory: mean(liveMemory), quadrantAliveCounts: q };
+  const aliveCount = liveAges.length;
+  const sizes = componentSizes(engine.snapshot());
+  return { generation: engine.generation, currentGeneration: engine.generation, totalGenerations: runState.totalGenerations, runEpoch: runState.runEpoch, resetCount: runState.resetCount, resetEvents: runState.resetEvents.slice(-20), highestObservedGeneration: runState.highestObservedGeneration, pageLoadId: runState.pageLoadId, continuityStatus: runState.continuityStatus, width: engine.width, height: engine.height, cellCount: total, aliveCount, aliveDensity: total ? aliveCount/total : 0, activeGenomeCount: activeGenomes.size, activeLineageCount: activeLineages.size, genomeRegistrySize: engine.genomeRegistry.genomes.length, lineageRegistrySize: engine.genomeRegistry.lineages.length, nextGenomeId: engine.genomeRegistry.nextGenomeId, nextLineageId: engine.genomeRegistry.nextLineageId, oldestLiveCellAge: liveAges.length?Math.max(...liveAges):0, meanLiveAge: mean(liveAges), meanLiveEnergy: mean(liveEnergy), meanLiveStress: mean(liveStress), meanLiveMemory: mean(liveMemory), quadrantAliveCounts: q, ecology_compact: buildEcologyCompact(sizes, lineageCounts, genomeCounts, liveAges, liveEnergy, liveStress, liveMemory, q) };
 }
+
+function buildEcologyCompact(sizes, lineageCounts, genomeCounts, liveAges, liveEnergy, liveStress, liveMemory, quadrantAliveCounts) {
+  const sorted = [...sizes].sort((a,b)=>a-b);
+  const q = p => sorted.length ? sorted[Math.min(sorted.length - 1, Math.floor((sorted.length - 1) * p))] : 0;
+  const mean = sorted.length ? sorted.reduce((a,b)=>a+b,0)/sorted.length : 0;
+  const top = (m) => [...m.entries()].sort((a,b)=>b[1]-a[1]).slice(0,8).map(([id,liveCells])=>({id,liveCells}));
+  const stats = arr => ({ min: arr.length ? Math.min(...arr) : 0, mean: arr.length ? arr.reduce((a,b)=>a+b,0)/arr.length : 0, p95: arr.length ? [...arr].sort((a,b)=>a-b)[Math.floor((arr.length-1)*0.95)] : 0, max: arr.length ? Math.max(...arr) : 0 });
+  return { connectedComponentCount: sorted.length, largestComponentSize: sorted.at(-1) || 0, meanComponentSize: mean, medianComponentSize: q(0.5), componentSizeP95: q(0.95), componentSizeMax: sorted.at(-1) || 0, quadrantAliveCounts, topLineagesByLiveCells: top(lineageCounts), topGenomesByLiveCells: top(genomeCounts), liveCellAgeStats: stats(liveAges), liveCellEnergyStats: stats(liveEnergy), liveCellStressStats: stats(liveStress), liveCellMemoryStats: stats(liveMemory) };
+}
+
+function componentSizes(snapshot) { return tracker.extractComponents(snapshot).map(c => c.mass); }
+
 
 function saveMetadataCheckpoint(totalGeneration) {
   const metadata = { checkpointMode: CHECKPOINT_MODE_DEFAULT, warning: 'full checkpoint not autosaved; use Save Checkpoint for manual full snapshot file export', runId: runState.runId, runEpoch: runState.runEpoch, totalGenerations: runState.totalGenerations, generation: engine.generation, resetCount: runState.resetCount, scenario: settings.scenario, settings: { ...settings }, timestamp: new Date().toISOString(), telemetryStats: telemetry.getSummary(), finalWorldCompact: buildFinalWorldCompact() };
@@ -278,9 +297,11 @@ function stepWorld() {
     organismCount: organisms.length,
     largestOrganismMass: organisms.reduce((max, organism) => Math.max(max, organism.mass), 0),
   };
+  const organismEventSummary = tracker.getEventSummary(runState.totalGenerations);
   telemetry.record(row, organisms, {
     events: evolution.events,
     evolution: evolutionTelemetry.exportData({ engine, organismTracker: tracker }),
+    organismEventSummary,
   });
   bridge.sendTelemetry(row);
   return row;

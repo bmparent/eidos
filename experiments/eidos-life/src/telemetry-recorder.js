@@ -21,7 +21,9 @@ export class TelemetryRecorder {
     this.regimeTransitions = [];
     this.eventTypeCounts = {};
     this.severityCounts = {};
-    this.repeatedEventCounts = {};
+    this.repeatedRawEventCounts = {};
+    this.repeatedConfirmedEventCounts = {};
+    this.organismEventSummary = null;
     this.metricSamples = {};
   }
 
@@ -43,6 +45,7 @@ export class TelemetryRecorder {
     }
     this.#recordEvents([...autoEvents, ...(extra.events || [])]);
     if (extra.evolution) this.evolution = extra.evolution;
+    if (extra.organismEventSummary) this.organismEventSummary = extra.organismEventSummary;
     this.prevRegime = row.regime;
   }
 
@@ -80,7 +83,8 @@ export class TelemetryRecorder {
       this.eventTypeCounts[type] = (this.eventTypeCounts[type] || 0) + 1;
       this.severityCounts[severity] = (this.severityCounts[severity] || 0) + 1;
       const sig = `${type}|L${event.lineageId ?? 'na'}|G${event.genomeId ?? 'na'}`;
-      this.repeatedEventCounts[sig] = (this.repeatedEventCounts[sig] || 0) + 1;
+      this.repeatedRawEventCounts[sig] = (this.repeatedRawEventCounts[sig] || 0) + 1;
+      this.repeatedConfirmedEventCounts[sig] = (this.repeatedConfirmedEventCounts[sig] || 0) + 1;
     }
     if (this.events.length > this.maxEvents) this.events.splice(0, this.events.length - this.maxEvents);
   }
@@ -98,7 +102,8 @@ export class TelemetryRecorder {
   getSummary() {
     const metrics = ['surprise','entropy','compressionRatio','plasticity','aliveRatio','organismCount','largestOrganismMass','livingLineages','activeGenomes','oldestOrganismAge','localRegimeDiversity','predictionError','births','deaths','mutations','splitCount','mergeCount','deathCount'];
     const telemetryStats = Object.fromEntries(metrics.map((m) => [m, summarize(this.metricSamples[m] || [])]));
-    const sortedPatterns = Object.entries(this.repeatedEventCounts).sort((a,b)=>b[1]-a[1]).slice(0,15).map(([signature,count])=>({signature,count}));
+    const sortedRawPatterns = Object.entries(this.repeatedRawEventCounts).sort((a,b)=>b[1]-a[1]).slice(0,15).map(([signature,count])=>({signature,count}));
+    const sortedConfirmedPatterns = Object.entries(this.repeatedConfirmedEventCounts).sort((a,b)=>b[1]-a[1]).slice(0,15).map(([signature,count])=>({signature,count}));
     return {
       totalRowsRecorded: this.totalRowsRecorded,
       retainedRows: this.rows.length,
@@ -111,21 +116,36 @@ export class TelemetryRecorder {
         recent: this.regimeTransitions.slice(-20),
       },
       eventSummary: {
-        eventTypeCounts: this.eventTypeCounts,
-        severityCounts: this.severityCounts,
-        recentEvents: this.recentEvents.slice(-100),
-        topEventPatterns: sortedPatterns,
+        rawEventCounts: this.organismEventSummary?.rawEventCounts || this.eventTypeCounts,
+        confirmedEventCounts: this.organismEventSummary?.confirmedEventCounts || this.eventTypeCounts,
+        candidateEventCounts: this.organismEventSummary?.candidateEventCounts || {},
+        eventSuppressionCounts: this.organismEventSummary?.eventSuppressionCounts || {},
+        eventRatesPer1kGenerations: this.organismEventSummary?.eventRatesPer1kGenerations || {},
+        topRawEventPatterns: sortedRawPatterns,
+        topConfirmedEventPatterns: sortedConfirmedPatterns,
+        recentRawEvents: this.organismEventSummary?.recentRawEvents || this.recentEvents.slice(-100),
+        recentConfirmedEvents: this.organismEventSummary?.recentConfirmedEvents || this.recentEvents.slice(-100),
       },
       rawRegimeCounts: this.rawRegimeCounts,
       confirmedRegimeCounts: this.confirmedRegimeCounts,
       redFlickerCount: this.redFlickerCount,
+      regimeSummary: {
+        rawRegimeCounts: this.rawRegimeCounts,
+        confirmedRegimeCounts: this.confirmedRegimeCounts,
+        candidateRedCount: this.rawRegimeCounts.RED || 0,
+        redFlickerCount: this.redFlickerCount,
+        longestConfirmedRedStreak: longestStreak(this.rows, r => (r.confirmedRegime || r.regime) === 'RED'),
+        longestGreenStreak: longestStreak(this.rows, r => (r.confirmedRegime || r.regime) === 'GREEN'),
+        rawRegimeTransitions: this.regimeTransitions.slice(-100),
+        confirmedRegimeTransitions: this.regimeTransitions.filter(t => t.to === 'RED' || t.from === 'RED').slice(-100),
+      },
     };
   }
 
   exportSummary(worldState = null, runMeta = {}, extras = {}) {
     const summary = this.getSummary();
     return {
-      summary_export_version: '1.1',
+      summary_export_version: '1.2',
       exported_at: new Date().toISOString(),
       run_meta: runMeta,
       manifest: {
@@ -146,6 +166,7 @@ export class TelemetryRecorder {
       confirmed_regime_counts: summary.confirmedRegimeCounts,
       red_flicker_count: summary.redFlickerCount,
       regime_transitions_compact: summary.regimeTransitions,
+      regime_summary: summary.regimeSummary,
       event_summary: summary.eventSummary,
       top_events_recent: this.events.slice(-100),
       top_genomes: (this.evolution.genomes || []).slice(0, 30),
@@ -169,3 +190,5 @@ export class TelemetryRecorder {
 function summarize(values) { if (!values.length) return { count:0,min:0,mean:0,p50:0,p90:0,p95:0,max:0 }; const s=[...values].sort((a,b)=>a-b); const mean=values.reduce((a,b)=>a+b,0)/values.length; const q=(p)=>s[Math.min(s.length-1,Math.floor((s.length-1)*p))]; return { count:values.length,min:s[0],mean,p50:q(0.5),p90:q(0.9),p95:q(0.95),max:s[s.length-1] }; }
 function pick(r){return{surprise:r.surprise,entropy:r.entropy,compressionRatio:r.compressionRatio,novelty:r.novelty,predictionError:r.predictionError};}
 function last(items){return items[items.length-1]||null;}
+
+function longestStreak(items, predicate) { let best = 0, cur = 0; for (const item of items) { if (predicate(item)) { cur += 1; if (cur > best) best = cur; } else cur = 0; } return best; }
