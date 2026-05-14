@@ -8,7 +8,7 @@ export const RULE_PRESETS = {
 };
 
 export class EidosMonitor {
-  constructor(){ this.prevAlive=null; this.prevEntropy=0; this.regime='CALIBRATING'; this.timeline=[]; }
+  constructor(){ this.prevAlive=null; this.prevEntropy=0; this.regime='CALIBRATING'; this.timeline=[]; this.redStreak=0; }
   analyze({alive,age,energy,stress,novelty,generation}){
     const size=alive.length; let live=0, ageSum=0, en=0, st=0, flips=0;
     for(let i=0;i<size;i++){ live+=alive[i]; ageSum+=age[i]; en+=energy[i]; st+=stress[i]; if(this.prevAlive) flips += alive[i]===this.prevAlive[i]?0:1; }
@@ -18,16 +18,21 @@ export class EidosMonitor {
     const compressionRatio = 1 + (1-aliveRatio) * 0.9 + (1-entropy) * 0.5;
     const plasticity = Math.max(0,Math.min(1,surprise + Math.abs(entropy-this.prevEntropy)*0.8 + novelty*0.4));
     const collapseRisk = aliveRatio<0.04 || aliveRatio>0.7 ? 1 : 0;
-    let regime='GREEN';
-    if(generation<20) regime='CALIBRATING';
-    else if(collapseRisk) regime='RED';
-    else if(novelty>0.7 && surprise>0.12) regime='VIOLET';
-    else if(surprise>0.11) regime='AMBER';
-    else if(entropy>0.92) regime='BLUE';
-    this.regime=regime; this.timeline.push(regime); if(this.timeline.length>256) this.timeline.shift();
-    const metrics={ generation, regime, surprise, entropy, compressionRatio, novelty, collapseRisk, plasticity, aliveRatio,
+    let rawRegime='GREEN';
+    if(generation<20) rawRegime='CALIBRATING';
+    else if(collapseRisk) rawRegime='RED';
+    else if(novelty>0.7 && surprise>0.12) rawRegime='VIOLET';
+    else if(surprise>0.11) rawRegime='AMBER';
+    else if(entropy>0.92) rawRegime='BLUE';
+
+    this.redStreak = rawRegime === 'RED' ? this.redStreak + 1 : 0;
+    const confirmedRegime = this.redStreak >= 3 ? 'RED' : (rawRegime === 'RED' ? 'AMBER' : rawRegime);
+    const redFlicker = rawRegime === 'RED' && this.redStreak < 3 ? 1 : 0;
+
+    this.regime=confirmedRegime; this.timeline.push(confirmedRegime); if(this.timeline.length>256) this.timeline.shift();
+    const metrics={ generation, regime: confirmedRegime, rawRegime, confirmedRegime, redFlicker, surprise, entropy, compressionRatio, novelty, collapseRisk, plasticity, aliveRatio,
       meanAge: ageSum/size, meanEnergy: en/size, meanStress: st/size };
     this.prevAlive = alive.slice(); this.prevEntropy = entropy;
-    return { metrics, rulePreset: RULE_PRESETS[regime] };
+    return { metrics, rulePreset: RULE_PRESETS[rawRegime] };
   }
 }

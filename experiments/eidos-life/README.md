@@ -106,3 +106,20 @@ This experiment does not modify or prove the production Eidos Brain engine. It u
 - `RED` regime indicates collapse risk / sparse-risk pressure and does **not** inherently mean the world is dead.
 
 > This remains a browser-side experiment harness (v0.4), not production Eidos Brain proof.
+
+## Run continuity and reset detection
+
+- `gen` is the current engine generation in memory.
+- `totalGenerations` is monotonic across detected restarts in durable metadata.
+- `highestObservedGeneration` is the maximum seen generation persisted to localStorage.
+- `runEpoch` increments for any detected reset/restart/import/seed/new-run event.
+- `resetCount` is the total count of reset events.
+- `pageLoadId` changes on every page load to prove continuity/restoration behavior.
+
+Durable metadata is stored in localStorage (`eidos-life:active-run-meta`, heartbeat, and reset history). On startup, if prior highest generation is materially above current generation, the app records an `app_restart_generation_drop` reset and shows a visible warning.
+
+Autosave remains **metadata-only by default**. Use **Save Checkpoint** for guarded full checkpoints.
+
+RED display is hysteresis-smoothed: single-frame RED is treated as candidate/flicker; confirmed RED requires persistence. Organism split/merge/death events also use confirmation frames plus cooldown to reduce topology jitter spam.
+
+Recommended workflow: run continuously, verify continuity status is active/restored, export Summary every 5k/10k, export World every 25k/50k, and if RESET/RESTART DETECTED appears export Summary immediately and note epoch.
