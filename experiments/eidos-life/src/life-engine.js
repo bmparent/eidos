@@ -18,7 +18,7 @@ export class LifeEngine {
   }
   idx(x,y){ return ((y + this.height) % this.height) * this.width + ((x + this.width) % this.width); }
   countNeighbors(x,y){ let n=0; for(let dy=-1;dy<=1;dy++) for(let dx=-1;dx<=1;dx++){ if(!dx&&!dy) continue; n += this.alive[this.idx(x+dx,y+dy)]; } return n; }
-  seed(points){ this.clear(); for (const [x,y,s=1] of points){ const i=this.idx(x,y); this.alive[i]=1; this.energy[i]=Math.max(this.energy[i],0.4); this.species[i]=s; } }
+  seed(points){ for (const [x,y,s=1] of points){ const i=this.idx(x,y); this.alive[i]=1; this.energy[i]=Math.max(this.energy[i],0.4); this.species[i]=s; } }
   clear(){ this.alive.fill(0); this.previousAlive.fill(0); this.nextAlive.fill(0); this.age.fill(0); this.memory.fill(0); this.stress.fill(0); this.generation=0; }
   randomize(prob=0.22){ for(let i=0;i<this.size;i++){ this.alive[i]=Math.random()<prob?1:0; this.species[i]=(Math.random()*4)|0; this.energy[i]=0.4+Math.random()*0.6; } }
   pulseAnomaly(x,y,r=4,power=0.6){ for(let dy=-r;dy<=r;dy++) for(let dx=-r;dx<=r;dx++){ const d=Math.hypot(dx,dy); if(d<=r){ const i=this.idx(x+dx,y+dy); this.anomalyField[i]+=power*(1-d/r); } } }
