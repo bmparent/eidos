@@ -123,3 +123,31 @@ Autosave remains **metadata-only by default**. Use **Save Checkpoint** for guard
 RED display is hysteresis-smoothed: single-frame RED is treated as candidate/flicker; confirmed RED requires persistence. Organism split/merge/death events also use confirmation frames plus cooldown to reduce topology jitter spam.
 
 Recommended workflow: run continuously, verify continuity status is active/restored, export Summary every 5k/10k, export World every 25k/50k, and if RESET/RESTART DETECTED appears export Summary immediately and note epoch.
+
+## Long-run proof export guidance
+
+- **Summary Export** is the preferred proof artifact for long runs.
+- **Export World** is the reloadable checkpoint artifact.
+- **Export Bundle** preserves raw/heavy telemetry and should be used sparingly for routine long runs.
+
+`final_world_compact` now includes `aliveDensity` (`aliveCount / cellCount`), `activeGenomeCount`, and `activeLineageCount` from currently live cells.
+
+Event accounting is split into:
+- `rawEventCounts` (every detected low-level event),
+- `candidateEventCounts` (pending persistence),
+- `confirmedEventCounts` (passed hysteresis + cooldown),
+- `eventSuppressionCounts` (filtered by persistence/cooldown).
+
+Organism event hysteresis/cooldown defaults:
+- split/merge/death confirmation: 3 frames,
+- birth confirmation: 2 frames with minimum mass guard,
+- cooldown: split/merge/death 25 frames, birth 10 frames.
+
+Regime export distinguishes raw RED flicker versus confirmed RED via `regime_summary` fields (`rawRegimeCounts`, `confirmedRegimeCounts`, `candidateRedCount`, `redFlickerCount`).
+
+Recommended export schedule:
+- 5k: Summary
+- 10k: Summary
+- 25k: Summary + World
+- 50k: Summary + World
+- 100k: Summary + World
