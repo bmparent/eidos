@@ -16,6 +16,7 @@ const memory = new PatternMemory();
 const tracker = new OrganismTracker();
 const telemetry = new TelemetryRecorder();
 const runState = new RunState();
+const settingsHash = () => JSON.stringify({ scenario: settings.scenario, mutationPressure: settings.mutationPressure, intervention: settings.intervention, evolutionEnabled: settings.evolutionEnabled });
 const evolutionTelemetry = new EvolutionTelemetry();
 const predictionGhost = new PredictionGhost(engine.width, engine.height);
 const bridge = new EidosBackendBridge({ enabled: false });
@@ -30,6 +31,7 @@ let paused = false;
 let frameCount = 0;
 
 applyScenario(engine, settings.scenario);
+runState.initialize({ currentGeneration: engine.generation, scenario: settings.scenario, settingsHash: settingsHash() });
 const viz = new LifeVisualization({ container: document.body, engine });
 
 const ui = id => document.getElementById(id);
@@ -66,6 +68,7 @@ function resetScenario(name = scenarioSel.value, reason = 'scenario_change') {
   selectedOrganism = null;
   prediction = predictionGhost.compare(engine.alive, engine.generation);
   runState.updateGeneration(engine.generation, { scenario: settings.scenario, settings: { ...settings } });
+  if (engine.generation % 120 === 0) runState.heartbeat({ scenario: settings.scenario, settingsHash: settingsHash(), visibilityState: document.visibilityState });
   viz.reset();
 }
 
@@ -133,6 +136,16 @@ ui('pauseBtn').onclick = () => {
   ui('pauseBtn').textContent = paused ? 'Resume' : 'Pause';
 };
 ui('seedBtn').onclick = () => resetScenario(scenarioSel.value, 'seed');
+ui('pulseBtn').onclick = () => {
+  engine.pulseAnomaly(36, 36, 8, 0.8);
+  viz.pulse({ x: 36, y: 36, power: 0.9 });
+};
+ui('newRunBtn').onclick = () => {
+  if (!confirm('Clear durable run state and start a new run?')) return;
+  runState.recordReset('new_run', runState.lastObservedGeneration, 0, { scenario: settings.scenario, settings: { ...settings } });
+  runState.clearDurableState();
+  window.location.reload();
+};
 scenarioSel.onchange = () => resetScenario(scenarioSel.value, 'scenario_change');
 ui('pulseBtn').onclick = () => {
   engine.pulseAnomaly(36, 36, 8, 0.8);
@@ -143,6 +156,7 @@ ui('summaryExportBtn').onclick = async () => {
   setStatus('summary export: building...');
   await new Promise(resolve => setTimeout(resolve, 0));
   try {
+    runState.markExported();
     const summary = telemetry.exportSummary(worldState(), runState.exportMeta(), { settings: { ...settings }, finalWorldCompact: buildFinalWorldCompact() });
     exportJson('eidos-life-summary.json', summary);
     setStatus('summary export: complete');
@@ -151,13 +165,15 @@ ui('summaryExportBtn').onclick = async () => {
     setStatus('summary export: failed, see console');
   }
 };
-ui('exportWorldBtn').onclick = () => exportJson('eidos-life-world-state.json', worldState());
+ui('exportWorldBtn').onclick = () => exportJson('eidos-life-world-state.json', { ...worldState(), runMeta: runState.exportMeta() });
 ui('importWorldBtn').onclick = () => ui('importWorldFile').click();
 ui('importWorldFile').onchange = async event => {
   const [file] = event.target.files;
   if (!file) return;
   const state = JSON.parse(await file.text());
-  runState.recordReset('import_world', runState.lastObservedGeneration, state.generation || 0, { scenario: state.scenario || settings.scenario, settings: { ...settings } });
+  const importedGeneration = state.generation || 0;
+  const resetReason = importedGeneration < runState.highestObservedGeneration ? 'import_world_lower_generation' : 'import_world';
+  runState.recordReset(resetReason, runState.lastObservedGeneration, importedGeneration, { scenario: state.scenario || settings.scenario, settings: { ...settings } });
   engine.importState(state);
   settings.scenario = state.scenario || settings.scenario;
   Object.assign(settings, state.settings || {});
@@ -194,7 +210,7 @@ function buildFinalWorldCompact() {
     liveAges.push(engine.age[i]); liveEnergy.push(engine.energy[i]); liveStress.push(engine.stress[i]); liveMemory.push(engine.memory[i]);
     q[(y>=engine.height/2)*2 + (x>=engine.width/2)]++;
   }
-  return { generation: engine.generation, totalGenerations: runState.totalGenerations, runEpoch: runState.runEpoch, resetCount: runState.resetCount, width: engine.width, height: engine.height, aliveCount, aliveDensity: aliveCount/total, activeGenomeCount: snap.activeGenomeCount, activeLineageCount: snap.activeLineageCount, genomeRegistrySize: engine.genomeRegistry.genomes.length, lineageRegistrySize: engine.genomeRegistry.lineages.length, nextGenomeId: engine.genomeRegistry.nextGenomeId, nextLineageId: engine.genomeRegistry.nextLineageId, oldestLiveCellAge: liveAges.length?Math.max(...liveAges):0, meanLiveAge: mean(liveAges), meanLiveEnergy: mean(liveEnergy), meanLiveStress: mean(liveStress), meanLiveMemory: mean(liveMemory), quadrantAliveCounts: q };
+  return { generation: engine.generation, currentGeneration: engine.generation, totalGenerations: runState.totalGenerations, runEpoch: runState.runEpoch, resetCount: runState.resetCount, resetEvents: runState.resetEvents.slice(-20), highestObservedGeneration: runState.highestObservedGeneration, pageLoadId: runState.pageLoadId, continuityStatus: runState.continuityStatus, width: engine.width, height: engine.height, aliveCount, aliveDensity: aliveCount/total, activeGenomeCount: snap.activeGenomeCount, activeLineageCount: snap.activeLineageCount, genomeRegistrySize: engine.genomeRegistry.genomes.length, lineageRegistrySize: engine.genomeRegistry.lineages.length, nextGenomeId: engine.genomeRegistry.nextGenomeId, nextLineageId: engine.genomeRegistry.nextLineageId, oldestLiveCellAge: liveAges.length?Math.max(...liveAges):0, meanLiveAge: mean(liveAges), meanLiveEnergy: mean(liveEnergy), meanLiveStress: mean(liveStress), meanLiveMemory: mean(liveMemory), quadrantAliveCounts: q };
 }
 
 function saveMetadataCheckpoint(totalGeneration) {
@@ -245,6 +261,7 @@ function stepWorld() {
   });
   prediction = predictionGhost.compare(engine.alive, engine.generation);
   runState.updateGeneration(engine.generation, { scenario: settings.scenario, settings: { ...settings } });
+  if (engine.generation % 120 === 0) runState.heartbeat({ scenario: settings.scenario, settingsHash: settingsHash(), visibilityState: document.visibilityState });
   organisms = tracker.update(engine.snapshot(), metrics, engine.genomeRegistry);
   const evolution = evolutionTelemetry.record({
     engine,
@@ -272,7 +289,9 @@ function stepWorld() {
 function updateHud(row) {
   ui('regimeLabel').textContent = row.regime === 'RED' && row.aliveRatio > 0 ? 'RED / sparse-risk' : row.regime;
   ui('generation').textContent = `gen ${engine.generation}`;
-  ui('runMeta').textContent = `total ${runState.totalGenerations} / epoch ${runState.runEpoch} / resets ${runState.resetCount}`;
+  ui('runMeta').textContent = `total ${runState.totalGenerations} / high ${runState.highestObservedGeneration} / epoch ${runState.runEpoch} / resets ${runState.resetCount}`;
+  ui('continuityLine').textContent = `continuity: ${runState.continuityStatus}`;
+  ui('resetBanner').style.display = runState.resetCount > 0 ? 'block' : 'none';
   ui('surprise').textContent = row.surprise.toFixed(3);
   ui('entropy').textContent = row.entropy.toFixed(3);
   ui('compression').textContent = `${row.compressionRatio.toFixed(2)}x`;
@@ -300,3 +319,6 @@ function tick() {
 }
 
 requestAnimationFrame(tick);
+
+window.addEventListener('beforeunload', () => runState.heartbeat({ scenario: settings.scenario, settingsHash: settingsHash(), visibilityState: document.visibilityState }));
+document.addEventListener('visibilitychange', () => { runState.noteVisibilityChange(document.visibilityState); runState.heartbeat({ scenario: settings.scenario, settingsHash: settingsHash(), visibilityState: document.visibilityState }); });

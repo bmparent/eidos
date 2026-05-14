@@ -15,6 +15,9 @@ export class TelemetryRecorder {
     this.largestMass = 0;
     this.evolution = { genomes: [], lineages: [], organisms: [], deadOrganisms: [], lineageGraph: [], events: [] };
     this.regimeCounts = {};
+    this.rawRegimeCounts = {};
+    this.confirmedRegimeCounts = {};
+    this.redFlickerCount = 0;
     this.regimeTransitions = [];
     this.eventTypeCounts = {};
     this.severityCounts = {};
@@ -58,6 +61,9 @@ export class TelemetryRecorder {
 
   #recordRegime(row) {
     this.regimeCounts[row.regime] = (this.regimeCounts[row.regime] || 0) + 1;
+    this.rawRegimeCounts[row.rawRegime || row.regime] = (this.rawRegimeCounts[row.rawRegime || row.regime] || 0) + 1;
+    this.confirmedRegimeCounts[row.confirmedRegime || row.regime] = (this.confirmedRegimeCounts[row.confirmedRegime || row.regime] || 0) + 1;
+    if (row.redFlicker) this.redFlickerCount += 1;
     if (this.prevRegime !== row.regime) {
       this.regimeTransitions.push({ generation: row.generation, from: this.prevRegime, to: row.regime });
       if (this.regimeTransitions.length > this.maxRegimeTransitions) this.regimeTransitions.shift();
@@ -110,6 +116,9 @@ export class TelemetryRecorder {
         recentEvents: this.recentEvents.slice(-100),
         topEventPatterns: sortedPatterns,
       },
+      rawRegimeCounts: this.rawRegimeCounts,
+      confirmedRegimeCounts: this.confirmedRegimeCounts,
+      redFlickerCount: this.redFlickerCount,
     };
   }
 
@@ -133,6 +142,9 @@ export class TelemetryRecorder {
       final_world_compact: extras.finalWorldCompact || {},
       telemetry_stats: summary.telemetryStats,
       regime_counts: summary.regimeCounts,
+      raw_regime_counts: summary.rawRegimeCounts,
+      confirmed_regime_counts: summary.confirmedRegimeCounts,
+      red_flicker_count: summary.redFlickerCount,
       regime_transitions_compact: summary.regimeTransitions,
       event_summary: summary.eventSummary,
       top_events_recent: this.events.slice(-100),
