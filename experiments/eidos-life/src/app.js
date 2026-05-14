@@ -8,12 +8,14 @@ import { PredictionGhost } from './prediction-ghost.js';
 import { SCENARIOS, applyScenario } from './scenarios.js';
 import { LifeVisualization, REGIME_CLASS } from './visualization.js';
 import { EidosBackendBridge } from './eidos-backend-bridge.js';
+import { RunState } from './run-state.js';
 
 const engine = new LifeEngine({ width: 72, height: 72, evolutionEnabled: true });
 const monitor = new EidosMonitor();
 const memory = new PatternMemory();
 const tracker = new OrganismTracker();
 const telemetry = new TelemetryRecorder();
+const runState = new RunState();
 const evolutionTelemetry = new EvolutionTelemetry();
 const predictionGhost = new PredictionGhost(engine.width, engine.height);
 const bridge = new EidosBackendBridge({ enabled: false });
@@ -47,8 +49,9 @@ Object.keys(SCENARIOS).forEach(name => {
 });
 scenarioSel.value = settings.scenario;
 
-function resetScenario(name = scenarioSel.value) {
+function resetScenario(name = scenarioSel.value, reason = 'scenario_change') {
   settings.scenario = name;
+  runState.recordReset(reason, runState.lastObservedGeneration, 0, { scenario: name, settings: { ...settings } });
   applyScenario(engine, name);
   monitor.prevAlive = null;
   monitor.prevEntropy = 0;
@@ -59,6 +62,7 @@ function resetScenario(name = scenarioSel.value) {
   organisms = [];
   selectedOrganism = null;
   prediction = predictionGhost.compare(engine.alive, engine.generation);
+  runState.updateGeneration(engine.generation, { scenario: settings.scenario, settings: { ...settings } });
   viz.reset();
 }
 
@@ -124,19 +128,21 @@ ui('pauseBtn').onclick = () => {
   paused = !paused;
   ui('pauseBtn').textContent = paused ? 'Resume' : 'Pause';
 };
-ui('seedBtn').onclick = () => resetScenario(scenarioSel.value);
-scenarioSel.onchange = () => resetScenario(scenarioSel.value);
+ui('seedBtn').onclick = () => resetScenario(scenarioSel.value, 'seed');
+scenarioSel.onchange = () => resetScenario(scenarioSel.value, 'scenario_change');
 ui('pulseBtn').onclick = () => {
   engine.pulseAnomaly(36, 36, 8, 0.8);
   viz.pulse({ x: 36, y: 36, power: 0.9 });
 };
 ui('exportBtn').onclick = () => exportJson('eidos-life-run-bundle.json', telemetry.exportBundle(worldState()));
+ui('summaryExportBtn').onclick = () => exportJson('eidos-life-summary.json', telemetry.exportSummary(worldState(), runState.exportMeta(), { settings: { ...settings }, finalWorldCompact: buildFinalWorldCompact() }));
 ui('exportWorldBtn').onclick = () => exportJson('eidos-life-world-state.json', worldState());
 ui('importWorldBtn').onclick = () => ui('importWorldFile').click();
 ui('importWorldFile').onchange = async event => {
   const [file] = event.target.files;
   if (!file) return;
   const state = JSON.parse(await file.text());
+  runState.recordReset('import_world', runState.lastObservedGeneration, state.generation || 0, { scenario: state.scenario || settings.scenario, settings: { ...settings } });
   engine.importState(state);
   settings.scenario = state.scenario || settings.scenario;
   Object.assign(settings, state.settings || {});
@@ -153,10 +159,35 @@ ui('mutationSelect').onchange = event => { settings.mutationPressure = event.tar
 ui('interventionSelect').onchange = event => { settings.intervention = event.target.value; };
 ui('speedSelect').onchange = event => { settings.speed = Number(event.target.value); };
 ui('inspectSelect').onchange = renderInspectPanel;
+ui('saveCheckpointBtn').onclick = saveCheckpoint;
+
 for (const id of ['toggleSurprise', 'toggleMemory', 'toggleEnergy', 'toggleOutlines', 'togglePrediction']) {
   ui(id).onchange = event => {
     viz.overlays[id.replace('toggle', '').toLowerCase()] = event.target.checked;
   };
+}
+
+function buildFinalWorldCompact() {
+  const snap = engine.snapshot();
+  const aliveCount = snap.aliveCount;
+  const total = engine.width * engine.height;
+  const mean = (arr) => arr.length ? arr.reduce((a,b)=>a+b,0)/arr.length : 0;
+  const liveAges=[]; const liveEnergy=[]; const liveStress=[]; const liveMemory=[];
+  const q=[0,0,0,0];
+  for (let y=0;y<engine.height;y++) for (let x=0;x<engine.width;x++) {
+    const i=y*engine.width+x; if (!engine.alive[i]) continue;
+    liveAges.push(engine.age[i]); liveEnergy.push(engine.energy[i]); liveStress.push(engine.stress[i]); liveMemory.push(engine.memory[i]);
+    q[(y>=engine.height/2)*2 + (x>=engine.width/2)]++;
+  }
+  return { generation: engine.generation, totalGenerations: runState.totalGenerations, runEpoch: runState.runEpoch, resetCount: runState.resetCount, width: engine.width, height: engine.height, aliveCount, aliveDensity: aliveCount/total, activeGenomeCount: snap.activeGenomeCount, activeLineageCount: snap.activeLineageCount, genomeRegistrySize: engine.genomeRegistry.size, lineageRegistrySize: engine.lineageRegistry.size, oldestLiveCellAge: liveAges.length?Math.max(...liveAges):0, meanLiveAge: mean(liveAges), meanLiveEnergy: mean(liveEnergy), meanLiveStress: mean(liveStress), meanLiveMemory: mean(liveMemory), quadrantAliveCounts: q };
+}
+
+function saveCheckpoint() {
+  const checkpoint = { worldState: worldState(), runMeta: runState.exportMeta(), compact: buildFinalWorldCompact(), savedAt: new Date().toISOString() };
+  try {
+    localStorage.setItem('eidos-life:last-checkpoint', JSON.stringify(checkpoint.worldState));
+    localStorage.setItem('eidos-life:checkpoint-meta', JSON.stringify({ runMeta: checkpoint.runMeta, compact: checkpoint.compact, savedAt: checkpoint.savedAt }));
+  } catch (error) { telemetry.record({ generation: engine.generation, regime: monitor.timeline.at(-1)||'CALIBRATING', surprise:0, entropy:0, compressionRatio:0, novelty:0, collapseRisk:0, plasticity:0 }, [], { events:[{ type:'checkpoint_warning', severity:'medium', description:`Checkpoint save failed: ${error.message}` }] }); }
 }
 
 function stepWorld() {
@@ -176,6 +207,7 @@ function stepWorld() {
     collapseRisk: metrics.collapseRisk,
   });
   prediction = predictionGhost.compare(engine.alive, engine.generation);
+  runState.updateGeneration(engine.generation, { scenario: settings.scenario, settings: { ...settings } });
   organisms = tracker.update(engine.snapshot(), metrics, engine.genomeRegistry);
   const evolution = evolutionTelemetry.record({
     engine,
@@ -203,6 +235,7 @@ function stepWorld() {
 function updateHud(row) {
   ui('regimeLabel').textContent = row.regime;
   ui('generation').textContent = `gen ${engine.generation}`;
+  ui('runMeta').textContent = `total ${runState.totalGenerations} / epoch ${runState.runEpoch} / resets ${runState.resetCount}`;
   ui('surprise').textContent = row.surprise.toFixed(3);
   ui('entropy').textContent = row.entropy.toFixed(3);
   ui('compression').textContent = `${row.compressionRatio.toFixed(2)}x`;
@@ -220,6 +253,7 @@ function tick() {
     let row = telemetry.rows[telemetry.rows.length - 1] || null;
     for (let i = 0; i < steps; i++) row = stepWorld();
     if (row) {
+      if (engine.generation > 0 && engine.generation % 5000 === 0) saveCheckpoint();
       updateHud(row);
       viz.render({ metrics: row, organisms, prediction, localRegimes: engine.localRegimes, genomeRegistry: engine.genomeRegistry, selectedOrganism });
     }
