@@ -1,0 +1,9 @@
+{
+  "git_commit": "9bfe9bd3781f641a2535881f76f9a3f2a6669292",
+  "python_version": null,
+  "platform": "linux",
+  "seed": 4,
+  "grid_size": "8x8",
+  "config_hash": "cfg_8x8_4",
+  "command": "node --test"
+}
