@@ -4,6 +4,9 @@
   "type": "module",
   "scripts": {
     "test": "node --test tests/*.test.mjs",
-    "serve": "cd ../.. && python -m http.server 5173"
+    "serve": "cd ../.. && python -m http.server 5173",
+    "test:life:stable": "node scripts/smoke_stable_ecology.mjs",
+    "test:life:recovery": "node scripts/smoke_primordial_recovery.mjs",
+    "test:life:diagnostics": "node scripts/smoke_export_diagnostics.mjs"
   }
 }

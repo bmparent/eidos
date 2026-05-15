@@ -71,6 +71,16 @@ canvas{touch-action:none}
     <div>Plasticity <span id="plasticity">0</span></div>
     <div>Alive <span id="aliveRatio">0</span></div>
     <div>Organisms <span id="organisms">0</span></div>
+    <div>Viability <span id="viabilityState">NOMINAL</span></div>
+    <div>Births <span id="births">0</span></div>
+    <div>Deaths <span id="deaths">0</span></div>
+    <div>Mutations <span id="mutations">0</span></div>
+    <div>Reseeds <span id="reseeds">0</span></div>
+    <div>Blooms <span id="blooms">0</span></div>
+    <div>Extinctions <span id="extinctions">0</span></div>
+    <div>Recoveries <span id="recoveries">0</span></div>
+    <div>Since birth <span id="sinceBirth">0</span></div>
+    <div>Since reseed <span id="sinceReseed">0</span></div>
   </div>
   <div class="controls">
     <button id="pauseBtn">Pause</button>
@@ -89,6 +99,12 @@ canvas{touch-action:none}
   </div>
   <div class="controls scenario">
     <select id="scenarioSelect" aria-label="Scenario"></select>
+    <select id="presetSelect" aria-label="Preset"></select>
+  </div>
+  <div class="controls world">
+    <label><input id="toggleAbiogenesis" type="checkbox" checked> abiogenesis</label>
+    <label><input id="toggleRecovery" type="checkbox" checked> recovery</label>
+    <button id="applyTuningBtn">Apply tuning</button>
   </div>
   <div id="statusLine" class="statusLine">status: ready</div>
   <div class="controls world">

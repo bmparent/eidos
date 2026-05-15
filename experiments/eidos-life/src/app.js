@@ -20,7 +20,7 @@ const settingsHash = () => JSON.stringify({ scenario: settings.scenario, mutatio
 const evolutionTelemetry = new EvolutionTelemetry();
 const predictionGhost = new PredictionGhost(engine.width, engine.height);
 const bridge = new EidosBackendBridge({ enabled: false });
-const settings = { evolutionEnabled: true, mutationPressure: 'adaptive', intervention: 'guardian', speed: 1, scenario: 'evolutionary_garden' };
+const settings = { evolutionEnabled: true, mutationPressure: 'adaptive', intervention: 'guardian', speed: 1, scenario: 'stable_ecology' };
 const AUTOSAVE_METADATA_INTERVAL = 5000;
 const FULL_CHECKPOINT_MAX_LOCALSTORAGE_BYTES = 1_000_000;
 const CHECKPOINT_MODE_DEFAULT = 'metadata_only';
@@ -53,6 +53,9 @@ Object.keys(SCENARIOS).forEach(name => {
   scenarioSel.appendChild(option);
 });
 scenarioSel.value = settings.scenario;
+const presetSel = ui('presetSelect');
+Object.keys(SCENARIOS).forEach(name=>{const option=document.createElement('option');option.value=name;option.textContent=name;presetSel.appendChild(option);});
+presetSel.value=settings.scenario;
 
 function resetScenario(name = scenarioSel.value, reason = 'scenario_change') {
   settings.scenario = name;
@@ -147,6 +150,8 @@ ui('newRunBtn').onclick = () => {
   window.location.reload();
 };
 scenarioSel.onchange = () => resetScenario(scenarioSel.value, 'scenario_change');
+presetSel.onchange = () => resetScenario(presetSel.value, 'preset_change');
+ui('applyTuningBtn').onclick = () => { engine.config.abiogenesis_enabled = ui('toggleAbiogenesis').checked; engine.config.near_extinction_recovery_enabled = ui('toggleRecovery').checked; resetScenario(presetSel.value,'apply_tuning'); };
 ui('pulseBtn').onclick = () => {
   engine.pulseAnomaly(36, 36, 8, 0.8);
   viz.pulse({ x: 36, y: 36, power: 0.9 });
@@ -319,6 +324,11 @@ function updateHud(row) {
   ui('plasticity').textContent = row.plasticity.toFixed(3);
   ui('aliveRatio').textContent = row.aliveRatio.toFixed(3);
   ui('organisms').textContent = `${organisms.length} / L${row.livingLineages}`;
+  const ws = worldState();
+  ui('viabilityState').textContent = ws.viability_state;
+  ui('births').textContent = ws.births; ui('deaths').textContent = ws.deaths; ui('mutations').textContent = ws.mutations;
+  ui('reseeds').textContent = ws.reseeds; ui('blooms').textContent = ws.primordial_blooms; ui('extinctions').textContent = ws.extinction_events; ui('recoveries').textContent = ws.recovery_events;
+  ui('sinceBirth').textContent = ws.time_since_last_birth; ui('sinceReseed').textContent = ws.time_since_last_reseed;
   renderRegimeTimeline(monitor.timeline);
   renderInspectPanel();
   renderEventFeed();

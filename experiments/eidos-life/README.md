@@ -151,3 +151,9 @@ Recommended export schedule:
 - 25k: Summary + World
 - 50k: Summary + World
 - 100k: Summary + World
+
+## Viability layer (v0.5)
+- Added explicit viability counters, abiogenesis/reseeding, near-extinction recovery state, and richer export diagnostics.
+- Added ecology presets: stable_ecology, primordial_soup, higgs_wells, harsh_world, mutation_storm, extinction_event, dead_world.
+- Added Node smoke scripts in `scripts/` for stable 5000-gen run, primordial recovery, extinction scenario, and export diagnostics.
+
