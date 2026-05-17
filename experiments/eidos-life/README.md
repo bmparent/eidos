@@ -157,3 +157,47 @@ Recommended export schedule:
 - Added ecology presets: stable_ecology, primordial_soup, higgs_wells, harsh_world, mutation_storm, extinction_event, dead_world.
 - Added Node smoke scripts in `scripts/` for stable 5000-gen run, primordial recovery, extinction scenario, and export diagnostics.
 
+
+## Seed sweep viability baseline package
+
+Run from repo root (no PYTHONPATH/path hacks needed):
+
+```bash
+node experiments/eidos-life/scripts/seed_sweep_viability.mjs \
+  --scenario primordial_soup \
+  --mode engine_fast \
+  --width 72 --height 72 \
+  --steps 10000 \
+  --seed-start 1 --seed-end 20 \
+  --out experiments/eidos-life/artifacts/eidos_life_viability_baseline_2026_05
+```
+
+Short CI-safe smoke run:
+
+```bash
+cd experiments/eidos-life
+npm run test:life:seed-sweep:smoke
+```
+
+Comparison mode toggles (`--comparison`):
+- `baseline`
+- `no_abiogenesis`
+- `no_near_extinction_recovery`
+- `no_primordial_bloom`
+- `no_rescue`
+
+### How to interpret extinction vs recovery
+- `generation_63_*` fields capture the early collapse checkpoint that can show `EXTINCT_WITH_RESOURCES`.
+- A run can still be healthy later if reseeding/recovery restores life and final diagnosis is `NOMINAL`.
+- `extinction_events` > 0 is not an automatic failure; persistent extinction and inability to recover is the stronger failure signal.
+- `run_status.json` is updated while running so partial/interrupted runs remain auditable rather than silently incomplete.
+
+### Why one successful seed is not proof
+- Single-seed success can be a stochastic outlier.
+- Viability claims should be based on a seed distribution, not one trajectory.
+- Use the summary CSV/MD to compare collapse and recovery frequency across seeds.
+
+### Recommended proof thresholds
+- Minimum: 20 seeds at 10k steps each for initial baseline confidence.
+- Stronger: 50+ seeds with multiple comparison modes to isolate rescue contributions.
+- Robustness: include at least one long-horizon run set (e.g., 50k+) and mark interrupted runs as `partial` for auditability.

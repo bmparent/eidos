@@ -7,6 +7,7 @@
     "serve": "cd ../.. && python -m http.server 5173",
     "test:life:stable": "node scripts/smoke_stable_ecology.mjs",
     "test:life:recovery": "node scripts/smoke_primordial_recovery.mjs",
-    "test:life:diagnostics": "node scripts/smoke_export_diagnostics.mjs"
+    "test:life:diagnostics": "node scripts/smoke_export_diagnostics.mjs",
+    "test:life:seed-sweep:smoke": "node scripts/seed_sweep_viability.mjs --scenario primordial_soup --mode engine_fast --width 72 --height 72 --steps 500 --seeds 1,2 --out artifacts/eidos_life_viability_smoke"
   }
 }
