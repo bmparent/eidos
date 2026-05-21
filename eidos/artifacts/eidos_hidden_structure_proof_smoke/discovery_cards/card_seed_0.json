@@ -1,0 +1,23 @@
+{
+  "source_window": [
+    3333,
+    4333
+  ],
+  "selected_lift": "raw",
+  "invariant": "spectral periodicity",
+  "quotient_residual": 1.0476344254959629,
+  "memory_score": 0.0,
+  "compression_bits": 614992,
+  "top_drivers": [
+    "fft_band_3_12"
+  ],
+  "replay_command": "python -m eidos_brain.proof.run_proof --suite smoke --seeds {seed} --frames {frames}",
+  "baseline_comparison": "zscore/ewma/cusum",
+  "confidence_interval": [
+    0.0,
+    1.0
+  ],
+  "config_hash": "1378a2874c1512d6ed9790268b1981d871350eb8055d7c4068baa861d63d88ea",
+  "seed": 0,
+  "git_commit": "fatal: cannot change to 'eidos/repo': No such file or directory"
+}
