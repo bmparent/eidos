@@ -1,0 +1,4 @@
+sources:
+  - id: reuters_world
+    type: rss
+    url: https://feeds.reuters.com/reuters/worldNews
