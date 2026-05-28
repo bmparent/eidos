@@ -1,0 +1,5 @@
+world:
+  horizons: [3d, 7d, 30d, 365d]
+market:
+  symbols: [SPY, QQQ, AAPL, MSFT, NVDA, BTC-USD]
+  horizons: [30m, 1h, eod, 1w, 1m, 1y]
