@@ -1,0 +1,3 @@
+reservoir,normal_false_alert_rate,abnormal_alert_rate,frozen_red_rate,noise_alert_rate,backdoor_alert_rate,finite_residual_stats,pass_all,total_frames,evaluated_frames,alerts,alert_rate,final_status,final_ema_err,final_sigma,final_event_score,adaptation_frozen_rate,rls_recoveries,step_csv
+64,0.0,1.0,0.9066666666666666,1.0,1.0,True,True,1400,1200,900,0.75,RED,0.04644154648654505,7.510056440204464e-05,7.088405413591304,0.22666666666666666,0,eidos_v3_steps_1400_reservoir_64.csv
+128,0.0,1.0,0.9033333333333333,1.0,1.0,True,True,1400,1200,900,0.75,RED,0.0017728575129913884,9.48029744538984e-05,6.794348494191022,0.22583333333333333,0,eidos_v3_steps_1400_reservoir_128.csv

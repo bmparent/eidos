@@ -1,0 +1,40 @@
+{
+  "command_line_arguments": [
+    "scripts/run_sentinel_v3_controlled.py",
+    "--reservoirs",
+    "64",
+    "128",
+    "--features",
+    "16",
+    "--warmup",
+    "200",
+    "--frames-per-regime",
+    "300",
+    "--seed",
+    "42",
+    "--out",
+    "artifacts/sentinel_v3_patch"
+  ],
+  "config_hash": "6fd5735b8b904b261d89624edbb8657412416903cac6bacef4da310a835569e5",
+  "feature_count": 16,
+  "frame_counts_per_regime": {
+    "BACKDOOR_PERIODIC": 300,
+    "FROZEN_LOW_VARIANCE": 300,
+    "NOISE_CRASH": 300,
+    "NORMAL": 300,
+    "WARMUP": 200
+  },
+  "git_branch": "codex/sentinel-v3-calibration",
+  "git_commit": "a99f9751f04eb07f7086f32029057d8fe7c19390",
+  "git_dirty": true,
+  "platform": "Windows-10-10.0.26200-SP0",
+  "python_version": "3.11.0 (main, Oct 24 2022, 18:26:48) [MSC v.1933 64 bit (AMD64)]",
+  "reservoir_grid": [
+    64,
+    128
+  ],
+  "seed": 42,
+  "timestamp_utc": "2026-05-28T02:08:46.920543+00:00",
+  "total_steps": 1400,
+  "warmup": 200
+}

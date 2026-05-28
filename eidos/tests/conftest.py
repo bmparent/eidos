@@ -48,8 +48,13 @@ def brain_module():
 
 # --- 3. CONFIG ISOLATION ---
 @pytest.fixture(autouse=True)
-def fresh_config(brain_module):
+def fresh_config(request):
     """Save and restore EIDOS_BRAIN_CONFIG and basic globals."""
+    if "brain_module" not in request.fixturenames:
+        yield
+        return
+
+    brain_module = request.getfixturevalue("brain_module")
     # Snapshot
     original_config = copy.deepcopy(brain_module.EIDOS_BRAIN_CONFIG)
     
