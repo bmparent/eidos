@@ -819,7 +819,8 @@ def entropy_from_bins(bins: torch.Tensor, eps: float = 1e-12) -> float:
 
 def orch_or_collapse(tensor: torch.Tensor, precision: float = 100000.0) -> torch.Tensor:
     """Deterministic quantization operator: snap to a finite lattice."""
-    return torch.round(tensor * precision) / precision
+    snapped = torch.round(tensor * precision) / precision
+    return snapped.to(dtype=tensor.dtype)
 
 def _safe_slug(name: str) -> str:
     """Make a filesystem-friendly name: letters, digits, -, _ only."""
@@ -3977,6 +3978,7 @@ def run_sentinel_stream(
     top_k_surprises: int = 100,
     save_surprise_artifacts: bool = True,
 ):
+    _initialize_torch_runtime()
     print(">>> INITIALIZING SENTINEL V2.2 (UNIFIED STREAM)...")
 
     if est_frames <= 0:
@@ -4823,6 +4825,8 @@ def run_sentinel_stream(
                 print("!!! CONTINUITY HASH MISMATCH: expected != observed")
 
         summary = {
+            "total_frames": total_frames_seen,
+            "total_frames_seen": total_frames_seen,
             "frames_processed": frames_processed,
             "surprises": surprises,
             "surprise_rate": surprise_rate,

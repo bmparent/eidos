@@ -1,0 +1,31 @@
+Real World Corpus v0 validation results
+Date: 2026-05-22
+
+Commands run from repo root:
+
+1. python -m pip install -e .
+   Result: passed
+
+2. python -m pytest tests/test_prediction_sources.py tests/test_world_telemetry_smoke.py -q
+   First attempt without editable install failed because subprocess CLI tests could not import eidos_brain.prediction.
+   After editable install and PYTEST_DISABLE_PLUGIN_AUTOLOAD=1: 9 passed.
+
+3. $env:PYTEST_DISABLE_PLUGIN_AUTOLOAD='1'; python -m pytest tests/test_prediction_sources.py tests/test_world_telemetry_smoke.py tests/test_market_forecast_smoke.py tests/test_prediction_ledger.py tests/test_prediction_reports.py tests/test_prediction_scoring.py -q
+   Result: 14 passed.
+
+4. python -m eidos_brain.prediction.run_world_telemetry --fixture --out artifacts/proof_runs/2026-05-22/real_world_corpus_v0/world_telemetry_fixture_smoke
+   Result: passed.
+   Latest run: artifacts/proof_runs/2026-05-22/real_world_corpus_v0/world_telemetry_fixture_smoke/20260522T200347Z
+
+5. python -m eidos_brain.prediction.run_world_telemetry --config config/prediction/world_sources.example.yaml --out artifacts/proof_runs/2026-05-22/real_world_corpus_v0/world_telemetry_public_smoke --max-events 25 --timeout-seconds 10
+   Result: passed.
+   Latest run: artifacts/proof_runs/2026-05-22/real_world_corpus_v0/world_telemetry_public_smoke/20260522T200400Z
+   Public corpus result: 26 source rows, 25 usable events, 12 pending predictions.
+   Notable source issue: gdelt_disruption_watch timed out and was preserved as one audited ingest_status=error row.
+
+6. $env:PYTEST_DISABLE_PLUGIN_AUTOLOAD='1'; python -m pytest tests -q
+   Result: 78 passed, 4 skipped, 11 warnings in 79.42s.
+
+Notes:
+- The first plain pytest attempt failed before collection because the user-site pytest_recording plugin expected urllib3.connectionpool.VerifiedHTTPSConnection. Focused and full test runs passed with PYTEST_DISABLE_PLUGIN_AUTOLOAD=1.
+- Core model behavior was not changed.

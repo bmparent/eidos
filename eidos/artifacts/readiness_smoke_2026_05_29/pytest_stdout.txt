@@ -1,0 +1,55 @@
+============================= test session starts =============================
+platform win32 -- Python 3.11.0, pytest-9.0.3, pluggy-1.6.0 -- C:\Python311\python.exe
+cachedir: .pytest_cache
+rootdir: C:\Users\bmpar\OneDrive\Documents\eidos-brain-readiness\eidos
+configfile: pytest.ini
+testpaths: tests
+collecting ... collected 48 items / 47 deselected / 1 selected
+
+tests/test_integration_stream.py::test_scenario_nominal PASSED           [100%]
+
+============================== warnings summary ===============================
+tests/test_integration_stream.py::test_scenario_nominal
+  C:\Python311\Lib\site-packages\PyPDF2\__init__.py:21: DeprecationWarning: PyPDF2 is deprecated. Please move to the pypdf library instead.
+    warnings.warn(
+
+tests/test_integration_stream.py::test_scenario_nominal
+  C:\Python311\Lib\site-packages\google\rpc\__init__.py:18: DeprecationWarning: pkg_resources is deprecated as an API. See https://setuptools.pypa.io/en/latest/pkg_resources.html
+    import pkg_resources
+
+tests/test_integration_stream.py::test_scenario_nominal
+tests/test_integration_stream.py::test_scenario_nominal
+  C:\Users\bmpar\AppData\Roaming\Python\Python311\site-packages\pkg_resources\__init__.py:3142: DeprecationWarning: Deprecated call to `pkg_resources.declare_namespace('google')`.
+  Implementing implicit namespace packages (as specified in PEP 420) is preferred to `pkg_resources.declare_namespace`. See https://setuptools.pypa.io/en/latest/references/keywords.html#keyword-namespace-packages
+    declare_namespace(pkg)
+
+tests/test_integration_stream.py::test_scenario_nominal
+tests/test_integration_stream.py::test_scenario_nominal
+  C:\Users\bmpar\AppData\Roaming\Python\Python311\site-packages\pkg_resources\__init__.py:3142: DeprecationWarning: Deprecated call to `pkg_resources.declare_namespace('google.cloud')`.
+  Implementing implicit namespace packages (as specified in PEP 420) is preferred to `pkg_resources.declare_namespace`. See https://setuptools.pypa.io/en/latest/references/keywords.html#keyword-namespace-packages
+    declare_namespace(pkg)
+
+tests/test_integration_stream.py::test_scenario_nominal
+tests/test_integration_stream.py::test_scenario_nominal
+  C:\Users\bmpar\AppData\Roaming\Python\Python311\site-packages\pkg_resources\__init__.py:2554: DeprecationWarning: Deprecated call to `pkg_resources.declare_namespace('google')`.
+  Implementing implicit namespace packages (as specified in PEP 420) is preferred to `pkg_resources.declare_namespace`. See https://setuptools.pypa.io/en/latest/references/keywords.html#keyword-namespace-packages
+    declare_namespace(parent)
+
+tests/test_integration_stream.py::test_scenario_nominal
+  C:\Users\bmpar\AppData\Roaming\Python\Python311\site-packages\pkg_resources\__init__.py:3142: DeprecationWarning: Deprecated call to `pkg_resources.declare_namespace('mpl_toolkits')`.
+  Implementing implicit namespace packages (as specified in PEP 420) is preferred to `pkg_resources.declare_namespace`. See https://setuptools.pypa.io/en/latest/references/keywords.html#keyword-namespace-packages
+    declare_namespace(pkg)
+
+tests/test_integration_stream.py::test_scenario_nominal
+  C:\Users\bmpar\AppData\Roaming\Python\Python311\site-packages\pkg_resources\__init__.py:3142: DeprecationWarning: Deprecated call to `pkg_resources.declare_namespace('ruamel')`.
+  Implementing implicit namespace packages (as specified in PEP 420) is preferred to `pkg_resources.declare_namespace`. See https://setuptools.pypa.io/en/latest/references/keywords.html#keyword-namespace-packages
+    declare_namespace(pkg)
+
+tests/test_integration_stream.py::test_scenario_nominal
+  C:\Python311\Lib\site-packages\google\rpc\__init__.py:20: DeprecationWarning: Deprecated call to `pkg_resources.declare_namespace('google.rpc')`.
+  Implementing implicit namespace packages (as specified in PEP 420) is preferred to `pkg_resources.declare_namespace`. See https://setuptools.pypa.io/en/latest/references/keywords.html#keyword-namespace-packages
+    pkg_resources.declare_namespace(__name__)
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+- generated xml file: C:\Users\bmpar\OneDrive\Documents\eidos-brain-readiness\eidos\artifacts\readiness_smoke_2026_05_29\pytest_results.xml -
+========== 1 passed, 47 deselected, 11 warnings in 123.41s (0:02:03) ==========

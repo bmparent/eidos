@@ -1,0 +1,333 @@
+{
+  "acceptance": [
+    {
+      "abnormal_alert_rate": 1.0,
+      "backdoor_alert_rate": 1.0,
+      "finite_residual_stats": true,
+      "frozen_red_rate": 0.9066666666666666,
+      "noise_alert_rate": 1.0,
+      "normal_false_alert_rate": 0.0,
+      "pass_all": true,
+      "reservoir": 64
+    },
+    {
+      "abnormal_alert_rate": 1.0,
+      "backdoor_alert_rate": 1.0,
+      "finite_residual_stats": true,
+      "frozen_red_rate": 0.9033333333333333,
+      "noise_alert_rate": 1.0,
+      "normal_false_alert_rate": 0.0,
+      "pass_all": true,
+      "reservoir": 128
+    }
+  ],
+  "config_hash": "6fd5735b8b904b261d89624edbb8657412416903cac6bacef4da310a835569e5",
+  "per_regime_summary": [
+    {
+      "alert_rate": 0.0,
+      "amber_rate": 0.0,
+      "frames": 300,
+      "green_rate": 1.0,
+      "mean_event_score": 0.012374429554131266,
+      "mean_geometry_evidence": 0.001143181510263681,
+      "mean_input_evidence": 0.00043996934995850853,
+      "mean_residual_evidence": 0.00024290105581610007,
+      "red_rate": 0.0,
+      "regime": "NORMAL",
+      "reservoir": 64
+    },
+    {
+      "alert_rate": 1.0,
+      "amber_rate": 1.0,
+      "frames": 300,
+      "green_rate": 0.0,
+      "mean_event_score": 10.530208077992805,
+      "mean_geometry_evidence": 0.013897169978374988,
+      "mean_input_evidence": 1.5973280421901173,
+      "mean_residual_evidence": 0.05791815565507542,
+      "red_rate": 0.0,
+      "regime": "BACKDOOR_PERIODIC",
+      "reservoir": 64
+    },
+    {
+      "alert_rate": 1.0,
+      "amber_rate": 1.0,
+      "frames": 300,
+      "green_rate": 0.0,
+      "mean_event_score": 21.359689806488372,
+      "mean_geometry_evidence": 0.0016329462298991023,
+      "mean_input_evidence": 3.0,
+      "mean_residual_evidence": 0.445949951275452,
+      "red_rate": 0.0,
+      "regime": "NOISE_CRASH",
+      "reservoir": 64
+    },
+    {
+      "alert_rate": 1.0,
+      "amber_rate": 0.09333333333333334,
+      "frames": 300,
+      "green_rate": 0.0,
+      "mean_event_score": 12.083660708063197,
+      "mean_geometry_evidence": 0.43063571431278347,
+      "mean_input_evidence": 0.7767728517174611,
+      "mean_residual_evidence": 1.5382519245231685,
+      "red_rate": 0.9066666666666666,
+      "regime": "FROZEN_LOW_VARIANCE",
+      "reservoir": 64
+    },
+    {
+      "alert_rate": 0.0,
+      "amber_rate": 0.0,
+      "frames": 300,
+      "green_rate": 1.0,
+      "mean_event_score": 0.027253656971020994,
+      "mean_geometry_evidence": 0.002891996051404079,
+      "mean_input_evidence": 0.00043996934995850853,
+      "mean_residual_evidence": 0.0008297186634927445,
+      "red_rate": 0.0,
+      "regime": "NORMAL",
+      "reservoir": 128
+    },
+    {
+      "alert_rate": 1.0,
+      "amber_rate": 1.0,
+      "frames": 300,
+      "green_rate": 0.0,
+      "mean_event_score": 10.43142596854206,
+      "mean_geometry_evidence": 0.0055765518230993264,
+      "mean_input_evidence": 1.5973280421901173,
+      "mean_residual_evidence": 0.04125248562794473,
+      "red_rate": 0.0,
+      "regime": "BACKDOOR_PERIODIC",
+      "reservoir": 128
+    },
+    {
+      "alert_rate": 1.0,
+      "amber_rate": 1.0,
+      "frames": 300,
+      "green_rate": 0.0,
+      "mean_event_score": 21.485053895960498,
+      "mean_geometry_evidence": 0.0006667972706035411,
+      "mean_input_evidence": 3.0,
+      "mean_residual_evidence": 0.5115090193329741,
+      "red_rate": 0.0,
+      "regime": "NOISE_CRASH",
+      "reservoir": 128
+    },
+    {
+      "alert_rate": 1.0,
+      "amber_rate": 0.09666666666666666,
+      "frames": 300,
+      "green_rate": 0.0,
+      "mean_event_score": 11.460017314673854,
+      "mean_geometry_evidence": 0.39501129105654686,
+      "mean_input_evidence": 0.7767728517174611,
+      "mean_residual_evidence": 1.3641202355911177,
+      "red_rate": 0.9033333333333333,
+      "regime": "FROZEN_LOW_VARIANCE",
+      "reservoir": 128
+    }
+  ],
+  "reservoir_runs": [
+    {
+      "acceptance": {
+        "abnormal_alert_rate": 1.0,
+        "backdoor_alert_rate": 1.0,
+        "finite_residual_stats": true,
+        "frozen_red_rate": 0.9066666666666666,
+        "noise_alert_rate": 1.0,
+        "normal_false_alert_rate": 0.0,
+        "pass_all": true,
+        "reservoir": 64
+      },
+      "per_regime": [
+        {
+          "alert_rate": 0.0,
+          "amber_rate": 0.0,
+          "frames": 300,
+          "green_rate": 1.0,
+          "mean_event_score": 0.012374429554131266,
+          "mean_geometry_evidence": 0.001143181510263681,
+          "mean_input_evidence": 0.00043996934995850853,
+          "mean_residual_evidence": 0.00024290105581610007,
+          "red_rate": 0.0,
+          "regime": "NORMAL",
+          "reservoir": 64
+        },
+        {
+          "alert_rate": 1.0,
+          "amber_rate": 1.0,
+          "frames": 300,
+          "green_rate": 0.0,
+          "mean_event_score": 10.530208077992805,
+          "mean_geometry_evidence": 0.013897169978374988,
+          "mean_input_evidence": 1.5973280421901173,
+          "mean_residual_evidence": 0.05791815565507542,
+          "red_rate": 0.0,
+          "regime": "BACKDOOR_PERIODIC",
+          "reservoir": 64
+        },
+        {
+          "alert_rate": 1.0,
+          "amber_rate": 1.0,
+          "frames": 300,
+          "green_rate": 0.0,
+          "mean_event_score": 21.359689806488372,
+          "mean_geometry_evidence": 0.0016329462298991023,
+          "mean_input_evidence": 3.0,
+          "mean_residual_evidence": 0.445949951275452,
+          "red_rate": 0.0,
+          "regime": "NOISE_CRASH",
+          "reservoir": 64
+        },
+        {
+          "alert_rate": 1.0,
+          "amber_rate": 0.09333333333333334,
+          "frames": 300,
+          "green_rate": 0.0,
+          "mean_event_score": 12.083660708063197,
+          "mean_geometry_evidence": 0.43063571431278347,
+          "mean_input_evidence": 0.7767728517174611,
+          "mean_residual_evidence": 1.5382519245231685,
+          "red_rate": 0.9066666666666666,
+          "regime": "FROZEN_LOW_VARIANCE",
+          "reservoir": 64
+        }
+      ],
+      "reservoir": 64,
+      "step_csv": "eidos_v3_steps_1400_reservoir_64.csv",
+      "summary": {
+        "abnormal_alert_rate": 1.0,
+        "adaptation_frozen_rate": 0.22666666666666666,
+        "alert_rate": 0.75,
+        "alerts": 900,
+        "backdoor_alert_rate": 1.0,
+        "evaluated_frames": 1200,
+        "final_ema_err": 0.04644154648654505,
+        "final_event_score": 7.088405413591304,
+        "final_sigma": 7.510056440204464e-05,
+        "final_status": "RED",
+        "finite_residual_stats": true,
+        "frozen_red_rate": 0.9066666666666666,
+        "noise_alert_rate": 1.0,
+        "normal_false_alert_rate": 0.0,
+        "pass_all": true,
+        "reservoir": 64,
+        "rls_recoveries": 0,
+        "step_csv": "eidos_v3_steps_1400_reservoir_64.csv",
+        "total_frames": 1400
+      }
+    },
+    {
+      "acceptance": {
+        "abnormal_alert_rate": 1.0,
+        "backdoor_alert_rate": 1.0,
+        "finite_residual_stats": true,
+        "frozen_red_rate": 0.9033333333333333,
+        "noise_alert_rate": 1.0,
+        "normal_false_alert_rate": 0.0,
+        "pass_all": true,
+        "reservoir": 128
+      },
+      "per_regime": [
+        {
+          "alert_rate": 0.0,
+          "amber_rate": 0.0,
+          "frames": 300,
+          "green_rate": 1.0,
+          "mean_event_score": 0.027253656971020994,
+          "mean_geometry_evidence": 0.002891996051404079,
+          "mean_input_evidence": 0.00043996934995850853,
+          "mean_residual_evidence": 0.0008297186634927445,
+          "red_rate": 0.0,
+          "regime": "NORMAL",
+          "reservoir": 128
+        },
+        {
+          "alert_rate": 1.0,
+          "amber_rate": 1.0,
+          "frames": 300,
+          "green_rate": 0.0,
+          "mean_event_score": 10.43142596854206,
+          "mean_geometry_evidence": 0.0055765518230993264,
+          "mean_input_evidence": 1.5973280421901173,
+          "mean_residual_evidence": 0.04125248562794473,
+          "red_rate": 0.0,
+          "regime": "BACKDOOR_PERIODIC",
+          "reservoir": 128
+        },
+        {
+          "alert_rate": 1.0,
+          "amber_rate": 1.0,
+          "frames": 300,
+          "green_rate": 0.0,
+          "mean_event_score": 21.485053895960498,
+          "mean_geometry_evidence": 0.0006667972706035411,
+          "mean_input_evidence": 3.0,
+          "mean_residual_evidence": 0.5115090193329741,
+          "red_rate": 0.0,
+          "regime": "NOISE_CRASH",
+          "reservoir": 128
+        },
+        {
+          "alert_rate": 1.0,
+          "amber_rate": 0.09666666666666666,
+          "frames": 300,
+          "green_rate": 0.0,
+          "mean_event_score": 11.460017314673854,
+          "mean_geometry_evidence": 0.39501129105654686,
+          "mean_input_evidence": 0.7767728517174611,
+          "mean_residual_evidence": 1.3641202355911177,
+          "red_rate": 0.9033333333333333,
+          "regime": "FROZEN_LOW_VARIANCE",
+          "reservoir": 128
+        }
+      ],
+      "reservoir": 128,
+      "step_csv": "eidos_v3_steps_1400_reservoir_128.csv",
+      "summary": {
+        "abnormal_alert_rate": 1.0,
+        "adaptation_frozen_rate": 0.22583333333333333,
+        "alert_rate": 0.75,
+        "alerts": 900,
+        "backdoor_alert_rate": 1.0,
+        "evaluated_frames": 1200,
+        "final_ema_err": 0.0017728575129913884,
+        "final_event_score": 6.794348494191022,
+        "final_sigma": 9.48029744538984e-05,
+        "final_status": "RED",
+        "finite_residual_stats": true,
+        "frozen_red_rate": 0.9033333333333333,
+        "noise_alert_rate": 1.0,
+        "normal_false_alert_rate": 0.0,
+        "pass_all": true,
+        "reservoir": 128,
+        "rls_recoveries": 0,
+        "step_csv": "eidos_v3_steps_1400_reservoir_128.csv",
+        "total_frames": 1400
+      }
+    }
+  ],
+  "run_config": {
+    "features": 16,
+    "regime_frames": {
+      "BACKDOOR_PERIODIC": 300,
+      "FROZEN_LOW_VARIANCE": 300,
+      "NOISE_CRASH": 300,
+      "NORMAL": 300
+    },
+    "reservoirs": [
+      64,
+      128
+    ],
+    "seed": 42,
+    "thresholds": {
+      "abnormal_alert_rate": 0.8,
+      "backdoor_alert_rate": 0.8,
+      "frozen_red_rate": 0.5,
+      "noise_alert_rate": 0.8,
+      "normal_false_alert_rate": 0.05
+    },
+    "warmup": 200
+  }
+}

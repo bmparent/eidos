@@ -1,0 +1,19 @@
+{
+  "session_id": "20260529_221308",
+  "engine_version": "0.4.7.02",
+  "config_hash": "0c09dc11fb8f58641edac67d30363981c3165d7fcd0b2e20f77b577002a0742d",
+  "synaptic_hash_initial": "46c71bf47831d30d",
+  "synaptic_hash_final": "e5f255d0cfe86a9e",
+  "continuity_hash": "281a37f7cb250bc46131ddc12d5d7a41490a3e2fd8e69cf09a6f09bbcae38c70",
+  "reservoir_state_hash": "63c7032a4a54a1bbf27f529e854ca71fb161ea6638b1b4c1c7f15c62b3ef53e2",
+  "reservoir_weights_hash": "486acf4b6c8d5b389d644aa9f0f843efe21f0b591826b2c6be7b00fcfd453b56",
+  "gate_state": {
+    "z_thresh": 1.3554845367882773,
+    "ema_err": 0.03085852546547596,
+    "sigma": 0.04689421562924981,
+    "surprise_ema": 0.0808114240211729,
+    "fatigue": 0.995
+  },
+  "checkpoint_path": "C:\\Users\\bmpar\\OneDrive\\Documents\\eidos-brain-readiness\\eidos\\artifacts\\readiness_smoke_2026_05_29\\scenarios\\_engine_artifacts\\reservoir_checkpoints/proof_baseline_synthetic_smoke\\20260529_221348_reservoir_checkpoint_proof_baseline_synthetic_smoke.pt",
+  "hippocampus_snapshot_path": "C:\\Users\\bmpar\\OneDrive\\Documents\\eidos-brain-readiness\\eidos\\artifacts\\readiness_smoke_2026_05_29\\scenarios\\_engine_artifacts\\hippocampus/proof_baseline_synthetic_smoke\\20260529_221349_hippocampus_snapshot_proof_baseline_synthetic_smoke.pt"
+}

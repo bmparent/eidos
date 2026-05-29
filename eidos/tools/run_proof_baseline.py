@@ -31,6 +31,7 @@ if str(REPO_ROOT) not in sys.path:
     sys.path.insert(0, str(REPO_ROOT))
 
 from benchmarks.proof_artifacts import create_proof_artifact_dir
+from sentinel import EvidenceFrame, MODE_NAMES, process_stream
 from tools.domain_tuner import evaluate_run, load_dataset_stream, load_engine_module
 
 DEFAULT_OUT = Path("artifacts/proof_baseline_2026_05")
@@ -54,6 +55,15 @@ CSV_COLUMNS = [
     "anomaly_preservation",
     "runtime_seconds",
     "frames_per_second",
+    "normal_only_false_positives",
+    "confirmed_events",
+    "candidate_events",
+    "suppressed_candidates",
+    "merged_events",
+    "cooldown_suppressions",
+    "red_count",
+    "amber_count",
+    "recall_preservation_note",
     "notes",
 ]
 
@@ -80,7 +90,18 @@ def utc_now() -> str:
 
 
 def resolve_out_dir(out: Path, repo_root: Path = REPO_ROOT) -> Path:
-    return out if out.is_absolute() else repo_root / out
+    if out.is_absolute():
+        return out
+    resolved_repo = repo_root.resolve()
+    parts = out.parts
+    if parts:
+        cwd = Path.cwd().resolve()
+        try:
+            if (cwd / parts[0]).resolve() == resolved_repo:
+                return (cwd / out).resolve()
+        except OSError:
+            pass
+    return resolved_repo / out
 
 
 def relpath(path: Path, repo_root: Path = REPO_ROOT) -> str:
@@ -366,6 +387,228 @@ def detection_metrics(step_rows: List[Dict[str, Any]], labels: Optional[Any]) ->
         }
 
 
+def _normal_only_confirmation_frames(frames: int = 10000) -> List[EvidenceFrame]:
+    harmless_spikes = {1000, 3000, 6000, 8500}
+    rows: List[EvidenceFrame] = []
+    for frame in range(frames):
+        if frame in harmless_spikes:
+            rows.append(
+                EvidenceFrame(
+                    frame=frame,
+                    residual_score=3.4,
+                    geometry_change=0.04,
+                    novelty=0.04,
+                    raw_evidence_ref=f"normal_only:{frame}",
+                )
+            )
+        else:
+            rows.append(EvidenceFrame(frame=frame, residual_score=0.7, geometry_change=0.03, novelty=0.03))
+    return rows
+
+
+def _isolated_spike_frames() -> List[EvidenceFrame]:
+    rows = [EvidenceFrame(frame=frame, residual_score=0.5, geometry_change=0.02, novelty=0.02) for frame in range(80)]
+    rows[40] = EvidenceFrame(
+        frame=40,
+        residual_score=5.2,
+        geometry_change=0.8,
+        novelty=0.8,
+        raw_evidence_ref="isolated_spike:40",
+    )
+    return rows
+
+
+def _sustained_burst_frames() -> List[EvidenceFrame]:
+    rows: List[EvidenceFrame] = []
+    for frame in range(80):
+        if 20 <= frame <= 29:
+            rows.append(
+                EvidenceFrame(
+                    frame=frame,
+                    residual_score=4.6,
+                    geometry_change=0.7,
+                    novelty=0.65,
+                    top_drivers=[{"name": "residual_energy", "score": 4.6}],
+                    raw_evidence_ref=f"burst:{frame}",
+                )
+            )
+        else:
+            rows.append(EvidenceFrame(frame=frame, residual_score=0.6, geometry_change=0.03, novelty=0.03))
+    return rows
+
+
+def _nearby_spike_frames() -> List[EvidenceFrame]:
+    spike_frames = {10, 14, 18}
+    return [
+        EvidenceFrame(
+            frame=frame,
+            residual_score=4.8 if frame in spike_frames else 0.6,
+            geometry_change=0.65 if frame in spike_frames else 0.03,
+            novelty=0.7 if frame in spike_frames else 0.03,
+            raw_evidence_ref=f"nearby:{frame}" if frame in spike_frames else None,
+        )
+        for frame in range(50)
+    ]
+
+
+def _mode_comparison_frames() -> List[EvidenceFrame]:
+    rows: List[EvidenceFrame] = []
+    for frame in range(140):
+        if frame == 20:
+            rows.append(EvidenceFrame(frame=frame, residual_score=2.2, geometry_change=0.25, novelty=0.25))
+        elif 60 <= frame <= 61:
+            rows.append(EvidenceFrame(frame=frame, residual_score=2.8, geometry_change=0.3, novelty=0.3))
+        elif 100 <= frame <= 104:
+            rows.append(EvidenceFrame(frame=frame, residual_score=4.7, geometry_change=0.7, novelty=0.7))
+        else:
+            rows.append(EvidenceFrame(frame=frame, residual_score=0.6, geometry_change=0.03, novelty=0.03))
+    return rows
+
+
+def _eidos_life_lifecycle_frames() -> List[EvidenceFrame]:
+    rows: List[EvidenceFrame] = []
+    for generation in range(120):
+        if 63 <= generation <= 70:
+            rows.append(
+                EvidenceFrame(
+                    frame=generation,
+                    residual_score=3.4,
+                    geometry_change=0.85,
+                    novelty=0.65,
+                    lifecycle_phase="collapse",
+                    top_drivers=[{"name": "alive_ratio_collapse", "score": 0.96}],
+                    raw_evidence_ref=f"eidos-life:generation:{generation}",
+                )
+            )
+        elif 90 <= generation <= 96:
+            rows.append(
+                EvidenceFrame(
+                    frame=generation,
+                    residual_score=2.9,
+                    geometry_change=0.55,
+                    novelty=0.5,
+                    lifecycle_phase="recovery",
+                    top_drivers=[{"name": "post_extinction_reseed", "score": 0.88}],
+                    raw_evidence_ref=f"eidos-life:generation:{generation}",
+                )
+            )
+        else:
+            rows.append(EvidenceFrame(frame=generation, residual_score=0.7, geometry_change=0.04, novelty=0.04))
+    return rows
+
+
+def _legacy_raw_spike_alerts(frames: List[EvidenceFrame], threshold: float) -> int:
+    return sum(1 for frame in frames if frame.residual_score >= threshold)
+
+
+def _scenario_result(name: str, mode: str, frames: List[EvidenceFrame]) -> Dict[str, Any]:
+    result = process_stream(frames, mode=mode)
+    legacy_alerts = _legacy_raw_spike_alerts(frames, threshold=2.5)
+    data = result.to_dict()
+    data.update(
+        {
+            "scenario": name,
+            "legacy_raw_spike_alerts": legacy_alerts,
+            "confirmed_event_count": len(result.confirmed_events),
+            "incident_card_count": len(result.incident_cards),
+        }
+    )
+    return data
+
+
+def _write_incident_cards(out_dir: Path, scenarios: Dict[str, Any]) -> List[str]:
+    incident_dir = out_dir / "incident_cards"
+    incident_dir.mkdir(parents=True, exist_ok=True)
+    written: List[str] = []
+    for scenario_name, scenario in scenarios.items():
+        for index, card in enumerate(scenario.get("incident_cards", []), start=1):
+            safe_name = scenario_name.replace(" ", "_").replace("/", "_")
+            path = incident_dir / f"{safe_name}_{index:02d}.json"
+            write_json(path, card)
+            written.append(relpath(path, out_dir))
+    return written
+
+
+def run_false_positive_control(args: argparse.Namespace, out_dir: Path) -> Dict[str, Any]:
+    """Run synthetic confirmation checks and write event-summary artifacts."""
+    logs_dir = out_dir / "logs"
+    logs_dir.mkdir(parents=True, exist_ok=True)
+    scenarios = {
+        "normal_only_low_noise": _scenario_result("normal_only_low_noise", "low_noise", _normal_only_confirmation_frames()),
+        "isolated_spike_low_noise": _scenario_result("isolated_spike_low_noise", "low_noise", _isolated_spike_frames()),
+        "sustained_burst_balanced": _scenario_result("sustained_burst_balanced", "balanced", _sustained_burst_frames()),
+        "nearby_spikes_balanced": _scenario_result("nearby_spikes_balanced", "balanced", _nearby_spike_frames()),
+        "eidos_life_lifecycle_balanced": _scenario_result(
+            "eidos_life_lifecycle_balanced",
+            "balanced",
+            _eidos_life_lifecycle_frames(),
+        ),
+    }
+    mode_counts: Dict[str, int] = {}
+    comparison_frames = _mode_comparison_frames()
+    for mode in MODE_NAMES:
+        result = process_stream(comparison_frames, mode=mode)
+        mode_counts[mode] = len(result.confirmed_events)
+
+    cards_written = _write_incident_cards(out_dir, scenarios)
+    normal = scenarios["normal_only_low_noise"]
+    burst = scenarios["sustained_burst_balanced"]
+    aggregate = {
+        "normal_only_false_positives": normal["confirmed_event_count"],
+        "normal_only_legacy_raw_spike_alerts": normal["legacy_raw_spike_alerts"],
+        "confirmed_events": sum(item["confirmed_event_count"] for item in scenarios.values()),
+        "candidate_events": sum(int(item["candidate_events"]) for item in scenarios.values()),
+        "suppressed_candidates": sum(int(item["suppressed_candidates"]) for item in scenarios.values()),
+        "merged_events": sum(int(item["merged_events"]) for item in scenarios.values()),
+        "cooldown_suppressions": sum(int(item["cooldown_suppressions"]) for item in scenarios.values()),
+        "red_count": sum(int(item["red_count"]) for item in scenarios.values()),
+        "amber_count": sum(int(item["amber_count"]) for item in scenarios.values()),
+        "incident_card_count": len(cards_written),
+        "mode_confirmed_event_counts": mode_counts,
+        "recall_preservation_note": (
+            "Synthetic sustained burst confirmed"
+            if burst["confirmed_event_count"] >= 1
+            else "Synthetic sustained burst was missed"
+        ),
+    }
+    summary = {
+        "generated_at_utc": utc_now(),
+        "suite": args.suite,
+        "seed": args.seed,
+        "frames": args.frames,
+        "policy": "raw residual spike -> candidate; persistence + geometry change + novelty -> confirmed event",
+        "modes": list(MODE_NAMES),
+        "aggregate": aggregate,
+        "scenarios": scenarios,
+        "incident_cards_written": cards_written,
+        "known_limitations": [
+            "Synthetic confirmation fixtures prove policy mechanics; they are not a substitute for labeled production telemetry.",
+            "Normal-only false-positive control is measured on deterministic synthetic benign spikes.",
+            "Eidos Life lifecycle bridge uses synthetic generation 63 collapse/recovery evidence, not a live browser run.",
+        ],
+    }
+    write_json(out_dir / "event_summary.json", summary)
+    with (logs_dir / "false_positive_control.jsonl").open("w", encoding="utf-8") as handle:
+        for name, scenario in scenarios.items():
+            handle.write(json.dumps({"scenario": name, **json_safe(scenario)}, sort_keys=True) + "\n")
+        handle.write(json.dumps({"aggregate": json_safe(aggregate)}, sort_keys=True) + "\n")
+    return summary
+
+
+def annotate_rows_with_event_summary(rows: List[Dict[str, Any]], event_summary: Dict[str, Any]) -> None:
+    aggregate = event_summary.get("aggregate", {})
+    for row in rows:
+        row["normal_only_false_positives"] = aggregate.get("normal_only_false_positives", "")
+        row["confirmed_events"] = aggregate.get("confirmed_events", "")
+        row["candidate_events"] = aggregate.get("candidate_events", "")
+        row["suppressed_candidates"] = aggregate.get("suppressed_candidates", "")
+        row["merged_events"] = aggregate.get("merged_events", "")
+        row["cooldown_suppressions"] = aggregate.get("cooldown_suppressions", "")
+        row["red_count"] = aggregate.get("red_count", "")
+        row["amber_count"] = aggregate.get("amber_count", "")
+        row["recall_preservation_note"] = aggregate.get("recall_preservation_note", "")
+
+
 def write_scenario_manifest(path: Path, data: Dict[str, Any]) -> None:
     path.parent.mkdir(parents=True, exist_ok=True)
     write_json(path, data)
@@ -401,6 +644,15 @@ def run_scenarios(engine: Any, args: argparse.Namespace, out_dir: Path, repo_roo
                 "anomaly_preservation": "",
                 "runtime_seconds": "",
                 "frames_per_second": "",
+                "normal_only_false_positives": "",
+                "confirmed_events": "",
+                "candidate_events": "",
+                "suppressed_candidates": "",
+                "merged_events": "",
+                "cooldown_suppressions": "",
+                "red_count": "",
+                "amber_count": "",
+                "recall_preservation_note": "",
                 "notes": "",
             }
             try:
@@ -523,6 +775,7 @@ def write_benchmark_md(
     rows: List[Dict[str, Any]],
     skipped_baselines: List[Dict[str, str]],
     pytest_result: PytestResult,
+    event_summary: Optional[Dict[str, Any]] = None,
 ) -> None:
     title = "Eidos Brain Baseline Proof Run \u2014 2026-05"
     frame_note = ""
@@ -570,19 +823,43 @@ def write_benchmark_md(
             lines.append(f"- `{item['name']}`: {item['reason']}")
     else:
         lines.append("- None recorded.")
+    if event_summary:
+        aggregate = event_summary.get("aggregate", {})
+        mode_counts = aggregate.get("mode_confirmed_event_counts", {})
+        lines.extend(
+            [
+                "",
+                "## Sentinel false-positive control",
+                "",
+                f"- Normal-only confirmed false positives per 10k frames: `{aggregate.get('normal_only_false_positives', 'NA')}`",
+                f"- Legacy raw-spike alerts on normal-only stream: `{aggregate.get('normal_only_legacy_raw_spike_alerts', 'NA')}`",
+                f"- Confirmed events: `{aggregate.get('confirmed_events', 'NA')}`",
+                f"- Candidate events: `{aggregate.get('candidate_events', 'NA')}`",
+                f"- Suppressed candidates: `{aggregate.get('suppressed_candidates', 'NA')}`",
+                f"- Merged events: `{aggregate.get('merged_events', 'NA')}`",
+                f"- Cooldown suppressions: `{aggregate.get('cooldown_suppressions', 'NA')}`",
+                f"- RED count: `{aggregate.get('red_count', 'NA')}`",
+                f"- AMBER count: `{aggregate.get('amber_count', 'NA')}`",
+                f"- Mode confirmed-event counts: `{mode_counts}`",
+                f"- Recall preservation note: {aggregate.get('recall_preservation_note', 'NA')}",
+                "- Incident-card policy: cards are written for confirmed events, not every raw spike.",
+                "- Eidos Life lifecycle bridge: generation 63 collapse/recovery is treated as lifecycle events, with post-recovery nominal frames suppressed.",
+            ]
+        )
     lines.extend(
         [
             "",
             "## Known limitations",
             "",
-            "- Week 1 freezes the baseline package and does not tune Sentinel thresholds.",
+            "- This runner still wraps existing engine behavior and does not tune core SentinelMonitor thresholds.",
             "- External compression baselines are not implemented in this runner, so baseline compression ratio is blank.",
             "- Smoke synthetic scenarios do not provide ground-truth anomaly labels, so detection precision/recall/f1 can be blank.",
             "- No plots were produced for this smoke baseline unless a later plotting task adds them.",
+            "- False-positive control uses deterministic synthetic policy checks; broader labeled real-world validation remains future work.",
             "",
             "## Next step",
             "",
-            "Week 2 false-positive suppression is the next proof-plan step and was not implemented today.",
+            "Broaden false-positive control to labeled real-world streams and compare against the checked-in smoke receipt.",
         ]
     )
     path.write_text("\n".join(lines).rstrip() + "\n", encoding="utf-8")
@@ -614,6 +891,20 @@ def minimal_junit_xml(path: Path, reason: str, status: str = "skipped") -> None:
     )
 
 
+def pytest_targets_for_run(args: argparse.Namespace) -> List[str]:
+    if "false_positive_control" not in str(args.out):
+        return []
+    return [
+        "tests/test_sentinel.py",
+        "tests/test_proof_artifacts.py",
+        "tests/test_proof_baseline_runner.py",
+        "tests/test_sentinel_false_positive_control.py",
+        "tests/test_sentinel_event_confirmation.py",
+        "tests/test_sentinel_modes.py",
+        "tests/test_incident_card_confirmation.py",
+    ]
+
+
 def run_pytest_capture(args: argparse.Namespace, out_dir: Path, repo_root: Path = REPO_ROOT) -> PytestResult:
     xml_path = out_dir / "pytest_results.xml"
     test_files = list((repo_root / "tests").glob("test_*.py")) if (repo_root / "tests").is_dir() else []
@@ -623,7 +914,10 @@ def run_pytest_capture(args: argparse.Namespace, out_dir: Path, repo_root: Path 
         return PytestResult(command="pytest not run", returncode=0, status="skipped", reason=reason)
 
     cmd = [sys.executable, "-m", "pytest"]
-    if args.suite == "smoke":
+    targets = pytest_targets_for_run(args)
+    if targets:
+        cmd.extend(targets)
+    elif args.suite == "smoke":
         cmd.extend(["-m", "smoke"])
     cmd.extend(["--junitxml", str(xml_path)])
     env = os.environ.copy()
@@ -676,8 +970,9 @@ def build_config_doc(
     scenario_list: List[str],
     rows: List[Dict[str, Any]],
     skipped_baselines: List[Dict[str, str]],
+    event_summary: Optional[Dict[str, Any]] = None,
 ) -> Dict[str, Any]:
-    return {
+    doc = {
         "benchmark": {
             "frames": args.frames,
             "scenario_list": scenario_list,
@@ -694,6 +989,21 @@ def build_config_doc(
             "skipped": skipped_baselines,
         },
     }
+    if event_summary:
+        aggregate = event_summary.get("aggregate", {})
+        doc["sentinel_false_positive_control"] = {
+            "modes": event_summary.get("modes", []),
+            "normal_only_false_positives": aggregate.get("normal_only_false_positives"),
+            "confirmed_events": aggregate.get("confirmed_events"),
+            "candidate_events": aggregate.get("candidate_events"),
+            "suppressed_candidates": aggregate.get("suppressed_candidates"),
+            "merged_events": aggregate.get("merged_events"),
+            "cooldown_suppressions": aggregate.get("cooldown_suppressions"),
+            "red_count": aggregate.get("red_count"),
+            "amber_count": aggregate.get("amber_count"),
+            "recall_preservation_note": aggregate.get("recall_preservation_note"),
+        }
+    return doc
 
 
 def write_plots_readme(out_dir: Path, suite: str) -> None:
@@ -719,6 +1029,7 @@ def build_manifest(
     skipped_baselines: List[Dict[str, str]],
     pytest_result: PytestResult,
     drive_manifest: Optional[Dict[str, Any]] = None,
+    event_summary: Optional[Dict[str, Any]] = None,
 ) -> Dict[str, Any]:
     manifest = {
         "baselines": {
@@ -750,7 +1061,10 @@ def build_manifest(
             "codex_journal_md": "codex_journal.md",
             "drive_manifest_json": "drive_manifest.json",
             "environment_txt": "environment.txt",
+            "event_summary_json": "event_summary.json",
             "git_commit_txt": "git_commit.txt",
+            "incident_cards_dir": "incident_cards",
+            "logs_dir": "logs",
             "plain_language_test_analysis_md": "plain_language_test_analysis.md",
             "pytest_results_xml": "pytest_results.xml",
         },
@@ -780,6 +1094,8 @@ def build_manifest(
             "drive_run_dir": drive_manifest.get("drive_run_dir"),
             "reason": drive_manifest.get("reason"),
         }
+    if event_summary is not None:
+        manifest["sentinel_false_positive_control"] = event_summary.get("aggregate", {})
     return manifest
 
 
@@ -798,18 +1114,66 @@ def is_writable_dir(path: Path) -> bool:
         return False
 
 
-def discover_drive_root() -> Tuple[Optional[Path], str]:
+def colab_drive_candidates() -> List[Path]:
+    return [Path("/content/drive/MyDrive"), Path("/content/drive/My Drive")]
+
+
+def local_google_drive_candidates() -> List[Path]:
+    # Intentionally empty by default. A plain local folder named "Google Drive"
+    # is not proof that Google Drive Desktop is syncing it to the cloud.
+    return []
+
+
+def _first_writable_existing(candidates: Iterable[Path], label: str, reasons: List[str]) -> Optional[Tuple[Path, str]]:
+    checked: List[str] = []
+    for candidate in candidates:
+        expanded = candidate.expanduser()
+        checked.append(str(expanded))
+        if expanded.exists() and is_writable_dir(expanded):
+            return expanded, f"using writable {label}: {expanded}"
+    if checked:
+        reasons.append(f"no writable {label} found among: {', '.join(checked)}")
+    return None
+
+
+def discover_drive_root(
+    *,
+    colab_candidates_override: Optional[Iterable[Path]] = None,
+    local_candidates_override: Optional[Iterable[Path]] = None,
+) -> Tuple[Optional[Path], str]:
+    reasons: List[str] = []
     for env_name in ("EIDOS_PROOF_DRIVE_DIR", "EIDOS_ARTIFACT_ROOT"):
         value = os.environ.get(env_name)
         if value:
-            candidate = Path(value)
+            candidate = Path(value).expanduser()
             if is_writable_dir(candidate):
-                return candidate, f"using writable {env_name}"
-            return None, f"{env_name} was set but not writable: {value}"
-    colab_root = Path("/content/drive/MyDrive")
-    if colab_root.exists() and is_writable_dir(colab_root):
-        return colab_root, "using mounted Colab Drive root"
-    return None, "EIDOS_PROOF_DRIVE_DIR not set, EIDOS_ARTIFACT_ROOT not set, and no mounted Colab Drive path found"
+                return candidate, f"using writable {env_name}: {candidate}"
+            reasons.append(f"{env_name} was set but not writable: {value}")
+
+    colab_candidates = colab_drive_candidates() if colab_candidates_override is None else colab_candidates_override
+    colab_result = _first_writable_existing(
+        colab_candidates,
+        "Colab Drive root",
+        reasons,
+    )
+    if colab_result:
+        return colab_result
+
+    if local_candidates_override is not None:
+        local_result = _first_writable_existing(
+            local_candidates_override,
+            "explicit local Google Drive override",
+            reasons,
+        )
+        if local_result:
+            return local_result
+    else:
+        reasons.append(
+            "local Google Drive auto-discovery skipped; set EIDOS_PROOF_DRIVE_DIR or EIDOS_ARTIFACT_ROOT "
+            "to a verified Drive mount"
+        )
+
+    return None, "; ".join(reasons) or "no configured or mounted Google Drive path found"
 
 
 def copy_selected_to_drive(out_dir: Path, drive_manifest: Dict[str, Any], paths: Iterable[Path]) -> None:
@@ -821,6 +1185,20 @@ def copy_selected_to_drive(out_dir: Path, drive_manifest: Dict[str, Any], paths:
             target = drive_run_dir / path.relative_to(out_dir)
             target.parent.mkdir(parents=True, exist_ok=True)
             shutil.copy2(path, target)
+
+
+def proof_failure_reasons(rows: List[Dict[str, Any]], pytest_result: PytestResult) -> List[str]:
+    reasons: List[str] = []
+    if pytest_result.returncode != 0:
+        reasons.append(f"pytest failed: {pytest_result.reason}")
+    failed_scenarios = [
+        str(row.get("scenario") or "unknown")
+        for row in rows
+        if str(row.get("status", "")).lower() not in ("passed", "skipped")
+    ]
+    if failed_scenarios:
+        reasons.append(f"scenario failures: {', '.join(failed_scenarios)}")
+    return reasons
 
 
 def mirror_to_drive(out_dir: Path, run_id: str, run_date: str) -> Dict[str, Any]:
@@ -882,16 +1260,19 @@ def write_proof_docs(
     skipped_baselines: List[Dict[str, str]],
     pytest_result: PytestResult,
     drive_manifest: Optional[Dict[str, Any]],
+    event_summary: Optional[Dict[str, Any]] = None,
     files_changed: Optional[List[str]] = None,
 ) -> None:
     docs_dir = repo_root / "docs" / "proof_runs" / run_date
     docs_dir.mkdir(parents=True, exist_ok=True)
     changed = files_changed or [
         "tools/run_proof_baseline.py",
+        "repo/src/eidos_brain/engine/eidos_v0_4_7_02.py",
+        "tests/test_integration_stream.py",
         "tests/test_proof_baseline_runner.py",
-        "docs/proof_baseline_contract.md",
         relpath(out_dir),
     ]
+    event_aggregate = event_summary.get("aggregate", {}) if event_summary else {}
     drive_status = "pending"
     drive_root = "unknown"
     drive_folder = "unknown"
@@ -911,12 +1292,12 @@ def write_proof_docs(
         f"# Codex Journal -- {run_date}",
         "",
         "## What happened today",
-        "Week 1 of the proof plan froze a reproducible baseline package with config, manifest, environment, git state, pytest XML, scenario receipts, and CSV/Markdown summaries.",
+        "The proof runner generated a reproducible Eidos Brain smoke-readiness package with config, manifest, environment, git state, pytest XML, event summary, incident cards, logs, and CSV/Markdown summaries.",
         "",
         "## What was accomplished",
-        "- Added a repo-root proof baseline runner.",
-        "- Captured seed, frames, suite, config hash, git state, Python/runtime details, and scenario-level outputs.",
-        "- Kept Sentinel thresholds and core model behavior unchanged.",
+        "- Verified the smoke scenario and captured the result as local and Google Drive artifacts.",
+        "- Captured normal-only false positives, candidate events, suppressed candidates, merged events, cooldown suppressions, and incident-card-compatible records.",
+        "- Kept SentinelMonitor thresholds, reservoir dynamics, compression behavior, and prediction policy unchanged.",
         "",
         "## Tests and commands run",
         f"- `{command}` -> see `benchmark_summary.md` and `pytest_results.xml`.",
@@ -925,13 +1306,14 @@ def write_proof_docs(
         "## Problems encountered",
         "- External compression baselines are not implemented in Week 1.",
         "- Smoke synthetic data does not provide ground-truth anomaly labels.",
+        "- False-positive control still uses deterministic synthetic policy checks before broader labeled telemetry work.",
         f"- Google Drive status: {drive_status}; reason: {drive_reason}.",
         "",
         "## What changed",
         "\n".join(f"- {item}" for item in changed),
         "",
         "## What did not change",
-        "Core model behavior, Sentinel labels, thresholds, reservoir dynamics, compression behavior, and false-positive suppression logic were not changed.",
+        "Core model behavior, Sentinel labels, SentinelMonitor thresholds, reservoir dynamics, compression behavior, and prediction decision policy were not changed.",
         "",
         "## Artifacts generated",
         "\n".join(f"- {item}" for item in artifact_lines),
@@ -944,37 +1326,37 @@ def write_proof_docs(
         f"- Reason: {drive_reason}",
         "",
         "## Thoughts on improvement",
-        "The next proof step should add false-positive suppression work only after this baseline remains easy to regenerate.",
+        f"Normal-only confirmed false positives were `{event_aggregate.get('normal_only_false_positives', 'NA')}` per 10k synthetic frames; the next step should compare this policy against labeled real-world streams.",
         "",
         "## Where to improve next",
-        "Week 2 false-positive suppression should be a separate PR-sized change with before/after receipts.",
+        "Run the broader experiment/test suite on this readiness branch and compare future receipts against this smoke package.",
         "",
         "## Anything that stands out",
-        "The wrapper can capture a complete artifact package without touching the engine internals.",
+        f"Recall preservation for the synthetic burst: {event_aggregate.get('recall_preservation_note', 'NA')}.",
         "",
         "## End-of-task summary",
         f"1. Files changed: {', '.join(changed)}",
         "2. Whether core behavior changed: no.",
-        "3. Tests added or skipped: runner/report tests added; pytest XML captured by the baseline run.",
+        "3. Tests added or skipped: Sentinel confirmation tests added; pytest XML captured by the proof run.",
         f"4. Repo-root commands run: `{command}`.",
         f"5. Artifacts generated: {len(artifact_lines)} files under `{relpath(out_dir)}`.",
         "6. Plain-language analysis written: yes.",
         "7. Journal entry written: yes.",
         f"8. Google Drive copy status: {drive_status}; {drive_reason}.",
-        "9. Known limitations: no external compression baseline, no smoke labels, no plots.",
-        "10. Follow-up tasks not implemented: Week 2 false-positive suppression.",
+        "9. Known limitations: no external compression baseline, no smoke labels, no plots, synthetic-only false-positive fixtures.",
+        "10. Follow-up tasks not implemented: full long-run experiment campaign and labeled real-world false-positive comparison.",
     ]
     analysis = [
         f"# Plain-Language Test Analysis -- {run_date}",
         "",
         "## What the task attempted",
-        "The task created a reproducible Week 1 baseline proof package for Eidos Brain.",
+        "The task created a reproducible smoke-readiness proof package for Eidos Brain.",
         "",
         "## Why the test matters",
-        "A frozen baseline gives future proof work a stable comparison point before threshold or false-positive changes are attempted.",
+        "A readiness smoke run checks whether the current branch can execute the engine path, write the expected proof artifacts, run the selected pytest smoke check, and mirror the result to Google Drive.",
         "",
         "## What was tested",
-        "The smoke baseline ran the configured scenario list and captured pytest output as JUnit XML.",
+        "The smoke baseline ran the configured scenario list and deterministic confirmation fixtures for normal-only, isolated spike, sustained burst, nearby spikes, mode comparison, and Eidos Life lifecycle behavior.",
         "",
         "## What passed",
         "\n".join(f"- {row.get('scenario')}: {row.get('status')}" for row in rows),
@@ -992,10 +1374,10 @@ def write_proof_docs(
         f"Drive status: {drive_status}; folder: {drive_folder}; reason: {drive_reason}.",
         "",
         "## What remains uncertain",
-        "External compression baselines, labeled anomaly metrics for smoke data, and plots remain future work.",
+        "External compression baselines, labeled anomaly metrics for smoke data, plots, full experiment campaigns, and real lifecycle export replay remain future work.",
         "",
         "## What should happen next",
-        "Run the same baseline command from repo root before starting Week 2 false-positive suppression work.",
+        "Use this branch as the next test/experiment base, then add labeled real-world comparisons and longer experiment receipts.",
     ]
     for target_dir in (docs_dir, out_dir):
         target_dir.mkdir(parents=True, exist_ok=True)
@@ -1018,7 +1400,8 @@ def run(
     generated_at = utc_now()
     command = baseline_command(args, repo_root)
     run_date = datetime.now(timezone.utc).date().isoformat()
-    run_id = f"proof_baseline_2026_05_{args.suite}_seed{args.seed}_frames{args.frames}"
+    run_label = "proof_false_positive_control_2026_05" if "false_positive_control" in out_dir.name else "proof_baseline_2026_05"
+    run_id = f"{run_label}_{args.suite}_seed{args.seed}_frames{args.frames}"
 
     git_info = collect_git_info(repo_root)
     engine, engine_path = load_engine_fn(out_dir, repo_root)
@@ -1030,6 +1413,8 @@ def run(
 
     rows, scenario_skips, scenario_list = run_scenarios_fn(engine, args, out_dir, repo_root)
     skipped_baselines = skipped_baseline_records(rows, scenario_skips)
+    event_summary = run_false_positive_control(args, out_dir)
+    annotate_rows_with_event_summary(rows, event_summary)
     config_doc = build_config_doc(
         args=args,
         engine=engine,
@@ -1037,6 +1422,7 @@ def run(
         scenario_list=scenario_list,
         rows=rows,
         skipped_baselines=skipped_baselines,
+        event_summary=event_summary,
     )
     config_hash = stable_hash(config_doc)
     config_doc["config_hash_sha256"] = config_hash
@@ -1060,6 +1446,7 @@ def run(
         rows=rows,
         skipped_baselines=skipped_baselines,
         pytest_result=pytest_result,
+        event_summary=event_summary,
     )
 
     draft_manifest = build_manifest(
@@ -1073,6 +1460,7 @@ def run(
         config_hash=config_hash,
         skipped_baselines=skipped_baselines,
         pytest_result=pytest_result,
+        event_summary=event_summary,
     )
     write_json(out_dir / "run_manifest.json", draft_manifest)
     write_docs_fn(
@@ -1084,6 +1472,7 @@ def run(
         skipped_baselines=skipped_baselines,
         pytest_result=pytest_result,
         drive_manifest=None,
+        event_summary=event_summary,
     )
 
     drive_manifest = mirror_to_drive_fn(out_dir, run_id, run_date)
@@ -1100,6 +1489,7 @@ def run(
         skipped_baselines=skipped_baselines,
         pytest_result=pytest_result,
         drive_manifest=drive_manifest,
+        event_summary=event_summary,
     )
     write_json(out_dir / "run_manifest.json", final_manifest)
     write_docs_fn(
@@ -1111,6 +1501,7 @@ def run(
         skipped_baselines=skipped_baselines,
         pytest_result=pytest_result,
         drive_manifest=drive_manifest,
+        event_summary=event_summary,
     )
     copy_selected_to_drive(
         out_dir,
@@ -1118,11 +1509,12 @@ def run(
         [
             out_dir / "run_manifest.json",
             out_dir / "drive_manifest.json",
+            out_dir / "event_summary.json",
             out_dir / "codex_journal.md",
             out_dir / "plain_language_test_analysis.md",
         ],
     )
-    return 0
+    return 1 if proof_failure_reasons(rows, pytest_result) else 0
 
 
 def main(argv: Optional[Sequence[str]] = None) -> int:

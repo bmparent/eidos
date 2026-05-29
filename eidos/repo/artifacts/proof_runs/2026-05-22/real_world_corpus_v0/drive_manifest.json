@@ -1,0 +1,24 @@
+{
+  "drive_copy_attempted": false,
+  "drive_copy_success": false,
+  "drive_root": "unknown",
+  "drive_run_dir": "unknown",
+  "reason": "EIDOS_PROOF_DRIVE_DIR not set, EIDOS_ARTIFACT_ROOT not set, and /content/drive/MyDrive not present in this Windows environment",
+  "files_considered": [
+    "docs/proof_runs/2026-05-22/codex_journal.md",
+    "docs/proof_runs/2026-05-22/plain_language_test_analysis.md",
+    "artifacts/proof_runs/2026-05-22/real_world_corpus_v0/test_results.txt",
+    "artifacts/proof_runs/2026-05-22/real_world_corpus_v0/world_telemetry_fixture_smoke/20260522T200347Z/manifest.json",
+    "artifacts/proof_runs/2026-05-22/real_world_corpus_v0/world_telemetry_fixture_smoke/20260522T200347Z/source_events.jsonl",
+    "artifacts/proof_runs/2026-05-22/real_world_corpus_v0/world_telemetry_public_smoke/20260522T200400Z/manifest.json",
+    "artifacts/proof_runs/2026-05-22/real_world_corpus_v0/world_telemetry_public_smoke/20260522T200400Z/source_events.jsonl"
+  ],
+  "files_copied": [],
+  "files_skipped": [
+    {
+      "path": "artifacts/proof_runs/2026-05-22/real_world_corpus_v0",
+      "reason": "no configured writable Google Drive proof root was available"
+    }
+  ],
+  "timestamp_utc": "2026-05-22T20:07:03Z"
+}

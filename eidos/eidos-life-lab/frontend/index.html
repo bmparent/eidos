@@ -1,0 +1,179 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Eidos Life Lab</title>
+  </head>
+  <body>
+    <div id="app" class="lab-shell">
+      <main class="world-shell">
+        <div class="top-hud" aria-live="polite">
+          <div>
+            <span class="hud-label">Generation</span>
+            <strong id="hudGeneration">0</strong>
+          </div>
+          <div>
+            <span class="hud-label">Alive</span>
+            <strong id="hudAlive">0</strong>
+          </div>
+          <div>
+            <span class="hud-label">Density</span>
+            <strong id="hudDensity">0.000</strong>
+          </div>
+          <div id="sentinelBadge" class="sentinel-badge">GREEN_EDGE</div>
+          <div id="connectionBadge" class="connection-badge">connecting</div>
+        </div>
+        <div id="worldMount" class="world-mount"></div>
+      </main>
+
+      <aside class="control-panel">
+        <header class="panel-header">
+          <div>
+            <p class="eyebrow">Eidos Brain / Sentinel</p>
+            <h1>Eidos Life Lab</h1>
+          </div>
+          <button id="fitBoardBtn" class="small-button">Fit Board</button>
+        </header>
+
+        <section class="panel-section">
+          <div class="button-row">
+            <button id="playBtn">Play</button>
+            <button id="pauseBtn">Pause</button>
+            <button id="stepBtn">Step</button>
+          </div>
+          <div class="form-grid">
+            <label>
+              Scenario
+              <select id="scenarioSelect">
+                <option value="evolutionary_garden">Evolutionary garden</option>
+                <option value="rare_structure_emergence">Rare structure emergence</option>
+                <option value="stress_test">Stress test</option>
+                <option value="sparse_seed">Sparse seed</option>
+                <option value="dense_seed">Dense seed</option>
+              </select>
+            </label>
+            <label>
+              Speed
+              <input id="speedInput" type="number" min="1" max="64" value="1" />
+            </label>
+            <label>
+              Mutation
+              <select id="mutationSelect">
+                <option value="low">Low</option>
+                <option value="medium" selected>Medium</option>
+                <option value="high">High</option>
+                <option value="extreme">Extreme</option>
+              </select>
+            </label>
+            <label>
+              Intervention
+              <select id="interventionSelect">
+                <option value="observational">Observational</option>
+                <option value="experimental">Experimental</option>
+              </select>
+            </label>
+          </div>
+          <div class="button-row">
+            <button id="resetBtn">Reset</button>
+            <button id="clearBtn">Clear</button>
+            <button id="randomBtn">Random Seed</button>
+          </div>
+        </section>
+
+        <section class="panel-section">
+          <h2>View</h2>
+          <div class="form-grid">
+            <label>
+              Field
+              <select id="fieldViewSelect">
+                <option value="lineage">Lineage colors</option>
+                <option value="energy">Energy</option>
+                <option value="memory">Memory</option>
+                <option value="signal">Signal</option>
+                <option value="nutrient">Nutrient</option>
+                <option value="waste">Waste</option>
+                <option value="stress">Stress</option>
+                <option value="alive">Alive/dead</option>
+              </select>
+            </label>
+            <label>
+              Quality
+              <select id="qualitySelect">
+                <option value="low">Low</option>
+                <option value="medium" selected>Medium</option>
+                <option value="high">High</option>
+              </select>
+            </label>
+          </div>
+          <div class="button-row">
+            <button id="topDownBtn">Top Down</button>
+            <button id="tiltBtn">Tilt View</button>
+          </div>
+        </section>
+
+        <section class="panel-section">
+          <h2>Board Tools</h2>
+          <div class="form-grid">
+            <label>
+              Tool
+              <select id="toolSelect">
+                <option value="inspect">Inspect cell</option>
+                <option value="toggle">Toggle</option>
+                <option value="birth">Birth cell</option>
+                <option value="kill">Kill cell</option>
+                <option value="paint_birth">Paint birth disk</option>
+                <option value="paint_kill">Paint kill disk</option>
+                <option value="glider">Inject glider</option>
+                <option value="blinker">Inject blinker</option>
+                <option value="block">Inject block</option>
+                <option value="r_pentomino">Inject r-pentomino</option>
+                <option value="acorn">Inject acorn</option>
+              </select>
+            </label>
+            <label>
+              Radius
+              <input id="radiusInput" type="number" min="1" max="16" value="3" />
+            </label>
+          </div>
+          <div id="cellInspector" class="cell-inspector">Click a cell to inspect or edit it.</div>
+        </section>
+
+        <section class="panel-section metrics-section">
+          <h2>Metrics</h2>
+          <div id="metricsGrid" class="metrics-grid"></div>
+          <canvas id="trendCanvas" width="360" height="150" aria-label="recent trends"></canvas>
+        </section>
+
+        <section class="panel-section">
+          <h2>Replay</h2>
+          <input id="replaySlider" type="range" min="0" max="0" value="0" />
+          <div class="button-row">
+            <button id="backToLiveBtn">Back to Live</button>
+          </div>
+          <p id="replayStatus" class="status-line">Live buffer: 0 frames</p>
+        </section>
+
+        <section class="panel-section">
+          <h2>Artifacts</h2>
+          <div class="button-row">
+            <button id="exportBtn">Export</button>
+            <button id="checkpointBtn">Checkpoint</button>
+          </div>
+          <p id="artifactStatus" class="status-line">No export yet.</p>
+        </section>
+
+        <section class="panel-section events-section">
+          <h2>Events</h2>
+          <div id="eventsFeed" class="events-feed"></div>
+        </section>
+
+        <section class="panel-section debug-section">
+          <h2>Debug</h2>
+          <pre id="debugLog"></pre>
+        </section>
+      </aside>
+    </div>
+    <script type="module" src="/src/main.js"></script>
+  </body>
+</html>

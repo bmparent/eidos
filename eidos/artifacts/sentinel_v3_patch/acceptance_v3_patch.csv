@@ -1,0 +1,3 @@
+reservoir,normal_false_alert_rate,abnormal_alert_rate,frozen_red_rate,noise_alert_rate,backdoor_alert_rate,finite_residual_stats,pass_all
+64,0.0,1.0,0.9066666666666666,1.0,1.0,True,True
+128,0.0,1.0,0.9033333333333333,1.0,1.0,True,True

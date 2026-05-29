@@ -1,0 +1,14 @@
+__pycache__/
+*.py[cod]
+.venv/
+node_modules/
+dist/
+
+eidos-life-lab/backend/.venv/
+eidos-life-lab/frontend/node_modules/
+eidos-life-lab/frontend/dist/
+eidos-life-lab/artifacts/exports/*.json
+eidos-life-lab/artifacts/checkpoints/*.json
+
+artifacts/eidos_life_lab/exports/*.json
+artifacts/eidos_life_lab/checkpoints/*.json

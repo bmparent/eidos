@@ -1,4 +1,33 @@
 sources:
-  - id: reuters_world
+  - id: bbc_world_rss
     type: rss
-    url: https://feeds.reuters.com/reuters/worldNews
+    url: https://feeds.bbci.co.uk/news/world/rss.xml
+    max_items: 20
+    license_note: Public BBC RSS metadata; retain short feed metadata only.
+  - id: gdelt_disruption_watch
+    type: gdelt_doc_api
+    query: '("supply chain" OR outage OR flood OR wildfire OR earthquake)'
+    timespan: 1d
+    max_records: 25
+    sort: DateDesc
+    license_note: GDELT DOC API article metadata; source article licenses vary by publisher.
+  - id: arxiv_ai_systems
+    type: arxiv_api
+    search_query: cat:cs.AI OR cat:cs.LG
+    max_results: 10
+    sortBy: submittedDate
+    sortOrder: descending
+    license_note: arXiv API metadata and abstracts; article licenses vary by record.
+
+horizons:
+  - 3d
+  - 7d
+  - 30d
+  - 365d
+
+# Optional local backfill example:
+# sources:
+#   - id: local_backfill
+#     type: local_jsonl
+#     path: data/prediction/local_world_events.jsonl
+#     max_items: 100
