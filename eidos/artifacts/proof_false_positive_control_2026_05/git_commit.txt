@@ -1,0 +1,59 @@
+commit: 89155b57f9a5486c9c586a0c9facfaf29fce30b0
+branch: codex/real-world-corpus-v0
+dirty: true
+
+git status --short:
+M __pycache__/EIDOS_BRAIN_UNIFIED_v0_4.7.02.cpython-311.pyc
+ M benchmarks/proof_artifacts.py
+ M pytest.ini
+ M repo/.github/workflows/eidos_prediction_experiments.yml
+ M repo/config/prediction/world_sources.example.yaml
+ M repo/docs/prediction_experiments.md
+ M repo/src/eidos_brain/__pycache__/__init__.cpython-311.pyc
+ M repo/src/eidos_brain/engine/__pycache__/eidos_v0_4_7_02.cpython-311.pyc
+ M repo/src/eidos_brain/prediction/feature_builder.py
+ M repo/src/eidos_brain/prediction/run_world_telemetry.py
+ M repo/src/eidos_brain/prediction/sources.py
+ M repo/src/eidos_brain/utils/__pycache__/__init__.cpython-311.pyc
+ M repo/tests/test_prediction_sources.py
+ M repo/tests/test_world_telemetry_smoke.py
+ M tests/test_proof_baseline_runner.py
+ M tools/domain_tuner.py
+ M tools/run_proof_baseline.py
+ M ../experiments/eidos-life/artifacts/eidos_life_lab_v0_2/events.jsonl
+ M ../experiments/eidos-life/artifacts/eidos_life_lab_v0_2/run_manifest.json
+ M ../experiments/eidos-life/artifacts/eidos_life_lab_v0_2/summary.json
+ M ../experiments/eidos-life/src/life-engine.js
+ M ../experiments/eidos-life/src/scenarios.js
+?? __pycache__/eidos_domain_adapters.cpython-311.pyc
+?? __pycache__/eidos_forecast.cpython-311.pyc
+?? __pycache__/eidos_incident_cards.cpython-311.pyc
+?? __pycache__/eidos_procedural_memory.cpython-311.pyc
+?? artifacts/proof_false_positive_control_2026_05/
+?? benchmarks/__pycache__/
+?? docs/proof_runs/2026-05-23/
+?? repo/artifacts/proof_runs/
+?? repo/docs/proof_runs/
+?? repo/src/eidos_brain/utils/__pycache__/provenance.cpython-311.pyc
+?? sentinel/
+?? tests/__pycache__/__init__.cpython-311.pyc
+?? tests/__pycache__/conftest.cpython-311-pytest-9.0.3.pyc
+?? tests/__pycache__/scenarios.cpython-311.pyc
+?? tests/__pycache__/test_hippocampus.cpython-311-pytest-9.0.3.pyc
+?? tests/__pycache__/test_incident_card_confirmation.cpython-311-pytest-9.0.3.pyc
+?? tests/__pycache__/test_integration_stream.cpython-311-pytest-9.0.3.pyc
+?? tests/__pycache__/test_proof_artifacts.cpython-311-pytest-9.0.3.pyc
+?? tests/__pycache__/test_proof_baseline_runner.cpython-311-pytest-9.0.3.pyc
+?? tests/__pycache__/test_regressions.cpython-311-pytest-9.0.3.pyc
+?? tests/__pycache__/test_reservoir.cpython-311-pytest-9.0.3.pyc
+?? tests/__pycache__/test_sentinel.cpython-311-pytest-9.0.3.pyc
+?? tests/__pycache__/test_sentinel_event_confirmation.cpython-311-pytest-9.0.3.pyc
+?? tests/__pycache__/test_sentinel_false_positive_control.cpython-311-pytest-9.0.3.pyc
+?? tests/__pycache__/test_sentinel_modes.cpython-311-pytest-9.0.3.pyc
+?? tests/__pycache__/test_storage_backends.cpython-311-pytest-9.0.3.pyc
+?? tests/__pycache__/test_user_config.cpython-311-pytest-9.0.3.pyc
+?? tests/test_incident_card_confirmation.py
+?? tests/test_sentinel_event_confirmation.py
+?? tests/test_sentinel_false_positive_control.py
+?? tests/test_sentinel_modes.py
+?? tools/__pycache__/

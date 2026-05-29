@@ -114,27 +114,109 @@ def test_run_writes_required_baseline_artifacts_with_seed_frames_and_out_dir(tmp
         "environment.txt",
         "git_commit.txt",
         "run_manifest.json",
+        "drive_manifest.json",
+        "event_summary.json",
     ):
         assert (out_dir / name).is_file()
     assert (out_dir / "scenarios").is_dir()
     assert (out_dir / "plots").is_dir()
+    assert (out_dir / "incident_cards").is_dir()
+    assert (out_dir / "logs").is_dir()
     assert (out_dir / "plots" / "README.md").is_file()
 
     manifest = json.loads((out_dir / "run_manifest.json").read_text(encoding="utf-8"))
     config = json.loads((out_dir / "config.json").read_text(encoding="utf-8"))
+    event_summary = json.loads((out_dir / "event_summary.json").read_text(encoding="utf-8"))
     assert manifest["benchmark"]["seed"] == 42
     assert manifest["benchmark"]["frames"] == 96
     assert manifest["benchmark"]["suite"] == "smoke"
     assert manifest["config"]["config_hash_sha256"] == config["config_hash_sha256"]
     assert manifest["outputs"]["benchmark_summary_csv"] == "benchmark_summary.csv"
+    assert manifest["outputs"]["event_summary_json"] == "event_summary.json"
+    assert event_summary["aggregate"]["normal_only_false_positives"] <= 5
 
     md = (out_dir / "benchmark_summary.md").read_text(encoding="utf-8")
     assert "Seed: `42`" in md
     assert "Frames: `96`" in md
     assert "synthetic_smoke" in md
+    assert "Sentinel false-positive control" in md
 
     with (out_dir / "benchmark_summary.csv").open(newline="", encoding="utf-8") as handle:
         rows = list(csv.DictReader(handle))
     assert rows[0]["scenario"] == "synthetic_smoke"
     assert rows[0]["seed"] == "42"
     assert rows[0]["frames"] == "96"
+    assert rows[0]["normal_only_false_positives"] == "0"
+
+
+def test_discover_drive_root_prefers_writable_env_dir(tmp_path, monkeypatch):
+    drive_root = tmp_path / "configured-drive"
+    monkeypatch.setenv("EIDOS_PROOF_DRIVE_DIR", str(drive_root))
+
+    root, reason = run_proof_baseline.discover_drive_root(
+        colab_candidates_override=[],
+        local_candidates_override=[],
+    )
+
+    assert root == drive_root
+    assert "EIDOS_PROOF_DRIVE_DIR" in reason
+    assert drive_root.is_dir()
+
+
+def test_discover_drive_root_accepts_colab_my_drive_path(tmp_path, monkeypatch):
+    monkeypatch.delenv("EIDOS_PROOF_DRIVE_DIR", raising=False)
+    monkeypatch.delenv("EIDOS_ARTIFACT_ROOT", raising=False)
+    colab_root = tmp_path / "content" / "drive" / "MyDrive"
+    colab_root.mkdir(parents=True)
+
+    root, reason = run_proof_baseline.discover_drive_root(
+        colab_candidates_override=[colab_root],
+        local_candidates_override=[],
+    )
+
+    assert root == colab_root
+    assert "Colab Drive root" in reason
+
+
+def test_discover_drive_root_skips_unconfigured_plain_local_google_drive(tmp_path, monkeypatch):
+    monkeypatch.delenv("EIDOS_PROOF_DRIVE_DIR", raising=False)
+    monkeypatch.delenv("EIDOS_ARTIFACT_ROOT", raising=False)
+    local_root = tmp_path / "Google Drive"
+    local_root.mkdir()
+    monkeypatch.setattr(
+        run_proof_baseline,
+        "local_google_drive_candidates",
+        lambda: [local_root],
+    )
+
+    root, reason = run_proof_baseline.discover_drive_root(
+        colab_candidates_override=[],
+    )
+
+    assert root is None
+    assert "local Google Drive auto-discovery skipped" in reason
+
+
+def test_mirror_to_drive_copies_artifact_tree_to_proof_phase(tmp_path, monkeypatch):
+    drive_root = tmp_path / "configured-drive"
+    monkeypatch.setenv("EIDOS_PROOF_DRIVE_DIR", str(drive_root))
+    monkeypatch.delenv("EIDOS_ARTIFACT_ROOT", raising=False)
+    out_dir = tmp_path / "artifact"
+    out_dir.mkdir()
+    (out_dir / "config.json").write_text("{}", encoding="utf-8")
+    (out_dir / "logs").mkdir()
+    (out_dir / "logs" / "run.txt").write_text("ok\n", encoding="utf-8")
+    monkeypatch.setattr(
+        run_proof_baseline,
+        "colab_drive_candidates",
+        lambda: [],
+    )
+
+    manifest = run_proof_baseline.mirror_to_drive(out_dir, "run_1", "2026-05-23")
+
+    drive_run_dir = drive_root / "Eidos_Brain_Proof_Phase" / "2026-05-23" / "run_1"
+    assert manifest["drive_copy_success"] is True
+    assert manifest["drive_root"] == str(drive_root)
+    assert manifest["drive_run_dir"] == str(drive_run_dir)
+    assert (drive_run_dir / "config.json").is_file()
+    assert (drive_run_dir / "logs" / "run.txt").is_file()
