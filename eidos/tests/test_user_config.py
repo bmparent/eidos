@@ -24,6 +24,25 @@ def test_validate_config_invalid_value(brain_module):
     with pytest.raises(ValueError, match="must be positive"):
         brain_module.validate_config(conf)
 
+
+@pytest.mark.parametrize(
+    ("key", "value", "message"),
+    [
+        ("reservoir", 0, "must be positive"),
+        ("spectral_radius", 0.0, "Invalid spectral_radius"),
+        ("spectral_radius", -1.0, "Invalid spectral_radius"),
+        ("spectral_radius", 10.0, "Invalid spectral_radius"),
+        ("hippocampus_dim", 99, "hippocampus_dim too small"),
+    ],
+)
+def test_validate_config_rejects_invalid_positive_and_range_values(brain_module, key, value, message):
+    """Validator should reject invalid positive/range config values."""
+    conf = brain_module.EIDOS_BRAIN_CONFIG.copy()
+    conf[key] = value
+    with pytest.raises(ValueError, match=message):
+        brain_module.validate_config(conf)
+
+
 def test_env_var_override(brain_module, monkeypatch):
     """
     Test that env vars override constants.

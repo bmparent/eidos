@@ -116,6 +116,8 @@ def test_run_writes_required_baseline_artifacts_with_seed_frames_and_out_dir(tmp
         "run_manifest.json",
         "drive_manifest.json",
         "event_summary.json",
+        "proof_digest.json",
+        "proof_digest.md",
     ):
         assert (out_dir / name).is_file()
     assert (out_dir / "scenarios").is_dir()
@@ -127,19 +129,24 @@ def test_run_writes_required_baseline_artifacts_with_seed_frames_and_out_dir(tmp
     manifest = json.loads((out_dir / "run_manifest.json").read_text(encoding="utf-8"))
     config = json.loads((out_dir / "config.json").read_text(encoding="utf-8"))
     event_summary = json.loads((out_dir / "event_summary.json").read_text(encoding="utf-8"))
+    digest = json.loads((out_dir / "proof_digest.json").read_text(encoding="utf-8"))
     assert manifest["benchmark"]["seed"] == 42
     assert manifest["benchmark"]["frames"] == 96
     assert manifest["benchmark"]["suite"] == "smoke"
     assert manifest["config"]["config_hash_sha256"] == config["config_hash_sha256"]
     assert manifest["outputs"]["benchmark_summary_csv"] == "benchmark_summary.csv"
     assert manifest["outputs"]["event_summary_json"] == "event_summary.json"
+    assert manifest["outputs"]["proof_digest_json"] == "proof_digest.json"
     assert event_summary["aggregate"]["normal_only_false_positives"] <= 5
+    assert digest["crash_scan"]["crash_hit_count"] == 0
+    assert digest["clean"] is True
 
     md = (out_dir / "benchmark_summary.md").read_text(encoding="utf-8")
     assert "Seed: `42`" in md
     assert "Frames: `96`" in md
     assert "synthetic_smoke" in md
     assert "Sentinel false-positive control" in md
+    assert "Compression baselines" in md
 
     with (out_dir / "benchmark_summary.csv").open(newline="", encoding="utf-8") as handle:
         rows = list(csv.DictReader(handle))
@@ -157,6 +164,36 @@ def test_resolve_out_dir_accepts_repo_prefixed_relative_path_from_git_parent(tmp
     out_dir = run_proof_baseline.resolve_out_dir(Path("eidos/artifacts/readiness"), repo_root=repo_root)
 
     assert out_dir == repo_root / "artifacts" / "readiness"
+
+
+def test_compression_baselines_for_frames_records_required_and_optional_status():
+    frames = run_proof_baseline.np.arange(24, dtype=float).reshape(6, 4)
+
+    result = run_proof_baseline.compression_baselines_for_frames(frames)
+    by_name = {item["name"]: item for item in result["baselines"]}
+
+    assert result["raw_bytes"] == frames.size * 8
+    assert by_name["raw"]["compression_ratio"] == 1.0
+    assert by_name["zlib"]["compressed_bytes"] > 0
+    assert by_name["zlib"]["compression_ratio"] > 0
+    assert by_name["lzma"]["compressed_bytes"] > 0
+    assert "zstd" in by_name
+    assert "lz4" in by_name
+    assert "delta_zlib" in by_name
+    assert result["best_baseline"]
+
+
+def test_crash_scan_and_digest_record_crash_hits(tmp_path):
+    out_dir = tmp_path / "proof"
+    out_dir.mkdir()
+    (out_dir / "engine_output.log").write_text("CRASH IN INCIDENT LOGIC\n", encoding="utf-8")
+    (out_dir / "notes.txt").write_text("can't convert cuda\nTraceback\n", encoding="utf-8")
+
+    scan = run_proof_baseline.scan_crash_strings(out_dir)
+
+    assert scan["status"] == "not_clean"
+    assert scan["crash_hit_count"] == 3
+    assert {item["path"] for item in scan["crash_hit_files"]} == {"engine_output.log", "notes.txt"}
 
 
 def test_run_returns_nonzero_when_pytest_fails(tmp_path, monkeypatch):

@@ -14,6 +14,7 @@ import copy
 import csv
 import hashlib
 import json
+import lzma
 import math
 import os
 import platform
@@ -21,10 +22,13 @@ import shutil
 import subprocess
 import sys
 import time
+import zlib
 from dataclasses import dataclass
 from datetime import datetime, timezone
 from pathlib import Path
 from typing import Any, Callable, Dict, Iterable, List, Optional, Sequence, Tuple
+
+import numpy as np
 
 REPO_ROOT = Path(__file__).resolve().parents[1]
 if str(REPO_ROOT) not in sys.path:
@@ -38,6 +42,8 @@ DEFAULT_OUT = Path("artifacts/proof_baseline_2026_05")
 ENGINE_FILENAME = "EIDOS_BRAIN_UNIFIED_v0_4.7.02.py"
 PROOF_MONTH = "2026-05"
 SECRET_MARKERS = ("KEY", "SECRET", "TOKEN", "PASSWORD", "CREDENTIAL", "AUTH")
+CRASH_SCAN_PATTERNS = ("CRASH IN INCIDENT LOGIC", "can't convert cuda", "Traceback")
+CRASH_SCAN_SUFFIXES = {".log", ".txt", ".jsonl", ".md", ".json"}
 
 CSV_COLUMNS = [
     "suite",
@@ -47,6 +53,24 @@ CSV_COLUMNS = [
     "status",
     "eidos_compression_ratio",
     "baseline_compression_ratio",
+    "raw_bytes",
+    "eidos_bytes",
+    "zlib_bytes",
+    "zlib_compression_ratio",
+    "lzma_bytes",
+    "lzma_compression_ratio",
+    "zstd_bytes",
+    "zstd_compression_ratio",
+    "zstd_skipped_reason",
+    "lz4_bytes",
+    "lz4_compression_ratio",
+    "lz4_skipped_reason",
+    "delta_zlib_bytes",
+    "delta_zlib_compression_ratio",
+    "delta_zlib_skipped_reason",
+    "best_baseline",
+    "best_baseline_compression_ratio",
+    "eidos_vs_best_baseline_note",
     "anomaly_recall",
     "anomaly_precision",
     "anomaly_f1",
@@ -74,6 +98,15 @@ class PytestResult:
     returncode: int
     status: str
     reason: str
+
+
+@dataclass(frozen=True)
+class CompressionBaselineResult:
+    name: str
+    raw_bytes: int
+    compressed_bytes: Optional[int]
+    compression_ratio: Optional[float]
+    skipped_reason: str = ""
 
 
 def parse_args(argv: Optional[Sequence[str]] = None) -> argparse.Namespace:
@@ -148,6 +181,197 @@ def sha256_file(path: Path) -> str:
         for chunk in iter(lambda: handle.read(1024 * 1024), b""):
             digest.update(chunk)
     return digest.hexdigest()
+
+
+def parse_float(value: Any) -> Optional[float]:
+    if value in ("", None):
+        return None
+    try:
+        parsed = float(value)
+    except (TypeError, ValueError):
+        return None
+    return parsed if math.isfinite(parsed) else None
+
+
+def compression_ratio(raw_bytes: int, compressed_bytes: Optional[int]) -> Optional[float]:
+    if raw_bytes <= 0 or not compressed_bytes or compressed_bytes <= 0:
+        return None
+    return round(float(raw_bytes) / float(compressed_bytes), 6)
+
+
+def compression_result(
+    name: str,
+    raw_bytes: int,
+    compressed_bytes: Optional[int],
+    skipped_reason: str = "",
+) -> CompressionBaselineResult:
+    return CompressionBaselineResult(
+        name=name,
+        raw_bytes=raw_bytes,
+        compressed_bytes=compressed_bytes,
+        compression_ratio=compression_ratio(raw_bytes, compressed_bytes),
+        skipped_reason=skipped_reason,
+    )
+
+
+def serialize_frames_for_baseline(frames: Any, max_frames: Optional[int] = None) -> Tuple[np.ndarray, bytes, Dict[str, Any]]:
+    """Serialize proof frames as little-endian float64 bytes for external baselines."""
+    arr = np.asarray(frames, dtype=np.dtype("<f8"))
+    if arr.ndim == 0:
+        arr = arr.reshape(1)
+    if max_frames is not None:
+        arr = arr[: int(max_frames)]
+    arr = np.ascontiguousarray(arr, dtype=np.dtype("<f8"))
+    payload = arr.tobytes(order="C")
+    meta = {
+        "dtype": "float64_le",
+        "shape": list(arr.shape),
+        "raw_bytes": len(payload),
+        "serialization": "contiguous little-endian float64 frame matrix",
+    }
+    return arr, payload, meta
+
+
+def _optional_zstd_result(raw_payload: bytes, raw_bytes: int) -> CompressionBaselineResult:
+    try:
+        import zstandard as zstd  # type: ignore
+    except ImportError:
+        return compression_result("zstd", raw_bytes, None, "zstandard package is not installed")
+    try:
+        compressed = zstd.ZstdCompressor(level=3).compress(raw_payload)
+    except Exception as exc:
+        return compression_result("zstd", raw_bytes, None, f"zstandard compression failed: {exc}")
+    return compression_result("zstd", raw_bytes, len(compressed))
+
+
+def _optional_lz4_result(raw_payload: bytes, raw_bytes: int) -> CompressionBaselineResult:
+    try:
+        import lz4.frame as lz4_frame  # type: ignore
+    except ImportError:
+        return compression_result("lz4", raw_bytes, None, "lz4 package is not installed")
+    try:
+        compressed = lz4_frame.compress(raw_payload)
+    except Exception as exc:
+        return compression_result("lz4", raw_bytes, None, f"lz4 compression failed: {exc}")
+    return compression_result("lz4", raw_bytes, len(compressed))
+
+
+def _delta_zlib_result(arr: np.ndarray, raw_bytes: int) -> CompressionBaselineResult:
+    if arr.shape[0] < 2:
+        return compression_result("delta_zlib", raw_bytes, None, "delta encoding requires at least two frames")
+    try:
+        delta_arr = np.concatenate([arr[:1], np.diff(arr, axis=0)], axis=0)
+        delta_payload = np.ascontiguousarray(delta_arr, dtype=np.dtype("<f8")).tobytes(order="C")
+        compressed = zlib.compress(delta_payload)
+    except Exception as exc:
+        return compression_result("delta_zlib", raw_bytes, None, f"delta+zlib compression failed: {exc}")
+    return compression_result("delta_zlib", raw_bytes, len(compressed))
+
+
+def compression_baselines_for_frames(frames: Any, max_frames: Optional[int] = None) -> Dict[str, Any]:
+    arr, raw_payload, serialization = serialize_frames_for_baseline(frames, max_frames)
+    raw_bytes = len(raw_payload)
+    if raw_bytes <= 0:
+        results = [
+            compression_result("raw", raw_bytes, None, "no frame bytes available"),
+            compression_result("zlib", raw_bytes, None, "no frame bytes available"),
+            compression_result("lzma", raw_bytes, None, "no frame bytes available"),
+            compression_result("zstd", raw_bytes, None, "no frame bytes available"),
+            compression_result("lz4", raw_bytes, None, "no frame bytes available"),
+            compression_result("delta_zlib", raw_bytes, None, "no frame bytes available"),
+        ]
+    else:
+        results = [
+            compression_result("raw", raw_bytes, raw_bytes),
+            compression_result("zlib", raw_bytes, len(zlib.compress(raw_payload))),
+            compression_result("lzma", raw_bytes, len(lzma.compress(raw_payload))),
+            _optional_zstd_result(raw_payload, raw_bytes),
+            _optional_lz4_result(raw_payload, raw_bytes),
+            _delta_zlib_result(arr, raw_bytes),
+        ]
+
+    completed = [item for item in results if item.compression_ratio is not None]
+    best = max(completed, key=lambda item: item.compression_ratio) if completed else None
+    return {
+        "frame_serialization": serialization,
+        "raw_bytes": raw_bytes,
+        "baselines": [item.__dict__ for item in results],
+        "best_baseline": best.name if best else "",
+        "best_baseline_compression_ratio": best.compression_ratio if best else "",
+        "skipped": [
+            {"name": item.name, "reason": item.skipped_reason}
+            for item in results
+            if item.skipped_reason
+        ],
+    }
+
+
+def _baseline_by_name(baseline_doc: Dict[str, Any], name: str) -> Dict[str, Any]:
+    for item in baseline_doc.get("baselines", []):
+        if item.get("name") == name:
+            return item
+    return {}
+
+
+def eidos_vs_best_baseline_note(eidos_ratio: Optional[float], best_name: str, best_ratio: Optional[float]) -> str:
+    if eidos_ratio is None or best_ratio is None or not best_name:
+        return "comparison unavailable"
+    if eidos_ratio <= 0 or best_ratio <= 0:
+        return "comparison unavailable"
+    if abs(eidos_ratio - best_ratio) < 1e-9:
+        return f"Eidos ratio matched {best_name}"
+    if eidos_ratio > best_ratio:
+        return f"Eidos ratio exceeded {best_name} by {round(eidos_ratio / best_ratio, 4)}x"
+    return f"{best_name} ratio exceeded Eidos by {round(best_ratio / eidos_ratio, 4)}x"
+
+
+def apply_compression_baselines_to_row(row: Dict[str, Any], baseline_doc: Dict[str, Any]) -> None:
+    raw_bytes = int(baseline_doc.get("raw_bytes") or 0)
+    row["raw_bytes"] = raw_bytes
+    eidos_ratio = parse_float(row.get("eidos_compression_ratio"))
+    row["eidos_bytes"] = int(round(raw_bytes / eidos_ratio)) if raw_bytes and eidos_ratio else ""
+
+    for name in ("zlib", "lzma", "zstd", "lz4", "delta_zlib"):
+        item = _baseline_by_name(baseline_doc, name)
+        row[f"{name}_bytes"] = item.get("compressed_bytes") or ""
+        row[f"{name}_compression_ratio"] = item.get("compression_ratio") or ""
+        skipped = item.get("skipped_reason") or ""
+        if name in ("zstd", "lz4", "delta_zlib"):
+            row[f"{name}_skipped_reason"] = skipped
+
+    row["best_baseline"] = baseline_doc.get("best_baseline", "")
+    row["best_baseline_compression_ratio"] = baseline_doc.get("best_baseline_compression_ratio", "")
+    row["baseline_compression_ratio"] = row["best_baseline_compression_ratio"]
+    row["eidos_vs_best_baseline_note"] = eidos_vs_best_baseline_note(
+        eidos_ratio,
+        str(row.get("best_baseline") or ""),
+        parse_float(row.get("best_baseline_compression_ratio")),
+    )
+
+
+def compression_baseline_manifest(rows: List[Dict[str, Any]]) -> List[Dict[str, Any]]:
+    records: List[Dict[str, Any]] = []
+    for row in rows:
+        records.append(
+            {
+                "scenario": row.get("scenario", ""),
+                "raw_bytes": row.get("raw_bytes", ""),
+                "eidos_compression_ratio": row.get("eidos_compression_ratio", ""),
+                "eidos_bytes": row.get("eidos_bytes", ""),
+                "best_baseline": row.get("best_baseline", ""),
+                "best_baseline_compression_ratio": row.get("best_baseline_compression_ratio", ""),
+                "zlib_compression_ratio": row.get("zlib_compression_ratio", ""),
+                "lzma_compression_ratio": row.get("lzma_compression_ratio", ""),
+                "zstd_compression_ratio": row.get("zstd_compression_ratio", ""),
+                "zstd_skipped_reason": row.get("zstd_skipped_reason", ""),
+                "lz4_compression_ratio": row.get("lz4_compression_ratio", ""),
+                "lz4_skipped_reason": row.get("lz4_skipped_reason", ""),
+                "delta_zlib_compression_ratio": row.get("delta_zlib_compression_ratio", ""),
+                "delta_zlib_skipped_reason": row.get("delta_zlib_skipped_reason", ""),
+                "eidos_vs_best_baseline_note": row.get("eidos_vs_best_baseline_note", ""),
+            }
+        )
+    return records
 
 
 def run_command(cmd: Sequence[str], repo_root: Path, timeout: int = 60, env: Optional[Dict[str, str]] = None) -> subprocess.CompletedProcess[str]:
@@ -636,6 +860,24 @@ def run_scenarios(engine: Any, args: argparse.Namespace, out_dir: Path, repo_roo
                 "status": status,
                 "eidos_compression_ratio": "",
                 "baseline_compression_ratio": "",
+                "raw_bytes": "",
+                "eidos_bytes": "",
+                "zlib_bytes": "",
+                "zlib_compression_ratio": "",
+                "lzma_bytes": "",
+                "lzma_compression_ratio": "",
+                "zstd_bytes": "",
+                "zstd_compression_ratio": "",
+                "zstd_skipped_reason": "",
+                "lz4_bytes": "",
+                "lz4_compression_ratio": "",
+                "lz4_skipped_reason": "",
+                "delta_zlib_bytes": "",
+                "delta_zlib_compression_ratio": "",
+                "delta_zlib_skipped_reason": "",
+                "best_baseline": "",
+                "best_baseline_compression_ratio": "",
+                "eidos_vs_best_baseline_note": "",
                 "anomaly_recall": "",
                 "anomaly_precision": "",
                 "anomaly_f1": "",
@@ -663,6 +905,7 @@ def run_scenarios(engine: Any, args: argparse.Namespace, out_dir: Path, repo_roo
                 actual_frames = min(int(args.frames), int(bundle.frames.shape[0]))
                 if actual_frames < int(args.frames):
                     notes.append(f"requested {args.frames} frames; scenario only provided {actual_frames}")
+                compression_baselines = compression_baselines_for_frames(bundle.frames, actual_frames)
                 labels = bundle.labels[:actual_frames] if bundle.labels is not None else None
                 if labels is None:
                     notes.append("no ground-truth labels; anomaly precision/recall/f1 left blank")
@@ -692,6 +935,7 @@ def run_scenarios(engine: Any, args: argparse.Namespace, out_dir: Path, repo_roo
                     row["eidos_compression_ratio"] = step_rows[-1].get("ratio", "")
                 else:
                     notes.append("no step rows returned; compression ratio unavailable")
+                apply_compression_baselines_to_row(row, compression_baselines)
                 row.update(detect)
                 row["runtime_seconds"] = round(elapsed, 6)
                 processed = int(summary.get("frames_processed") or len(step_rows) or actual_frames)
@@ -708,6 +952,7 @@ def run_scenarios(engine: Any, args: argparse.Namespace, out_dir: Path, repo_roo
                         "status": status,
                         "summary": summary,
                         "tuner_metrics": tuner_metrics,
+                        "compression_baselines": compression_baselines,
                         "csv_row": row,
                     },
                 )
@@ -745,19 +990,45 @@ def write_benchmark_csv(path: Path, rows: Iterable[Dict[str, Any]]) -> None:
 
 
 def markdown_table(rows: List[Dict[str, Any]]) -> str:
-    header = "| scenario | status | frames | eidos compression ratio | anomaly f1 | runtime seconds | notes |"
-    sep = "| --- | --- | ---: | ---: | ---: | ---: | --- |"
+    header = "| scenario | status | frames | eidos compression ratio | best baseline | anomaly f1 | runtime seconds | notes |"
+    sep = "| --- | --- | ---: | ---: | --- | ---: | ---: | --- |"
     body = []
     for row in rows:
         body.append(
-            "| {scenario} | {status} | {frames} | {ratio} | {f1} | {runtime} | {notes} |".format(
+            "| {scenario} | {status} | {frames} | {ratio} | {best} | {f1} | {runtime} | {notes} |".format(
                 scenario=row.get("scenario", ""),
                 status=row.get("status", ""),
                 frames=row.get("frames", ""),
                 ratio=row.get("eidos_compression_ratio", ""),
+                best=f"{row.get('best_baseline', '')} {row.get('best_baseline_compression_ratio', '')}".strip(),
                 f1=row.get("anomaly_f1", ""),
                 runtime=row.get("runtime_seconds", ""),
                 notes=str(row.get("notes", "")).replace("|", "\\|"),
+            )
+        )
+    return "\n".join([header, sep, *body])
+
+
+def markdown_compression_baseline_table(rows: List[Dict[str, Any]]) -> str:
+    header = "| scenario | raw bytes | Eidos ratio | zlib | lzma | zstd | lz4 | delta+zlib | best baseline | note |"
+    sep = "| --- | ---: | ---: | ---: | ---: | --- | --- | --- | --- | --- |"
+    body = []
+    for row in rows:
+        zstd = row.get("zstd_compression_ratio") or f"skipped: {row.get('zstd_skipped_reason', '')}"
+        lz4 = row.get("lz4_compression_ratio") or f"skipped: {row.get('lz4_skipped_reason', '')}"
+        delta = row.get("delta_zlib_compression_ratio") or f"skipped: {row.get('delta_zlib_skipped_reason', '')}"
+        body.append(
+            "| {scenario} | {raw} | {eidos} | {zlib_ratio} | {lzma_ratio} | {zstd} | {lz4} | {delta} | {best} | {note} |".format(
+                scenario=row.get("scenario", ""),
+                raw=row.get("raw_bytes", ""),
+                eidos=row.get("eidos_compression_ratio", ""),
+                zlib_ratio=row.get("zlib_compression_ratio", ""),
+                lzma_ratio=row.get("lzma_compression_ratio", ""),
+                zstd=str(zstd).replace("|", "\\|"),
+                lz4=str(lz4).replace("|", "\\|"),
+                delta=str(delta).replace("|", "\\|"),
+                best=f"{row.get('best_baseline', '')} {row.get('best_baseline_compression_ratio', '')}".strip(),
+                note=str(row.get("eidos_vs_best_baseline_note", "")).replace("|", "\\|"),
             )
         )
     return "\n".join([header, sep, *body])
@@ -814,6 +1085,12 @@ def write_benchmark_md(
             "",
             markdown_table(rows),
             "",
+            "## Compression baselines",
+            "",
+            "External baselines use the same proof-frame matrix serialized as contiguous little-endian float64 bytes. Optional zstandard/lz4 baselines are recorded as skipped when their packages are not installed.",
+            "",
+            markdown_compression_baseline_table(rows),
+            "",
             "## Skipped baselines and reasons",
             "",
         ]
@@ -852,7 +1129,7 @@ def write_benchmark_md(
             "## Known limitations",
             "",
             "- This runner still wraps existing engine behavior and does not tune core SentinelMonitor thresholds.",
-            "- External compression baselines are not implemented in this runner, so baseline compression ratio is blank.",
+            "- External compression baselines use a documented float64 proof-frame serialization; optional zstandard/lz4 baselines depend on local packages.",
             "- Smoke synthetic scenarios do not provide ground-truth anomaly labels, so detection precision/recall/f1 can be blank.",
             "- No plots were produced for this smoke baseline unless a later plotting task adds them.",
             "- False-positive control uses deterministic synthetic policy checks; broader labeled real-world validation remains future work.",
@@ -944,12 +1221,31 @@ def run_pytest_capture(args: argparse.Namespace, out_dir: Path, repo_root: Path 
 
 
 def skipped_baseline_records(rows: List[Dict[str, Any]], scenario_skips: List[Dict[str, Any]]) -> List[Dict[str, str]]:
-    records = [
-        {
-            "name": "baseline_compression_ratio",
-            "reason": "Week 1 runner records Eidos ratio only; external compression baselines are scheduled for later proof work.",
-        }
-    ]
+    records: List[Dict[str, str]] = []
+    seen = set()
+    if rows and all(not row.get("baseline_compression_ratio") for row in rows):
+        records.append(
+            {
+                "name": "baseline_compression_ratio",
+                "reason": "External compression baseline comparison was unavailable for every scenario.",
+            }
+        )
+        seen.add(("baseline_compression_ratio", records[-1]["reason"]))
+    for row in rows:
+        scenario = str(row.get("scenario") or "unknown")
+        for field, name in (
+            ("zstd_skipped_reason", "zstd"),
+            ("lz4_skipped_reason", "lz4"),
+            ("delta_zlib_skipped_reason", "delta_zlib"),
+        ):
+            reason = str(row.get(field) or "")
+            if not reason:
+                continue
+            key = (f"{scenario}:{name}", reason)
+            if key in seen:
+                continue
+            records.append({"name": f"{scenario}:{name}", "reason": reason})
+            seen.add(key)
     if any(not row.get("anomaly_f1") for row in rows):
         records.append(
             {
@@ -984,7 +1280,7 @@ def build_config_doc(
             "parameters": json_safe(getattr(engine, "EIDOS_BRAIN_CONFIG", {})),
         },
         "baselines": {
-            "compression": [],
+            "compression": compression_baseline_manifest(rows),
             "detection": [],
             "skipped": skipped_baselines,
         },
@@ -1025,6 +1321,7 @@ def build_manifest(
     packages: Dict[str, str],
     args: argparse.Namespace,
     scenario_list: List[str],
+    rows: List[Dict[str, Any]],
     config_hash: str,
     skipped_baselines: List[Dict[str, str]],
     pytest_result: PytestResult,
@@ -1033,7 +1330,7 @@ def build_manifest(
 ) -> Dict[str, Any]:
     manifest = {
         "baselines": {
-            "compression": [],
+            "compression": compression_baseline_manifest(rows),
             "detection": [],
             "skipped": skipped_baselines,
         },
@@ -1066,6 +1363,8 @@ def build_manifest(
             "incident_cards_dir": "incident_cards",
             "logs_dir": "logs",
             "plain_language_test_analysis_md": "plain_language_test_analysis.md",
+            "proof_digest_json": "proof_digest.json",
+            "proof_digest_md": "proof_digest.md",
             "pytest_results_xml": "pytest_results.xml",
         },
         "packages": packages,
@@ -1201,6 +1500,150 @@ def proof_failure_reasons(rows: List[Dict[str, Any]], pytest_result: PytestResul
     return reasons
 
 
+def scan_crash_strings(out_dir: Path) -> Dict[str, Any]:
+    ignored = {"proof_digest.json", "proof_digest.md"}
+    hit_files: List[Dict[str, Any]] = []
+    hit_count = 0
+    for path in sorted(out_dir.rglob("*")):
+        if not path.is_file() or path.name in ignored or path.suffix.lower() not in CRASH_SCAN_SUFFIXES:
+            continue
+        try:
+            text = path.read_text(encoding="utf-8", errors="ignore")
+        except Exception:
+            continue
+        matches = []
+        for pattern in CRASH_SCAN_PATTERNS:
+            count = text.count(pattern)
+            if count:
+                matches.append({"pattern": pattern, "count": count})
+                hit_count += count
+        if matches:
+            hit_files.append({"path": relpath(path, out_dir), "matches": matches})
+    return {
+        "patterns": list(CRASH_SCAN_PATTERNS),
+        "crash_hit_count": hit_count,
+        "crash_hit_files": hit_files,
+        "status": "clean" if hit_count == 0 else "not_clean",
+    }
+
+
+def build_proof_digest(
+    *,
+    out_dir: Path,
+    command: str,
+    git_info: Dict[str, Any],
+    args: argparse.Namespace,
+    rows: List[Dict[str, Any]],
+    event_summary: Dict[str, Any],
+    pytest_result: PytestResult,
+    crash_scan: Dict[str, Any],
+) -> Dict[str, Any]:
+    primary_row = rows[0] if rows else {}
+    aggregate = event_summary.get("aggregate", {}) if event_summary else {}
+    incident_cards = event_summary.get("incident_cards_written", []) if event_summary else []
+    runtime_seconds = sum(parse_float(row.get("runtime_seconds")) or 0.0 for row in rows)
+    digest = {
+        "repo_branch": git_info.get("branch", "unknown"),
+        "git_commit": git_info.get("commit", "unknown"),
+        "git_dirty": bool(git_info.get("dirty")),
+        "command": command,
+        "seed": args.seed,
+        "frames": args.frames,
+        "suite": args.suite,
+        "runtime_seconds": round(runtime_seconds, 6),
+        "eidos_compression_ratio": primary_row.get("eidos_compression_ratio", ""),
+        "external_compression_baselines": compression_baseline_manifest(rows),
+        "normal_only_confirmed_false_positives_per_10k_frames": aggregate.get("normal_only_false_positives"),
+        "legacy_raw_spike_alerts": aggregate.get("normal_only_legacy_raw_spike_alerts"),
+        "candidate_events": aggregate.get("candidate_events"),
+        "confirmed_events": aggregate.get("confirmed_events"),
+        "suppressed_candidates": aggregate.get("suppressed_candidates"),
+        "merged_events": aggregate.get("merged_events"),
+        "cooldown_suppressions": aggregate.get("cooldown_suppressions"),
+        "red_count": aggregate.get("red_count"),
+        "amber_count": aggregate.get("amber_count"),
+        "incident_card_count": aggregate.get("incident_card_count"),
+        "incident_card_filenames": incident_cards,
+        "pytest": {
+            "command": pytest_result.command,
+            "returncode": pytest_result.returncode,
+            "status": pytest_result.status,
+            "reason": pytest_result.reason,
+        },
+        "known_limitations": event_summary.get("known_limitations", []) if event_summary else [],
+        "crash_scan": crash_scan,
+        "clean": crash_scan.get("crash_hit_count", 0) == 0 and not proof_failure_reasons(rows, pytest_result),
+        "artifact_dir": relpath(out_dir),
+        "generated_at_utc": utc_now(),
+    }
+    return digest
+
+
+def write_proof_digest_md(path: Path, digest: Dict[str, Any]) -> None:
+    baselines = digest.get("external_compression_baselines", [])
+    crash_scan = digest.get("crash_scan", {})
+    lines = [
+        "# Proof Digest",
+        "",
+        f"- Branch: `{digest.get('repo_branch', 'unknown')}`",
+        f"- Commit: `{digest.get('git_commit', 'unknown')}`",
+        f"- Dirty: `{digest.get('git_dirty')}`",
+        f"- Command: `{digest.get('command', '')}`",
+        f"- Suite/seed/frames: `{digest.get('suite')}` / `{digest.get('seed')}` / `{digest.get('frames')}`",
+        f"- Runtime seconds: `{digest.get('runtime_seconds')}`",
+        f"- Eidos compression ratio: `{digest.get('eidos_compression_ratio', 'NA')}`",
+        f"- Normal-only confirmed false positives per 10k frames: `{digest.get('normal_only_confirmed_false_positives_per_10k_frames', 'NA')}`",
+        f"- Legacy raw-spike alerts: `{digest.get('legacy_raw_spike_alerts', 'NA')}`",
+        f"- Candidate / confirmed / suppressed: `{digest.get('candidate_events', 'NA')}` / `{digest.get('confirmed_events', 'NA')}` / `{digest.get('suppressed_candidates', 'NA')}`",
+        f"- Incident cards: `{digest.get('incident_card_count', 'NA')}`",
+        f"- Crash scan: `{crash_scan.get('status', 'unknown')}` with `{crash_scan.get('crash_hit_count', 'NA')}` hits",
+        "",
+        "## Compression Baselines",
+        "",
+    ]
+    if baselines:
+        lines.append("| scenario | raw bytes | Eidos ratio | zlib | lzma | zstd | lz4 | delta+zlib | best |")
+        lines.append("| --- | ---: | ---: | ---: | ---: | --- | --- | --- | --- |")
+        for item in baselines:
+            zstd = item.get("zstd_compression_ratio") or f"skipped: {item.get('zstd_skipped_reason', '')}"
+            lz4 = item.get("lz4_compression_ratio") or f"skipped: {item.get('lz4_skipped_reason', '')}"
+            delta = item.get("delta_zlib_compression_ratio") or f"skipped: {item.get('delta_zlib_skipped_reason', '')}"
+            lines.append(
+                "| {scenario} | {raw} | {eidos} | {zlib_ratio} | {lzma_ratio} | {zstd} | {lz4} | {delta} | {best} {best_ratio} |".format(
+                    scenario=item.get("scenario", ""),
+                    raw=item.get("raw_bytes", ""),
+                    eidos=item.get("eidos_compression_ratio", ""),
+                    zlib_ratio=item.get("zlib_compression_ratio", ""),
+                    lzma_ratio=item.get("lzma_compression_ratio", ""),
+                    zstd=str(zstd).replace("|", "\\|"),
+                    lz4=str(lz4).replace("|", "\\|"),
+                    delta=str(delta).replace("|", "\\|"),
+                    best=item.get("best_baseline", ""),
+                    best_ratio=item.get("best_baseline_compression_ratio", ""),
+                )
+            )
+    else:
+        lines.append("- No compression baseline records were available.")
+
+    lines.extend(["", "## Crash Scan", ""])
+    if crash_scan.get("crash_hit_files"):
+        for item in crash_scan["crash_hit_files"]:
+            patterns = ", ".join(f"{m['pattern']}={m['count']}" for m in item.get("matches", []))
+            lines.append(f"- `{item.get('path')}`: {patterns}")
+    else:
+        lines.append("- No crash strings found.")
+
+    lines.extend(["", "## Known Limitations", ""])
+    for item in digest.get("known_limitations", []):
+        lines.append(f"- {item}")
+    path.write_text("\n".join(lines).rstrip() + "\n", encoding="utf-8")
+
+
+def write_proof_digest(out_dir: Path, digest: Dict[str, Any]) -> None:
+    write_json(out_dir / "proof_digest.json", digest)
+    write_proof_digest_md(out_dir / "proof_digest.md", digest)
+
+
 def mirror_to_drive(out_dir: Path, run_id: str, run_date: str) -> Dict[str, Any]:
     files = artifact_files(out_dir)
     files_considered = [relpath(path, out_dir) for path in files]
@@ -1266,9 +1709,16 @@ def write_proof_docs(
     docs_dir = repo_root / "docs" / "proof_runs" / run_date
     docs_dir.mkdir(parents=True, exist_ok=True)
     changed = files_changed or [
+        "eidos_tensor_utils.py",
+        "eidos_incident_cards.py",
+        "eidos_procedural_memory.py",
+        "eidos_forecast.py",
+        "scripts/verify_colab_gpu_hotfix.py",
         "tools/run_proof_baseline.py",
         "repo/src/eidos_brain/engine/eidos_v0_4_7_02.py",
-        "tests/test_integration_stream.py",
+        "tests/test_tensor_conversion_regressions.py",
+        "tests/test_user_config.py",
+        "tests/test_colab_gpu_hotfix_smoke.py",
         "tests/test_proof_baseline_runner.py",
         relpath(out_dir),
     ]
@@ -1304,7 +1754,7 @@ def write_proof_docs(
         f"- Pytest status: {pytest_result.status} ({pytest_result.reason}).",
         "",
         "## Problems encountered",
-        "- External compression baselines are not implemented in Week 1.",
+        "- External compression baselines are limited to the proof-frame serialization used by this runner; optional zstandard/lz4 baselines are skipped when packages are unavailable.",
         "- Smoke synthetic data does not provide ground-truth anomaly labels.",
         "- False-positive control still uses deterministic synthetic policy checks before broader labeled telemetry work.",
         f"- Google Drive status: {drive_status}; reason: {drive_reason}.",
@@ -1337,13 +1787,13 @@ def write_proof_docs(
         "## End-of-task summary",
         f"1. Files changed: {', '.join(changed)}",
         "2. Whether core behavior changed: no.",
-        "3. Tests added or skipped: Sentinel confirmation tests added; pytest XML captured by the proof run.",
+        "3. Tests added or skipped: tensor conversion, config validation, GPU-hotfix smoke, compression baseline, and digest regression tests are covered by pytest; pytest XML captured by the proof run.",
         f"4. Repo-root commands run: `{command}`.",
         f"5. Artifacts generated: {len(artifact_lines)} files under `{relpath(out_dir)}`.",
         "6. Plain-language analysis written: yes.",
         "7. Journal entry written: yes.",
         f"8. Google Drive copy status: {drive_status}; {drive_reason}.",
-        "9. Known limitations: no external compression baseline, no smoke labels, no plots, synthetic-only false-positive fixtures.",
+        "9. Known limitations: optional compression baselines may be skipped by dependency availability; no smoke labels, no plots, synthetic-only false-positive fixtures.",
         "10. Follow-up tasks not implemented: full long-run experiment campaign and labeled real-world false-positive comparison.",
     ]
     analysis = [
@@ -1374,7 +1824,7 @@ def write_proof_docs(
         f"Drive status: {drive_status}; folder: {drive_folder}; reason: {drive_reason}.",
         "",
         "## What remains uncertain",
-        "External compression baselines, labeled anomaly metrics for smoke data, plots, full experiment campaigns, and real lifecycle export replay remain future work.",
+        "Optional compression baselines depend on installed packages; labeled anomaly metrics for smoke data, plots, full experiment campaigns, and real lifecycle export replay remain future work.",
         "",
         "## What should happen next",
         "Use this branch as the next test/experiment base, then add labeled real-world comparisons and longer experiment receipts.",
@@ -1457,6 +1907,7 @@ def run(
         packages=packages,
         args=args,
         scenario_list=scenario_list,
+        rows=rows,
         config_hash=config_hash,
         skipped_baselines=skipped_baselines,
         pytest_result=pytest_result,
@@ -1475,6 +1926,19 @@ def run(
         event_summary=event_summary,
     )
 
+    crash_scan = scan_crash_strings(out_dir)
+    digest = build_proof_digest(
+        out_dir=out_dir,
+        command=command,
+        git_info=git_info,
+        args=args,
+        rows=rows,
+        event_summary=event_summary,
+        pytest_result=pytest_result,
+        crash_scan=crash_scan,
+    )
+    write_proof_digest(out_dir, digest)
+
     drive_manifest = mirror_to_drive_fn(out_dir, run_id, run_date)
     write_json(out_dir / "drive_manifest.json", drive_manifest)
     final_manifest = build_manifest(
@@ -1485,6 +1949,7 @@ def run(
         packages=packages,
         args=args,
         scenario_list=scenario_list,
+        rows=rows,
         config_hash=config_hash,
         skipped_baselines=skipped_baselines,
         pytest_result=pytest_result,
@@ -1510,11 +1975,16 @@ def run(
             out_dir / "run_manifest.json",
             out_dir / "drive_manifest.json",
             out_dir / "event_summary.json",
+            out_dir / "proof_digest.json",
+            out_dir / "proof_digest.md",
             out_dir / "codex_journal.md",
             out_dir / "plain_language_test_analysis.md",
         ],
     )
-    return 1 if proof_failure_reasons(rows, pytest_result) else 0
+    failure_reasons = proof_failure_reasons(rows, pytest_result)
+    if crash_scan.get("crash_hit_count", 0):
+        failure_reasons.append("proof digest crash scan found crash strings")
+    return 1 if failure_reasons else 0
 
 
 def main(argv: Optional[Sequence[str]] = None) -> int:

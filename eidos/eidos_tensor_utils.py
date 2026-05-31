@@ -5,7 +5,13 @@ from typing import Any, Optional
 import numpy as np
 
 
-def to_cpu_numpy(value: Any, *, dtype: Optional[Any] = None, copy: bool = False) -> np.ndarray:
+def to_cpu_numpy(
+    value: Any,
+    *,
+    dtype: Optional[Any] = None,
+    copy: bool = False,
+    flatten: bool = False,
+) -> np.ndarray:
     """Return ``value`` as a CPU NumPy array.
 
     PyTorch CUDA tensors cannot be converted by ``np.asarray`` directly. This
@@ -28,15 +34,25 @@ def to_cpu_numpy(value: Any, *, dtype: Optional[Any] = None, copy: bool = False)
         arr = np.asarray(current)
 
     if dtype is not None:
-        return np.asarray(arr, dtype=dtype)
-    if copy:
-        return np.array(arr, copy=True)
-    return np.asarray(arr)
+        result = np.asarray(arr, dtype=dtype)
+    elif copy:
+        result = np.array(arr, copy=True)
+    else:
+        result = np.asarray(arr)
+
+    if flatten:
+        return result.reshape(-1)
+    return result
 
 
 def to_cpu_numpy_1d(value: Any, *, dtype: Optional[Any] = np.float64) -> np.ndarray:
     """Return ``value`` as a flattened CPU NumPy array."""
-    return to_cpu_numpy(value, dtype=dtype).reshape(-1)
+    return to_cpu_numpy(value, dtype=dtype, flatten=True)
+
+
+def to_cpu_numpy_flat(value: Any, *, dtype: Optional[Any] = np.float64) -> np.ndarray:
+    """Return ``value`` as a flattened CPU NumPy array."""
+    return to_cpu_numpy(value, dtype=dtype, flatten=True)
 
 
 def to_cpu_list(value: Any) -> Any:

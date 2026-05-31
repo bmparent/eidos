@@ -4,7 +4,7 @@ import pytest
 from eidos_forecast import ForecastEngine, TrajectoryRecord
 from eidos_incident_cards import EpisodeIndex, EpisodeRecord
 from eidos_procedural_memory import ProceduralMemory
-from eidos_tensor_utils import to_cpu_numpy_1d
+from eidos_tensor_utils import to_cpu_numpy, to_cpu_numpy_1d
 
 
 def _tensor(values):
@@ -14,11 +14,56 @@ def _tensor(values):
 
 
 @pytest.mark.regression
+def test_tensor_conversion_accepts_python_lists():
+    arr = to_cpu_numpy([1, 2, 3], dtype=np.float32)
+
+    assert isinstance(arr, np.ndarray)
+    assert arr.dtype == np.float32
+    np.testing.assert_allclose(arr, np.array([1.0, 2.0, 3.0], dtype=np.float32))
+
+
+@pytest.mark.regression
+def test_tensor_conversion_accepts_numpy_arrays_without_mutating_source():
+    source = np.array([[1.0, 2.0], [3.0, 4.0]], dtype=np.float64)
+    arr = to_cpu_numpy(source, dtype=np.float32, flatten=True)
+
+    assert isinstance(arr, np.ndarray)
+    assert arr.dtype == np.float32
+    np.testing.assert_allclose(arr, np.array([1.0, 2.0, 3.0, 4.0], dtype=np.float32))
+    assert source.shape == (2, 2)
+    assert source.dtype == np.float64
+
+
+@pytest.mark.regression
+def test_tensor_conversion_accepts_cpu_torch_tensors_when_torch_is_installed():
+    torch = pytest.importorskip("torch")
+    tensor = torch.tensor([1.5, 2.5, 3.5], dtype=torch.float32, device="cpu", requires_grad=True)
+
+    arr = to_cpu_numpy_1d(tensor)
+
+    assert isinstance(arr, np.ndarray)
+    np.testing.assert_allclose(arr, np.array([1.5, 2.5, 3.5]))
+
+
+@pytest.mark.regression
 def test_tensor_conversion_handles_cuda_when_available_and_cpu_otherwise():
     arr = to_cpu_numpy_1d(_tensor([1.0, 2.0, 3.0]))
 
     assert isinstance(arr, np.ndarray)
     np.testing.assert_allclose(arr, np.array([1.0, 2.0, 3.0]))
+
+
+@pytest.mark.regression
+def test_tensor_conversion_cuda_path_skips_cleanly_when_unavailable():
+    torch = pytest.importorskip("torch")
+    if not torch.cuda.is_available():
+        pytest.skip("CUDA is not available in this environment")
+
+    cuda_tensor = torch.tensor([4.0, 5.0, 6.0], dtype=torch.float32, device="cuda")
+    arr = to_cpu_numpy_1d(cuda_tensor)
+
+    assert isinstance(arr, np.ndarray)
+    np.testing.assert_allclose(arr, np.array([4.0, 5.0, 6.0]))
 
 
 @pytest.mark.regression
