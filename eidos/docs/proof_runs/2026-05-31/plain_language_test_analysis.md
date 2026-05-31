@@ -93,3 +93,35 @@ CUDA was not available during the local 1200-frame validation, but the later off
 ## What should happen next
 
 Run the first real labeled/domain proof using CICIDS2017/WebAttacks or controlled system telemetry. Track true positives, false positives, compression ratio, incident-card quality, runtime/memory, and crash scan.
+
+## Labeled CICIDS/WebAttacks proof harness -- artifacts/cicids_webattacks_proof_20260531T201013Z
+
+### What the task attempted
+The task connected Eidos Brain to a labeled cyber anomaly CSV so the system can be scored against known benign and attack rows.
+
+### Why the test matters
+The official GPU 10k proof established that the engine could run cleanly. This proof starts measuring labeled domain behavior, which is the next evidence step.
+
+### What was tested
+The runner processed a labeled CICIDS/WebAttacks-style fixture, grouped attack labels into windows, compared existing confirmed events to those windows, and wrote crash and compression receipts.
+
+### What passed
+- Focused runner tests: 2 passed.
+- Full pytest: 66 passed, 1 skipped.
+- Frames processed: 11
+- Crash hits: 0
+- Incident cards: 1
+
+### What failed or remains uncertain
+- Any false positives and false negatives are recorded in the metrics instead of being tuned away.
+- The tiny smoke artifact recorded 1 false positive and 1 false negative, which is useful evidence for the next review rather than a failure hidden by the harness.
+- A full CICIDS/WebAttacks run still requires the dataset file to be mounted or uploaded.
+
+### What was saved locally
+Artifacts were saved under `artifacts/cicids_webattacks_proof_20260531T201013Z`.
+
+### What was saved to Google Drive
+Drive status: skipped or failed; folder: unknown; reason: no writable Colab Drive root found among: \content\drive\MyDrive, \content\drive\My Drive; local Google Drive auto-discovery skipped; set EIDOS_PROOF_DRIVE_DIR or EIDOS_ARTIFACT_ROOT to a verified Drive mount.
+
+### What should happen next
+Run the same harness against the real CICIDS2017 WebAttacks CSV in Colab, then review metrics before any threshold tuning.

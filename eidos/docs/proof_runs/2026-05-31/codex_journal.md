@@ -86,3 +86,88 @@ The 1200-frame proof digest reported `NO_CRASH_HITS`, 0 normal-only confirmed fa
 8. Google Drive copy status: skipped because no verified Drive mount/env path was available.
 9. Known limitations: local validation was CPU-only; 10k proof not rerun locally.
 10. Follow-up tasks not implemented: first real labeled/domain proof with true-positive, false-positive, compression, incident-card-quality, runtime/memory, and crash-scan metrics.
+
+## Labeled CICIDS/WebAttacks proof harness -- artifacts/cicids_webattacks_proof_20260531T201013Z
+
+### What happened today
+Built and ran the first labeled/domain proof harness after the official Colab GPU 10k baseline.
+
+### What was accomplished
+- Added CICIDS/WebAttacks row adaptation and a repo-root labeled proof runner.
+- Captured label distributions, event metrics, compression baselines, incident cards, runtime, and crash scan receipts.
+- Kept core Eidos model behavior untouched.
+
+### Tests and commands run
+- `PYTEST_DISABLE_PLUGIN_AUTOLOAD=1 python -m pytest tests/test_labeled_domain_proof_runner.py -q` -> passed, 2 tests.
+- `PYTEST_DISABLE_PLUGIN_AUTOLOAD=1 python -m pytest -q` -> passed, 66 passed, 1 skipped, 11 deprecation warnings.
+- `python tools/run_labeled_domain_proof.py --dataset cicids_webattacks --file tests/fixtures/cicids_webattacks_tiny.csv --label-column Label --frames 12 --seed 42 --out artifacts/cicids_webattacks_proof_20260531T201013Z --suite smoke --attack-labels "Web Attack - Brute Force" --max-rows 12` -> labeled smoke proof artifacts written.
+
+### Problems encountered
+- Google Drive status: skipped or failed; reason: no writable Colab Drive root found among: \content\drive\MyDrive, \content\drive\My Drive; local Google Drive auto-discovery skipped; set EIDOS_PROOF_DRIVE_DIR or EIDOS_ARTIFACT_ROOT to a verified Drive mount.
+- This is not threshold tuning, so misses or false positives are reported rather than optimized away.
+- Full pytest emitted deprecation warnings from installed packages, but no test failures.
+
+### What changed
+- eidos_domain_adapters.py
+- tools/run_labeled_domain_proof.py
+- tests/test_labeled_domain_proof_runner.py
+- docs/proof_runs/2026-05-31/cicids_webattacks_plan.md
+- .gitignore
+- artifacts/cicids_webattacks_proof_20260531T201013Z
+
+### What did not change
+Reservoir dynamics, RLS updates, Sentinel thresholds, anomaly policy, compression behavior, and architecture layers were not changed.
+
+### Artifacts generated
+- artifacts/cicids_webattacks_proof_20260531T201013Z/benchmark_summary.csv
+- artifacts/cicids_webattacks_proof_20260531T201013Z/benchmark_summary.md
+- artifacts/cicids_webattacks_proof_20260531T201013Z/config.json
+- artifacts/cicids_webattacks_proof_20260531T201013Z/crash_scan.json
+- artifacts/cicids_webattacks_proof_20260531T201013Z/drive_manifest.json
+- artifacts/cicids_webattacks_proof_20260531T201013Z/engine_artifacts/compression/cicids_webattacks_labeled_proof/20260531_201121_bicameral_stream_cicids_webattacks_labeled_proof.bin
+- artifacts/cicids_webattacks_proof_20260531T201013Z/engine_artifacts/compression/cicids_webattacks_labeled_proof/20260531_201121_bicameral_stream_meta_cicids_webattacks_labeled_proof.json
+- artifacts/cicids_webattacks_proof_20260531T201013Z/engine_artifacts/eidos_brain_archive/20260531_201115_cicids_webattacks_labeled_proof_seed42/anomalies.jsonl
+- artifacts/cicids_webattacks_proof_20260531T201013Z/engine_artifacts/eidos_brain_archive/20260531_201115_cicids_webattacks_labeled_proof_seed42/clusters.json
+- artifacts/cicids_webattacks_proof_20260531T201013Z/engine_artifacts/eidos_brain_archive/20260531_201115_cicids_webattacks_labeled_proof_seed42/report.txt
+- artifacts/cicids_webattacks_proof_20260531T201013Z/engine_artifacts/eidos_brain_archive/20260531_201115_cicids_webattacks_labeled_proof_seed42/session_meta.json
+- artifacts/cicids_webattacks_proof_20260531T201013Z/engine_artifacts/eidos_brain_archive/20260531_201115_cicids_webattacks_labeled_proof_seed42/state_capsule.json
+- artifacts/cicids_webattacks_proof_20260531T201013Z/engine_artifacts/eidos_brain_archive/20260531_201115_cicids_webattacks_labeled_proof_seed42/steps.csv
+- artifacts/cicids_webattacks_proof_20260531T201013Z/engine_artifacts/eidos_brain_archive/20260531_201115_cicids_webattacks_labeled_proof_seed42/summary.json
+- artifacts/cicids_webattacks_proof_20260531T201013Z/engine_artifacts/forecast.jsonl
+- artifacts/cicids_webattacks_proof_20260531T201013Z/engine_artifacts/hippocampus/cicids_webattacks_labeled_proof/20260531_201120_hippocampus_snapshot_cicids_webattacks_labeled_proof.pt
+- artifacts/cicids_webattacks_proof_20260531T201013Z/engine_artifacts/incident_cards.jsonl
+- artifacts/cicids_webattacks_proof_20260531T201013Z/engine_artifacts/manifest.jsonl
+- artifacts/cicids_webattacks_proof_20260531T201013Z/engine_artifacts/reservoir_checkpoints/cicids_webattacks_labeled_proof/20260531_201120_reservoir_checkpoint_cicids_webattacks_labeled_proof.pt
+- artifacts/cicids_webattacks_proof_20260531T201013Z/engine_artifacts/reservoir_geometry/cicids_webattacks_labeled_proof/20260531_201120_reservoir_states_cicids_webattacks_labeled_proof.npy
+- artifacts/cicids_webattacks_proof_20260531T201013Z/engine_artifacts/reservoir_geometry/cicids_webattacks_labeled_proof/20260531_201121_reservoir_geom_cicids_webattacks_labeled_proof.json
+- artifacts/cicids_webattacks_proof_20260531T201013Z/engine_artifacts/sentinel_forensics/cicids_webattacks_labeled_proof/20260531_201121_top_100_surprises_cicids_webattacks_labeled_proof.json
+- artifacts/cicids_webattacks_proof_20260531T201013Z/engine_artifacts/sentinel_forensics/cicids_webattacks_labeled_proof/20260531_201121_top_100_surprises_text_cicids_webattacks_labeled_proof.txt
+- artifacts/cicids_webattacks_proof_20260531T201013Z/environment.txt
+- artifacts/cicids_webattacks_proof_20260531T201013Z/event_summary.json
+- artifacts/cicids_webattacks_proof_20260531T201013Z/git_commit.txt
+- artifacts/cicids_webattacks_proof_20260531T201013Z/incident_cards/engine_card_001.json
+- artifacts/cicids_webattacks_proof_20260531T201013Z/labeled_metrics.json
+- artifacts/cicids_webattacks_proof_20260531T201013Z/labeled_metrics.md
+- artifacts/cicids_webattacks_proof_20260531T201013Z/logs/engine_output.log
+- artifacts/cicids_webattacks_proof_20260531T201013Z/proof_digest.json
+- artifacts/cicids_webattacks_proof_20260531T201013Z/proof_digest.md
+- artifacts/cicids_webattacks_proof_20260531T201013Z/run_manifest.json
+
+### Google Drive archive status
+- Drive root used: unknown
+- Drive folder used: unknown
+- Files copied: 0
+- Files skipped: 0
+- Reason: no writable Colab Drive root found among: \content\drive\MyDrive, \content\drive\My Drive; local Google Drive auto-discovery skipped; set EIDOS_PROOF_DRIVE_DIR or EIDOS_ARTIFACT_ROOT to a verified Drive mount
+
+### End-of-task summary
+1. Files changed: eidos_domain_adapters.py, tools/run_labeled_domain_proof.py, tests/test_labeled_domain_proof_runner.py, docs/proof_runs/2026-05-31/cicids_webattacks_plan.md, .gitignore, artifacts/cicids_webattacks_proof_20260531T201013Z
+2. Whether core behavior changed: no.
+3. Tests added or skipped: focused labeled runner tests added; full pytest passed with 66 passed and 1 skipped.
+4. Repo-root commands run: `PYTEST_DISABLE_PLUGIN_AUTOLOAD=1 python -m pytest tests/test_labeled_domain_proof_runner.py -q`; `PYTEST_DISABLE_PLUGIN_AUTOLOAD=1 python -m pytest -q`; `python tools/run_labeled_domain_proof.py --dataset cicids_webattacks --file tests/fixtures/cicids_webattacks_tiny.csv --label-column Label --frames 12 --seed 42 --out artifacts/cicids_webattacks_proof_20260531T201013Z --suite smoke --attack-labels "Web Attack - Brute Force" --max-rows 12`.
+5. Artifacts generated: 33 files under `artifacts/cicids_webattacks_proof_20260531T201013Z`.
+6. Plain-language analysis written: yes.
+7. Journal entry written: yes.
+8. Google Drive copy status: skipped or failed; no writable Colab Drive root found among: \content\drive\MyDrive, \content\drive\My Drive; local Google Drive auto-discovery skipped; set EIDOS_PROOF_DRIVE_DIR or EIDOS_ARTIFACT_ROOT to a verified Drive mount.
+9. Known limitations: labeled windows are frame-aligned only; no threshold tuning was attempted.
+10. Follow-up tasks not implemented: full CICIDS dataset run and threshold calibration.

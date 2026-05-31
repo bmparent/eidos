@@ -15,4 +15,5 @@ artifacts/eidos_life_lab/checkpoints/*.json
 
 # Local generated proof outputs that are summarized in docs/proof_runs.
 artifacts/hotfix_official_10000_colab_gpu/
+artifacts/cicids_webattacks_proof_*/
 full_pytest_output.txt
