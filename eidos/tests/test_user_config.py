@@ -6,6 +6,10 @@ def test_validate_config_success(brain_module):
     conf = brain_module.EIDOS_BRAIN_CONFIG.copy()
     brain_module.validate_config(conf)
 
+def test_validate_config_exported_from_packaged_engine(brain_module):
+    """Packaged engine module should expose the config validator."""
+    assert callable(brain_module.validate_config)
+
 def test_validate_config_missing_key(brain_module):
     """Missing key raises ValueError."""
     conf = brain_module.EIDOS_BRAIN_CONFIG.copy()

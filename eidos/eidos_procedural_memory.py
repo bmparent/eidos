@@ -3,6 +3,8 @@ import os
 import numpy as np
 from typing import Dict, List, Any, Optional
 
+from eidos_tensor_utils import to_cpu_numpy_1d
+
 class ProceduralMemory:
     def __init__(self, domain: str, policy: str = "recommend", min_similarity: float = 0.35, enabled: bool = True):
         self.domain = domain
@@ -37,12 +39,10 @@ class ProceduralMemory:
     def rank_actions(self, signature_vec: Any, regime: str) -> List[Dict[str, Any]]:
         if not self.enabled:
             return []
-            
+
         scores = []
-        # Handle conversion
-        sig_arr = np.array(signature_vec)
-        if hasattr(signature_vec, "cpu"): sig_arr = signature_vec.cpu().numpy()
-        
+        sig_arr = to_cpu_numpy_1d(signature_vec)
+
         sig_norm = np.linalg.norm(sig_arr)
         
         for act, proto_vec in self.proto.items():
@@ -87,10 +87,9 @@ class ProceduralMemory:
     def update_prototype(self, action: str, signature_vec: Any, eta: float = 0.1):
         if action not in self.proto:
             return
-            
-        sig_arr = np.array(signature_vec)
-        if hasattr(signature_vec, "cpu"): sig_arr = signature_vec.cpu().numpy()
-            
+
+        sig_arr = to_cpu_numpy_1d(signature_vec)
+
         curr_proto = self.proto[action]
         if curr_proto is None:
             self.proto[action] = sig_arr.copy()

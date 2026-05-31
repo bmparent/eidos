@@ -6,6 +6,8 @@ import math
 import json
 import numpy as np
 
+from eidos_tensor_utils import to_cpu_numpy_1d
+
 @dataclass
 class EpisodeRecord:
     step: int
@@ -29,24 +31,20 @@ class EpisodeIndex:
         # Simple cosine/mean similarity
         if not self.buf:
             return []
-            
+
         scores = []
-        # Support numpy or tensor
-        sig_arr = np.array(signature_vec)
-        if hasattr(signature_vec, "cpu"):
-             sig_arr = signature_vec.cpu().numpy()
-             
+        sig_arr = to_cpu_numpy_1d(signature_vec)
+
         norm_sig = np.linalg.norm(sig_arr)
         if norm_sig < 1e-9: norm_sig = 1.0
-        
+
         for rec in self.buf:
             # We can optionally filter by regime if we want specific regime matching
             # if rec.regime != regime: continue
-            
+
             other_sig = rec.signature
-            if hasattr(other_sig, "cpu"): other_sig = other_sig.cpu().numpy()
-            other_sig = np.array(other_sig)
-            
+            other_sig = to_cpu_numpy_1d(other_sig)
+
             norm_other = np.linalg.norm(other_sig)
             if norm_other < 1e-9: norm_other = 1.0
             

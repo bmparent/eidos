@@ -361,6 +361,25 @@ EIDOS_BRAIN_CONFIG = {
 
 DEFAULT_EIDOS_BRAIN_CONFIG = deepcopy(EIDOS_BRAIN_CONFIG)
 
+
+def validate_config(conf: Dict[str, Any]) -> None:
+    """Ensure configuration sanity."""
+    required_keys = ["steps", "reservoir", "spectral_radius", "hippocampus_dim"]
+    for key in required_keys:
+        if key not in conf:
+            raise ValueError(f"Config missing required key: {key}")
+
+    if conf["steps"] <= 0:
+        raise ValueError("steps must be positive")
+    if conf["reservoir"] <= 0:
+        raise ValueError("reservoir must be positive")
+    if not (0.0 < conf["spectral_radius"] < 10.0):
+        raise ValueError(f"Invalid spectral_radius: {conf['spectral_radius']}")
+
+    dims = conf.get("hippocampus_dim", 1000)
+    if dims < 100:
+        raise ValueError("hippocampus_dim too small (<100)")
+
 # =============================================================================
 # IMPORTS & PHYSICS INITIALIZATION
 # =============================================================================
