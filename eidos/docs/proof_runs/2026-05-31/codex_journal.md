@@ -4,6 +4,8 @@
 
 The Colab-discovered GPU tensor/config hotfix was audited and extended into a proof-engineering branch. The branch now has a shared CPU-safe tensor conversion helper, a Colab/local GPU validation script, proof-runner external compression baselines, and a compact proof digest with crash scanning.
 
+Packaging update: after this local 1200-frame CPU proof, a clean Colab GPU proof on a Tesla T4 completed 10k frames from commit `3eca182f7351c382a0f47b6b5b5e3bee5c956f49`. The official 10k receipt is preserved separately in `official_colab_gpu_10000_summary.md`, `official_colab_gpu_10000_receipt.json`, and `baseline_status.md`; this journal remains the local CPU validation record.
+
 ## What was accomplished
 
 - Confirmed the branch was `codex/eidos-hotfix-gpu-config-2026-05-31` at starting commit `a29ae0ee2cd07baef06d7db3cdd9d451ccd92b27`.
@@ -13,6 +15,7 @@ The Colab-discovered GPU tensor/config hotfix was audited and extended into a pr
 - Added `scripts/verify_colab_gpu_hotfix.py` for local/Colab validation.
 - Added proof-runner compression baseline comparison for raw bytes, zlib, lzma, optional zstandard, optional lz4, and delta+zlib.
 - Added `proof_digest.json` and `proof_digest.md` generation with crash scan results.
+- Packaged the official clean Colab GPU 10k proof receipt in docs without committing the generated runtime artifact folder.
 
 ## Tests and commands run
 
@@ -65,7 +68,7 @@ The proof runner now compares Eidos compression against simple external baseline
 
 ## Where to improve next
 
-Run the 10k proof/control in Colab GPU from the final committed branch and compare it against `colab_false_positive_control_10000_hotfix_20260531_010237`.
+Use the official 10k Colab GPU receipt as the frozen hotfix baseline, then run the first real labeled/domain proof using CICIDS2017/WebAttacks or controlled system telemetry.
 
 ## Anything that stands out
 
@@ -82,4 +85,4 @@ The 1200-frame proof digest reported `NO_CRASH_HITS`, 0 normal-only confirmed fa
 7. Journal entry written: yes.
 8. Google Drive copy status: skipped because no verified Drive mount/env path was available.
 9. Known limitations: local validation was CPU-only; 10k proof not rerun locally.
-10. Follow-up tasks not implemented: clean Colab GPU 10k rerun and comparison against the previous Colab receipt.
+10. Follow-up tasks not implemented: first real labeled/domain proof with true-positive, false-positive, compression, incident-card-quality, runtime/memory, and crash-scan metrics.

@@ -12,3 +12,7 @@ eidos-life-lab/artifacts/checkpoints/*.json
 
 artifacts/eidos_life_lab/exports/*.json
 artifacts/eidos_life_lab/checkpoints/*.json
+
+# Local generated proof outputs that are summarized in docs/proof_runs.
+artifacts/hotfix_official_10000_colab_gpu/
+full_pytest_output.txt

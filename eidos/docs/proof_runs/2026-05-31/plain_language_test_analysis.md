@@ -4,6 +4,8 @@
 
 This task turned a CUDA tensor/config hotfix into a cleaner proof branch. It also made the proof runner more useful by adding external compression baselines and a compact digest that records the most important proof numbers and crash-scan result.
 
+Follow-up packaging note: the earlier local proof in this file was a 1200-frame CPU-only validation. The official frozen proof receipt is now the clean Colab GPU 10k run from commit `3eca182f7351c382a0f47b6b5b5e3bee5c956f49`, recorded in `official_colab_gpu_10000_summary.md` and `official_colab_gpu_10000_receipt.json`.
+
 ## Why the test matters
 
 The original Colab failure happened when CUDA tensors entered CPU/NumPy similarity code. The new tests and validation script make sure tensor-like signatures are safely detached, moved to CPU, and converted before similarity logic runs. The proof-runner additions make future receipts easier to compare because they now include external compression baselines and a small JSON/Markdown digest.
@@ -86,8 +88,8 @@ Nothing was copied to Google Drive from this local run. No verified Drive mount 
 
 ## What remains uncertain
 
-CUDA was not available locally, so actual CUDA execution still needs a clean Colab GPU validation. The 10k proof was not rerun locally because the CPU-only 1200-frame proof took multiple minutes, making the 10k run better suited to Colab GPU.
+CUDA was not available during the local 1200-frame validation, but the later official Colab receipt exercised CUDA on a Tesla T4 and completed the 10k proof. What remains uncertain is performance on labeled production-like telemetry rather than synthetic smoke fixtures.
 
 ## What should happen next
 
-Run the 10k proof/control in a clean Colab GPU checkout from the committed branch, then compare against the previous Colab receipt `colab_false_positive_control_10000_hotfix_20260531_010237`.
+Run the first real labeled/domain proof using CICIDS2017/WebAttacks or controlled system telemetry. Track true positives, false positives, compression ratio, incident-card quality, runtime/memory, and crash scan.

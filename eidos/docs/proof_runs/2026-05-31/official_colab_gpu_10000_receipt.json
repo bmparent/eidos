@@ -1,0 +1,96 @@
+{
+  "receipt_type": "official_colab_gpu_10000_hotfix_baseline",
+  "receipt_date": "2026-05-31",
+  "repo": "bmparent/eidos",
+  "branch": "codex/eidos-hotfix-gpu-config-2026-05-31",
+  "source_commit": "3eca182f7351c382a0f47b6b5b5e3bee5c956f49",
+  "origin_reachability": {
+    "verified": true,
+    "remote": "origin",
+    "ref": "refs/heads/codex/eidos-hotfix-gpu-config-2026-05-31",
+    "commit": "3eca182f7351c382a0f47b6b5b5e3bee5c956f49",
+    "verification_command": "git ls-remote --heads origin codex/eidos-hotfix-gpu-config-2026-05-31",
+    "verification_timing": "before the docs-packaging commit",
+    "interpretation": "3eca182f7351c382a0f47b6b5b5e3bee5c956f49 is the proof source commit. A later docs-packaging commit may become the branch head while retaining this source commit as an ancestor."
+  },
+  "proof_command": "python tools/run_proof_baseline.py --suite smoke --seed 42 --frames 10000 --out artifacts/hotfix_official_10000_colab_gpu",
+  "runtime_environment": {
+    "platform": "Google Colab",
+    "runtime": "clean Colab GPU runtime",
+    "gpu": "Tesla T4",
+    "cuda_exercised": true
+  },
+  "run": {
+    "suite": "smoke",
+    "seed": 42,
+    "frames": 10000,
+    "runtime_seconds": 66.608078,
+    "pytest": "passed",
+    "crash_scan": {
+      "status": "clean",
+      "hits": 0
+    }
+  },
+  "false_positive_control": {
+    "normal_only_confirmed_false_positives_per_10000_frames": 0,
+    "confirmed_events": 4,
+    "candidate_events": 9,
+    "suppressed_candidates": 5,
+    "incident_cards": 4
+  },
+  "compression": {
+    "eidos_ratio": 16.192510963679297,
+    "external_baselines_present": true,
+    "best_external_baseline": {
+      "name": "lzma",
+      "ratio": 1.130315
+    }
+  },
+  "proof_digest": {
+    "git_commit": "3eca182f7351c382a0f47b6b5b5e3bee5c956f49",
+    "branch": "codex/eidos-hotfix-gpu-config-2026-05-31",
+    "git_dirty": true,
+    "dirty_causes": [
+      "Two tracked docs modified during or after proof generation: docs/proof_runs/2026-05-31/codex_journal.md and docs/proof_runs/2026-05-31/plain_language_test_analysis.md",
+      "Generated artifact folder: artifacts/hotfix_official_10000_colab_gpu/",
+      "Generated pytest output file: full_pytest_output.txt"
+    ]
+  },
+  "artifact_policy": {
+    "generated_runtime_artifacts_committed": false,
+    "generated_runtime_artifacts_left_uncommitted": [
+      "artifacts/hotfix_official_10000_colab_gpu/",
+      "full_pytest_output.txt"
+    ],
+    "receipt_docs_committed": [
+      "docs/proof_runs/2026-05-31/official_colab_gpu_10000_summary.md",
+      "docs/proof_runs/2026-05-31/official_colab_gpu_10000_receipt.json",
+      "docs/proof_runs/2026-05-31/baseline_status.md"
+    ]
+  },
+  "source_state_after_packaging": {
+    "expected_tracked_source_state": "clean after the packaging commit",
+    "generated_runtime_artifacts": "intentionally uncommitted and covered by targeted ignore rules",
+    "note": "The final packaging commit hash is reported in the task summary rather than embedded here, because embedding a commit's own hash would change the commit."
+  },
+  "known_limitations": [
+    "The run uses synthetic smoke fixtures, not labeled production telemetry.",
+    "This receipt does not prove production detection quality on real-world traffic.",
+    "Incident-card quality was not scored against a labeled analyst review set."
+  ],
+  "recommended_next_experiment": {
+    "name": "First real labeled/domain proof",
+    "candidate_datasets": [
+      "CICIDS2017/WebAttacks",
+      "controlled system telemetry"
+    ],
+    "metrics": [
+      "true positives",
+      "false positives",
+      "compression ratio",
+      "incident-card quality",
+      "runtime and memory",
+      "crash scan"
+    ]
+  }
+}
