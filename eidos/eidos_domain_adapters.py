@@ -113,15 +113,18 @@ class CICIDSWebAttacksAdapter(DomainAdapter):
                 ("dest_port", "destination_port"),
                 ("protocol", "protocol"),
                 ("label", "label"),
+                ("OriginalLabel", "OriginalLabel"),
+                ("EidosProofLabel", "EidosProofLabel"),
                 ("attack", "attack"),
             ):
                 if source_key in raw_event and raw_event[source_key] not in (None, ""):
                     entities[entity_key] = raw_event[source_key]
 
-            label = raw_event.get("label", "unknown")
+            label = raw_event.get("OriginalLabel", raw_event.get("label", "unknown"))
+            proof_label = raw_event.get("EidosProofLabel", "unknown")
             attack = bool(raw_event.get("attack", False))
             row_index = raw_event.get("row_index", "unknown")
-            exemplars.append(f"CICIDS row={row_index} label={label} attack={attack}")
+            exemplars.append(f"CICIDS row={row_index} label={label} proof_label={proof_label} attack={attack}")
         else:
             x_vec = raw_event
 
