@@ -4,6 +4,8 @@ from typing import List, Dict, Any, Deque
 from collections import deque
 import json
 
+from eidos_tensor_utils import to_cpu_list, to_cpu_numpy_1d
+
 @dataclass
 class TrajectoryRecord:
     domain: str
@@ -48,11 +50,7 @@ class ForecastEngine:
         if not self.enabled:
             return
             
-        # Convert torch/numpy to list for storage
-        sig_val = signature_vec
-        if hasattr(sig_val, "cpu"): sig_val = sig_val.cpu().numpy()
-        if hasattr(sig_val, "tolist"): sig_val = sig_val.tolist()
-        elif isinstance(sig_val, np.ndarray): sig_val = sig_val.tolist()
+        sig_val = to_cpu_list(signature_vec)
         
         self.live_sigs.append(sig_val)
         self.live_zs.append(float(z))
@@ -72,7 +70,7 @@ class ForecastEngine:
             }
             
         # Compare with end of trajectory (assuming trajectory encodes the "ramp up")
-        live_curr = np.array(self.live_sigs[-1])
+        live_curr = to_cpu_numpy_1d(self.live_sigs[-1])
         norm_live = np.linalg.norm(live_curr)
         if norm_live < 1e-9: norm_live = 1.0
         
@@ -82,7 +80,7 @@ class ForecastEngine:
             
             # Simple endpoint matching for v1 speed
             # Real version would use DTW on live_sigs vs traj.sig_seq
-            traj_end = np.array(traj.sig_seq[-1])
+            traj_end = to_cpu_numpy_1d(traj.sig_seq[-1])
             # Pad if dims mismatch (hack for demo robustness)
             if len(traj_end) != len(live_curr):
                  # re-init to match dimension

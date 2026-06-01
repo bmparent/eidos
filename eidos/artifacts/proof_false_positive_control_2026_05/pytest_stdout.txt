@@ -1,0 +1,73 @@
+============================= test session starts =============================
+platform win32 -- Python 3.11.0, pytest-9.0.3, pluggy-1.6.0 -- C:\Python311\python.exe
+cachedir: .pytest_cache
+rootdir: C:\Users\bmpar\OneDrive\Documents\eidos-brain-real-world-corpus\eidos
+configfile: pytest.ini
+collecting ... collected 20 items
+
+tests/test_sentinel.py::TestSentinel::test_initial_state PASSED          [  5%]
+tests/test_sentinel.py::TestSentinel::test_nominal_transition PASSED     [ 10%]
+tests/test_sentinel.py::TestSentinel::test_amber_state PASSED            [ 15%]
+tests/test_sentinel.py::TestSentinel::test_red_representation_collapse PASSED [ 20%]
+tests/test_proof_artifacts.py::test_create_proof_artifact_dir_creates_root_and_required_subdirs PASSED [ 25%]
+tests/test_proof_artifacts.py::test_create_proof_subdirs_is_idempotent PASSED [ 30%]
+tests/test_proof_artifacts.py::test_expected_proof_artifact_paths_lists_required_files_without_creating_them PASSED [ 35%]
+tests/test_proof_baseline_runner.py::test_run_writes_required_baseline_artifacts_with_seed_frames_and_out_dir PASSED [ 40%]
+tests/test_proof_baseline_runner.py::test_discover_drive_root_prefers_writable_env_dir PASSED [ 45%]
+tests/test_proof_baseline_runner.py::test_discover_drive_root_accepts_colab_my_drive_path PASSED [ 50%]
+tests/test_proof_baseline_runner.py::test_discover_drive_root_skips_unconfigured_plain_local_google_drive PASSED [ 55%]
+tests/test_proof_baseline_runner.py::test_mirror_to_drive_copies_artifact_tree_to_proof_phase PASSED [ 60%]
+tests/test_sentinel_false_positive_control.py::test_low_noise_normal_only_false_positive_target PASSED [ 65%]
+tests/test_sentinel_false_positive_control.py::test_single_isolated_spike_stays_candidate_in_low_noise PASSED [ 70%]
+tests/test_sentinel_event_confirmation.py::test_sustained_anomaly_burst_confirms_as_one_event PASSED [ 75%]
+tests/test_sentinel_event_confirmation.py::test_repeated_nearby_spikes_merge_without_alert_spam PASSED [ 80%]
+tests/test_sentinel_event_confirmation.py::test_cooldown_suppresses_same_cluster_alert_spam PASSED [ 85%]
+tests/test_sentinel_modes.py::test_modes_order_false_positive_control_vs_recall PASSED [ 90%]
+tests/test_incident_card_confirmation.py::test_confirmed_event_emits_one_incident_card_compatible_record PASSED [ 95%]
+tests/test_incident_card_confirmation.py::test_eidos_life_lifecycle_events_confirm_without_post_recovery_spam PASSED [100%]
+
+============================== warnings summary ===============================
+tests/test_sentinel.py::TestSentinel::test_initial_state
+  C:\Python311\Lib\site-packages\PyPDF2\__init__.py:21: DeprecationWarning: PyPDF2 is deprecated. Please move to the pypdf library instead.
+    warnings.warn(
+
+tests/test_sentinel.py::TestSentinel::test_initial_state
+  C:\Python311\Lib\site-packages\google\rpc\__init__.py:18: DeprecationWarning: pkg_resources is deprecated as an API. See https://setuptools.pypa.io/en/latest/pkg_resources.html
+    import pkg_resources
+
+tests/test_sentinel.py::TestSentinel::test_initial_state
+tests/test_sentinel.py::TestSentinel::test_initial_state
+  C:\Users\bmpar\AppData\Roaming\Python\Python311\site-packages\pkg_resources\__init__.py:3142: DeprecationWarning: Deprecated call to `pkg_resources.declare_namespace('google')`.
+  Implementing implicit namespace packages (as specified in PEP 420) is preferred to `pkg_resources.declare_namespace`. See https://setuptools.pypa.io/en/latest/references/keywords.html#keyword-namespace-packages
+    declare_namespace(pkg)
+
+tests/test_sentinel.py::TestSentinel::test_initial_state
+tests/test_sentinel.py::TestSentinel::test_initial_state
+  C:\Users\bmpar\AppData\Roaming\Python\Python311\site-packages\pkg_resources\__init__.py:3142: DeprecationWarning: Deprecated call to `pkg_resources.declare_namespace('google.cloud')`.
+  Implementing implicit namespace packages (as specified in PEP 420) is preferred to `pkg_resources.declare_namespace`. See https://setuptools.pypa.io/en/latest/references/keywords.html#keyword-namespace-packages
+    declare_namespace(pkg)
+
+tests/test_sentinel.py::TestSentinel::test_initial_state
+tests/test_sentinel.py::TestSentinel::test_initial_state
+  C:\Users\bmpar\AppData\Roaming\Python\Python311\site-packages\pkg_resources\__init__.py:2554: DeprecationWarning: Deprecated call to `pkg_resources.declare_namespace('google')`.
+  Implementing implicit namespace packages (as specified in PEP 420) is preferred to `pkg_resources.declare_namespace`. See https://setuptools.pypa.io/en/latest/references/keywords.html#keyword-namespace-packages
+    declare_namespace(parent)
+
+tests/test_sentinel.py::TestSentinel::test_initial_state
+  C:\Users\bmpar\AppData\Roaming\Python\Python311\site-packages\pkg_resources\__init__.py:3142: DeprecationWarning: Deprecated call to `pkg_resources.declare_namespace('mpl_toolkits')`.
+  Implementing implicit namespace packages (as specified in PEP 420) is preferred to `pkg_resources.declare_namespace`. See https://setuptools.pypa.io/en/latest/references/keywords.html#keyword-namespace-packages
+    declare_namespace(pkg)
+
+tests/test_sentinel.py::TestSentinel::test_initial_state
+  C:\Users\bmpar\AppData\Roaming\Python\Python311\site-packages\pkg_resources\__init__.py:3142: DeprecationWarning: Deprecated call to `pkg_resources.declare_namespace('ruamel')`.
+  Implementing implicit namespace packages (as specified in PEP 420) is preferred to `pkg_resources.declare_namespace`. See https://setuptools.pypa.io/en/latest/references/keywords.html#keyword-namespace-packages
+    declare_namespace(pkg)
+
+tests/test_sentinel.py::TestSentinel::test_initial_state
+  C:\Python311\Lib\site-packages\google\rpc\__init__.py:20: DeprecationWarning: Deprecated call to `pkg_resources.declare_namespace('google.rpc')`.
+  Implementing implicit namespace packages (as specified in PEP 420) is preferred to `pkg_resources.declare_namespace`. See https://setuptools.pypa.io/en/latest/references/keywords.html#keyword-namespace-packages
+    pkg_resources.declare_namespace(__name__)
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+- generated xml file: C:\Users\bmpar\OneDrive\Documents\eidos-brain-real-world-corpus\eidos\artifacts\proof_false_positive_control_2026_05\pytest_results.xml -
+====================== 20 passed, 11 warnings in 19.75s =======================

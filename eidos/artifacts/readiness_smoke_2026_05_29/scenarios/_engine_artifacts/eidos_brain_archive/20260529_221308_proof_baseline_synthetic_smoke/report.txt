@@ -1,0 +1,41 @@
+SENTINEL SESSION REPORT
+=======================
+
+Session overview
+----------------
+- Frames processed (post-warmup): 87
+- Surprises: 77 (88.51% of frames)
+- Surprise Rate: 88.51%
+- Error range: min=0.0003, max=0.2171
+- Final approx absolute surprise threshold: 0.09447
+- Final z-threshold in surprise space: 1.355
+- Final residual baseline: ema_err=0.0309, sigma=0.0469
+
+Sentinel regimes observed
+--------------------------
+- CALIBRATING: 56.3% of post-warmup frames
+- GREEN: 43.7% of post-warmup frames
+
+Geometry and spectrum
+----------------------
+- Average eigen dominance ≈ 0.79.
+
+Hippocampus (episodic memory)
+-----------------------------
+- Mean recall similarity ≈ 0.301 (range ~[-1,1]).
+- Mean familiarity χ ≈ 0.142 (0..1).
+- Writes performed: 38
+
+Anomaly highlights
+------------------
+- Cluster 0: steps 13–22 (n=7), max z≈43.30, generic numeric/vector data. Example: ''
+- Cluster 1: steps 20–20 (n=1), max z≈37.03, generic numeric/vector data. Example: ''
+- Cluster 2: steps 23–28 (n=5), max z≈27.49, generic numeric/vector data. Example: ''
+- Cluster 3: steps 27–29 (n=2), max z≈19.58, generic numeric/vector data. Example: ''
+- Cluster 4: steps 59–59 (n=1), max z≈14.96, generic numeric/vector data. Example: ''
+- Cluster 5: steps 58–58 (n=1), max z≈14.71, generic numeric/vector data. Example: ''
+
+Plain-language summary
+----------------------
+The engine stayed mostly stable, but encountered distinct segments that deviated from expectation and forced sharper internal adjustment.
+Hippocampus tracked whether spikes were novel vs. recurrent; recurrent episodes inhibited learning to reduce 'relearning the same surprise'.

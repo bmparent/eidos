@@ -1,0 +1,520 @@
+{
+  "aggregate": {
+    "amber_count": 1,
+    "candidate_events": 9,
+    "confirmed_events": 4,
+    "cooldown_suppressions": 0,
+    "incident_card_count": 4,
+    "merged_events": 0,
+    "mode_confirmed_event_counts": {
+      "balanced": 2,
+      "high_recall": 3,
+      "low_noise": 1
+    },
+    "normal_only_false_positives": 0,
+    "normal_only_legacy_raw_spike_alerts": 4,
+    "recall_preservation_note": "Synthetic sustained burst confirmed",
+    "red_count": 2,
+    "suppressed_candidates": 5
+  },
+  "frames": 1200,
+  "generated_at_utc": "2026-05-23T19:46:20Z",
+  "incident_cards_written": [
+    "incident_cards/sustained_burst_balanced_01.json",
+    "incident_cards/nearby_spikes_balanced_01.json",
+    "incident_cards/eidos_life_lifecycle_balanced_01.json",
+    "incident_cards/eidos_life_lifecycle_balanced_02.json"
+  ],
+  "known_limitations": [
+    "Synthetic confirmation fixtures prove policy mechanics; they are not a substitute for labeled production telemetry.",
+    "Normal-only false-positive control is measured on deterministic synthetic benign spikes.",
+    "Eidos Life lifecycle bridge uses synthetic generation 63 collapse/recovery evidence, not a live browser run."
+  ],
+  "modes": [
+    "low_noise",
+    "balanced",
+    "high_recall"
+  ],
+  "policy": "raw residual spike -> candidate; persistence + geometry change + novelty -> confirmed event",
+  "scenarios": {
+    "eidos_life_lifecycle_balanced": {
+      "amber_count": 0,
+      "candidate_events": 2,
+      "confirmed_event_count": 2,
+      "confirmed_events": [
+        {
+          "confidence": 0.95,
+          "duration": 8,
+          "end_frame": 70,
+          "event_count": 8,
+          "event_id": "evt_lifecycle_collapse_63_70",
+          "event_type": "lifecycle_collapse",
+          "peak_score": 3.4,
+          "raw_evidence_refs": [
+            "eidos-life:generation:63",
+            "eidos-life:generation:64",
+            "eidos-life:generation:65",
+            "eidos-life:generation:66",
+            "eidos-life:generation:67",
+            "eidos-life:generation:68",
+            "eidos-life:generation:69",
+            "eidos-life:generation:70"
+          ],
+          "severity": "RED",
+          "similar_past_events": [],
+          "start_frame": 63,
+          "top_drivers": [
+            {
+              "name": "alive_ratio_collapse",
+              "score": 0.96
+            },
+            {
+              "name": "alive_ratio_collapse",
+              "score": 0.96
+            },
+            {
+              "name": "alive_ratio_collapse",
+              "score": 0.96
+            },
+            {
+              "name": "alive_ratio_collapse",
+              "score": 0.96
+            },
+            {
+              "name": "alive_ratio_collapse",
+              "score": 0.96
+            },
+            {
+              "name": "alive_ratio_collapse",
+              "score": 0.96
+            },
+            {
+              "name": "alive_ratio_collapse",
+              "score": 0.96
+            },
+            {
+              "name": "alive_ratio_collapse",
+              "score": 0.96
+            }
+          ],
+          "why_flagged": [
+            "candidate accumulated enough evidence",
+            "geometry change and novelty supported the residual spike",
+            "lifecycle transition evidence was sustained"
+          ]
+        },
+        {
+          "confidence": 0.905,
+          "duration": 7,
+          "end_frame": 96,
+          "event_count": 7,
+          "event_id": "evt_lifecycle_recovery_90_96",
+          "event_type": "lifecycle_recovery",
+          "peak_score": 2.9,
+          "raw_evidence_refs": [
+            "eidos-life:generation:90",
+            "eidos-life:generation:91",
+            "eidos-life:generation:92",
+            "eidos-life:generation:93",
+            "eidos-life:generation:94",
+            "eidos-life:generation:95",
+            "eidos-life:generation:96"
+          ],
+          "severity": "RECOVERY",
+          "similar_past_events": [],
+          "start_frame": 90,
+          "top_drivers": [
+            {
+              "name": "post_extinction_reseed",
+              "score": 0.88
+            },
+            {
+              "name": "post_extinction_reseed",
+              "score": 0.88
+            },
+            {
+              "name": "post_extinction_reseed",
+              "score": 0.88
+            },
+            {
+              "name": "post_extinction_reseed",
+              "score": 0.88
+            },
+            {
+              "name": "post_extinction_reseed",
+              "score": 0.88
+            },
+            {
+              "name": "post_extinction_reseed",
+              "score": 0.88
+            },
+            {
+              "name": "post_extinction_reseed",
+              "score": 0.88
+            }
+          ],
+          "why_flagged": [
+            "candidate accumulated enough evidence",
+            "geometry change and novelty supported the residual spike",
+            "lifecycle transition evidence was sustained"
+          ]
+        }
+      ],
+      "cooldown_suppressions": 0,
+      "incident_card_count": 2,
+      "incident_cards": [
+        {
+          "confidence": 0.95,
+          "end_frame": 70,
+          "event_id": "evt_lifecycle_collapse_63_70",
+          "event_type": "lifecycle_collapse",
+          "incident_id": "incident_evt_lifecycle_collapse_63_70",
+          "raw_evidence_refs": [
+            "eidos-life:generation:63",
+            "eidos-life:generation:64",
+            "eidos-life:generation:65",
+            "eidos-life:generation:66",
+            "eidos-life:generation:67",
+            "eidos-life:generation:68",
+            "eidos-life:generation:69",
+            "eidos-life:generation:70"
+          ],
+          "severity": "RED",
+          "similar_past_events": [],
+          "start_frame": 63,
+          "top_drivers": [
+            {
+              "name": "alive_ratio_collapse",
+              "score": 0.96
+            },
+            {
+              "name": "alive_ratio_collapse",
+              "score": 0.96
+            },
+            {
+              "name": "alive_ratio_collapse",
+              "score": 0.96
+            },
+            {
+              "name": "alive_ratio_collapse",
+              "score": 0.96
+            },
+            {
+              "name": "alive_ratio_collapse",
+              "score": 0.96
+            },
+            {
+              "name": "alive_ratio_collapse",
+              "score": 0.96
+            },
+            {
+              "name": "alive_ratio_collapse",
+              "score": 0.96
+            },
+            {
+              "name": "alive_ratio_collapse",
+              "score": 0.96
+            }
+          ],
+          "why_flagged": [
+            "candidate accumulated enough evidence",
+            "geometry change and novelty supported the residual spike",
+            "lifecycle transition evidence was sustained"
+          ]
+        },
+        {
+          "confidence": 0.905,
+          "end_frame": 96,
+          "event_id": "evt_lifecycle_recovery_90_96",
+          "event_type": "lifecycle_recovery",
+          "incident_id": "incident_evt_lifecycle_recovery_90_96",
+          "raw_evidence_refs": [
+            "eidos-life:generation:90",
+            "eidos-life:generation:91",
+            "eidos-life:generation:92",
+            "eidos-life:generation:93",
+            "eidos-life:generation:94",
+            "eidos-life:generation:95",
+            "eidos-life:generation:96"
+          ],
+          "severity": "RECOVERY",
+          "similar_past_events": [],
+          "start_frame": 90,
+          "top_drivers": [
+            {
+              "name": "post_extinction_reseed",
+              "score": 0.88
+            },
+            {
+              "name": "post_extinction_reseed",
+              "score": 0.88
+            },
+            {
+              "name": "post_extinction_reseed",
+              "score": 0.88
+            },
+            {
+              "name": "post_extinction_reseed",
+              "score": 0.88
+            },
+            {
+              "name": "post_extinction_reseed",
+              "score": 0.88
+            },
+            {
+              "name": "post_extinction_reseed",
+              "score": 0.88
+            },
+            {
+              "name": "post_extinction_reseed",
+              "score": 0.88
+            }
+          ],
+          "why_flagged": [
+            "candidate accumulated enough evidence",
+            "geometry change and novelty supported the residual spike",
+            "lifecycle transition evidence was sustained"
+          ]
+        }
+      ],
+      "legacy_raw_spike_alerts": 15,
+      "merged_events": 0,
+      "mode": "balanced",
+      "red_count": 1,
+      "scenario": "eidos_life_lifecycle_balanced",
+      "suppressed_candidates": 0
+    },
+    "isolated_spike_low_noise": {
+      "amber_count": 0,
+      "candidate_events": 1,
+      "confirmed_event_count": 0,
+      "confirmed_events": [],
+      "cooldown_suppressions": 0,
+      "incident_card_count": 0,
+      "incident_cards": [],
+      "legacy_raw_spike_alerts": 1,
+      "merged_events": 0,
+      "mode": "low_noise",
+      "red_count": 0,
+      "scenario": "isolated_spike_low_noise",
+      "suppressed_candidates": 1
+    },
+    "nearby_spikes_balanced": {
+      "amber_count": 0,
+      "candidate_events": 1,
+      "confirmed_event_count": 1,
+      "confirmed_events": [
+        {
+          "confidence": 0.935,
+          "duration": 9,
+          "end_frame": 18,
+          "event_count": 3,
+          "event_id": "evt_anomaly_10_18",
+          "event_type": "anomaly",
+          "peak_score": 4.8,
+          "raw_evidence_refs": [
+            "nearby:10",
+            "nearby:14",
+            "nearby:18"
+          ],
+          "severity": "RED",
+          "similar_past_events": [],
+          "start_frame": 10,
+          "top_drivers": [],
+          "why_flagged": [
+            "candidate persisted across the confirmation window",
+            "candidate accumulated enough evidence",
+            "geometry change and novelty supported the residual spike"
+          ]
+        }
+      ],
+      "cooldown_suppressions": 0,
+      "incident_card_count": 1,
+      "incident_cards": [
+        {
+          "confidence": 0.935,
+          "end_frame": 18,
+          "event_id": "evt_anomaly_10_18",
+          "event_type": "anomaly",
+          "incident_id": "incident_evt_anomaly_10_18",
+          "raw_evidence_refs": [
+            "nearby:10",
+            "nearby:14",
+            "nearby:18"
+          ],
+          "severity": "RED",
+          "similar_past_events": [],
+          "start_frame": 10,
+          "top_drivers": [],
+          "why_flagged": [
+            "candidate persisted across the confirmation window",
+            "candidate accumulated enough evidence",
+            "geometry change and novelty supported the residual spike"
+          ]
+        }
+      ],
+      "legacy_raw_spike_alerts": 3,
+      "merged_events": 0,
+      "mode": "balanced",
+      "red_count": 1,
+      "scenario": "nearby_spikes_balanced",
+      "suppressed_candidates": 0
+    },
+    "normal_only_low_noise": {
+      "amber_count": 0,
+      "candidate_events": 4,
+      "confirmed_event_count": 0,
+      "confirmed_events": [],
+      "cooldown_suppressions": 0,
+      "incident_card_count": 0,
+      "incident_cards": [],
+      "legacy_raw_spike_alerts": 4,
+      "merged_events": 0,
+      "mode": "low_noise",
+      "red_count": 0,
+      "scenario": "normal_only_low_noise",
+      "suppressed_candidates": 4
+    },
+    "sustained_burst_balanced": {
+      "amber_count": 1,
+      "candidate_events": 1,
+      "confirmed_event_count": 1,
+      "confirmed_events": [
+        {
+          "confidence": 0.935,
+          "duration": 10,
+          "end_frame": 29,
+          "event_count": 10,
+          "event_id": "evt_anomaly_20_29",
+          "event_type": "anomaly",
+          "peak_score": 4.6,
+          "raw_evidence_refs": [
+            "burst:20",
+            "burst:21",
+            "burst:22",
+            "burst:23",
+            "burst:24",
+            "burst:25",
+            "burst:26",
+            "burst:27",
+            "burst:28",
+            "burst:29"
+          ],
+          "severity": "AMBER",
+          "similar_past_events": [],
+          "start_frame": 20,
+          "top_drivers": [
+            {
+              "name": "residual_energy",
+              "score": 4.6
+            },
+            {
+              "name": "residual_energy",
+              "score": 4.6
+            },
+            {
+              "name": "residual_energy",
+              "score": 4.6
+            },
+            {
+              "name": "residual_energy",
+              "score": 4.6
+            },
+            {
+              "name": "residual_energy",
+              "score": 4.6
+            },
+            {
+              "name": "residual_energy",
+              "score": 4.6
+            },
+            {
+              "name": "residual_energy",
+              "score": 4.6
+            },
+            {
+              "name": "residual_energy",
+              "score": 4.6
+            }
+          ],
+          "why_flagged": [
+            "candidate accumulated enough evidence",
+            "geometry change and novelty supported the residual spike"
+          ]
+        }
+      ],
+      "cooldown_suppressions": 0,
+      "incident_card_count": 1,
+      "incident_cards": [
+        {
+          "confidence": 0.935,
+          "end_frame": 29,
+          "event_id": "evt_anomaly_20_29",
+          "event_type": "anomaly",
+          "incident_id": "incident_evt_anomaly_20_29",
+          "raw_evidence_refs": [
+            "burst:20",
+            "burst:21",
+            "burst:22",
+            "burst:23",
+            "burst:24",
+            "burst:25",
+            "burst:26",
+            "burst:27",
+            "burst:28",
+            "burst:29"
+          ],
+          "severity": "AMBER",
+          "similar_past_events": [],
+          "start_frame": 20,
+          "top_drivers": [
+            {
+              "name": "residual_energy",
+              "score": 4.6
+            },
+            {
+              "name": "residual_energy",
+              "score": 4.6
+            },
+            {
+              "name": "residual_energy",
+              "score": 4.6
+            },
+            {
+              "name": "residual_energy",
+              "score": 4.6
+            },
+            {
+              "name": "residual_energy",
+              "score": 4.6
+            },
+            {
+              "name": "residual_energy",
+              "score": 4.6
+            },
+            {
+              "name": "residual_energy",
+              "score": 4.6
+            },
+            {
+              "name": "residual_energy",
+              "score": 4.6
+            }
+          ],
+          "why_flagged": [
+            "candidate accumulated enough evidence",
+            "geometry change and novelty supported the residual spike"
+          ]
+        }
+      ],
+      "legacy_raw_spike_alerts": 10,
+      "merged_events": 0,
+      "mode": "balanced",
+      "red_count": 0,
+      "scenario": "sustained_burst_balanced",
+      "suppressed_candidates": 0
+    }
+  },
+  "seed": 42,
+  "suite": "smoke"
+}

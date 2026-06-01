@@ -16,7 +16,7 @@ jobs:
       - run: python -m pip install -e eidos/repo
       - run: python -m pip install pytest pyyaml
       - run: pytest eidos/repo/tests -q
-      - run: python -m eidos_brain.prediction.run_world_telemetry --fixture --out artifacts/predictions/world_telemetry
+      - run: python -m eidos_brain.prediction.run_world_telemetry --config eidos/repo/config/prediction/world_sources.example.yaml --out artifacts/predictions/world_telemetry
       - run: python -m eidos_brain.prediction.run_market_forecast --fixture --out artifacts/predictions/market_forecast
       - run: python -m eidos_brain.prediction.evaluate_due_predictions --ledger artifacts/predictions/ledger --out artifacts/predictions/evaluations
       - uses: actions/upload-artifact@v4

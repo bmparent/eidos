@@ -45,14 +45,15 @@ def test_scenario_nominal(brain_module, temp_artifact_root):
         summ = json.load(f)
         assert "total_frames" in summ
         assert summ["total_frames"] == steps
+        assert summ["total_frames_seen"] == steps
         assert "surprises" in summ
         
     # 3. report.txt
     report_path = os.path.join(session_dir, "report.txt")
     with open(report_path, "r") as f:
         content = f.read()
-        assert "SENTINEL SESSION REPORT" in content
-        assert "Surprise Rate" in content
+        assert "Session overview" in content
+        assert "Surprises" in content
 
 @pytest.mark.regression
 def test_scenario_spike(brain_module, temp_artifact_root):

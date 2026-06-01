@@ -1,0 +1,21 @@
+__pycache__/
+*.py[cod]
+.venv/
+node_modules/
+dist/
+
+eidos-life-lab/backend/.venv/
+eidos-life-lab/frontend/node_modules/
+eidos-life-lab/frontend/dist/
+eidos-life-lab/artifacts/exports/*.json
+eidos-life-lab/artifacts/checkpoints/*.json
+
+artifacts/eidos_life_lab/exports/*.json
+artifacts/eidos_life_lab/checkpoints/*.json
+
+# Local generated proof outputs that are summarized in docs/proof_runs.
+artifacts/hotfix_official_10000_colab_gpu/
+artifacts/cicids_webattacks_proof_*/
+artifacts/cicids_webattacks_samples/
+tmp/eidos_proof_data/
+full_pytest_output.txt

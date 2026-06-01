@@ -1,0 +1,21 @@
+{
+  "confidence": 0.935,
+  "end_frame": 18,
+  "event_id": "evt_anomaly_10_18",
+  "event_type": "anomaly",
+  "incident_id": "incident_evt_anomaly_10_18",
+  "raw_evidence_refs": [
+    "nearby:10",
+    "nearby:14",
+    "nearby:18"
+  ],
+  "severity": "RED",
+  "similar_past_events": [],
+  "start_frame": 10,
+  "top_drivers": [],
+  "why_flagged": [
+    "candidate persisted across the confirmation window",
+    "candidate accumulated enough evidence",
+    "geometry change and novelty supported the residual spike"
+  ]
+}

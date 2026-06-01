@@ -1,0 +1,59 @@
+{
+  "confidence": 0.95,
+  "end_frame": 70,
+  "event_id": "evt_lifecycle_collapse_63_70",
+  "event_type": "lifecycle_collapse",
+  "incident_id": "incident_evt_lifecycle_collapse_63_70",
+  "raw_evidence_refs": [
+    "eidos-life:generation:63",
+    "eidos-life:generation:64",
+    "eidos-life:generation:65",
+    "eidos-life:generation:66",
+    "eidos-life:generation:67",
+    "eidos-life:generation:68",
+    "eidos-life:generation:69",
+    "eidos-life:generation:70"
+  ],
+  "severity": "RED",
+  "similar_past_events": [],
+  "start_frame": 63,
+  "top_drivers": [
+    {
+      "name": "alive_ratio_collapse",
+      "score": 0.96
+    },
+    {
+      "name": "alive_ratio_collapse",
+      "score": 0.96
+    },
+    {
+      "name": "alive_ratio_collapse",
+      "score": 0.96
+    },
+    {
+      "name": "alive_ratio_collapse",
+      "score": 0.96
+    },
+    {
+      "name": "alive_ratio_collapse",
+      "score": 0.96
+    },
+    {
+      "name": "alive_ratio_collapse",
+      "score": 0.96
+    },
+    {
+      "name": "alive_ratio_collapse",
+      "score": 0.96
+    },
+    {
+      "name": "alive_ratio_collapse",
+      "score": 0.96
+    }
+  ],
+  "why_flagged": [
+    "candidate accumulated enough evidence",
+    "geometry change and novelty supported the residual spike",
+    "lifecycle transition evidence was sustained"
+  ]
+}

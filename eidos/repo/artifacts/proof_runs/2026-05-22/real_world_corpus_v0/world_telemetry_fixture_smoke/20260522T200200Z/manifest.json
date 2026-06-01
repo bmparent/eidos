@@ -1,0 +1,29 @@
+{
+  "config_hash": "8fe843e5c40360ece81c26c62cc4d08f4c131073b3fbc092786d9ce96798b588",
+  "corpus": {
+    "corpus_version": "real_world_corpus_v0",
+    "event_count": 2,
+    "ok_event_count": 2,
+    "source_count": 1,
+    "source_type_counts": {
+      "fixture": 2
+    },
+    "sources": [
+      {
+        "enabled": true,
+        "id": "fixture_world",
+        "type": "fixture"
+      }
+    ],
+    "status_counts": {
+      "ok": 2
+    }
+  },
+  "data_snapshot_hash": "36ac3b750abd8b9342f6b673e06e63a8dcd0fd171731f8bf0a2011924ab319d8",
+  "experiment_type": "world_telemetry",
+  "fixture_mode": true,
+  "google_drive_sync": "skipped_missing_secret",
+  "run_id": "20260522T200200Z",
+  "source_window_end_utc": "2026-05-22T20:02:00Z",
+  "source_window_start_utc": "2026-05-22T20:02:00Z"
+}

@@ -1,0 +1,23 @@
+{
+  "config_hash": "6fd5735b8b904b261d89624edbb8657412416903cac6bacef4da310a835569e5",
+  "features": 16,
+  "regime_frames": {
+    "BACKDOOR_PERIODIC": 300,
+    "FROZEN_LOW_VARIANCE": 300,
+    "NOISE_CRASH": 300,
+    "NORMAL": 300
+  },
+  "reservoirs": [
+    64,
+    128
+  ],
+  "seed": 42,
+  "thresholds": {
+    "abnormal_alert_rate": 0.8,
+    "backdoor_alert_rate": 0.8,
+    "frozen_red_rate": 0.5,
+    "noise_alert_rate": 0.8,
+    "normal_false_alert_rate": 0.05
+  },
+  "warmup": 200
+}

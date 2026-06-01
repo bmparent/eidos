@@ -1,0 +1,25 @@
+{
+  "total_frames": 96,
+  "frames_processed": 87,
+  "surprises": 77,
+  "surprise_rate": 88.50574712643679,
+  "final_threshold": 0.09446690412579498,
+  "final_z_thresh": 1.3554845367882773,
+  "final_ema_err": 0.03085852546547596,
+  "final_sigma": 0.04689421562924981,
+  "err_min": 0.00027999983285553753,
+  "err_max": 0.21711945533752441,
+  "synaptic_hash_initial": "46c71bf47831d30d",
+  "synaptic_hash_final": "e5f255d0cfe86a9e",
+  "config_hash": "0c09dc11fb8f58641edac67d30363981c3165d7fcd0b2e20f77b577002a0742d",
+  "continuity_hash": "281a37f7cb250bc46131ddc12d5d7a41490a3e2fd8e69cf09a6f09bbcae38c70",
+  "continuity_expected_hash": null,
+  "continuity_match": null,
+  "reservoir_state_hash": "63c7032a4a54a1bbf27f529e854ca71fb161ea6638b1b4c1c7f15c62b3ef53e2",
+  "reservoir_weights_hash": "486acf4b6c8d5b389d644aa9f0f843efe21f0b591826b2c6be7b00fcfd453b56",
+  "hippocampus_write_counts": {
+    "MISC": 0,
+    "ELEVATED": 0,
+    "INCIDENT": 38
+  }
+}

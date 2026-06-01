@@ -1,0 +1,128 @@
+>>> INITIALIZING SENTINEL V2.2 (UNIFIED STREAM)...
+>>> Determinism: Pinning seed=42
+>>> est_frames=96, using WARMUP=9
+[ANOMALY] step=9 err=0.0005 z=2.359 z_thr=1.480 ema=0.0276 sig=0.0115 ratio=3.9 plas_rms=0.0005 plas_clp=0.00 clip_frac~0.98 fatigue=0.18 lr_raw=1.527 lr_eff=1.468 HIPP bank=ELEVATED sim=+0.010 chi=0.051 write=0 status=CALIBRATING | Thermo E=0.14 | text=''
+[ANOMALY] step=10 err=0.0006 z=2.426 z_thr=1.478 ema=0.0276 sig=0.0111 ratio=3.9 plas_rms=0.0002 plas_clp=0.00 clip_frac~1.00 fatigue=0.20 lr_raw=1.522 lr_eff=1.464 HIPP bank=ELEVATED sim=+0.010 chi=0.051 write=0 status=CALIBRATING | Thermo E=0.26 | text=''
+[ANOMALY] step=11 err=0.0007 z=2.491 z_thr=1.476 ema=0.0276 sig=0.0108 ratio=3.9 plas_rms=0.0001 plas_clp=0.00 clip_frac~1.00 fatigue=0.22 lr_raw=1.518 lr_eff=1.459 HIPP bank=ELEVATED sim=+0.009 chi=0.051 write=0 status=CALIBRATING | Thermo E=0.39 | text=''
+[ANOMALY] step=12 err=0.0007 z=2.557 z_thr=1.474 ema=0.0275 sig=0.0105 ratio=3.9 plas_rms=0.0001 plas_clp=0.00 clip_frac~1.00 fatigue=0.24 lr_raw=1.513 lr_eff=1.455 HIPP bank=ELEVATED sim=+0.010 chi=0.051 write=0 status=CALIBRATING | Thermo E=0.50 | text=''
+[ANOMALY] step=13 err=0.0008 z=2.619 z_thr=1.472 ema=0.0275 sig=0.0102 ratio=3.9 plas_rms=0.0001 plas_clp=0.00 clip_frac~1.00 fatigue=0.26 lr_raw=1.509 lr_eff=1.451 HIPP bank=ELEVATED sim=+0.009 chi=0.051 write=0 status=CALIBRATING | Thermo E=0.62 | text=''
+[ANOMALY] step=14 err=0.0009 z=2.680 z_thr=1.470 ema=0.0275 sig=0.0099 ratio=3.9 plas_rms=0.0001 plas_clp=0.00 clip_frac~1.00 fatigue=0.28 lr_raw=1.504 lr_eff=1.446 HIPP bank=ELEVATED sim=+0.009 chi=0.051 write=0 status=CALIBRATING | Thermo E=0.72 | text=''
+[ANOMALY] step=15 err=0.0010 z=2.738 z_thr=1.468 ema=0.0275 sig=0.0097 ratio=3.9 plas_rms=0.0002 plas_clp=0.00 clip_frac~1.00 fatigue=0.30 lr_raw=1.500 lr_eff=1.442 HIPP bank=ELEVATED sim=+0.009 chi=0.051 write=0 status=CALIBRATING | Thermo E=0.82 | text=''
+[ANOMALY] step=16 err=0.0011 z=2.796 z_thr=1.466 ema=0.0274 sig=0.0094 ratio=3.9 plas_rms=0.0002 plas_clp=0.00 clip_frac~1.00 fatigue=0.32 lr_raw=1.495 lr_eff=1.438 HIPP bank=ELEVATED sim=+0.009 chi=0.051 write=0 status=CALIBRATING | Thermo E=0.92 | text=''
+[ANOMALY] step=17 err=0.0013 z=2.844 z_thr=1.464 ema=0.0274 sig=0.0092 ratio=3.9 plas_rms=0.0001 plas_clp=0.00 clip_frac~1.00 fatigue=0.34 lr_raw=1.491 lr_eff=1.434 HIPP bank=ELEVATED sim=+0.009 chi=0.051 write=0 status=CALIBRATING | Thermo E=1.01 | text=''
+[ANOMALY] step=18 err=0.0014 z=2.898 z_thr=1.462 ema=0.0274 sig=0.0090 ratio=3.9 plas_rms=0.0001 plas_clp=0.00 clip_frac~1.00 fatigue=0.36 lr_raw=1.487 lr_eff=1.429 HIPP bank=ELEVATED sim=+0.009 chi=0.051 write=0 status=CALIBRATING | Thermo E=1.10 | text=''
+[ANOMALY] step=19 err=0.0016 z=43.301 z_thr=1.460 ema=0.0274 sig=0.0006 ratio=3.6 plas_rms=0.0001 plas_clp=0.00 clip_frac~1.00 fatigue=0.38 lr_raw=0.350 lr_eff=0.337 HIPP bank=INCIDENT sim=+0.009 chi=0.051 write=0 status=CALIBRATING | Thermo E=5.22 | text=''
+[ANOMALY] step=20 err=0.0018 z=37.029 z_thr=1.458 ema=0.0273 sig=0.0007 ratio=3.4 plas_rms=0.0002 plas_clp=0.00 clip_frac~1.00 fatigue=0.40 lr_raw=0.350 lr_eff=0.337 HIPP bank=INCIDENT sim=+0.009 chi=0.051 write=0 status=CALIBRATING | Thermo E=8.30 | text=''
+[ANOMALY] step=21 err=0.0020 z=34.122 z_thr=1.457 ema=0.0273 sig=0.0007 ratio=3.2 plas_rms=0.0007 plas_clp=0.00 clip_frac~1.00 fatigue=0.42 lr_raw=0.350 lr_eff=0.337 HIPP bank=INCIDENT sim=+0.009 chi=0.051 write=0 status=CALIBRATING | Thermo E=10.78 | text=''
+[ANOMALY] step=22 err=0.0022 z=31.568 z_thr=1.455 ema=0.0273 sig=0.0008 ratio=3.1 plas_rms=0.0003 plas_clp=0.00 clip_frac~1.00 fatigue=0.44 lr_raw=0.350 lr_eff=0.337 HIPP bank=INCIDENT sim=+0.009 chi=0.051 write=0 status=CALIBRATING | Thermo E=12.76 | text=''
+[ANOMALY] step=23 err=0.0025 z=27.489 z_thr=1.453 ema=0.0273 sig=0.0009 ratio=2.9 plas_rms=0.0001 plas_clp=0.00 clip_frac~1.00 fatigue=0.46 lr_raw=0.350 lr_eff=0.337 HIPP bank=INCIDENT sim=+0.009 chi=0.051 write=0 status=CALIBRATING | Thermo E=14.14 | text=''
+[ANOMALY] step=24 err=0.0028 z=25.403 z_thr=1.451 ema=0.0272 sig=0.0010 ratio=2.9 plas_rms=0.0001 plas_clp=0.00 clip_frac~1.00 fatigue=0.48 lr_raw=0.350 lr_eff=0.337 HIPP bank=INCIDENT sim=+0.008 chi=0.051 write=0 status=CALIBRATING | Thermo E=15.16 | text=''
+[ANOMALY] step=25 err=0.0031 z=23.303 z_thr=1.449 ema=0.0272 sig=0.0010 ratio=2.8 plas_rms=0.0000 plas_clp=0.00 clip_frac~1.00 fatigue=0.50 lr_raw=0.350 lr_eff=0.337 HIPP bank=INCIDENT sim=+0.008 chi=0.051 write=1 status=CALIBRATING | Thermo E=15.88 | text=''
+[ANOMALY] step=26 err=0.0035 z=21.452 z_thr=1.447 ema=0.0272 sig=0.0011 ratio=2.7 plas_rms=0.0001 plas_clp=0.00 clip_frac~1.00 fatigue=0.52 lr_raw=0.350 lr_eff=0.241 HIPP bank=INCIDENT sim=+0.707 chi=0.415 write=1 status=CALIBRATING | Thermo E=16.33 | text=''
+[ANOMALY] step=27 err=0.0038 z=19.581 z_thr=1.445 ema=0.0272 sig=0.0012 ratio=2.7 plas_rms=0.0005 plas_clp=0.00 clip_frac~1.00 fatigue=0.54 lr_raw=0.350 lr_eff=0.230 HIPP bank=INCIDENT sim=+0.739 chi=0.457 write=1 status=CALIBRATING | Thermo E=16.56 | text=''
+[ANOMALY] step=28 err=0.0043 z=16.786 z_thr=1.444 ema=0.0271 sig=0.0014 ratio=2.6 plas_rms=0.0008 plas_clp=0.00 clip_frac~1.00 fatigue=0.56 lr_raw=0.350 lr_eff=0.257 HIPP bank=INCIDENT sim=+0.654 chi=0.354 write=1 status=CALIBRATING | Thermo E=16.48 | text=''
+[ANOMALY] step=29 err=0.0048 z=15.921 z_thr=1.442 ema=0.0271 sig=0.0014 ratio=2.6 plas_rms=0.0007 plas_clp=0.00 clip_frac~1.00 fatigue=0.58 lr_raw=0.350 lr_eff=0.256 HIPP bank=INCIDENT sim=+0.659 chi=0.360 write=1 status=CALIBRATING | Thermo E=16.33 | text=''
+[ANOMALY] step=30 err=0.0053 z=14.211 z_thr=1.440 ema=0.0271 sig=0.0015 ratio=2.5 plas_rms=0.0007 plas_clp=0.00 clip_frac~1.00 fatigue=0.60 lr_raw=0.350 lr_eff=0.267 HIPP bank=INCIDENT sim=+0.618 chi=0.318 write=1 status=CALIBRATING | Thermo E=16.01 | text=''
+[ANOMALY] step=31 err=0.0059 z=12.953 z_thr=1.438 ema=0.0271 sig=0.0016 ratio=2.5 plas_rms=0.0010 plas_clp=0.00 clip_frac~1.00 fatigue=0.62 lr_raw=0.350 lr_eff=0.258 HIPP bank=INCIDENT sim=+0.649 chi=0.349 write=1 status=CALIBRATING | Thermo E=15.61 | text=''
+[ANOMALY] step=32 err=0.0066 z=11.785 z_thr=1.437 ema=0.0271 sig=0.0017 ratio=2.5 plas_rms=0.0010 plas_clp=0.00 clip_frac~1.00 fatigue=0.64 lr_raw=0.350 lr_eff=0.270 HIPP bank=INCIDENT sim=+0.603 chi=0.304 write=1 status=CALIBRATING | Thermo E=15.13 | text=''
+[ANOMALY] step=33 err=0.0073 z=10.350 z_thr=1.435 ema=0.0270 sig=0.0019 ratio=2.5 plas_rms=0.0011 plas_clp=0.00 clip_frac~1.00 fatigue=0.66 lr_raw=0.350 lr_eff=0.257 HIPP bank=INCIDENT sim=+0.653 chi=0.353 write=1 status=CALIBRATING | Thermo E=14.55 | text=''
+[ANOMALY] step=34 err=0.0082 z=9.491 z_thr=1.433 ema=0.0270 sig=0.0020 ratio=2.4 plas_rms=0.0014 plas_clp=0.00 clip_frac~0.99 fatigue=0.68 lr_raw=0.350 lr_eff=0.266 HIPP bank=INCIDENT sim=+0.621 chi=0.321 write=1 status=CALIBRATING | Thermo E=13.94 | text=''
+[ANOMALY] step=35 err=0.0091 z=8.205 z_thr=1.432 ema=0.0270 sig=0.0022 ratio=2.4 plas_rms=0.0015 plas_clp=0.00 clip_frac~0.99 fatigue=0.70 lr_raw=0.350 lr_eff=0.260 HIPP bank=INCIDENT sim=+0.643 chi=0.342 write=1 status=CALIBRATING | Thermo E=13.27 | text=''
+[ANOMALY] step=36 err=0.0101 z=7.357 z_thr=1.430 ema=0.0270 sig=0.0023 ratio=2.4 plas_rms=0.0018 plas_clp=0.00 clip_frac~0.99 fatigue=0.72 lr_raw=0.350 lr_eff=0.262 HIPP bank=INCIDENT sim=+0.636 chi=0.335 write=1 status=CALIBRATING | Thermo E=12.58 | text=''
+[ANOMALY] step=37 err=0.0113 z=6.260 z_thr=1.428 ema=0.0270 sig=0.0025 ratio=2.4 plas_rms=0.0021 plas_clp=0.00 clip_frac~0.99 fatigue=0.74 lr_raw=0.350 lr_eff=0.254 HIPP bank=INCIDENT sim=+0.664 chi=0.365 write=1 status=CALIBRATING | Thermo E=11.85 | text=''
+[ANOMALY] step=38 err=0.0125 z=5.491 z_thr=1.427 ema=0.0269 sig=0.0026 ratio=2.4 plas_rms=0.0026 plas_clp=0.00 clip_frac~0.98 fatigue=0.76 lr_raw=0.350 lr_eff=0.260 HIPP bank=INCIDENT sim=+0.644 chi=0.343 write=1 status=CALIBRATING | Thermo E=11.32 | text=''
+[ANOMALY] step=39 err=0.0138 z=4.575 z_thr=1.425 ema=0.0269 sig=0.0029 ratio=2.4 plas_rms=0.0030 plas_clp=0.00 clip_frac~0.97 fatigue=0.78 lr_raw=0.350 lr_eff=0.269 HIPP bank=INCIDENT sim=+0.608 chi=0.309 write=1 status=CALIBRATING | Thermo E=10.75 | text=''
+[ANOMALY] step=40 err=0.0154 z=3.825 z_thr=1.424 ema=0.0269 sig=0.0030 ratio=2.5 plas_rms=0.0034 plas_clp=0.00 clip_frac~0.97 fatigue=0.80 lr_raw=0.350 lr_eff=0.259 HIPP bank=INCIDENT sim=+0.645 chi=0.345 write=0 status=CALIBRATING | Thermo E=10.16 | text=''
+[ANOMALY] step=41 err=0.0170 z=3.088 z_thr=1.422 ema=0.0269 sig=0.0032 ratio=2.5 plas_rms=0.0039 plas_clp=0.00 clip_frac~0.96 fatigue=0.82 lr_raw=0.350 lr_eff=0.262 HIPP bank=INCIDENT sim=+0.634 chi=0.334 write=0 status=CALIBRATING | Thermo E=9.55 | text=''
+[ANOMALY] step=42 err=0.0189 z=2.316 z_thr=1.420 ema=0.0269 sig=0.0035 ratio=2.5 plas_rms=0.0046 plas_clp=0.00 clip_frac~0.94 fatigue=0.84 lr_raw=0.350 lr_eff=0.268 HIPP bank=INCIDENT sim=+0.613 chi=0.313 write=0 status=CALIBRATING | Thermo E=8.93 | text=''
+[ANOMALY] step=43 err=0.0209 z=1.638 z_thr=1.419 ema=0.0269 sig=0.0036 ratio=2.6 plas_rms=0.0052 plas_clp=0.00 clip_frac~0.92 fatigue=0.86 lr_raw=0.350 lr_eff=0.273 HIPP bank=INCIDENT sim=+0.591 chi=0.293 write=0 status=CALIBRATING | Thermo E=8.30 | text=''
+[ANOMALY] step=45 err=0.0841 z=13.799 z_thr=1.416 ema=0.0270 sig=0.0041 ratio=2.6 plas_rms=0.0060 plas_clp=0.00 clip_frac~0.89 fatigue=0.88 lr_raw=0.350 lr_eff=0.284 HIPP bank=INCIDENT sim=+0.539 chi=0.251 write=1 status=CALIBRATING | Thermo E=8.39 | text=''
+[ANOMALY] step=46 err=0.0193 z=1.713 z_thr=1.414 ema=0.0269 sig=0.0045 ratio=2.6 plas_rms=0.0090 plas_clp=0.00 clip_frac~0.79 fatigue=0.90 lr_raw=0.350 lr_eff=0.286 HIPP bank=INCIDENT sim=+0.527 chi=0.242 write=0 status=CALIBRATING | Thermo E=7.82 | text=''
+[ANOMALY] step=47 err=0.0440 z=3.616 z_thr=1.413 ema=0.0270 sig=0.0047 ratio=2.6 plas_rms=0.0101 plas_clp=0.00 clip_frac~0.74 fatigue=0.92 lr_raw=0.350 lr_eff=0.290 HIPP bank=INCIDENT sim=+0.506 chi=0.227 write=0 status=CALIBRATING | Thermo E=7.50 | text=''
+[ANOMALY] step=48 err=0.0374 z=2.072 z_thr=1.411 ema=0.0270 sig=0.0050 ratio=2.7 plas_rms=0.0115 plas_clp=0.00 clip_frac~0.69 fatigue=0.94 lr_raw=0.350 lr_eff=0.294 HIPP bank=INCIDENT sim=+0.487 chi=0.215 write=0 status=CALIBRATING | Thermo E=7.05 | text=''
+[ANOMALY] step=49 err=0.0430 z=3.000 z_thr=1.410 ema=0.0270 sig=0.0053 ratio=2.7 plas_rms=0.0129 plas_clp=0.00 clip_frac~0.64 fatigue=0.96 lr_raw=0.350 lr_eff=0.297 HIPP bank=INCIDENT sim=+0.468 chi=0.203 write=0 status=CALIBRATING | Thermo E=6.75 | text=''
+[ANOMALY] step=50 err=0.0500 z=4.009 z_thr=1.408 ema=0.0270 sig=0.0057 ratio=2.7 plas_rms=0.0152 plas_clp=0.00 clip_frac~0.57 fatigue=0.98 lr_raw=0.350 lr_eff=0.298 HIPP bank=INCIDENT sim=+0.462 chi=0.199 write=1 status=CALIBRATING | Thermo E=6.57 | text=''
+[ANOMALY] step=51 err=0.0586 z=5.239 z_thr=1.407 ema=0.0270 sig=0.0060 ratio=2.7 plas_rms=0.0176 plas_clp=0.00 clip_frac~0.51 fatigue=1.00 lr_raw=0.350 lr_eff=0.297 HIPP bank=INCIDENT sim=+0.469 chi=0.203 write=1 status=CALIBRATING | Thermo E=6.54 | text=''
+[ANOMALY] step=52 err=0.0693 z=6.588 z_thr=1.406 ema=0.0271 sig=0.0064 ratio=2.7 plas_rms=0.0204 plas_clp=0.00 clip_frac~0.45 fatigue=1.00 lr_raw=0.350 lr_eff=0.298 HIPP bank=INCIDENT sim=+0.461 chi=0.198 write=1 status=CALIBRATING | Thermo E=6.65 | text=''
+[ANOMALY] step=53 err=0.0820 z=8.081 z_thr=1.404 ema=0.0271 sig=0.0068 ratio=2.7 plas_rms=0.0239 plas_clp=0.00 clip_frac~0.39 fatigue=1.00 lr_raw=0.350 lr_eff=0.299 HIPP bank=INCIDENT sim=+0.452 chi=0.193 write=1 status=CALIBRATING | Thermo E=6.90 | text=''
+[ANOMALY] step=54 err=0.0968 z=9.724 z_thr=1.403 ema=0.0272 sig=0.0072 ratio=2.7 plas_rms=0.0275 plas_clp=0.00 clip_frac~0.34 fatigue=1.00 lr_raw=0.350 lr_eff=0.300 HIPP bank=INCIDENT sim=+0.448 chi=0.191 write=1 status=CALIBRATING | Thermo E=7.29 | text=''
+[ANOMALY] step=55 err=0.1132 z=11.235 z_thr=1.401 ema=0.0273 sig=0.0076 ratio=2.6 plas_rms=0.0321 plas_clp=0.00 clip_frac~0.29 fatigue=1.00 lr_raw=0.350 lr_eff=0.301 HIPP bank=INCIDENT sim=+0.441 chi=0.187 write=1 status=CALIBRATING | Thermo E=7.79 | text=''
+[ANOMALY] step=56 err=0.1303 z=12.796 z_thr=1.400 ema=0.0274 sig=0.0080 ratio=2.6 plas_rms=0.0372 plas_clp=0.00 clip_frac~0.25 fatigue=1.00 lr_raw=0.350 lr_eff=0.303 HIPP bank=INCIDENT sim=+0.425 chi=0.178 write=1 status=CALIBRATING | Thermo E=8.41 | text=''
+[ANOMALY] step=57 err=0.1467 z=13.857 z_thr=1.399 ema=0.0275 sig=0.0086 ratio=2.6 plas_rms=0.0426 plas_clp=0.00 clip_frac~0.22 fatigue=1.00 lr_raw=0.350 lr_eff=0.303 HIPP bank=INCIDENT sim=+0.424 chi=0.177 write=1 status=CALIBRATING | Thermo E=9.07 | text=''
+[ANOMALY] step=58 err=0.1611 z=14.713 z_thr=1.397 ema=0.0277 sig=0.0091 ratio=2.6 plas_rms=0.0487 plas_clp=0.00 clip_frac~0.19 fatigue=1.00 lr_raw=0.350 lr_eff=0.307 HIPP bank=INCIDENT sim=+0.394 chi=0.162 write=1 status=GREEN: NOMINAL | Thermo E=9.75 | text=''
+[ANOMALY] step=59 err=0.1722 z=14.959 z_thr=1.396 ema=0.0278 sig=0.0097 ratio=2.6 plas_rms=0.0556 plas_clp=0.00 clip_frac~0.16 fatigue=1.00 lr_raw=0.350 lr_eff=0.311 HIPP bank=INCIDENT sim=+0.366 chi=0.149 write=1 status=GREEN: NOMINAL | Thermo E=10.39 | text=''
+
+========================================
+SENTINEL SUMMARY (UNIFIED STREAM)
+========================================
+Total frames seen             : 96
+Frames processed (post warmup): 87
+Surprises                     : 77 (88.51% of frames)
+Final approx abs threshold    : 0.09447
+Final err range               : min=0.0003 max=0.2171
+Final z_thresh                : 1.35548
+Final ema_err                 : 0.0309, final sigma: 0.0469
+Synaptic hash (initial→final) : 46c71bf47831d30d → e5f255d0cfe86a9e
+
+========================================
+EIDOS SENTINEL PLAIN-LANGUAGE REPORT
+========================================
+SENTINEL SESSION REPORT
+=======================
+
+Session overview
+----------------
+- Frames processed (post-warmup): 87
+- Surprises: 77 (88.51% of frames)
+- Surprise Rate: 88.51%
+- Error range: min=0.0003, max=0.2171
+- Final approx absolute surprise threshold: 0.09447
+- Final z-threshold in surprise space: 1.355
+- Final residual baseline: ema_err=0.0309, sigma=0.0469
+
+Sentinel regimes observed
+--------------------------
+- CALIBRATING: 56.3% of post-warmup frames
+- GREEN: 43.7% of post-warmup frames
+
+Geometry and spectrum
+----------------------
+- Average eigen dominance ≈ 0.79.
+
+Hippocampus (episodic memory)
+-----------------------------
+- Mean recall similarity ≈ 0.301 (range ~[-1,1]).
+- Mean familiarity χ ≈ 0.142 (0..1).
+- Writes performed: 38
+
+Anomaly highlights
+------------------
+- Cluster 0: steps 13–22 (n=7), max z≈43.30, generic numeric/vector data. Example: ''
+- Cluster 1: steps 20–20 (n=1), max z≈37.03, generic numeric/vector data. Example: ''
+- Cluster 2: steps 23–28 (n=5), max z≈27.49, generic numeric/vector data. Example: ''
+- Cluster 3: steps 27–29 (n=2), max z≈19.58, generic numeric/vector data. Example: ''
+- Cluster 4: steps 59–59 (n=1), max z≈14.96, generic numeric/vector data. Example: ''
+- Cluster 5: steps 58–58 (n=1), max z≈14.71, generic numeric/vector data. Example: ''
+
+Plain-language summary
+----------------------
+The engine stayed mostly stable, but encountered distinct segments that deviated from expectation and forced sharper internal adjustment.
+Hippocampus tracked whether spikes were novel vs. recurrent; recurrent episodes inhibited learning to reduce 'relearning the same surprise'.
+
+Reservoir checkpoint saved: C:\Users\bmpar\OneDrive\Documents\eidos-brain-readiness\eidos\artifacts\readiness_smoke_2026_05_29\scenarios\_engine_artifacts\reservoir_checkpoints/proof_baseline_synthetic_smoke\20260529_221348_reservoir_checkpoint_proof_baseline_synthetic_smoke.pt
+Hippocampus snapshot saved: C:\Users\bmpar\OneDrive\Documents\eidos-brain-readiness\eidos\artifacts\readiness_smoke_2026_05_29\scenarios\_engine_artifacts\hippocampus/proof_baseline_synthetic_smoke\20260529_221349_hippocampus_snapshot_proof_baseline_synthetic_smoke.pt
+
+Reservoir geometry artifacts:
+  Raw states   : C:\Users\bmpar\OneDrive\Documents\eidos-brain-readiness\eidos\artifacts\readiness_smoke_2026_05_29\scenarios\_engine_artifacts\reservoir_geometry/proof_baseline_synthetic_smoke\20260529_221349_reservoir_states_proof_baseline_synthetic_smoke.npy
+  Geometry JSON: C:\Users\bmpar\OneDrive\Documents\eidos-brain-readiness\eidos\artifacts\readiness_smoke_2026_05_29\scenarios\_engine_artifacts\reservoir_geometry/proof_baseline_synthetic_smoke\20260529_221349_reservoir_geom_proof_baseline_synthetic_smoke.json
+
+Top-K surprise artifacts:
+  JSON : C:\Users\bmpar\OneDrive\Documents\eidos-brain-readiness\eidos\artifacts\readiness_smoke_2026_05_29\scenarios\_engine_artifacts\sentinel_forensics/proof_baseline_synthetic_smoke\20260529_221349_top_100_surprises_proof_baseline_synthetic_smoke.json
+  TEXT : C:\Users\bmpar\OneDrive\Documents\eidos-brain-readiness\eidos\artifacts\readiness_smoke_2026_05_29\scenarios\_engine_artifacts\sentinel_forensics/proof_baseline_synthetic_smoke\20260529_221349_top_100_surprises_text_proof_baseline_synthetic_smoke.txt
+
+Compression summary (bicameral V6 prototype):
+  Raw bytes (float64 frames): 44544
+  Compressed bytes          : 14961
+  Global ratio              : 2.98x
+  Compressed stream artifact: C:\Users\bmpar\OneDrive\Documents\eidos-brain-readiness\eidos\artifacts\readiness_smoke_2026_05_29\scenarios\_engine_artifacts\compression/proof_baseline_synthetic_smoke\20260529_221349_bicameral_stream_proof_baseline_synthetic_smoke.bin
+  Codec meta artifact       : C:\Users\bmpar\OneDrive\Documents\eidos-brain-readiness\eidos\artifacts\readiness_smoke_2026_05_29\scenarios\_engine_artifacts\compression/proof_baseline_synthetic_smoke\20260529_221349_bicameral_stream_meta_proof_baseline_synthetic_smoke.json

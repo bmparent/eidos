@@ -14,6 +14,7 @@ import copy
 import csv
 import hashlib
 import json
+import lzma
 import math
 import os
 import platform
@@ -21,22 +22,28 @@ import shutil
 import subprocess
 import sys
 import time
+import zlib
 from dataclasses import dataclass
 from datetime import datetime, timezone
 from pathlib import Path
 from typing import Any, Callable, Dict, Iterable, List, Optional, Sequence, Tuple
+
+import numpy as np
 
 REPO_ROOT = Path(__file__).resolve().parents[1]
 if str(REPO_ROOT) not in sys.path:
     sys.path.insert(0, str(REPO_ROOT))
 
 from benchmarks.proof_artifacts import create_proof_artifact_dir
+from sentinel import EvidenceFrame, MODE_NAMES, process_stream
 from tools.domain_tuner import evaluate_run, load_dataset_stream, load_engine_module
 
 DEFAULT_OUT = Path("artifacts/proof_baseline_2026_05")
 ENGINE_FILENAME = "EIDOS_BRAIN_UNIFIED_v0_4.7.02.py"
 PROOF_MONTH = "2026-05"
 SECRET_MARKERS = ("KEY", "SECRET", "TOKEN", "PASSWORD", "CREDENTIAL", "AUTH")
+CRASH_SCAN_PATTERNS = ("CRASH IN INCIDENT LOGIC", "can't convert cuda", "Traceback")
+CRASH_SCAN_SUFFIXES = {".log", ".txt", ".jsonl", ".md", ".json"}
 
 CSV_COLUMNS = [
     "suite",
@@ -46,6 +53,24 @@ CSV_COLUMNS = [
     "status",
     "eidos_compression_ratio",
     "baseline_compression_ratio",
+    "raw_bytes",
+    "eidos_bytes",
+    "zlib_bytes",
+    "zlib_compression_ratio",
+    "lzma_bytes",
+    "lzma_compression_ratio",
+    "zstd_bytes",
+    "zstd_compression_ratio",
+    "zstd_skipped_reason",
+    "lz4_bytes",
+    "lz4_compression_ratio",
+    "lz4_skipped_reason",
+    "delta_zlib_bytes",
+    "delta_zlib_compression_ratio",
+    "delta_zlib_skipped_reason",
+    "best_baseline",
+    "best_baseline_compression_ratio",
+    "eidos_vs_best_baseline_note",
     "anomaly_recall",
     "anomaly_precision",
     "anomaly_f1",
@@ -54,6 +79,15 @@ CSV_COLUMNS = [
     "anomaly_preservation",
     "runtime_seconds",
     "frames_per_second",
+    "normal_only_false_positives",
+    "confirmed_events",
+    "candidate_events",
+    "suppressed_candidates",
+    "merged_events",
+    "cooldown_suppressions",
+    "red_count",
+    "amber_count",
+    "recall_preservation_note",
     "notes",
 ]
 
@@ -64,6 +98,15 @@ class PytestResult:
     returncode: int
     status: str
     reason: str
+
+
+@dataclass(frozen=True)
+class CompressionBaselineResult:
+    name: str
+    raw_bytes: int
+    compressed_bytes: Optional[int]
+    compression_ratio: Optional[float]
+    skipped_reason: str = ""
 
 
 def parse_args(argv: Optional[Sequence[str]] = None) -> argparse.Namespace:
@@ -80,7 +123,18 @@ def utc_now() -> str:
 
 
 def resolve_out_dir(out: Path, repo_root: Path = REPO_ROOT) -> Path:
-    return out if out.is_absolute() else repo_root / out
+    if out.is_absolute():
+        return out
+    resolved_repo = repo_root.resolve()
+    parts = out.parts
+    if parts:
+        cwd = Path.cwd().resolve()
+        try:
+            if (cwd / parts[0]).resolve() == resolved_repo:
+                return (cwd / out).resolve()
+        except OSError:
+            pass
+    return resolved_repo / out
 
 
 def relpath(path: Path, repo_root: Path = REPO_ROOT) -> str:
@@ -127,6 +181,197 @@ def sha256_file(path: Path) -> str:
         for chunk in iter(lambda: handle.read(1024 * 1024), b""):
             digest.update(chunk)
     return digest.hexdigest()
+
+
+def parse_float(value: Any) -> Optional[float]:
+    if value in ("", None):
+        return None
+    try:
+        parsed = float(value)
+    except (TypeError, ValueError):
+        return None
+    return parsed if math.isfinite(parsed) else None
+
+
+def compression_ratio(raw_bytes: int, compressed_bytes: Optional[int]) -> Optional[float]:
+    if raw_bytes <= 0 or not compressed_bytes or compressed_bytes <= 0:
+        return None
+    return round(float(raw_bytes) / float(compressed_bytes), 6)
+
+
+def compression_result(
+    name: str,
+    raw_bytes: int,
+    compressed_bytes: Optional[int],
+    skipped_reason: str = "",
+) -> CompressionBaselineResult:
+    return CompressionBaselineResult(
+        name=name,
+        raw_bytes=raw_bytes,
+        compressed_bytes=compressed_bytes,
+        compression_ratio=compression_ratio(raw_bytes, compressed_bytes),
+        skipped_reason=skipped_reason,
+    )
+
+
+def serialize_frames_for_baseline(frames: Any, max_frames: Optional[int] = None) -> Tuple[np.ndarray, bytes, Dict[str, Any]]:
+    """Serialize proof frames as little-endian float64 bytes for external baselines."""
+    arr = np.asarray(frames, dtype=np.dtype("<f8"))
+    if arr.ndim == 0:
+        arr = arr.reshape(1)
+    if max_frames is not None:
+        arr = arr[: int(max_frames)]
+    arr = np.ascontiguousarray(arr, dtype=np.dtype("<f8"))
+    payload = arr.tobytes(order="C")
+    meta = {
+        "dtype": "float64_le",
+        "shape": list(arr.shape),
+        "raw_bytes": len(payload),
+        "serialization": "contiguous little-endian float64 frame matrix",
+    }
+    return arr, payload, meta
+
+
+def _optional_zstd_result(raw_payload: bytes, raw_bytes: int) -> CompressionBaselineResult:
+    try:
+        import zstandard as zstd  # type: ignore
+    except ImportError:
+        return compression_result("zstd", raw_bytes, None, "zstandard package is not installed")
+    try:
+        compressed = zstd.ZstdCompressor(level=3).compress(raw_payload)
+    except Exception as exc:
+        return compression_result("zstd", raw_bytes, None, f"zstandard compression failed: {exc}")
+    return compression_result("zstd", raw_bytes, len(compressed))
+
+
+def _optional_lz4_result(raw_payload: bytes, raw_bytes: int) -> CompressionBaselineResult:
+    try:
+        import lz4.frame as lz4_frame  # type: ignore
+    except ImportError:
+        return compression_result("lz4", raw_bytes, None, "lz4 package is not installed")
+    try:
+        compressed = lz4_frame.compress(raw_payload)
+    except Exception as exc:
+        return compression_result("lz4", raw_bytes, None, f"lz4 compression failed: {exc}")
+    return compression_result("lz4", raw_bytes, len(compressed))
+
+
+def _delta_zlib_result(arr: np.ndarray, raw_bytes: int) -> CompressionBaselineResult:
+    if arr.shape[0] < 2:
+        return compression_result("delta_zlib", raw_bytes, None, "delta encoding requires at least two frames")
+    try:
+        delta_arr = np.concatenate([arr[:1], np.diff(arr, axis=0)], axis=0)
+        delta_payload = np.ascontiguousarray(delta_arr, dtype=np.dtype("<f8")).tobytes(order="C")
+        compressed = zlib.compress(delta_payload)
+    except Exception as exc:
+        return compression_result("delta_zlib", raw_bytes, None, f"delta+zlib compression failed: {exc}")
+    return compression_result("delta_zlib", raw_bytes, len(compressed))
+
+
+def compression_baselines_for_frames(frames: Any, max_frames: Optional[int] = None) -> Dict[str, Any]:
+    arr, raw_payload, serialization = serialize_frames_for_baseline(frames, max_frames)
+    raw_bytes = len(raw_payload)
+    if raw_bytes <= 0:
+        results = [
+            compression_result("raw", raw_bytes, None, "no frame bytes available"),
+            compression_result("zlib", raw_bytes, None, "no frame bytes available"),
+            compression_result("lzma", raw_bytes, None, "no frame bytes available"),
+            compression_result("zstd", raw_bytes, None, "no frame bytes available"),
+            compression_result("lz4", raw_bytes, None, "no frame bytes available"),
+            compression_result("delta_zlib", raw_bytes, None, "no frame bytes available"),
+        ]
+    else:
+        results = [
+            compression_result("raw", raw_bytes, raw_bytes),
+            compression_result("zlib", raw_bytes, len(zlib.compress(raw_payload))),
+            compression_result("lzma", raw_bytes, len(lzma.compress(raw_payload))),
+            _optional_zstd_result(raw_payload, raw_bytes),
+            _optional_lz4_result(raw_payload, raw_bytes),
+            _delta_zlib_result(arr, raw_bytes),
+        ]
+
+    completed = [item for item in results if item.compression_ratio is not None]
+    best = max(completed, key=lambda item: item.compression_ratio) if completed else None
+    return {
+        "frame_serialization": serialization,
+        "raw_bytes": raw_bytes,
+        "baselines": [item.__dict__ for item in results],
+        "best_baseline": best.name if best else "",
+        "best_baseline_compression_ratio": best.compression_ratio if best else "",
+        "skipped": [
+            {"name": item.name, "reason": item.skipped_reason}
+            for item in results
+            if item.skipped_reason
+        ],
+    }
+
+
+def _baseline_by_name(baseline_doc: Dict[str, Any], name: str) -> Dict[str, Any]:
+    for item in baseline_doc.get("baselines", []):
+        if item.get("name") == name:
+            return item
+    return {}
+
+
+def eidos_vs_best_baseline_note(eidos_ratio: Optional[float], best_name: str, best_ratio: Optional[float]) -> str:
+    if eidos_ratio is None or best_ratio is None or not best_name:
+        return "comparison unavailable"
+    if eidos_ratio <= 0 or best_ratio <= 0:
+        return "comparison unavailable"
+    if abs(eidos_ratio - best_ratio) < 1e-9:
+        return f"Eidos ratio matched {best_name}"
+    if eidos_ratio > best_ratio:
+        return f"Eidos ratio exceeded {best_name} by {round(eidos_ratio / best_ratio, 4)}x"
+    return f"{best_name} ratio exceeded Eidos by {round(best_ratio / eidos_ratio, 4)}x"
+
+
+def apply_compression_baselines_to_row(row: Dict[str, Any], baseline_doc: Dict[str, Any]) -> None:
+    raw_bytes = int(baseline_doc.get("raw_bytes") or 0)
+    row["raw_bytes"] = raw_bytes
+    eidos_ratio = parse_float(row.get("eidos_compression_ratio"))
+    row["eidos_bytes"] = int(round(raw_bytes / eidos_ratio)) if raw_bytes and eidos_ratio else ""
+
+    for name in ("zlib", "lzma", "zstd", "lz4", "delta_zlib"):
+        item = _baseline_by_name(baseline_doc, name)
+        row[f"{name}_bytes"] = item.get("compressed_bytes") or ""
+        row[f"{name}_compression_ratio"] = item.get("compression_ratio") or ""
+        skipped = item.get("skipped_reason") or ""
+        if name in ("zstd", "lz4", "delta_zlib"):
+            row[f"{name}_skipped_reason"] = skipped
+
+    row["best_baseline"] = baseline_doc.get("best_baseline", "")
+    row["best_baseline_compression_ratio"] = baseline_doc.get("best_baseline_compression_ratio", "")
+    row["baseline_compression_ratio"] = row["best_baseline_compression_ratio"]
+    row["eidos_vs_best_baseline_note"] = eidos_vs_best_baseline_note(
+        eidos_ratio,
+        str(row.get("best_baseline") or ""),
+        parse_float(row.get("best_baseline_compression_ratio")),
+    )
+
+
+def compression_baseline_manifest(rows: List[Dict[str, Any]]) -> List[Dict[str, Any]]:
+    records: List[Dict[str, Any]] = []
+    for row in rows:
+        records.append(
+            {
+                "scenario": row.get("scenario", ""),
+                "raw_bytes": row.get("raw_bytes", ""),
+                "eidos_compression_ratio": row.get("eidos_compression_ratio", ""),
+                "eidos_bytes": row.get("eidos_bytes", ""),
+                "best_baseline": row.get("best_baseline", ""),
+                "best_baseline_compression_ratio": row.get("best_baseline_compression_ratio", ""),
+                "zlib_compression_ratio": row.get("zlib_compression_ratio", ""),
+                "lzma_compression_ratio": row.get("lzma_compression_ratio", ""),
+                "zstd_compression_ratio": row.get("zstd_compression_ratio", ""),
+                "zstd_skipped_reason": row.get("zstd_skipped_reason", ""),
+                "lz4_compression_ratio": row.get("lz4_compression_ratio", ""),
+                "lz4_skipped_reason": row.get("lz4_skipped_reason", ""),
+                "delta_zlib_compression_ratio": row.get("delta_zlib_compression_ratio", ""),
+                "delta_zlib_skipped_reason": row.get("delta_zlib_skipped_reason", ""),
+                "eidos_vs_best_baseline_note": row.get("eidos_vs_best_baseline_note", ""),
+            }
+        )
+    return records
 
 
 def run_command(cmd: Sequence[str], repo_root: Path, timeout: int = 60, env: Optional[Dict[str, str]] = None) -> subprocess.CompletedProcess[str]:
@@ -366,6 +611,228 @@ def detection_metrics(step_rows: List[Dict[str, Any]], labels: Optional[Any]) ->
         }
 
 
+def _normal_only_confirmation_frames(frames: int = 10000) -> List[EvidenceFrame]:
+    harmless_spikes = {1000, 3000, 6000, 8500}
+    rows: List[EvidenceFrame] = []
+    for frame in range(frames):
+        if frame in harmless_spikes:
+            rows.append(
+                EvidenceFrame(
+                    frame=frame,
+                    residual_score=3.4,
+                    geometry_change=0.04,
+                    novelty=0.04,
+                    raw_evidence_ref=f"normal_only:{frame}",
+                )
+            )
+        else:
+            rows.append(EvidenceFrame(frame=frame, residual_score=0.7, geometry_change=0.03, novelty=0.03))
+    return rows
+
+
+def _isolated_spike_frames() -> List[EvidenceFrame]:
+    rows = [EvidenceFrame(frame=frame, residual_score=0.5, geometry_change=0.02, novelty=0.02) for frame in range(80)]
+    rows[40] = EvidenceFrame(
+        frame=40,
+        residual_score=5.2,
+        geometry_change=0.8,
+        novelty=0.8,
+        raw_evidence_ref="isolated_spike:40",
+    )
+    return rows
+
+
+def _sustained_burst_frames() -> List[EvidenceFrame]:
+    rows: List[EvidenceFrame] = []
+    for frame in range(80):
+        if 20 <= frame <= 29:
+            rows.append(
+                EvidenceFrame(
+                    frame=frame,
+                    residual_score=4.6,
+                    geometry_change=0.7,
+                    novelty=0.65,
+                    top_drivers=[{"name": "residual_energy", "score": 4.6}],
+                    raw_evidence_ref=f"burst:{frame}",
+                )
+            )
+        else:
+            rows.append(EvidenceFrame(frame=frame, residual_score=0.6, geometry_change=0.03, novelty=0.03))
+    return rows
+
+
+def _nearby_spike_frames() -> List[EvidenceFrame]:
+    spike_frames = {10, 14, 18}
+    return [
+        EvidenceFrame(
+            frame=frame,
+            residual_score=4.8 if frame in spike_frames else 0.6,
+            geometry_change=0.65 if frame in spike_frames else 0.03,
+            novelty=0.7 if frame in spike_frames else 0.03,
+            raw_evidence_ref=f"nearby:{frame}" if frame in spike_frames else None,
+        )
+        for frame in range(50)
+    ]
+
+
+def _mode_comparison_frames() -> List[EvidenceFrame]:
+    rows: List[EvidenceFrame] = []
+    for frame in range(140):
+        if frame == 20:
+            rows.append(EvidenceFrame(frame=frame, residual_score=2.2, geometry_change=0.25, novelty=0.25))
+        elif 60 <= frame <= 61:
+            rows.append(EvidenceFrame(frame=frame, residual_score=2.8, geometry_change=0.3, novelty=0.3))
+        elif 100 <= frame <= 104:
+            rows.append(EvidenceFrame(frame=frame, residual_score=4.7, geometry_change=0.7, novelty=0.7))
+        else:
+            rows.append(EvidenceFrame(frame=frame, residual_score=0.6, geometry_change=0.03, novelty=0.03))
+    return rows
+
+
+def _eidos_life_lifecycle_frames() -> List[EvidenceFrame]:
+    rows: List[EvidenceFrame] = []
+    for generation in range(120):
+        if 63 <= generation <= 70:
+            rows.append(
+                EvidenceFrame(
+                    frame=generation,
+                    residual_score=3.4,
+                    geometry_change=0.85,
+                    novelty=0.65,
+                    lifecycle_phase="collapse",
+                    top_drivers=[{"name": "alive_ratio_collapse", "score": 0.96}],
+                    raw_evidence_ref=f"eidos-life:generation:{generation}",
+                )
+            )
+        elif 90 <= generation <= 96:
+            rows.append(
+                EvidenceFrame(
+                    frame=generation,
+                    residual_score=2.9,
+                    geometry_change=0.55,
+                    novelty=0.5,
+                    lifecycle_phase="recovery",
+                    top_drivers=[{"name": "post_extinction_reseed", "score": 0.88}],
+                    raw_evidence_ref=f"eidos-life:generation:{generation}",
+                )
+            )
+        else:
+            rows.append(EvidenceFrame(frame=generation, residual_score=0.7, geometry_change=0.04, novelty=0.04))
+    return rows
+
+
+def _legacy_raw_spike_alerts(frames: List[EvidenceFrame], threshold: float) -> int:
+    return sum(1 for frame in frames if frame.residual_score >= threshold)
+
+
+def _scenario_result(name: str, mode: str, frames: List[EvidenceFrame]) -> Dict[str, Any]:
+    result = process_stream(frames, mode=mode)
+    legacy_alerts = _legacy_raw_spike_alerts(frames, threshold=2.5)
+    data = result.to_dict()
+    data.update(
+        {
+            "scenario": name,
+            "legacy_raw_spike_alerts": legacy_alerts,
+            "confirmed_event_count": len(result.confirmed_events),
+            "incident_card_count": len(result.incident_cards),
+        }
+    )
+    return data
+
+
+def _write_incident_cards(out_dir: Path, scenarios: Dict[str, Any]) -> List[str]:
+    incident_dir = out_dir / "incident_cards"
+    incident_dir.mkdir(parents=True, exist_ok=True)
+    written: List[str] = []
+    for scenario_name, scenario in scenarios.items():
+        for index, card in enumerate(scenario.get("incident_cards", []), start=1):
+            safe_name = scenario_name.replace(" ", "_").replace("/", "_")
+            path = incident_dir / f"{safe_name}_{index:02d}.json"
+            write_json(path, card)
+            written.append(relpath(path, out_dir))
+    return written
+
+
+def run_false_positive_control(args: argparse.Namespace, out_dir: Path) -> Dict[str, Any]:
+    """Run synthetic confirmation checks and write event-summary artifacts."""
+    logs_dir = out_dir / "logs"
+    logs_dir.mkdir(parents=True, exist_ok=True)
+    scenarios = {
+        "normal_only_low_noise": _scenario_result("normal_only_low_noise", "low_noise", _normal_only_confirmation_frames()),
+        "isolated_spike_low_noise": _scenario_result("isolated_spike_low_noise", "low_noise", _isolated_spike_frames()),
+        "sustained_burst_balanced": _scenario_result("sustained_burst_balanced", "balanced", _sustained_burst_frames()),
+        "nearby_spikes_balanced": _scenario_result("nearby_spikes_balanced", "balanced", _nearby_spike_frames()),
+        "eidos_life_lifecycle_balanced": _scenario_result(
+            "eidos_life_lifecycle_balanced",
+            "balanced",
+            _eidos_life_lifecycle_frames(),
+        ),
+    }
+    mode_counts: Dict[str, int] = {}
+    comparison_frames = _mode_comparison_frames()
+    for mode in MODE_NAMES:
+        result = process_stream(comparison_frames, mode=mode)
+        mode_counts[mode] = len(result.confirmed_events)
+
+    cards_written = _write_incident_cards(out_dir, scenarios)
+    normal = scenarios["normal_only_low_noise"]
+    burst = scenarios["sustained_burst_balanced"]
+    aggregate = {
+        "normal_only_false_positives": normal["confirmed_event_count"],
+        "normal_only_legacy_raw_spike_alerts": normal["legacy_raw_spike_alerts"],
+        "confirmed_events": sum(item["confirmed_event_count"] for item in scenarios.values()),
+        "candidate_events": sum(int(item["candidate_events"]) for item in scenarios.values()),
+        "suppressed_candidates": sum(int(item["suppressed_candidates"]) for item in scenarios.values()),
+        "merged_events": sum(int(item["merged_events"]) for item in scenarios.values()),
+        "cooldown_suppressions": sum(int(item["cooldown_suppressions"]) for item in scenarios.values()),
+        "red_count": sum(int(item["red_count"]) for item in scenarios.values()),
+        "amber_count": sum(int(item["amber_count"]) for item in scenarios.values()),
+        "incident_card_count": len(cards_written),
+        "mode_confirmed_event_counts": mode_counts,
+        "recall_preservation_note": (
+            "Synthetic sustained burst confirmed"
+            if burst["confirmed_event_count"] >= 1
+            else "Synthetic sustained burst was missed"
+        ),
+    }
+    summary = {
+        "generated_at_utc": utc_now(),
+        "suite": args.suite,
+        "seed": args.seed,
+        "frames": args.frames,
+        "policy": "raw residual spike -> candidate; persistence + geometry change + novelty -> confirmed event",
+        "modes": list(MODE_NAMES),
+        "aggregate": aggregate,
+        "scenarios": scenarios,
+        "incident_cards_written": cards_written,
+        "known_limitations": [
+            "Synthetic confirmation fixtures prove policy mechanics; they are not a substitute for labeled production telemetry.",
+            "Normal-only false-positive control is measured on deterministic synthetic benign spikes.",
+            "Eidos Life lifecycle bridge uses synthetic generation 63 collapse/recovery evidence, not a live browser run.",
+        ],
+    }
+    write_json(out_dir / "event_summary.json", summary)
+    with (logs_dir / "false_positive_control.jsonl").open("w", encoding="utf-8") as handle:
+        for name, scenario in scenarios.items():
+            handle.write(json.dumps({"scenario": name, **json_safe(scenario)}, sort_keys=True) + "\n")
+        handle.write(json.dumps({"aggregate": json_safe(aggregate)}, sort_keys=True) + "\n")
+    return summary
+
+
+def annotate_rows_with_event_summary(rows: List[Dict[str, Any]], event_summary: Dict[str, Any]) -> None:
+    aggregate = event_summary.get("aggregate", {})
+    for row in rows:
+        row["normal_only_false_positives"] = aggregate.get("normal_only_false_positives", "")
+        row["confirmed_events"] = aggregate.get("confirmed_events", "")
+        row["candidate_events"] = aggregate.get("candidate_events", "")
+        row["suppressed_candidates"] = aggregate.get("suppressed_candidates", "")
+        row["merged_events"] = aggregate.get("merged_events", "")
+        row["cooldown_suppressions"] = aggregate.get("cooldown_suppressions", "")
+        row["red_count"] = aggregate.get("red_count", "")
+        row["amber_count"] = aggregate.get("amber_count", "")
+        row["recall_preservation_note"] = aggregate.get("recall_preservation_note", "")
+
+
 def write_scenario_manifest(path: Path, data: Dict[str, Any]) -> None:
     path.parent.mkdir(parents=True, exist_ok=True)
     write_json(path, data)
@@ -393,6 +860,24 @@ def run_scenarios(engine: Any, args: argparse.Namespace, out_dir: Path, repo_roo
                 "status": status,
                 "eidos_compression_ratio": "",
                 "baseline_compression_ratio": "",
+                "raw_bytes": "",
+                "eidos_bytes": "",
+                "zlib_bytes": "",
+                "zlib_compression_ratio": "",
+                "lzma_bytes": "",
+                "lzma_compression_ratio": "",
+                "zstd_bytes": "",
+                "zstd_compression_ratio": "",
+                "zstd_skipped_reason": "",
+                "lz4_bytes": "",
+                "lz4_compression_ratio": "",
+                "lz4_skipped_reason": "",
+                "delta_zlib_bytes": "",
+                "delta_zlib_compression_ratio": "",
+                "delta_zlib_skipped_reason": "",
+                "best_baseline": "",
+                "best_baseline_compression_ratio": "",
+                "eidos_vs_best_baseline_note": "",
                 "anomaly_recall": "",
                 "anomaly_precision": "",
                 "anomaly_f1": "",
@@ -401,6 +886,15 @@ def run_scenarios(engine: Any, args: argparse.Namespace, out_dir: Path, repo_roo
                 "anomaly_preservation": "",
                 "runtime_seconds": "",
                 "frames_per_second": "",
+                "normal_only_false_positives": "",
+                "confirmed_events": "",
+                "candidate_events": "",
+                "suppressed_candidates": "",
+                "merged_events": "",
+                "cooldown_suppressions": "",
+                "red_count": "",
+                "amber_count": "",
+                "recall_preservation_note": "",
                 "notes": "",
             }
             try:
@@ -411,6 +905,7 @@ def run_scenarios(engine: Any, args: argparse.Namespace, out_dir: Path, repo_roo
                 actual_frames = min(int(args.frames), int(bundle.frames.shape[0]))
                 if actual_frames < int(args.frames):
                     notes.append(f"requested {args.frames} frames; scenario only provided {actual_frames}")
+                compression_baselines = compression_baselines_for_frames(bundle.frames, actual_frames)
                 labels = bundle.labels[:actual_frames] if bundle.labels is not None else None
                 if labels is None:
                     notes.append("no ground-truth labels; anomaly precision/recall/f1 left blank")
@@ -440,6 +935,7 @@ def run_scenarios(engine: Any, args: argparse.Namespace, out_dir: Path, repo_roo
                     row["eidos_compression_ratio"] = step_rows[-1].get("ratio", "")
                 else:
                     notes.append("no step rows returned; compression ratio unavailable")
+                apply_compression_baselines_to_row(row, compression_baselines)
                 row.update(detect)
                 row["runtime_seconds"] = round(elapsed, 6)
                 processed = int(summary.get("frames_processed") or len(step_rows) or actual_frames)
@@ -456,6 +952,7 @@ def run_scenarios(engine: Any, args: argparse.Namespace, out_dir: Path, repo_roo
                         "status": status,
                         "summary": summary,
                         "tuner_metrics": tuner_metrics,
+                        "compression_baselines": compression_baselines,
                         "csv_row": row,
                     },
                 )
@@ -493,19 +990,45 @@ def write_benchmark_csv(path: Path, rows: Iterable[Dict[str, Any]]) -> None:
 
 
 def markdown_table(rows: List[Dict[str, Any]]) -> str:
-    header = "| scenario | status | frames | eidos compression ratio | anomaly f1 | runtime seconds | notes |"
-    sep = "| --- | --- | ---: | ---: | ---: | ---: | --- |"
+    header = "| scenario | status | frames | eidos compression ratio | best baseline | anomaly f1 | runtime seconds | notes |"
+    sep = "| --- | --- | ---: | ---: | --- | ---: | ---: | --- |"
     body = []
     for row in rows:
         body.append(
-            "| {scenario} | {status} | {frames} | {ratio} | {f1} | {runtime} | {notes} |".format(
+            "| {scenario} | {status} | {frames} | {ratio} | {best} | {f1} | {runtime} | {notes} |".format(
                 scenario=row.get("scenario", ""),
                 status=row.get("status", ""),
                 frames=row.get("frames", ""),
                 ratio=row.get("eidos_compression_ratio", ""),
+                best=f"{row.get('best_baseline', '')} {row.get('best_baseline_compression_ratio', '')}".strip(),
                 f1=row.get("anomaly_f1", ""),
                 runtime=row.get("runtime_seconds", ""),
                 notes=str(row.get("notes", "")).replace("|", "\\|"),
+            )
+        )
+    return "\n".join([header, sep, *body])
+
+
+def markdown_compression_baseline_table(rows: List[Dict[str, Any]]) -> str:
+    header = "| scenario | raw bytes | Eidos ratio | zlib | lzma | zstd | lz4 | delta+zlib | best baseline | note |"
+    sep = "| --- | ---: | ---: | ---: | ---: | --- | --- | --- | --- | --- |"
+    body = []
+    for row in rows:
+        zstd = row.get("zstd_compression_ratio") or f"skipped: {row.get('zstd_skipped_reason', '')}"
+        lz4 = row.get("lz4_compression_ratio") or f"skipped: {row.get('lz4_skipped_reason', '')}"
+        delta = row.get("delta_zlib_compression_ratio") or f"skipped: {row.get('delta_zlib_skipped_reason', '')}"
+        body.append(
+            "| {scenario} | {raw} | {eidos} | {zlib_ratio} | {lzma_ratio} | {zstd} | {lz4} | {delta} | {best} | {note} |".format(
+                scenario=row.get("scenario", ""),
+                raw=row.get("raw_bytes", ""),
+                eidos=row.get("eidos_compression_ratio", ""),
+                zlib_ratio=row.get("zlib_compression_ratio", ""),
+                lzma_ratio=row.get("lzma_compression_ratio", ""),
+                zstd=str(zstd).replace("|", "\\|"),
+                lz4=str(lz4).replace("|", "\\|"),
+                delta=str(delta).replace("|", "\\|"),
+                best=f"{row.get('best_baseline', '')} {row.get('best_baseline_compression_ratio', '')}".strip(),
+                note=str(row.get("eidos_vs_best_baseline_note", "")).replace("|", "\\|"),
             )
         )
     return "\n".join([header, sep, *body])
@@ -523,6 +1046,7 @@ def write_benchmark_md(
     rows: List[Dict[str, Any]],
     skipped_baselines: List[Dict[str, str]],
     pytest_result: PytestResult,
+    event_summary: Optional[Dict[str, Any]] = None,
 ) -> None:
     title = "Eidos Brain Baseline Proof Run \u2014 2026-05"
     frame_note = ""
@@ -561,6 +1085,12 @@ def write_benchmark_md(
             "",
             markdown_table(rows),
             "",
+            "## Compression baselines",
+            "",
+            "External baselines use the same proof-frame matrix serialized as contiguous little-endian float64 bytes. Optional zstandard/lz4 baselines are recorded as skipped when their packages are not installed.",
+            "",
+            markdown_compression_baseline_table(rows),
+            "",
             "## Skipped baselines and reasons",
             "",
         ]
@@ -570,19 +1100,43 @@ def write_benchmark_md(
             lines.append(f"- `{item['name']}`: {item['reason']}")
     else:
         lines.append("- None recorded.")
+    if event_summary:
+        aggregate = event_summary.get("aggregate", {})
+        mode_counts = aggregate.get("mode_confirmed_event_counts", {})
+        lines.extend(
+            [
+                "",
+                "## Sentinel false-positive control",
+                "",
+                f"- Normal-only confirmed false positives per 10k frames: `{aggregate.get('normal_only_false_positives', 'NA')}`",
+                f"- Legacy raw-spike alerts on normal-only stream: `{aggregate.get('normal_only_legacy_raw_spike_alerts', 'NA')}`",
+                f"- Confirmed events: `{aggregate.get('confirmed_events', 'NA')}`",
+                f"- Candidate events: `{aggregate.get('candidate_events', 'NA')}`",
+                f"- Suppressed candidates: `{aggregate.get('suppressed_candidates', 'NA')}`",
+                f"- Merged events: `{aggregate.get('merged_events', 'NA')}`",
+                f"- Cooldown suppressions: `{aggregate.get('cooldown_suppressions', 'NA')}`",
+                f"- RED count: `{aggregate.get('red_count', 'NA')}`",
+                f"- AMBER count: `{aggregate.get('amber_count', 'NA')}`",
+                f"- Mode confirmed-event counts: `{mode_counts}`",
+                f"- Recall preservation note: {aggregate.get('recall_preservation_note', 'NA')}",
+                "- Incident-card policy: cards are written for confirmed events, not every raw spike.",
+                "- Eidos Life lifecycle bridge: generation 63 collapse/recovery is treated as lifecycle events, with post-recovery nominal frames suppressed.",
+            ]
+        )
     lines.extend(
         [
             "",
             "## Known limitations",
             "",
-            "- Week 1 freezes the baseline package and does not tune Sentinel thresholds.",
-            "- External compression baselines are not implemented in this runner, so baseline compression ratio is blank.",
+            "- This runner still wraps existing engine behavior and does not tune core SentinelMonitor thresholds.",
+            "- External compression baselines use a documented float64 proof-frame serialization; optional zstandard/lz4 baselines depend on local packages.",
             "- Smoke synthetic scenarios do not provide ground-truth anomaly labels, so detection precision/recall/f1 can be blank.",
             "- No plots were produced for this smoke baseline unless a later plotting task adds them.",
+            "- False-positive control uses deterministic synthetic policy checks; broader labeled real-world validation remains future work.",
             "",
             "## Next step",
             "",
-            "Week 2 false-positive suppression is the next proof-plan step and was not implemented today.",
+            "Broaden false-positive control to labeled real-world streams and compare against the checked-in smoke receipt.",
         ]
     )
     path.write_text("\n".join(lines).rstrip() + "\n", encoding="utf-8")
@@ -614,6 +1168,20 @@ def minimal_junit_xml(path: Path, reason: str, status: str = "skipped") -> None:
     )
 
 
+def pytest_targets_for_run(args: argparse.Namespace) -> List[str]:
+    if "false_positive_control" not in str(args.out):
+        return []
+    return [
+        "tests/test_sentinel.py",
+        "tests/test_proof_artifacts.py",
+        "tests/test_proof_baseline_runner.py",
+        "tests/test_sentinel_false_positive_control.py",
+        "tests/test_sentinel_event_confirmation.py",
+        "tests/test_sentinel_modes.py",
+        "tests/test_incident_card_confirmation.py",
+    ]
+
+
 def run_pytest_capture(args: argparse.Namespace, out_dir: Path, repo_root: Path = REPO_ROOT) -> PytestResult:
     xml_path = out_dir / "pytest_results.xml"
     test_files = list((repo_root / "tests").glob("test_*.py")) if (repo_root / "tests").is_dir() else []
@@ -623,7 +1191,10 @@ def run_pytest_capture(args: argparse.Namespace, out_dir: Path, repo_root: Path 
         return PytestResult(command="pytest not run", returncode=0, status="skipped", reason=reason)
 
     cmd = [sys.executable, "-m", "pytest"]
-    if args.suite == "smoke":
+    targets = pytest_targets_for_run(args)
+    if targets:
+        cmd.extend(targets)
+    elif args.suite == "smoke":
         cmd.extend(["-m", "smoke"])
     cmd.extend(["--junitxml", str(xml_path)])
     env = os.environ.copy()
@@ -650,12 +1221,31 @@ def run_pytest_capture(args: argparse.Namespace, out_dir: Path, repo_root: Path 
 
 
 def skipped_baseline_records(rows: List[Dict[str, Any]], scenario_skips: List[Dict[str, Any]]) -> List[Dict[str, str]]:
-    records = [
-        {
-            "name": "baseline_compression_ratio",
-            "reason": "Week 1 runner records Eidos ratio only; external compression baselines are scheduled for later proof work.",
-        }
-    ]
+    records: List[Dict[str, str]] = []
+    seen = set()
+    if rows and all(not row.get("baseline_compression_ratio") for row in rows):
+        records.append(
+            {
+                "name": "baseline_compression_ratio",
+                "reason": "External compression baseline comparison was unavailable for every scenario.",
+            }
+        )
+        seen.add(("baseline_compression_ratio", records[-1]["reason"]))
+    for row in rows:
+        scenario = str(row.get("scenario") or "unknown")
+        for field, name in (
+            ("zstd_skipped_reason", "zstd"),
+            ("lz4_skipped_reason", "lz4"),
+            ("delta_zlib_skipped_reason", "delta_zlib"),
+        ):
+            reason = str(row.get(field) or "")
+            if not reason:
+                continue
+            key = (f"{scenario}:{name}", reason)
+            if key in seen:
+                continue
+            records.append({"name": f"{scenario}:{name}", "reason": reason})
+            seen.add(key)
     if any(not row.get("anomaly_f1") for row in rows):
         records.append(
             {
@@ -676,8 +1266,9 @@ def build_config_doc(
     scenario_list: List[str],
     rows: List[Dict[str, Any]],
     skipped_baselines: List[Dict[str, str]],
+    event_summary: Optional[Dict[str, Any]] = None,
 ) -> Dict[str, Any]:
-    return {
+    doc = {
         "benchmark": {
             "frames": args.frames,
             "scenario_list": scenario_list,
@@ -689,11 +1280,26 @@ def build_config_doc(
             "parameters": json_safe(getattr(engine, "EIDOS_BRAIN_CONFIG", {})),
         },
         "baselines": {
-            "compression": [],
+            "compression": compression_baseline_manifest(rows),
             "detection": [],
             "skipped": skipped_baselines,
         },
     }
+    if event_summary:
+        aggregate = event_summary.get("aggregate", {})
+        doc["sentinel_false_positive_control"] = {
+            "modes": event_summary.get("modes", []),
+            "normal_only_false_positives": aggregate.get("normal_only_false_positives"),
+            "confirmed_events": aggregate.get("confirmed_events"),
+            "candidate_events": aggregate.get("candidate_events"),
+            "suppressed_candidates": aggregate.get("suppressed_candidates"),
+            "merged_events": aggregate.get("merged_events"),
+            "cooldown_suppressions": aggregate.get("cooldown_suppressions"),
+            "red_count": aggregate.get("red_count"),
+            "amber_count": aggregate.get("amber_count"),
+            "recall_preservation_note": aggregate.get("recall_preservation_note"),
+        }
+    return doc
 
 
 def write_plots_readme(out_dir: Path, suite: str) -> None:
@@ -715,14 +1321,16 @@ def build_manifest(
     packages: Dict[str, str],
     args: argparse.Namespace,
     scenario_list: List[str],
+    rows: List[Dict[str, Any]],
     config_hash: str,
     skipped_baselines: List[Dict[str, str]],
     pytest_result: PytestResult,
     drive_manifest: Optional[Dict[str, Any]] = None,
+    event_summary: Optional[Dict[str, Any]] = None,
 ) -> Dict[str, Any]:
     manifest = {
         "baselines": {
-            "compression": [],
+            "compression": compression_baseline_manifest(rows),
             "detection": [],
             "skipped": skipped_baselines,
         },
@@ -750,8 +1358,13 @@ def build_manifest(
             "codex_journal_md": "codex_journal.md",
             "drive_manifest_json": "drive_manifest.json",
             "environment_txt": "environment.txt",
+            "event_summary_json": "event_summary.json",
             "git_commit_txt": "git_commit.txt",
+            "incident_cards_dir": "incident_cards",
+            "logs_dir": "logs",
             "plain_language_test_analysis_md": "plain_language_test_analysis.md",
+            "proof_digest_json": "proof_digest.json",
+            "proof_digest_md": "proof_digest.md",
             "pytest_results_xml": "pytest_results.xml",
         },
         "packages": packages,
@@ -780,6 +1393,8 @@ def build_manifest(
             "drive_run_dir": drive_manifest.get("drive_run_dir"),
             "reason": drive_manifest.get("reason"),
         }
+    if event_summary is not None:
+        manifest["sentinel_false_positive_control"] = event_summary.get("aggregate", {})
     return manifest
 
 
@@ -798,18 +1413,66 @@ def is_writable_dir(path: Path) -> bool:
         return False
 
 
-def discover_drive_root() -> Tuple[Optional[Path], str]:
+def colab_drive_candidates() -> List[Path]:
+    return [Path("/content/drive/MyDrive"), Path("/content/drive/My Drive")]
+
+
+def local_google_drive_candidates() -> List[Path]:
+    # Intentionally empty by default. A plain local folder named "Google Drive"
+    # is not proof that Google Drive Desktop is syncing it to the cloud.
+    return []
+
+
+def _first_writable_existing(candidates: Iterable[Path], label: str, reasons: List[str]) -> Optional[Tuple[Path, str]]:
+    checked: List[str] = []
+    for candidate in candidates:
+        expanded = candidate.expanduser()
+        checked.append(str(expanded))
+        if expanded.exists() and is_writable_dir(expanded):
+            return expanded, f"using writable {label}: {expanded}"
+    if checked:
+        reasons.append(f"no writable {label} found among: {', '.join(checked)}")
+    return None
+
+
+def discover_drive_root(
+    *,
+    colab_candidates_override: Optional[Iterable[Path]] = None,
+    local_candidates_override: Optional[Iterable[Path]] = None,
+) -> Tuple[Optional[Path], str]:
+    reasons: List[str] = []
     for env_name in ("EIDOS_PROOF_DRIVE_DIR", "EIDOS_ARTIFACT_ROOT"):
         value = os.environ.get(env_name)
         if value:
-            candidate = Path(value)
+            candidate = Path(value).expanduser()
             if is_writable_dir(candidate):
-                return candidate, f"using writable {env_name}"
-            return None, f"{env_name} was set but not writable: {value}"
-    colab_root = Path("/content/drive/MyDrive")
-    if colab_root.exists() and is_writable_dir(colab_root):
-        return colab_root, "using mounted Colab Drive root"
-    return None, "EIDOS_PROOF_DRIVE_DIR not set, EIDOS_ARTIFACT_ROOT not set, and no mounted Colab Drive path found"
+                return candidate, f"using writable {env_name}: {candidate}"
+            reasons.append(f"{env_name} was set but not writable: {value}")
+
+    colab_candidates = colab_drive_candidates() if colab_candidates_override is None else colab_candidates_override
+    colab_result = _first_writable_existing(
+        colab_candidates,
+        "Colab Drive root",
+        reasons,
+    )
+    if colab_result:
+        return colab_result
+
+    if local_candidates_override is not None:
+        local_result = _first_writable_existing(
+            local_candidates_override,
+            "explicit local Google Drive override",
+            reasons,
+        )
+        if local_result:
+            return local_result
+    else:
+        reasons.append(
+            "local Google Drive auto-discovery skipped; set EIDOS_PROOF_DRIVE_DIR or EIDOS_ARTIFACT_ROOT "
+            "to a verified Drive mount"
+        )
+
+    return None, "; ".join(reasons) or "no configured or mounted Google Drive path found"
 
 
 def copy_selected_to_drive(out_dir: Path, drive_manifest: Dict[str, Any], paths: Iterable[Path]) -> None:
@@ -821,6 +1484,164 @@ def copy_selected_to_drive(out_dir: Path, drive_manifest: Dict[str, Any], paths:
             target = drive_run_dir / path.relative_to(out_dir)
             target.parent.mkdir(parents=True, exist_ok=True)
             shutil.copy2(path, target)
+
+
+def proof_failure_reasons(rows: List[Dict[str, Any]], pytest_result: PytestResult) -> List[str]:
+    reasons: List[str] = []
+    if pytest_result.returncode != 0:
+        reasons.append(f"pytest failed: {pytest_result.reason}")
+    failed_scenarios = [
+        str(row.get("scenario") or "unknown")
+        for row in rows
+        if str(row.get("status", "")).lower() not in ("passed", "skipped")
+    ]
+    if failed_scenarios:
+        reasons.append(f"scenario failures: {', '.join(failed_scenarios)}")
+    return reasons
+
+
+def scan_crash_strings(out_dir: Path) -> Dict[str, Any]:
+    ignored = {"proof_digest.json", "proof_digest.md"}
+    hit_files: List[Dict[str, Any]] = []
+    hit_count = 0
+    for path in sorted(out_dir.rglob("*")):
+        if not path.is_file() or path.name in ignored or path.suffix.lower() not in CRASH_SCAN_SUFFIXES:
+            continue
+        try:
+            text = path.read_text(encoding="utf-8", errors="ignore")
+        except Exception:
+            continue
+        matches = []
+        for pattern in CRASH_SCAN_PATTERNS:
+            count = text.count(pattern)
+            if count:
+                matches.append({"pattern": pattern, "count": count})
+                hit_count += count
+        if matches:
+            hit_files.append({"path": relpath(path, out_dir), "matches": matches})
+    return {
+        "patterns": list(CRASH_SCAN_PATTERNS),
+        "crash_hit_count": hit_count,
+        "crash_hit_files": hit_files,
+        "status": "clean" if hit_count == 0 else "not_clean",
+    }
+
+
+def build_proof_digest(
+    *,
+    out_dir: Path,
+    command: str,
+    git_info: Dict[str, Any],
+    args: argparse.Namespace,
+    rows: List[Dict[str, Any]],
+    event_summary: Dict[str, Any],
+    pytest_result: PytestResult,
+    crash_scan: Dict[str, Any],
+) -> Dict[str, Any]:
+    primary_row = rows[0] if rows else {}
+    aggregate = event_summary.get("aggregate", {}) if event_summary else {}
+    incident_cards = event_summary.get("incident_cards_written", []) if event_summary else []
+    runtime_seconds = sum(parse_float(row.get("runtime_seconds")) or 0.0 for row in rows)
+    digest = {
+        "repo_branch": git_info.get("branch", "unknown"),
+        "git_commit": git_info.get("commit", "unknown"),
+        "git_dirty": bool(git_info.get("dirty")),
+        "command": command,
+        "seed": args.seed,
+        "frames": args.frames,
+        "suite": args.suite,
+        "runtime_seconds": round(runtime_seconds, 6),
+        "eidos_compression_ratio": primary_row.get("eidos_compression_ratio", ""),
+        "external_compression_baselines": compression_baseline_manifest(rows),
+        "normal_only_confirmed_false_positives_per_10k_frames": aggregate.get("normal_only_false_positives"),
+        "legacy_raw_spike_alerts": aggregate.get("normal_only_legacy_raw_spike_alerts"),
+        "candidate_events": aggregate.get("candidate_events"),
+        "confirmed_events": aggregate.get("confirmed_events"),
+        "suppressed_candidates": aggregate.get("suppressed_candidates"),
+        "merged_events": aggregate.get("merged_events"),
+        "cooldown_suppressions": aggregate.get("cooldown_suppressions"),
+        "red_count": aggregate.get("red_count"),
+        "amber_count": aggregate.get("amber_count"),
+        "incident_card_count": aggregate.get("incident_card_count"),
+        "incident_card_filenames": incident_cards,
+        "pytest": {
+            "command": pytest_result.command,
+            "returncode": pytest_result.returncode,
+            "status": pytest_result.status,
+            "reason": pytest_result.reason,
+        },
+        "known_limitations": event_summary.get("known_limitations", []) if event_summary else [],
+        "crash_scan": crash_scan,
+        "clean": crash_scan.get("crash_hit_count", 0) == 0 and not proof_failure_reasons(rows, pytest_result),
+        "artifact_dir": relpath(out_dir),
+        "generated_at_utc": utc_now(),
+    }
+    return digest
+
+
+def write_proof_digest_md(path: Path, digest: Dict[str, Any]) -> None:
+    baselines = digest.get("external_compression_baselines", [])
+    crash_scan = digest.get("crash_scan", {})
+    lines = [
+        "# Proof Digest",
+        "",
+        f"- Branch: `{digest.get('repo_branch', 'unknown')}`",
+        f"- Commit: `{digest.get('git_commit', 'unknown')}`",
+        f"- Dirty: `{digest.get('git_dirty')}`",
+        f"- Command: `{digest.get('command', '')}`",
+        f"- Suite/seed/frames: `{digest.get('suite')}` / `{digest.get('seed')}` / `{digest.get('frames')}`",
+        f"- Runtime seconds: `{digest.get('runtime_seconds')}`",
+        f"- Eidos compression ratio: `{digest.get('eidos_compression_ratio', 'NA')}`",
+        f"- Normal-only confirmed false positives per 10k frames: `{digest.get('normal_only_confirmed_false_positives_per_10k_frames', 'NA')}`",
+        f"- Legacy raw-spike alerts: `{digest.get('legacy_raw_spike_alerts', 'NA')}`",
+        f"- Candidate / confirmed / suppressed: `{digest.get('candidate_events', 'NA')}` / `{digest.get('confirmed_events', 'NA')}` / `{digest.get('suppressed_candidates', 'NA')}`",
+        f"- Incident cards: `{digest.get('incident_card_count', 'NA')}`",
+        f"- Crash scan: `{crash_scan.get('status', 'unknown')}` with `{crash_scan.get('crash_hit_count', 'NA')}` hits",
+        "",
+        "## Compression Baselines",
+        "",
+    ]
+    if baselines:
+        lines.append("| scenario | raw bytes | Eidos ratio | zlib | lzma | zstd | lz4 | delta+zlib | best |")
+        lines.append("| --- | ---: | ---: | ---: | ---: | --- | --- | --- | --- |")
+        for item in baselines:
+            zstd = item.get("zstd_compression_ratio") or f"skipped: {item.get('zstd_skipped_reason', '')}"
+            lz4 = item.get("lz4_compression_ratio") or f"skipped: {item.get('lz4_skipped_reason', '')}"
+            delta = item.get("delta_zlib_compression_ratio") or f"skipped: {item.get('delta_zlib_skipped_reason', '')}"
+            lines.append(
+                "| {scenario} | {raw} | {eidos} | {zlib_ratio} | {lzma_ratio} | {zstd} | {lz4} | {delta} | {best} {best_ratio} |".format(
+                    scenario=item.get("scenario", ""),
+                    raw=item.get("raw_bytes", ""),
+                    eidos=item.get("eidos_compression_ratio", ""),
+                    zlib_ratio=item.get("zlib_compression_ratio", ""),
+                    lzma_ratio=item.get("lzma_compression_ratio", ""),
+                    zstd=str(zstd).replace("|", "\\|"),
+                    lz4=str(lz4).replace("|", "\\|"),
+                    delta=str(delta).replace("|", "\\|"),
+                    best=item.get("best_baseline", ""),
+                    best_ratio=item.get("best_baseline_compression_ratio", ""),
+                )
+            )
+    else:
+        lines.append("- No compression baseline records were available.")
+
+    lines.extend(["", "## Crash Scan", ""])
+    if crash_scan.get("crash_hit_files"):
+        for item in crash_scan["crash_hit_files"]:
+            patterns = ", ".join(f"{m['pattern']}={m['count']}" for m in item.get("matches", []))
+            lines.append(f"- `{item.get('path')}`: {patterns}")
+    else:
+        lines.append("- No crash strings found.")
+
+    lines.extend(["", "## Known Limitations", ""])
+    for item in digest.get("known_limitations", []):
+        lines.append(f"- {item}")
+    path.write_text("\n".join(lines).rstrip() + "\n", encoding="utf-8")
+
+
+def write_proof_digest(out_dir: Path, digest: Dict[str, Any]) -> None:
+    write_json(out_dir / "proof_digest.json", digest)
+    write_proof_digest_md(out_dir / "proof_digest.md", digest)
 
 
 def mirror_to_drive(out_dir: Path, run_id: str, run_date: str) -> Dict[str, Any]:
@@ -882,16 +1703,26 @@ def write_proof_docs(
     skipped_baselines: List[Dict[str, str]],
     pytest_result: PytestResult,
     drive_manifest: Optional[Dict[str, Any]],
+    event_summary: Optional[Dict[str, Any]] = None,
     files_changed: Optional[List[str]] = None,
 ) -> None:
     docs_dir = repo_root / "docs" / "proof_runs" / run_date
     docs_dir.mkdir(parents=True, exist_ok=True)
     changed = files_changed or [
+        "eidos_tensor_utils.py",
+        "eidos_incident_cards.py",
+        "eidos_procedural_memory.py",
+        "eidos_forecast.py",
+        "scripts/verify_colab_gpu_hotfix.py",
         "tools/run_proof_baseline.py",
+        "repo/src/eidos_brain/engine/eidos_v0_4_7_02.py",
+        "tests/test_tensor_conversion_regressions.py",
+        "tests/test_user_config.py",
+        "tests/test_colab_gpu_hotfix_smoke.py",
         "tests/test_proof_baseline_runner.py",
-        "docs/proof_baseline_contract.md",
         relpath(out_dir),
     ]
+    event_aggregate = event_summary.get("aggregate", {}) if event_summary else {}
     drive_status = "pending"
     drive_root = "unknown"
     drive_folder = "unknown"
@@ -911,27 +1742,28 @@ def write_proof_docs(
         f"# Codex Journal -- {run_date}",
         "",
         "## What happened today",
-        "Week 1 of the proof plan froze a reproducible baseline package with config, manifest, environment, git state, pytest XML, scenario receipts, and CSV/Markdown summaries.",
+        "The proof runner generated a reproducible Eidos Brain smoke-readiness package with config, manifest, environment, git state, pytest XML, event summary, incident cards, logs, and CSV/Markdown summaries.",
         "",
         "## What was accomplished",
-        "- Added a repo-root proof baseline runner.",
-        "- Captured seed, frames, suite, config hash, git state, Python/runtime details, and scenario-level outputs.",
-        "- Kept Sentinel thresholds and core model behavior unchanged.",
+        "- Verified the smoke scenario and captured the result as local and Google Drive artifacts.",
+        "- Captured normal-only false positives, candidate events, suppressed candidates, merged events, cooldown suppressions, and incident-card-compatible records.",
+        "- Kept SentinelMonitor thresholds, reservoir dynamics, compression behavior, and prediction policy unchanged.",
         "",
         "## Tests and commands run",
         f"- `{command}` -> see `benchmark_summary.md` and `pytest_results.xml`.",
         f"- Pytest status: {pytest_result.status} ({pytest_result.reason}).",
         "",
         "## Problems encountered",
-        "- External compression baselines are not implemented in Week 1.",
+        "- External compression baselines are limited to the proof-frame serialization used by this runner; optional zstandard/lz4 baselines are skipped when packages are unavailable.",
         "- Smoke synthetic data does not provide ground-truth anomaly labels.",
+        "- False-positive control still uses deterministic synthetic policy checks before broader labeled telemetry work.",
         f"- Google Drive status: {drive_status}; reason: {drive_reason}.",
         "",
         "## What changed",
         "\n".join(f"- {item}" for item in changed),
         "",
         "## What did not change",
-        "Core model behavior, Sentinel labels, thresholds, reservoir dynamics, compression behavior, and false-positive suppression logic were not changed.",
+        "Core model behavior, Sentinel labels, SentinelMonitor thresholds, reservoir dynamics, compression behavior, and prediction decision policy were not changed.",
         "",
         "## Artifacts generated",
         "\n".join(f"- {item}" for item in artifact_lines),
@@ -944,37 +1776,37 @@ def write_proof_docs(
         f"- Reason: {drive_reason}",
         "",
         "## Thoughts on improvement",
-        "The next proof step should add false-positive suppression work only after this baseline remains easy to regenerate.",
+        f"Normal-only confirmed false positives were `{event_aggregate.get('normal_only_false_positives', 'NA')}` per 10k synthetic frames; the next step should compare this policy against labeled real-world streams.",
         "",
         "## Where to improve next",
-        "Week 2 false-positive suppression should be a separate PR-sized change with before/after receipts.",
+        "Run the broader experiment/test suite on this readiness branch and compare future receipts against this smoke package.",
         "",
         "## Anything that stands out",
-        "The wrapper can capture a complete artifact package without touching the engine internals.",
+        f"Recall preservation for the synthetic burst: {event_aggregate.get('recall_preservation_note', 'NA')}.",
         "",
         "## End-of-task summary",
         f"1. Files changed: {', '.join(changed)}",
         "2. Whether core behavior changed: no.",
-        "3. Tests added or skipped: runner/report tests added; pytest XML captured by the baseline run.",
+        "3. Tests added or skipped: tensor conversion, config validation, GPU-hotfix smoke, compression baseline, and digest regression tests are covered by pytest; pytest XML captured by the proof run.",
         f"4. Repo-root commands run: `{command}`.",
         f"5. Artifacts generated: {len(artifact_lines)} files under `{relpath(out_dir)}`.",
         "6. Plain-language analysis written: yes.",
         "7. Journal entry written: yes.",
         f"8. Google Drive copy status: {drive_status}; {drive_reason}.",
-        "9. Known limitations: no external compression baseline, no smoke labels, no plots.",
-        "10. Follow-up tasks not implemented: Week 2 false-positive suppression.",
+        "9. Known limitations: optional compression baselines may be skipped by dependency availability; no smoke labels, no plots, synthetic-only false-positive fixtures.",
+        "10. Follow-up tasks not implemented: full long-run experiment campaign and labeled real-world false-positive comparison.",
     ]
     analysis = [
         f"# Plain-Language Test Analysis -- {run_date}",
         "",
         "## What the task attempted",
-        "The task created a reproducible Week 1 baseline proof package for Eidos Brain.",
+        "The task created a reproducible smoke-readiness proof package for Eidos Brain.",
         "",
         "## Why the test matters",
-        "A frozen baseline gives future proof work a stable comparison point before threshold or false-positive changes are attempted.",
+        "A readiness smoke run checks whether the current branch can execute the engine path, write the expected proof artifacts, run the selected pytest smoke check, and mirror the result to Google Drive.",
         "",
         "## What was tested",
-        "The smoke baseline ran the configured scenario list and captured pytest output as JUnit XML.",
+        "The smoke baseline ran the configured scenario list and deterministic confirmation fixtures for normal-only, isolated spike, sustained burst, nearby spikes, mode comparison, and Eidos Life lifecycle behavior.",
         "",
         "## What passed",
         "\n".join(f"- {row.get('scenario')}: {row.get('status')}" for row in rows),
@@ -992,10 +1824,10 @@ def write_proof_docs(
         f"Drive status: {drive_status}; folder: {drive_folder}; reason: {drive_reason}.",
         "",
         "## What remains uncertain",
-        "External compression baselines, labeled anomaly metrics for smoke data, and plots remain future work.",
+        "Optional compression baselines depend on installed packages; labeled anomaly metrics for smoke data, plots, full experiment campaigns, and real lifecycle export replay remain future work.",
         "",
         "## What should happen next",
-        "Run the same baseline command from repo root before starting Week 2 false-positive suppression work.",
+        "Use this branch as the next test/experiment base, then add labeled real-world comparisons and longer experiment receipts.",
     ]
     for target_dir in (docs_dir, out_dir):
         target_dir.mkdir(parents=True, exist_ok=True)
@@ -1018,7 +1850,8 @@ def run(
     generated_at = utc_now()
     command = baseline_command(args, repo_root)
     run_date = datetime.now(timezone.utc).date().isoformat()
-    run_id = f"proof_baseline_2026_05_{args.suite}_seed{args.seed}_frames{args.frames}"
+    run_label = "proof_false_positive_control_2026_05" if "false_positive_control" in out_dir.name else "proof_baseline_2026_05"
+    run_id = f"{run_label}_{args.suite}_seed{args.seed}_frames{args.frames}"
 
     git_info = collect_git_info(repo_root)
     engine, engine_path = load_engine_fn(out_dir, repo_root)
@@ -1030,6 +1863,8 @@ def run(
 
     rows, scenario_skips, scenario_list = run_scenarios_fn(engine, args, out_dir, repo_root)
     skipped_baselines = skipped_baseline_records(rows, scenario_skips)
+    event_summary = run_false_positive_control(args, out_dir)
+    annotate_rows_with_event_summary(rows, event_summary)
     config_doc = build_config_doc(
         args=args,
         engine=engine,
@@ -1037,6 +1872,7 @@ def run(
         scenario_list=scenario_list,
         rows=rows,
         skipped_baselines=skipped_baselines,
+        event_summary=event_summary,
     )
     config_hash = stable_hash(config_doc)
     config_doc["config_hash_sha256"] = config_hash
@@ -1060,6 +1896,7 @@ def run(
         rows=rows,
         skipped_baselines=skipped_baselines,
         pytest_result=pytest_result,
+        event_summary=event_summary,
     )
 
     draft_manifest = build_manifest(
@@ -1070,9 +1907,11 @@ def run(
         packages=packages,
         args=args,
         scenario_list=scenario_list,
+        rows=rows,
         config_hash=config_hash,
         skipped_baselines=skipped_baselines,
         pytest_result=pytest_result,
+        event_summary=event_summary,
     )
     write_json(out_dir / "run_manifest.json", draft_manifest)
     write_docs_fn(
@@ -1084,7 +1923,21 @@ def run(
         skipped_baselines=skipped_baselines,
         pytest_result=pytest_result,
         drive_manifest=None,
+        event_summary=event_summary,
     )
+
+    crash_scan = scan_crash_strings(out_dir)
+    digest = build_proof_digest(
+        out_dir=out_dir,
+        command=command,
+        git_info=git_info,
+        args=args,
+        rows=rows,
+        event_summary=event_summary,
+        pytest_result=pytest_result,
+        crash_scan=crash_scan,
+    )
+    write_proof_digest(out_dir, digest)
 
     drive_manifest = mirror_to_drive_fn(out_dir, run_id, run_date)
     write_json(out_dir / "drive_manifest.json", drive_manifest)
@@ -1096,10 +1949,12 @@ def run(
         packages=packages,
         args=args,
         scenario_list=scenario_list,
+        rows=rows,
         config_hash=config_hash,
         skipped_baselines=skipped_baselines,
         pytest_result=pytest_result,
         drive_manifest=drive_manifest,
+        event_summary=event_summary,
     )
     write_json(out_dir / "run_manifest.json", final_manifest)
     write_docs_fn(
@@ -1111,6 +1966,7 @@ def run(
         skipped_baselines=skipped_baselines,
         pytest_result=pytest_result,
         drive_manifest=drive_manifest,
+        event_summary=event_summary,
     )
     copy_selected_to_drive(
         out_dir,
@@ -1118,11 +1974,17 @@ def run(
         [
             out_dir / "run_manifest.json",
             out_dir / "drive_manifest.json",
+            out_dir / "event_summary.json",
+            out_dir / "proof_digest.json",
+            out_dir / "proof_digest.md",
             out_dir / "codex_journal.md",
             out_dir / "plain_language_test_analysis.md",
         ],
     )
-    return 0
+    failure_reasons = proof_failure_reasons(rows, pytest_result)
+    if crash_scan.get("crash_hit_count", 0):
+        failure_reasons.append("proof digest crash scan found crash strings")
+    return 1 if failure_reasons else 0
 
 
 def main(argv: Optional[Sequence[str]] = None) -> int:

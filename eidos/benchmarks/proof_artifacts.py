@@ -19,11 +19,15 @@ EXPECTED_PROOF_ARTIFACT_FILENAMES = (
     "environment.txt",
     "git_commit.txt",
     "run_manifest.json",
+    "drive_manifest.json",
+    "event_summary.json",
 )
 
 EXPECTED_PROOF_ARTIFACT_SUBDIRS = (
     "scenarios",
     "plots",
+    "incident_cards",
+    "logs",
 )
 
 

@@ -1,0 +1,54 @@
+{
+  "confidence": 0.905,
+  "end_frame": 96,
+  "event_id": "evt_lifecycle_recovery_90_96",
+  "event_type": "lifecycle_recovery",
+  "incident_id": "incident_evt_lifecycle_recovery_90_96",
+  "raw_evidence_refs": [
+    "eidos-life:generation:90",
+    "eidos-life:generation:91",
+    "eidos-life:generation:92",
+    "eidos-life:generation:93",
+    "eidos-life:generation:94",
+    "eidos-life:generation:95",
+    "eidos-life:generation:96"
+  ],
+  "severity": "RECOVERY",
+  "similar_past_events": [],
+  "start_frame": 90,
+  "top_drivers": [
+    {
+      "name": "post_extinction_reseed",
+      "score": 0.88
+    },
+    {
+      "name": "post_extinction_reseed",
+      "score": 0.88
+    },
+    {
+      "name": "post_extinction_reseed",
+      "score": 0.88
+    },
+    {
+      "name": "post_extinction_reseed",
+      "score": 0.88
+    },
+    {
+      "name": "post_extinction_reseed",
+      "score": 0.88
+    },
+    {
+      "name": "post_extinction_reseed",
+      "score": 0.88
+    },
+    {
+      "name": "post_extinction_reseed",
+      "score": 0.88
+    }
+  ],
+  "why_flagged": [
+    "candidate accumulated enough evidence",
+    "geometry change and novelty supported the residual spike",
+    "lifecycle transition evidence was sustained"
+  ]
+}

@@ -89,6 +89,53 @@ class CyberSecurityAdapter(DomainAdapter):
             "privacy": {"contains_phi": False, "redacted": False}
         }
 
+class CICIDSWebAttacksAdapter(DomainAdapter):
+    domain = "cicids_webattacks"
+
+    def extract(self, raw_event: Any) -> Dict[str, Any]:
+        """Extract projected CICIDS/WebAttacks rows without tuning Eidos logic."""
+        x_vec = []
+        entities: Dict[str, Any] = {}
+        exemplars: List[str] = []
+        feature_names = None
+
+        if isinstance(raw_event, dict):
+            x_vec = raw_event.get("x", raw_event.get("vector", []))
+            feature_names = raw_event.get("feature_names")
+
+            for source_key, entity_key in (
+                ("row_index", "row_index"),
+                ("src_ip", "src_ip"),
+                ("source_ip", "src_ip"),
+                ("dst_ip", "dst_ip"),
+                ("destination_ip", "dst_ip"),
+                ("destination_port", "destination_port"),
+                ("dest_port", "destination_port"),
+                ("protocol", "protocol"),
+                ("label", "label"),
+                ("OriginalLabel", "OriginalLabel"),
+                ("EidosProofLabel", "EidosProofLabel"),
+                ("attack", "attack"),
+            ):
+                if source_key in raw_event and raw_event[source_key] not in (None, ""):
+                    entities[entity_key] = raw_event[source_key]
+
+            label = raw_event.get("OriginalLabel", raw_event.get("label", "unknown"))
+            proof_label = raw_event.get("EidosProofLabel", "unknown")
+            attack = bool(raw_event.get("attack", False))
+            row_index = raw_event.get("row_index", "unknown")
+            exemplars.append(f"CICIDS row={row_index} label={label} proof_label={proof_label} attack={attack}")
+        else:
+            x_vec = raw_event
+
+        return {
+            "x": np.asarray(x_vec, dtype=np.float32),
+            "entities": entities,
+            "exemplars": exemplars,
+            "feature_names": feature_names,
+            "privacy": {"contains_phi": False, "redacted": True}
+        }
+
 class WebsiteMetricsAdapter(DomainAdapter):
     domain = "web"
     
@@ -194,6 +241,10 @@ def get_domain_adapter(domain: str) -> DomainAdapter:
     mapping = {
         "generic": GenericVectorAdapter,
         "cyber": CyberSecurityAdapter,
+        "cicids": CICIDSWebAttacksAdapter,
+        "cicids2017": CICIDSWebAttacksAdapter,
+        "cicids_webattacks": CICIDSWebAttacksAdapter,
+        "webattacks": CICIDSWebAttacksAdapter,
         "web": WebsiteMetricsAdapter,
         "dataset": DatasetRowAdapter,
         "flight": FlightDataAdapter,

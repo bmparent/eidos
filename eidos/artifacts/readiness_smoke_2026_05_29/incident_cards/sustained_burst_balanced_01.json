@@ -1,0 +1,60 @@
+{
+  "confidence": 0.935,
+  "end_frame": 29,
+  "event_id": "evt_anomaly_20_29",
+  "event_type": "anomaly",
+  "incident_id": "incident_evt_anomaly_20_29",
+  "raw_evidence_refs": [
+    "burst:20",
+    "burst:21",
+    "burst:22",
+    "burst:23",
+    "burst:24",
+    "burst:25",
+    "burst:26",
+    "burst:27",
+    "burst:28",
+    "burst:29"
+  ],
+  "severity": "AMBER",
+  "similar_past_events": [],
+  "start_frame": 20,
+  "top_drivers": [
+    {
+      "name": "residual_energy",
+      "score": 4.6
+    },
+    {
+      "name": "residual_energy",
+      "score": 4.6
+    },
+    {
+      "name": "residual_energy",
+      "score": 4.6
+    },
+    {
+      "name": "residual_energy",
+      "score": 4.6
+    },
+    {
+      "name": "residual_energy",
+      "score": 4.6
+    },
+    {
+      "name": "residual_energy",
+      "score": 4.6
+    },
+    {
+      "name": "residual_energy",
+      "score": 4.6
+    },
+    {
+      "name": "residual_energy",
+      "score": 4.6
+    }
+  ],
+  "why_flagged": [
+    "candidate accumulated enough evidence",
+    "geometry change and novelty supported the residual spike"
+  ]
+}

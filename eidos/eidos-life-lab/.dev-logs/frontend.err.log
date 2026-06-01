@@ -1,0 +1,755 @@
+[2m9:09:15 PM[22m [31m[1m[vite][22m[39m [31mws proxy error:[39m
+Error: read ECONNRESET
+    at TCP.onStreamRead (node:internal/stream_base_commons:216:20)
+[2m9:09:32 PM[22m [33m[1m[vite][22m[39m [33m[2m(client)[22m[39m [2m[console.warn] [22mEidos Life Lab WebSocket closed; HTTP polling fallback will continue.
+[2m9:09:32 PM[22m [31m[1m[vite][22m[39m [31mhttp proxy error: /api/state[39m
+Error: connect ECONNREFUSED 127.0.0.1:8787
+    at TCPConnectWrap.afterConnect [as oncomplete] (node:net:1645:16)
+[2m9:09:32 PM[22m [33m[1m[vite][22m[39m [33m[2m(client)[22m[39m [2m[console.warn] [22mHTTP polling fallback failed Error: GET /api/state failed: 502
+    at LabApi.fetchState (http://127.0.0.1:5173/src/api.js:14:13)
+    at async pollFallback (http://127.0.0.1:5173/src/main.js:114:22)
+[2m9:09:33 PM[22m [31m[1m[vite][22m[39m [31mhttp proxy error: /api/state[39m
+Error: connect ECONNREFUSED 127.0.0.1:8787
+    at TCPConnectWrap.afterConnect [as oncomplete] (node:net:1645:16)
+[2m9:09:33 PM[22m [33m[1m[vite][22m[39m [33m[2m(client)[22m[39m [2m[console.warn] [22mHTTP polling fallback failed Error: GET /api/state failed: 502
+    at LabApi.fetchState (http://127.0.0.1:5173/src/api.js:14:13)
+    at async pollFallback (http://127.0.0.1:5173/src/main.js:114:22)
+[2m9:09:35 PM[22m [31m[1m[vite][22m[39m [31mws proxy error:[39m
+Error: connect ECONNREFUSED 127.0.0.1:8787
+    at TCPConnectWrap.afterConnect [as oncomplete] (node:net:1645:16)
+[2m9:09:35 PM[22m [33m[1m[vite][22m[39m [33m[2m(client)[22m[39m [2m[console.warn] [22mEidos Life Lab WebSocket error; HTTP fallback is active. {"isTrusted":true}
+[2m9:09:35 PM[22m [31m[1m[vite][22m[39m [31mhttp proxy error: /api/state[39m
+Error: connect ECONNREFUSED 127.0.0.1:8787
+    at TCPConnectWrap.afterConnect [as oncomplete] (node:net:1645:16)
+[2m9:09:35 PM[22m [33m[1m[vite][22m[39m [33m[2m(client)[22m[39m [2m[console.warn] [22mHTTP polling fallback failed Error: GET /api/state failed: 502
+    at LabApi.fetchState (http://127.0.0.1:5173/src/api.js:14:13)
+    at async pollFallback (http://127.0.0.1:5173/src/main.js:114:22)
+[2m9:09:36 PM[22m [31m[1m[vite][22m[39m [31mhttp proxy error: /api/state[39m
+Error: connect ECONNREFUSED 127.0.0.1:8787
+    at TCPConnectWrap.afterConnect [as oncomplete] (node:net:1645:16)
+[2m9:09:36 PM[22m [33m[1m[vite][22m[39m [33m[2m(client)[22m[39m [2m[console.warn] [22mHTTP polling fallback failed Error: GET /api/state failed: 502
+    at LabApi.fetchState (http://127.0.0.1:5173/src/api.js:14:13)
+    at async pollFallback (http://127.0.0.1:5173/src/main.js:114:22)
+[2m9:09:37 PM[22m [31m[1m[vite][22m[39m [31mhttp proxy error: /api/state[39m
+Error: connect ECONNREFUSED 127.0.0.1:8787
+    at TCPConnectWrap.afterConnect [as oncomplete] (node:net:1645:16)
+[2m9:09:37 PM[22m [33m[1m[vite][22m[39m [33m[2m(client)[22m[39m [2m[console.warn] [22mHTTP polling fallback failed Error: GET /api/state failed: 502
+    at LabApi.fetchState (http://127.0.0.1:5173/src/api.js:14:13)
+    at async pollFallback (http://127.0.0.1:5173/src/main.js:114:22)
+[2m9:09:38 PM[22m [31m[1m[vite][22m[39m [31mws proxy error:[39m
+Error: connect ECONNREFUSED 127.0.0.1:8787
+    at TCPConnectWrap.afterConnect [as oncomplete] (node:net:1645:16)
+[2m9:09:38 PM[22m [31m[1m[vite][22m[39m [31mhttp proxy error: /api/state[39m
+Error: connect ECONNREFUSED 127.0.0.1:8787
+    at TCPConnectWrap.afterConnect [as oncomplete] (node:net:1645:16)
+[2m9:09:38 PM[22m [33m[1m[vite][22m[39m [33m[2m(client)[22m[39m [2m[console.warn] [22mEidos Life Lab WebSocket error; HTTP fallback is active. {"isTrusted":true}
+[2m9:09:38 PM[22m [33m[1m[vite][22m[39m [33m[2m(client)[22m[39m [2m[console.warn] [22mHTTP polling fallback failed Error: GET /api/state failed: 502
+    at LabApi.fetchState (http://127.0.0.1:5173/src/api.js:14:13)
+    at async pollFallback (http://127.0.0.1:5173/src/main.js:114:22)
+[2m9:09:39 PM[22m [31m[1m[vite][22m[39m [31mhttp proxy error: /api/state[39m
+Error: connect ECONNREFUSED 127.0.0.1:8787
+    at TCPConnectWrap.afterConnect [as oncomplete] (node:net:1645:16)
+[2m9:09:39 PM[22m [33m[1m[vite][22m[39m [33m[2m(client)[22m[39m [2m[console.warn] [22mHTTP polling fallback failed Error: GET /api/state failed: 502
+    at LabApi.fetchState (http://127.0.0.1:5173/src/api.js:14:13)
+    at async pollFallback (http://127.0.0.1:5173/src/main.js:114:22)
+[2m9:09:40 PM[22m [31m[1m[vite][22m[39m [31mhttp proxy error: /api/state[39m
+Error: connect ECONNREFUSED 127.0.0.1:8787
+    at TCPConnectWrap.afterConnect [as oncomplete] (node:net:1645:16)
+[2m9:09:41 PM[22m [33m[1m[vite][22m[39m [33m[2m(client)[22m[39m [2m[console.warn] [22mHTTP polling fallback failed Error: GET /api/state failed: 502
+    at LabApi.fetchState (http://127.0.0.1:5173/src/api.js:14:13)
+    at async pollFallback (http://127.0.0.1:5173/src/main.js:114:22)
+[2m9:09:41 PM[22m [31m[1m[vite][22m[39m [31mws proxy error:[39m
+Error: connect ECONNREFUSED 127.0.0.1:8787
+    at TCPConnectWrap.afterConnect [as oncomplete] (node:net:1645:16)
+[2m9:09:41 PM[22m [33m[1m[vite][22m[39m [33m[2m(client)[22m[39m [2m[console.warn] [22mEidos Life Lab WebSocket error; HTTP fallback is active. {"isTrusted":true}
+[2m9:09:42 PM[22m [31m[1m[vite][22m[39m [31mhttp proxy error: /api/state[39m
+Error: connect ECONNREFUSED 127.0.0.1:8787
+    at TCPConnectWrap.afterConnect [as oncomplete] (node:net:1645:16)
+[2m9:09:42 PM[22m [33m[1m[vite][22m[39m [33m[2m(client)[22m[39m [2m[console.warn] [22mHTTP polling fallback failed Error: GET /api/state failed: 502
+    at LabApi.fetchState (http://127.0.0.1:5173/src/api.js:14:13)
+    at async pollFallback (http://127.0.0.1:5173/src/main.js:114:22)
+[2m9:09:43 PM[22m [31m[1m[vite][22m[39m [31mhttp proxy error: /api/state[39m
+Error: connect ECONNREFUSED 127.0.0.1:8787
+    at TCPConnectWrap.afterConnect [as oncomplete] (node:net:1645:16)
+[2m9:09:43 PM[22m [33m[1m[vite][22m[39m [33m[2m(client)[22m[39m [2m[console.warn] [22mHTTP polling fallback failed Error: GET /api/state failed: 502
+    at LabApi.fetchState (http://127.0.0.1:5173/src/api.js:14:13)
+    at async pollFallback (http://127.0.0.1:5173/src/main.js:114:22)
+[2m9:09:44 PM[22m [31m[1m[vite][22m[39m [31mws proxy error:[39m
+Error: connect ECONNREFUSED 127.0.0.1:8787
+    at TCPConnectWrap.afterConnect [as oncomplete] (node:net:1645:16)
+[2m9:09:44 PM[22m [31m[1m[vite][22m[39m [31mhttp proxy error: /api/state[39m
+Error: connect ECONNREFUSED 127.0.0.1:8787
+    at TCPConnectWrap.afterConnect [as oncomplete] (node:net:1645:16)
+[2m9:09:44 PM[22m [33m[1m[vite][22m[39m [33m[2m(client)[22m[39m [2m[console.warn] [22mEidos Life Lab WebSocket error; HTTP fallback is active. {"isTrusted":true}
+[2m9:09:44 PM[22m [33m[1m[vite][22m[39m [33m[2m(client)[22m[39m [2m[console.warn] [22mHTTP polling fallback failed Error: GET /api/state failed: 502
+    at LabApi.fetchState (http://127.0.0.1:5173/src/api.js:14:13)
+    at async pollFallback (http://127.0.0.1:5173/src/main.js:114:22)
+[2m9:09:45 PM[22m [31m[1m[vite][22m[39m [31mhttp proxy error: /api/state[39m
+Error: connect ECONNREFUSED 127.0.0.1:8787
+    at TCPConnectWrap.afterConnect [as oncomplete] (node:net:1645:16)
+[2m9:09:45 PM[22m [33m[1m[vite][22m[39m [33m[2m(client)[22m[39m [2m[console.warn] [22mHTTP polling fallback failed Error: GET /api/state failed: 502
+    at LabApi.fetchState (http://127.0.0.1:5173/src/api.js:14:13)
+    at async pollFallback (http://127.0.0.1:5173/src/main.js:114:22)
+[2m9:09:46 PM[22m [31m[1m[vite][22m[39m [31mhttp proxy error: /api/state[39m
+Error: connect ECONNREFUSED 127.0.0.1:8787
+    at TCPConnectWrap.afterConnect [as oncomplete] (node:net:1645:16)
+[2m9:09:46 PM[22m [33m[1m[vite][22m[39m [33m[2m(client)[22m[39m [2m[console.warn] [22mHTTP polling fallback failed Error: GET /api/state failed: 502
+    at LabApi.fetchState (http://127.0.0.1:5173/src/api.js:14:13)
+    at async pollFallback (http://127.0.0.1:5173/src/main.js:114:22)
+[2m9:09:47 PM[22m [31m[1m[vite][22m[39m [31mhttp proxy error: /api/state[39m
+Error: connect ECONNREFUSED 127.0.0.1:8787
+    at TCPConnectWrap.afterConnect [as oncomplete] (node:net:1645:16)
+[2m9:09:47 PM[22m [31m[1m[vite][22m[39m [31mws proxy error:[39m
+Error: connect ECONNREFUSED 127.0.0.1:8787
+    at TCPConnectWrap.afterConnect [as oncomplete] (node:net:1645:16)
+[2m9:09:47 PM[22m [33m[1m[vite][22m[39m [33m[2m(client)[22m[39m [2m[console.warn] [22mEidos Life Lab WebSocket error; HTTP fallback is active. {"isTrusted":true}
+[2m9:09:47 PM[22m [33m[1m[vite][22m[39m [33m[2m(client)[22m[39m [2m[console.warn] [22mHTTP polling fallback failed Error: GET /api/state failed: 502
+    at LabApi.fetchState (http://127.0.0.1:5173/src/api.js:14:13)
+    at async pollFallback (http://127.0.0.1:5173/src/main.js:114:22)
+[2m9:09:48 PM[22m [31m[1m[vite][22m[39m [31mhttp proxy error: /api/state[39m
+Error: connect ECONNREFUSED 127.0.0.1:8787
+    at TCPConnectWrap.afterConnect [as oncomplete] (node:net:1645:16)
+[2m9:09:48 PM[22m [33m[1m[vite][22m[39m [33m[2m(client)[22m[39m [2m[console.warn] [22mHTTP polling fallback failed Error: GET /api/state failed: 502
+    at LabApi.fetchState (http://127.0.0.1:5173/src/api.js:14:13)
+    at async pollFallback (http://127.0.0.1:5173/src/main.js:114:22)
+[2m9:09:49 PM[22m [31m[1m[vite][22m[39m [31mhttp proxy error: /api/state[39m
+Error: connect ECONNREFUSED 127.0.0.1:8787
+    at TCPConnectWrap.afterConnect [as oncomplete] (node:net:1645:16)
+[2m9:09:49 PM[22m [33m[1m[vite][22m[39m [33m[2m(client)[22m[39m [2m[console.warn] [22mHTTP polling fallback failed Error: GET /api/state failed: 502
+    at LabApi.fetchState (http://127.0.0.1:5173/src/api.js:14:13)
+    at async pollFallback (http://127.0.0.1:5173/src/main.js:114:22)
+[2m9:09:50 PM[22m [31m[1m[vite][22m[39m [31mhttp proxy error: /api/state[39m
+Error: connect ECONNREFUSED 127.0.0.1:8787
+    at TCPConnectWrap.afterConnect [as oncomplete] (node:net:1645:16)
+[2m9:09:50 PM[22m [31m[1m[vite][22m[39m [31mws proxy error:[39m
+Error: connect ECONNREFUSED 127.0.0.1:8787
+    at TCPConnectWrap.afterConnect [as oncomplete] (node:net:1645:16)
+[2m9:09:50 PM[22m [33m[1m[vite][22m[39m [33m[2m(client)[22m[39m [2m[console.warn] [22mEidos Life Lab WebSocket error; HTTP fallback is active. {"isTrusted":true}
+[2m9:09:50 PM[22m [33m[1m[vite][22m[39m [33m[2m(client)[22m[39m [2m[console.warn] [22mHTTP polling fallback failed Error: GET /api/state failed: 502
+    at LabApi.fetchState (http://127.0.0.1:5173/src/api.js:14:13)
+    at async pollFallback (http://127.0.0.1:5173/src/main.js:114:22)
+[2m9:09:51 PM[22m [31m[1m[vite][22m[39m [31mhttp proxy error: /api/state[39m
+Error: connect ECONNREFUSED 127.0.0.1:8787
+    at TCPConnectWrap.afterConnect [as oncomplete] (node:net:1645:16)
+[2m9:09:51 PM[22m [33m[1m[vite][22m[39m [33m[2m(client)[22m[39m [2m[console.warn] [22mHTTP polling fallback failed Error: GET /api/state failed: 502
+    at LabApi.fetchState (http://127.0.0.1:5173/src/api.js:14:13)
+    at async pollFallback (http://127.0.0.1:5173/src/main.js:114:22)
+[2m9:09:52 PM[22m [31m[1m[vite][22m[39m [31mhttp proxy error: /api/state[39m
+Error: connect ECONNREFUSED 127.0.0.1:8787
+    at TCPConnectWrap.afterConnect [as oncomplete] (node:net:1645:16)
+[2m9:09:52 PM[22m [31m[1m[vite][22m[39m [31mws proxy error:[39m
+Error: connect ECONNREFUSED 127.0.0.1:8787
+    at TCPConnectWrap.afterConnect [as oncomplete] (node:net:1645:16)
+[2m9:09:52 PM[22m [31m[1m[vite][22m[39m [31mhttp proxy error: /api/state[39m
+Error: connect ECONNREFUSED 127.0.0.1:8787
+    at TCPConnectWrap.afterConnect [as oncomplete] (node:net:1645:16)
+[2m9:09:52 PM[22m [33m[1m[vite][22m[39m [33m[2m(client)[22m[39m [2m[console.warn] [22mHTTP polling fallback failed Error: GET /api/state failed: 502
+    at LabApi.fetchState (http://127.0.0.1:5173/src/api.js:14:13)
+    at async pollFallback (http://127.0.0.1:5173/src/main.js:114:22)
+[2m9:09:53 PM[22m [33m[1m[vite][22m[39m [33m[2m(client)[22m[39m [2m[console.warn] [22mInitial state fetch failed Error: GET /api/state failed: 502
+    at LabApi.fetchState (http://127.0.0.1:5173/src/api.js:14:13)
+    at async boot (http://127.0.0.1:5173/src/main.js:260:22)
+[2m9:09:53 PM[22m [33m[1m[vite][22m[39m [33m[2m(client)[22m[39m [2m[console.warn] [22mEidos Life Lab WebSocket error; HTTP fallback is active. {"isTrusted":true}
+[2m9:09:53 PM[22m [31m[1m[vite][22m[39m [31mws proxy error:[39m
+Error: connect ECONNREFUSED 127.0.0.1:8787
+    at TCPConnectWrap.afterConnect [as oncomplete] (node:net:1645:16)
+[2m9:09:53 PM[22m [31m[1m[vite][22m[39m [31mhttp proxy error: /api/state[39m
+Error: connect ECONNREFUSED 127.0.0.1:8787
+    at TCPConnectWrap.afterConnect [as oncomplete] (node:net:1645:16)
+[2m9:09:53 PM[22m [33m[1m[vite][22m[39m [33m[2m(client)[22m[39m [2m[console.warn] [22mEidos Life Lab WebSocket error; HTTP fallback is active. {"isTrusted":true}
+[2m9:09:53 PM[22m [33m[1m[vite][22m[39m [33m[2m(client)[22m[39m [2m[console.warn] [22mHTTP polling fallback failed Error: GET /api/state failed: 502
+    at LabApi.fetchState (http://127.0.0.1:5173/src/api.js:14:13)
+    at async pollFallback (http://127.0.0.1:5173/src/main.js:114:22)
+[2m9:09:53 PM[22m [31m[1m[vite][22m[39m [31mhttp proxy error: /api/state[39m
+Error: connect ECONNREFUSED 127.0.0.1:8787
+    at TCPConnectWrap.afterConnect [as oncomplete] (node:net:1645:16)
+[2m9:09:53 PM[22m [33m[1m[vite][22m[39m [33m[2m(client)[22m[39m [2m[console.warn] [22mHTTP polling fallback failed Error: GET /api/state failed: 502
+    at LabApi.fetchState (http://127.0.0.1:5173/src/api.js:14:13)
+    at async pollFallback (http://127.0.0.1:5173/src/main.js:114:22)
+[2m9:09:54 PM[22m [31m[1m[vite][22m[39m [31mhttp proxy error: /api/state[39m
+Error: connect ECONNREFUSED 127.0.0.1:8787
+    at TCPConnectWrap.afterConnect [as oncomplete] (node:net:1645:16)
+[2m9:09:54 PM[22m [33m[1m[vite][22m[39m [33m[2m(client)[22m[39m [2m[console.warn] [22mHTTP polling fallback failed Error: GET /api/state failed: 502
+    at LabApi.fetchState (http://127.0.0.1:5173/src/api.js:14:13)
+    at async pollFallback (http://127.0.0.1:5173/src/main.js:114:22)
+[2m9:09:54 PM[22m [31m[1m[vite][22m[39m [31mhttp proxy error: /api/state[39m
+Error: connect ECONNREFUSED 127.0.0.1:8787
+    at TCPConnectWrap.afterConnect [as oncomplete] (node:net:1645:16)
+[2m9:09:54 PM[22m [33m[1m[vite][22m[39m [33m[2m(client)[22m[39m [2m[console.warn] [22mHTTP polling fallback failed Error: GET /api/state failed: 502
+    at LabApi.fetchState (http://127.0.0.1:5173/src/api.js:14:13)
+    at async pollFallback (http://127.0.0.1:5173/src/main.js:114:22)
+[2m9:09:55 PM[22m [31m[1m[vite][22m[39m [31mhttp proxy error: /api/state[39m
+Error: connect ECONNREFUSED 127.0.0.1:8787
+    at TCPConnectWrap.afterConnect [as oncomplete] (node:net:1645:16)
+[2m9:09:55 PM[22m [33m[1m[vite][22m[39m [33m[2m(client)[22m[39m [2m[console.warn] [22mHTTP polling fallback failed Error: GET /api/state failed: 502
+    at LabApi.fetchState (http://127.0.0.1:5173/src/api.js:14:13)
+    at async pollFallback (http://127.0.0.1:5173/src/main.js:114:22)
+[2m9:09:55 PM[22m [31m[1m[vite][22m[39m [31mhttp proxy error: /api/state[39m
+Error: connect ECONNREFUSED 127.0.0.1:8787
+    at TCPConnectWrap.afterConnect [as oncomplete] (node:net:1645:16)
+[2m9:09:55 PM[22m [31m[1m[vite][22m[39m [31mws proxy error:[39m
+Error: connect ECONNREFUSED 127.0.0.1:8787
+    at TCPConnectWrap.afterConnect [as oncomplete] (node:net:1645:16)
+[2m9:09:55 PM[22m [33m[1m[vite][22m[39m [33m[2m(client)[22m[39m [2m[console.warn] [22mHTTP polling fallback failed Error: GET /api/state failed: 502
+    at LabApi.fetchState (http://127.0.0.1:5173/src/api.js:14:13)
+    at async pollFallback (http://127.0.0.1:5173/src/main.js:114:22)
+[2m9:09:55 PM[22m [33m[1m[vite][22m[39m [33m[2m(client)[22m[39m [2m[console.warn] [22mEidos Life Lab WebSocket error; HTTP fallback is active. {"isTrusted":true}
+[2m9:09:56 PM[22m [31m[1m[vite][22m[39m [31mhttp proxy error: /api/state[39m
+Error: connect ECONNREFUSED 127.0.0.1:8787
+    at TCPConnectWrap.afterConnect [as oncomplete] (node:net:1645:16)
+[2m9:09:56 PM[22m [33m[1m[vite][22m[39m [33m[2m(client)[22m[39m [2m[console.warn] [22mHTTP polling fallback failed Error: GET /api/state failed: 502
+    at LabApi.fetchState (http://127.0.0.1:5173/src/api.js:14:13)
+    at async pollFallback (http://127.0.0.1:5173/src/main.js:114:22)
+[2m9:09:56 PM[22m [31m[1m[vite][22m[39m [31mws proxy error:[39m
+Error: connect ECONNREFUSED 127.0.0.1:8787
+    at TCPConnectWrap.afterConnect [as oncomplete] (node:net:1645:16)
+[2m9:09:56 PM[22m [31m[1m[vite][22m[39m [31mhttp proxy error: /api/state[39m
+Error: connect ECONNREFUSED 127.0.0.1:8787
+    at TCPConnectWrap.afterConnect [as oncomplete] (node:net:1645:16)
+[2m9:09:56 PM[22m [33m[1m[vite][22m[39m [33m[2m(client)[22m[39m [2m[console.warn] [22mEidos Life Lab WebSocket error; HTTP fallback is active. {"isTrusted":true}
+[2m9:09:56 PM[22m [33m[1m[vite][22m[39m [33m[2m(client)[22m[39m [2m[console.warn] [22mHTTP polling fallback failed Error: GET /api/state failed: 502
+    at LabApi.fetchState (http://127.0.0.1:5173/src/api.js:14:13)
+    at async pollFallback (http://127.0.0.1:5173/src/main.js:114:22)
+[2m9:09:57 PM[22m [31m[1m[vite][22m[39m [31mhttp proxy error: /api/state[39m
+Error: connect ECONNREFUSED 127.0.0.1:8787
+    at TCPConnectWrap.afterConnect [as oncomplete] (node:net:1645:16)
+[2m9:09:57 PM[22m [33m[1m[vite][22m[39m [33m[2m(client)[22m[39m [2m[console.warn] [22mHTTP polling fallback failed Error: GET /api/state failed: 502
+    at LabApi.fetchState (http://127.0.0.1:5173/src/api.js:14:13)
+    at async pollFallback (http://127.0.0.1:5173/src/main.js:114:22)
+[2m9:09:57 PM[22m [31m[1m[vite][22m[39m [31mhttp proxy error: /api/state[39m
+Error: connect ECONNREFUSED 127.0.0.1:8787
+    at TCPConnectWrap.afterConnect [as oncomplete] (node:net:1645:16)
+[2m9:09:57 PM[22m [33m[1m[vite][22m[39m [33m[2m(client)[22m[39m [2m[console.warn] [22mHTTP polling fallback failed Error: GET /api/state failed: 502
+    at LabApi.fetchState (http://127.0.0.1:5173/src/api.js:14:13)
+    at async pollFallback (http://127.0.0.1:5173/src/main.js:114:22)
+[2m9:09:57 PM[22m [31m[1m[vite][22m[39m [31mhttp proxy error: /api/state[39m
+Error: connect ECONNREFUSED 127.0.0.1:8787
+    at TCPConnectWrap.afterConnect [as oncomplete] (node:net:1645:16)
+[2m9:09:57 PM[22m [33m[1m[vite][22m[39m [33m[2m(client)[22m[39m [2m[console.warn] [22mHTTP polling fallback failed Error: GET /api/state failed: 502
+    at LabApi.fetchState (http://127.0.0.1:5173/src/api.js:14:13)
+    at async pollFallback (http://127.0.0.1:5173/src/main.js:114:22)
+[2m9:09:58 PM[22m [31m[1m[vite][22m[39m [31mws proxy error:[39m
+Error: connect ECONNREFUSED 127.0.0.1:8787
+    at TCPConnectWrap.afterConnect [as oncomplete] (node:net:1645:16)
+[2m9:09:58 PM[22m [33m[1m[vite][22m[39m [33m[2m(client)[22m[39m [2m[console.warn] [22mEidos Life Lab WebSocket error; HTTP fallback is active. {"isTrusted":true}
+[2m9:09:58 PM[22m [31m[1m[vite][22m[39m [31mhttp proxy error: /api/state[39m
+Error: connect ECONNREFUSED 127.0.0.1:8787
+    at TCPConnectWrap.afterConnect [as oncomplete] (node:net:1645:16)
+[2m9:09:58 PM[22m [33m[1m[vite][22m[39m [33m[2m(client)[22m[39m [2m[console.warn] [22mHTTP polling fallback failed Error: GET /api/state failed: 502
+    at LabApi.fetchState (http://127.0.0.1:5173/src/api.js:14:13)
+    at async pollFallback (http://127.0.0.1:5173/src/main.js:114:22)
+[2m9:09:59 PM[22m [31m[1m[vite][22m[39m [31mhttp proxy error: /api/state[39m
+Error: connect ECONNREFUSED 127.0.0.1:8787
+    at TCPConnectWrap.afterConnect [as oncomplete] (node:net:1645:16)
+[2m9:09:59 PM[22m [33m[1m[vite][22m[39m [33m[2m(client)[22m[39m [2m[console.warn] [22mHTTP polling fallback failed Error: GET /api/state failed: 502
+    at LabApi.fetchState (http://127.0.0.1:5173/src/api.js:14:13)
+    at async pollFallback (http://127.0.0.1:5173/src/main.js:114:22)
+[2m9:09:59 PM[22m [31m[1m[vite][22m[39m [31mws proxy error:[39m
+Error: connect ECONNREFUSED 127.0.0.1:8787
+    at TCPConnectWrap.afterConnect [as oncomplete] (node:net:1645:16)
+[2m9:09:59 PM[22m [31m[1m[vite][22m[39m [31mhttp proxy error: /api/state[39m
+Error: connect ECONNREFUSED 127.0.0.1:8787
+    at TCPConnectWrap.afterConnect [as oncomplete] (node:net:1645:16)
+[2m9:09:59 PM[22m [33m[1m[vite][22m[39m [33m[2m(client)[22m[39m [2m[console.warn] [22mEidos Life Lab WebSocket error; HTTP fallback is active. {"isTrusted":true}
+[2m9:09:59 PM[22m [33m[1m[vite][22m[39m [33m[2m(client)[22m[39m [2m[console.warn] [22mHTTP polling fallback failed Error: GET /api/state failed: 502
+    at LabApi.fetchState (http://127.0.0.1:5173/src/api.js:14:13)
+    at async pollFallback (http://127.0.0.1:5173/src/main.js:114:22)
+[2m9:09:59 PM[22m [31m[1m[vite][22m[39m [31mhttp proxy error: /api/state[39m
+Error: connect ECONNREFUSED 127.0.0.1:8787
+    at TCPConnectWrap.afterConnect [as oncomplete] (node:net:1645:16)
+[2m9:10:00 PM[22m [33m[1m[vite][22m[39m [33m[2m(client)[22m[39m [2m[console.warn] [22mHTTP polling fallback failed Error: GET /api/state failed: 502
+    at LabApi.fetchState (http://127.0.0.1:5173/src/api.js:14:13)
+    at async pollFallback (http://127.0.0.1:5173/src/main.js:114:22)
+[2m9:10:00 PM[22m [31m[1m[vite][22m[39m [31mhttp proxy error: /api/state[39m
+Error: connect ECONNREFUSED 127.0.0.1:8787
+    at TCPConnectWrap.afterConnect [as oncomplete] (node:net:1645:16)
+[2m9:10:00 PM[22m [33m[1m[vite][22m[39m [33m[2m(client)[22m[39m [2m[console.warn] [22mHTTP polling fallback failed Error: GET /api/state failed: 502
+    at LabApi.fetchState (http://127.0.0.1:5173/src/api.js:14:13)
+    at async pollFallback (http://127.0.0.1:5173/src/main.js:114:22)
+[2m9:10:00 PM[22m [31m[1m[vite][22m[39m [31mhttp proxy error: /api/state[39m
+Error: connect ECONNREFUSED 127.0.0.1:8787
+    at TCPConnectWrap.afterConnect [as oncomplete] (node:net:1645:16)
+[2m9:10:00 PM[22m [33m[1m[vite][22m[39m [33m[2m(client)[22m[39m [2m[console.warn] [22mHTTP polling fallback failed Error: GET /api/state failed: 502
+    at LabApi.fetchState (http://127.0.0.1:5173/src/api.js:14:13)
+    at async pollFallback (http://127.0.0.1:5173/src/main.js:114:22)
+[2m9:10:00 PM[22m [31m[1m[vite][22m[39m [31mws proxy error:[39m
+Error: connect ECONNREFUSED 127.0.0.1:8787
+    at TCPConnectWrap.afterConnect [as oncomplete] (node:net:1645:16)
+[2m9:10:00 PM[22m [33m[1m[vite][22m[39m [33m[2m(client)[22m[39m [2m[console.warn] [22mEidos Life Lab WebSocket error; HTTP fallback is active. {"isTrusted":true}
+[2m9:10:01 PM[22m [31m[1m[vite][22m[39m [31mhttp proxy error: /api/state[39m
+Error: connect ECONNREFUSED 127.0.0.1:8787
+    at TCPConnectWrap.afterConnect [as oncomplete] (node:net:1645:16)
+[2m9:10:01 PM[22m [33m[1m[vite][22m[39m [33m[2m(client)[22m[39m [2m[console.warn] [22mHTTP polling fallback failed Error: GET /api/state failed: 502
+    at LabApi.fetchState (http://127.0.0.1:5173/src/api.js:14:13)
+    at async pollFallback (http://127.0.0.1:5173/src/main.js:114:22)
+[2m9:10:01 PM[22m [31m[1m[vite][22m[39m [31mhttp proxy error: /api/state[39m
+Error: connect ECONNREFUSED 127.0.0.1:8787
+    at TCPConnectWrap.afterConnect [as oncomplete] (node:net:1645:16)
+[2m9:10:01 PM[22m [33m[1m[vite][22m[39m [33m[2m(client)[22m[39m [2m[console.warn] [22mHTTP polling fallback failed Error: GET /api/state failed: 502
+    at LabApi.fetchState (http://127.0.0.1:5173/src/api.js:14:13)
+    at async pollFallback (http://127.0.0.1:5173/src/main.js:114:22)
+[2m9:10:02 PM[22m [31m[1m[vite][22m[39m [31mhttp proxy error: /api/state[39m
+Error: connect ECONNREFUSED 127.0.0.1:8787
+    at TCPConnectWrap.afterConnect [as oncomplete] (node:net:1645:16)
+[2m9:10:02 PM[22m [33m[1m[vite][22m[39m [33m[2m(client)[22m[39m [2m[console.warn] [22mHTTP polling fallback failed Error: GET /api/state failed: 502
+    at LabApi.fetchState (http://127.0.0.1:5173/src/api.js:14:13)
+    at async pollFallback (http://127.0.0.1:5173/src/main.js:114:22)
+[2m9:10:02 PM[22m [31m[1m[vite][22m[39m [31mhttp proxy error: /api/state[39m
+Error: connect ECONNREFUSED 127.0.0.1:8787
+    at TCPConnectWrap.afterConnect [as oncomplete] (node:net:1645:16)
+[2m9:10:02 PM[22m [31m[1m[vite][22m[39m [31mws proxy error:[39m
+Error: connect ECONNREFUSED 127.0.0.1:8787
+    at TCPConnectWrap.afterConnect [as oncomplete] (node:net:1645:16)
+[2m9:10:02 PM[22m [33m[1m[vite][22m[39m [33m[2m(client)[22m[39m [2m[console.warn] [22mHTTP polling fallback failed Error: GET /api/state failed: 502
+    at LabApi.fetchState (http://127.0.0.1:5173/src/api.js:14:13)
+    at async pollFallback (http://127.0.0.1:5173/src/main.js:114:22)
+[2m9:10:02 PM[22m [33m[1m[vite][22m[39m [33m[2m(client)[22m[39m [2m[console.warn] [22mEidos Life Lab WebSocket error; HTTP fallback is active. {"isTrusted":true}
+[2m9:10:03 PM[22m [31m[1m[vite][22m[39m [31mhttp proxy error: /api/state[39m
+Error: connect ECONNREFUSED 127.0.0.1:8787
+    at TCPConnectWrap.afterConnect [as oncomplete] (node:net:1645:16)
+[2m9:10:03 PM[22m [33m[1m[vite][22m[39m [33m[2m(client)[22m[39m [2m[console.warn] [22mHTTP polling fallback failed Error: GET /api/state failed: 502
+    at LabApi.fetchState (http://127.0.0.1:5173/src/api.js:14:13)
+    at async pollFallback (http://127.0.0.1:5173/src/main.js:114:22)
+[2m9:10:03 PM[22m [31m[1m[vite][22m[39m [31mhttp proxy error: /api/state[39m
+Error: connect ECONNREFUSED 127.0.0.1:8787
+    at TCPConnectWrap.afterConnect [as oncomplete] (node:net:1645:16)
+[2m9:10:03 PM[22m [33m[1m[vite][22m[39m [33m[2m(client)[22m[39m [2m[console.warn] [22mHTTP polling fallback failed Error: GET /api/state failed: 502
+    at LabApi.fetchState (http://127.0.0.1:5173/src/api.js:14:13)
+    at async pollFallback (http://127.0.0.1:5173/src/main.js:114:22)
+[2m9:10:03 PM[22m [31m[1m[vite][22m[39m [31mws proxy error:[39m
+Error: connect ECONNREFUSED 127.0.0.1:8787
+    at TCPConnectWrap.afterConnect [as oncomplete] (node:net:1645:16)
+[2m9:10:03 PM[22m [33m[1m[vite][22m[39m [33m[2m(client)[22m[39m [2m[console.warn] [22mEidos Life Lab WebSocket error; HTTP fallback is active. {"isTrusted":true}
+[2m9:10:03 PM[22m [31m[1m[vite][22m[39m [31mhttp proxy error: /api/state[39m
+Error: connect ECONNREFUSED 127.0.0.1:8787
+    at TCPConnectWrap.afterConnect [as oncomplete] (node:net:1645:16)
+[2m9:10:03 PM[22m [33m[1m[vite][22m[39m [33m[2m(client)[22m[39m [2m[console.warn] [22mHTTP polling fallback failed Error: GET /api/state failed: 502
+    at LabApi.fetchState (http://127.0.0.1:5173/src/api.js:14:13)
+    at async pollFallback (http://127.0.0.1:5173/src/main.js:114:22)
+[2m9:10:04 PM[22m [31m[1m[vite][22m[39m [31mhttp proxy error: /api/state[39m
+Error: connect ECONNREFUSED 127.0.0.1:8787
+    at TCPConnectWrap.afterConnect [as oncomplete] (node:net:1645:16)
+[2m9:10:04 PM[22m [33m[1m[vite][22m[39m [33m[2m(client)[22m[39m [2m[console.warn] [22mHTTP polling fallback failed Error: GET /api/state failed: 502
+    at LabApi.fetchState (http://127.0.0.1:5173/src/api.js:14:13)
+    at async pollFallback (http://127.0.0.1:5173/src/main.js:114:22)
+[2m9:10:04 PM[22m [31m[1m[vite][22m[39m [31mhttp proxy error: /api/state[39m
+Error: connect ECONNREFUSED 127.0.0.1:8787
+    at TCPConnectWrap.afterConnect [as oncomplete] (node:net:1645:16)
+[2m9:10:04 PM[22m [33m[1m[vite][22m[39m [33m[2m(client)[22m[39m [2m[console.warn] [22mHTTP polling fallback failed Error: GET /api/state failed: 502
+    at LabApi.fetchState (http://127.0.0.1:5173/src/api.js:14:13)
+    at async pollFallback (http://127.0.0.1:5173/src/main.js:114:22)
+[2m9:10:05 PM[22m [31m[1m[vite][22m[39m [31mhttp proxy error: /api/state[39m
+Error: connect ECONNREFUSED 127.0.0.1:8787
+    at TCPConnectWrap.afterConnect [as oncomplete] (node:net:1645:16)
+[2m9:10:05 PM[22m [31m[1m[vite][22m[39m [31mws proxy error:[39m
+Error: connect ECONNREFUSED 127.0.0.1:8787
+    at TCPConnectWrap.afterConnect [as oncomplete] (node:net:1645:16)
+[2m9:10:05 PM[22m [33m[1m[vite][22m[39m [33m[2m(client)[22m[39m [2m[console.warn] [22mHTTP polling fallback failed Error: GET /api/state failed: 502
+    at LabApi.fetchState (http://127.0.0.1:5173/src/api.js:14:13)
+    at async pollFallback (http://127.0.0.1:5173/src/main.js:114:22)
+[2m9:10:05 PM[22m [33m[1m[vite][22m[39m [33m[2m(client)[22m[39m [2m[console.warn] [22mEidos Life Lab WebSocket error; HTTP fallback is active. {"isTrusted":true}
+[2m9:10:05 PM[22m [31m[1m[vite][22m[39m [31mhttp proxy error: /api/state[39m
+Error: connect ECONNREFUSED 127.0.0.1:8787
+    at TCPConnectWrap.afterConnect [as oncomplete] (node:net:1645:16)
+[2m9:10:05 PM[22m [33m[1m[vite][22m[39m [33m[2m(client)[22m[39m [2m[console.warn] [22mHTTP polling fallback failed Error: GET /api/state failed: 502
+    at LabApi.fetchState (http://127.0.0.1:5173/src/api.js:14:13)
+    at async pollFallback (http://127.0.0.1:5173/src/main.js:114:22)
+[2m9:10:06 PM[22m [31m[1m[vite][22m[39m [31mws proxy error:[39m
+Error: connect ECONNREFUSED 127.0.0.1:8787
+    at TCPConnectWrap.afterConnect [as oncomplete] (node:net:1645:16)
+[2m9:10:06 PM[22m [33m[1m[vite][22m[39m [33m[2m(client)[22m[39m [2m[console.warn] [22mEidos Life Lab WebSocket error; HTTP fallback is active. {"isTrusted":true}
+[2m9:10:12 PM[22m [31m[1m[vite][22m[39m [31mws proxy error:[39m
+Error: connect ECONNREFUSED 127.0.0.1:8787
+    at TCPConnectWrap.afterConnect [as oncomplete] (node:net:1645:16)
+[2m9:10:12 PM[22m [31m[1m[vite][22m[39m [31mhttp proxy error: /api/state[39m
+Error: connect ECONNREFUSED 127.0.0.1:8787
+    at TCPConnectWrap.afterConnect [as oncomplete] (node:net:1645:16)
+[2m9:10:12 PM[22m [31m[1m[vite][22m[39m [31mhttp proxy error: /api/state[39m
+Error: connect ECONNREFUSED 127.0.0.1:8787
+    at TCPConnectWrap.afterConnect [as oncomplete] (node:net:1645:16)
+[2m9:10:15 PM[22m [31m[1m[vite][22m[39m [31mhttp proxy error: /api/state[39m
+Error: connect ECONNREFUSED 127.0.0.1:8787
+    at TCPConnectWrap.afterConnect [as oncomplete] (node:net:1645:16)
+[2m9:10:18 PM[22m [31m[1m[vite][22m[39m [31mhttp proxy error: /api/state[39m
+Error: connect ECONNREFUSED 127.0.0.1:8787
+    at TCPConnectWrap.afterConnect [as oncomplete] (node:net:1645:16)
+[2m9:10:18 PM[22m [31m[1m[vite][22m[39m [31mws proxy error:[39m
+Error: connect ECONNREFUSED 127.0.0.1:8787
+    at TCPConnectWrap.afterConnect [as oncomplete] (node:net:1645:16)
+[2m9:10:18 PM[22m [33m[1m[vite][22m[39m [33m[2m(client)[22m[39m [2m[console.warn] [22mEidos Life Lab WebSocket error; HTTP fallback is active. {"isTrusted":true}
+[2m9:10:19 PM[22m [31m[1m[vite][22m[39m [31mhttp proxy error: /api/state[39m
+Error: connect ECONNREFUSED 127.0.0.1:8787
+    at TCPConnectWrap.afterConnect [as oncomplete] (node:net:1645:16)
+[2m9:10:19 PM[22m [33m[1m[vite][22m[39m [33m[2m(client)[22m[39m [2m[console.warn] [22mHTTP polling fallback failed Error: GET /api/state failed: 502
+    at LabApi.fetchState (http://127.0.0.1:5173/src/api.js:14:13)
+    at async pollFallback (http://127.0.0.1:5173/src/main.js:114:22)
+[2m9:10:19 PM[22m [33m[1m[vite][22m[39m [33m[2m(client)[22m[39m [2m[console.warn] [22mHTTP polling fallback failed Error: GET /api/state failed: 502
+    at LabApi.fetchState (http://127.0.0.1:5173/src/api.js:14:13)
+    at async pollFallback (http://127.0.0.1:5173/src/main.js:114:22)
+[2m9:10:19 PM[22m [31m[1m[vite][22m[39m [31mhttp proxy error: /api/state[39m
+Error: connect ECONNREFUSED 127.0.0.1:8787
+    at TCPConnectWrap.afterConnect [as oncomplete] (node:net:1645:16)
+[2m9:10:19 PM[22m [33m[1m[vite][22m[39m [33m[2m(client)[22m[39m [2m[console.warn] [22mHTTP polling fallback failed Error: GET /api/state failed: 502
+    at LabApi.fetchState (http://127.0.0.1:5173/src/api.js:14:13)
+    at async pollFallback (http://127.0.0.1:5173/src/main.js:114:22)
+[2m9:10:19 PM[22m [33m[1m[vite][22m[39m [33m[2m(client)[22m[39m [2m[console.warn] [22mHTTP polling fallback failed Error: GET /api/state failed: 502
+    at LabApi.fetchState (http://127.0.0.1:5173/src/api.js:14:13)
+    at async pollFallback (http://127.0.0.1:5173/src/main.js:114:22)
+[2m9:10:19 PM[22m [33m[1m[vite][22m[39m [33m[2m(client)[22m[39m [2m[console.warn] [22mHTTP polling fallback failed Error: GET /api/state failed: 502
+    at LabApi.fetchState (http://127.0.0.1:5173/src/api.js:14:13)
+    at async pollFallback (http://127.0.0.1:5173/src/main.js:114:22)
+[2m9:10:20 PM[22m [31m[1m[vite][22m[39m [31mhttp proxy error: /api/state[39m
+Error: connect ECONNREFUSED 127.0.0.1:8787
+    at TCPConnectWrap.afterConnect [as oncomplete] (node:net:1645:16)
+[2m9:10:20 PM[22m [33m[1m[vite][22m[39m [33m[2m(client)[22m[39m [2m[console.warn] [22mEidos Life Lab WebSocket error; HTTP fallback is active. {"isTrusted":true}
+[2m9:10:20 PM[22m [31m[1m[vite][22m[39m [31mhttp proxy error: /api/state[39m
+Error: connect ECONNREFUSED 127.0.0.1:8787
+    at TCPConnectWrap.afterConnect [as oncomplete] (node:net:1645:16)
+[2m9:10:21 PM[22m [31m[1m[vite][22m[39m [31mhttp proxy error: /api/state[39m
+Error: connect ECONNREFUSED 127.0.0.1:8787
+    at TCPConnectWrap.afterConnect [as oncomplete] (node:net:1645:16)
+[2m9:10:22 PM[22m [33m[1m[vite][22m[39m [33m[2m(client)[22m[39m [2m[console.warn] [22mHTTP polling fallback failed Error: GET /api/state failed: 502
+    at LabApi.fetchState (http://127.0.0.1:5173/src/api.js:14:13)
+    at async pollFallback (http://127.0.0.1:5173/src/main.js:114:22)
+[2m9:10:22 PM[22m [31m[1m[vite][22m[39m [31mhttp proxy error: /api/state[39m
+Error: connect ECONNREFUSED 127.0.0.1:8787
+    at TCPConnectWrap.afterConnect [as oncomplete] (node:net:1645:16)
+[2m9:10:22 PM[22m [31m[1m[vite][22m[39m [31mws proxy error:[39m
+Error: connect ECONNREFUSED 127.0.0.1:8787
+    at TCPConnectWrap.afterConnect [as oncomplete] (node:net:1645:16)
+[2m9:10:23 PM[22m [33m[1m[vite][22m[39m [33m[2m(client)[22m[39m [2m[console.warn] [22mHTTP polling fallback failed Error: GET /api/state failed: 502
+    at LabApi.fetchState (http://127.0.0.1:5173/src/api.js:14:13)
+    at async pollFallback (http://127.0.0.1:5173/src/main.js:114:22)
+[2m9:10:23 PM[22m [33m[1m[vite][22m[39m [33m[2m(client)[22m[39m [2m[console.warn] [22mHTTP polling fallback failed Error: GET /api/state failed: 502
+    at LabApi.fetchState (http://127.0.0.1:5173/src/api.js:14:13)
+    at async pollFallback (http://127.0.0.1:5173/src/main.js:114:22)
+[2m9:10:23 PM[22m [33m[1m[vite][22m[39m [33m[2m(client)[22m[39m [2m[console.warn] [22mEidos Life Lab WebSocket error; HTTP fallback is active. {"isTrusted":true}
+[2m9:10:23 PM[22m [31m[1m[vite][22m[39m [31mws proxy error:[39m
+Error: connect ECONNREFUSED 127.0.0.1:8787
+    at TCPConnectWrap.afterConnect [as oncomplete] (node:net:1645:16)
+[2m9:10:23 PM[22m [33m[1m[vite][22m[39m [33m[2m(client)[22m[39m [2m[console.warn] [22mEidos Life Lab WebSocket error; HTTP fallback is active. {"isTrusted":true}
+[2m9:10:23 PM[22m [31m[1m[vite][22m[39m [31mhttp proxy error: /api/state[39m
+Error: connect ECONNREFUSED 127.0.0.1:8787
+    at TCPConnectWrap.afterConnect [as oncomplete] (node:net:1645:16)
+[2m9:10:23 PM[22m [31m[1m[vite][22m[39m [31mhttp proxy error: /api/state[39m
+Error: connect ECONNREFUSED 127.0.0.1:8787
+    at TCPConnectWrap.afterConnect [as oncomplete] (node:net:1645:16)
+[2m9:10:23 PM[22m [33m[1m[vite][22m[39m [33m[2m(client)[22m[39m [2m[console.warn] [22mHTTP polling fallback failed Error: GET /api/state failed: 502
+    at LabApi.fetchState (http://127.0.0.1:5173/src/api.js:14:13)
+    at async pollFallback (http://127.0.0.1:5173/src/main.js:114:22)
+[2m9:10:23 PM[22m [33m[1m[vite][22m[39m [33m[2m(client)[22m[39m [2m[console.warn] [22mHTTP polling fallback failed Error: GET /api/state failed: 502
+    at LabApi.fetchState (http://127.0.0.1:5173/src/api.js:14:13)
+    at async pollFallback (http://127.0.0.1:5173/src/main.js:114:22)
+[2m9:10:23 PM[22m [33m[1m[vite][22m[39m [33m[2m(client)[22m[39m [2m[console.warn] [22mHTTP polling fallback failed Error: GET /api/state failed: 502
+    at LabApi.fetchState (http://127.0.0.1:5173/src/api.js:14:13)
+    at async pollFallback (http://127.0.0.1:5173/src/main.js:114:22)
+[2m9:10:24 PM[22m [31m[1m[vite][22m[39m [31mhttp proxy error: /api/state[39m
+Error: connect ECONNREFUSED 127.0.0.1:8787
+    at TCPConnectWrap.afterConnect [as oncomplete] (node:net:1645:16)
+[2m9:10:24 PM[22m [33m[1m[vite][22m[39m [33m[2m(client)[22m[39m [2m[console.warn] [22mHTTP polling fallback failed Error: GET /api/state failed: 502
+    at LabApi.fetchState (http://127.0.0.1:5173/src/api.js:14:13)
+    at async pollFallback (http://127.0.0.1:5173/src/main.js:114:22)
+[2m9:10:26 PM[22m [31m[1m[vite][22m[39m [31mhttp proxy error: /api/state[39m
+Error: connect ECONNREFUSED 127.0.0.1:8787
+    at TCPConnectWrap.afterConnect [as oncomplete] (node:net:1645:16)
+[2m9:10:26 PM[22m [31m[1m[vite][22m[39m [31mws proxy error:[39m
+Error: connect ECONNREFUSED 127.0.0.1:8787
+    at TCPConnectWrap.afterConnect [as oncomplete] (node:net:1645:16)
+[2m9:10:26 PM[22m [33m[1m[vite][22m[39m [33m[2m(client)[22m[39m [2m[console.warn] [22mEidos Life Lab WebSocket error; HTTP fallback is active. {"isTrusted":true}
+[2m9:10:26 PM[22m [33m[1m[vite][22m[39m [33m[2m(client)[22m[39m [2m[console.warn] [22mHTTP polling fallback failed Error: GET /api/state failed: 502
+    at LabApi.fetchState (http://127.0.0.1:5173/src/api.js:14:13)
+    at async pollFallback (http://127.0.0.1:5173/src/main.js:114:22)
+[2m9:10:26 PM[22m [31m[1m[vite][22m[39m [31mws proxy error:[39m
+Error: connect ECONNREFUSED 127.0.0.1:8787
+    at TCPConnectWrap.afterConnect [as oncomplete] (node:net:1645:16)
+[2m9:10:26 PM[22m [33m[1m[vite][22m[39m [33m[2m(client)[22m[39m [2m[console.warn] [22mEidos Life Lab WebSocket error; HTTP fallback is active. {"isTrusted":true}
+[2m9:10:26 PM[22m [31m[1m[vite][22m[39m [31mhttp proxy error: /api/state[39m
+Error: connect ECONNREFUSED 127.0.0.1:8787
+    at TCPConnectWrap.afterConnect [as oncomplete] (node:net:1645:16)
+[2m9:10:27 PM[22m [33m[1m[vite][22m[39m [33m[2m(client)[22m[39m [2m[console.warn] [22mHTTP polling fallback failed Error: GET /api/state failed: 502
+    at LabApi.fetchState (http://127.0.0.1:5173/src/api.js:14:13)
+    at async pollFallback (http://127.0.0.1:5173/src/main.js:114:22)
+[2m9:10:27 PM[22m [31m[1m[vite][22m[39m [31mhttp proxy error: /api/state[39m
+Error: connect ECONNREFUSED 127.0.0.1:8787
+    at TCPConnectWrap.afterConnect [as oncomplete] (node:net:1645:16)
+[2m9:10:28 PM[22m [31m[1m[vite][22m[39m [31mws proxy error:[39m
+Error: connect ECONNREFUSED 127.0.0.1:8787
+    at TCPConnectWrap.afterConnect [as oncomplete] (node:net:1645:16)
+[2m9:10:28 PM[22m [33m[1m[vite][22m[39m [33m[2m(client)[22m[39m [2m[console.warn] [22mEidos Life Lab WebSocket error; HTTP fallback is active. {"isTrusted":true}
+[2m9:10:28 PM[22m [31m[1m[vite][22m[39m [31mhttp proxy error: /api/state[39m
+Error: connect ECONNREFUSED 127.0.0.1:8787
+    at TCPConnectWrap.afterConnect [as oncomplete] (node:net:1645:16)
+[2m9:10:28 PM[22m [33m[1m[vite][22m[39m [33m[2m(client)[22m[39m [2m[console.warn] [22mHTTP polling fallback failed Error: GET /api/state failed: 502
+    at LabApi.fetchState (http://127.0.0.1:5173/src/api.js:14:13)
+    at async pollFallback (http://127.0.0.1:5173/src/main.js:114:22)
+[2m9:10:28 PM[22m [33m[1m[vite][22m[39m [33m[2m(client)[22m[39m [2m[console.warn] [22mHTTP polling fallback failed Error: GET /api/state failed: 502
+    at LabApi.fetchState (http://127.0.0.1:5173/src/api.js:14:13)
+    at async pollFallback (http://127.0.0.1:5173/src/main.js:114:22)
+[2m9:10:29 PM[22m [31m[1m[vite][22m[39m [31mws proxy error:[39m
+Error: connect ECONNREFUSED 127.0.0.1:8787
+    at TCPConnectWrap.afterConnect [as oncomplete] (node:net:1645:16)
+[2m9:10:29 PM[22m [31m[1m[vite][22m[39m [31mhttp proxy error: /api/state[39m
+Error: connect ECONNREFUSED 127.0.0.1:8787
+    at TCPConnectWrap.afterConnect [as oncomplete] (node:net:1645:16)
+[2m9:10:29 PM[22m [33m[1m[vite][22m[39m [33m[2m(client)[22m[39m [2m[console.warn] [22mEidos Life Lab WebSocket error; HTTP fallback is active. {"isTrusted":true}
+[2m9:10:29 PM[22m [33m[1m[vite][22m[39m [33m[2m(client)[22m[39m [2m[console.warn] [22mHTTP polling fallback failed Error: GET /api/state failed: 502
+    at LabApi.fetchState (http://127.0.0.1:5173/src/api.js:14:13)
+    at async pollFallback (http://127.0.0.1:5173/src/main.js:114:22)
+[2m9:10:30 PM[22m [31m[1m[vite][22m[39m [31mhttp proxy error: /api/state[39m
+Error: connect ECONNREFUSED 127.0.0.1:8787
+    at TCPConnectWrap.afterConnect [as oncomplete] (node:net:1645:16)
+[2m9:10:30 PM[22m [33m[1m[vite][22m[39m [33m[2m(client)[22m[39m [2m[console.warn] [22mHTTP polling fallback failed Error: GET /api/state failed: 502
+    at LabApi.fetchState (http://127.0.0.1:5173/src/api.js:14:13)
+    at async pollFallback (http://127.0.0.1:5173/src/main.js:114:22)
+[2m9:10:31 PM[22m [31m[1m[vite][22m[39m [31mhttp proxy error: /api/state[39m
+Error: connect ECONNREFUSED 127.0.0.1:8787
+    at TCPConnectWrap.afterConnect [as oncomplete] (node:net:1645:16)
+[2m9:10:31 PM[22m [31m[1m[vite][22m[39m [31mws proxy error:[39m
+Error: connect ECONNREFUSED 127.0.0.1:8787
+    at TCPConnectWrap.afterConnect [as oncomplete] (node:net:1645:16)
+[2m9:10:31 PM[22m [33m[1m[vite][22m[39m [33m[2m(client)[22m[39m [2m[console.warn] [22mHTTP polling fallback failed Error: GET /api/state failed: 502
+    at LabApi.fetchState (http://127.0.0.1:5173/src/api.js:14:13)
+    at async pollFallback (http://127.0.0.1:5173/src/main.js:114:22)
+[2m9:10:31 PM[22m [33m[1m[vite][22m[39m [33m[2m(client)[22m[39m [2m[console.warn] [22mEidos Life Lab WebSocket error; HTTP fallback is active. {"isTrusted":true}
+[2m9:10:31 PM[22m [31m[1m[vite][22m[39m [31mhttp proxy error: /api/state[39m
+Error: connect ECONNREFUSED 127.0.0.1:8787
+    at TCPConnectWrap.afterConnect [as oncomplete] (node:net:1645:16)
+[2m9:10:32 PM[22m [33m[1m[vite][22m[39m [33m[2m(client)[22m[39m [2m[console.warn] [22mHTTP polling fallback failed Error: GET /api/state failed: 502
+    at LabApi.fetchState (http://127.0.0.1:5173/src/api.js:14:13)
+    at async pollFallback (http://127.0.0.1:5173/src/main.js:114:22)
+[2m9:10:32 PM[22m [31m[1m[vite][22m[39m [31mws proxy error:[39m
+Error: connect ECONNREFUSED 127.0.0.1:8787
+    at TCPConnectWrap.afterConnect [as oncomplete] (node:net:1645:16)
+[2m9:10:32 PM[22m [33m[1m[vite][22m[39m [33m[2m(client)[22m[39m [2m[console.warn] [22mEidos Life Lab WebSocket error; HTTP fallback is active. {"isTrusted":true}
+[2m9:10:33 PM[22m [31m[1m[vite][22m[39m [31mhttp proxy error: /api/state[39m
+Error: connect ECONNREFUSED 127.0.0.1:8787
+    at TCPConnectWrap.afterConnect [as oncomplete] (node:net:1645:16)
+[2m9:10:35 PM[22m [31m[1m[vite][22m[39m [31mws proxy error:[39m
+Error: connect ECONNREFUSED 127.0.0.1:8787
+    at TCPConnectWrap.afterConnect [as oncomplete] (node:net:1645:16)
+[2m9:10:35 PM[22m [33m[1m[vite][22m[39m [33m[2m(client)[22m[39m [2m[console.warn] [22mEidos Life Lab WebSocket error; HTTP fallback is active. {"isTrusted":true}
+[2m9:10:35 PM[22m [31m[1m[vite][22m[39m [31mhttp proxy error: /api/state[39m
+Error: connect ECONNREFUSED 127.0.0.1:8787
+    at TCPConnectWrap.afterConnect [as oncomplete] (node:net:1645:16)
+[2m9:10:35 PM[22m [33m[1m[vite][22m[39m [33m[2m(client)[22m[39m [2m[console.warn] [22mHTTP polling fallback failed Error: GET /api/state failed: 502
+    at LabApi.fetchState (http://127.0.0.1:5173/src/api.js:14:13)
+    at async pollFallback (http://127.0.0.1:5173/src/main.js:114:22)
+[2m9:10:35 PM[22m [33m[1m[vite][22m[39m [33m[2m(client)[22m[39m [2m[console.warn] [22mHTTP polling fallback failed Error: GET /api/state failed: 502
+    at LabApi.fetchState (http://127.0.0.1:5173/src/api.js:14:13)
+    at async pollFallback (http://127.0.0.1:5173/src/main.js:114:22)
+[2m9:10:35 PM[22m [31m[1m[vite][22m[39m [31mws proxy error:[39m
+Error: connect ECONNREFUSED 127.0.0.1:8787
+    at TCPConnectWrap.afterConnect [as oncomplete] (node:net:1645:16)
+[2m9:10:35 PM[22m [33m[1m[vite][22m[39m [33m[2m(client)[22m[39m [2m[console.warn] [22mEidos Life Lab WebSocket error; HTTP fallback is active. {"isTrusted":true}
+[2m9:10:35 PM[22m [31m[1m[vite][22m[39m [31mhttp proxy error: /api/state[39m
+Error: connect ECONNREFUSED 127.0.0.1:8787
+    at TCPConnectWrap.afterConnect [as oncomplete] (node:net:1645:16)
+[2m9:10:35 PM[22m [33m[1m[vite][22m[39m [33m[2m(client)[22m[39m [2m[console.warn] [22mHTTP polling fallback failed Error: GET /api/state failed: 502
+    at LabApi.fetchState (http://127.0.0.1:5173/src/api.js:14:13)
+    at async pollFallback (http://127.0.0.1:5173/src/main.js:114:22)
+[2m9:10:36 PM[22m [31m[1m[vite][22m[39m [31mhttp proxy error: /api/state[39m
+Error: connect ECONNREFUSED 127.0.0.1:8787
+    at TCPConnectWrap.afterConnect [as oncomplete] (node:net:1645:16)
+[2m9:10:36 PM[22m [33m[1m[vite][22m[39m [33m[2m(client)[22m[39m [2m[console.warn] [22mHTTP polling fallback failed Error: GET /api/state failed: 502
+    at LabApi.fetchState (http://127.0.0.1:5173/src/api.js:14:13)
+    at async pollFallback (http://127.0.0.1:5173/src/main.js:114:22)
+[2m9:10:37 PM[22m [31m[1m[vite][22m[39m [31mhttp proxy error: /api/state[39m
+Error: connect ECONNREFUSED 127.0.0.1:8787
+    at TCPConnectWrap.afterConnect [as oncomplete] (node:net:1645:16)
+[2m9:10:37 PM[22m [33m[1m[vite][22m[39m [33m[2m(client)[22m[39m [2m[console.warn] [22mHTTP polling fallback failed Error: GET /api/state failed: 502
+    at LabApi.fetchState (http://127.0.0.1:5173/src/api.js:14:13)
+    at async pollFallback (http://127.0.0.1:5173/src/main.js:114:22)
+[2m9:10:37 PM[22m [31m[1m[vite][22m[39m [31mws proxy error:[39m
+Error: connect ECONNREFUSED 127.0.0.1:8787
+    at TCPConnectWrap.afterConnect [as oncomplete] (node:net:1645:16)
+[2m9:10:37 PM[22m [33m[1m[vite][22m[39m [33m[2m(client)[22m[39m [2m[console.warn] [22mEidos Life Lab WebSocket error; HTTP fallback is active. {"isTrusted":true}
+[2m9:10:38 PM[22m [31m[1m[vite][22m[39m [31mhttp proxy error: /api/state[39m
+Error: connect ECONNREFUSED 127.0.0.1:8787
+    at TCPConnectWrap.afterConnect [as oncomplete] (node:net:1645:16)
+[2m9:10:38 PM[22m [33m[1m[vite][22m[39m [33m[2m(client)[22m[39m [2m[console.warn] [22mHTTP polling fallback failed Error: GET /api/state failed: 502
+    at LabApi.fetchState (http://127.0.0.1:5173/src/api.js:14:13)
+    at async pollFallback (http://127.0.0.1:5173/src/main.js:114:22)
+[2m9:10:38 PM[22m [31m[1m[vite][22m[39m [31mws proxy error:[39m
+Error: connect ECONNREFUSED 127.0.0.1:8787
+    at TCPConnectWrap.afterConnect [as oncomplete] (node:net:1645:16)
+[2m9:10:38 PM[22m [33m[1m[vite][22m[39m [33m[2m(client)[22m[39m [2m[console.warn] [22mEidos Life Lab WebSocket error; HTTP fallback is active. {"isTrusted":true}
+[2m9:10:38 PM[22m [31m[1m[vite][22m[39m [31mhttp proxy error: /api/state[39m
+Error: connect ECONNREFUSED 127.0.0.1:8787
+    at TCPConnectWrap.afterConnect [as oncomplete] (node:net:1645:16)
+[2m9:10:38 PM[22m [33m[1m[vite][22m[39m [33m[2m(client)[22m[39m [2m[console.warn] [22mHTTP polling fallback failed Error: GET /api/state failed: 502
+    at LabApi.fetchState (http://127.0.0.1:5173/src/api.js:14:13)
+    at async pollFallback (http://127.0.0.1:5173/src/main.js:114:22)
+[2m9:10:39 PM[22m [31m[1m[vite][22m[39m [31mhttp proxy error: /api/state[39m
+Error: connect ECONNREFUSED 127.0.0.1:8787
+    at TCPConnectWrap.afterConnect [as oncomplete] (node:net:1645:16)
+[2m9:10:39 PM[22m [33m[1m[vite][22m[39m [33m[2m(client)[22m[39m [2m[console.warn] [22mHTTP polling fallback failed Error: GET /api/state failed: 502
+    at LabApi.fetchState (http://127.0.0.1:5173/src/api.js:14:13)
+    at async pollFallback (http://127.0.0.1:5173/src/main.js:114:22)
+[2m9:10:39 PM[22m [31m[1m[vite][22m[39m [31mhttp proxy error: /api/state[39m
+Error: connect ECONNREFUSED 127.0.0.1:8787
+    at TCPConnectWrap.afterConnect [as oncomplete] (node:net:1645:16)
+[2m9:10:39 PM[22m [33m[1m[vite][22m[39m [33m[2m(client)[22m[39m [2m[console.warn] [22mHTTP polling fallback failed Error: GET /api/state failed: 502
+    at LabApi.fetchState (http://127.0.0.1:5173/src/api.js:14:13)
+    at async pollFallback (http://127.0.0.1:5173/src/main.js:114:22)
+[2m9:10:40 PM[22m [31m[1m[vite][22m[39m [31mws proxy error:[39m
+Error: connect ECONNREFUSED 127.0.0.1:8787
+    at TCPConnectWrap.afterConnect [as oncomplete] (node:net:1645:16)
+[2m9:10:40 PM[22m [33m[1m[vite][22m[39m [33m[2m(client)[22m[39m [2m[console.warn] [22mEidos Life Lab WebSocket error; HTTP fallback is active. {"isTrusted":true}
+[2m9:10:40 PM[22m [31m[1m[vite][22m[39m [31mhttp proxy error: /api/state[39m
+Error: connect ECONNREFUSED 127.0.0.1:8787
+    at TCPConnectWrap.afterConnect [as oncomplete] (node:net:1645:16)
+[2m9:10:40 PM[22m [33m[1m[vite][22m[39m [33m[2m(client)[22m[39m [2m[console.warn] [22mHTTP polling fallback failed Error: GET /api/state failed: 502
+    at LabApi.fetchState (http://127.0.0.1:5173/src/api.js:14:13)
+    at async pollFallback (http://127.0.0.1:5173/src/main.js:114:22)
+[2m9:10:41 PM[22m [31m[1m[vite][22m[39m [31mws proxy error:[39m
+Error: connect ECONNREFUSED 127.0.0.1:8787
+    at TCPConnectWrap.afterConnect [as oncomplete] (node:net:1645:16)
+[2m9:10:41 PM[22m [33m[1m[vite][22m[39m [33m[2m(client)[22m[39m [2m[console.warn] [22mEidos Life Lab WebSocket error; HTTP fallback is active. {"isTrusted":true}
+[2m9:10:41 PM[22m [31m[1m[vite][22m[39m [31mhttp proxy error: /api/state[39m
+Error: connect ECONNREFUSED 127.0.0.1:8787
+    at TCPConnectWrap.afterConnect [as oncomplete] (node:net:1645:16)
+[2m9:10:42 PM[22m [31m[1m[vite][22m[39m [31mhttp proxy error: /api/state[39m
+Error: connect ECONNREFUSED 127.0.0.1:8787
+    at TCPConnectWrap.afterConnect [as oncomplete] (node:net:1645:16)
+[2m9:10:43 PM[22m [33m[1m[vite][22m[39m [33m[2m(client)[22m[39m [2m[console.warn] [22mHTTP polling fallback failed Error: GET /api/state failed: 502
+    at LabApi.fetchState (http://127.0.0.1:5173/src/api.js:14:13)
+    at async pollFallback (http://127.0.0.1:5173/src/main.js:114:22)
+[2m9:10:43 PM[22m [31m[1m[vite][22m[39m [31mws proxy error:[39m
+Error: connect ECONNREFUSED 127.0.0.1:8787
+    at TCPConnectWrap.afterConnect [as oncomplete] (node:net:1645:16)
+[2m9:10:43 PM[22m [31m[1m[vite][22m[39m [31mhttp proxy error: /api/state[39m
+Error: connect ECONNREFUSED 127.0.0.1:8787
+    at TCPConnectWrap.afterConnect [as oncomplete] (node:net:1645:16)
+[2m9:10:43 PM[22m [33m[1m[vite][22m[39m [33m[2m(client)[22m[39m [2m[console.warn] [22mEidos Life Lab WebSocket error; HTTP fallback is active. {"isTrusted":true}
+[2m9:10:44 PM[22m [31m[1m[vite][22m[39m [31mhttp proxy error: /api/state[39m
+Error: connect ECONNREFUSED 127.0.0.1:8787
+    at TCPConnectWrap.afterConnect [as oncomplete] (node:net:1645:16)
+[2m9:10:44 PM[22m [33m[1m[vite][22m[39m [33m[2m(client)[22m[39m [2m[console.warn] [22mHTTP polling fallback failed Error: GET /api/state failed: 502
+    at LabApi.fetchState (http://127.0.0.1:5173/src/api.js:14:13)
+    at async pollFallback (http://127.0.0.1:5173/src/main.js:114:22)
+[2m9:10:44 PM[22m [31m[1m[vite][22m[39m [31mws proxy error:[39m
+Error: connect ECONNREFUSED 127.0.0.1:8787
+    at TCPConnectWrap.afterConnect [as oncomplete] (node:net:1645:16)
+[2m9:10:44 PM[22m [33m[1m[vite][22m[39m [33m[2m(client)[22m[39m [2m[console.warn] [22mHTTP polling fallback failed Error: GET /api/state failed: 502
+    at LabApi.fetchState (http://127.0.0.1:5173/src/api.js:14:13)
+    at async pollFallback (http://127.0.0.1:5173/src/main.js:114:22)
+[2m9:10:44 PM[22m [33m[1m[vite][22m[39m [33m[2m(client)[22m[39m [2m[console.warn] [22mEidos Life Lab WebSocket error; HTTP fallback is active. {"isTrusted":true}
+[2m9:10:44 PM[22m [33m[1m[vite][22m[39m [33m[2m(client)[22m[39m [2m[console.warn] [22mHTTP polling fallback failed Error: GET /api/state failed: 502
+    at LabApi.fetchState (http://127.0.0.1:5173/src/api.js:14:13)
+    at async pollFallback (http://127.0.0.1:5173/src/main.js:114:22)
+[2m9:10:44 PM[22m [31m[1m[vite][22m[39m [31mhttp proxy error: /api/state[39m
+Error: connect ECONNREFUSED 127.0.0.1:8787
+    at TCPConnectWrap.afterConnect [as oncomplete] (node:net:1645:16)
+[2m9:10:44 PM[22m [33m[1m[vite][22m[39m [33m[2m(client)[22m[39m [2m[console.warn] [22mHTTP polling fallback failed Error: GET /api/state failed: 502
+    at LabApi.fetchState (http://127.0.0.1:5173/src/api.js:14:13)
+    at async pollFallback (http://127.0.0.1:5173/src/main.js:114:22)
+[2m9:10:45 PM[22m [31m[1m[vite][22m[39m [31mhttp proxy error: /api/state[39m
+Error: connect ECONNREFUSED 127.0.0.1:8787
+    at TCPConnectWrap.afterConnect [as oncomplete] (node:net:1645:16)
+[2m9:10:46 PM[22m [33m[1m[vite][22m[39m [33m[2m(client)[22m[39m [2m[console.warn] [22mHTTP polling fallback failed Error: GET /api/state failed: 502
+    at LabApi.fetchState (http://127.0.0.1:5173/src/api.js:14:13)
+    at async pollFallback (http://127.0.0.1:5173/src/main.js:114:22)
+[2m9:10:46 PM[22m [31m[1m[vite][22m[39m [31mws proxy error:[39m
+Error: connect ECONNREFUSED 127.0.0.1:8787
+    at TCPConnectWrap.afterConnect [as oncomplete] (node:net:1645:16)
+[2m9:10:46 PM[22m [31m[1m[vite][22m[39m [31mhttp proxy error: /api/state[39m
+Error: connect ECONNREFUSED 127.0.0.1:8787
+    at TCPConnectWrap.afterConnect [as oncomplete] (node:net:1645:16)
+[2m9:10:46 PM[22m [33m[1m[vite][22m[39m [33m[2m(client)[22m[39m [2m[console.warn] [22mEidos Life Lab WebSocket error; HTTP fallback is active. {"isTrusted":true}
+[2m9:10:46 PM[22m [33m[1m[vite][22m[39m [33m[2m(client)[22m[39m [2m[console.warn] [22mHTTP polling fallback failed Error: GET /api/state failed: 502
+    at LabApi.fetchState (http://127.0.0.1:5173/src/api.js:14:13)
+    at async pollFallback (http://127.0.0.1:5173/src/main.js:114:22)
+[2m9:10:47 PM[22m [31m[1m[vite][22m[39m [31mhttp proxy error: /api/state[39m
+Error: connect ECONNREFUSED 127.0.0.1:8787
+    at TCPConnectWrap.afterConnect [as oncomplete] (node:net:1645:16)
+[2m9:10:47 PM[22m [31m[1m[vite][22m[39m [31mws proxy error:[39m
+Error: connect ECONNREFUSED 127.0.0.1:8787
+    at TCPConnectWrap.afterConnect [as oncomplete] (node:net:1645:16)
+[2m9:10:47 PM[22m [33m[1m[vite][22m[39m [33m[2m(client)[22m[39m [2m[console.warn] [22mEidos Life Lab WebSocket error; HTTP fallback is active. {"isTrusted":true}
+[2m9:10:47 PM[22m [33m[1m[vite][22m[39m [33m[2m(client)[22m[39m [2m[console.warn] [22mHTTP polling fallback failed Error: GET /api/state failed: 502
+    at LabApi.fetchState (http://127.0.0.1:5173/src/api.js:14:13)
+    at async pollFallback (http://127.0.0.1:5173/src/main.js:114:22)
+[2m9:10:48 PM[22m [31m[1m[vite][22m[39m [31mhttp proxy error: /api/state[39m
+Error: connect ECONNREFUSED 127.0.0.1:8787
+    at TCPConnectWrap.afterConnect [as oncomplete] (node:net:1645:16)
+[2m9:10:48 PM[22m [33m[1m[vite][22m[39m [33m[2m(client)[22m[39m [2m[console.warn] [22mHTTP polling fallback failed Error: GET /api/state failed: 502
+    at LabApi.fetchState (http://127.0.0.1:5173/src/api.js:14:13)
+    at async pollFallback (http://127.0.0.1:5173/src/main.js:114:22)
+[2m9:10:49 PM[22m [31m[1m[vite][22m[39m [31mhttp proxy error: /api/state[39m
+Error: connect ECONNREFUSED 127.0.0.1:8787
+    at TCPConnectWrap.afterConnect [as oncomplete] (node:net:1645:16)
+[2m9:10:49 PM[22m [33m[1m[vite][22m[39m [33m[2m(client)[22m[39m [2m[console.warn] [22mHTTP polling fallback failed Error: GET /api/state failed: 502
+    at LabApi.fetchState (http://127.0.0.1:5173/src/api.js:14:13)
+    at async pollFallback (http://127.0.0.1:5173/src/main.js:114:22)
+[2m9:10:49 PM[22m [31m[1m[vite][22m[39m [31mws proxy error:[39m
+Error: connect ECONNREFUSED 127.0.0.1:8787
+    at TCPConnectWrap.afterConnect [as oncomplete] (node:net:1645:16)
+[2m9:10:49 PM[22m [33m[1m[vite][22m[39m [33m[2m(client)[22m[39m [2m[console.warn] [22mEidos Life Lab WebSocket error; HTTP fallback is active. {"isTrusted":true}
+[2m9:10:49 PM[22m [31m[1m[vite][22m[39m [31mhttp proxy error: /api/state[39m
+Error: connect ECONNREFUSED 127.0.0.1:8787
+    at TCPConnectWrap.afterConnect [as oncomplete] (node:net:1645:16)
+[2m9:10:49 PM[22m [33m[1m[vite][22m[39m [33m[2m(client)[22m[39m [2m[console.warn] [22mHTTP polling fallback failed Error: GET /api/state failed: 502
+    at LabApi.fetchState (http://127.0.0.1:5173/src/api.js:14:13)
+    at async pollFallback (http://127.0.0.1:5173/src/main.js:114:22)
+[2m9:10:50 PM[22m [31m[1m[vite][22m[39m [31mws proxy error:[39m
+Error: connect ECONNREFUSED 127.0.0.1:8787
+    at TCPConnectWrap.afterConnect [as oncomplete] (node:net:1645:16)
+[2m9:10:50 PM[22m [33m[1m[vite][22m[39m [33m[2m(client)[22m[39m [2m[console.warn] [22mEidos Life Lab WebSocket error; HTTP fallback is active. {"isTrusted":true}
+[2m9:10:50 PM[22m [31m[1m[vite][22m[39m [31mhttp proxy error: /api/state[39m
+Error: connect ECONNREFUSED 127.0.0.1:8787
+    at TCPConnectWrap.afterConnect [as oncomplete] (node:net:1645:16)
+[2m9:10:50 PM[22m [33m[1m[vite][22m[39m [33m[2m(client)[22m[39m [2m[console.warn] [22mHTTP polling fallback failed Error: GET /api/state failed: 502
+    at LabApi.fetchState (http://127.0.0.1:5173/src/api.js:14:13)
+    at async pollFallback (http://127.0.0.1:5173/src/main.js:114:22)
+[2m9:10:51 PM[22m [31m[1m[vite][22m[39m [31mhttp proxy error: /api/state[39m
+Error: connect ECONNREFUSED 127.0.0.1:8787
+    at TCPConnectWrap.afterConnect [as oncomplete] (node:net:1645:16)
+[2m9:10:51 PM[22m [33m[1m[vite][22m[39m [33m[2m(client)[22m[39m [2m[console.warn] [22mHTTP polling fallback failed Error: GET /api/state failed: 502
+    at LabApi.fetchState (http://127.0.0.1:5173/src/api.js:14:13)
+    at async pollFallback (http://127.0.0.1:5173/src/main.js:114:22)
+[2m9:10:51 PM[22m [31m[1m[vite][22m[39m [31mws proxy error:[39m
+Error: connect ECONNREFUSED 127.0.0.1:8787
+    at TCPConnectWrap.afterConnect [as oncomplete] (node:net:1645:16)
+[2m9:10:51 PM[22m [33m[1m[vite][22m[39m [33m[2m(client)[22m[39m [2m[console.warn] [22mEidos Life Lab WebSocket error; HTTP fallback is active. {"isTrusted":true}
+[2m9:10:52 PM[22m [31m[1m[vite][22m[39m [31mhttp proxy error: /api/state[39m
+Error: connect ECONNREFUSED 127.0.0.1:8787
+    at TCPConnectWrap.afterConnect [as oncomplete] (node:net:1645:16)
+[2m9:10:52 PM[22m [33m[1m[vite][22m[39m [33m[2m(client)[22m[39m [2m[console.warn] [22mHTTP polling fallback failed Error: GET /api/state failed: 502
+    at LabApi.fetchState (http://127.0.0.1:5173/src/api.js:14:13)
+    at async pollFallback (http://127.0.0.1:5173/src/main.js:114:22)
+[2m9:13:01 PM[22m [31m[1m[vite][22m[39m [31mws proxy error:[39m
+Error: read ECONNRESET
+    at TCP.onStreamRead (node:internal/stream_base_commons:216:20)
+[2m9:13:01 PM[22m [31m[1m[vite][22m[39m [31mws proxy socket error:[39m
+Error: read ECONNRESET
+    at TCP.onStreamRead (node:internal/stream_base_commons:216:20)
+[2m9:13:32 PM[22m [31m[1m[vite][22m[39m [31mws proxy error:[39m
+Error: write ECONNABORTED
+    at afterWriteDispatched (node:internal/stream_base_commons:159:15)
+    at writeGeneric (node:internal/stream_base_commons:150:3)
+    at Socket._writeGeneric (node:net:966:11)
+    at Socket._write (node:net:978:8)
+    at writeOrBuffer (node:internal/streams/writable:570:12)
+    at _write (node:internal/streams/writable:499:10)
+    at Writable.write (node:internal/streams/writable:508:10)
+    at Socket.ondata (node:internal/streams/readable:1012:24)
+    at Socket.emit (node:events:508:28)
+    at addChunk (node:internal/streams/readable:563:12)
+[2m9:13:32 PM[22m [31m[1m[vite][22m[39m [31mws proxy socket error:[39m
+Error: write ECONNABORTED
+    at afterWriteDispatched (node:internal/stream_base_commons:159:15)
+    at writeGeneric (node:internal/stream_base_commons:150:3)
+    at Socket._writeGeneric (node:net:966:11)
+    at Socket._write (node:net:978:8)
+    at writeOrBuffer (node:internal/streams/writable:570:12)
+    at _write (node:internal/streams/writable:499:10)
+    at Writable.write (node:internal/streams/writable:508:10)
+    at Socket.ondata (node:internal/streams/readable:1012:24)
+    at Socket.emit (node:events:508:28)
+    at addChunk (node:internal/streams/readable:563:12)
+[2m9:15:47 PM[22m [31m[1m[vite][22m[39m [31mws proxy error:[39m
+Error: read ECONNRESET
+    at TCP.onStreamRead (node:internal/stream_base_commons:216:20)
+[2m9:15:47 PM[22m [31m[1m[vite][22m[39m [31mws proxy socket error:[39m
+Error: read ECONNRESET
+    at TCP.onStreamRead (node:internal/stream_base_commons:216:20)

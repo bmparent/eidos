@@ -361,6 +361,25 @@ EIDOS_BRAIN_CONFIG = {
 
 DEFAULT_EIDOS_BRAIN_CONFIG = deepcopy(EIDOS_BRAIN_CONFIG)
 
+
+def validate_config(conf: Dict[str, Any]) -> None:
+    """Ensure configuration sanity."""
+    required_keys = ["steps", "reservoir", "spectral_radius", "hippocampus_dim"]
+    for key in required_keys:
+        if key not in conf:
+            raise ValueError(f"Config missing required key: {key}")
+
+    if conf["steps"] <= 0:
+        raise ValueError("steps must be positive")
+    if conf["reservoir"] <= 0:
+        raise ValueError("reservoir must be positive")
+    if not (0.0 < conf["spectral_radius"] < 10.0):
+        raise ValueError(f"Invalid spectral_radius: {conf['spectral_radius']}")
+
+    dims = conf.get("hippocampus_dim", 1000)
+    if dims < 100:
+        raise ValueError("hippocampus_dim too small (<100)")
+
 # =============================================================================
 # IMPORTS & PHYSICS INITIALIZATION
 # =============================================================================
@@ -819,7 +838,8 @@ def entropy_from_bins(bins: torch.Tensor, eps: float = 1e-12) -> float:
 
 def orch_or_collapse(tensor: torch.Tensor, precision: float = 100000.0) -> torch.Tensor:
     """Deterministic quantization operator: snap to a finite lattice."""
-    return torch.round(tensor * precision) / precision
+    snapped = torch.round(tensor * precision) / precision
+    return snapped.to(dtype=tensor.dtype)
 
 def _safe_slug(name: str) -> str:
     """Make a filesystem-friendly name: letters, digits, -, _ only."""
@@ -3977,6 +3997,7 @@ def run_sentinel_stream(
     top_k_surprises: int = 100,
     save_surprise_artifacts: bool = True,
 ):
+    _initialize_torch_runtime()
     print(">>> INITIALIZING SENTINEL V2.2 (UNIFIED STREAM)...")
 
     if est_frames <= 0:
@@ -4823,6 +4844,8 @@ def run_sentinel_stream(
                 print("!!! CONTINUITY HASH MISMATCH: expected != observed")
 
         summary = {
+            "total_frames": total_frames_seen,
+            "total_frames_seen": total_frames_seen,
             "frames_processed": frames_processed,
             "surprises": surprises,
             "surprise_rate": surprise_rate,
