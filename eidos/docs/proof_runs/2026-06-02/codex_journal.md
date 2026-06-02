@@ -1,0 +1,572 @@
+## Labeled CICIDS/WebAttacks proof harness -- artifacts/cicids_webattacks_proof_confirmation_balanced250_cpu_low_noise_20260601
+
+### What happened today
+Built and ran the event-confirmation layer for the labeled/domain proof harness.
+
+### What was accomplished
+- Added proof-side candidate scoring and confirmation modes for labeled-domain events.
+- Captured raw, merged, deduped, and confirmed event metrics side by side.
+- Added reason codes, suppression examples, confirmation examples, false-positive context, attack-window timing diagnostics, device receipts, and artifact hygiene receipts.
+- Kept core Eidos model behavior untouched.
+
+### Tests and commands run
+- `python tools/run_labeled_domain_proof.py --dataset cicids_webattacks --file artifacts/cicids_webattacks_samples/Thursday-WorkingHours-Morning-WebAttacks.pcap_ISCX.csv --label-column Label --frames 250 --seed 42 --out artifacts/cicids_webattacks_proof_confirmation_balanced250_cpu_low_noise_20260601 --suite full --sample-mode balanced --event-merge-gap 25 --confirmation-mode low_noise --attack-labels "Web Attack - Brute Force" --attack-labels "Web Attack - XSS" --attack-labels "Web Attack - Sql Injection"` -> labeled smoke proof artifacts written.
+
+### Problems encountered
+- Google Drive status: skipped or failed; reason: no writable Colab Drive root found among: \content\drive\MyDrive, \content\drive\My Drive; local Google Drive auto-discovery skipped; set EIDOS_PROOF_DRIVE_DIR or EIDOS_ARTIFACT_ROOT to a verified Drive mount.
+- This is not threshold tuning, so misses or false positives are reported rather than optimized away.
+
+### What changed
+- proof/event_confirmation.py
+- tools/run_labeled_domain_proof.py
+- tests/test_labeled_domain_proof_runner.py
+- .gitignore
+- artifacts/cicids_webattacks_proof_confirmation_balanced250_cpu_low_noise_20260601
+
+### What did not change
+Reservoir dynamics, RLS updates, Sentinel thresholds, anomaly policy, compression behavior, and architecture layers were not changed.
+
+### Artifacts generated
+- artifacts/cicids_webattacks_proof_confirmation_balanced250_cpu_low_noise_20260601/benchmark_summary.csv
+- artifacts/cicids_webattacks_proof_confirmation_balanced250_cpu_low_noise_20260601/benchmark_summary.md
+- artifacts/cicids_webattacks_proof_confirmation_balanced250_cpu_low_noise_20260601/config.json
+- artifacts/cicids_webattacks_proof_confirmation_balanced250_cpu_low_noise_20260601/crash_scan.json
+- artifacts/cicids_webattacks_proof_confirmation_balanced250_cpu_low_noise_20260601/drive_manifest.json
+- artifacts/cicids_webattacks_proof_confirmation_balanced250_cpu_low_noise_20260601/engine_artifacts/compression/cicids_webattacks_labeled_proof/20260602_000643_bicameral_stream_cicids_webattacks_labeled_proof.bin
+- artifacts/cicids_webattacks_proof_confirmation_balanced250_cpu_low_noise_20260601/engine_artifacts/compression/cicids_webattacks_labeled_proof/20260602_000643_bicameral_stream_meta_cicids_webattacks_labeled_proof.json
+- artifacts/cicids_webattacks_proof_confirmation_balanced250_cpu_low_noise_20260601/engine_artifacts/eidos_brain_archive/20260602_000446_cicids_webattacks_labeled_proof_seed42/anomalies.jsonl
+- artifacts/cicids_webattacks_proof_confirmation_balanced250_cpu_low_noise_20260601/engine_artifacts/eidos_brain_archive/20260602_000446_cicids_webattacks_labeled_proof_seed42/clusters.json
+- artifacts/cicids_webattacks_proof_confirmation_balanced250_cpu_low_noise_20260601/engine_artifacts/eidos_brain_archive/20260602_000446_cicids_webattacks_labeled_proof_seed42/report.txt
+- artifacts/cicids_webattacks_proof_confirmation_balanced250_cpu_low_noise_20260601/engine_artifacts/eidos_brain_archive/20260602_000446_cicids_webattacks_labeled_proof_seed42/session_meta.json
+- artifacts/cicids_webattacks_proof_confirmation_balanced250_cpu_low_noise_20260601/engine_artifacts/eidos_brain_archive/20260602_000446_cicids_webattacks_labeled_proof_seed42/state_capsule.json
+- artifacts/cicids_webattacks_proof_confirmation_balanced250_cpu_low_noise_20260601/engine_artifacts/eidos_brain_archive/20260602_000446_cicids_webattacks_labeled_proof_seed42/steps.csv
+- artifacts/cicids_webattacks_proof_confirmation_balanced250_cpu_low_noise_20260601/engine_artifacts/eidos_brain_archive/20260602_000446_cicids_webattacks_labeled_proof_seed42/summary.json
+- artifacts/cicids_webattacks_proof_confirmation_balanced250_cpu_low_noise_20260601/engine_artifacts/forecast.jsonl
+- artifacts/cicids_webattacks_proof_confirmation_balanced250_cpu_low_noise_20260601/engine_artifacts/hippocampus/cicids_webattacks_labeled_proof/20260602_000642_hippocampus_snapshot_cicids_webattacks_labeled_proof.pt
+- artifacts/cicids_webattacks_proof_confirmation_balanced250_cpu_low_noise_20260601/engine_artifacts/incident_cards.jsonl
+- artifacts/cicids_webattacks_proof_confirmation_balanced250_cpu_low_noise_20260601/engine_artifacts/manifest.jsonl
+- artifacts/cicids_webattacks_proof_confirmation_balanced250_cpu_low_noise_20260601/engine_artifacts/reservoir_checkpoints/cicids_webattacks_labeled_proof/20260602_000641_reservoir_checkpoint_cicids_webattacks_labeled_proof.pt
+- artifacts/cicids_webattacks_proof_confirmation_balanced250_cpu_low_noise_20260601/engine_artifacts/reservoir_geometry/cicids_webattacks_labeled_proof/20260602_000642_reservoir_geom_cicids_webattacks_labeled_proof.json
+- artifacts/cicids_webattacks_proof_confirmation_balanced250_cpu_low_noise_20260601/engine_artifacts/reservoir_geometry/cicids_webattacks_labeled_proof/20260602_000642_reservoir_states_cicids_webattacks_labeled_proof.npy
+- artifacts/cicids_webattacks_proof_confirmation_balanced250_cpu_low_noise_20260601/engine_artifacts/sentinel_forensics/cicids_webattacks_labeled_proof/20260602_000642_top_100_surprises_cicids_webattacks_labeled_proof.json
+- artifacts/cicids_webattacks_proof_confirmation_balanced250_cpu_low_noise_20260601/engine_artifacts/sentinel_forensics/cicids_webattacks_labeled_proof/20260602_000643_top_100_surprises_text_cicids_webattacks_labeled_proof.txt
+- artifacts/cicids_webattacks_proof_confirmation_balanced250_cpu_low_noise_20260601/environment.txt
+- artifacts/cicids_webattacks_proof_confirmation_balanced250_cpu_low_noise_20260601/event_confirmation_report.json
+- artifacts/cicids_webattacks_proof_confirmation_balanced250_cpu_low_noise_20260601/event_confirmation_report.md
+- artifacts/cicids_webattacks_proof_confirmation_balanced250_cpu_low_noise_20260601/event_summary.json
+- artifacts/cicids_webattacks_proof_confirmation_balanced250_cpu_low_noise_20260601/git_commit.txt
+- artifacts/cicids_webattacks_proof_confirmation_balanced250_cpu_low_noise_20260601/incident_cards/confirmed_event_001.json
+- artifacts/cicids_webattacks_proof_confirmation_balanced250_cpu_low_noise_20260601/incident_cards/confirmed_event_002.json
+- artifacts/cicids_webattacks_proof_confirmation_balanced250_cpu_low_noise_20260601/incident_cards/confirmed_event_003.json
+- artifacts/cicids_webattacks_proof_confirmation_balanced250_cpu_low_noise_20260601/incident_cards/engine_card_001.json
+- artifacts/cicids_webattacks_proof_confirmation_balanced250_cpu_low_noise_20260601/incident_cards/engine_card_002.json
+- artifacts/cicids_webattacks_proof_confirmation_balanced250_cpu_low_noise_20260601/incident_cards/engine_card_003.json
+- artifacts/cicids_webattacks_proof_confirmation_balanced250_cpu_low_noise_20260601/incident_cards/engine_card_004.json
+- artifacts/cicids_webattacks_proof_confirmation_balanced250_cpu_low_noise_20260601/incident_cards/engine_card_005.json
+- artifacts/cicids_webattacks_proof_confirmation_balanced250_cpu_low_noise_20260601/incident_cards/engine_card_006.json
+- artifacts/cicids_webattacks_proof_confirmation_balanced250_cpu_low_noise_20260601/incident_cards/engine_card_007.json
+- artifacts/cicids_webattacks_proof_confirmation_balanced250_cpu_low_noise_20260601/incident_cards/engine_card_008.json
+- artifacts/cicids_webattacks_proof_confirmation_balanced250_cpu_low_noise_20260601/incident_cards/engine_card_009.json
+- artifacts/cicids_webattacks_proof_confirmation_balanced250_cpu_low_noise_20260601/labeled_metrics.json
+- artifacts/cicids_webattacks_proof_confirmation_balanced250_cpu_low_noise_20260601/labeled_metrics.md
+- artifacts/cicids_webattacks_proof_confirmation_balanced250_cpu_low_noise_20260601/logs/engine_output.log
+- artifacts/cicids_webattacks_proof_confirmation_balanced250_cpu_low_noise_20260601/precision_ledger.json
+- artifacts/cicids_webattacks_proof_confirmation_balanced250_cpu_low_noise_20260601/precision_ledger.md
+- artifacts/cicids_webattacks_proof_confirmation_balanced250_cpu_low_noise_20260601/proof_digest.json
+- artifacts/cicids_webattacks_proof_confirmation_balanced250_cpu_low_noise_20260601/proof_digest.md
+- artifacts/cicids_webattacks_proof_confirmation_balanced250_cpu_low_noise_20260601/run_manifest.json
+
+### Google Drive archive status
+- Drive root used: unknown
+- Drive folder used: unknown
+- Files copied: 0
+- Files skipped: 0
+- Reason: no writable Colab Drive root found among: \content\drive\MyDrive, \content\drive\My Drive; local Google Drive auto-discovery skipped; set EIDOS_PROOF_DRIVE_DIR or EIDOS_ARTIFACT_ROOT to a verified Drive mount
+
+### End-of-task summary
+1. Files changed: proof/event_confirmation.py, tools/run_labeled_domain_proof.py, tests/test_labeled_domain_proof_runner.py, .gitignore, artifacts/cicids_webattacks_proof_confirmation_balanced250_cpu_low_noise_20260601
+2. Whether core behavior changed: no.
+3. Tests added or skipped: focused labeled runner tests added; full pytest run handled outside this runner.
+4. Repo-root commands run: `python tools/run_labeled_domain_proof.py --dataset cicids_webattacks --file artifacts/cicids_webattacks_samples/Thursday-WorkingHours-Morning-WebAttacks.pcap_ISCX.csv --label-column Label --frames 250 --seed 42 --out artifacts/cicids_webattacks_proof_confirmation_balanced250_cpu_low_noise_20260601 --suite full --sample-mode balanced --event-merge-gap 25 --confirmation-mode low_noise --attack-labels "Web Attack - Brute Force" --attack-labels "Web Attack - XSS" --attack-labels "Web Attack - Sql Injection"`.
+5. Artifacts generated: 48 files under `artifacts/cicids_webattacks_proof_confirmation_balanced250_cpu_low_noise_20260601`.
+6. Plain-language analysis written: yes.
+7. Journal entry written: yes.
+8. Google Drive copy status: skipped or failed; no writable Colab Drive root found among: \content\drive\MyDrive, \content\drive\My Drive; local Google Drive auto-discovery skipped; set EIDOS_PROOF_DRIVE_DIR or EIDOS_ARTIFACT_ROOT to a verified Drive mount.
+9. Known limitations: event confirmation is proof-side postprocessing only; no threshold tuning was attempted.
+10. Follow-up tasks not implemented: threshold calibration or core behavior changes.
+
+## Labeled CICIDS/WebAttacks proof harness -- artifacts/cicids_webattacks_proof_confirmation_transition1k_cpu_off_20260601
+
+### What happened today
+Built and ran the event-confirmation layer for the labeled/domain proof harness.
+
+### What was accomplished
+- Added proof-side candidate scoring and confirmation modes for labeled-domain events.
+- Captured raw, merged, deduped, and confirmed event metrics side by side.
+- Added reason codes, suppression examples, confirmation examples, false-positive context, attack-window timing diagnostics, device receipts, and artifact hygiene receipts.
+- Kept core Eidos model behavior untouched.
+
+### Tests and commands run
+- `python tools/run_labeled_domain_proof.py --dataset cicids_webattacks --file artifacts/cicids_webattacks_samples/Thursday-WorkingHours-Morning-WebAttacks.pcap_ISCX.csv --label-column Label --frames 1000 --seed 42 --out artifacts/cicids_webattacks_proof_confirmation_transition1k_cpu_off_20260601 --suite full --sample-mode transition --event-merge-gap 25 --confirmation-mode off --attack-labels "Web Attack - Brute Force" --attack-labels "Web Attack - XSS" --attack-labels "Web Attack - Sql Injection"` -> labeled smoke proof artifacts written.
+
+### Problems encountered
+- Google Drive status: skipped or failed; reason: no writable Colab Drive root found among: \content\drive\MyDrive, \content\drive\My Drive; local Google Drive auto-discovery skipped; set EIDOS_PROOF_DRIVE_DIR or EIDOS_ARTIFACT_ROOT to a verified Drive mount.
+- This is not threshold tuning, so misses or false positives are reported rather than optimized away.
+
+### What changed
+- proof/event_confirmation.py
+- tools/run_labeled_domain_proof.py
+- tests/test_labeled_domain_proof_runner.py
+- .gitignore
+- artifacts/cicids_webattacks_proof_confirmation_transition1k_cpu_off_20260601
+
+### What did not change
+Reservoir dynamics, RLS updates, Sentinel thresholds, anomaly policy, compression behavior, and architecture layers were not changed.
+
+### Artifacts generated
+- artifacts/cicids_webattacks_proof_confirmation_transition1k_cpu_off_20260601/benchmark_summary.csv
+- artifacts/cicids_webattacks_proof_confirmation_transition1k_cpu_off_20260601/benchmark_summary.md
+- artifacts/cicids_webattacks_proof_confirmation_transition1k_cpu_off_20260601/config.json
+- artifacts/cicids_webattacks_proof_confirmation_transition1k_cpu_off_20260601/crash_scan.json
+- artifacts/cicids_webattacks_proof_confirmation_transition1k_cpu_off_20260601/drive_manifest.json
+- artifacts/cicids_webattacks_proof_confirmation_transition1k_cpu_off_20260601/engine_artifacts/compression/cicids_webattacks_labeled_proof/20260602_001941_bicameral_stream_cicids_webattacks_labeled_proof.bin
+- artifacts/cicids_webattacks_proof_confirmation_transition1k_cpu_off_20260601/engine_artifacts/compression/cicids_webattacks_labeled_proof/20260602_001941_bicameral_stream_meta_cicids_webattacks_labeled_proof.json
+- artifacts/cicids_webattacks_proof_confirmation_transition1k_cpu_off_20260601/engine_artifacts/eidos_brain_archive/20260602_001019_cicids_webattacks_labeled_proof_seed42/anomalies.jsonl
+- artifacts/cicids_webattacks_proof_confirmation_transition1k_cpu_off_20260601/engine_artifacts/eidos_brain_archive/20260602_001019_cicids_webattacks_labeled_proof_seed42/clusters.json
+- artifacts/cicids_webattacks_proof_confirmation_transition1k_cpu_off_20260601/engine_artifacts/eidos_brain_archive/20260602_001019_cicids_webattacks_labeled_proof_seed42/report.txt
+- artifacts/cicids_webattacks_proof_confirmation_transition1k_cpu_off_20260601/engine_artifacts/eidos_brain_archive/20260602_001019_cicids_webattacks_labeled_proof_seed42/session_meta.json
+- artifacts/cicids_webattacks_proof_confirmation_transition1k_cpu_off_20260601/engine_artifacts/eidos_brain_archive/20260602_001019_cicids_webattacks_labeled_proof_seed42/state_capsule.json
+- artifacts/cicids_webattacks_proof_confirmation_transition1k_cpu_off_20260601/engine_artifacts/eidos_brain_archive/20260602_001019_cicids_webattacks_labeled_proof_seed42/steps.csv
+- artifacts/cicids_webattacks_proof_confirmation_transition1k_cpu_off_20260601/engine_artifacts/eidos_brain_archive/20260602_001019_cicids_webattacks_labeled_proof_seed42/summary.json
+- artifacts/cicids_webattacks_proof_confirmation_transition1k_cpu_off_20260601/engine_artifacts/forecast.jsonl
+- artifacts/cicids_webattacks_proof_confirmation_transition1k_cpu_off_20260601/engine_artifacts/hippocampus/cicids_webattacks_labeled_proof/20260602_001940_hippocampus_snapshot_cicids_webattacks_labeled_proof.pt
+- artifacts/cicids_webattacks_proof_confirmation_transition1k_cpu_off_20260601/engine_artifacts/incident_cards.jsonl
+- artifacts/cicids_webattacks_proof_confirmation_transition1k_cpu_off_20260601/engine_artifacts/manifest.jsonl
+- artifacts/cicids_webattacks_proof_confirmation_transition1k_cpu_off_20260601/engine_artifacts/reservoir_checkpoints/cicids_webattacks_labeled_proof/20260602_001939_reservoir_checkpoint_cicids_webattacks_labeled_proof.pt
+- artifacts/cicids_webattacks_proof_confirmation_transition1k_cpu_off_20260601/engine_artifacts/reservoir_geometry/cicids_webattacks_labeled_proof/20260602_001940_reservoir_geom_cicids_webattacks_labeled_proof.json
+- artifacts/cicids_webattacks_proof_confirmation_transition1k_cpu_off_20260601/engine_artifacts/reservoir_geometry/cicids_webattacks_labeled_proof/20260602_001940_reservoir_states_cicids_webattacks_labeled_proof.npy
+- artifacts/cicids_webattacks_proof_confirmation_transition1k_cpu_off_20260601/engine_artifacts/sentinel_forensics/cicids_webattacks_labeled_proof/20260602_001940_top_100_surprises_cicids_webattacks_labeled_proof.json
+- artifacts/cicids_webattacks_proof_confirmation_transition1k_cpu_off_20260601/engine_artifacts/sentinel_forensics/cicids_webattacks_labeled_proof/20260602_001941_top_100_surprises_text_cicids_webattacks_labeled_proof.txt
+- artifacts/cicids_webattacks_proof_confirmation_transition1k_cpu_off_20260601/environment.txt
+- artifacts/cicids_webattacks_proof_confirmation_transition1k_cpu_off_20260601/event_confirmation_report.json
+- artifacts/cicids_webattacks_proof_confirmation_transition1k_cpu_off_20260601/event_confirmation_report.md
+- artifacts/cicids_webattacks_proof_confirmation_transition1k_cpu_off_20260601/event_summary.json
+- artifacts/cicids_webattacks_proof_confirmation_transition1k_cpu_off_20260601/git_commit.txt
+- artifacts/cicids_webattacks_proof_confirmation_transition1k_cpu_off_20260601/incident_cards/confirmed_event_001.json
+- artifacts/cicids_webattacks_proof_confirmation_transition1k_cpu_off_20260601/incident_cards/engine_card_001.json
+- artifacts/cicids_webattacks_proof_confirmation_transition1k_cpu_off_20260601/incident_cards/engine_card_002.json
+- artifacts/cicids_webattacks_proof_confirmation_transition1k_cpu_off_20260601/incident_cards/engine_card_003.json
+- artifacts/cicids_webattacks_proof_confirmation_transition1k_cpu_off_20260601/incident_cards/engine_card_004.json
+- artifacts/cicids_webattacks_proof_confirmation_transition1k_cpu_off_20260601/incident_cards/engine_card_005.json
+- artifacts/cicids_webattacks_proof_confirmation_transition1k_cpu_off_20260601/incident_cards/engine_card_006.json
+- artifacts/cicids_webattacks_proof_confirmation_transition1k_cpu_off_20260601/incident_cards/engine_card_007.json
+- artifacts/cicids_webattacks_proof_confirmation_transition1k_cpu_off_20260601/incident_cards/engine_card_008.json
+- artifacts/cicids_webattacks_proof_confirmation_transition1k_cpu_off_20260601/incident_cards/engine_card_009.json
+- artifacts/cicids_webattacks_proof_confirmation_transition1k_cpu_off_20260601/incident_cards/engine_card_010.json
+- artifacts/cicids_webattacks_proof_confirmation_transition1k_cpu_off_20260601/incident_cards/engine_card_011.json
+- artifacts/cicids_webattacks_proof_confirmation_transition1k_cpu_off_20260601/incident_cards/engine_card_012.json
+- artifacts/cicids_webattacks_proof_confirmation_transition1k_cpu_off_20260601/incident_cards/engine_card_013.json
+- artifacts/cicids_webattacks_proof_confirmation_transition1k_cpu_off_20260601/incident_cards/engine_card_014.json
+- artifacts/cicids_webattacks_proof_confirmation_transition1k_cpu_off_20260601/incident_cards/engine_card_015.json
+- artifacts/cicids_webattacks_proof_confirmation_transition1k_cpu_off_20260601/incident_cards/engine_card_016.json
+- artifacts/cicids_webattacks_proof_confirmation_transition1k_cpu_off_20260601/incident_cards/engine_card_017.json
+- artifacts/cicids_webattacks_proof_confirmation_transition1k_cpu_off_20260601/incident_cards/engine_card_018.json
+- artifacts/cicids_webattacks_proof_confirmation_transition1k_cpu_off_20260601/incident_cards/engine_card_019.json
+- artifacts/cicids_webattacks_proof_confirmation_transition1k_cpu_off_20260601/incident_cards/engine_card_020.json
+- artifacts/cicids_webattacks_proof_confirmation_transition1k_cpu_off_20260601/incident_cards/engine_card_021.json
+- artifacts/cicids_webattacks_proof_confirmation_transition1k_cpu_off_20260601/incident_cards/engine_card_022.json
+- artifacts/cicids_webattacks_proof_confirmation_transition1k_cpu_off_20260601/incident_cards/engine_card_023.json
+- artifacts/cicids_webattacks_proof_confirmation_transition1k_cpu_off_20260601/incident_cards/engine_card_024.json
+- artifacts/cicids_webattacks_proof_confirmation_transition1k_cpu_off_20260601/incident_cards/engine_card_025.json
+- artifacts/cicids_webattacks_proof_confirmation_transition1k_cpu_off_20260601/incident_cards/engine_card_026.json
+- artifacts/cicids_webattacks_proof_confirmation_transition1k_cpu_off_20260601/incident_cards/engine_card_027.json
+- artifacts/cicids_webattacks_proof_confirmation_transition1k_cpu_off_20260601/incident_cards/engine_card_028.json
+- artifacts/cicids_webattacks_proof_confirmation_transition1k_cpu_off_20260601/incident_cards/engine_card_029.json
+- artifacts/cicids_webattacks_proof_confirmation_transition1k_cpu_off_20260601/incident_cards/engine_card_030.json
+- artifacts/cicids_webattacks_proof_confirmation_transition1k_cpu_off_20260601/incident_cards/engine_card_031.json
+- artifacts/cicids_webattacks_proof_confirmation_transition1k_cpu_off_20260601/incident_cards/engine_card_032.json
+- artifacts/cicids_webattacks_proof_confirmation_transition1k_cpu_off_20260601/incident_cards/engine_card_033.json
+- artifacts/cicids_webattacks_proof_confirmation_transition1k_cpu_off_20260601/labeled_metrics.json
+- artifacts/cicids_webattacks_proof_confirmation_transition1k_cpu_off_20260601/labeled_metrics.md
+- artifacts/cicids_webattacks_proof_confirmation_transition1k_cpu_off_20260601/logs/engine_output.log
+- artifacts/cicids_webattacks_proof_confirmation_transition1k_cpu_off_20260601/precision_ledger.json
+- artifacts/cicids_webattacks_proof_confirmation_transition1k_cpu_off_20260601/precision_ledger.md
+- artifacts/cicids_webattacks_proof_confirmation_transition1k_cpu_off_20260601/proof_digest.json
+- artifacts/cicids_webattacks_proof_confirmation_transition1k_cpu_off_20260601/proof_digest.md
+- artifacts/cicids_webattacks_proof_confirmation_transition1k_cpu_off_20260601/run_manifest.json
+
+### Google Drive archive status
+- Drive root used: unknown
+- Drive folder used: unknown
+- Files copied: 0
+- Files skipped: 0
+- Reason: no writable Colab Drive root found among: \content\drive\MyDrive, \content\drive\My Drive; local Google Drive auto-discovery skipped; set EIDOS_PROOF_DRIVE_DIR or EIDOS_ARTIFACT_ROOT to a verified Drive mount
+
+### End-of-task summary
+1. Files changed: proof/event_confirmation.py, tools/run_labeled_domain_proof.py, tests/test_labeled_domain_proof_runner.py, .gitignore, artifacts/cicids_webattacks_proof_confirmation_transition1k_cpu_off_20260601
+2. Whether core behavior changed: no.
+3. Tests added or skipped: focused labeled runner tests added; full pytest run handled outside this runner.
+4. Repo-root commands run: `python tools/run_labeled_domain_proof.py --dataset cicids_webattacks --file artifacts/cicids_webattacks_samples/Thursday-WorkingHours-Morning-WebAttacks.pcap_ISCX.csv --label-column Label --frames 1000 --seed 42 --out artifacts/cicids_webattacks_proof_confirmation_transition1k_cpu_off_20260601 --suite full --sample-mode transition --event-merge-gap 25 --confirmation-mode off --attack-labels "Web Attack - Brute Force" --attack-labels "Web Attack - XSS" --attack-labels "Web Attack - Sql Injection"`.
+5. Artifacts generated: 70 files under `artifacts/cicids_webattacks_proof_confirmation_transition1k_cpu_off_20260601`.
+6. Plain-language analysis written: yes.
+7. Journal entry written: yes.
+8. Google Drive copy status: skipped or failed; no writable Colab Drive root found among: \content\drive\MyDrive, \content\drive\My Drive; local Google Drive auto-discovery skipped; set EIDOS_PROOF_DRIVE_DIR or EIDOS_ARTIFACT_ROOT to a verified Drive mount.
+9. Known limitations: event confirmation is proof-side postprocessing only; no threshold tuning was attempted.
+10. Follow-up tasks not implemented: threshold calibration or core behavior changes.
+
+## Labeled CICIDS/WebAttacks proof harness -- artifacts/cicids_webattacks_proof_confirmation_transition1k_cpu_high_recall_20260601
+
+### What happened today
+Built and ran the event-confirmation layer for the labeled/domain proof harness.
+
+### What was accomplished
+- Added proof-side candidate scoring and confirmation modes for labeled-domain events.
+- Captured raw, merged, deduped, and confirmed event metrics side by side.
+- Added reason codes, suppression examples, confirmation examples, false-positive context, attack-window timing diagnostics, device receipts, and artifact hygiene receipts.
+- Kept core Eidos model behavior untouched.
+
+### Tests and commands run
+- `python tools/run_labeled_domain_proof.py --dataset cicids_webattacks --file artifacts/cicids_webattacks_samples/Thursday-WorkingHours-Morning-WebAttacks.pcap_ISCX.csv --label-column Label --frames 1000 --seed 42 --out artifacts/cicids_webattacks_proof_confirmation_transition1k_cpu_high_recall_20260601 --suite full --sample-mode transition --event-merge-gap 25 --confirmation-mode high_recall --attack-labels "Web Attack - Brute Force" --attack-labels "Web Attack - XSS" --attack-labels "Web Attack - Sql Injection"` -> labeled smoke proof artifacts written.
+
+### Problems encountered
+- Google Drive status: skipped or failed; reason: no writable Colab Drive root found among: \content\drive\MyDrive, \content\drive\My Drive; local Google Drive auto-discovery skipped; set EIDOS_PROOF_DRIVE_DIR or EIDOS_ARTIFACT_ROOT to a verified Drive mount.
+- This is not threshold tuning, so misses or false positives are reported rather than optimized away.
+
+### What changed
+- proof/event_confirmation.py
+- tools/run_labeled_domain_proof.py
+- tests/test_labeled_domain_proof_runner.py
+- .gitignore
+- artifacts/cicids_webattacks_proof_confirmation_transition1k_cpu_high_recall_20260601
+
+### What did not change
+Reservoir dynamics, RLS updates, Sentinel thresholds, anomaly policy, compression behavior, and architecture layers were not changed.
+
+### Artifacts generated
+- artifacts/cicids_webattacks_proof_confirmation_transition1k_cpu_high_recall_20260601/benchmark_summary.csv
+- artifacts/cicids_webattacks_proof_confirmation_transition1k_cpu_high_recall_20260601/benchmark_summary.md
+- artifacts/cicids_webattacks_proof_confirmation_transition1k_cpu_high_recall_20260601/config.json
+- artifacts/cicids_webattacks_proof_confirmation_transition1k_cpu_high_recall_20260601/crash_scan.json
+- artifacts/cicids_webattacks_proof_confirmation_transition1k_cpu_high_recall_20260601/drive_manifest.json
+- artifacts/cicids_webattacks_proof_confirmation_transition1k_cpu_high_recall_20260601/engine_artifacts/compression/cicids_webattacks_labeled_proof/20260602_003154_bicameral_stream_cicids_webattacks_labeled_proof.bin
+- artifacts/cicids_webattacks_proof_confirmation_transition1k_cpu_high_recall_20260601/engine_artifacts/compression/cicids_webattacks_labeled_proof/20260602_003154_bicameral_stream_meta_cicids_webattacks_labeled_proof.json
+- artifacts/cicids_webattacks_proof_confirmation_transition1k_cpu_high_recall_20260601/engine_artifacts/eidos_brain_archive/20260602_002322_cicids_webattacks_labeled_proof_seed42/anomalies.jsonl
+- artifacts/cicids_webattacks_proof_confirmation_transition1k_cpu_high_recall_20260601/engine_artifacts/eidos_brain_archive/20260602_002322_cicids_webattacks_labeled_proof_seed42/clusters.json
+- artifacts/cicids_webattacks_proof_confirmation_transition1k_cpu_high_recall_20260601/engine_artifacts/eidos_brain_archive/20260602_002322_cicids_webattacks_labeled_proof_seed42/report.txt
+- artifacts/cicids_webattacks_proof_confirmation_transition1k_cpu_high_recall_20260601/engine_artifacts/eidos_brain_archive/20260602_002322_cicids_webattacks_labeled_proof_seed42/session_meta.json
+- artifacts/cicids_webattacks_proof_confirmation_transition1k_cpu_high_recall_20260601/engine_artifacts/eidos_brain_archive/20260602_002322_cicids_webattacks_labeled_proof_seed42/state_capsule.json
+- artifacts/cicids_webattacks_proof_confirmation_transition1k_cpu_high_recall_20260601/engine_artifacts/eidos_brain_archive/20260602_002322_cicids_webattacks_labeled_proof_seed42/steps.csv
+- artifacts/cicids_webattacks_proof_confirmation_transition1k_cpu_high_recall_20260601/engine_artifacts/eidos_brain_archive/20260602_002322_cicids_webattacks_labeled_proof_seed42/summary.json
+- artifacts/cicids_webattacks_proof_confirmation_transition1k_cpu_high_recall_20260601/engine_artifacts/forecast.jsonl
+- artifacts/cicids_webattacks_proof_confirmation_transition1k_cpu_high_recall_20260601/engine_artifacts/hippocampus/cicids_webattacks_labeled_proof/20260602_003153_hippocampus_snapshot_cicids_webattacks_labeled_proof.pt
+- artifacts/cicids_webattacks_proof_confirmation_transition1k_cpu_high_recall_20260601/engine_artifacts/incident_cards.jsonl
+- artifacts/cicids_webattacks_proof_confirmation_transition1k_cpu_high_recall_20260601/engine_artifacts/manifest.jsonl
+- artifacts/cicids_webattacks_proof_confirmation_transition1k_cpu_high_recall_20260601/engine_artifacts/reservoir_checkpoints/cicids_webattacks_labeled_proof/20260602_003153_reservoir_checkpoint_cicids_webattacks_labeled_proof.pt
+- artifacts/cicids_webattacks_proof_confirmation_transition1k_cpu_high_recall_20260601/engine_artifacts/reservoir_geometry/cicids_webattacks_labeled_proof/20260602_003153_reservoir_states_cicids_webattacks_labeled_proof.npy
+- artifacts/cicids_webattacks_proof_confirmation_transition1k_cpu_high_recall_20260601/engine_artifacts/reservoir_geometry/cicids_webattacks_labeled_proof/20260602_003154_reservoir_geom_cicids_webattacks_labeled_proof.json
+- artifacts/cicids_webattacks_proof_confirmation_transition1k_cpu_high_recall_20260601/engine_artifacts/sentinel_forensics/cicids_webattacks_labeled_proof/20260602_003154_top_100_surprises_cicids_webattacks_labeled_proof.json
+- artifacts/cicids_webattacks_proof_confirmation_transition1k_cpu_high_recall_20260601/engine_artifacts/sentinel_forensics/cicids_webattacks_labeled_proof/20260602_003154_top_100_surprises_text_cicids_webattacks_labeled_proof.txt
+- artifacts/cicids_webattacks_proof_confirmation_transition1k_cpu_high_recall_20260601/environment.txt
+- artifacts/cicids_webattacks_proof_confirmation_transition1k_cpu_high_recall_20260601/event_confirmation_report.json
+- artifacts/cicids_webattacks_proof_confirmation_transition1k_cpu_high_recall_20260601/event_confirmation_report.md
+- artifacts/cicids_webattacks_proof_confirmation_transition1k_cpu_high_recall_20260601/event_summary.json
+- artifacts/cicids_webattacks_proof_confirmation_transition1k_cpu_high_recall_20260601/git_commit.txt
+- artifacts/cicids_webattacks_proof_confirmation_transition1k_cpu_high_recall_20260601/incident_cards/confirmed_event_001.json
+- artifacts/cicids_webattacks_proof_confirmation_transition1k_cpu_high_recall_20260601/incident_cards/engine_card_001.json
+- artifacts/cicids_webattacks_proof_confirmation_transition1k_cpu_high_recall_20260601/incident_cards/engine_card_002.json
+- artifacts/cicids_webattacks_proof_confirmation_transition1k_cpu_high_recall_20260601/incident_cards/engine_card_003.json
+- artifacts/cicids_webattacks_proof_confirmation_transition1k_cpu_high_recall_20260601/incident_cards/engine_card_004.json
+- artifacts/cicids_webattacks_proof_confirmation_transition1k_cpu_high_recall_20260601/incident_cards/engine_card_005.json
+- artifacts/cicids_webattacks_proof_confirmation_transition1k_cpu_high_recall_20260601/incident_cards/engine_card_006.json
+- artifacts/cicids_webattacks_proof_confirmation_transition1k_cpu_high_recall_20260601/incident_cards/engine_card_007.json
+- artifacts/cicids_webattacks_proof_confirmation_transition1k_cpu_high_recall_20260601/incident_cards/engine_card_008.json
+- artifacts/cicids_webattacks_proof_confirmation_transition1k_cpu_high_recall_20260601/incident_cards/engine_card_009.json
+- artifacts/cicids_webattacks_proof_confirmation_transition1k_cpu_high_recall_20260601/incident_cards/engine_card_010.json
+- artifacts/cicids_webattacks_proof_confirmation_transition1k_cpu_high_recall_20260601/incident_cards/engine_card_011.json
+- artifacts/cicids_webattacks_proof_confirmation_transition1k_cpu_high_recall_20260601/incident_cards/engine_card_012.json
+- artifacts/cicids_webattacks_proof_confirmation_transition1k_cpu_high_recall_20260601/incident_cards/engine_card_013.json
+- artifacts/cicids_webattacks_proof_confirmation_transition1k_cpu_high_recall_20260601/incident_cards/engine_card_014.json
+- artifacts/cicids_webattacks_proof_confirmation_transition1k_cpu_high_recall_20260601/incident_cards/engine_card_015.json
+- artifacts/cicids_webattacks_proof_confirmation_transition1k_cpu_high_recall_20260601/incident_cards/engine_card_016.json
+- artifacts/cicids_webattacks_proof_confirmation_transition1k_cpu_high_recall_20260601/incident_cards/engine_card_017.json
+- artifacts/cicids_webattacks_proof_confirmation_transition1k_cpu_high_recall_20260601/incident_cards/engine_card_018.json
+- artifacts/cicids_webattacks_proof_confirmation_transition1k_cpu_high_recall_20260601/incident_cards/engine_card_019.json
+- artifacts/cicids_webattacks_proof_confirmation_transition1k_cpu_high_recall_20260601/incident_cards/engine_card_020.json
+- artifacts/cicids_webattacks_proof_confirmation_transition1k_cpu_high_recall_20260601/incident_cards/engine_card_021.json
+- artifacts/cicids_webattacks_proof_confirmation_transition1k_cpu_high_recall_20260601/incident_cards/engine_card_022.json
+- artifacts/cicids_webattacks_proof_confirmation_transition1k_cpu_high_recall_20260601/incident_cards/engine_card_023.json
+- artifacts/cicids_webattacks_proof_confirmation_transition1k_cpu_high_recall_20260601/incident_cards/engine_card_024.json
+- artifacts/cicids_webattacks_proof_confirmation_transition1k_cpu_high_recall_20260601/incident_cards/engine_card_025.json
+- artifacts/cicids_webattacks_proof_confirmation_transition1k_cpu_high_recall_20260601/incident_cards/engine_card_026.json
+- artifacts/cicids_webattacks_proof_confirmation_transition1k_cpu_high_recall_20260601/incident_cards/engine_card_027.json
+- artifacts/cicids_webattacks_proof_confirmation_transition1k_cpu_high_recall_20260601/incident_cards/engine_card_028.json
+- artifacts/cicids_webattacks_proof_confirmation_transition1k_cpu_high_recall_20260601/incident_cards/engine_card_029.json
+- artifacts/cicids_webattacks_proof_confirmation_transition1k_cpu_high_recall_20260601/incident_cards/engine_card_030.json
+- artifacts/cicids_webattacks_proof_confirmation_transition1k_cpu_high_recall_20260601/incident_cards/engine_card_031.json
+- artifacts/cicids_webattacks_proof_confirmation_transition1k_cpu_high_recall_20260601/incident_cards/engine_card_032.json
+- artifacts/cicids_webattacks_proof_confirmation_transition1k_cpu_high_recall_20260601/incident_cards/engine_card_033.json
+- artifacts/cicids_webattacks_proof_confirmation_transition1k_cpu_high_recall_20260601/labeled_metrics.json
+- artifacts/cicids_webattacks_proof_confirmation_transition1k_cpu_high_recall_20260601/labeled_metrics.md
+- artifacts/cicids_webattacks_proof_confirmation_transition1k_cpu_high_recall_20260601/logs/engine_output.log
+- artifacts/cicids_webattacks_proof_confirmation_transition1k_cpu_high_recall_20260601/precision_ledger.json
+- artifacts/cicids_webattacks_proof_confirmation_transition1k_cpu_high_recall_20260601/precision_ledger.md
+- artifacts/cicids_webattacks_proof_confirmation_transition1k_cpu_high_recall_20260601/proof_digest.json
+- artifacts/cicids_webattacks_proof_confirmation_transition1k_cpu_high_recall_20260601/proof_digest.md
+- artifacts/cicids_webattacks_proof_confirmation_transition1k_cpu_high_recall_20260601/run_manifest.json
+
+### Google Drive archive status
+- Drive root used: unknown
+- Drive folder used: unknown
+- Files copied: 0
+- Files skipped: 0
+- Reason: no writable Colab Drive root found among: \content\drive\MyDrive, \content\drive\My Drive; local Google Drive auto-discovery skipped; set EIDOS_PROOF_DRIVE_DIR or EIDOS_ARTIFACT_ROOT to a verified Drive mount
+
+### End-of-task summary
+1. Files changed: proof/event_confirmation.py, tools/run_labeled_domain_proof.py, tests/test_labeled_domain_proof_runner.py, .gitignore, artifacts/cicids_webattacks_proof_confirmation_transition1k_cpu_high_recall_20260601
+2. Whether core behavior changed: no.
+3. Tests added or skipped: focused labeled runner tests added; full pytest run handled outside this runner.
+4. Repo-root commands run: `python tools/run_labeled_domain_proof.py --dataset cicids_webattacks --file artifacts/cicids_webattacks_samples/Thursday-WorkingHours-Morning-WebAttacks.pcap_ISCX.csv --label-column Label --frames 1000 --seed 42 --out artifacts/cicids_webattacks_proof_confirmation_transition1k_cpu_high_recall_20260601 --suite full --sample-mode transition --event-merge-gap 25 --confirmation-mode high_recall --attack-labels "Web Attack - Brute Force" --attack-labels "Web Attack - XSS" --attack-labels "Web Attack - Sql Injection"`.
+5. Artifacts generated: 70 files under `artifacts/cicids_webattacks_proof_confirmation_transition1k_cpu_high_recall_20260601`.
+6. Plain-language analysis written: yes.
+7. Journal entry written: yes.
+8. Google Drive copy status: skipped or failed; no writable Colab Drive root found among: \content\drive\MyDrive, \content\drive\My Drive; local Google Drive auto-discovery skipped; set EIDOS_PROOF_DRIVE_DIR or EIDOS_ARTIFACT_ROOT to a verified Drive mount.
+9. Known limitations: event confirmation is proof-side postprocessing only; no threshold tuning was attempted.
+10. Follow-up tasks not implemented: threshold calibration or core behavior changes.
+
+## Labeled CICIDS/WebAttacks proof harness -- artifacts/cicids_webattacks_proof_confirmation_transition1k_cpu_balanced_20260601
+
+### What happened today
+Built and ran the event-confirmation layer for the labeled/domain proof harness.
+
+### What was accomplished
+- Added proof-side candidate scoring and confirmation modes for labeled-domain events.
+- Captured raw, merged, deduped, and confirmed event metrics side by side.
+- Added reason codes, suppression examples, confirmation examples, false-positive context, attack-window timing diagnostics, device receipts, and artifact hygiene receipts.
+- Kept core Eidos model behavior untouched.
+
+### Tests and commands run
+- `python tools/run_labeled_domain_proof.py --dataset cicids_webattacks --file artifacts/cicids_webattacks_samples/Thursday-WorkingHours-Morning-WebAttacks.pcap_ISCX.csv --label-column Label --frames 1000 --seed 42 --out artifacts/cicids_webattacks_proof_confirmation_transition1k_cpu_balanced_20260601 --suite full --sample-mode transition --event-merge-gap 25 --confirmation-mode balanced --attack-labels "Web Attack - Brute Force" --attack-labels "Web Attack - XSS" --attack-labels "Web Attack - Sql Injection"` -> labeled smoke proof artifacts written.
+
+### Problems encountered
+- Google Drive status: skipped or failed; reason: no writable Colab Drive root found among: \content\drive\MyDrive, \content\drive\My Drive; local Google Drive auto-discovery skipped; set EIDOS_PROOF_DRIVE_DIR or EIDOS_ARTIFACT_ROOT to a verified Drive mount.
+- This is not threshold tuning, so misses or false positives are reported rather than optimized away.
+
+### What changed
+- proof/event_confirmation.py
+- tools/run_labeled_domain_proof.py
+- tests/test_labeled_domain_proof_runner.py
+- .gitignore
+- artifacts/cicids_webattacks_proof_confirmation_transition1k_cpu_balanced_20260601
+
+### What did not change
+Reservoir dynamics, RLS updates, Sentinel thresholds, anomaly policy, compression behavior, and architecture layers were not changed.
+
+### Artifacts generated
+- artifacts/cicids_webattacks_proof_confirmation_transition1k_cpu_balanced_20260601/benchmark_summary.csv
+- artifacts/cicids_webattacks_proof_confirmation_transition1k_cpu_balanced_20260601/benchmark_summary.md
+- artifacts/cicids_webattacks_proof_confirmation_transition1k_cpu_balanced_20260601/config.json
+- artifacts/cicids_webattacks_proof_confirmation_transition1k_cpu_balanced_20260601/crash_scan.json
+- artifacts/cicids_webattacks_proof_confirmation_transition1k_cpu_balanced_20260601/drive_manifest.json
+- artifacts/cicids_webattacks_proof_confirmation_transition1k_cpu_balanced_20260601/engine_artifacts/compression/cicids_webattacks_labeled_proof/20260602_004445_bicameral_stream_cicids_webattacks_labeled_proof.bin
+- artifacts/cicids_webattacks_proof_confirmation_transition1k_cpu_balanced_20260601/engine_artifacts/compression/cicids_webattacks_labeled_proof/20260602_004445_bicameral_stream_meta_cicids_webattacks_labeled_proof.json
+- artifacts/cicids_webattacks_proof_confirmation_transition1k_cpu_balanced_20260601/engine_artifacts/eidos_brain_archive/20260602_003537_cicids_webattacks_labeled_proof_seed42/anomalies.jsonl
+- artifacts/cicids_webattacks_proof_confirmation_transition1k_cpu_balanced_20260601/engine_artifacts/eidos_brain_archive/20260602_003537_cicids_webattacks_labeled_proof_seed42/clusters.json
+- artifacts/cicids_webattacks_proof_confirmation_transition1k_cpu_balanced_20260601/engine_artifacts/eidos_brain_archive/20260602_003537_cicids_webattacks_labeled_proof_seed42/report.txt
+- artifacts/cicids_webattacks_proof_confirmation_transition1k_cpu_balanced_20260601/engine_artifacts/eidos_brain_archive/20260602_003537_cicids_webattacks_labeled_proof_seed42/session_meta.json
+- artifacts/cicids_webattacks_proof_confirmation_transition1k_cpu_balanced_20260601/engine_artifacts/eidos_brain_archive/20260602_003537_cicids_webattacks_labeled_proof_seed42/state_capsule.json
+- artifacts/cicids_webattacks_proof_confirmation_transition1k_cpu_balanced_20260601/engine_artifacts/eidos_brain_archive/20260602_003537_cicids_webattacks_labeled_proof_seed42/steps.csv
+- artifacts/cicids_webattacks_proof_confirmation_transition1k_cpu_balanced_20260601/engine_artifacts/eidos_brain_archive/20260602_003537_cicids_webattacks_labeled_proof_seed42/summary.json
+- artifacts/cicids_webattacks_proof_confirmation_transition1k_cpu_balanced_20260601/engine_artifacts/forecast.jsonl
+- artifacts/cicids_webattacks_proof_confirmation_transition1k_cpu_balanced_20260601/engine_artifacts/hippocampus/cicids_webattacks_labeled_proof/20260602_004444_hippocampus_snapshot_cicids_webattacks_labeled_proof.pt
+- artifacts/cicids_webattacks_proof_confirmation_transition1k_cpu_balanced_20260601/engine_artifacts/incident_cards.jsonl
+- artifacts/cicids_webattacks_proof_confirmation_transition1k_cpu_balanced_20260601/engine_artifacts/manifest.jsonl
+- artifacts/cicids_webattacks_proof_confirmation_transition1k_cpu_balanced_20260601/engine_artifacts/reservoir_checkpoints/cicids_webattacks_labeled_proof/20260602_004444_reservoir_checkpoint_cicids_webattacks_labeled_proof.pt
+- artifacts/cicids_webattacks_proof_confirmation_transition1k_cpu_balanced_20260601/engine_artifacts/reservoir_geometry/cicids_webattacks_labeled_proof/20260602_004444_reservoir_states_cicids_webattacks_labeled_proof.npy
+- artifacts/cicids_webattacks_proof_confirmation_transition1k_cpu_balanced_20260601/engine_artifacts/reservoir_geometry/cicids_webattacks_labeled_proof/20260602_004445_reservoir_geom_cicids_webattacks_labeled_proof.json
+- artifacts/cicids_webattacks_proof_confirmation_transition1k_cpu_balanced_20260601/engine_artifacts/sentinel_forensics/cicids_webattacks_labeled_proof/20260602_004445_top_100_surprises_cicids_webattacks_labeled_proof.json
+- artifacts/cicids_webattacks_proof_confirmation_transition1k_cpu_balanced_20260601/engine_artifacts/sentinel_forensics/cicids_webattacks_labeled_proof/20260602_004445_top_100_surprises_text_cicids_webattacks_labeled_proof.txt
+- artifacts/cicids_webattacks_proof_confirmation_transition1k_cpu_balanced_20260601/environment.txt
+- artifacts/cicids_webattacks_proof_confirmation_transition1k_cpu_balanced_20260601/event_confirmation_report.json
+- artifacts/cicids_webattacks_proof_confirmation_transition1k_cpu_balanced_20260601/event_confirmation_report.md
+- artifacts/cicids_webattacks_proof_confirmation_transition1k_cpu_balanced_20260601/event_summary.json
+- artifacts/cicids_webattacks_proof_confirmation_transition1k_cpu_balanced_20260601/git_commit.txt
+- artifacts/cicids_webattacks_proof_confirmation_transition1k_cpu_balanced_20260601/incident_cards/confirmed_event_001.json
+- artifacts/cicids_webattacks_proof_confirmation_transition1k_cpu_balanced_20260601/incident_cards/engine_card_001.json
+- artifacts/cicids_webattacks_proof_confirmation_transition1k_cpu_balanced_20260601/incident_cards/engine_card_002.json
+- artifacts/cicids_webattacks_proof_confirmation_transition1k_cpu_balanced_20260601/incident_cards/engine_card_003.json
+- artifacts/cicids_webattacks_proof_confirmation_transition1k_cpu_balanced_20260601/incident_cards/engine_card_004.json
+- artifacts/cicids_webattacks_proof_confirmation_transition1k_cpu_balanced_20260601/incident_cards/engine_card_005.json
+- artifacts/cicids_webattacks_proof_confirmation_transition1k_cpu_balanced_20260601/incident_cards/engine_card_006.json
+- artifacts/cicids_webattacks_proof_confirmation_transition1k_cpu_balanced_20260601/incident_cards/engine_card_007.json
+- artifacts/cicids_webattacks_proof_confirmation_transition1k_cpu_balanced_20260601/incident_cards/engine_card_008.json
+- artifacts/cicids_webattacks_proof_confirmation_transition1k_cpu_balanced_20260601/incident_cards/engine_card_009.json
+- artifacts/cicids_webattacks_proof_confirmation_transition1k_cpu_balanced_20260601/incident_cards/engine_card_010.json
+- artifacts/cicids_webattacks_proof_confirmation_transition1k_cpu_balanced_20260601/incident_cards/engine_card_011.json
+- artifacts/cicids_webattacks_proof_confirmation_transition1k_cpu_balanced_20260601/incident_cards/engine_card_012.json
+- artifacts/cicids_webattacks_proof_confirmation_transition1k_cpu_balanced_20260601/incident_cards/engine_card_013.json
+- artifacts/cicids_webattacks_proof_confirmation_transition1k_cpu_balanced_20260601/incident_cards/engine_card_014.json
+- artifacts/cicids_webattacks_proof_confirmation_transition1k_cpu_balanced_20260601/incident_cards/engine_card_015.json
+- artifacts/cicids_webattacks_proof_confirmation_transition1k_cpu_balanced_20260601/incident_cards/engine_card_016.json
+- artifacts/cicids_webattacks_proof_confirmation_transition1k_cpu_balanced_20260601/incident_cards/engine_card_017.json
+- artifacts/cicids_webattacks_proof_confirmation_transition1k_cpu_balanced_20260601/incident_cards/engine_card_018.json
+- artifacts/cicids_webattacks_proof_confirmation_transition1k_cpu_balanced_20260601/incident_cards/engine_card_019.json
+- artifacts/cicids_webattacks_proof_confirmation_transition1k_cpu_balanced_20260601/incident_cards/engine_card_020.json
+- artifacts/cicids_webattacks_proof_confirmation_transition1k_cpu_balanced_20260601/incident_cards/engine_card_021.json
+- artifacts/cicids_webattacks_proof_confirmation_transition1k_cpu_balanced_20260601/incident_cards/engine_card_022.json
+- artifacts/cicids_webattacks_proof_confirmation_transition1k_cpu_balanced_20260601/incident_cards/engine_card_023.json
+- artifacts/cicids_webattacks_proof_confirmation_transition1k_cpu_balanced_20260601/incident_cards/engine_card_024.json
+- artifacts/cicids_webattacks_proof_confirmation_transition1k_cpu_balanced_20260601/incident_cards/engine_card_025.json
+- artifacts/cicids_webattacks_proof_confirmation_transition1k_cpu_balanced_20260601/incident_cards/engine_card_026.json
+- artifacts/cicids_webattacks_proof_confirmation_transition1k_cpu_balanced_20260601/incident_cards/engine_card_027.json
+- artifacts/cicids_webattacks_proof_confirmation_transition1k_cpu_balanced_20260601/incident_cards/engine_card_028.json
+- artifacts/cicids_webattacks_proof_confirmation_transition1k_cpu_balanced_20260601/incident_cards/engine_card_029.json
+- artifacts/cicids_webattacks_proof_confirmation_transition1k_cpu_balanced_20260601/incident_cards/engine_card_030.json
+- artifacts/cicids_webattacks_proof_confirmation_transition1k_cpu_balanced_20260601/incident_cards/engine_card_031.json
+- artifacts/cicids_webattacks_proof_confirmation_transition1k_cpu_balanced_20260601/incident_cards/engine_card_032.json
+- artifacts/cicids_webattacks_proof_confirmation_transition1k_cpu_balanced_20260601/incident_cards/engine_card_033.json
+- artifacts/cicids_webattacks_proof_confirmation_transition1k_cpu_balanced_20260601/labeled_metrics.json
+- artifacts/cicids_webattacks_proof_confirmation_transition1k_cpu_balanced_20260601/labeled_metrics.md
+- artifacts/cicids_webattacks_proof_confirmation_transition1k_cpu_balanced_20260601/logs/engine_output.log
+- artifacts/cicids_webattacks_proof_confirmation_transition1k_cpu_balanced_20260601/precision_ledger.json
+- artifacts/cicids_webattacks_proof_confirmation_transition1k_cpu_balanced_20260601/precision_ledger.md
+- artifacts/cicids_webattacks_proof_confirmation_transition1k_cpu_balanced_20260601/proof_digest.json
+- artifacts/cicids_webattacks_proof_confirmation_transition1k_cpu_balanced_20260601/proof_digest.md
+- artifacts/cicids_webattacks_proof_confirmation_transition1k_cpu_balanced_20260601/run_manifest.json
+
+### Google Drive archive status
+- Drive root used: unknown
+- Drive folder used: unknown
+- Files copied: 0
+- Files skipped: 0
+- Reason: no writable Colab Drive root found among: \content\drive\MyDrive, \content\drive\My Drive; local Google Drive auto-discovery skipped; set EIDOS_PROOF_DRIVE_DIR or EIDOS_ARTIFACT_ROOT to a verified Drive mount
+
+### End-of-task summary
+1. Files changed: proof/event_confirmation.py, tools/run_labeled_domain_proof.py, tests/test_labeled_domain_proof_runner.py, .gitignore, artifacts/cicids_webattacks_proof_confirmation_transition1k_cpu_balanced_20260601
+2. Whether core behavior changed: no.
+3. Tests added or skipped: focused labeled runner tests added; full pytest run handled outside this runner.
+4. Repo-root commands run: `python tools/run_labeled_domain_proof.py --dataset cicids_webattacks --file artifacts/cicids_webattacks_samples/Thursday-WorkingHours-Morning-WebAttacks.pcap_ISCX.csv --label-column Label --frames 1000 --seed 42 --out artifacts/cicids_webattacks_proof_confirmation_transition1k_cpu_balanced_20260601 --suite full --sample-mode transition --event-merge-gap 25 --confirmation-mode balanced --attack-labels "Web Attack - Brute Force" --attack-labels "Web Attack - XSS" --attack-labels "Web Attack - Sql Injection"`.
+5. Artifacts generated: 70 files under `artifacts/cicids_webattacks_proof_confirmation_transition1k_cpu_balanced_20260601`.
+6. Plain-language analysis written: yes.
+7. Journal entry written: yes.
+8. Google Drive copy status: skipped or failed; no writable Colab Drive root found among: \content\drive\MyDrive, \content\drive\My Drive; local Google Drive auto-discovery skipped; set EIDOS_PROOF_DRIVE_DIR or EIDOS_ARTIFACT_ROOT to a verified Drive mount.
+9. Known limitations: event confirmation is proof-side postprocessing only; no threshold tuning was attempted.
+10. Follow-up tasks not implemented: threshold calibration or core behavior changes.
+
+## Labeled CICIDS/WebAttacks proof harness -- artifacts/cicids_webattacks_proof_confirmation_transition1k_cpu_low_noise_20260601
+
+### What happened today
+Built and ran the event-confirmation layer for the labeled/domain proof harness.
+
+### What was accomplished
+- Added proof-side candidate scoring and confirmation modes for labeled-domain events.
+- Captured raw, merged, deduped, and confirmed event metrics side by side.
+- Added reason codes, suppression examples, confirmation examples, false-positive context, attack-window timing diagnostics, device receipts, and artifact hygiene receipts.
+- Kept core Eidos model behavior untouched.
+
+### Tests and commands run
+- `python tools/run_labeled_domain_proof.py --dataset cicids_webattacks --file artifacts/cicids_webattacks_samples/Thursday-WorkingHours-Morning-WebAttacks.pcap_ISCX.csv --label-column Label --frames 1000 --seed 42 --out artifacts/cicids_webattacks_proof_confirmation_transition1k_cpu_low_noise_20260601 --suite full --sample-mode transition --event-merge-gap 25 --confirmation-mode low_noise --attack-labels "Web Attack - Brute Force" --attack-labels "Web Attack - XSS" --attack-labels "Web Attack - Sql Injection"` -> labeled smoke proof artifacts written.
+
+### Problems encountered
+- Google Drive status: skipped or failed; reason: no writable Colab Drive root found among: \content\drive\MyDrive, \content\drive\My Drive; local Google Drive auto-discovery skipped; set EIDOS_PROOF_DRIVE_DIR or EIDOS_ARTIFACT_ROOT to a verified Drive mount.
+- This is not threshold tuning, so misses or false positives are reported rather than optimized away.
+
+### What changed
+- proof/event_confirmation.py
+- tools/run_labeled_domain_proof.py
+- tests/test_labeled_domain_proof_runner.py
+- .gitignore
+- artifacts/cicids_webattacks_proof_confirmation_transition1k_cpu_low_noise_20260601
+
+### What did not change
+Reservoir dynamics, RLS updates, Sentinel thresholds, anomaly policy, compression behavior, and architecture layers were not changed.
+
+### Artifacts generated
+- artifacts/cicids_webattacks_proof_confirmation_transition1k_cpu_low_noise_20260601/benchmark_summary.csv
+- artifacts/cicids_webattacks_proof_confirmation_transition1k_cpu_low_noise_20260601/benchmark_summary.md
+- artifacts/cicids_webattacks_proof_confirmation_transition1k_cpu_low_noise_20260601/config.json
+- artifacts/cicids_webattacks_proof_confirmation_transition1k_cpu_low_noise_20260601/crash_scan.json
+- artifacts/cicids_webattacks_proof_confirmation_transition1k_cpu_low_noise_20260601/drive_manifest.json
+- artifacts/cicids_webattacks_proof_confirmation_transition1k_cpu_low_noise_20260601/engine_artifacts/compression/cicids_webattacks_labeled_proof/20260602_005330_bicameral_stream_cicids_webattacks_labeled_proof.bin
+- artifacts/cicids_webattacks_proof_confirmation_transition1k_cpu_low_noise_20260601/engine_artifacts/compression/cicids_webattacks_labeled_proof/20260602_005330_bicameral_stream_meta_cicids_webattacks_labeled_proof.json
+- artifacts/cicids_webattacks_proof_confirmation_transition1k_cpu_low_noise_20260601/engine_artifacts/eidos_brain_archive/20260602_004837_cicids_webattacks_labeled_proof_seed42/anomalies.jsonl
+- artifacts/cicids_webattacks_proof_confirmation_transition1k_cpu_low_noise_20260601/engine_artifacts/eidos_brain_archive/20260602_004837_cicids_webattacks_labeled_proof_seed42/clusters.json
+- artifacts/cicids_webattacks_proof_confirmation_transition1k_cpu_low_noise_20260601/engine_artifacts/eidos_brain_archive/20260602_004837_cicids_webattacks_labeled_proof_seed42/report.txt
+- artifacts/cicids_webattacks_proof_confirmation_transition1k_cpu_low_noise_20260601/engine_artifacts/eidos_brain_archive/20260602_004837_cicids_webattacks_labeled_proof_seed42/session_meta.json
+- artifacts/cicids_webattacks_proof_confirmation_transition1k_cpu_low_noise_20260601/engine_artifacts/eidos_brain_archive/20260602_004837_cicids_webattacks_labeled_proof_seed42/state_capsule.json
+- artifacts/cicids_webattacks_proof_confirmation_transition1k_cpu_low_noise_20260601/engine_artifacts/eidos_brain_archive/20260602_004837_cicids_webattacks_labeled_proof_seed42/steps.csv
+- artifacts/cicids_webattacks_proof_confirmation_transition1k_cpu_low_noise_20260601/engine_artifacts/eidos_brain_archive/20260602_004837_cicids_webattacks_labeled_proof_seed42/summary.json
+- artifacts/cicids_webattacks_proof_confirmation_transition1k_cpu_low_noise_20260601/engine_artifacts/forecast.jsonl
+- artifacts/cicids_webattacks_proof_confirmation_transition1k_cpu_low_noise_20260601/engine_artifacts/hippocampus/cicids_webattacks_labeled_proof/20260602_005329_hippocampus_snapshot_cicids_webattacks_labeled_proof.pt
+- artifacts/cicids_webattacks_proof_confirmation_transition1k_cpu_low_noise_20260601/engine_artifacts/incident_cards.jsonl
+- artifacts/cicids_webattacks_proof_confirmation_transition1k_cpu_low_noise_20260601/engine_artifacts/manifest.jsonl
+- artifacts/cicids_webattacks_proof_confirmation_transition1k_cpu_low_noise_20260601/engine_artifacts/reservoir_checkpoints/cicids_webattacks_labeled_proof/20260602_005329_reservoir_checkpoint_cicids_webattacks_labeled_proof.pt
+- artifacts/cicids_webattacks_proof_confirmation_transition1k_cpu_low_noise_20260601/engine_artifacts/reservoir_geometry/cicids_webattacks_labeled_proof/20260602_005329_reservoir_geom_cicids_webattacks_labeled_proof.json
+- artifacts/cicids_webattacks_proof_confirmation_transition1k_cpu_low_noise_20260601/engine_artifacts/reservoir_geometry/cicids_webattacks_labeled_proof/20260602_005329_reservoir_states_cicids_webattacks_labeled_proof.npy
+- artifacts/cicids_webattacks_proof_confirmation_transition1k_cpu_low_noise_20260601/engine_artifacts/sentinel_forensics/cicids_webattacks_labeled_proof/20260602_005330_top_100_surprises_cicids_webattacks_labeled_proof.json
+- artifacts/cicids_webattacks_proof_confirmation_transition1k_cpu_low_noise_20260601/engine_artifacts/sentinel_forensics/cicids_webattacks_labeled_proof/20260602_005330_top_100_surprises_text_cicids_webattacks_labeled_proof.txt
+- artifacts/cicids_webattacks_proof_confirmation_transition1k_cpu_low_noise_20260601/environment.txt
+- artifacts/cicids_webattacks_proof_confirmation_transition1k_cpu_low_noise_20260601/event_confirmation_report.json
+- artifacts/cicids_webattacks_proof_confirmation_transition1k_cpu_low_noise_20260601/event_confirmation_report.md
+- artifacts/cicids_webattacks_proof_confirmation_transition1k_cpu_low_noise_20260601/event_summary.json
+- artifacts/cicids_webattacks_proof_confirmation_transition1k_cpu_low_noise_20260601/git_commit.txt
+- artifacts/cicids_webattacks_proof_confirmation_transition1k_cpu_low_noise_20260601/incident_cards/confirmed_event_001.json
+- artifacts/cicids_webattacks_proof_confirmation_transition1k_cpu_low_noise_20260601/incident_cards/engine_card_001.json
+- artifacts/cicids_webattacks_proof_confirmation_transition1k_cpu_low_noise_20260601/incident_cards/engine_card_002.json
+- artifacts/cicids_webattacks_proof_confirmation_transition1k_cpu_low_noise_20260601/incident_cards/engine_card_003.json
+- artifacts/cicids_webattacks_proof_confirmation_transition1k_cpu_low_noise_20260601/incident_cards/engine_card_004.json
+- artifacts/cicids_webattacks_proof_confirmation_transition1k_cpu_low_noise_20260601/incident_cards/engine_card_005.json
+- artifacts/cicids_webattacks_proof_confirmation_transition1k_cpu_low_noise_20260601/incident_cards/engine_card_006.json
+- artifacts/cicids_webattacks_proof_confirmation_transition1k_cpu_low_noise_20260601/incident_cards/engine_card_007.json
+- artifacts/cicids_webattacks_proof_confirmation_transition1k_cpu_low_noise_20260601/incident_cards/engine_card_008.json
+- artifacts/cicids_webattacks_proof_confirmation_transition1k_cpu_low_noise_20260601/incident_cards/engine_card_009.json
+- artifacts/cicids_webattacks_proof_confirmation_transition1k_cpu_low_noise_20260601/incident_cards/engine_card_010.json
+- artifacts/cicids_webattacks_proof_confirmation_transition1k_cpu_low_noise_20260601/incident_cards/engine_card_011.json
+- artifacts/cicids_webattacks_proof_confirmation_transition1k_cpu_low_noise_20260601/incident_cards/engine_card_012.json
+- artifacts/cicids_webattacks_proof_confirmation_transition1k_cpu_low_noise_20260601/incident_cards/engine_card_013.json
+- artifacts/cicids_webattacks_proof_confirmation_transition1k_cpu_low_noise_20260601/incident_cards/engine_card_014.json
+- artifacts/cicids_webattacks_proof_confirmation_transition1k_cpu_low_noise_20260601/incident_cards/engine_card_015.json
+- artifacts/cicids_webattacks_proof_confirmation_transition1k_cpu_low_noise_20260601/incident_cards/engine_card_016.json
+- artifacts/cicids_webattacks_proof_confirmation_transition1k_cpu_low_noise_20260601/incident_cards/engine_card_017.json
+- artifacts/cicids_webattacks_proof_confirmation_transition1k_cpu_low_noise_20260601/incident_cards/engine_card_018.json
+- artifacts/cicids_webattacks_proof_confirmation_transition1k_cpu_low_noise_20260601/incident_cards/engine_card_019.json
+- artifacts/cicids_webattacks_proof_confirmation_transition1k_cpu_low_noise_20260601/incident_cards/engine_card_020.json
+- artifacts/cicids_webattacks_proof_confirmation_transition1k_cpu_low_noise_20260601/incident_cards/engine_card_021.json
+- artifacts/cicids_webattacks_proof_confirmation_transition1k_cpu_low_noise_20260601/incident_cards/engine_card_022.json
+- artifacts/cicids_webattacks_proof_confirmation_transition1k_cpu_low_noise_20260601/incident_cards/engine_card_023.json
+- artifacts/cicids_webattacks_proof_confirmation_transition1k_cpu_low_noise_20260601/incident_cards/engine_card_024.json
+- artifacts/cicids_webattacks_proof_confirmation_transition1k_cpu_low_noise_20260601/incident_cards/engine_card_025.json
+- artifacts/cicids_webattacks_proof_confirmation_transition1k_cpu_low_noise_20260601/incident_cards/engine_card_026.json
+- artifacts/cicids_webattacks_proof_confirmation_transition1k_cpu_low_noise_20260601/incident_cards/engine_card_027.json
+- artifacts/cicids_webattacks_proof_confirmation_transition1k_cpu_low_noise_20260601/incident_cards/engine_card_028.json
+- artifacts/cicids_webattacks_proof_confirmation_transition1k_cpu_low_noise_20260601/incident_cards/engine_card_029.json
+- artifacts/cicids_webattacks_proof_confirmation_transition1k_cpu_low_noise_20260601/incident_cards/engine_card_030.json
+- artifacts/cicids_webattacks_proof_confirmation_transition1k_cpu_low_noise_20260601/incident_cards/engine_card_031.json
+- artifacts/cicids_webattacks_proof_confirmation_transition1k_cpu_low_noise_20260601/incident_cards/engine_card_032.json
+- artifacts/cicids_webattacks_proof_confirmation_transition1k_cpu_low_noise_20260601/incident_cards/engine_card_033.json
+- artifacts/cicids_webattacks_proof_confirmation_transition1k_cpu_low_noise_20260601/labeled_metrics.json
+- artifacts/cicids_webattacks_proof_confirmation_transition1k_cpu_low_noise_20260601/labeled_metrics.md
+- artifacts/cicids_webattacks_proof_confirmation_transition1k_cpu_low_noise_20260601/logs/engine_output.log
+- artifacts/cicids_webattacks_proof_confirmation_transition1k_cpu_low_noise_20260601/precision_ledger.json
+- artifacts/cicids_webattacks_proof_confirmation_transition1k_cpu_low_noise_20260601/precision_ledger.md
+- artifacts/cicids_webattacks_proof_confirmation_transition1k_cpu_low_noise_20260601/proof_digest.json
+- artifacts/cicids_webattacks_proof_confirmation_transition1k_cpu_low_noise_20260601/proof_digest.md
+- artifacts/cicids_webattacks_proof_confirmation_transition1k_cpu_low_noise_20260601/run_manifest.json
+
+### Google Drive archive status
+- Drive root used: unknown
+- Drive folder used: unknown
+- Files copied: 0
+- Files skipped: 0
+- Reason: no writable Colab Drive root found among: \content\drive\MyDrive, \content\drive\My Drive; local Google Drive auto-discovery skipped; set EIDOS_PROOF_DRIVE_DIR or EIDOS_ARTIFACT_ROOT to a verified Drive mount
+
+### End-of-task summary
+1. Files changed: proof/event_confirmation.py, tools/run_labeled_domain_proof.py, tests/test_labeled_domain_proof_runner.py, .gitignore, artifacts/cicids_webattacks_proof_confirmation_transition1k_cpu_low_noise_20260601
+2. Whether core behavior changed: no.
+3. Tests added or skipped: focused labeled runner tests added; full pytest run handled outside this runner.
+4. Repo-root commands run: `python tools/run_labeled_domain_proof.py --dataset cicids_webattacks --file artifacts/cicids_webattacks_samples/Thursday-WorkingHours-Morning-WebAttacks.pcap_ISCX.csv --label-column Label --frames 1000 --seed 42 --out artifacts/cicids_webattacks_proof_confirmation_transition1k_cpu_low_noise_20260601 --suite full --sample-mode transition --event-merge-gap 25 --confirmation-mode low_noise --attack-labels "Web Attack - Brute Force" --attack-labels "Web Attack - XSS" --attack-labels "Web Attack - Sql Injection"`.
+5. Artifacts generated: 70 files under `artifacts/cicids_webattacks_proof_confirmation_transition1k_cpu_low_noise_20260601`.
+6. Plain-language analysis written: yes.
+7. Journal entry written: yes.
+8. Google Drive copy status: skipped or failed; no writable Colab Drive root found among: \content\drive\MyDrive, \content\drive\My Drive; local Google Drive auto-discovery skipped; set EIDOS_PROOF_DRIVE_DIR or EIDOS_ARTIFACT_ROOT to a verified Drive mount.
+9. Known limitations: event confirmation is proof-side postprocessing only; no threshold tuning was attempted.
+10. Follow-up tasks not implemented: threshold calibration or core behavior changes.
