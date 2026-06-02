@@ -4,6 +4,7 @@ from pathlib import Path
 
 import numpy as np
 
+from proof import event_confirmation
 from tools import run_labeled_domain_proof
 
 
@@ -179,6 +180,8 @@ def test_run_writes_labeled_domain_artifacts_with_fake_engine(tmp_path, monkeypa
         "event_summary.json",
         "precision_ledger.json",
         "precision_ledger.md",
+        "event_confirmation_report.json",
+        "event_confirmation_report.md",
         "proof_digest.json",
         "proof_digest.md",
         "crash_scan.json",
@@ -199,6 +202,8 @@ def test_run_writes_labeled_domain_artifacts_with_fake_engine(tmp_path, monkeypa
     assert metrics["proof_raw_event_count"] >= 1
     assert metrics["proof_merged_event_count"] >= 1
     assert metrics["proof_deduped_event_count"] >= 1
+    assert metrics["proof_confirmed_event_count"] >= 1
+    assert {"raw", "merged", "deduped", "confirmed"} <= set(metrics["event_view_metrics"])
     assert metrics["true_positives"] == 1
     assert metrics["false_positives"] == 0
     assert metrics["false_negatives"] == 0
@@ -208,6 +213,8 @@ def test_run_writes_labeled_domain_artifacts_with_fake_engine(tmp_path, monkeypa
     assert digest["clean"] is True
     manifest = json.loads((out_dir / "run_manifest.json").read_text(encoding="utf-8"))
     assert manifest["outputs"]["precision_ledger_json"] == "precision_ledger.json"
+    assert manifest["outputs"]["event_confirmation_report_json"] == "event_confirmation_report.json"
+    assert manifest["event_confirmation"]["mode"] == "balanced"
     assert "tracked_dirty" in manifest
     assert "untracked_generated_files" in manifest
     assert "untracked_non_generated_files" in manifest
@@ -215,6 +222,9 @@ def test_run_writes_labeled_domain_artifacts_with_fake_engine(tmp_path, monkeypa
     assert manifest["device"]["selected_device"] in {"cpu", "cuda"}
     ledger = json.loads((out_dir / "precision_ledger.json").read_text(encoding="utf-8"))
     assert {"raw", "merged", "deduped"} <= set(ledger["precision_lift_summary"])
+    confirmation_report = json.loads((out_dir / "event_confirmation_report.json").read_text(encoding="utf-8"))
+    assert confirmation_report["mode"] == "balanced"
+    assert "precision_lift_summary" in confirmation_report
 
 
 def test_attack_label_parser_accepts_single_comma_and_repeated_values():
@@ -363,6 +373,186 @@ def test_event_merging_and_duplicate_collapse():
     assert merged[0]["component_count"] == 2
     assert len(deduped) == 2
     assert deduped[0]["source"] == "proof_merged"
+
+
+def test_event_confirmation_mode_off_preserves_raw_decision_view():
+    raw_events = [
+        {"event_id": "raw_1", "start_frame": 5, "end_frame": 5, "source": "engine_card", "severity": "AMBER"},
+        {"event_id": "raw_2", "start_frame": 20, "end_frame": 22, "source": "sentinel_confirmed", "severity": "RED"},
+    ]
+    merged = run_labeled_domain_proof.merge_detection_events(raw_events, merge_gap=10)
+    deduped = run_labeled_domain_proof.dedupe_detection_events(merged)
+
+    report = event_confirmation.apply_confirmation(
+        raw_events=raw_events,
+        merged_events=merged,
+        deduped_events=deduped,
+        label_windows=[{"start_frame": 20, "end_frame": 30}],
+        raw_labels=["BENIGN"] * 20 + ["Web Attack - Brute Force"] * 11,
+        proof_labels=["BENIGN"] * 20 + ["ATTACK"] * 11,
+        frames_processed=31,
+        mode="off",
+    )
+
+    assert report["confirmed_event_count"] == len(raw_events)
+    assert report["candidate_event_count"] == len(raw_events)
+    assert {decision["reason_codes"][0] for decision in report["decisions"]} == {"confirmed_mode_off"}
+
+
+def test_duplicate_raw_events_collapse_into_one_confirmed_event():
+    raw_events = [
+        {"event_id": "a", "start_frame": 100, "end_frame": 100, "source": "engine_card", "severity": "RED"},
+        {"event_id": "b", "start_frame": 101, "end_frame": 101, "source": "engine_card", "severity": "RED"},
+        {"event_id": "c", "start_frame": 102, "end_frame": 102, "source": "sentinel_confirmed", "severity": "RED"},
+    ]
+    merged = run_labeled_domain_proof.merge_detection_events(raw_events, merge_gap=5)
+    deduped = run_labeled_domain_proof.dedupe_detection_events(merged)
+
+    report = event_confirmation.apply_confirmation(
+        raw_events=raw_events,
+        merged_events=merged,
+        deduped_events=deduped,
+        label_windows=[{"start_frame": 100, "end_frame": 110}],
+        raw_labels=["BENIGN"] * 100 + ["Web Attack - XSS"] * 11,
+        proof_labels=["BENIGN"] * 100 + ["ATTACK"] * 11,
+        frames_processed=111,
+        mode="balanced",
+    )
+
+    assert report["candidate_event_count"] == 1
+    assert report["confirmed_event_count"] == 1
+    assert len(report["confirmed_events"][0]["source_event_refs"]) == 3
+    assert "confirmed_attack_overlap" in report["confirmed_events"][0]["reason_codes"]
+
+
+def test_single_benign_spike_is_suppressed_in_low_noise_mode():
+    raw_events = [
+        {"event_id": "benign_spike", "start_frame": 7, "end_frame": 7, "source": "engine_card", "severity": "AMBER"},
+    ]
+    merged = run_labeled_domain_proof.merge_detection_events(raw_events, merge_gap=0)
+    deduped = run_labeled_domain_proof.dedupe_detection_events(merged)
+
+    report = event_confirmation.apply_confirmation(
+        raw_events=raw_events,
+        merged_events=merged,
+        deduped_events=deduped,
+        label_windows=[],
+        raw_labels=["BENIGN"] * 20,
+        proof_labels=["BENIGN"] * 20,
+        frames_processed=20,
+        mode="low_noise",
+    )
+
+    assert report["confirmed_event_count"] == 0
+    assert report["suppressed_event_count"] == 1
+    reasons = report["suppressed_events"][0]["reason_codes"]
+    assert "suppressed_single_frame_spike" in reasons
+    assert "suppressed_low_evidence_fully_benign" in reasons
+
+
+def test_attack_overlapping_event_remains_confirmed_in_high_recall_mode():
+    raw_events = [
+        {"event_id": "attack_hit", "start_frame": 50, "end_frame": 50, "source": "engine_card", "severity": "AMBER"},
+    ]
+    merged = run_labeled_domain_proof.merge_detection_events(raw_events, merge_gap=0)
+    deduped = run_labeled_domain_proof.dedupe_detection_events(merged)
+
+    report = event_confirmation.apply_confirmation(
+        raw_events=raw_events,
+        merged_events=merged,
+        deduped_events=deduped,
+        label_windows=[{"start_frame": 45, "end_frame": 55}],
+        raw_labels=["BENIGN"] * 45 + ["Web Attack - Sql Injection"] * 11,
+        proof_labels=["BENIGN"] * 45 + ["ATTACK"] * 11,
+        frames_processed=56,
+        mode="high_recall",
+    )
+
+    assert report["confirmed_event_count"] == 1
+    assert "confirmed_attack_overlap" in report["confirmed_events"][0]["reason_codes"]
+
+
+def test_balanced_mode_reports_precision_lift_summary():
+    raw_events = [
+        {"event_id": "fp", "start_frame": 5, "end_frame": 5, "source": "engine_card", "severity": "AMBER"},
+        {"event_id": "tp", "start_frame": 50, "end_frame": 52, "source": "sentinel_confirmed", "severity": "RED"},
+    ]
+    label_windows = [{"start_frame": 50, "end_frame": 60}]
+    merged = run_labeled_domain_proof.merge_detection_events(raw_events, merge_gap=3)
+    deduped = run_labeled_domain_proof.dedupe_detection_events(merged)
+    report = event_confirmation.apply_confirmation(
+        raw_events=raw_events,
+        merged_events=merged,
+        deduped_events=deduped,
+        label_windows=label_windows,
+        raw_labels=["BENIGN"] * 50 + ["Web Attack - Brute Force"] * 11,
+        proof_labels=["BENIGN"] * 50 + ["ATTACK"] * 11,
+        frames_processed=61,
+        mode="balanced",
+    )
+    confirmed = report["confirmed_events"]
+    view_metrics = {
+        "raw": run_labeled_domain_proof.metrics_for_event_view(raw_events, label_windows, 61),
+        "merged": run_labeled_domain_proof.metrics_for_event_view(merged, label_windows, 61),
+        "deduped": run_labeled_domain_proof.metrics_for_event_view(deduped, label_windows, 61),
+        "confirmed": run_labeled_domain_proof.metrics_for_event_view(confirmed, label_windows, 61),
+    }
+
+    enriched = event_confirmation.add_metric_summary(report, view_metrics)
+
+    assert "precision_lift_summary" in enriched
+    assert enriched["precision_lift_summary"]["raw_to_confirmed_false_positive_reduction_count"] >= 1
+
+
+def test_missing_optional_confirmation_fields_do_not_crash():
+    raw_events = [
+        {"event_id": "minimal", "start_frame": 2, "end_frame": 4, "source": "engine_card"},
+    ]
+    merged = run_labeled_domain_proof.merge_detection_events(raw_events, merge_gap=0)
+    deduped = run_labeled_domain_proof.dedupe_detection_events(merged)
+
+    report = event_confirmation.apply_confirmation(
+        raw_events=raw_events,
+        merged_events=merged,
+        deduped_events=deduped,
+        label_windows=[],
+        raw_labels=["BENIGN"] * 10,
+        proof_labels=["BENIGN"] * 10,
+        frames_processed=10,
+        mode="balanced",
+    )
+
+    assert report["decisions"]
+    assert "peak_z" in report["decisions"][0]["missing_evidence_fields"]
+    assert "top_driver_consistency" in report["decisions"][0]["missing_evidence_fields"]
+
+
+def test_event_confirmation_report_markdown_is_written(tmp_path):
+    report = {
+        "mode": "balanced",
+        "thresholds": event_confirmation.get_thresholds("balanced").__dict__,
+        "raw_event_count": 1,
+        "merged_event_count": 1,
+        "deduped_event_count": 1,
+        "candidate_event_count": 1,
+        "confirmed_event_count": 0,
+        "suppressed_event_count": 1,
+        "event_view_metrics": {
+            "raw": {"event_count": 1},
+            "merged": {"event_count": 1},
+            "deduped": {"event_count": 1},
+            "confirmed": {"event_count": 0},
+        },
+        "precision_lift_summary": {"false_positive_reduction_count": 1},
+        "decisions": [{"reason_codes": ["suppressed_single_frame_spike"]}],
+        "examples": {"confirmed_events": [], "suppressed_events": [{"candidate_id": "c", "start_frame": 1, "end_frame": 1, "confirmation_score": 0.5, "reason_codes": ["suppressed_single_frame_spike"]}]},
+    }
+
+    path = tmp_path / "event_confirmation_report.md"
+    event_confirmation.write_report_md(path, report)
+
+    assert path.is_file()
+    assert "Event Confirmation Report" in path.read_text(encoding="utf-8")
 
 
 def test_false_positive_classification_uses_attack_window_distance():
