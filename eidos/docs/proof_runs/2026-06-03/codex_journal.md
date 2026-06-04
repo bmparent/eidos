@@ -619,3 +619,43 @@ Reservoir dynamics, RLS updates, Sentinel thresholds, anomaly policy, compressio
 8. Google Drive copy status: copied; copy completed.
 9. Known limitations: recommendation depends on available saved receipts; no threshold tuning was attempted.
 10. Follow-up tasks not implemented: Sentinel calibration or brain behavior changes.
+
+## Sentinel calibration v1 acceptance -- artifacts/cicids_webattacks_calibration_v1_acceptance_20260604
+
+### What happened today
+Built a Month 1 / Week 2 acceptance package for Sentinel calibration v1.
+
+### What was accomplished
+- Decision: approved.
+- Recommended baseline: balanced + sentinel_calibration_v1.
+- Compared saved uncalibrated balanced receipts against calibrated balanced receipts by sample family.
+- Wrote guardrail summaries, acceptance Markdown, JSON, CSV, and manifest receipts.
+- Stayed within the 90-day proof plan false-positive-control track.
+
+### Tests and commands run
+- `C:\Python311\python.exe tools/build_sentinel_calibration_acceptance.py --pair transition1k artifacts/cicids_webattacks_proof_confirmation_transition1k_cpu_balanced_20260601 artifacts/cicids_webattacks_calibration_v1_transition1k_cpu_balanced_20260603 --pair transition2k artifacts/cicids_webattacks_proof_confirmation_transition2k_cpu_balanced_20260602 artifacts/cicids_webattacks_calibration_v1_transition2k_cpu_balanced_20260603 --pair transition4360 artifacts/cicids_webattacks_proof_confirmation_transition4360_cpu_balanced_20260602 artifacts/cicids_webattacks_calibration_v1_transition4360_cpu_balanced_20260603 --pair natural2k artifacts/cicids_webattacks_proof_confirmation_natural2k_cpu_balanced_20260602 artifacts/cicids_webattacks_calibration_v1_natural2k_cpu_balanced_20260603 --out artifacts/cicids_webattacks_calibration_v1_acceptance_20260604` -> acceptance artifacts written.
+
+### Problems encountered
+- Google Drive status: copied; reason: copy completed.
+
+### What changed
+- tools/build_sentinel_calibration_acceptance.py
+- tests/test_sentinel_calibration_acceptance.py
+- artifacts/cicids_webattacks_calibration_v1_acceptance_20260604
+
+### What did not change
+Reservoir dynamics, RLS updates, Sentinel thresholds, anomaly policy, compression behavior, hippocampus memory, incident-card generation, and domain adapter math were not changed.
+
+### Artifacts generated
+- artifacts/cicids_webattacks_calibration_v1_acceptance_20260604/calibration_v1_acceptance.json
+- artifacts/cicids_webattacks_calibration_v1_acceptance_20260604/calibration_v1_acceptance.md
+- artifacts/cicids_webattacks_calibration_v1_acceptance_20260604/calibration_v1_acceptance_summary.csv
+- artifacts/cicids_webattacks_calibration_v1_acceptance_20260604/drive_manifest.json
+- artifacts/cicids_webattacks_calibration_v1_acceptance_20260604/guardrail_summary.csv
+
+### Google Drive archive status
+- Drive root used: G:\My Drive
+- Drive folder used: G:\My Drive\Eidos_Brain_Proof_Phase\2026-06-03\cicids_webattacks_calibration_v1_acceptance_20260604
+- Files copied: 4
+- Files skipped: 0
+- Reason: copy completed

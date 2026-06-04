@@ -119,3 +119,31 @@ Drive status: copied; folder: G:\My Drive\Eidos_Brain_Proof_Phase\2026-06-03\cic
 
 ### What should happen next
 Use the comparison report to choose whether a separately gated Sentinel calibration task is worth doing.
+
+## Sentinel calibration v1 acceptance -- artifacts/cicids_webattacks_calibration_v1_acceptance_20260604
+
+### What the task attempted
+This task turned Sentinel calibration v1 into a reviewable acceptance gate instead of a loose proof-run success claim.
+
+### Why the test matters
+The 90-day plan says Month 1 should make Eidos trustworthy by reducing false positives without destroying anomaly recall.
+
+### What was tested
+The acceptance package checked FP/10k reduction, recall preservation, attack-window coverage, first latency, missed windows, crash scans, raw/pre/post metric visibility, and Drive status.
+
+### What passed
+- Decision: approved
+- Recommended baseline: balanced + sentinel_calibration_v1
+
+### What remains uncertain
+- This is still CICIDS/WebAttacks receipt evidence, not proof across every domain.
+- The natural2k sample is benign-only pressure evidence.
+
+### What was saved locally
+Artifacts were saved under `artifacts/cicids_webattacks_calibration_v1_acceptance_20260604`.
+
+### What was saved to Google Drive
+Drive status: copied; folder: G:\My Drive\Eidos_Brain_Proof_Phase\2026-06-03\cicids_webattacks_calibration_v1_acceptance_20260604; reason: copy completed.
+
+### What should happen next
+Move to broader Month 1 baselines and proof-report automation before adding Month 2 features.
