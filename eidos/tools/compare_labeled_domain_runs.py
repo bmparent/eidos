@@ -43,6 +43,8 @@ ARTIFACT_SPECS = (
     ("precision_ledger", "precision_ledger.json", "json"),
     ("labeled_metrics", "labeled_metrics.json", "json"),
     ("event_confirmation_report", "event_confirmation_report.json", "json"),
+    ("sentinel_calibration_v1", "sentinel_calibration_v1.json", "json"),
+    ("calibrated_precision_ledger", "calibrated_precision_ledger.json", "json"),
     ("event_summary", "event_summary.json", "json"),
     ("proof_digest", "proof_digest.json", "json"),
     ("run_manifest", "run_manifest.json", "json"),
@@ -54,12 +56,29 @@ CSV_COLUMNS = (
     "run_name",
     "run_path",
     "confirmation_mode",
+    "calibration_enabled",
+    "calibration_version",
     "sample_mode",
     "frames_processed",
     "raw_event_count",
     "merged_event_count",
     "deduped_event_count",
     "confirmed_event_count",
+    "pre_calibration_confirmed_event_count",
+    "post_calibration_confirmed_event_count",
+    "calibration_suppressed_event_count",
+    "raw_precision",
+    "raw_recall",
+    "raw_f1",
+    "raw_false_positives_per_10k_frames",
+    "pre_calibration_precision",
+    "pre_calibration_recall",
+    "pre_calibration_f1",
+    "pre_calibration_false_positives_per_10k_frames",
+    "calibrated_precision",
+    "calibrated_recall",
+    "calibrated_f1",
+    "calibrated_false_positives_per_10k_frames",
     "precision",
     "recall",
     "f1",
@@ -385,6 +404,9 @@ def load_artifacts(run_path: Path) -> Tuple[Dict[str, Any], List[str], List[str]
         missing.remove("benchmark_summary.json")
     if "benchmark_summary.json" not in missing and "benchmark_summary.csv" in missing:
         missing.remove("benchmark_summary.csv")
+    for optional_name in ("sentinel_calibration_v1.json", "calibrated_precision_ledger.json"):
+        if optional_name in missing:
+            missing.remove(optional_name)
     return artifacts, missing, errors, benchmark_rows
 
 
@@ -399,6 +421,8 @@ def extract_comparison_row(
     metrics = artifacts.get("labeled_metrics", {})
     event_summary = artifacts.get("event_summary", {})
     event_report = artifacts.get("event_confirmation_report", {})
+    calibration_report = artifacts.get("sentinel_calibration_v1", {})
+    calibrated_ledger = artifacts.get("calibrated_precision_ledger", {})
     precision_ledger = artifacts.get("precision_ledger", {})
     digest = artifacts.get("proof_digest", {})
     manifest = artifacts.get("run_manifest", {})
@@ -413,16 +437,78 @@ def extract_comparison_row(
         get_nested(manifest, "event_confirmation", "mode"),
         "unknown",
     )
+    calibration_enabled = first_present(
+        metrics.get("calibration_enabled"),
+        event_summary.get("calibration_enabled"),
+        calibration_report.get("calibration_enabled"),
+        get_nested(manifest, "sentinel_calibration_v1", "enabled"),
+        False,
+    )
+    calibration_version = first_present(
+        metrics.get("calibration_version"),
+        event_summary.get("calibration_version"),
+        calibration_report.get("calibration_version"),
+        get_nested(manifest, "sentinel_calibration_v1", "version"),
+        "disabled",
+    )
+    raw_metric_view = metrics.get("raw_event_metrics") if isinstance(metrics.get("raw_event_metrics"), dict) else {}
+    pre_metric_view = first_present(
+        metrics.get("pre_calibration_confirmed_event_metrics"),
+        get_nested(calibration_report, "before_metrics"),
+        get_nested(calibrated_ledger, "before_after_metrics", "before"),
+        {},
+    )
+    calibrated_metric_view = first_present(
+        metrics.get("calibrated_event_metrics"),
+        get_nested(calibration_report, "after_metrics"),
+        get_nested(calibrated_ledger, "before_after_metrics", "after"),
+        {},
+    )
     return {
         "run_name": run_path.name,
         "run_path": relpath(run_path),
         "confirmation_mode": mode,
+        "calibration_enabled": calibration_enabled,
+        "calibration_version": calibration_version,
         "sample_mode": first_present(metrics.get("sample_mode"), digest.get("sample_mode"), benchmark_row.get("sample_mode")),
         "frames_processed": first_present(metrics.get("frames_processed"), digest.get("frames_processed"), benchmark_row.get("frames_processed")),
         "raw_event_count": first_present(metrics.get("proof_raw_event_count"), event_summary.get("raw_event_count"), event_report.get("raw_event_count"), accounting.get("proof_raw_event_count")),
         "merged_event_count": first_present(metrics.get("proof_merged_event_count"), event_summary.get("merged_event_count"), event_report.get("merged_event_count"), accounting.get("proof_merged_event_count")),
         "deduped_event_count": first_present(metrics.get("proof_deduped_event_count"), event_summary.get("deduped_event_count"), event_report.get("deduped_event_count"), accounting.get("proof_deduped_event_count")),
         "confirmed_event_count": first_present(metrics.get("proof_confirmed_event_count"), event_summary.get("confirmed_event_count"), event_report.get("confirmed_event_count"), metrics.get("confirmed_events")),
+        "pre_calibration_confirmed_event_count": first_present(
+            metrics.get("pre_calibration_confirmed_events"),
+            event_summary.get("pre_calibration_confirmed_event_count"),
+            get_nested(calibration_report, "counts", "pre_calibration_confirmed_events"),
+        ),
+        "post_calibration_confirmed_event_count": first_present(
+            metrics.get("post_calibration_confirmed_events"),
+            event_summary.get("post_calibration_confirmed_event_count"),
+            get_nested(calibration_report, "counts", "post_calibration_confirmed_events"),
+            metrics.get("confirmed_events"),
+        ),
+        "calibration_suppressed_event_count": first_present(
+            metrics.get("calibration_suppressed_events"),
+            event_summary.get("calibration_suppressed_event_count"),
+            get_nested(calibration_report, "counts", "suppressed_events"),
+            0,
+        ),
+        "raw_precision": raw_metric_view.get("precision"),
+        "raw_recall": raw_metric_view.get("recall"),
+        "raw_f1": raw_metric_view.get("f1"),
+        "raw_false_positives_per_10k_frames": raw_metric_view.get("false_positives_per_10k_frames"),
+        "pre_calibration_precision": pre_metric_view.get("precision") if isinstance(pre_metric_view, dict) else None,
+        "pre_calibration_recall": pre_metric_view.get("recall") if isinstance(pre_metric_view, dict) else None,
+        "pre_calibration_f1": pre_metric_view.get("f1") if isinstance(pre_metric_view, dict) else None,
+        "pre_calibration_false_positives_per_10k_frames": (
+            pre_metric_view.get("false_positives_per_10k_frames") if isinstance(pre_metric_view, dict) else None
+        ),
+        "calibrated_precision": calibrated_metric_view.get("precision") if isinstance(calibrated_metric_view, dict) else None,
+        "calibrated_recall": calibrated_metric_view.get("recall") if isinstance(calibrated_metric_view, dict) else None,
+        "calibrated_f1": calibrated_metric_view.get("f1") if isinstance(calibrated_metric_view, dict) else None,
+        "calibrated_false_positives_per_10k_frames": (
+            calibrated_metric_view.get("false_positives_per_10k_frames") if isinstance(calibrated_metric_view, dict) else None
+        ),
         "precision": first_present(metrics.get("precision"), get_nested(metrics, "confirmed_event_metrics", "precision"), digest.get("precision"), benchmark_row.get("precision")),
         "recall": first_present(metrics.get("recall"), get_nested(metrics, "confirmed_event_metrics", "recall"), digest.get("recall"), benchmark_row.get("recall")),
         "f1": first_present(metrics.get("f1"), get_nested(metrics, "confirmed_event_metrics", "f1"), digest.get("f1"), benchmark_row.get("f1")),
@@ -496,6 +582,7 @@ def load_run(run_path: Path, repo_root: Path = REPO_ROOT) -> LoadedRun:
     artifacts, missing, errors, benchmark_rows = load_artifacts(resolved)
     event_summary = artifacts.get("event_summary", {})
     event_report = artifacts.get("event_confirmation_report", {})
+    calibration_report = artifacts.get("sentinel_calibration_v1", {})
     precision_ledger = artifacts.get("precision_ledger", {})
     label_windows = list(event_summary.get("label_windows") or [])
     if not label_windows and precision_ledger.get("attack_window_diagnostics"):
@@ -520,6 +607,12 @@ def load_run(run_path: Path, repo_root: Path = REPO_ROOT) -> LoadedRun:
         attack_summary=attack_summary,
     )
     useful_suppressed = useful_suppressed_events(event_report, label_windows)
+    calibration_useful_suppressed = [
+        event
+        for event in calibration_report.get("suppressed_events", [])
+        if event_overlaps_attack_or_has_attack_frames(event, label_windows)
+    ]
+    useful_suppressed.extend(calibration_useful_suppressed)
     failures = build_failure_cases(
         row=row,
         diagnostics=diagnostics,
@@ -600,6 +693,9 @@ def recommend_mode(rows: Sequence[Dict[str, Any]], policy: str) -> Dict[str, Any
         "generated_at_utc": utc_now(),
         "recommendation_policy": policy,
         "recommended_mode": recommended.get("confirmation_mode"),
+        "recommended_calibration_enabled": recommended.get("calibration_enabled"),
+        "recommended_calibration_version": recommended.get("calibration_version"),
+        "recommended_display_mode": display_mode(recommended),
         "recommended_run_path": recommended.get("run_path"),
         "recommended_metrics": {key: recommended.get(key) for key in CSV_COLUMNS if key not in ("missing_artifacts",)},
         "eligibility_note": eligibility_note,
@@ -613,6 +709,9 @@ def recommend_mode(rows: Sequence[Dict[str, Any]], policy: str) -> Dict[str, Any
             {
                 "rank": index,
                 "confirmation_mode": row.get("confirmation_mode"),
+                "calibration_enabled": row.get("calibration_enabled"),
+                "calibration_version": row.get("calibration_version"),
+                "display_mode": display_mode(row),
                 "run_path": row.get("run_path"),
                 "score_tuple": list(recommendation_sort_key(row, policy)),
                 "precision": row.get("precision"),
@@ -685,6 +784,14 @@ def md_escape(value: Any) -> str:
     return format_metric(value).replace("|", "\\|")
 
 
+def display_mode(row: Dict[str, Any]) -> str:
+    mode = str(row.get("confirmation_mode", "unknown"))
+    enabled = str(row.get("calibration_enabled")).lower() in {"true", "1", "yes"}
+    if enabled:
+        return f"{mode} + {row.get('calibration_version') or 'calibrated'}"
+    return f"{mode} (uncalibrated)"
+
+
 def markdown_event_ref(event: Dict[str, Any]) -> str:
     return "`{event}` {start}-{end}".format(
         event=md_escape(first_present(event.get("event_id"), event.get("candidate_id"), "unknown")),
@@ -712,28 +819,33 @@ def write_comparison_report(path: Path, rows: Sequence[Dict[str, Any]], recommen
         "",
         "## Recommendation",
         "",
-        f"- Recommended confirmation mode: `{recommendation.get('recommended_mode')}`",
+        f"- Recommended confirmation/calibration view: `{recommendation.get('recommended_display_mode', recommendation.get('recommended_mode'))}`",
         f"- Recommendation policy: `{recommendation.get('recommendation_policy')}`",
         f"- Reason: {recommendation.get('ranking_reason')}",
         f"- Run folder: `{recommendation.get('recommended_run_path')}`",
         "",
         "## Decision Matrix",
         "",
-        "| mode | raw | merged | deduped | confirmed | precision | recall | F1 | FP/10k | attack windows covered | first latency | missed | crash hits |",
-        "| --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: |",
+        "| mode | calibration | raw | merged | deduped | pre-confirmed | confirmed | suppressed | raw FP/10k | pre FP/10k | calibrated FP/10k | precision | recall | F1 | attack windows covered | first latency | missed | crash hits |",
+        "| --- | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: |",
     ]
     for row in rows:
         lines.append(
-            "| {mode} | {raw} | {merged} | {deduped} | {confirmed} | {precision} | {recall} | {f1} | {fp10k} | {coverage} | {latency} | {missed} | {crash} |".format(
-                mode=md_escape(row.get("confirmation_mode")),
+            "| {mode} | {calibration} | {raw} | {merged} | {deduped} | {pre_confirmed} | {confirmed} | {suppressed} | {raw_fp10k} | {pre_fp10k} | {cal_fp10k} | {precision} | {recall} | {f1} | {coverage} | {latency} | {missed} | {crash} |".format(
+                mode=md_escape(display_mode(row)),
+                calibration=md_escape(row.get("calibration_enabled")),
                 raw=md_escape(row.get("raw_event_count")),
                 merged=md_escape(row.get("merged_event_count")),
                 deduped=md_escape(row.get("deduped_event_count")),
+                pre_confirmed=md_escape(row.get("pre_calibration_confirmed_event_count")),
                 confirmed=md_escape(row.get("confirmed_event_count")),
+                suppressed=md_escape(row.get("calibration_suppressed_event_count")),
+                raw_fp10k=md_escape(row.get("raw_false_positives_per_10k_frames")),
+                pre_fp10k=md_escape(row.get("pre_calibration_false_positives_per_10k_frames")),
+                cal_fp10k=md_escape(row.get("calibrated_false_positives_per_10k_frames")),
                 precision=md_escape(row.get("precision")),
                 recall=md_escape(row.get("recall")),
                 f1=md_escape(row.get("f1")),
-                fp10k=md_escape(row.get("false_positives_per_10k_frames")),
                 coverage=md_escape(row.get("attack_window_coverage_pct")),
                 latency=md_escape(row.get("first_detection_latency_frames")),
                 missed=md_escape(row.get("missed_attack_windows")),
@@ -741,7 +853,7 @@ def write_comparison_report(path: Path, rows: Sequence[Dict[str, Any]], recommen
             )
         )
     lines.extend(["", "## Plain Answers", ""])
-    lines.append(f"- Which mode performed best? `{recommendation.get('recommended_mode')}` under `{recommendation.get('recommendation_policy')}`.")
+    lines.append(f"- Which mode performed best? `{recommendation.get('recommended_display_mode', recommendation.get('recommended_mode'))}` under `{recommendation.get('recommendation_policy')}`.")
     lines.append(f"- Why? {recommendation.get('ranking_reason')}")
     if off_row:
         notes = recommendation.get("tradeoffs", {}).get("versus_off_control", {})
@@ -781,14 +893,16 @@ def write_comparison_report(path: Path, rows: Sequence[Dict[str, Any]], recommen
             "",
             "## Reproducibility Receipts",
             "",
-            "| mode | run path | git commit | config hash | device | CUDA | missing artifacts |",
-            "| --- | --- | --- | --- | --- | --- | --- |",
+            "| mode | calibration | version | run path | git commit | config hash | device | CUDA | missing artifacts |",
+            "| --- | --- | --- | --- | --- | --- | --- | --- | --- |",
         ]
     )
     for row in rows:
         lines.append(
-            "| {mode} | `{path}` | `{commit}` | `{config}` | {device} | {cuda} | {missing} |".format(
-                mode=md_escape(row.get("confirmation_mode")),
+            "| {mode} | {calibration} | `{version}` | `{path}` | `{commit}` | `{config}` | {device} | {cuda} | {missing} |".format(
+                mode=md_escape(display_mode(row)),
+                calibration=md_escape(row.get("calibration_enabled")),
+                version=md_escape(row.get("calibration_version")),
                 path=md_escape(row.get("run_path")),
                 commit=md_escape(row.get("git_commit")),
                 config=md_escape(row.get("config_hash")),
@@ -820,7 +934,7 @@ def write_attack_window_report(path: Path, loaded_runs: Sequence[LoadedRun]) -> 
         row = run.comparison_row
         lines.append(
             "| {mode} | {windows} | {coverage} | {frame_coverage} | {first} | {mean} | {late} | {missed} |".format(
-                mode=md_escape(row.get("confirmation_mode")),
+                mode=md_escape(display_mode(row)),
                 windows=md_escape(row.get("attack_window_count")),
                 coverage=md_escape(row.get("attack_window_coverage_pct")),
                 frame_coverage=md_escape(row.get("attack_window_mean_frame_coverage_pct")),
@@ -832,7 +946,7 @@ def write_attack_window_report(path: Path, loaded_runs: Sequence[LoadedRun]) -> 
         )
     lines.extend(["", "## Per-Window Details", ""])
     for run in loaded_runs:
-        lines.append(f"### {run.comparison_row.get('confirmation_mode')} - {run.run_name}")
+        lines.append(f"### {display_mode(run.comparison_row)} - {run.run_name}")
         if not run.attack_window_diagnostics:
             lines.append("- No attack-window diagnostics were available.")
         for item in run.attack_window_diagnostics:
@@ -866,7 +980,7 @@ def write_false_positive_taxonomy(path: Path, loaded_runs: Sequence[LoadedRun]) 
         for run in loaded_runs:
             total = sum(run.false_positive_taxonomy.values())
             cells = [str(run.false_positive_taxonomy.get(category, 0)) for category in categories]
-            lines.append(f"| {md_escape(run.comparison_row.get('confirmation_mode'))} | {total} | " + " | ".join(cells) + " |")
+            lines.append(f"| {md_escape(display_mode(run.comparison_row))} | {total} | " + " | ".join(cells) + " |")
     else:
         lines.append("- No confirmed-event false positives were found in the compared runs.")
     lines.extend(["", "## Precision-Ledger False Positives", ""])
@@ -880,7 +994,7 @@ def write_false_positive_taxonomy(path: Path, loaded_runs: Sequence[LoadedRun]) 
         for run in loaded_runs:
             total = sum(run.ledger_false_positive_taxonomy.values())
             cells = [str(run.ledger_false_positive_taxonomy.get(category, 0)) for category in ledger_categories]
-            lines.append(f"| {md_escape(run.comparison_row.get('confirmation_mode'))} | {total} | " + " | ".join(cells) + " |")
+            lines.append(f"| {md_escape(display_mode(run.comparison_row))} | {total} | " + " | ".join(cells) + " |")
     else:
         lines.append("- No precision-ledger false-positive taxonomy entries were available.")
     path.write_text("\n".join(lines).rstrip() + "\n", encoding="utf-8")
@@ -900,7 +1014,7 @@ def write_failure_cases(path: Path, loaded_runs: Sequence[LoadedRun]) -> None:
         lines.extend([f"## {title}", ""])
         wrote_any = False
         for run in loaded_runs:
-            mode = run.comparison_row.get("confirmation_mode")
+            mode = display_mode(run.comparison_row)
             items = run.failure_cases.get(key, [])
             if key == "duplicate_noise_clusters" and run.failure_cases.get("duplicate_event_count"):
                 lines.append(
@@ -966,7 +1080,7 @@ def write_plain_docs(
     docs_dir = repo_root / "docs" / "proof_runs" / run_date
     docs_dir.mkdir(parents=True, exist_ok=True)
     heading = f"## Labeled confirmation comparison -- {relpath(out_dir, repo_root)}"
-    modes = ", ".join(str(row.get("confirmation_mode")) for row in rows)
+    modes = ", ".join(display_mode(dict(row)) for row in rows)
     journal_body = "\n".join(
         [
             "### What happened today",
@@ -974,7 +1088,7 @@ def write_plain_docs(
             "",
             "### What was accomplished",
             f"- Compared confirmation modes: {modes}.",
-            f"- Recommended `{recommendation.get('recommended_mode')}` using `{recommendation.get('recommendation_policy')}`.",
+            f"- Recommended `{recommendation.get('recommended_display_mode', recommendation.get('recommended_mode'))}` using `{recommendation.get('recommendation_policy')}`.",
             "- Wrote comparison CSV, Markdown reports, recommendation JSON, failure cases, and artifact manifests.",
             "- Kept Eidos core behavior untouched.",
             "",
@@ -1028,7 +1142,7 @@ def write_plain_docs(
             "The tool read labeled metrics, event summaries, confirmation reports, precision ledgers, run manifests, crash scans, proof digests, and benchmark summaries when present.",
             "",
             "### What passed",
-            f"- Recommended mode: {recommendation.get('recommended_mode')}",
+            f"- Recommended mode: {recommendation.get('recommended_display_mode', recommendation.get('recommended_mode'))}",
             f"- Policy: {recommendation.get('recommendation_policy')}",
             f"- Compared modes: {modes}",
             "",
@@ -1107,6 +1221,9 @@ def build_manifest(
             {
                 "run_path": relpath(run.path),
                 "confirmation_mode": run.comparison_row.get("confirmation_mode"),
+                "calibration_enabled": run.comparison_row.get("calibration_enabled"),
+                "calibration_version": run.comparison_row.get("calibration_version"),
+                "display_mode": display_mode(run.comparison_row),
                 "missing_artifacts": run.missing_artifacts,
                 "artifact_errors": run.artifact_errors,
             }

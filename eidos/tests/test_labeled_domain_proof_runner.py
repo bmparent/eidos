@@ -5,6 +5,7 @@ from pathlib import Path
 import numpy as np
 
 from proof import event_confirmation
+from proof import sentinel_calibration_v1
 from tools import run_labeled_domain_proof
 
 
@@ -182,6 +183,10 @@ def test_run_writes_labeled_domain_artifacts_with_fake_engine(tmp_path, monkeypa
         "precision_ledger.md",
         "event_confirmation_report.json",
         "event_confirmation_report.md",
+        "sentinel_calibration_v1.json",
+        "sentinel_calibration_v1.md",
+        "calibrated_precision_ledger.json",
+        "calibrated_precision_ledger.md",
         "proof_digest.json",
         "proof_digest.md",
         "crash_scan.json",
@@ -214,7 +219,10 @@ def test_run_writes_labeled_domain_artifacts_with_fake_engine(tmp_path, monkeypa
     manifest = json.loads((out_dir / "run_manifest.json").read_text(encoding="utf-8"))
     assert manifest["outputs"]["precision_ledger_json"] == "precision_ledger.json"
     assert manifest["outputs"]["event_confirmation_report_json"] == "event_confirmation_report.json"
+    assert manifest["outputs"]["sentinel_calibration_v1_json"] == "sentinel_calibration_v1.json"
+    assert manifest["outputs"]["calibrated_precision_ledger_json"] == "calibrated_precision_ledger.json"
     assert manifest["event_confirmation"]["mode"] == "balanced"
+    assert manifest["sentinel_calibration_v1"]["enabled"] is False
     assert "tracked_dirty" in manifest
     assert "untracked_generated_files" in manifest
     assert "untracked_non_generated_files" in manifest
@@ -225,6 +233,146 @@ def test_run_writes_labeled_domain_artifacts_with_fake_engine(tmp_path, monkeypa
     confirmation_report = json.loads((out_dir / "event_confirmation_report.json").read_text(encoding="utf-8"))
     assert confirmation_report["mode"] == "balanced"
     assert "precision_lift_summary" in confirmation_report
+    drive_manifest = json.loads((out_dir / "drive_manifest.json").read_text(encoding="utf-8"))
+    assert drive_manifest["drive_copy_attempted"] is True
+    assert drive_manifest["drive_copy_success"] is False
+    assert drive_manifest["reason"] == "not configured in test"
+    calibration_report = json.loads((out_dir / "sentinel_calibration_v1.json").read_text(encoding="utf-8"))
+    assert calibration_report["calibration_enabled"] is False
+    assert calibration_report["core_behavior_boundary"]["sentinel_thresholds_changed"] is False
+
+
+def test_calibration_config_serialization_is_conservative():
+    args = run_labeled_domain_proof.parse_args(
+        [
+            "--dataset",
+            "cicids_webattacks",
+            "--file",
+            "tests/fixtures/cicids_webattacks_tiny.csv",
+            "--label-column",
+            "Label",
+            "--frames",
+            "10",
+            "--seed",
+            "42",
+            "--suite",
+            "smoke",
+            "--confirmation-mode",
+            "balanced",
+            "--calibration-enabled",
+        ]
+    )
+
+    config = run_labeled_domain_proof.build_calibration_config(args)
+    payload = sentinel_calibration_v1.config_to_dict(config)
+
+    assert payload["calibration_enabled"] is True
+    assert payload["calibration_version"] == "sentinel_calibration_v1"
+    assert payload["confirmation_mode_baseline"] == "balanced"
+    assert payload["suppress_duplicate_noise"] is True
+    assert payload["suppress_fully_benign_pressure"] is True
+    assert payload["core_behavior_boundary"]["reservoir_dynamics_changed"] is False
+    assert len(sentinel_calibration_v1.config_hash(config)) == 64
+
+
+def test_calibration_suppression_reason_accounting_and_raw_visibility():
+    confirmed = [
+        {
+            "event_id": "benign_fp",
+            "start_frame": 5,
+            "end_frame": 6,
+            "component_count": 1,
+            "score_detail": {"raw_hit_count": 2, "false_positive_classification": "fully_benign"},
+        },
+        {
+            "event_id": "attack_hit",
+            "start_frame": 20,
+            "end_frame": 22,
+            "component_count": 2,
+            "score_detail": {"raw_hit_count": 2, "false_positive_classification": "overlap_boundary"},
+        },
+    ]
+    raw_labels = ["BENIGN"] * 20 + ["Web Attack - Brute Force"] * 10
+    proof_labels = ["BENIGN"] * 20 + ["ATTACK"] * 10
+    config = sentinel_calibration_v1.SentinelCalibrationConfig(calibration_enabled=True)
+
+    report = sentinel_calibration_v1.apply_calibration(
+        confirmed_events=confirmed,
+        raw_event_count=4,
+        merged_event_count=2,
+        deduped_event_count=2,
+        attack_windows=[{"start_frame": 20, "end_frame": 29}],
+        raw_labels=raw_labels,
+        proof_labels=proof_labels,
+        frames_processed=30,
+        config=config,
+        sample_mode="transition",
+        crash_hit_count=0,
+    )
+
+    assert report["guardrails"]["passed"] is True
+    assert report["counts"]["raw_engine_card_events"] == 4
+    assert report["counts"]["pre_calibration_confirmed_events"] == 2
+    assert report["counts"]["post_calibration_confirmed_events"] == 1
+    assert report["suppressed_events"][0]["reason_code"] == "fully_benign_context"
+    assert report["suppressed_events"][0]["suppression_would_affect_attack_window_coverage"] is False
+    assert report["before_metrics"]["false_positives"] == 1
+    assert report["after_metrics"]["false_positives"] == 0
+
+
+def test_calibration_attack_window_guard_cannot_suppress_first_in_window_detection():
+    confirmed = [
+        {
+            "event_id": "first_attack_hit",
+            "start_frame": 20,
+            "end_frame": 20,
+            "component_count": 1,
+            "score_detail": {"raw_hit_count": 1, "false_positive_classification": "overlap_boundary"},
+        }
+    ]
+    raw_labels = ["BENIGN"] * 20 + ["Web Attack - XSS"] * 10
+    proof_labels = ["BENIGN"] * 20 + ["ATTACK"] * 10
+    config = sentinel_calibration_v1.SentinelCalibrationConfig(calibration_enabled=True)
+
+    report = sentinel_calibration_v1.apply_calibration(
+        confirmed_events=confirmed,
+        raw_event_count=1,
+        merged_event_count=1,
+        deduped_event_count=1,
+        attack_windows=[{"start_frame": 20, "end_frame": 29}],
+        raw_labels=raw_labels,
+        proof_labels=proof_labels,
+        frames_processed=30,
+        config=config,
+        sample_mode="transition",
+        crash_hit_count=0,
+    )
+
+    assert report["suppressed_events"] == []
+    assert report["after_metrics"]["recall"] == 1.0
+    assert report["attack_window_summary_after"]["attack_window_coverage_pct"] == 100.0
+    assert report["attack_window_summary_after"]["first_detection_latency_frames"] == 0
+
+
+def test_calibration_benign_only_pressure_reason():
+    config = sentinel_calibration_v1.SentinelCalibrationConfig(calibration_enabled=True)
+
+    report = sentinel_calibration_v1.apply_calibration(
+        confirmed_events=[{"event_id": "natural_fp", "start_frame": 5, "end_frame": 5}],
+        raw_event_count=1,
+        merged_event_count=1,
+        deduped_event_count=1,
+        attack_windows=[],
+        raw_labels=["BENIGN"] * 10,
+        proof_labels=["BENIGN"] * 10,
+        frames_processed=10,
+        config=config,
+        sample_mode="natural",
+        crash_hit_count=0,
+    )
+
+    assert report["suppressed_events"][0]["reason_code"] == "benign_only_pressure"
+    assert report["after_metrics"]["false_positives"] == 0
 
 
 def test_attack_label_parser_accepts_single_comma_and_repeated_values():

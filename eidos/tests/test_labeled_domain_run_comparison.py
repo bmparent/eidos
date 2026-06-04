@@ -61,17 +61,41 @@ def write_fake_run(
     confirmed_events,
     suppressed_events=None,
     omit=(),
+    calibration_enabled=False,
 ):
     root.mkdir(parents=True)
     label_windows = [{"start_frame": 10, "end_frame": 19, "duration": 10, "label_distribution": {"ATTACK": 10}}]
     metrics = {
         "confirmation_mode": mode,
+        "calibration_enabled": calibration_enabled,
+        "calibration_version": "sentinel_calibration_v1" if calibration_enabled else "disabled",
         "sample_mode": "transition",
         "frames_processed": 100,
         "proof_raw_event_count": 5,
         "proof_merged_event_count": 2,
         "proof_deduped_event_count": 2,
         "proof_confirmed_event_count": len(confirmed_events),
+        "pre_calibration_confirmed_events": len(confirmed_events) + (len(suppressed_events or []) if calibration_enabled else 0),
+        "post_calibration_confirmed_events": len(confirmed_events),
+        "calibration_suppressed_events": len(suppressed_events or []) if calibration_enabled else 0,
+        "raw_event_metrics": {
+            "precision": 0.5,
+            "recall": 1.0,
+            "f1": 0.666667,
+            "false_positives_per_10k_frames": 100.0,
+        },
+        "pre_calibration_confirmed_event_metrics": {
+            "precision": 0.5 if calibration_enabled else precision,
+            "recall": 1.0 if calibration_enabled else recall,
+            "f1": 0.666667 if calibration_enabled else f1,
+            "false_positives_per_10k_frames": 100.0 if calibration_enabled else fp10k,
+        },
+        "calibrated_event_metrics": {
+            "precision": precision,
+            "recall": recall,
+            "f1": f1,
+            "false_positives_per_10k_frames": fp10k,
+        },
         "precision": precision,
         "recall": recall,
         "f1": f1,
@@ -96,6 +120,11 @@ def write_fake_run(
             "label_windows": label_windows,
             "confirmed_events": confirmed_events,
             "confirmed_event_count": len(confirmed_events),
+            "pre_calibration_confirmed_event_count": len(confirmed_events) + (len(suppressed_events or []) if calibration_enabled else 0),
+            "post_calibration_confirmed_event_count": len(confirmed_events),
+            "calibration_suppressed_event_count": len(suppressed_events or []) if calibration_enabled else 0,
+            "calibration_enabled": calibration_enabled,
+            "calibration_version": "sentinel_calibration_v1" if calibration_enabled else "disabled",
             "raw_event_count": 5,
             "merged_event_count": 2,
             "deduped_event_count": 2,
@@ -144,6 +173,11 @@ def write_fake_run(
                 "frames_per_second": 50.0,
             },
             "event_confirmation": {"mode": mode},
+            "sentinel_calibration_v1": {
+                "enabled": calibration_enabled,
+                "version": "sentinel_calibration_v1" if calibration_enabled else "disabled",
+                "config_hash_sha256": f"{mode}-calibration-hash",
+            },
         },
         "crash_scan.json": {
             "crash_hit_count": 0,
@@ -152,6 +186,49 @@ def write_fake_run(
         },
         "benchmark_summary.json": {"mode": mode},
     }
+    if calibration_enabled:
+        artifacts["sentinel_calibration_v1.json"] = {
+            "calibration_enabled": True,
+            "calibration_version": "sentinel_calibration_v1",
+            "counts": {
+                "pre_calibration_confirmed_events": len(confirmed_events) + len(suppressed_events or []),
+                "post_calibration_confirmed_events": len(confirmed_events),
+                "suppressed_events": len(suppressed_events or []),
+            },
+            "before_metrics": {
+                "precision": 0.5,
+                "recall": 1.0,
+                "f1": 0.666667,
+                "false_positives_per_10k_frames": 100.0,
+            },
+            "after_metrics": {
+                "precision": precision,
+                "recall": recall,
+                "f1": f1,
+                "false_positives_per_10k_frames": fp10k,
+            },
+            "suppressed_events": suppressed_events or [],
+            "guardrails": {"passed": True},
+        }
+        artifacts["calibrated_precision_ledger.json"] = {
+            "calibration_enabled": True,
+            "calibration_version": "sentinel_calibration_v1",
+            "before_after_metrics": {
+                "before": {
+                    "precision": 0.5,
+                    "recall": 1.0,
+                    "f1": 0.666667,
+                    "false_positives_per_10k_frames": 100.0,
+                },
+                "after": {
+                    "precision": precision,
+                    "recall": recall,
+                    "f1": f1,
+                    "false_positives_per_10k_frames": fp10k,
+                },
+            },
+            "suppressed_events": suppressed_events or [],
+        }
     for name, payload in artifacts.items():
         if name not in omit:
             write_json(root / name, payload)
@@ -335,3 +412,64 @@ def test_comparison_does_not_mutate_source_run_artifacts(tmp_path, monkeypatch):
     compare_runs.run(args, repo_root=tmp_path, mirror_to_drive_fn=fake_drive_manifest, write_docs=False)
 
     assert before == {run_a: file_hashes(run_a), run_b: file_hashes(run_b)}
+
+
+def test_comparison_distinguishes_calibrated_and_uncalibrated_runs(tmp_path, monkeypatch):
+    monkeypatch.setattr(
+        compare_runs.proof_helpers,
+        "collect_git_info",
+        lambda _repo_root: {"branch": "test", "commit": "abc123", "dirty": False},
+    )
+    uncalibrated = write_fake_run(
+        tmp_path / "runs" / "balanced_uncalibrated",
+        mode="balanced",
+        precision=0.5,
+        recall=1.0,
+        f1=0.666667,
+        false_positives=1,
+        fp10k=100.0,
+        confirmed_events=[event("fp", 0, 0, "fully_benign"), event("tp", 10, 12)],
+    )
+    calibrated = write_fake_run(
+        tmp_path / "runs" / "balanced_calibrated",
+        mode="balanced",
+        precision=1.0,
+        recall=1.0,
+        f1=1.0,
+        false_positives=0,
+        fp10k=0.0,
+        confirmed_events=[event("tp", 10, 12)],
+        suppressed_events=[
+            {
+                "event_id": "fp",
+                "start_frame": 0,
+                "end_frame": 0,
+                "reason_code": "fully_benign_context",
+                "suppression_would_affect_attack_window_coverage": False,
+            }
+        ],
+        calibration_enabled=True,
+    )
+    args = compare_runs.parse_args(
+        [
+            "--runs",
+            str(uncalibrated),
+            str(calibrated),
+            "--out",
+            str(tmp_path / "artifacts" / "comparison"),
+            "--recommendation-policy",
+            "balanced_f1",
+        ]
+    )
+
+    result = compare_runs.run(args, repo_root=tmp_path, mirror_to_drive_fn=fake_drive_manifest, write_docs=False)
+
+    rows = result["rows"]
+    calibrated_row = next(row for row in rows if row["calibration_enabled"] is True)
+    assert calibrated_row["calibration_version"] == "sentinel_calibration_v1"
+    assert calibrated_row["pre_calibration_false_positives_per_10k_frames"] == 100.0
+    assert calibrated_row["calibrated_false_positives_per_10k_frames"] == 0.0
+    assert result["recommendation"]["recommended_display_mode"] == "balanced + sentinel_calibration_v1"
+    report = (tmp_path / "artifacts" / "comparison" / "comparison_report.md").read_text(encoding="utf-8")
+    assert "balanced + sentinel_calibration_v1" in report
+    assert "raw FP/10k" in report
