@@ -565,3 +565,57 @@ Reservoir dynamics, RLS updates, Sentinel thresholds, anomaly policy, compressio
 8. Google Drive copy status: skipped or failed; no writable Colab Drive root found among: \content\drive\MyDrive, \content\drive\My Drive; local Google Drive auto-discovery skipped; set EIDOS_PROOF_DRIVE_DIR or EIDOS_ARTIFACT_ROOT to a verified Drive mount.
 9. Known limitations: event confirmation is proof-side postprocessing only; no threshold tuning was attempted.
 10. Follow-up tasks not implemented: threshold calibration or core behavior changes.
+
+## Labeled confirmation comparison -- artifacts/cicids_webattacks_calibration_v1_transition1k_comparison_20260603
+
+### What happened today
+Built a comparison/reporting package for CICIDS/WebAttacks labeled-domain confirmation modes.
+
+### What was accomplished
+- Compared confirmation modes: off (uncalibrated), high_recall (uncalibrated), low_noise (uncalibrated), balanced (uncalibrated), balanced + sentinel_calibration_v1.
+- Recommended `balanced (uncalibrated)` using `balanced_f1`.
+- Wrote comparison CSV, Markdown reports, recommendation JSON, failure cases, and artifact manifests.
+- Kept Eidos core behavior untouched.
+
+### Tests and commands run
+- `C:\Python311\python.exe tools/compare_labeled_domain_runs.py --runs artifacts/cicids_webattacks_proof_confirmation_transition1k_cpu_off_20260601 artifacts/cicids_webattacks_proof_confirmation_transition1k_cpu_high_recall_20260601 artifacts/cicids_webattacks_proof_confirmation_transition1k_cpu_low_noise_20260601 artifacts/cicids_webattacks_proof_confirmation_transition1k_cpu_balanced_20260601 artifacts/cicids_webattacks_calibration_v1_transition1k_cpu_balanced_20260603 --out artifacts/cicids_webattacks_calibration_v1_transition1k_comparison_20260603 --recommendation-policy balanced_f1` -> comparison artifacts written.
+
+### Problems encountered
+- Google Drive status: copied; reason: copy completed.
+- Missing optional source artifacts, if any, are listed in the comparison report.
+
+### What changed
+- tools/compare_labeled_domain_runs.py
+- tests/test_labeled_domain_run_comparison.py
+- artifacts/cicids_webattacks_calibration_v1_transition1k_comparison_20260603
+
+### What did not change
+Reservoir dynamics, RLS updates, Sentinel thresholds, anomaly policy, compression behavior, hippocampus memory, incident-card generation, and domain adapter math were not changed.
+
+### Artifacts generated
+- artifacts/cicids_webattacks_calibration_v1_transition1k_comparison_20260603/attack_window_comparison.md
+- artifacts/cicids_webattacks_calibration_v1_transition1k_comparison_20260603/comparison_report.md
+- artifacts/cicids_webattacks_calibration_v1_transition1k_comparison_20260603/comparison_summary.csv
+- artifacts/cicids_webattacks_calibration_v1_transition1k_comparison_20260603/drive_manifest.json
+- artifacts/cicids_webattacks_calibration_v1_transition1k_comparison_20260603/failure_cases.md
+- artifacts/cicids_webattacks_calibration_v1_transition1k_comparison_20260603/false_positive_taxonomy_summary.md
+- artifacts/cicids_webattacks_calibration_v1_transition1k_comparison_20260603/recommended_confirmation_mode.json
+
+### Google Drive archive status
+- Drive root used: G:\My Drive
+- Drive folder used: G:\My Drive\Eidos_Brain_Proof_Phase\2026-06-03\cicids_webattacks_calibration_v1_transition1k_comparison_20260603
+- Files copied: 6
+- Files skipped: 0
+- Reason: copy completed
+
+### End-of-task summary
+1. Files changed: tools/compare_labeled_domain_runs.py; tests/test_labeled_domain_run_comparison.py; comparison artifacts and docs.
+2. Whether core behavior changed: no.
+3. Tests added or skipped: comparison tests added; full validation run separately.
+4. Repo-root commands run: `C:\Python311\python.exe tools/compare_labeled_domain_runs.py --runs artifacts/cicids_webattacks_proof_confirmation_transition1k_cpu_off_20260601 artifacts/cicids_webattacks_proof_confirmation_transition1k_cpu_high_recall_20260601 artifacts/cicids_webattacks_proof_confirmation_transition1k_cpu_low_noise_20260601 artifacts/cicids_webattacks_proof_confirmation_transition1k_cpu_balanced_20260601 artifacts/cicids_webattacks_calibration_v1_transition1k_cpu_balanced_20260603 --out artifacts/cicids_webattacks_calibration_v1_transition1k_comparison_20260603 --recommendation-policy balanced_f1`.
+5. Artifacts generated: 7 files under `artifacts/cicids_webattacks_calibration_v1_transition1k_comparison_20260603`.
+6. Plain-language analysis written: yes.
+7. Journal entry written: yes.
+8. Google Drive copy status: copied; copy completed.
+9. Known limitations: recommendation depends on available saved receipts; no threshold tuning was attempted.
+10. Follow-up tasks not implemented: Sentinel calibration or brain behavior changes.
