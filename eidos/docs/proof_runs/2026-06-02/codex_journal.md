@@ -570,3 +570,111 @@ Reservoir dynamics, RLS updates, Sentinel thresholds, anomaly policy, compressio
 8. Google Drive copy status: skipped or failed; no writable Colab Drive root found among: \content\drive\MyDrive, \content\drive\My Drive; local Google Drive auto-discovery skipped; set EIDOS_PROOF_DRIVE_DIR or EIDOS_ARTIFACT_ROOT to a verified Drive mount.
 9. Known limitations: event confirmation is proof-side postprocessing only; no threshold tuning was attempted.
 10. Follow-up tasks not implemented: threshold calibration or core behavior changes.
+
+## Labeled confirmation comparison -- artifacts/cicids_webattacks_confirmation_comparison_transition1k_20260602
+
+### What happened today
+Built a comparison/reporting package for CICIDS/WebAttacks labeled-domain confirmation modes.
+
+### What was accomplished
+- Compared confirmation modes: off, high_recall, balanced, low_noise.
+- Recommended `balanced` using `balanced_f1`.
+- Wrote comparison CSV, Markdown reports, recommendation JSON, failure cases, and artifact manifests.
+- Kept Eidos core behavior untouched.
+
+### Tests and commands run
+- `C:\Python311\python.exe tools/compare_labeled_domain_runs.py --runs artifacts/cicids_webattacks_proof_confirmation_transition1k_cpu_off_20260601 artifacts/cicids_webattacks_proof_confirmation_transition1k_cpu_high_recall_20260601 artifacts/cicids_webattacks_proof_confirmation_transition1k_cpu_balanced_20260601 artifacts/cicids_webattacks_proof_confirmation_transition1k_cpu_low_noise_20260601 --out artifacts/cicids_webattacks_confirmation_comparison_transition1k_20260602 --recommendation-policy balanced_f1` -> comparison artifacts written.
+
+### Problems encountered
+- Google Drive status: skipped or failed; reason: no writable Colab Drive root found among: \content\drive\MyDrive, \content\drive\My Drive; local Google Drive auto-discovery skipped; set EIDOS_PROOF_DRIVE_DIR or EIDOS_ARTIFACT_ROOT to a verified Drive mount.
+- Missing optional source artifacts, if any, are listed in the comparison report.
+
+### What changed
+- tools/compare_labeled_domain_runs.py
+- tests/test_labeled_domain_run_comparison.py
+- artifacts/cicids_webattacks_confirmation_comparison_transition1k_20260602
+
+### What did not change
+Reservoir dynamics, RLS updates, Sentinel thresholds, anomaly policy, compression behavior, hippocampus memory, incident-card generation, and domain adapter math were not changed.
+
+### Artifacts generated
+- artifacts/cicids_webattacks_confirmation_comparison_transition1k_20260602/attack_window_comparison.md
+- artifacts/cicids_webattacks_confirmation_comparison_transition1k_20260602/comparison_report.md
+- artifacts/cicids_webattacks_confirmation_comparison_transition1k_20260602/comparison_summary.csv
+- artifacts/cicids_webattacks_confirmation_comparison_transition1k_20260602/drive_manifest.json
+- artifacts/cicids_webattacks_confirmation_comparison_transition1k_20260602/failure_cases.md
+- artifacts/cicids_webattacks_confirmation_comparison_transition1k_20260602/false_positive_taxonomy_summary.md
+- artifacts/cicids_webattacks_confirmation_comparison_transition1k_20260602/recommended_confirmation_mode.json
+
+### Google Drive archive status
+- Drive root used: unknown
+- Drive folder used: unknown
+- Files copied: 0
+- Files skipped: 0
+- Reason: no writable Colab Drive root found among: \content\drive\MyDrive, \content\drive\My Drive; local Google Drive auto-discovery skipped; set EIDOS_PROOF_DRIVE_DIR or EIDOS_ARTIFACT_ROOT to a verified Drive mount
+
+### End-of-task summary
+1. Files changed: tools/compare_labeled_domain_runs.py; tests/test_labeled_domain_run_comparison.py; comparison artifacts and docs.
+2. Whether core behavior changed: no.
+3. Tests added or skipped: comparison tests added; full validation run separately.
+4. Repo-root commands run: `C:\Python311\python.exe tools/compare_labeled_domain_runs.py --runs artifacts/cicids_webattacks_proof_confirmation_transition1k_cpu_off_20260601 artifacts/cicids_webattacks_proof_confirmation_transition1k_cpu_high_recall_20260601 artifacts/cicids_webattacks_proof_confirmation_transition1k_cpu_balanced_20260601 artifacts/cicids_webattacks_proof_confirmation_transition1k_cpu_low_noise_20260601 --out artifacts/cicids_webattacks_confirmation_comparison_transition1k_20260602 --recommendation-policy balanced_f1`.
+5. Artifacts generated: 7 files under `artifacts/cicids_webattacks_confirmation_comparison_transition1k_20260602`.
+6. Plain-language analysis written: yes.
+7. Journal entry written: yes.
+8. Google Drive copy status: skipped or failed; no writable Colab Drive root found among: \content\drive\MyDrive, \content\drive\My Drive; local Google Drive auto-discovery skipped; set EIDOS_PROOF_DRIVE_DIR or EIDOS_ARTIFACT_ROOT to a verified Drive mount.
+9. Known limitations: recommendation depends on available saved receipts; no threshold tuning was attempted.
+10. Follow-up tasks not implemented: Sentinel calibration or brain behavior changes.
+
+## Labeled confirmation comparison -- artifacts/cicids_webattacks_confirmation_promotion_20260602
+
+### What happened today
+Built a comparison/reporting package for CICIDS/WebAttacks labeled-domain confirmation modes.
+
+### What was accomplished
+- Compared confirmation modes: off, high_recall, balanced, low_noise, balanced, balanced.
+- Recommended `balanced` using `balanced_f1`.
+- Wrote comparison CSV, Markdown reports, recommendation JSON, failure cases, and artifact manifests.
+- Kept Eidos core behavior untouched.
+
+### Tests and commands run
+- `C:\Python311\python.exe tools/compare_labeled_domain_runs.py --runs artifacts/cicids_webattacks_proof_confirmation_transition1k_cpu_off_20260601 artifacts/cicids_webattacks_proof_confirmation_transition1k_cpu_high_recall_20260601 artifacts/cicids_webattacks_proof_confirmation_transition1k_cpu_balanced_20260601 artifacts/cicids_webattacks_proof_confirmation_transition1k_cpu_low_noise_20260601 artifacts/cicids_webattacks_proof_confirmation_transition2k_cpu_balanced_20260602 artifacts/cicids_webattacks_proof_confirmation_natural2k_cpu_balanced_20260602 --out artifacts/cicids_webattacks_confirmation_promotion_20260602 --recommendation-policy balanced_f1` -> comparison artifacts written.
+
+### Problems encountered
+- Google Drive status: skipped or failed; reason: no writable Colab Drive root found among: \content\drive\MyDrive, \content\drive\My Drive; local Google Drive auto-discovery skipped; set EIDOS_PROOF_DRIVE_DIR or EIDOS_ARTIFACT_ROOT to a verified Drive mount.
+- Missing optional source artifacts, if any, are listed in the comparison report.
+
+### What changed
+- tools/compare_labeled_domain_runs.py
+- tests/test_labeled_domain_run_comparison.py
+- artifacts/cicids_webattacks_confirmation_promotion_20260602
+
+### What did not change
+Reservoir dynamics, RLS updates, Sentinel thresholds, anomaly policy, compression behavior, hippocampus memory, incident-card generation, and domain adapter math were not changed.
+
+### Artifacts generated
+- artifacts/cicids_webattacks_confirmation_promotion_20260602/attack_window_comparison.md
+- artifacts/cicids_webattacks_confirmation_promotion_20260602/comparison_report.md
+- artifacts/cicids_webattacks_confirmation_promotion_20260602/comparison_summary.csv
+- artifacts/cicids_webattacks_confirmation_promotion_20260602/drive_manifest.json
+- artifacts/cicids_webattacks_confirmation_promotion_20260602/failure_cases.md
+- artifacts/cicids_webattacks_confirmation_promotion_20260602/false_positive_taxonomy_summary.md
+- artifacts/cicids_webattacks_confirmation_promotion_20260602/recommended_confirmation_mode.json
+
+### Google Drive archive status
+- Drive root used: unknown
+- Drive folder used: unknown
+- Files copied: 0
+- Files skipped: 0
+- Reason: no writable Colab Drive root found among: \content\drive\MyDrive, \content\drive\My Drive; local Google Drive auto-discovery skipped; set EIDOS_PROOF_DRIVE_DIR or EIDOS_ARTIFACT_ROOT to a verified Drive mount
+
+### End-of-task summary
+1. Files changed: tools/compare_labeled_domain_runs.py; tests/test_labeled_domain_run_comparison.py; comparison artifacts and docs.
+2. Whether core behavior changed: no.
+3. Tests added or skipped: comparison tests added; full validation run separately.
+4. Repo-root commands run: `C:\Python311\python.exe tools/compare_labeled_domain_runs.py --runs artifacts/cicids_webattacks_proof_confirmation_transition1k_cpu_off_20260601 artifacts/cicids_webattacks_proof_confirmation_transition1k_cpu_high_recall_20260601 artifacts/cicids_webattacks_proof_confirmation_transition1k_cpu_balanced_20260601 artifacts/cicids_webattacks_proof_confirmation_transition1k_cpu_low_noise_20260601 artifacts/cicids_webattacks_proof_confirmation_transition2k_cpu_balanced_20260602 artifacts/cicids_webattacks_proof_confirmation_natural2k_cpu_balanced_20260602 --out artifacts/cicids_webattacks_confirmation_promotion_20260602 --recommendation-policy balanced_f1`.
+5. Artifacts generated: 7 files under `artifacts/cicids_webattacks_confirmation_promotion_20260602`.
+6. Plain-language analysis written: yes.
+7. Journal entry written: yes.
+8. Google Drive copy status: skipped or failed; no writable Colab Drive root found among: \content\drive\MyDrive, \content\drive\My Drive; local Google Drive auto-discovery skipped; set EIDOS_PROOF_DRIVE_DIR or EIDOS_ARTIFACT_ROOT to a verified Drive mount.
+9. Known limitations: recommendation depends on available saved receipts; no threshold tuning was attempted.
+10. Follow-up tasks not implemented: Sentinel calibration or brain behavior changes.
