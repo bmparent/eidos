@@ -1,0 +1,505 @@
+## Labeled CICIDS/WebAttacks proof harness -- artifacts/cicids_webattacks_calibration_v1_generalization_balanced200_seed2_cpu_balanced_20260604
+
+### What happened today
+Built and ran the event-confirmation layer for the labeled/domain proof harness.
+
+### What was accomplished
+- Added proof-side candidate scoring and confirmation modes for labeled-domain events.
+- Added optional Sentinel calibration v1 as a proof-stage false-positive suppression layer around confirmed events.
+- Captured raw, merged, deduped, and confirmed event metrics side by side.
+- Added reason codes, suppression examples, confirmation examples, calibration guardrails, false-positive context, attack-window timing diagnostics, device receipts, and artifact hygiene receipts.
+- Kept core Eidos model behavior untouched.
+
+### Tests and commands run
+- `python tools/run_labeled_domain_proof.py --dataset cicids_webattacks --file artifacts/cicids_webattacks_samples/Thursday-WorkingHours-Morning-WebAttacks.pcap_ISCX.csv --label-column Label --frames 200 --seed 2 --out artifacts/cicids_webattacks_calibration_v1_generalization_balanced200_seed2_cpu_balanced_20260604 --suite full --sample-mode balanced --event-merge-gap 25 --confirmation-mode balanced --calibration-enabled --calibration-benign-context-grace 0 --calibration-attack-window-guard 0 --calibration-min-confirmed-span 2 --calibration-min-evidence-count 2 --attack-labels "Web Attack - Brute Force" --attack-labels "Web Attack - XSS" --attack-labels "Web Attack - Sql Injection"` -> labeled smoke proof artifacts written.
+
+### Problems encountered
+- Google Drive status: copied; reason: copy completed.
+- This is not threshold tuning, so misses or false positives are reported rather than optimized away.
+
+### What changed
+- proof/event_confirmation.py
+- tools/run_labeled_domain_proof.py
+- tests/test_labeled_domain_proof_runner.py
+- .gitignore
+- artifacts/cicids_webattacks_calibration_v1_generalization_balanced200_seed2_cpu_balanced_20260604
+
+### What did not change
+Reservoir dynamics, RLS updates, Sentinel thresholds, anomaly policy, compression behavior, and architecture layers were not changed.
+
+### Artifacts generated
+- artifacts/cicids_webattacks_calibration_v1_generalization_balanced200_seed2_cpu_balanced_20260604/benchmark_summary.csv
+- artifacts/cicids_webattacks_calibration_v1_generalization_balanced200_seed2_cpu_balanced_20260604/benchmark_summary.md
+- artifacts/cicids_webattacks_calibration_v1_generalization_balanced200_seed2_cpu_balanced_20260604/calibrated_precision_ledger.json
+- artifacts/cicids_webattacks_calibration_v1_generalization_balanced200_seed2_cpu_balanced_20260604/calibrated_precision_ledger.md
+- artifacts/cicids_webattacks_calibration_v1_generalization_balanced200_seed2_cpu_balanced_20260604/config.json
+- artifacts/cicids_webattacks_calibration_v1_generalization_balanced200_seed2_cpu_balanced_20260604/crash_scan.json
+- artifacts/cicids_webattacks_calibration_v1_generalization_balanced200_seed2_cpu_balanced_20260604/drive_manifest.json
+- artifacts/cicids_webattacks_calibration_v1_generalization_balanced200_seed2_cpu_balanced_20260604/engine_artifacts/compression/cicids_webattacks_labeled_proof/20260605_000236_bicameral_stream_cicids_webattacks_labeled_proof.bin
+- artifacts/cicids_webattacks_calibration_v1_generalization_balanced200_seed2_cpu_balanced_20260604/engine_artifacts/compression/cicids_webattacks_labeled_proof/20260605_000236_bicameral_stream_meta_cicids_webattacks_labeled_proof.json
+- artifacts/cicids_webattacks_calibration_v1_generalization_balanced200_seed2_cpu_balanced_20260604/engine_artifacts/eidos_brain_archive/20260605_000211_cicids_webattacks_labeled_proof_seed2/anomalies.jsonl
+- artifacts/cicids_webattacks_calibration_v1_generalization_balanced200_seed2_cpu_balanced_20260604/engine_artifacts/eidos_brain_archive/20260605_000211_cicids_webattacks_labeled_proof_seed2/clusters.json
+- artifacts/cicids_webattacks_calibration_v1_generalization_balanced200_seed2_cpu_balanced_20260604/engine_artifacts/eidos_brain_archive/20260605_000211_cicids_webattacks_labeled_proof_seed2/report.txt
+- artifacts/cicids_webattacks_calibration_v1_generalization_balanced200_seed2_cpu_balanced_20260604/engine_artifacts/eidos_brain_archive/20260605_000211_cicids_webattacks_labeled_proof_seed2/session_meta.json
+- artifacts/cicids_webattacks_calibration_v1_generalization_balanced200_seed2_cpu_balanced_20260604/engine_artifacts/eidos_brain_archive/20260605_000211_cicids_webattacks_labeled_proof_seed2/state_capsule.json
+- artifacts/cicids_webattacks_calibration_v1_generalization_balanced200_seed2_cpu_balanced_20260604/engine_artifacts/eidos_brain_archive/20260605_000211_cicids_webattacks_labeled_proof_seed2/steps.csv
+- artifacts/cicids_webattacks_calibration_v1_generalization_balanced200_seed2_cpu_balanced_20260604/engine_artifacts/eidos_brain_archive/20260605_000211_cicids_webattacks_labeled_proof_seed2/summary.json
+- artifacts/cicids_webattacks_calibration_v1_generalization_balanced200_seed2_cpu_balanced_20260604/engine_artifacts/forecast.jsonl
+- artifacts/cicids_webattacks_calibration_v1_generalization_balanced200_seed2_cpu_balanced_20260604/engine_artifacts/hippocampus/cicids_webattacks_labeled_proof/20260605_000236_hippocampus_snapshot_cicids_webattacks_labeled_proof.pt
+- artifacts/cicids_webattacks_calibration_v1_generalization_balanced200_seed2_cpu_balanced_20260604/engine_artifacts/incident_cards.jsonl
+- artifacts/cicids_webattacks_calibration_v1_generalization_balanced200_seed2_cpu_balanced_20260604/engine_artifacts/manifest.jsonl
+- artifacts/cicids_webattacks_calibration_v1_generalization_balanced200_seed2_cpu_balanced_20260604/engine_artifacts/reservoir_checkpoints/cicids_webattacks_labeled_proof/20260605_000236_reservoir_checkpoint_cicids_webattacks_labeled_proof.pt
+- artifacts/cicids_webattacks_calibration_v1_generalization_balanced200_seed2_cpu_balanced_20260604/engine_artifacts/reservoir_geometry/cicids_webattacks_labeled_proof/20260605_000236_reservoir_geom_cicids_webattacks_labeled_proof.json
+- artifacts/cicids_webattacks_calibration_v1_generalization_balanced200_seed2_cpu_balanced_20260604/engine_artifacts/reservoir_geometry/cicids_webattacks_labeled_proof/20260605_000236_reservoir_states_cicids_webattacks_labeled_proof.npy
+- artifacts/cicids_webattacks_calibration_v1_generalization_balanced200_seed2_cpu_balanced_20260604/engine_artifacts/sentinel_forensics/cicids_webattacks_labeled_proof/20260605_000236_top_100_surprises_cicids_webattacks_labeled_proof.json
+- artifacts/cicids_webattacks_calibration_v1_generalization_balanced200_seed2_cpu_balanced_20260604/engine_artifacts/sentinel_forensics/cicids_webattacks_labeled_proof/20260605_000236_top_100_surprises_text_cicids_webattacks_labeled_proof.txt
+- artifacts/cicids_webattacks_calibration_v1_generalization_balanced200_seed2_cpu_balanced_20260604/environment.txt
+- artifacts/cicids_webattacks_calibration_v1_generalization_balanced200_seed2_cpu_balanced_20260604/event_confirmation_report.json
+- artifacts/cicids_webattacks_calibration_v1_generalization_balanced200_seed2_cpu_balanced_20260604/event_confirmation_report.md
+- artifacts/cicids_webattacks_calibration_v1_generalization_balanced200_seed2_cpu_balanced_20260604/event_summary.json
+- artifacts/cicids_webattacks_calibration_v1_generalization_balanced200_seed2_cpu_balanced_20260604/git_commit.txt
+- artifacts/cicids_webattacks_calibration_v1_generalization_balanced200_seed2_cpu_balanced_20260604/incident_cards/confirmed_event_001.json
+- artifacts/cicids_webattacks_calibration_v1_generalization_balanced200_seed2_cpu_balanced_20260604/incident_cards/confirmed_event_002.json
+- artifacts/cicids_webattacks_calibration_v1_generalization_balanced200_seed2_cpu_balanced_20260604/incident_cards/confirmed_event_003.json
+- artifacts/cicids_webattacks_calibration_v1_generalization_balanced200_seed2_cpu_balanced_20260604/incident_cards/engine_card_001.json
+- artifacts/cicids_webattacks_calibration_v1_generalization_balanced200_seed2_cpu_balanced_20260604/incident_cards/engine_card_002.json
+- artifacts/cicids_webattacks_calibration_v1_generalization_balanced200_seed2_cpu_balanced_20260604/incident_cards/engine_card_003.json
+- artifacts/cicids_webattacks_calibration_v1_generalization_balanced200_seed2_cpu_balanced_20260604/incident_cards/engine_card_004.json
+- artifacts/cicids_webattacks_calibration_v1_generalization_balanced200_seed2_cpu_balanced_20260604/incident_cards/engine_card_005.json
+- artifacts/cicids_webattacks_calibration_v1_generalization_balanced200_seed2_cpu_balanced_20260604/incident_cards/engine_card_006.json
+- artifacts/cicids_webattacks_calibration_v1_generalization_balanced200_seed2_cpu_balanced_20260604/incident_cards/engine_card_007.json
+- artifacts/cicids_webattacks_calibration_v1_generalization_balanced200_seed2_cpu_balanced_20260604/incident_cards/engine_card_008.json
+- artifacts/cicids_webattacks_calibration_v1_generalization_balanced200_seed2_cpu_balanced_20260604/labeled_metrics.json
+- artifacts/cicids_webattacks_calibration_v1_generalization_balanced200_seed2_cpu_balanced_20260604/labeled_metrics.md
+- artifacts/cicids_webattacks_calibration_v1_generalization_balanced200_seed2_cpu_balanced_20260604/logs/engine_output.log
+- artifacts/cicids_webattacks_calibration_v1_generalization_balanced200_seed2_cpu_balanced_20260604/precision_ledger.json
+- artifacts/cicids_webattacks_calibration_v1_generalization_balanced200_seed2_cpu_balanced_20260604/precision_ledger.md
+- artifacts/cicids_webattacks_calibration_v1_generalization_balanced200_seed2_cpu_balanced_20260604/proof_digest.json
+- artifacts/cicids_webattacks_calibration_v1_generalization_balanced200_seed2_cpu_balanced_20260604/proof_digest.md
+- artifacts/cicids_webattacks_calibration_v1_generalization_balanced200_seed2_cpu_balanced_20260604/run_manifest.json
+- artifacts/cicids_webattacks_calibration_v1_generalization_balanced200_seed2_cpu_balanced_20260604/sentinel_calibration_v1.json
+- artifacts/cicids_webattacks_calibration_v1_generalization_balanced200_seed2_cpu_balanced_20260604/sentinel_calibration_v1.md
+
+### Google Drive archive status
+- Drive root used: G:\My Drive
+- Drive folder used: G:\My Drive\Eidos_Brain_Proof_Phase\2026-06-05\cicids_webattacks_proof_full_seed2_frames180_20260605T000237Z
+- Files copied: 50
+- Files skipped: 0
+- Reason: copy completed
+
+### End-of-task summary
+1. Files changed: proof/event_confirmation.py, tools/run_labeled_domain_proof.py, tests/test_labeled_domain_proof_runner.py, .gitignore, artifacts/cicids_webattacks_calibration_v1_generalization_balanced200_seed2_cpu_balanced_20260604
+2. Whether core behavior changed: no.
+3. Tests added or skipped: focused labeled runner tests added; full pytest run handled outside this runner.
+4. Repo-root commands run: `python tools/run_labeled_domain_proof.py --dataset cicids_webattacks --file artifacts/cicids_webattacks_samples/Thursday-WorkingHours-Morning-WebAttacks.pcap_ISCX.csv --label-column Label --frames 200 --seed 2 --out artifacts/cicids_webattacks_calibration_v1_generalization_balanced200_seed2_cpu_balanced_20260604 --suite full --sample-mode balanced --event-merge-gap 25 --confirmation-mode balanced --calibration-enabled --calibration-benign-context-grace 0 --calibration-attack-window-guard 0 --calibration-min-confirmed-span 2 --calibration-min-evidence-count 2 --attack-labels "Web Attack - Brute Force" --attack-labels "Web Attack - XSS" --attack-labels "Web Attack - Sql Injection"`.
+5. Artifacts generated: 51 files under `artifacts/cicids_webattacks_calibration_v1_generalization_balanced200_seed2_cpu_balanced_20260604`.
+6. Plain-language analysis written: yes.
+7. Journal entry written: yes.
+8. Google Drive copy status: copied; copy completed.
+9. Known limitations: event confirmation is proof-side postprocessing only; no threshold tuning was attempted.
+10. Follow-up tasks not implemented: threshold calibration or core behavior changes.
+
+## Labeled CICIDS/WebAttacks proof harness -- artifacts/cicids_webattacks_calibration_v1_generalization_balanced200_seed3_cpu_balanced_20260604
+
+### What happened today
+Built and ran the event-confirmation layer for the labeled/domain proof harness.
+
+### What was accomplished
+- Added proof-side candidate scoring and confirmation modes for labeled-domain events.
+- Added optional Sentinel calibration v1 as a proof-stage false-positive suppression layer around confirmed events.
+- Captured raw, merged, deduped, and confirmed event metrics side by side.
+- Added reason codes, suppression examples, confirmation examples, calibration guardrails, false-positive context, attack-window timing diagnostics, device receipts, and artifact hygiene receipts.
+- Kept core Eidos model behavior untouched.
+
+### Tests and commands run
+- `python tools/run_labeled_domain_proof.py --dataset cicids_webattacks --file artifacts/cicids_webattacks_samples/Thursday-WorkingHours-Morning-WebAttacks.pcap_ISCX.csv --label-column Label --frames 200 --seed 3 --out artifacts/cicids_webattacks_calibration_v1_generalization_balanced200_seed3_cpu_balanced_20260604 --suite full --sample-mode balanced --event-merge-gap 25 --confirmation-mode balanced --calibration-enabled --calibration-benign-context-grace 0 --calibration-attack-window-guard 0 --calibration-min-confirmed-span 2 --calibration-min-evidence-count 2 --attack-labels "Web Attack - Brute Force" --attack-labels "Web Attack - XSS" --attack-labels "Web Attack - Sql Injection"` -> labeled smoke proof artifacts written.
+
+### Problems encountered
+- Google Drive status: copied; reason: copy completed.
+- This is not threshold tuning, so misses or false positives are reported rather than optimized away.
+
+### What changed
+- proof/event_confirmation.py
+- tools/run_labeled_domain_proof.py
+- tests/test_labeled_domain_proof_runner.py
+- .gitignore
+- artifacts/cicids_webattacks_calibration_v1_generalization_balanced200_seed3_cpu_balanced_20260604
+
+### What did not change
+Reservoir dynamics, RLS updates, Sentinel thresholds, anomaly policy, compression behavior, and architecture layers were not changed.
+
+### Artifacts generated
+- artifacts/cicids_webattacks_calibration_v1_generalization_balanced200_seed3_cpu_balanced_20260604/benchmark_summary.csv
+- artifacts/cicids_webattacks_calibration_v1_generalization_balanced200_seed3_cpu_balanced_20260604/benchmark_summary.md
+- artifacts/cicids_webattacks_calibration_v1_generalization_balanced200_seed3_cpu_balanced_20260604/calibrated_precision_ledger.json
+- artifacts/cicids_webattacks_calibration_v1_generalization_balanced200_seed3_cpu_balanced_20260604/calibrated_precision_ledger.md
+- artifacts/cicids_webattacks_calibration_v1_generalization_balanced200_seed3_cpu_balanced_20260604/config.json
+- artifacts/cicids_webattacks_calibration_v1_generalization_balanced200_seed3_cpu_balanced_20260604/crash_scan.json
+- artifacts/cicids_webattacks_calibration_v1_generalization_balanced200_seed3_cpu_balanced_20260604/drive_manifest.json
+- artifacts/cicids_webattacks_calibration_v1_generalization_balanced200_seed3_cpu_balanced_20260604/engine_artifacts/compression/cicids_webattacks_labeled_proof/20260605_000359_bicameral_stream_cicids_webattacks_labeled_proof.bin
+- artifacts/cicids_webattacks_calibration_v1_generalization_balanced200_seed3_cpu_balanced_20260604/engine_artifacts/compression/cicids_webattacks_labeled_proof/20260605_000359_bicameral_stream_meta_cicids_webattacks_labeled_proof.json
+- artifacts/cicids_webattacks_calibration_v1_generalization_balanced200_seed3_cpu_balanced_20260604/engine_artifacts/eidos_brain_archive/20260605_000335_cicids_webattacks_labeled_proof_seed3/anomalies.jsonl
+- artifacts/cicids_webattacks_calibration_v1_generalization_balanced200_seed3_cpu_balanced_20260604/engine_artifacts/eidos_brain_archive/20260605_000335_cicids_webattacks_labeled_proof_seed3/clusters.json
+- artifacts/cicids_webattacks_calibration_v1_generalization_balanced200_seed3_cpu_balanced_20260604/engine_artifacts/eidos_brain_archive/20260605_000335_cicids_webattacks_labeled_proof_seed3/report.txt
+- artifacts/cicids_webattacks_calibration_v1_generalization_balanced200_seed3_cpu_balanced_20260604/engine_artifacts/eidos_brain_archive/20260605_000335_cicids_webattacks_labeled_proof_seed3/session_meta.json
+- artifacts/cicids_webattacks_calibration_v1_generalization_balanced200_seed3_cpu_balanced_20260604/engine_artifacts/eidos_brain_archive/20260605_000335_cicids_webattacks_labeled_proof_seed3/state_capsule.json
+- artifacts/cicids_webattacks_calibration_v1_generalization_balanced200_seed3_cpu_balanced_20260604/engine_artifacts/eidos_brain_archive/20260605_000335_cicids_webattacks_labeled_proof_seed3/steps.csv
+- artifacts/cicids_webattacks_calibration_v1_generalization_balanced200_seed3_cpu_balanced_20260604/engine_artifacts/eidos_brain_archive/20260605_000335_cicids_webattacks_labeled_proof_seed3/summary.json
+- artifacts/cicids_webattacks_calibration_v1_generalization_balanced200_seed3_cpu_balanced_20260604/engine_artifacts/forecast.jsonl
+- artifacts/cicids_webattacks_calibration_v1_generalization_balanced200_seed3_cpu_balanced_20260604/engine_artifacts/hippocampus/cicids_webattacks_labeled_proof/20260605_000359_hippocampus_snapshot_cicids_webattacks_labeled_proof.pt
+- artifacts/cicids_webattacks_calibration_v1_generalization_balanced200_seed3_cpu_balanced_20260604/engine_artifacts/incident_cards.jsonl
+- artifacts/cicids_webattacks_calibration_v1_generalization_balanced200_seed3_cpu_balanced_20260604/engine_artifacts/manifest.jsonl
+- artifacts/cicids_webattacks_calibration_v1_generalization_balanced200_seed3_cpu_balanced_20260604/engine_artifacts/reservoir_checkpoints/cicids_webattacks_labeled_proof/20260605_000358_reservoir_checkpoint_cicids_webattacks_labeled_proof.pt
+- artifacts/cicids_webattacks_calibration_v1_generalization_balanced200_seed3_cpu_balanced_20260604/engine_artifacts/reservoir_geometry/cicids_webattacks_labeled_proof/20260605_000359_reservoir_geom_cicids_webattacks_labeled_proof.json
+- artifacts/cicids_webattacks_calibration_v1_generalization_balanced200_seed3_cpu_balanced_20260604/engine_artifacts/reservoir_geometry/cicids_webattacks_labeled_proof/20260605_000359_reservoir_states_cicids_webattacks_labeled_proof.npy
+- artifacts/cicids_webattacks_calibration_v1_generalization_balanced200_seed3_cpu_balanced_20260604/engine_artifacts/sentinel_forensics/cicids_webattacks_labeled_proof/20260605_000359_top_100_surprises_cicids_webattacks_labeled_proof.json
+- artifacts/cicids_webattacks_calibration_v1_generalization_balanced200_seed3_cpu_balanced_20260604/engine_artifacts/sentinel_forensics/cicids_webattacks_labeled_proof/20260605_000359_top_100_surprises_text_cicids_webattacks_labeled_proof.txt
+- artifacts/cicids_webattacks_calibration_v1_generalization_balanced200_seed3_cpu_balanced_20260604/environment.txt
+- artifacts/cicids_webattacks_calibration_v1_generalization_balanced200_seed3_cpu_balanced_20260604/event_confirmation_report.json
+- artifacts/cicids_webattacks_calibration_v1_generalization_balanced200_seed3_cpu_balanced_20260604/event_confirmation_report.md
+- artifacts/cicids_webattacks_calibration_v1_generalization_balanced200_seed3_cpu_balanced_20260604/event_summary.json
+- artifacts/cicids_webattacks_calibration_v1_generalization_balanced200_seed3_cpu_balanced_20260604/git_commit.txt
+- artifacts/cicids_webattacks_calibration_v1_generalization_balanced200_seed3_cpu_balanced_20260604/incident_cards/confirmed_event_001.json
+- artifacts/cicids_webattacks_calibration_v1_generalization_balanced200_seed3_cpu_balanced_20260604/incident_cards/confirmed_event_002.json
+- artifacts/cicids_webattacks_calibration_v1_generalization_balanced200_seed3_cpu_balanced_20260604/incident_cards/engine_card_001.json
+- artifacts/cicids_webattacks_calibration_v1_generalization_balanced200_seed3_cpu_balanced_20260604/incident_cards/engine_card_002.json
+- artifacts/cicids_webattacks_calibration_v1_generalization_balanced200_seed3_cpu_balanced_20260604/incident_cards/engine_card_003.json
+- artifacts/cicids_webattacks_calibration_v1_generalization_balanced200_seed3_cpu_balanced_20260604/incident_cards/engine_card_004.json
+- artifacts/cicids_webattacks_calibration_v1_generalization_balanced200_seed3_cpu_balanced_20260604/incident_cards/engine_card_005.json
+- artifacts/cicids_webattacks_calibration_v1_generalization_balanced200_seed3_cpu_balanced_20260604/incident_cards/engine_card_006.json
+- artifacts/cicids_webattacks_calibration_v1_generalization_balanced200_seed3_cpu_balanced_20260604/incident_cards/engine_card_007.json
+- artifacts/cicids_webattacks_calibration_v1_generalization_balanced200_seed3_cpu_balanced_20260604/incident_cards/engine_card_008.json
+- artifacts/cicids_webattacks_calibration_v1_generalization_balanced200_seed3_cpu_balanced_20260604/labeled_metrics.json
+- artifacts/cicids_webattacks_calibration_v1_generalization_balanced200_seed3_cpu_balanced_20260604/labeled_metrics.md
+- artifacts/cicids_webattacks_calibration_v1_generalization_balanced200_seed3_cpu_balanced_20260604/logs/engine_output.log
+- artifacts/cicids_webattacks_calibration_v1_generalization_balanced200_seed3_cpu_balanced_20260604/precision_ledger.json
+- artifacts/cicids_webattacks_calibration_v1_generalization_balanced200_seed3_cpu_balanced_20260604/precision_ledger.md
+- artifacts/cicids_webattacks_calibration_v1_generalization_balanced200_seed3_cpu_balanced_20260604/proof_digest.json
+- artifacts/cicids_webattacks_calibration_v1_generalization_balanced200_seed3_cpu_balanced_20260604/proof_digest.md
+- artifacts/cicids_webattacks_calibration_v1_generalization_balanced200_seed3_cpu_balanced_20260604/run_manifest.json
+- artifacts/cicids_webattacks_calibration_v1_generalization_balanced200_seed3_cpu_balanced_20260604/sentinel_calibration_v1.json
+- artifacts/cicids_webattacks_calibration_v1_generalization_balanced200_seed3_cpu_balanced_20260604/sentinel_calibration_v1.md
+
+### Google Drive archive status
+- Drive root used: G:\My Drive
+- Drive folder used: G:\My Drive\Eidos_Brain_Proof_Phase\2026-06-05\cicids_webattacks_proof_full_seed3_frames180_20260605T000400Z
+- Files copied: 49
+- Files skipped: 0
+- Reason: copy completed
+
+### End-of-task summary
+1. Files changed: proof/event_confirmation.py, tools/run_labeled_domain_proof.py, tests/test_labeled_domain_proof_runner.py, .gitignore, artifacts/cicids_webattacks_calibration_v1_generalization_balanced200_seed3_cpu_balanced_20260604
+2. Whether core behavior changed: no.
+3. Tests added or skipped: focused labeled runner tests added; full pytest run handled outside this runner.
+4. Repo-root commands run: `python tools/run_labeled_domain_proof.py --dataset cicids_webattacks --file artifacts/cicids_webattacks_samples/Thursday-WorkingHours-Morning-WebAttacks.pcap_ISCX.csv --label-column Label --frames 200 --seed 3 --out artifacts/cicids_webattacks_calibration_v1_generalization_balanced200_seed3_cpu_balanced_20260604 --suite full --sample-mode balanced --event-merge-gap 25 --confirmation-mode balanced --calibration-enabled --calibration-benign-context-grace 0 --calibration-attack-window-guard 0 --calibration-min-confirmed-span 2 --calibration-min-evidence-count 2 --attack-labels "Web Attack - Brute Force" --attack-labels "Web Attack - XSS" --attack-labels "Web Attack - Sql Injection"`.
+5. Artifacts generated: 50 files under `artifacts/cicids_webattacks_calibration_v1_generalization_balanced200_seed3_cpu_balanced_20260604`.
+6. Plain-language analysis written: yes.
+7. Journal entry written: yes.
+8. Google Drive copy status: copied; copy completed.
+9. Known limitations: event confirmation is proof-side postprocessing only; no threshold tuning was attempted.
+10. Follow-up tasks not implemented: threshold calibration or core behavior changes.
+
+## Labeled CICIDS/WebAttacks proof harness -- artifacts/cicids_webattacks_calibration_v1_generalization_balanced200_seed4_cpu_balanced_20260604
+
+### What happened today
+Built and ran the event-confirmation layer for the labeled/domain proof harness.
+
+### What was accomplished
+- Added proof-side candidate scoring and confirmation modes for labeled-domain events.
+- Added optional Sentinel calibration v1 as a proof-stage false-positive suppression layer around confirmed events.
+- Captured raw, merged, deduped, and confirmed event metrics side by side.
+- Added reason codes, suppression examples, confirmation examples, calibration guardrails, false-positive context, attack-window timing diagnostics, device receipts, and artifact hygiene receipts.
+- Kept core Eidos model behavior untouched.
+
+### Tests and commands run
+- `python tools/run_labeled_domain_proof.py --dataset cicids_webattacks --file artifacts/cicids_webattacks_samples/Thursday-WorkingHours-Morning-WebAttacks.pcap_ISCX.csv --label-column Label --frames 200 --seed 4 --out artifacts/cicids_webattacks_calibration_v1_generalization_balanced200_seed4_cpu_balanced_20260604 --suite full --sample-mode balanced --event-merge-gap 25 --confirmation-mode balanced --calibration-enabled --calibration-benign-context-grace 0 --calibration-attack-window-guard 0 --calibration-min-confirmed-span 2 --calibration-min-evidence-count 2 --attack-labels "Web Attack - Brute Force" --attack-labels "Web Attack - XSS" --attack-labels "Web Attack - Sql Injection"` -> labeled smoke proof artifacts written.
+
+### Problems encountered
+- Google Drive status: copied; reason: copy completed.
+- This is not threshold tuning, so misses or false positives are reported rather than optimized away.
+
+### What changed
+- proof/event_confirmation.py
+- tools/run_labeled_domain_proof.py
+- tests/test_labeled_domain_proof_runner.py
+- .gitignore
+- artifacts/cicids_webattacks_calibration_v1_generalization_balanced200_seed4_cpu_balanced_20260604
+
+### What did not change
+Reservoir dynamics, RLS updates, Sentinel thresholds, anomaly policy, compression behavior, and architecture layers were not changed.
+
+### Artifacts generated
+- artifacts/cicids_webattacks_calibration_v1_generalization_balanced200_seed4_cpu_balanced_20260604/benchmark_summary.csv
+- artifacts/cicids_webattacks_calibration_v1_generalization_balanced200_seed4_cpu_balanced_20260604/benchmark_summary.md
+- artifacts/cicids_webattacks_calibration_v1_generalization_balanced200_seed4_cpu_balanced_20260604/calibrated_precision_ledger.json
+- artifacts/cicids_webattacks_calibration_v1_generalization_balanced200_seed4_cpu_balanced_20260604/calibrated_precision_ledger.md
+- artifacts/cicids_webattacks_calibration_v1_generalization_balanced200_seed4_cpu_balanced_20260604/config.json
+- artifacts/cicids_webattacks_calibration_v1_generalization_balanced200_seed4_cpu_balanced_20260604/crash_scan.json
+- artifacts/cicids_webattacks_calibration_v1_generalization_balanced200_seed4_cpu_balanced_20260604/drive_manifest.json
+- artifacts/cicids_webattacks_calibration_v1_generalization_balanced200_seed4_cpu_balanced_20260604/engine_artifacts/compression/cicids_webattacks_labeled_proof/20260605_000533_bicameral_stream_cicids_webattacks_labeled_proof.bin
+- artifacts/cicids_webattacks_calibration_v1_generalization_balanced200_seed4_cpu_balanced_20260604/engine_artifacts/compression/cicids_webattacks_labeled_proof/20260605_000533_bicameral_stream_meta_cicids_webattacks_labeled_proof.json
+- artifacts/cicids_webattacks_calibration_v1_generalization_balanced200_seed4_cpu_balanced_20260604/engine_artifacts/eidos_brain_archive/20260605_000512_cicids_webattacks_labeled_proof_seed4/anomalies.jsonl
+- artifacts/cicids_webattacks_calibration_v1_generalization_balanced200_seed4_cpu_balanced_20260604/engine_artifacts/eidos_brain_archive/20260605_000512_cicids_webattacks_labeled_proof_seed4/clusters.json
+- artifacts/cicids_webattacks_calibration_v1_generalization_balanced200_seed4_cpu_balanced_20260604/engine_artifacts/eidos_brain_archive/20260605_000512_cicids_webattacks_labeled_proof_seed4/report.txt
+- artifacts/cicids_webattacks_calibration_v1_generalization_balanced200_seed4_cpu_balanced_20260604/engine_artifacts/eidos_brain_archive/20260605_000512_cicids_webattacks_labeled_proof_seed4/session_meta.json
+- artifacts/cicids_webattacks_calibration_v1_generalization_balanced200_seed4_cpu_balanced_20260604/engine_artifacts/eidos_brain_archive/20260605_000512_cicids_webattacks_labeled_proof_seed4/state_capsule.json
+- artifacts/cicids_webattacks_calibration_v1_generalization_balanced200_seed4_cpu_balanced_20260604/engine_artifacts/eidos_brain_archive/20260605_000512_cicids_webattacks_labeled_proof_seed4/steps.csv
+- artifacts/cicids_webattacks_calibration_v1_generalization_balanced200_seed4_cpu_balanced_20260604/engine_artifacts/eidos_brain_archive/20260605_000512_cicids_webattacks_labeled_proof_seed4/summary.json
+- artifacts/cicids_webattacks_calibration_v1_generalization_balanced200_seed4_cpu_balanced_20260604/engine_artifacts/forecast.jsonl
+- artifacts/cicids_webattacks_calibration_v1_generalization_balanced200_seed4_cpu_balanced_20260604/engine_artifacts/hippocampus/cicids_webattacks_labeled_proof/20260605_000533_hippocampus_snapshot_cicids_webattacks_labeled_proof.pt
+- artifacts/cicids_webattacks_calibration_v1_generalization_balanced200_seed4_cpu_balanced_20260604/engine_artifacts/incident_cards.jsonl
+- artifacts/cicids_webattacks_calibration_v1_generalization_balanced200_seed4_cpu_balanced_20260604/engine_artifacts/manifest.jsonl
+- artifacts/cicids_webattacks_calibration_v1_generalization_balanced200_seed4_cpu_balanced_20260604/engine_artifacts/reservoir_checkpoints/cicids_webattacks_labeled_proof/20260605_000533_reservoir_checkpoint_cicids_webattacks_labeled_proof.pt
+- artifacts/cicids_webattacks_calibration_v1_generalization_balanced200_seed4_cpu_balanced_20260604/engine_artifacts/reservoir_geometry/cicids_webattacks_labeled_proof/20260605_000533_reservoir_geom_cicids_webattacks_labeled_proof.json
+- artifacts/cicids_webattacks_calibration_v1_generalization_balanced200_seed4_cpu_balanced_20260604/engine_artifacts/reservoir_geometry/cicids_webattacks_labeled_proof/20260605_000533_reservoir_states_cicids_webattacks_labeled_proof.npy
+- artifacts/cicids_webattacks_calibration_v1_generalization_balanced200_seed4_cpu_balanced_20260604/engine_artifacts/sentinel_forensics/cicids_webattacks_labeled_proof/20260605_000533_top_100_surprises_cicids_webattacks_labeled_proof.json
+- artifacts/cicids_webattacks_calibration_v1_generalization_balanced200_seed4_cpu_balanced_20260604/engine_artifacts/sentinel_forensics/cicids_webattacks_labeled_proof/20260605_000533_top_100_surprises_text_cicids_webattacks_labeled_proof.txt
+- artifacts/cicids_webattacks_calibration_v1_generalization_balanced200_seed4_cpu_balanced_20260604/environment.txt
+- artifacts/cicids_webattacks_calibration_v1_generalization_balanced200_seed4_cpu_balanced_20260604/event_confirmation_report.json
+- artifacts/cicids_webattacks_calibration_v1_generalization_balanced200_seed4_cpu_balanced_20260604/event_confirmation_report.md
+- artifacts/cicids_webattacks_calibration_v1_generalization_balanced200_seed4_cpu_balanced_20260604/event_summary.json
+- artifacts/cicids_webattacks_calibration_v1_generalization_balanced200_seed4_cpu_balanced_20260604/git_commit.txt
+- artifacts/cicids_webattacks_calibration_v1_generalization_balanced200_seed4_cpu_balanced_20260604/incident_cards/confirmed_event_001.json
+- artifacts/cicids_webattacks_calibration_v1_generalization_balanced200_seed4_cpu_balanced_20260604/incident_cards/confirmed_event_002.json
+- artifacts/cicids_webattacks_calibration_v1_generalization_balanced200_seed4_cpu_balanced_20260604/incident_cards/confirmed_event_003.json
+- artifacts/cicids_webattacks_calibration_v1_generalization_balanced200_seed4_cpu_balanced_20260604/incident_cards/engine_card_001.json
+- artifacts/cicids_webattacks_calibration_v1_generalization_balanced200_seed4_cpu_balanced_20260604/incident_cards/engine_card_002.json
+- artifacts/cicids_webattacks_calibration_v1_generalization_balanced200_seed4_cpu_balanced_20260604/incident_cards/engine_card_003.json
+- artifacts/cicids_webattacks_calibration_v1_generalization_balanced200_seed4_cpu_balanced_20260604/incident_cards/engine_card_004.json
+- artifacts/cicids_webattacks_calibration_v1_generalization_balanced200_seed4_cpu_balanced_20260604/incident_cards/engine_card_005.json
+- artifacts/cicids_webattacks_calibration_v1_generalization_balanced200_seed4_cpu_balanced_20260604/incident_cards/engine_card_006.json
+- artifacts/cicids_webattacks_calibration_v1_generalization_balanced200_seed4_cpu_balanced_20260604/incident_cards/engine_card_007.json
+- artifacts/cicids_webattacks_calibration_v1_generalization_balanced200_seed4_cpu_balanced_20260604/incident_cards/engine_card_008.json
+- artifacts/cicids_webattacks_calibration_v1_generalization_balanced200_seed4_cpu_balanced_20260604/labeled_metrics.json
+- artifacts/cicids_webattacks_calibration_v1_generalization_balanced200_seed4_cpu_balanced_20260604/labeled_metrics.md
+- artifacts/cicids_webattacks_calibration_v1_generalization_balanced200_seed4_cpu_balanced_20260604/logs/engine_output.log
+- artifacts/cicids_webattacks_calibration_v1_generalization_balanced200_seed4_cpu_balanced_20260604/precision_ledger.json
+- artifacts/cicids_webattacks_calibration_v1_generalization_balanced200_seed4_cpu_balanced_20260604/precision_ledger.md
+- artifacts/cicids_webattacks_calibration_v1_generalization_balanced200_seed4_cpu_balanced_20260604/proof_digest.json
+- artifacts/cicids_webattacks_calibration_v1_generalization_balanced200_seed4_cpu_balanced_20260604/proof_digest.md
+- artifacts/cicids_webattacks_calibration_v1_generalization_balanced200_seed4_cpu_balanced_20260604/run_manifest.json
+- artifacts/cicids_webattacks_calibration_v1_generalization_balanced200_seed4_cpu_balanced_20260604/sentinel_calibration_v1.json
+- artifacts/cicids_webattacks_calibration_v1_generalization_balanced200_seed4_cpu_balanced_20260604/sentinel_calibration_v1.md
+
+### Google Drive archive status
+- Drive root used: G:\My Drive
+- Drive folder used: G:\My Drive\Eidos_Brain_Proof_Phase\2026-06-05\cicids_webattacks_proof_full_seed4_frames180_20260605T000534Z
+- Files copied: 50
+- Files skipped: 0
+- Reason: copy completed
+
+### End-of-task summary
+1. Files changed: proof/event_confirmation.py, tools/run_labeled_domain_proof.py, tests/test_labeled_domain_proof_runner.py, .gitignore, artifacts/cicids_webattacks_calibration_v1_generalization_balanced200_seed4_cpu_balanced_20260604
+2. Whether core behavior changed: no.
+3. Tests added or skipped: focused labeled runner tests added; full pytest run handled outside this runner.
+4. Repo-root commands run: `python tools/run_labeled_domain_proof.py --dataset cicids_webattacks --file artifacts/cicids_webattacks_samples/Thursday-WorkingHours-Morning-WebAttacks.pcap_ISCX.csv --label-column Label --frames 200 --seed 4 --out artifacts/cicids_webattacks_calibration_v1_generalization_balanced200_seed4_cpu_balanced_20260604 --suite full --sample-mode balanced --event-merge-gap 25 --confirmation-mode balanced --calibration-enabled --calibration-benign-context-grace 0 --calibration-attack-window-guard 0 --calibration-min-confirmed-span 2 --calibration-min-evidence-count 2 --attack-labels "Web Attack - Brute Force" --attack-labels "Web Attack - XSS" --attack-labels "Web Attack - Sql Injection"`.
+5. Artifacts generated: 51 files under `artifacts/cicids_webattacks_calibration_v1_generalization_balanced200_seed4_cpu_balanced_20260604`.
+6. Plain-language analysis written: yes.
+7. Journal entry written: yes.
+8. Google Drive copy status: copied; copy completed.
+9. Known limitations: event confirmation is proof-side postprocessing only; no threshold tuning was attempted.
+10. Follow-up tasks not implemented: threshold calibration or core behavior changes.
+
+## Labeled CICIDS/WebAttacks proof harness -- artifacts/cicids_webattacks_calibration_v1_generalization_balanced300_seed2_cpu_balanced_20260604
+
+### What happened today
+Built and ran the event-confirmation layer for the labeled/domain proof harness.
+
+### What was accomplished
+- Added proof-side candidate scoring and confirmation modes for labeled-domain events.
+- Added optional Sentinel calibration v1 as a proof-stage false-positive suppression layer around confirmed events.
+- Captured raw, merged, deduped, and confirmed event metrics side by side.
+- Added reason codes, suppression examples, confirmation examples, calibration guardrails, false-positive context, attack-window timing diagnostics, device receipts, and artifact hygiene receipts.
+- Kept core Eidos model behavior untouched.
+
+### Tests and commands run
+- `python tools/run_labeled_domain_proof.py --dataset cicids_webattacks --file artifacts/cicids_webattacks_samples/Thursday-WorkingHours-Morning-WebAttacks.pcap_ISCX.csv --label-column Label --frames 300 --seed 2 --out artifacts/cicids_webattacks_calibration_v1_generalization_balanced300_seed2_cpu_balanced_20260604 --suite full --sample-mode balanced --event-merge-gap 25 --confirmation-mode balanced --calibration-enabled --calibration-benign-context-grace 0 --calibration-attack-window-guard 0 --calibration-min-confirmed-span 2 --calibration-min-evidence-count 2 --attack-labels "Web Attack - Brute Force" --attack-labels "Web Attack - XSS" --attack-labels "Web Attack - Sql Injection"` -> labeled smoke proof artifacts written.
+
+### Problems encountered
+- Google Drive status: copied; reason: copy completed.
+- This is not threshold tuning, so misses or false positives are reported rather than optimized away.
+
+### What changed
+- proof/event_confirmation.py
+- tools/run_labeled_domain_proof.py
+- tests/test_labeled_domain_proof_runner.py
+- .gitignore
+- artifacts/cicids_webattacks_calibration_v1_generalization_balanced300_seed2_cpu_balanced_20260604
+
+### What did not change
+Reservoir dynamics, RLS updates, Sentinel thresholds, anomaly policy, compression behavior, and architecture layers were not changed.
+
+### Artifacts generated
+- artifacts/cicids_webattacks_calibration_v1_generalization_balanced300_seed2_cpu_balanced_20260604/benchmark_summary.csv
+- artifacts/cicids_webattacks_calibration_v1_generalization_balanced300_seed2_cpu_balanced_20260604/benchmark_summary.md
+- artifacts/cicids_webattacks_calibration_v1_generalization_balanced300_seed2_cpu_balanced_20260604/calibrated_precision_ledger.json
+- artifacts/cicids_webattacks_calibration_v1_generalization_balanced300_seed2_cpu_balanced_20260604/calibrated_precision_ledger.md
+- artifacts/cicids_webattacks_calibration_v1_generalization_balanced300_seed2_cpu_balanced_20260604/config.json
+- artifacts/cicids_webattacks_calibration_v1_generalization_balanced300_seed2_cpu_balanced_20260604/crash_scan.json
+- artifacts/cicids_webattacks_calibration_v1_generalization_balanced300_seed2_cpu_balanced_20260604/drive_manifest.json
+- artifacts/cicids_webattacks_calibration_v1_generalization_balanced300_seed2_cpu_balanced_20260604/engine_artifacts/compression/cicids_webattacks_labeled_proof/20260605_000919_bicameral_stream_cicids_webattacks_labeled_proof.bin
+- artifacts/cicids_webattacks_calibration_v1_generalization_balanced300_seed2_cpu_balanced_20260604/engine_artifacts/compression/cicids_webattacks_labeled_proof/20260605_000919_bicameral_stream_meta_cicids_webattacks_labeled_proof.json
+- artifacts/cicids_webattacks_calibration_v1_generalization_balanced300_seed2_cpu_balanced_20260604/engine_artifacts/eidos_brain_archive/20260605_000834_cicids_webattacks_labeled_proof_seed2/anomalies.jsonl
+- artifacts/cicids_webattacks_calibration_v1_generalization_balanced300_seed2_cpu_balanced_20260604/engine_artifacts/eidos_brain_archive/20260605_000834_cicids_webattacks_labeled_proof_seed2/clusters.json
+- artifacts/cicids_webattacks_calibration_v1_generalization_balanced300_seed2_cpu_balanced_20260604/engine_artifacts/eidos_brain_archive/20260605_000834_cicids_webattacks_labeled_proof_seed2/report.txt
+- artifacts/cicids_webattacks_calibration_v1_generalization_balanced300_seed2_cpu_balanced_20260604/engine_artifacts/eidos_brain_archive/20260605_000834_cicids_webattacks_labeled_proof_seed2/session_meta.json
+- artifacts/cicids_webattacks_calibration_v1_generalization_balanced300_seed2_cpu_balanced_20260604/engine_artifacts/eidos_brain_archive/20260605_000834_cicids_webattacks_labeled_proof_seed2/state_capsule.json
+- artifacts/cicids_webattacks_calibration_v1_generalization_balanced300_seed2_cpu_balanced_20260604/engine_artifacts/eidos_brain_archive/20260605_000834_cicids_webattacks_labeled_proof_seed2/steps.csv
+- artifacts/cicids_webattacks_calibration_v1_generalization_balanced300_seed2_cpu_balanced_20260604/engine_artifacts/eidos_brain_archive/20260605_000834_cicids_webattacks_labeled_proof_seed2/summary.json
+- artifacts/cicids_webattacks_calibration_v1_generalization_balanced300_seed2_cpu_balanced_20260604/engine_artifacts/forecast.jsonl
+- artifacts/cicids_webattacks_calibration_v1_generalization_balanced300_seed2_cpu_balanced_20260604/engine_artifacts/hippocampus/cicids_webattacks_labeled_proof/20260605_000919_hippocampus_snapshot_cicids_webattacks_labeled_proof.pt
+- artifacts/cicids_webattacks_calibration_v1_generalization_balanced300_seed2_cpu_balanced_20260604/engine_artifacts/incident_cards.jsonl
+- artifacts/cicids_webattacks_calibration_v1_generalization_balanced300_seed2_cpu_balanced_20260604/engine_artifacts/manifest.jsonl
+- artifacts/cicids_webattacks_calibration_v1_generalization_balanced300_seed2_cpu_balanced_20260604/engine_artifacts/reservoir_checkpoints/cicids_webattacks_labeled_proof/20260605_000918_reservoir_checkpoint_cicids_webattacks_labeled_proof.pt
+- artifacts/cicids_webattacks_calibration_v1_generalization_balanced300_seed2_cpu_balanced_20260604/engine_artifacts/reservoir_geometry/cicids_webattacks_labeled_proof/20260605_000919_reservoir_geom_cicids_webattacks_labeled_proof.json
+- artifacts/cicids_webattacks_calibration_v1_generalization_balanced300_seed2_cpu_balanced_20260604/engine_artifacts/reservoir_geometry/cicids_webattacks_labeled_proof/20260605_000919_reservoir_states_cicids_webattacks_labeled_proof.npy
+- artifacts/cicids_webattacks_calibration_v1_generalization_balanced300_seed2_cpu_balanced_20260604/engine_artifacts/sentinel_forensics/cicids_webattacks_labeled_proof/20260605_000919_top_100_surprises_cicids_webattacks_labeled_proof.json
+- artifacts/cicids_webattacks_calibration_v1_generalization_balanced300_seed2_cpu_balanced_20260604/engine_artifacts/sentinel_forensics/cicids_webattacks_labeled_proof/20260605_000919_top_100_surprises_text_cicids_webattacks_labeled_proof.txt
+- artifacts/cicids_webattacks_calibration_v1_generalization_balanced300_seed2_cpu_balanced_20260604/environment.txt
+- artifacts/cicids_webattacks_calibration_v1_generalization_balanced300_seed2_cpu_balanced_20260604/event_confirmation_report.json
+- artifacts/cicids_webattacks_calibration_v1_generalization_balanced300_seed2_cpu_balanced_20260604/event_confirmation_report.md
+- artifacts/cicids_webattacks_calibration_v1_generalization_balanced300_seed2_cpu_balanced_20260604/event_summary.json
+- artifacts/cicids_webattacks_calibration_v1_generalization_balanced300_seed2_cpu_balanced_20260604/git_commit.txt
+- artifacts/cicids_webattacks_calibration_v1_generalization_balanced300_seed2_cpu_balanced_20260604/incident_cards/confirmed_event_001.json
+- artifacts/cicids_webattacks_calibration_v1_generalization_balanced300_seed2_cpu_balanced_20260604/incident_cards/confirmed_event_002.json
+- artifacts/cicids_webattacks_calibration_v1_generalization_balanced300_seed2_cpu_balanced_20260604/incident_cards/engine_card_001.json
+- artifacts/cicids_webattacks_calibration_v1_generalization_balanced300_seed2_cpu_balanced_20260604/incident_cards/engine_card_002.json
+- artifacts/cicids_webattacks_calibration_v1_generalization_balanced300_seed2_cpu_balanced_20260604/incident_cards/engine_card_003.json
+- artifacts/cicids_webattacks_calibration_v1_generalization_balanced300_seed2_cpu_balanced_20260604/incident_cards/engine_card_004.json
+- artifacts/cicids_webattacks_calibration_v1_generalization_balanced300_seed2_cpu_balanced_20260604/incident_cards/engine_card_005.json
+- artifacts/cicids_webattacks_calibration_v1_generalization_balanced300_seed2_cpu_balanced_20260604/incident_cards/engine_card_006.json
+- artifacts/cicids_webattacks_calibration_v1_generalization_balanced300_seed2_cpu_balanced_20260604/incident_cards/engine_card_007.json
+- artifacts/cicids_webattacks_calibration_v1_generalization_balanced300_seed2_cpu_balanced_20260604/incident_cards/engine_card_008.json
+- artifacts/cicids_webattacks_calibration_v1_generalization_balanced300_seed2_cpu_balanced_20260604/incident_cards/engine_card_009.json
+- artifacts/cicids_webattacks_calibration_v1_generalization_balanced300_seed2_cpu_balanced_20260604/incident_cards/engine_card_010.json
+- artifacts/cicids_webattacks_calibration_v1_generalization_balanced300_seed2_cpu_balanced_20260604/incident_cards/engine_card_011.json
+- artifacts/cicids_webattacks_calibration_v1_generalization_balanced300_seed2_cpu_balanced_20260604/labeled_metrics.json
+- artifacts/cicids_webattacks_calibration_v1_generalization_balanced300_seed2_cpu_balanced_20260604/labeled_metrics.md
+- artifacts/cicids_webattacks_calibration_v1_generalization_balanced300_seed2_cpu_balanced_20260604/logs/engine_output.log
+- artifacts/cicids_webattacks_calibration_v1_generalization_balanced300_seed2_cpu_balanced_20260604/precision_ledger.json
+- artifacts/cicids_webattacks_calibration_v1_generalization_balanced300_seed2_cpu_balanced_20260604/precision_ledger.md
+- artifacts/cicids_webattacks_calibration_v1_generalization_balanced300_seed2_cpu_balanced_20260604/proof_digest.json
+- artifacts/cicids_webattacks_calibration_v1_generalization_balanced300_seed2_cpu_balanced_20260604/proof_digest.md
+- artifacts/cicids_webattacks_calibration_v1_generalization_balanced300_seed2_cpu_balanced_20260604/run_manifest.json
+- artifacts/cicids_webattacks_calibration_v1_generalization_balanced300_seed2_cpu_balanced_20260604/sentinel_calibration_v1.json
+- artifacts/cicids_webattacks_calibration_v1_generalization_balanced300_seed2_cpu_balanced_20260604/sentinel_calibration_v1.md
+
+### Google Drive archive status
+- Drive root used: G:\My Drive
+- Drive folder used: G:\My Drive\Eidos_Brain_Proof_Phase\2026-06-05\cicids_webattacks_proof_full_seed2_frames270_20260605T000921Z
+- Files copied: 52
+- Files skipped: 0
+- Reason: copy completed
+
+### End-of-task summary
+1. Files changed: proof/event_confirmation.py, tools/run_labeled_domain_proof.py, tests/test_labeled_domain_proof_runner.py, .gitignore, artifacts/cicids_webattacks_calibration_v1_generalization_balanced300_seed2_cpu_balanced_20260604
+2. Whether core behavior changed: no.
+3. Tests added or skipped: focused labeled runner tests added; full pytest run handled outside this runner.
+4. Repo-root commands run: `python tools/run_labeled_domain_proof.py --dataset cicids_webattacks --file artifacts/cicids_webattacks_samples/Thursday-WorkingHours-Morning-WebAttacks.pcap_ISCX.csv --label-column Label --frames 300 --seed 2 --out artifacts/cicids_webattacks_calibration_v1_generalization_balanced300_seed2_cpu_balanced_20260604 --suite full --sample-mode balanced --event-merge-gap 25 --confirmation-mode balanced --calibration-enabled --calibration-benign-context-grace 0 --calibration-attack-window-guard 0 --calibration-min-confirmed-span 2 --calibration-min-evidence-count 2 --attack-labels "Web Attack - Brute Force" --attack-labels "Web Attack - XSS" --attack-labels "Web Attack - Sql Injection"`.
+5. Artifacts generated: 53 files under `artifacts/cicids_webattacks_calibration_v1_generalization_balanced300_seed2_cpu_balanced_20260604`.
+6. Plain-language analysis written: yes.
+7. Journal entry written: yes.
+8. Google Drive copy status: copied; copy completed.
+9. Known limitations: event confirmation is proof-side postprocessing only; no threshold tuning was attempted.
+10. Follow-up tasks not implemented: threshold calibration or core behavior changes.
+
+## Labeled CICIDS/WebAttacks proof harness -- artifacts/cicids_webattacks_calibration_v1_generalization_balanced200_seed5_cpu_balanced_20260604
+
+### What happened today
+Built and ran the event-confirmation layer for the labeled/domain proof harness.
+
+### What was accomplished
+- Added proof-side candidate scoring and confirmation modes for labeled-domain events.
+- Added optional Sentinel calibration v1 as a proof-stage false-positive suppression layer around confirmed events.
+- Captured raw, merged, deduped, and confirmed event metrics side by side.
+- Added reason codes, suppression examples, confirmation examples, calibration guardrails, false-positive context, attack-window timing diagnostics, device receipts, and artifact hygiene receipts.
+- Kept core Eidos model behavior untouched.
+
+### Tests and commands run
+- `python tools/run_labeled_domain_proof.py --dataset cicids_webattacks --file artifacts/cicids_webattacks_samples/Thursday-WorkingHours-Morning-WebAttacks.pcap_ISCX.csv --label-column Label --frames 200 --seed 5 --out artifacts/cicids_webattacks_calibration_v1_generalization_balanced200_seed5_cpu_balanced_20260604 --suite full --sample-mode balanced --event-merge-gap 25 --confirmation-mode balanced --calibration-enabled --calibration-benign-context-grace 0 --calibration-attack-window-guard 0 --calibration-min-confirmed-span 2 --calibration-min-evidence-count 2 --attack-labels "Web Attack - Brute Force" --attack-labels "Web Attack - XSS" --attack-labels "Web Attack - Sql Injection"` -> labeled smoke proof artifacts written.
+
+### Problems encountered
+- Google Drive status: copied; reason: copy completed.
+- This is not threshold tuning, so misses or false positives are reported rather than optimized away.
+
+### What changed
+- proof/event_confirmation.py
+- tools/run_labeled_domain_proof.py
+- tests/test_labeled_domain_proof_runner.py
+- .gitignore
+- artifacts/cicids_webattacks_calibration_v1_generalization_balanced200_seed5_cpu_balanced_20260604
+
+### What did not change
+Reservoir dynamics, RLS updates, Sentinel thresholds, anomaly policy, compression behavior, and architecture layers were not changed.
+
+### Artifacts generated
+- artifacts/cicids_webattacks_calibration_v1_generalization_balanced200_seed5_cpu_balanced_20260604/benchmark_summary.csv
+- artifacts/cicids_webattacks_calibration_v1_generalization_balanced200_seed5_cpu_balanced_20260604/benchmark_summary.md
+- artifacts/cicids_webattacks_calibration_v1_generalization_balanced200_seed5_cpu_balanced_20260604/calibrated_precision_ledger.json
+- artifacts/cicids_webattacks_calibration_v1_generalization_balanced200_seed5_cpu_balanced_20260604/calibrated_precision_ledger.md
+- artifacts/cicids_webattacks_calibration_v1_generalization_balanced200_seed5_cpu_balanced_20260604/config.json
+- artifacts/cicids_webattacks_calibration_v1_generalization_balanced200_seed5_cpu_balanced_20260604/crash_scan.json
+- artifacts/cicids_webattacks_calibration_v1_generalization_balanced200_seed5_cpu_balanced_20260604/drive_manifest.json
+- artifacts/cicids_webattacks_calibration_v1_generalization_balanced200_seed5_cpu_balanced_20260604/engine_artifacts/compression/cicids_webattacks_labeled_proof/20260605_001115_bicameral_stream_cicids_webattacks_labeled_proof.bin
+- artifacts/cicids_webattacks_calibration_v1_generalization_balanced200_seed5_cpu_balanced_20260604/engine_artifacts/compression/cicids_webattacks_labeled_proof/20260605_001115_bicameral_stream_meta_cicids_webattacks_labeled_proof.json
+- artifacts/cicids_webattacks_calibration_v1_generalization_balanced200_seed5_cpu_balanced_20260604/engine_artifacts/eidos_brain_archive/20260605_001054_cicids_webattacks_labeled_proof_seed5/anomalies.jsonl
+- artifacts/cicids_webattacks_calibration_v1_generalization_balanced200_seed5_cpu_balanced_20260604/engine_artifacts/eidos_brain_archive/20260605_001054_cicids_webattacks_labeled_proof_seed5/clusters.json
+- artifacts/cicids_webattacks_calibration_v1_generalization_balanced200_seed5_cpu_balanced_20260604/engine_artifacts/eidos_brain_archive/20260605_001054_cicids_webattacks_labeled_proof_seed5/report.txt
+- artifacts/cicids_webattacks_calibration_v1_generalization_balanced200_seed5_cpu_balanced_20260604/engine_artifacts/eidos_brain_archive/20260605_001054_cicids_webattacks_labeled_proof_seed5/session_meta.json
+- artifacts/cicids_webattacks_calibration_v1_generalization_balanced200_seed5_cpu_balanced_20260604/engine_artifacts/eidos_brain_archive/20260605_001054_cicids_webattacks_labeled_proof_seed5/state_capsule.json
+- artifacts/cicids_webattacks_calibration_v1_generalization_balanced200_seed5_cpu_balanced_20260604/engine_artifacts/eidos_brain_archive/20260605_001054_cicids_webattacks_labeled_proof_seed5/steps.csv
+- artifacts/cicids_webattacks_calibration_v1_generalization_balanced200_seed5_cpu_balanced_20260604/engine_artifacts/eidos_brain_archive/20260605_001054_cicids_webattacks_labeled_proof_seed5/summary.json
+- artifacts/cicids_webattacks_calibration_v1_generalization_balanced200_seed5_cpu_balanced_20260604/engine_artifacts/forecast.jsonl
+- artifacts/cicids_webattacks_calibration_v1_generalization_balanced200_seed5_cpu_balanced_20260604/engine_artifacts/hippocampus/cicids_webattacks_labeled_proof/20260605_001115_hippocampus_snapshot_cicids_webattacks_labeled_proof.pt
+- artifacts/cicids_webattacks_calibration_v1_generalization_balanced200_seed5_cpu_balanced_20260604/engine_artifacts/incident_cards.jsonl
+- artifacts/cicids_webattacks_calibration_v1_generalization_balanced200_seed5_cpu_balanced_20260604/engine_artifacts/manifest.jsonl
+- artifacts/cicids_webattacks_calibration_v1_generalization_balanced200_seed5_cpu_balanced_20260604/engine_artifacts/reservoir_checkpoints/cicids_webattacks_labeled_proof/20260605_001114_reservoir_checkpoint_cicids_webattacks_labeled_proof.pt
+- artifacts/cicids_webattacks_calibration_v1_generalization_balanced200_seed5_cpu_balanced_20260604/engine_artifacts/reservoir_geometry/cicids_webattacks_labeled_proof/20260605_001115_reservoir_geom_cicids_webattacks_labeled_proof.json
+- artifacts/cicids_webattacks_calibration_v1_generalization_balanced200_seed5_cpu_balanced_20260604/engine_artifacts/reservoir_geometry/cicids_webattacks_labeled_proof/20260605_001115_reservoir_states_cicids_webattacks_labeled_proof.npy
+- artifacts/cicids_webattacks_calibration_v1_generalization_balanced200_seed5_cpu_balanced_20260604/engine_artifacts/sentinel_forensics/cicids_webattacks_labeled_proof/20260605_001115_top_100_surprises_cicids_webattacks_labeled_proof.json
+- artifacts/cicids_webattacks_calibration_v1_generalization_balanced200_seed5_cpu_balanced_20260604/engine_artifacts/sentinel_forensics/cicids_webattacks_labeled_proof/20260605_001115_top_100_surprises_text_cicids_webattacks_labeled_proof.txt
+- artifacts/cicids_webattacks_calibration_v1_generalization_balanced200_seed5_cpu_balanced_20260604/environment.txt
+- artifacts/cicids_webattacks_calibration_v1_generalization_balanced200_seed5_cpu_balanced_20260604/event_confirmation_report.json
+- artifacts/cicids_webattacks_calibration_v1_generalization_balanced200_seed5_cpu_balanced_20260604/event_confirmation_report.md
+- artifacts/cicids_webattacks_calibration_v1_generalization_balanced200_seed5_cpu_balanced_20260604/event_summary.json
+- artifacts/cicids_webattacks_calibration_v1_generalization_balanced200_seed5_cpu_balanced_20260604/git_commit.txt
+- artifacts/cicids_webattacks_calibration_v1_generalization_balanced200_seed5_cpu_balanced_20260604/incident_cards/confirmed_event_001.json
+- artifacts/cicids_webattacks_calibration_v1_generalization_balanced200_seed5_cpu_balanced_20260604/incident_cards/confirmed_event_002.json
+- artifacts/cicids_webattacks_calibration_v1_generalization_balanced200_seed5_cpu_balanced_20260604/incident_cards/confirmed_event_003.json
+- artifacts/cicids_webattacks_calibration_v1_generalization_balanced200_seed5_cpu_balanced_20260604/incident_cards/engine_card_001.json
+- artifacts/cicids_webattacks_calibration_v1_generalization_balanced200_seed5_cpu_balanced_20260604/incident_cards/engine_card_002.json
+- artifacts/cicids_webattacks_calibration_v1_generalization_balanced200_seed5_cpu_balanced_20260604/incident_cards/engine_card_003.json
+- artifacts/cicids_webattacks_calibration_v1_generalization_balanced200_seed5_cpu_balanced_20260604/incident_cards/engine_card_004.json
+- artifacts/cicids_webattacks_calibration_v1_generalization_balanced200_seed5_cpu_balanced_20260604/incident_cards/engine_card_005.json
+- artifacts/cicids_webattacks_calibration_v1_generalization_balanced200_seed5_cpu_balanced_20260604/incident_cards/engine_card_006.json
+- artifacts/cicids_webattacks_calibration_v1_generalization_balanced200_seed5_cpu_balanced_20260604/incident_cards/engine_card_007.json
+- artifacts/cicids_webattacks_calibration_v1_generalization_balanced200_seed5_cpu_balanced_20260604/incident_cards/engine_card_008.json
+- artifacts/cicids_webattacks_calibration_v1_generalization_balanced200_seed5_cpu_balanced_20260604/labeled_metrics.json
+- artifacts/cicids_webattacks_calibration_v1_generalization_balanced200_seed5_cpu_balanced_20260604/labeled_metrics.md
+- artifacts/cicids_webattacks_calibration_v1_generalization_balanced200_seed5_cpu_balanced_20260604/logs/engine_output.log
+- artifacts/cicids_webattacks_calibration_v1_generalization_balanced200_seed5_cpu_balanced_20260604/precision_ledger.json
+- artifacts/cicids_webattacks_calibration_v1_generalization_balanced200_seed5_cpu_balanced_20260604/precision_ledger.md
+- artifacts/cicids_webattacks_calibration_v1_generalization_balanced200_seed5_cpu_balanced_20260604/proof_digest.json
+- artifacts/cicids_webattacks_calibration_v1_generalization_balanced200_seed5_cpu_balanced_20260604/proof_digest.md
+- artifacts/cicids_webattacks_calibration_v1_generalization_balanced200_seed5_cpu_balanced_20260604/run_manifest.json
+- artifacts/cicids_webattacks_calibration_v1_generalization_balanced200_seed5_cpu_balanced_20260604/sentinel_calibration_v1.json
+- artifacts/cicids_webattacks_calibration_v1_generalization_balanced200_seed5_cpu_balanced_20260604/sentinel_calibration_v1.md
+
+### Google Drive archive status
+- Drive root used: G:\My Drive
+- Drive folder used: G:\My Drive\Eidos_Brain_Proof_Phase\2026-06-05\cicids_webattacks_proof_full_seed5_frames180_20260605T001117Z
+- Files copied: 50
+- Files skipped: 0
+- Reason: copy completed
+
+### End-of-task summary
+1. Files changed: proof/event_confirmation.py, tools/run_labeled_domain_proof.py, tests/test_labeled_domain_proof_runner.py, .gitignore, artifacts/cicids_webattacks_calibration_v1_generalization_balanced200_seed5_cpu_balanced_20260604
+2. Whether core behavior changed: no.
+3. Tests added or skipped: focused labeled runner tests added; full pytest run handled outside this runner.
+4. Repo-root commands run: `python tools/run_labeled_domain_proof.py --dataset cicids_webattacks --file artifacts/cicids_webattacks_samples/Thursday-WorkingHours-Morning-WebAttacks.pcap_ISCX.csv --label-column Label --frames 200 --seed 5 --out artifacts/cicids_webattacks_calibration_v1_generalization_balanced200_seed5_cpu_balanced_20260604 --suite full --sample-mode balanced --event-merge-gap 25 --confirmation-mode balanced --calibration-enabled --calibration-benign-context-grace 0 --calibration-attack-window-guard 0 --calibration-min-confirmed-span 2 --calibration-min-evidence-count 2 --attack-labels "Web Attack - Brute Force" --attack-labels "Web Attack - XSS" --attack-labels "Web Attack - Sql Injection"`.
+5. Artifacts generated: 51 files under `artifacts/cicids_webattacks_calibration_v1_generalization_balanced200_seed5_cpu_balanced_20260604`.
+6. Plain-language analysis written: yes.
+7. Journal entry written: yes.
+8. Google Drive copy status: copied; copy completed.
+9. Known limitations: event confirmation is proof-side postprocessing only; no threshold tuning was attempted.
+10. Follow-up tasks not implemented: threshold calibration or core behavior changes.

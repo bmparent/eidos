@@ -316,6 +316,9 @@ def test_calibration_suppression_reason_accounting_and_raw_visibility():
     assert report["counts"]["post_calibration_confirmed_events"] == 1
     assert report["suppressed_events"][0]["reason_code"] == "fully_benign_context"
     assert report["suppressed_events"][0]["suppression_would_affect_attack_window_coverage"] is False
+    assert report["suppressed_events"][0]["suppression_could_affect_recall"] is False
+    assert report["suppressed_events"][0]["labels_around_event"]
+    assert "raw_evidence_reference" in report["suppressed_events"][0]
     assert report["before_metrics"]["false_positives"] == 1
     assert report["after_metrics"]["false_positives"] == 0
 

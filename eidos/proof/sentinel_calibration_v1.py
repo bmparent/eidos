@@ -361,13 +361,32 @@ def _suppressed_event_record(
 ) -> Dict[str, Any]:
     window, distance, direction = nearest_attack_window(event, attack_windows)
     would_affect = _would_affect_attack_window_coverage(event, all_confirmed_events, attack_windows)
+    start_frame = _event_start(event)
+    end_frame = _event_end(event)
+    score_detail = event.get("score_detail") if isinstance(event.get("score_detail"), dict) else {}
+    labels_around_event = [
+        label_at(frame, raw_labels, proof_labels)
+        for frame in range(max(0, start_frame - 2), min(len(proof_labels), end_frame + 3))
+    ]
+    raw_evidence_reference = (
+        event.get("raw_evidence_reference")
+        or event.get("source_event_refs")
+        or event.get("raw_event_refs")
+        or score_detail.get("source_event_refs")
+        or score_detail.get("raw_event_refs")
+        or []
+    )
+    overlaps_attack = any(overlaps(event, attack_window) for attack_window in attack_windows)
     record = {
         "event_id": _event_id(event),
         "candidate_id": event.get("candidate_id"),
-        "start_frame": _event_start(event),
-        "end_frame": _event_end(event),
-        "labels_at_start": label_at(_event_start(event), raw_labels, proof_labels),
-        "labels_at_end": label_at(_event_end(event), raw_labels, proof_labels),
+        "start_frame": start_frame,
+        "end_frame": end_frame,
+        "raw_severity": event.get("severity", score_detail.get("severity")),
+        "raw_status": event.get("status", score_detail.get("status")),
+        "labels_at_start": label_at(start_frame, raw_labels, proof_labels),
+        "labels_at_end": label_at(end_frame, raw_labels, proof_labels),
+        "labels_around_event": labels_around_event,
         "nearest_attack_window_distance": distance,
         "nearest_attack_window_direction": direction,
         "nearest_attack_window": (
@@ -382,6 +401,8 @@ def _suppressed_event_record(
         "reason_code": reason_code if reason_code in SUPPRESSION_REASON_CODES else "other_calibration_rule",
         "reason_codes": [reason_code if reason_code in SUPPRESSION_REASON_CODES else "other_calibration_rule"],
         "suppression_would_affect_attack_window_coverage": would_affect,
+        "suppression_could_affect_recall": bool(overlaps_attack or would_affect),
+        "raw_evidence_reference": raw_evidence_reference,
         "duration": _duration(event),
         "evidence_count": _evidence_count(event),
         "component_count": event.get("component_count"),
