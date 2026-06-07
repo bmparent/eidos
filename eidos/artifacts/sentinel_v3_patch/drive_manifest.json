@@ -1,53 +1,31 @@
 {
   "drive_copy_attempted": true,
-  "drive_copy_success": false,
-  "drive_root": "unknown",
-  "drive_run_dir": "unknown",
+  "drive_copy_success": true,
+  "drive_root": "G:\\My Drive",
+  "drive_run_dir": "G:\\My Drive\\Eidos_Brain_Proof_Phase\\2026-05-28\\sentinel_v3_patch",
   "files_considered": [
-    "C:\\Users\\bmpar\\OneDrive\\Documents\\eidos-brain\\eidos\\artifacts\\sentinel_v3_patch\\acceptance_v3_patch.csv",
-    "C:\\Users\\bmpar\\OneDrive\\Documents\\eidos-brain\\eidos\\artifacts\\sentinel_v3_patch\\config_v3_patch.json",
-    "C:\\Users\\bmpar\\OneDrive\\Documents\\eidos-brain\\eidos\\artifacts\\sentinel_v3_patch\\eidos_v3_steps_1400_reservoir_128.csv",
-    "C:\\Users\\bmpar\\OneDrive\\Documents\\eidos-brain\\eidos\\artifacts\\sentinel_v3_patch\\eidos_v3_steps_1400_reservoir_64.csv",
-    "C:\\Users\\bmpar\\OneDrive\\Documents\\eidos-brain\\eidos\\artifacts\\sentinel_v3_patch\\per_regime_summary_v3_patch.csv",
-    "C:\\Users\\bmpar\\OneDrive\\Documents\\eidos-brain\\eidos\\artifacts\\sentinel_v3_patch\\run_manifest_v3_patch.json",
-    "C:\\Users\\bmpar\\OneDrive\\Documents\\eidos-brain\\eidos\\artifacts\\sentinel_v3_patch\\summary_v3_patch.csv",
-    "C:\\Users\\bmpar\\OneDrive\\Documents\\eidos-brain\\eidos\\artifacts\\sentinel_v3_patch\\summary_v3_patch_full.json"
+    "acceptance_v3_patch.csv",
+    "config_v3_patch.json",
+    "drive_manifest.json",
+    "eidos_v3_steps_1400_reservoir_128.csv",
+    "eidos_v3_steps_1400_reservoir_64.csv",
+    "per_regime_summary_v3_patch.csv",
+    "run_manifest_v3_patch.json",
+    "summary_v3_patch.csv",
+    "summary_v3_patch_full.json"
   ],
-  "files_copied": [],
-  "files_skipped": [
-    {
-      "path": "C:\\Users\\bmpar\\OneDrive\\Documents\\eidos-brain\\eidos\\artifacts\\sentinel_v3_patch\\acceptance_v3_patch.csv",
-      "reason": "EIDOS_PROOF_DRIVE_DIR not set, EIDOS_ARTIFACT_ROOT not writable, and no mounted Colab Drive path found"
-    },
-    {
-      "path": "C:\\Users\\bmpar\\OneDrive\\Documents\\eidos-brain\\eidos\\artifacts\\sentinel_v3_patch\\config_v3_patch.json",
-      "reason": "EIDOS_PROOF_DRIVE_DIR not set, EIDOS_ARTIFACT_ROOT not writable, and no mounted Colab Drive path found"
-    },
-    {
-      "path": "C:\\Users\\bmpar\\OneDrive\\Documents\\eidos-brain\\eidos\\artifacts\\sentinel_v3_patch\\eidos_v3_steps_1400_reservoir_128.csv",
-      "reason": "EIDOS_PROOF_DRIVE_DIR not set, EIDOS_ARTIFACT_ROOT not writable, and no mounted Colab Drive path found"
-    },
-    {
-      "path": "C:\\Users\\bmpar\\OneDrive\\Documents\\eidos-brain\\eidos\\artifacts\\sentinel_v3_patch\\eidos_v3_steps_1400_reservoir_64.csv",
-      "reason": "EIDOS_PROOF_DRIVE_DIR not set, EIDOS_ARTIFACT_ROOT not writable, and no mounted Colab Drive path found"
-    },
-    {
-      "path": "C:\\Users\\bmpar\\OneDrive\\Documents\\eidos-brain\\eidos\\artifacts\\sentinel_v3_patch\\per_regime_summary_v3_patch.csv",
-      "reason": "EIDOS_PROOF_DRIVE_DIR not set, EIDOS_ARTIFACT_ROOT not writable, and no mounted Colab Drive path found"
-    },
-    {
-      "path": "C:\\Users\\bmpar\\OneDrive\\Documents\\eidos-brain\\eidos\\artifacts\\sentinel_v3_patch\\run_manifest_v3_patch.json",
-      "reason": "EIDOS_PROOF_DRIVE_DIR not set, EIDOS_ARTIFACT_ROOT not writable, and no mounted Colab Drive path found"
-    },
-    {
-      "path": "C:\\Users\\bmpar\\OneDrive\\Documents\\eidos-brain\\eidos\\artifacts\\sentinel_v3_patch\\summary_v3_patch.csv",
-      "reason": "EIDOS_PROOF_DRIVE_DIR not set, EIDOS_ARTIFACT_ROOT not writable, and no mounted Colab Drive path found"
-    },
-    {
-      "path": "C:\\Users\\bmpar\\OneDrive\\Documents\\eidos-brain\\eidos\\artifacts\\sentinel_v3_patch\\summary_v3_patch_full.json",
-      "reason": "EIDOS_PROOF_DRIVE_DIR not set, EIDOS_ARTIFACT_ROOT not writable, and no mounted Colab Drive path found"
-    }
+  "files_copied": [
+    "acceptance_v3_patch.csv",
+    "config_v3_patch.json",
+    "drive_manifest.json",
+    "eidos_v3_steps_1400_reservoir_128.csv",
+    "eidos_v3_steps_1400_reservoir_64.csv",
+    "per_regime_summary_v3_patch.csv",
+    "run_manifest_v3_patch.json",
+    "summary_v3_patch.csv",
+    "summary_v3_patch_full.json"
   ],
-  "reason": "EIDOS_PROOF_DRIVE_DIR not set, EIDOS_ARTIFACT_ROOT not writable, and no mounted Colab Drive path found",
-  "timestamp_utc": "2026-05-28T02:08:48.075466+00:00"
+  "files_skipped": [],
+  "reason": "copy completed",
+  "timestamp_utc": "2026-06-05T17:34:51Z"
 }
