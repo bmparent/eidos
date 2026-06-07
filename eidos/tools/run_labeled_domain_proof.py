@@ -34,6 +34,8 @@ REPO_ROOT = Path(__file__).resolve().parents[1]
 if str(REPO_ROOT) not in sys.path:
     sys.path.insert(0, str(REPO_ROOT))
 
+from proof import event_confirmation as proof_event_confirmation
+from proof import sentinel_calibration_v1 as proof_calibration
 from sentinel import EvidenceFrame, process_stream
 from tools import run_proof_baseline as proof_helpers
 from tools.domain_tuner import load_engine_module
@@ -41,6 +43,7 @@ from tools.domain_tuner import load_engine_module
 DEFAULT_DATASET = "cicids_webattacks"
 DEFAULT_FEATURES = 64
 DEFAULT_CONFIRMATION_MODE = "balanced"
+DEFAULT_SENTINEL_CONFIRMATION_MODE = "balanced"
 DEFAULT_SAMPLE_MODE = "natural"
 DEFAULT_EVENT_MERGE_GAP = 25
 PROOF_LABEL_BENIGN = "BENIGN"
@@ -72,6 +75,9 @@ CSV_COLUMNS = [
     "suite",
     "seed",
     "sample_mode",
+    "confirmation_mode",
+    "calibration_enabled",
+    "calibration_version",
     "frames_requested",
     "frames_processed",
     "label_column",
@@ -81,9 +87,13 @@ CSV_COLUMNS = [
     "normalized_label_distribution",
     "candidate_events",
     "confirmed_events",
+    "pre_calibration_confirmed_events",
+    "post_calibration_confirmed_events",
+    "calibration_suppressed_events",
     "proof_raw_event_count",
     "proof_merged_event_count",
     "proof_deduped_event_count",
+    "proof_confirmed_event_count",
     "suppressed_candidates",
     "true_positives",
     "false_positives",
@@ -92,6 +102,14 @@ CSV_COLUMNS = [
     "recall",
     "f1",
     "false_positives_per_10k_frames",
+    "pre_calibration_precision",
+    "pre_calibration_recall",
+    "pre_calibration_f1",
+    "pre_calibration_false_positives_per_10k_frames",
+    "calibrated_precision",
+    "calibrated_recall",
+    "calibrated_f1",
+    "calibrated_false_positives_per_10k_frames",
     "incident_card_count",
     "eidos_compression_ratio",
     "best_external_baseline",
@@ -209,6 +227,83 @@ def parse_args(argv: Optional[Sequence[str]] = None) -> argparse.Namespace:
         type=int,
         default=DEFAULT_EVENT_MERGE_GAP,
         help="Frame gap used by precision-ledger postprocessing to merge nearby event windows.",
+    )
+    parser.add_argument(
+        "--confirmation-mode",
+        choices=proof_event_confirmation.CONFIRMATION_MODES,
+        default=DEFAULT_CONFIRMATION_MODE,
+        help=(
+            "Proof-side event confirmation mode. off preserves the previous raw-event decision view; "
+            "other modes score deduped candidate events and emit confirmed_events."
+        ),
+    )
+    parser.add_argument(
+        "--confirmation-min-raw-hits",
+        type=int,
+        default=None,
+        help="Optional override for minimum raw hits per confirmed proof event.",
+    )
+    parser.add_argument(
+        "--confirmation-min-duration",
+        type=int,
+        default=None,
+        help="Optional override for minimum candidate duration per confirmed proof event.",
+    )
+    parser.add_argument(
+        "--confirmation-min-score",
+        type=float,
+        default=None,
+        help="Optional override for minimum accumulated confirmation score.",
+    )
+    parser.add_argument(
+        "--confirmation-event-merge-gap",
+        type=int,
+        default=None,
+        help="Optional override for proof-side candidate merge gap.",
+    )
+    parser.add_argument(
+        "--confirmation-cooldown-gap",
+        type=int,
+        default=None,
+        help="Optional override for cooldown frames after a confirmed proof event.",
+    )
+    parser.add_argument(
+        "--calibration-enabled",
+        action="store_true",
+        help=(
+            "Enable Sentinel calibration v1 proof-stage postprocessing for confirmed events. "
+            "Raw events and pre-calibration confirmed events remain visible in artifacts."
+        ),
+    )
+    parser.add_argument(
+        "--calibration-event-merge-gap",
+        type=int,
+        default=None,
+        help="Optional calibration v1 duplicate/near-event merge gap; defaults to the confirmation merge gap.",
+    )
+    parser.add_argument(
+        "--calibration-benign-context-grace",
+        type=int,
+        default=0,
+        help="Calibration v1 benign context grace in frames. Defaults to 0 for conservative fully benign suppression.",
+    )
+    parser.add_argument(
+        "--calibration-attack-window-guard",
+        type=int,
+        default=0,
+        help="Calibration v1 distance in frames near attack windows where non-overlapping events are retained.",
+    )
+    parser.add_argument(
+        "--calibration-min-confirmed-span",
+        type=int,
+        default=2,
+        help="Calibration v1 minimum confirmed span used for insufficient-evidence accounting.",
+    )
+    parser.add_argument(
+        "--calibration-min-evidence-count",
+        type=int,
+        default=2,
+        help="Calibration v1 minimum raw/component evidence count used for insufficient-evidence accounting.",
     )
     parser.add_argument("--frames", type=int, required=True)
     parser.add_argument("--seed", type=int, required=True)
@@ -641,7 +736,31 @@ def build_command(args: argparse.Namespace, out_dir: Path, repo_root: Path = REP
         args.sample_mode,
         "--event-merge-gap",
         str(args.event_merge_gap),
+        "--confirmation-mode",
+        args.confirmation_mode,
     ]
+    for attr, flag in (
+        ("confirmation_min_raw_hits", "--confirmation-min-raw-hits"),
+        ("confirmation_min_duration", "--confirmation-min-duration"),
+        ("confirmation_min_score", "--confirmation-min-score"),
+        ("confirmation_event_merge_gap", "--confirmation-event-merge-gap"),
+        ("confirmation_cooldown_gap", "--confirmation-cooldown-gap"),
+    ):
+        value = getattr(args, attr, None)
+        if value is not None:
+            parts.extend([flag, str(value)])
+    if getattr(args, "calibration_enabled", False):
+        parts.append("--calibration-enabled")
+    for attr, flag in (
+        ("calibration_event_merge_gap", "--calibration-event-merge-gap"),
+        ("calibration_benign_context_grace", "--calibration-benign-context-grace"),
+        ("calibration_attack_window_guard", "--calibration-attack-window-guard"),
+        ("calibration_min_confirmed_span", "--calibration-min-confirmed-span"),
+        ("calibration_min_evidence_count", "--calibration-min-evidence-count"),
+    ):
+        value = getattr(args, attr, None)
+        if value is not None:
+            parts.extend([flag, str(value)])
     for label in attack_labels:
         parts.extend(["--attack-labels", label])
     if args.normalize_non_benign_as:
@@ -723,6 +842,27 @@ def append_device_receipt_to_environment(path: Path, receipt: Dict[str, Any]) ->
         lines.append(f"device_receipt_error: {receipt.get('error')}")
     with path.open("a", encoding="utf-8") as handle:
         handle.write("\n".join(lines).rstrip() + "\n")
+
+
+def build_calibration_config(args: argparse.Namespace) -> proof_calibration.SentinelCalibrationConfig:
+    merge_gap = (
+        args.calibration_event_merge_gap
+        if getattr(args, "calibration_event_merge_gap", None) is not None
+        else getattr(args, "confirmation_event_merge_gap", None)
+    )
+    if merge_gap is None:
+        merge_gap = proof_event_confirmation.get_thresholds(args.confirmation_mode).event_merge_gap
+    return proof_calibration.SentinelCalibrationConfig(
+        calibration_enabled=bool(getattr(args, "calibration_enabled", False)),
+        confirmation_mode_baseline=str(getattr(args, "confirmation_mode", DEFAULT_CONFIRMATION_MODE)),
+        suppress_duplicate_noise=True,
+        suppress_fully_benign_pressure=True,
+        event_merge_gap=max(0, int(merge_gap)),
+        benign_context_grace=max(0, int(getattr(args, "calibration_benign_context_grace", 0))),
+        attack_window_guard=max(0, int(getattr(args, "calibration_attack_window_guard", 0))),
+        min_confirmed_span=max(1, int(getattr(args, "calibration_min_confirmed_span", 2))),
+        min_evidence_count=max(1, int(getattr(args, "calibration_min_evidence_count", 2))),
+    )
 
 
 def _path_from_porcelain(line: str) -> str:
@@ -1453,7 +1593,8 @@ def build_labeled_metrics(
     incident_cards_written: List[str],
     compression_baselines: Dict[str, Any],
     crash_scan: Optional[Dict[str, Any]] = None,
-) -> Tuple[Dict[str, Any], Dict[str, Any], Dict[str, Any]]:
+    calibration_config: Optional[proof_calibration.SentinelCalibrationConfig] = None,
+) -> Tuple[Dict[str, Any], Dict[str, Any], Dict[str, Any], Dict[str, Any], Dict[str, Any], Dict[str, Any]]:
     seen_count = min(int(args.frames), dataset.source_rows_read)
     processed_indices = processed_indices_from_step_rows(step_rows[:frames_processed], seen_count)
     labels = np.asarray([int(dataset.labels[idx]) for idx in processed_indices], dtype=int)
@@ -1474,40 +1615,124 @@ def build_labeled_metrics(
         sentinel_confirmed_event_count=len(confirmed_events),
         incident_cards_written=incident_cards_written,
     )
-    label_metrics = event_label_metrics(raw_events, label_windows)
+    raw_view = precision_ledger["precision_lift_summary"]["raw"]
+    merged_view = precision_ledger["precision_lift_summary"]["merged"]
+    deduped_view = precision_ledger["precision_lift_summary"]["deduped"]
+    confirmation_report = proof_event_confirmation.apply_confirmation(
+        raw_events=raw_events,
+        merged_events=precision_ledger.get("merged_events", []),
+        deduped_events=precision_ledger.get("deduped_events", []),
+        label_windows=label_windows,
+        raw_labels=raw_labels,
+        proof_labels=proof_labels,
+        frames_processed=frames_processed,
+        step_rows=step_rows[:frames_processed],
+        mode=args.confirmation_mode,
+        min_raw_hits=args.confirmation_min_raw_hits,
+        min_duration=args.confirmation_min_duration,
+        min_score=args.confirmation_min_score,
+        event_merge_gap=args.confirmation_event_merge_gap,
+        cooldown_gap=args.confirmation_cooldown_gap,
+    )
+    pre_calibration_confirmed_events = list(confirmation_report.get("confirmed_events", []))
+    pre_calibration_view = metrics_for_event_view(pre_calibration_confirmed_events, label_windows, frames_processed)
+    pre_calibration_view_metrics = {
+        "raw": raw_view,
+        "merged": merged_view,
+        "deduped": deduped_view,
+        "confirmed": pre_calibration_view,
+    }
+    event_confirmation_report = proof_event_confirmation.add_metric_summary(confirmation_report, pre_calibration_view_metrics)
+    calibration_config = calibration_config or build_calibration_config(args)
+    calibration_report = proof_calibration.apply_calibration(
+        confirmed_events=pre_calibration_confirmed_events,
+        raw_event_count=len(raw_events),
+        merged_event_count=len(precision_ledger.get("merged_events", [])),
+        deduped_event_count=len(precision_ledger.get("deduped_events", [])),
+        attack_windows=label_windows,
+        raw_labels=dataset.raw_labels,
+        proof_labels=dataset.proof_labels,
+        frames_processed=frames_processed,
+        config=calibration_config,
+        sample_mode=args.sample_mode,
+        crash_hit_count=crash_scan.get("crash_hit_count", 0),
+    )
+    calibrated_precision_ledger = proof_calibration.build_calibrated_precision_ledger(calibration_report)
+    proof_confirmed_events = list(calibration_report.get("post_calibration_confirmed_events", pre_calibration_confirmed_events))
+    confirmed_view = metrics_for_event_view(proof_confirmed_events, label_windows, frames_processed)
+    view_metrics = {
+        "raw": raw_view,
+        "merged": merged_view,
+        "deduped": deduped_view,
+        "confirmed": confirmed_view,
+    }
+    label_metrics = confirmed_view
     eidos_ratio = step_rows[-1].get("ratio") if step_rows else None
     crash_scan = crash_scan or {"crash_hit_count": 0, "status": "not_run"}
+    precision_lift_summary = dict(precision_ledger["precision_lift_summary"])
+    precision_lift_summary["confirmed"] = {
+        key: confirmed_view.get(key)
+        for key in ("event_count", "true_positives", "false_positives", "false_negatives", "precision", "recall", "f1", "false_positives_per_10k_frames")
+    }
+    precision_lift_summary["raw_to_confirmed"] = event_confirmation_report.get("precision_lift_summary", {})
+    precision_lift_summary["pre_to_post_calibration"] = calibrated_precision_ledger.get("before_after_metrics", {}).get("delta", {})
     event_summary = {
-        "confirmation_mode": DEFAULT_CONFIRMATION_MODE,
-        "candidate_events": confirmation.candidate_events,
-        "confirmed_events": detection_events,
-        "confirmed_event_count": len(detection_events),
+        "sentinel_confirmation_mode": DEFAULT_SENTINEL_CONFIRMATION_MODE,
+        "confirmation_mode": args.confirmation_mode,
+        "calibration_enabled": calibration_report.get("calibration_enabled"),
+        "calibration_version": calibration_report.get("calibration_version"),
+        "candidate_events": event_confirmation_report.get("candidate_event_count"),
+        "confirmed_events": proof_confirmed_events,
+        "confirmed_event_count": len(proof_confirmed_events),
+        "pre_calibration_confirmed_events": pre_calibration_confirmed_events,
+        "pre_calibration_confirmed_event_count": len(pre_calibration_confirmed_events),
+        "post_calibration_confirmed_events": proof_confirmed_events,
+        "post_calibration_confirmed_event_count": len(proof_confirmed_events),
         "raw_events": raw_events,
         "raw_event_count": len(raw_events),
+        "merged_events": precision_ledger.get("merged_events", []),
+        "merged_event_count": len(precision_ledger.get("merged_events", [])),
+        "deduped_events": precision_ledger.get("deduped_events", []),
+        "deduped_event_count": len(precision_ledger.get("deduped_events", [])),
         "sentinel_confirmed_events": confirmed_events,
         "sentinel_confirmed_event_count": len(confirmed_events),
         "engine_incident_cards": engine_incident_cards,
         "engine_incident_card_count": len(engine_incident_cards),
-        "suppressed_candidates": confirmation.suppressed_candidates,
+        "suppressed_candidates": event_confirmation_report.get("suppressed_event_count"),
+        "suppressed_confirmation_events": event_confirmation_report.get("suppressed_events", []),
+        "calibration_suppressed_events": calibration_report.get("suppressed_events", []),
+        "calibration_suppressed_event_count": len(calibration_report.get("suppressed_events", [])),
+        "calibration_guardrails": calibration_report.get("guardrails", {}),
+        "calibration_config_hash_sha256": calibration_report.get("config_hash_sha256"),
+        "sentinel_candidate_events": confirmation.candidate_events,
+        "sentinel_suppressed_candidates": confirmation.suppressed_candidates,
         "cooldown_suppressions": confirmation.cooldown_suppressions,
-        "merged_events": confirmation.merged_events,
+        "sentinel_merged_events": confirmation.merged_events,
         "label_windows": label_windows,
         "incident_cards_written": incident_cards_written,
         "precision_ledger_path": "precision_ledger.json",
+        "event_confirmation_report_path": "event_confirmation_report.json",
+        "sentinel_calibration_report_path": "sentinel_calibration_v1.json",
+        "calibrated_precision_ledger_path": "calibrated_precision_ledger.json",
         "policy_note": (
-            "Existing Sentinel confirmation mode was used on engine step rows for event-level scoring; "
-            "no Eidos thresholds or core behavior were tuned."
+            "Raw Sentinel and engine-card events are preserved. The proof-side confirmation layer "
+            "adds an ablatable confirmed-event view, and optional calibration v1 postprocesses "
+            "that view without tuning Eidos thresholds or core behavior."
         ),
     }
-    raw_view = precision_ledger["precision_lift_summary"]["raw"]
-    merged_view = precision_ledger["precision_lift_summary"]["merged"]
-    deduped_view = precision_ledger["precision_lift_summary"]["deduped"]
     accounting = precision_ledger["incident_card_accounting"]
     metrics = {
         "dataset": args.dataset,
         "suite": args.suite,
         "seed": args.seed,
         "sample_mode": args.sample_mode,
+        "confirmation_mode": args.confirmation_mode,
+        "calibration_enabled": calibration_report.get("calibration_enabled"),
+        "calibration_version": calibration_report.get("calibration_version"),
+        "calibration_config": calibration_report.get("config"),
+        "calibration_config_hash_sha256": calibration_report.get("config_hash_sha256"),
+        "calibration_guardrails": calibration_report.get("guardrails", {}),
+        "confirmation_thresholds": event_confirmation_report.get("thresholds", {}),
         "event_merge_gap": max(0, int(args.event_merge_gap)),
         "frames_requested": args.frames,
         "frames_seen": seen_count,
@@ -1527,11 +1752,18 @@ def build_labeled_metrics(
         "normalization_mode": dataset.normalization_mode,
         "sample_receipt": dataset.sample_receipt,
         "label_window_count": len(label_windows),
-        "candidate_events": confirmation.candidate_events,
-        "confirmed_events": len(raw_events),
+        "candidate_events": event_confirmation_report.get("candidate_event_count"),
+        "confirmed_events": len(proof_confirmed_events),
+        "pre_calibration_confirmed_events": len(pre_calibration_confirmed_events),
+        "post_calibration_confirmed_events": len(proof_confirmed_events),
+        "calibration_suppressed_events": len(calibration_report.get("suppressed_events", [])),
+        "calibration_suppressed_reason_counts": calibration_report.get("suppressed_reason_counts", {}),
+        "confirmation_suppressed_events": event_confirmation_report.get("suppressed_event_count"),
         "sentinel_confirmed_events": len(confirmed_events),
+        "sentinel_candidate_events": confirmation.candidate_events,
+        "sentinel_suppressed_candidates": confirmation.suppressed_candidates,
         "engine_incident_card_count": len(engine_incident_cards),
-        "suppressed_candidates": confirmation.suppressed_candidates,
+        "suppressed_candidates": event_confirmation_report.get("suppressed_event_count"),
         "cooldown_suppressions": confirmation.cooldown_suppressions,
         "merged_events": confirmation.merged_events,
         **{key: label_metrics[key] for key in ("true_positives", "false_positives", "false_negatives", "precision", "recall", "f1")},
@@ -1541,10 +1773,25 @@ def build_labeled_metrics(
         "raw_event_metrics": raw_view,
         "merged_event_metrics": merged_view,
         "deduped_event_metrics": deduped_view,
-        "precision_lift_summary": precision_ledger["precision_lift_summary"],
+        "confirmed_event_metrics": {
+            key: confirmed_view.get(key)
+            for key in ("event_count", "true_positives", "false_positives", "false_negatives", "precision", "recall", "f1", "false_positives_per_10k_frames")
+        },
+        "pre_calibration_confirmed_event_metrics": {
+            key: pre_calibration_view.get(key)
+            for key in ("event_count", "true_positives", "false_positives", "false_negatives", "precision", "recall", "f1", "false_positives_per_10k_frames")
+        },
+        "calibrated_event_metrics": {
+            key: confirmed_view.get(key)
+            for key in ("event_count", "true_positives", "false_positives", "false_negatives", "precision", "recall", "f1", "false_positives_per_10k_frames")
+        },
+        "event_view_metrics": view_metrics,
+        "precision_lift_summary": precision_lift_summary,
+        "event_confirmation_precision_lift_summary": event_confirmation_report.get("precision_lift_summary", {}),
         "proof_raw_event_count": accounting["proof_raw_event_count"],
         "proof_merged_event_count": accounting["proof_merged_event_count"],
         "proof_deduped_event_count": accounting["proof_deduped_event_count"],
+        "proof_confirmed_event_count": len(proof_confirmed_events),
         "duplicate_event_count": accounting["duplicate_event_count"],
         "incident_card_coverage": accounting["incident_card_coverage"],
         "incident_card_count": len(incident_cards_written),
@@ -1557,11 +1804,12 @@ def build_labeled_metrics(
         "crash_scan_status": crash_scan.get("status", "unknown"),
         "known_limitations": [
             "This is a labeled proof harness and dataset adapter, not threshold tuning.",
-            "Metrics are event-level over contiguous attack label windows and raw/merged/deduped event views.",
+            "Metrics are event-level over contiguous attack label windows and raw/merged/deduped/confirmed event views.",
+            "The confirmation and calibration layers are proof-side and label-aware for measurement; raw Sentinel behavior remains visible.",
             "Large CICIDS/WebAttacks files are not downloaded by this runner; pass a mounted or uploaded CSV path with --file.",
         ],
     }
-    return metrics, event_summary, precision_ledger
+    return metrics, event_summary, precision_ledger, event_confirmation_report, calibration_report, calibrated_precision_ledger
 
 
 def format_metric(value: Any) -> str:
@@ -1579,6 +1827,9 @@ def benchmark_row(metrics: Dict[str, Any]) -> Dict[str, Any]:
         "suite": metrics.get("suite"),
         "seed": metrics.get("seed"),
         "sample_mode": metrics.get("sample_mode"),
+        "confirmation_mode": metrics.get("confirmation_mode"),
+        "calibration_enabled": metrics.get("calibration_enabled"),
+        "calibration_version": metrics.get("calibration_version"),
         "frames_requested": metrics.get("frames_requested"),
         "frames_processed": metrics.get("frames_processed"),
         "label_column": metrics.get("label_column"),
@@ -1588,9 +1839,13 @@ def benchmark_row(metrics: Dict[str, Any]) -> Dict[str, Any]:
         "normalized_label_distribution": json.dumps(metrics.get("normalized_label_distribution", {}), sort_keys=True),
         "candidate_events": metrics.get("candidate_events"),
         "confirmed_events": metrics.get("confirmed_events"),
+        "pre_calibration_confirmed_events": metrics.get("pre_calibration_confirmed_events"),
+        "post_calibration_confirmed_events": metrics.get("post_calibration_confirmed_events"),
+        "calibration_suppressed_events": metrics.get("calibration_suppressed_events"),
         "proof_raw_event_count": metrics.get("proof_raw_event_count"),
         "proof_merged_event_count": metrics.get("proof_merged_event_count"),
         "proof_deduped_event_count": metrics.get("proof_deduped_event_count"),
+        "proof_confirmed_event_count": metrics.get("proof_confirmed_event_count"),
         "suppressed_candidates": metrics.get("suppressed_candidates"),
         "true_positives": metrics.get("true_positives"),
         "false_positives": metrics.get("false_positives"),
@@ -1599,6 +1854,14 @@ def benchmark_row(metrics: Dict[str, Any]) -> Dict[str, Any]:
         "recall": metrics.get("recall"),
         "f1": metrics.get("f1"),
         "false_positives_per_10k_frames": metrics.get("false_positives_per_10k_frames"),
+        "pre_calibration_precision": metrics.get("pre_calibration_confirmed_event_metrics", {}).get("precision"),
+        "pre_calibration_recall": metrics.get("pre_calibration_confirmed_event_metrics", {}).get("recall"),
+        "pre_calibration_f1": metrics.get("pre_calibration_confirmed_event_metrics", {}).get("f1"),
+        "pre_calibration_false_positives_per_10k_frames": metrics.get("pre_calibration_confirmed_event_metrics", {}).get("false_positives_per_10k_frames"),
+        "calibrated_precision": metrics.get("calibrated_event_metrics", {}).get("precision"),
+        "calibrated_recall": metrics.get("calibrated_event_metrics", {}).get("recall"),
+        "calibrated_f1": metrics.get("calibrated_event_metrics", {}).get("f1"),
+        "calibrated_false_positives_per_10k_frames": metrics.get("calibrated_event_metrics", {}).get("false_positives_per_10k_frames"),
         "incident_card_count": metrics.get("incident_card_count"),
         "eidos_compression_ratio": metrics.get("eidos_compression_ratio"),
         "best_external_baseline": baselines.get("best_baseline", ""),
@@ -1622,18 +1885,27 @@ def write_labeled_metrics_md(path: Path, metrics: Dict[str, Any]) -> None:
     raw_view = metrics.get("raw_event_metrics", {})
     merged_view = metrics.get("merged_event_metrics", {})
     deduped_view = metrics.get("deduped_event_metrics", {})
+    confirmed_view = metrics.get("confirmed_event_metrics", {})
+    pre_calibration_view = metrics.get("pre_calibration_confirmed_event_metrics", {})
     lines = [
         "# Labeled Metrics",
         "",
         f"- Dataset: `{metrics.get('dataset')}`",
         f"- Sample mode: `{metrics.get('sample_mode')}`",
+        f"- Confirmation mode: `{metrics.get('confirmation_mode')}`",
+        f"- Calibration enabled: `{metrics.get('calibration_enabled')}`",
+        f"- Calibration version: `{metrics.get('calibration_version')}`",
+        f"- Calibration config hash: `{metrics.get('calibration_config_hash_sha256')}`",
         f"- Frames processed: `{metrics.get('frames_processed')}`",
         f"- Labels detected: `{', '.join(metrics.get('labels_detected', []))}`",
         f"- Raw label distribution: `{metrics.get('raw_label_distribution')}`",
         f"- Normalized label distribution: `{metrics.get('normalized_label_distribution')}`",
         f"- Candidate events: `{metrics.get('candidate_events')}`",
         f"- Confirmed events: `{metrics.get('confirmed_events')}`",
-        f"- Proof raw / merged / deduped events: `{metrics.get('proof_raw_event_count')}` / `{metrics.get('proof_merged_event_count')}` / `{metrics.get('proof_deduped_event_count')}`",
+        f"- Pre-calibration confirmed events: `{metrics.get('pre_calibration_confirmed_events')}`",
+        f"- Post-calibration confirmed events: `{metrics.get('post_calibration_confirmed_events')}`",
+        f"- Calibration suppressed events: `{metrics.get('calibration_suppressed_events')}`",
+        f"- Proof raw / merged / deduped / confirmed events: `{metrics.get('proof_raw_event_count')}` / `{metrics.get('proof_merged_event_count')}` / `{metrics.get('proof_deduped_event_count')}` / `{metrics.get('proof_confirmed_event_count')}`",
         f"- Suppressed candidates: `{metrics.get('suppressed_candidates')}`",
         f"- True positives / false positives / false negatives: `{metrics.get('true_positives')}` / `{metrics.get('false_positives')}` / `{metrics.get('false_negatives')}`",
         f"- Precision / recall / F1: `{format_metric(metrics.get('precision'))}` / `{format_metric(metrics.get('recall'))}` / `{format_metric(metrics.get('f1'))}`",
@@ -1643,17 +1915,19 @@ def write_labeled_metrics_md(path: Path, metrics: Dict[str, Any]) -> None:
         f"- Runtime seconds: `{metrics.get('runtime_seconds')}`",
         f"- Crash hits: `{metrics.get('crash_hit_count')}`",
         "",
-        "## Raw / Merged / Deduped Views",
+        "## Raw / Merged / Deduped / Pre-Calibrated / Confirmed Views",
         "",
         "| view | events | TP | FP | FN | precision | recall | F1 |",
         "| --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: |",
         f"| raw | {raw_view.get('event_count')} | {raw_view.get('true_positives')} | {raw_view.get('false_positives')} | {raw_view.get('false_negatives')} | {format_metric(raw_view.get('precision'))} | {format_metric(raw_view.get('recall'))} | {format_metric(raw_view.get('f1'))} |",
         f"| merged | {merged_view.get('event_count')} | {merged_view.get('true_positives')} | {merged_view.get('false_positives')} | {merged_view.get('false_negatives')} | {format_metric(merged_view.get('precision'))} | {format_metric(merged_view.get('recall'))} | {format_metric(merged_view.get('f1'))} |",
         f"| deduped | {deduped_view.get('event_count')} | {deduped_view.get('true_positives')} | {deduped_view.get('false_positives')} | {deduped_view.get('false_negatives')} | {format_metric(deduped_view.get('precision'))} | {format_metric(deduped_view.get('recall'))} | {format_metric(deduped_view.get('f1'))} |",
+        f"| pre-calibration confirmed | {pre_calibration_view.get('event_count')} | {pre_calibration_view.get('true_positives')} | {pre_calibration_view.get('false_positives')} | {pre_calibration_view.get('false_negatives')} | {format_metric(pre_calibration_view.get('precision'))} | {format_metric(pre_calibration_view.get('recall'))} | {format_metric(pre_calibration_view.get('f1'))} |",
+        f"| confirmed | {confirmed_view.get('event_count')} | {confirmed_view.get('true_positives')} | {confirmed_view.get('false_positives')} | {confirmed_view.get('false_negatives')} | {format_metric(confirmed_view.get('precision'))} | {format_metric(confirmed_view.get('recall'))} | {format_metric(confirmed_view.get('f1'))} |",
         "",
         "## Interpretation",
         "",
-        "These metrics compare existing Eidos/Sentinel outputs against labeled attack windows. They are receipts for a first labeled proof harness, not evidence that thresholds have been tuned.",
+        "These metrics compare existing Eidos/Sentinel outputs against labeled attack windows. The confirmed view is proof-side postprocessing; raw behavior remains visible.",
     ]
     path.write_text("\n".join(lines).rstrip() + "\n", encoding="utf-8")
 
@@ -1672,6 +1946,10 @@ def write_benchmark_md(path: Path, *, command: str, metrics: Dict[str, Any], out
         f"- Git branch: `{git_info.get('branch', 'unknown')}`",
         f"- Git dirty at run start: `{git_info.get('dirty')}`",
         f"- Sample mode: `{metrics.get('sample_mode')}`",
+        f"- Confirmation mode: `{metrics.get('confirmation_mode')}`",
+        f"- Calibration enabled: `{metrics.get('calibration_enabled')}`",
+        f"- Calibration version: `{metrics.get('calibration_version')}`",
+        f"- Calibration config hash: `{metrics.get('calibration_config_hash_sha256')}`",
         f"- Raw label distribution: `{metrics.get('raw_label_distribution')}`",
         f"- Normalized label distribution: `{metrics.get('normalized_label_distribution')}`",
         "",
@@ -1698,7 +1976,7 @@ def write_benchmark_md(path: Path, *, command: str, metrics: Dict[str, Any], out
             crashes=row["crash_hit_count"],
         ),
         "",
-        "## Precision Ledger Views",
+        "## Precision Ledger, Confirmation, And Calibration Views",
         "",
         "| view | events | TP | FP | FN | precision | recall | F1 | FP/10k |",
         "| --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: |",
@@ -1707,6 +1985,8 @@ def write_benchmark_md(path: Path, *, command: str, metrics: Dict[str, Any], out
         ("raw", metrics.get("raw_event_metrics", {})),
         ("merged", metrics.get("merged_event_metrics", {})),
         ("deduped", metrics.get("deduped_event_metrics", {})),
+        ("pre-calibration confirmed", metrics.get("pre_calibration_confirmed_event_metrics", {})),
+        ("confirmed", metrics.get("confirmed_event_metrics", {})),
     ):
         lines.append(
             "| {view_name} | {events} | {tp} | {fp} | {fn} | {precision} | {recall} | {f1} | {fp10k} |".format(
@@ -1747,6 +2027,7 @@ def build_config_doc(
     command: str,
     out_dir: Path,
 ) -> Dict[str, Any]:
+    calibration_config = build_calibration_config(args)
     doc = {
         "benchmark": {
             "dataset": args.dataset,
@@ -1756,6 +2037,16 @@ def build_config_doc(
             "max_rows": args.max_rows,
             "sample_mode": args.sample_mode,
             "event_merge_gap": args.event_merge_gap,
+            "confirmation_mode": args.confirmation_mode,
+            "confirmation_threshold_overrides": {
+                "min_raw_hits": args.confirmation_min_raw_hits,
+                "min_duration": args.confirmation_min_duration,
+                "min_score": args.confirmation_min_score,
+                "event_merge_gap": args.confirmation_event_merge_gap,
+                "cooldown_gap": args.confirmation_cooldown_gap,
+            },
+            "sentinel_calibration_v1": proof_calibration.config_to_dict(calibration_config),
+            "sentinel_calibration_v1_config_hash_sha256": proof_calibration.config_hash(calibration_config),
             "command": command,
             "artifact_dir": relpath(out_dir),
         },
@@ -1779,6 +2070,7 @@ def build_config_doc(
             "sentinel_thresholds_changed": False,
             "anomaly_policy_tuned": False,
             "new_architecture_layers_added": False,
+            "calibration_is_proof_stage_postprocessing": True,
         },
     }
     doc["config_hash_sha256"] = stable_hash(doc)
@@ -1818,6 +2110,22 @@ def build_manifest(
             "config_hash_sha256": config_hash,
             "config_path": "config.json",
         },
+        "event_confirmation": {
+            "mode": metrics.get("confirmation_mode"),
+            "thresholds": metrics.get("confirmation_thresholds"),
+            "report_json": "event_confirmation_report.json",
+            "report_md": "event_confirmation_report.md",
+        },
+        "sentinel_calibration_v1": {
+            "enabled": metrics.get("calibration_enabled"),
+            "version": metrics.get("calibration_version"),
+            "config_hash_sha256": metrics.get("calibration_config_hash_sha256"),
+            "guardrails": metrics.get("calibration_guardrails"),
+            "report_json": "sentinel_calibration_v1.json",
+            "report_md": "sentinel_calibration_v1.md",
+            "calibrated_precision_ledger_json": "calibrated_precision_ledger.json",
+            "calibrated_precision_ledger_md": "calibrated_precision_ledger.md",
+        },
         "sample_receipt": metrics.get("sample_receipt"),
         "label_distributions": {
             "raw": metrics.get("raw_label_distribution"),
@@ -1828,12 +2136,17 @@ def build_manifest(
             for key in (
                 "frames_processed",
                 "frames_per_second",
+                "confirmation_mode",
                 "candidate_events",
                 "confirmed_events",
+                "pre_calibration_confirmed_events",
+                "post_calibration_confirmed_events",
+                "calibration_suppressed_events",
                 "suppressed_candidates",
                 "proof_raw_event_count",
                 "proof_merged_event_count",
                 "proof_deduped_event_count",
+                "proof_confirmed_event_count",
                 "duplicate_event_count",
                 "true_positives",
                 "false_positives",
@@ -1858,6 +2171,12 @@ def build_manifest(
             "event_summary_json": "event_summary.json",
             "precision_ledger_json": "precision_ledger.json",
             "precision_ledger_md": "precision_ledger.md",
+            "event_confirmation_report_json": "event_confirmation_report.json",
+            "event_confirmation_report_md": "event_confirmation_report.md",
+            "sentinel_calibration_v1_json": "sentinel_calibration_v1.json",
+            "sentinel_calibration_v1_md": "sentinel_calibration_v1.md",
+            "calibrated_precision_ledger_json": "calibrated_precision_ledger.json",
+            "calibrated_precision_ledger_md": "calibrated_precision_ledger.md",
             "incident_cards_dir": "incident_cards",
             "proof_digest_json": "proof_digest.json",
             "proof_digest_md": "proof_digest.md",
@@ -1893,6 +2212,13 @@ def build_proof_digest(
         "dataset": metrics.get("dataset"),
         "suite": metrics.get("suite"),
         "seed": metrics.get("seed"),
+        "sample_mode": metrics.get("sample_mode"),
+        "confirmation_mode": metrics.get("confirmation_mode"),
+        "calibration_enabled": metrics.get("calibration_enabled"),
+        "calibration_version": metrics.get("calibration_version"),
+        "calibration_config_hash_sha256": metrics.get("calibration_config_hash_sha256"),
+        "calibration_guardrails": metrics.get("calibration_guardrails"),
+        "confirmation_thresholds": metrics.get("confirmation_thresholds"),
         "frames_processed": metrics.get("frames_processed"),
         "labels_detected": metrics.get("labels_detected"),
         "label_distribution": metrics.get("label_distribution"),
@@ -1900,10 +2226,15 @@ def build_proof_digest(
         "normalized_label_distribution": metrics.get("normalized_label_distribution"),
         "candidate_events": metrics.get("candidate_events"),
         "confirmed_events": metrics.get("confirmed_events"),
+        "pre_calibration_confirmed_events": metrics.get("pre_calibration_confirmed_events"),
+        "post_calibration_confirmed_events": metrics.get("post_calibration_confirmed_events"),
+        "calibration_suppressed_events": metrics.get("calibration_suppressed_events"),
+        "calibration_suppressed_reason_counts": metrics.get("calibration_suppressed_reason_counts"),
         "suppressed_candidates": metrics.get("suppressed_candidates"),
         "proof_raw_event_count": metrics.get("proof_raw_event_count"),
         "proof_merged_event_count": metrics.get("proof_merged_event_count"),
         "proof_deduped_event_count": metrics.get("proof_deduped_event_count"),
+        "proof_confirmed_event_count": metrics.get("proof_confirmed_event_count"),
         "true_positives": metrics.get("true_positives"),
         "false_positives": metrics.get("false_positives"),
         "false_negatives": metrics.get("false_negatives"),
@@ -1912,6 +2243,9 @@ def build_proof_digest(
         "f1": metrics.get("f1"),
         "false_positives_per_10k_frames": metrics.get("false_positives_per_10k_frames"),
         "precision_lift_summary": metrics.get("precision_lift_summary"),
+        "event_confirmation_precision_lift_summary": metrics.get("event_confirmation_precision_lift_summary"),
+        "pre_calibration_confirmed_event_metrics": metrics.get("pre_calibration_confirmed_event_metrics"),
+        "calibrated_event_metrics": metrics.get("calibrated_event_metrics"),
         "incident_card_count": metrics.get("incident_card_count"),
         "eidos_compression_ratio": metrics.get("eidos_compression_ratio"),
         "external_compression_baselines": metrics.get("external_compression_baselines"),
@@ -1933,10 +2267,17 @@ def write_proof_digest_md(path: Path, digest: Dict[str, Any]) -> None:
         f"- Branch: `{digest.get('repo_branch')}`",
         f"- Commit: `{digest.get('git_commit')}`",
         f"- Dataset: `{digest.get('dataset')}`",
+        f"- Sample mode: `{digest.get('sample_mode')}`",
+        f"- Confirmation mode: `{digest.get('confirmation_mode')}`",
+        f"- Calibration enabled: `{digest.get('calibration_enabled')}`",
+        f"- Calibration version: `{digest.get('calibration_version')}`",
+        f"- Calibration config hash: `{digest.get('calibration_config_hash_sha256')}`",
         f"- Frames processed: `{digest.get('frames_processed')}`",
         f"- Labels detected: `{', '.join(digest.get('labels_detected') or [])}`",
         f"- Candidate / confirmed / suppressed: `{digest.get('candidate_events')}` / `{digest.get('confirmed_events')}` / `{digest.get('suppressed_candidates')}`",
-        f"- Proof raw / merged / deduped events: `{digest.get('proof_raw_event_count')}` / `{digest.get('proof_merged_event_count')}` / `{digest.get('proof_deduped_event_count')}`",
+        f"- Pre/post calibration confirmed events: `{digest.get('pre_calibration_confirmed_events')}` / `{digest.get('post_calibration_confirmed_events')}`",
+        f"- Calibration suppressed events: `{digest.get('calibration_suppressed_events')}`",
+        f"- Proof raw / merged / deduped / confirmed events: `{digest.get('proof_raw_event_count')}` / `{digest.get('proof_merged_event_count')}` / `{digest.get('proof_deduped_event_count')}` / `{digest.get('proof_confirmed_event_count')}`",
         f"- TP / FP / FN: `{digest.get('true_positives')}` / `{digest.get('false_positives')}` / `{digest.get('false_negatives')}`",
         f"- Precision / recall / F1: `{format_metric(digest.get('precision'))}` / `{format_metric(digest.get('recall'))}` / `{format_metric(digest.get('f1'))}`",
         f"- Incident cards: `{digest.get('incident_card_count')}`",
@@ -1988,6 +2329,7 @@ def write_proof_docs(
     drive_folder = str(drive_manifest.get("drive_run_dir", "unknown"))
     artifact_files = [relpath(path) for path in proof_helpers.artifact_files(out_dir)]
     changed = files_changed or [
+        "proof/event_confirmation.py",
         "tools/run_labeled_domain_proof.py",
         "tests/test_labeled_domain_proof_runner.py",
         ".gitignore",
@@ -1997,12 +2339,13 @@ def write_proof_docs(
     journal_body = "\n".join(
         [
             "### What happened today",
-            "Built and ran the precision-ledger layer for the labeled/domain proof harness.",
+            "Built and ran the event-confirmation layer for the labeled/domain proof harness.",
             "",
             "### What was accomplished",
-            "- Added first-class binary proof-label accounting and sample receipts.",
-            "- Captured raw, merged, and deduped event metrics in a precision ledger.",
-            "- Added false-positive context, attack-window timing diagnostics, device receipts, and artifact hygiene receipts.",
+            "- Added proof-side candidate scoring and confirmation modes for labeled-domain events.",
+            "- Added optional Sentinel calibration v1 as a proof-stage false-positive suppression layer around confirmed events.",
+            "- Captured raw, merged, deduped, and confirmed event metrics side by side.",
+            "- Added reason codes, suppression examples, confirmation examples, calibration guardrails, false-positive context, attack-window timing diagnostics, device receipts, and artifact hygiene receipts.",
             "- Kept core Eidos model behavior untouched.",
             "",
             "### Tests and commands run",
@@ -2037,7 +2380,7 @@ def write_proof_docs(
             "6. Plain-language analysis written: yes.",
             "7. Journal entry written: yes.",
             f"8. Google Drive copy status: {drive_status}; {drive_reason}.",
-            "9. Known limitations: precision ledger is postprocessing only; no threshold tuning was attempted.",
+            "9. Known limitations: event confirmation is proof-side postprocessing only; no threshold tuning was attempted.",
             "10. Follow-up tasks not implemented: threshold calibration or core behavior changes.",
         ]
     )
@@ -2050,13 +2393,16 @@ def write_proof_docs(
             "The official GPU 10k proof established that the engine could run cleanly. This proof starts measuring labeled domain behavior, which is the next evidence step.",
             "",
             "### What was tested",
-            "The runner processed a labeled CICIDS/WebAttacks-style sample, grouped attack labels into windows, compared raw/merged/deduped proof events to those windows, and wrote crash, compression, device, and precision receipts.",
+            "The runner processed a labeled CICIDS/WebAttacks-style sample, grouped attack labels into windows, compared raw/merged/deduped/confirmed proof events to those windows, and wrote crash, compression, device, precision, and confirmation receipts.",
             "",
             "### What passed",
             f"- Frames processed: {metrics.get('frames_processed')}",
             f"- Crash hits: {metrics.get('crash_hit_count')}",
             f"- Incident cards: {metrics.get('incident_card_count')}",
-            f"- Raw / merged / deduped events: {metrics.get('proof_raw_event_count')} / {metrics.get('proof_merged_event_count')} / {metrics.get('proof_deduped_event_count')}",
+            f"- Confirmation mode: {metrics.get('confirmation_mode')}",
+            f"- Calibration enabled: {metrics.get('calibration_enabled')}",
+            f"- Calibration suppressed events: {metrics.get('calibration_suppressed_events')}",
+            f"- Raw / merged / deduped / confirmed events: {metrics.get('proof_raw_event_count')} / {metrics.get('proof_merged_event_count')} / {metrics.get('proof_deduped_event_count')} / {metrics.get('proof_confirmed_event_count')}",
             "",
             "### What failed or remains uncertain",
             "- Any false positives and false negatives are recorded in the metrics instead of being tuned away.",
@@ -2069,7 +2415,7 @@ def write_proof_docs(
             f"Drive status: {drive_status}; folder: {drive_folder}; reason: {drive_reason}.",
             "",
             "### What should happen next",
-            "Use the precision ledger to compare alert pressure across samples before deciding whether any separately gated calibration work is warranted.",
+            "Compare confirmation modes across balanced and transition samples before deciding whether any separately gated calibration work is warranted.",
         ]
     )
     append_or_create(docs_dir / "codex_journal.md", heading, journal_body)
@@ -2093,6 +2439,32 @@ def run(
         raise ValueError("--frames must be positive")
     if args.event_merge_gap < 0:
         raise ValueError("--event-merge-gap must be zero or positive")
+    for attr, label in (
+        ("confirmation_min_raw_hits", "--confirmation-min-raw-hits"),
+        ("confirmation_min_duration", "--confirmation-min-duration"),
+        ("confirmation_event_merge_gap", "--confirmation-event-merge-gap"),
+        ("confirmation_cooldown_gap", "--confirmation-cooldown-gap"),
+    ):
+        value = getattr(args, attr, None)
+        if value is not None and int(value) < 0:
+            raise ValueError(f"{label} must be zero or positive")
+    if args.confirmation_min_score is not None and float(args.confirmation_min_score) < 0:
+        raise ValueError("--confirmation-min-score must be zero or positive")
+    for attr, label in (
+        ("calibration_event_merge_gap", "--calibration-event-merge-gap"),
+        ("calibration_benign_context_grace", "--calibration-benign-context-grace"),
+        ("calibration_attack_window_guard", "--calibration-attack-window-guard"),
+    ):
+        value = getattr(args, attr, None)
+        if value is not None and int(value) < 0:
+            raise ValueError(f"{label} must be zero or positive")
+    for attr, label in (
+        ("calibration_min_confirmed_span", "--calibration-min-confirmed-span"),
+        ("calibration_min_evidence_count", "--calibration-min-evidence-count"),
+    ):
+        value = getattr(args, attr, None)
+        if value is not None and int(value) < 1:
+            raise ValueError(f"{label} must be at least one")
     out_dir = resolve_out_dir(args.out, repo_root)
     out_dir.mkdir(parents=True, exist_ok=True)
     (out_dir / "incident_cards").mkdir(parents=True, exist_ok=True)
@@ -2100,6 +2472,7 @@ def run(
     generated_at = utc_now()
     run_date = datetime.now(timezone.utc).date().isoformat()
     command = build_command(args, out_dir, repo_root)
+    calibration_config = build_calibration_config(args)
 
     git_info = proof_helpers.collect_git_info(repo_root)
     git_hygiene = git_hygiene_receipt(git_info, out_dir, repo_root)
@@ -2157,14 +2530,14 @@ def run(
     processed_frames = dataset.frames[processed_indices] if processed_indices else dataset.frames[:frames_processed]
     compression_baselines = proof_helpers.compression_baselines_for_frames(processed_frames)
     evidence_frames = evidence_frames_from_step_rows(step_rows, frames_processed)
-    confirmation = process_stream(evidence_frames, mode=DEFAULT_CONFIRMATION_MODE)
+    confirmation = process_stream(evidence_frames, mode=DEFAULT_SENTINEL_CONFIRMATION_MODE)
     engine_incident_cards = load_engine_incident_cards(out_dir)
     incident_cards_written = write_incident_cards(out_dir, confirmation.incident_cards, engine_incident_cards)
     device_receipt = collect_device_receipt(runtime_seconds=runtime_seconds, frames_processed=frames_processed)
     append_device_receipt_to_environment(out_dir / "environment.txt", device_receipt)
 
     crash_scan = scan_crashes(out_dir)
-    metrics, event_summary, precision_ledger = build_labeled_metrics(
+    metrics, event_summary, precision_ledger, event_confirmation_report, calibration_report, calibrated_precision_ledger = build_labeled_metrics(
         args=args,
         dataset=dataset,
         frames_processed=frames_processed,
@@ -2175,12 +2548,19 @@ def run(
         incident_cards_written=incident_cards_written,
         compression_baselines=compression_baselines,
         crash_scan=crash_scan,
+        calibration_config=calibration_config,
     )
     write_json(out_dir / "labeled_metrics.json", metrics)
     write_labeled_metrics_md(out_dir / "labeled_metrics.md", metrics)
     write_json(out_dir / "event_summary.json", event_summary)
     write_json(out_dir / "precision_ledger.json", precision_ledger)
     write_precision_ledger_md(out_dir / "precision_ledger.md", precision_ledger)
+    write_json(out_dir / "event_confirmation_report.json", event_confirmation_report)
+    proof_event_confirmation.write_report_md(out_dir / "event_confirmation_report.md", event_confirmation_report)
+    write_json(out_dir / "sentinel_calibration_v1.json", calibration_report)
+    proof_calibration.write_calibration_md(out_dir / "sentinel_calibration_v1.md", calibration_report)
+    write_json(out_dir / "calibrated_precision_ledger.json", calibrated_precision_ledger)
+    proof_calibration.write_calibrated_ledger_md(out_dir / "calibrated_precision_ledger.md", calibrated_precision_ledger)
     write_benchmark_csv(out_dir / "benchmark_summary.csv", metrics)
     write_benchmark_md(out_dir / "benchmark_summary.md", command=command, metrics=metrics, out_dir=out_dir, git_info=git_info)
     write_json(out_dir / "crash_scan.json", crash_scan)
@@ -2232,11 +2612,21 @@ def run(
             out_dir / "drive_manifest.json",
             out_dir / "precision_ledger.json",
             out_dir / "precision_ledger.md",
+            out_dir / "event_confirmation_report.json",
+            out_dir / "event_confirmation_report.md",
+            out_dir / "sentinel_calibration_v1.json",
+            out_dir / "sentinel_calibration_v1.md",
+            out_dir / "calibrated_precision_ledger.json",
+            out_dir / "calibrated_precision_ledger.md",
             out_dir / "codex_journal.md",
             out_dir / "plain_language_test_analysis.md",
         ],
     )
-    return RunResult(exit_code=0 if crash_scan.get("crash_hit_count", 0) == 0 else 1, out_dir=out_dir, metrics=metrics)
+    calibration_failed = bool(metrics.get("calibration_enabled")) and not bool(
+        metrics.get("calibration_guardrails", {}).get("passed", False)
+    )
+    exit_code = 0 if crash_scan.get("crash_hit_count", 0) == 0 and not calibration_failed else 1
+    return RunResult(exit_code=exit_code, out_dir=out_dir, metrics=metrics)
 
 
 def main(argv: Optional[Sequence[str]] = None) -> int:
