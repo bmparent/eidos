@@ -109,3 +109,17 @@ The strongest result is the transition1k CPU run. The balanced250 run is useful 
 ## What should happen next
 
 Use this report as the merge-state receipt for the named candidate commits. Do not tune thresholds or change core behavior based only on this audit. If a future task needs to improve balanced recall, it should be a separate, explicitly scoped proof/calibration task with before/after receipts.
+
+## Sentinel calibration v1 generalization - 2026-06-07
+
+This follow-up ran a CICIDS/WebAttacks calibration generalization matrix with proof-stage calibration enabled and core Eidos behavior unchanged.
+
+- Decision: `HOLD`.
+- Completed runs: `5`.
+- Skipped optional runs: `1`.
+- Suppressed events audited: `8`.
+- Suppressions that may hide true attack context: `0`.
+- Completed crash scans: clean (`crash_hit_count = 0`).
+- Drive copy: copied; folder: `G:\My Drive\Eidos_Brain_Proof_Phase\2026-06-07\sentinel_calibration_v1_generalization`; reason: `copy completed`.
+
+The validation supports continued false-positive-control work, but the decision is HOLD because balanced recall/generalization remains ambiguous and the larger natural run was not feasible in this CPU pass.

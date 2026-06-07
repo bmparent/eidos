@@ -98,3 +98,19 @@ The transition1k CPU receipt is strong: confirmed/calibrated precision, recall, 
 8. Google Drive copy status: copied to `G:\My Drive\Eidos_Brain_Proof_Phase\2026-06-07\merge_consolidation_audit`; 6 files copied, 0 skipped.
 9. Known limitations: existing proofs are CPU receipts; tiny smoke missed its attack window; balanced250 confirmed recall is low; no new proof rerun was performed.
 10. Follow-up tasks not implemented: no merge, no cherry-pick, no threshold tuning, no core behavior changes, no new proof feature work.
+
+## Sentinel calibration v1 generalization validation - 2026-06-07
+
+What happened today: ran balanced250, balanced1000, transition1000, transition4360 max-feasible, and natural2000 with calibration enabled. The natural15000 optional leg was started and interrupted during dataset loading after the completed max-transition CPU leg took about 39 minutes.
+
+What was accomplished:
+- Wrote `generalization_report.md`, `generalization_summary.csv`, `recall_protection_audit.json`, and `decision.json`.
+- Audited every confirmation/calibration suppressed event from the completed receipt folders.
+- Confirmed completed crash scans reported `crash_hit_count = 0`.
+- Mirrored the aggregate validation artifact folder to Google Drive when `EIDOS_PROOF_DRIVE_DIR` was set.
+
+What changed: reporting and proof artifacts only. Core Eidos behavior did not change.
+
+What did not change: reservoir dynamics, RLS behavior, raw Sentinel thresholds, anomaly policy, compression behavior, hippocampus memory, and incident-card generation remained untouched.
+
+End-of-task decision: `HOLD` - FP control and crash scans are clean, but generalization remains ambiguous: balanced recall is weak or the optional larger natural run was skipped as CPU-infeasible.
