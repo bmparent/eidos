@@ -23,6 +23,11 @@ class EvidenceFrame:
     novelty: float = 0.0
     severity_hint: Optional[str] = None
     lifecycle_phase: Optional[str] = None
+    surprise_rate: Optional[float] = None
+    eigen_dominance: Optional[float] = None
+    spectral_entropy: Optional[float] = None
+    spectral_flatness: Optional[float] = None
+    plasticity: Optional[float] = None
     top_drivers: List[Dict[str, Any]] = field(default_factory=list)
     similar_past_events: List[Dict[str, Any]] = field(default_factory=list)
     raw_evidence_ref: Optional[str] = None
@@ -174,6 +179,11 @@ class SentinelEventConfirmer:
             residual_score=float(frame.residual_score),
             geometry_change=float(frame.geometry_change),
             novelty=float(frame.novelty),
+            surprise_rate=frame.surprise_rate,
+            eigen_dominance=frame.eigen_dominance,
+            spectral_entropy=frame.spectral_entropy,
+            spectral_flatness=frame.spectral_flatness,
+            plasticity=frame.plasticity,
             config=self.config,
         )
         phase = (frame.lifecycle_phase or "").lower()

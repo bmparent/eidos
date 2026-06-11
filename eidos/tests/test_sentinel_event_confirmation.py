@@ -1,4 +1,6 @@
 from sentinel import EvidenceFrame, process_stream
+from sentinel.calibration import get_mode_config
+from sentinel.normal_suppression import evidence_weight, is_stable_normal_context
 
 
 def burst_stream(start=20, end=29, frames=80):
@@ -27,6 +29,24 @@ def test_sustained_anomaly_burst_confirms_as_one_event():
     assert event.event_count == 10
     assert event.peak_score == 4.6
     assert len(result.incident_cards) == 1
+
+
+def test_isolated_spike_stays_candidate_only():
+    stream = [
+        EvidenceFrame(
+            frame=frame,
+            residual_score=5.2 if frame == 12 else 0.5,
+            geometry_change=0.7 if frame == 12 else 0.02,
+            novelty=0.7 if frame == 12 else 0.02,
+        )
+        for frame in range(40)
+    ]
+
+    result = process_stream(stream, mode="balanced")
+
+    assert result.candidate_events == 1
+    assert result.suppressed_candidates == 1
+    assert result.confirmed_events == []
 
 
 def test_repeated_nearby_spikes_merge_without_alert_spam():
@@ -68,3 +88,46 @@ def test_cooldown_suppresses_same_cluster_alert_spam():
 
     assert len(result.confirmed_events) == 1
     assert result.cooldown_suppressions == 1
+
+
+def test_normal_suppression_only_stable_periods_raise_bar():
+    config = get_mode_config("balanced")
+
+    stable_weight = evidence_weight(
+        residual_score=2.6,
+        geometry_change=0.01,
+        novelty=0.01,
+        config=config,
+    )
+    active_weight = evidence_weight(
+        residual_score=2.6,
+        geometry_change=0.8,
+        novelty=0.8,
+        config=config,
+    )
+
+    assert is_stable_normal_context(
+        residual_score=1.0,
+        geometry_change=0.02,
+        novelty=0.02,
+        config=config,
+    )
+    assert active_weight > stable_weight
+
+
+def test_high_recall_confirms_earlier_than_low_noise():
+    stream = [
+        EvidenceFrame(
+            frame=frame,
+            residual_score=4.3 if frame in {10, 11} else 0.5,
+            geometry_change=0.5 if frame in {10, 11} else 0.02,
+            novelty=0.5 if frame in {10, 11} else 0.02,
+        )
+        for frame in range(35)
+    ]
+
+    high_recall = process_stream(stream, mode="high_recall")
+    low_noise = process_stream(stream, mode="low_noise")
+
+    assert len(high_recall.confirmed_events) == 1
+    assert low_noise.confirmed_events == []

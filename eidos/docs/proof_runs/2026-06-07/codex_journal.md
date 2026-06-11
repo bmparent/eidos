@@ -114,3 +114,44 @@ What changed: reporting and proof artifacts only. Core Eidos behavior did not ch
 What did not change: reservoir dynamics, RLS behavior, raw Sentinel thresholds, anomaly policy, compression behavior, hippocampus memory, and incident-card generation remained untouched.
 
 End-of-task decision: `HOLD` - FP control and crash scans are clean, but generalization remains ambiguous: balanced recall is weak or the optional larger natural run was skipped as CPU-infeasible.
+
+## Calibration recall diagnostics implementation - 2026-06-07
+
+What happened today: investigated the Sentinel calibration v1 HOLD by adding proof-side recall diagnostics, block-preserving balanced sampling, targeted natural attack-window sampling, and confirmation profile sweep reporting.
+
+What was accomplished:
+- Added candidate funnel reporting from raw candidates through merged, deduped, confirmed, and calibrated confirmed events.
+- Added dropped/suppressed event accounting with reason codes and attack-window context.
+- Added `balanced_blocks` and `natural_attack_windows` sample modes for proof receipts.
+- Added proof-stage confirmation profiles: `strict`, `balanced`, `recall_guarded`, and `high_recall`.
+- Produced the aggregate diagnostics folder at `artifacts/proof_runs/2026-06-07/calibration_recall_diagnostics`.
+
+Tests and commands run:
+- `python -m py_compile tools/run_labeled_domain_proof.py proof/event_confirmation.py tools/build_calibration_recall_diagnostics.py` -> passed.
+- `$env:PYTEST_DISABLE_PLUGIN_AUTOLOAD='1'; python -m pytest -q tests/test_labeled_domain_proof_runner.py tests/test_sentinel_calibration_generalization.py tests/test_sentinel_calibration_acceptance.py` -> `31 passed`.
+- `$env:PYTEST_DISABLE_PLUGIN_AUTOLOAD='1'; python -m pytest -q` -> `100 passed, 1 skipped`.
+- Proof matrix completed for `balanced250`, `balanced1000`, `balanced_blocks250`, `balanced_blocks1000`, `transition1000`, `transition4360_max_feasible`, `natural_attack_windows`, and `natural2000`.
+
+Problems encountered:
+- OneDrive briefly locked `run_matrix_status.jsonl` during three sidecar status writes. The authoritative per-run metrics, manifests, crash scans, and Drive manifests were still written successfully.
+- Running `tools/build_calibration_recall_diagnostics.py` as a direct path could not import the repo `tools` namespace. Rerunning as `python -m tools.build_calibration_recall_diagnostics` resolved it without changing `PYTHONPATH`.
+
+What changed: proof runner diagnostics, proof-side confirmation profiles, sampling receipts, tests, aggregate reports, and docs.
+
+What did not change: reservoir dynamics, RLS behavior, raw Sentinel thresholds, anomaly policy, compression behavior, hippocampus memory, incident-card generation, and domain adapter math.
+
+Artifacts generated:
+- `generalization_recall_report.md`
+- `generalization_recall_summary.csv`
+- `candidate_funnel_report.json`
+- `candidate_funnel_report.md`
+- `confirmation_profile_sweep.csv`
+- `confirmation_profile_sweep.md`
+- `balanced_blocks_manifest.json`
+- `natural_attack_windows_manifest.json`
+- `recall_protection_audit.json`
+- `decision.json`
+
+Google Drive archive status: copied to `G:\My Drive\Eidos_Brain_Proof_Phase\2026-06-07\calibration_recall_diagnostics`; aggregate `drive_manifest.json` reports `drive_copy_success = true` and `823` files copied.
+
+Decision: `APPROVE` - recall improved on `balanced_blocks` and `natural_attack_windows` while calibrated FP/10k stayed `0.0`, crash scans were clean, coverage stayed at or above the acceptance threshold, and the recall-protection audit found no suppressed true attack-context events.

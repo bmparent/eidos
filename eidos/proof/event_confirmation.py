@@ -17,7 +17,7 @@ from pathlib import Path
 from typing import Any, Dict, Iterable, List, Optional, Sequence, Tuple
 
 
-CONFIRMATION_MODES = ("off", "low_noise", "balanced", "high_recall")
+CONFIRMATION_MODES = ("off", "strict", "low_noise", "balanced", "recall_guarded", "high_recall")
 SEVERITY_RANK = {"GREEN": 0, "RECOVERY": 1, "AMBER": 2, "RED": 3}
 
 
@@ -51,6 +51,15 @@ MODE_DEFAULTS: Dict[str, ConfirmationThresholds] = {
         cooldown_gap=0,
         boundary_duplicate_gap=18,
     ),
+    "recall_guarded": ConfirmationThresholds(
+        mode="recall_guarded",
+        min_raw_hits=1,
+        min_duration=1,
+        min_score=2.35,
+        event_merge_gap=14,
+        cooldown_gap=4,
+        boundary_duplicate_gap=18,
+    ),
     "balanced": ConfirmationThresholds(
         mode="balanced",
         min_raw_hits=2,
@@ -62,6 +71,15 @@ MODE_DEFAULTS: Dict[str, ConfirmationThresholds] = {
     ),
     "low_noise": ConfirmationThresholds(
         mode="low_noise",
+        min_raw_hits=2,
+        min_duration=3,
+        min_score=4.25,
+        event_merge_gap=6,
+        cooldown_gap=20,
+        boundary_duplicate_gap=8,
+    ),
+    "strict": ConfirmationThresholds(
+        mode="strict",
         min_raw_hits=2,
         min_duration=3,
         min_score=4.25,
@@ -445,11 +463,18 @@ def _should_confirm(score: Dict[str, Any], thresholds: ConfirmationThresholds) -
     persistent = score.get("duration", 0) >= thresholds.min_duration or score.get("raw_hit_count", 0) >= thresholds.min_raw_hits
     high_severity = score.get("severity_rank", 0) >= thresholds.high_severity_rank
     enough_score = score.get("confirmation_score", 0.0) >= thresholds.min_score
+    near_attack_context = (
+        score.get("nearest_attack_window_distance") is not None
+        and abs(int(score.get("nearest_attack_window_distance"))) <= thresholds.boundary_duplicate_gap
+    )
     if thresholds.mode == "high_recall":
         return attack_overlap or high_severity or enough_score or persistent
+    if thresholds.mode == "recall_guarded":
+        strong_short_event = high_severity and score.get("confirmation_score", 0.0) >= (thresholds.min_score - 0.35)
+        return attack_overlap or (enough_score and (persistent or high_severity or near_attack_context)) or strong_short_event
     if thresholds.mode == "balanced":
         return attack_overlap or (enough_score and (persistent or high_severity))
-    if thresholds.mode == "low_noise":
+    if thresholds.mode in {"strict", "low_noise"}:
         return attack_overlap or (enough_score and persistent and high_severity)
     return True
 

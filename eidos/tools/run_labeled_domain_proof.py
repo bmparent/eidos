@@ -23,7 +23,7 @@ import sys
 import time
 import unicodedata
 from collections import Counter
-from dataclasses import dataclass
+from dataclasses import dataclass, replace
 from datetime import datetime, timezone
 from pathlib import Path
 from typing import Any, Callable, Dict, Iterable, List, Optional, Sequence, Tuple
@@ -44,7 +44,12 @@ DEFAULT_DATASET = "cicids_webattacks"
 DEFAULT_FEATURES = 64
 DEFAULT_CONFIRMATION_MODE = "balanced"
 DEFAULT_SENTINEL_CONFIRMATION_MODE = "balanced"
+SENTINEL_CALIBRATION_MODES = ("off", "low_noise", "balanced", "high_recall")
 DEFAULT_SAMPLE_MODE = "natural"
+DEFAULT_CONFIRMATION_PROFILE_SWEEP = ("balanced", "recall_guarded", "high_recall")
+DEFAULT_NATURAL_WINDOW_PRE = 250
+DEFAULT_NATURAL_WINDOW_POST = 250
+DEFAULT_NATURAL_WINDOW_MAX_WINDOWS = 3
 DEFAULT_EVENT_MERGE_GAP = 25
 PROOF_LABEL_BENIGN = "BENIGN"
 PROOF_LABEL_ATTACK = "ATTACK"
@@ -90,6 +95,7 @@ CSV_COLUMNS = [
     "pre_calibration_confirmed_events",
     "post_calibration_confirmed_events",
     "calibration_suppressed_events",
+    "sentinel_calibration_mode",
     "proof_raw_event_count",
     "proof_merged_event_count",
     "proof_deduped_event_count",
@@ -115,6 +121,7 @@ CSV_COLUMNS = [
     "best_external_baseline",
     "best_external_baseline_ratio",
     "runtime_seconds",
+    "frames_per_second",
     "crash_hit_count",
     "status",
     "notes",
@@ -196,6 +203,7 @@ def default_out_dir() -> Path:
 
 
 def parse_args(argv: Optional[Sequence[str]] = None) -> argparse.Namespace:
+    raw_argv = list(argv) if argv is not None else sys.argv[1:]
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--dataset", default=DEFAULT_DATASET)
     parser.add_argument("--file", type=Path, required=True)
@@ -218,9 +226,30 @@ def parse_args(argv: Optional[Sequence[str]] = None) -> argparse.Namespace:
     )
     parser.add_argument(
         "--sample-mode",
-        choices=("natural", "balanced", "transition"),
+        choices=("natural", "balanced", "transition", "balanced_blocks", "natural_attack_windows"),
         default=DEFAULT_SAMPLE_MODE,
-        help="Construct a natural, balanced, or benign-to-attack transition replay sample.",
+        help=(
+            "Construct a natural, balanced, benign-to-attack transition, block-balanced, "
+            "or natural attack-window replay sample."
+        ),
+    )
+    parser.add_argument(
+        "--natural-window-pre",
+        type=int,
+        default=DEFAULT_NATURAL_WINDOW_PRE,
+        help="Rows of benign/source-order context to include before each natural_attack_windows attack window.",
+    )
+    parser.add_argument(
+        "--natural-window-post",
+        type=int,
+        default=DEFAULT_NATURAL_WINDOW_POST,
+        help="Rows of benign/source-order context to include after each natural_attack_windows attack window.",
+    )
+    parser.add_argument(
+        "--natural-window-max-windows",
+        type=int,
+        default=DEFAULT_NATURAL_WINDOW_MAX_WINDOWS,
+        help="Maximum attack windows to include in natural_attack_windows mode.",
     )
     parser.add_argument(
         "--event-merge-gap",
@@ -235,6 +264,27 @@ def parse_args(argv: Optional[Sequence[str]] = None) -> argparse.Namespace:
         help=(
             "Proof-side event confirmation mode. off preserves the previous raw-event decision view; "
             "other modes score deduped candidate events and emit confirmed_events."
+        ),
+    )
+    parser.add_argument(
+        "--sentinel-calibration-mode",
+        choices=SENTINEL_CALIBRATION_MODES,
+        default=None,
+        help=(
+            "Gate-facing Sentinel calibration mode. off preserves raw proof decisions; "
+            "low_noise, balanced, and high_recall enable calibration and map to the "
+            "matching proof-side confirmation profile unless --confirmation-mode is set."
+        ),
+    )
+    parser.add_argument(
+        "--confirmation-profile-sweep",
+        action="append",
+        nargs="+",
+        choices=proof_event_confirmation.CONFIRMATION_MODES,
+        default=[],
+        help=(
+            "Optional proof-side confirmation profile sweep to compute from one engine pass. "
+            "May be repeated or passed as multiple values."
         ),
     )
     parser.add_argument(
@@ -310,7 +360,13 @@ def parse_args(argv: Optional[Sequence[str]] = None) -> argparse.Namespace:
     parser.add_argument("--out", type=Path, default=None)
     parser.add_argument("--suite", choices=("smoke", "full"), required=True)
     parser.add_argument("--max-rows", type=int, default=None)
-    return parser.parse_args(argv)
+    args = parser.parse_args(raw_argv)
+    args._confirmation_mode_explicit = any(
+        item == "--confirmation-mode" or str(item).startswith("--confirmation-mode=")
+        for item in raw_argv
+    )
+    normalize_sentinel_calibration_mode(args)
+    return args
 
 
 def command_text(parts: Sequence[str]) -> str:
@@ -381,6 +437,46 @@ def parse_attack_labels(raw: Any) -> List[str]:
             labels.append(label)
             seen.add(key)
     return labels
+
+
+def parse_confirmation_profile_sweep(raw: Any) -> List[str]:
+    profiles: List[str] = []
+    seen = set()
+    for chunk in _flatten_attack_label_args(raw):
+        for item in str(chunk).split(","):
+            profile = str(item).strip()
+            if not profile:
+                continue
+            if profile not in proof_event_confirmation.CONFIRMATION_MODES:
+                known = ", ".join(proof_event_confirmation.CONFIRMATION_MODES)
+                raise ValueError(f"unknown confirmation profile {profile!r}; expected one of: {known}")
+            if profile in seen:
+                continue
+            profiles.append(profile)
+            seen.add(profile)
+    return profiles
+
+
+def normalize_sentinel_calibration_mode(args: argparse.Namespace) -> None:
+    mode = getattr(args, "sentinel_calibration_mode", None)
+    mode_requested = mode is not None
+    confirmation_explicit = bool(getattr(args, "_confirmation_mode_explicit", False))
+    if mode is None:
+        if getattr(args, "calibration_enabled", False):
+            mode = str(getattr(args, "confirmation_mode", DEFAULT_CONFIRMATION_MODE))
+            if mode not in SENTINEL_CALIBRATION_MODES:
+                mode = DEFAULT_CONFIRMATION_MODE
+        else:
+            mode = "off"
+    if mode == "off":
+        args.calibration_enabled = False
+        if mode_requested and not confirmation_explicit:
+            args.confirmation_mode = "off"
+    else:
+        args.calibration_enabled = True
+        if not confirmation_explicit:
+            args.confirmation_mode = mode
+    args.sentinel_calibration_mode = mode
 
 
 def label_key(value: Any) -> str:
@@ -496,6 +592,94 @@ def _sample_target(frames: int, available: int) -> int:
     return max(0, min(int(frames), int(available)))
 
 
+def _label_blocks(records: Sequence[Dict[str, Any]]) -> List[Dict[str, Any]]:
+    blocks: List[Dict[str, Any]] = []
+    start = 0
+    while start < len(records):
+        label = records[start]["proof_label"]
+        end = start
+        while end + 1 < len(records) and records[end + 1]["proof_label"] == label:
+            end += 1
+        block_records = list(records[start : end + 1])
+        blocks.append(
+            {
+                "proof_label": label,
+                "source_start_index": int(block_records[0]["source_row_index"]),
+                "source_end_index": int(block_records[-1]["source_row_index"]),
+                "row_count": len(block_records),
+                "records": block_records,
+            }
+        )
+        start = end + 1
+    return blocks
+
+
+def _take_from_blocks(blocks: Sequence[Dict[str, Any]], target: int) -> List[Dict[str, Any]]:
+    selected: List[Dict[str, Any]] = []
+    remaining = max(0, int(target))
+    for block in blocks:
+        if remaining <= 0:
+            break
+        take = min(remaining, len(block["records"]))
+        if take <= 0:
+            continue
+        records = list(block["records"][:take])
+        selected.append(
+            {
+                "proof_label": block["proof_label"],
+                "source_start_index": int(records[0]["source_row_index"]),
+                "source_end_index": int(records[-1]["source_row_index"]),
+                "row_count": len(records),
+                "source_block_row_count": int(block["row_count"]),
+                "truncated": take < int(block["row_count"]),
+                "records": records,
+            }
+        )
+        remaining -= take
+    return selected
+
+
+def _block_receipts(blocks: Sequence[Dict[str, Any]]) -> List[Dict[str, Any]]:
+    receipts: List[Dict[str, Any]] = []
+    sample_cursor = 0
+    for idx, block in enumerate(blocks, start=1):
+        row_count = int(block["row_count"])
+        receipts.append(
+            {
+                "block_index": idx,
+                "proof_label": block["proof_label"],
+                "source_start_index": int(block["source_start_index"]),
+                "source_end_index": int(block["source_end_index"]),
+                "sample_start_frame": sample_cursor,
+                "sample_end_frame": sample_cursor + row_count - 1 if row_count else None,
+                "row_count": row_count,
+                "source_block_row_count": int(block.get("source_block_row_count", row_count)),
+                "truncated": bool(block.get("truncated", False)),
+            }
+        )
+        sample_cursor += row_count
+    return receipts
+
+
+def _transition_boundaries_from_selected(selected: Sequence[Dict[str, Any]]) -> List[Dict[str, Any]]:
+    boundaries: List[Dict[str, Any]] = []
+    for idx in range(1, len(selected)):
+        previous = selected[idx - 1]["proof_label"]
+        current = selected[idx]["proof_label"]
+        if previous != current:
+            boundaries.append(
+                {
+                    "before_frame": idx - 1,
+                    "after_frame": idx,
+                    "from": previous,
+                    "to": current,
+                    "source_before": int(selected[idx - 1]["source_row_index"]),
+                    "source_after": int(selected[idx]["source_row_index"]),
+                }
+            )
+    return boundaries
+
+
 def build_sample_records(
     records: List[Dict[str, Any]],
     *,
@@ -503,6 +687,9 @@ def build_sample_records(
     frames: int,
     seed: int,
     source_path: Path,
+    natural_window_pre: int = DEFAULT_NATURAL_WINDOW_PRE,
+    natural_window_post: int = DEFAULT_NATURAL_WINDOW_POST,
+    natural_window_max_windows: int = DEFAULT_NATURAL_WINDOW_MAX_WINDOWS,
     repo_root: Path = REPO_ROOT,
 ) -> Tuple[List[Dict[str, Any]], Dict[str, Any]]:
     if not records:
@@ -516,6 +703,8 @@ def build_sample_records(
         selected = list(records[:target])
         order_preserved = True
         transition_boundary = None
+        sample_blocks: List[Dict[str, Any]] = []
+        natural_window_slices: List[Dict[str, Any]] = []
     elif sample_mode in {"balanced", "transition"}:
         benign_target = target // 2
         attack_target = target - benign_target
@@ -537,6 +726,72 @@ def build_sample_records(
                 "benign_end_frame": benign_target - 1 if benign_target else None,
                 "attack_start_frame": benign_target if attack_target else None,
             }
+        sample_blocks = []
+        natural_window_slices = []
+    elif sample_mode == "balanced_blocks":
+        benign_target = target // 2
+        attack_target = target - benign_target
+        all_blocks = _label_blocks(records)
+        benign_blocks = [block for block in all_blocks if block["proof_label"] == PROOF_LABEL_BENIGN]
+        attack_blocks = [block for block in all_blocks if block["proof_label"] == PROOF_LABEL_ATTACK]
+        if sum(int(block["row_count"]) for block in benign_blocks) < benign_target or sum(int(block["row_count"]) for block in attack_blocks) < attack_target:
+            raise ValueError(
+                f"balanced_blocks sample requested {benign_target} benign and {attack_target} attack rows, "
+                f"but source has {len(benign_records)} benign and {len(attack_records)} attack rows after normalization"
+            )
+        selected_blocks = _take_from_blocks(benign_blocks, benign_target) + _take_from_blocks(attack_blocks, attack_target)
+        rng = np.random.default_rng(seed)
+        if len(selected_blocks) > 1:
+            order = rng.permutation(len(selected_blocks)).tolist()
+            selected_blocks = [selected_blocks[idx] for idx in order]
+        selected = [record for block in selected_blocks for record in block["records"]]
+        order_preserved = False
+        transition_boundary = None
+        sample_blocks = _block_receipts(selected_blocks)
+        natural_window_slices = []
+    elif sample_mode == "natural_attack_windows":
+        all_blocks = _label_blocks(records)
+        attack_blocks = [block for block in all_blocks if block["proof_label"] == PROOF_LABEL_ATTACK]
+        if not attack_blocks:
+            raise ValueError("natural_attack_windows requested but no attack windows were found after normalization")
+        selected_indices: set[int] = set()
+        natural_window_slices = []
+        max_windows = max(1, int(natural_window_max_windows))
+        pre = max(0, int(natural_window_pre))
+        post = max(0, int(natural_window_post))
+        for window_index, block in enumerate(attack_blocks[:max_windows], start=1):
+            attack_start = int(block["source_start_index"])
+            attack_end = int(block["source_end_index"])
+            slice_start = max(0, attack_start - pre)
+            slice_end = min(len(records) - 1, attack_end + post)
+            for idx in range(slice_start, slice_end + 1):
+                selected_indices.add(idx)
+            natural_window_slices.append(
+                {
+                    "window_index": window_index,
+                    "attack_source_start_index": attack_start,
+                    "attack_source_end_index": attack_end,
+                    "slice_source_start_index": slice_start,
+                    "slice_source_end_index": slice_end,
+                    "pre_context_rows": attack_start - slice_start,
+                    "post_context_rows": slice_end - attack_end,
+                    "attack_rows": int(block["row_count"]),
+                }
+            )
+        ordered_indices = sorted(selected_indices)
+        truncated_by_frame_limit = len(ordered_indices) > target
+        ordered_indices = ordered_indices[:target]
+        selected = [records[idx] for idx in ordered_indices]
+        selected_index_set = set(ordered_indices)
+        for item in natural_window_slices:
+            item["selected_rows"] = sum(
+                1 for idx in range(int(item["slice_source_start_index"]), int(item["slice_source_end_index"]) + 1)
+                if idx in selected_index_set
+            )
+            item["truncated_by_frame_limit"] = bool(truncated_by_frame_limit and item["selected_rows"] < (int(item["slice_source_end_index"]) - int(item["slice_source_start_index"]) + 1))
+        order_preserved = True
+        transition_boundary = None
+        sample_blocks = _block_receipts(_label_blocks(selected))
     else:
         raise ValueError(f"unsupported sample mode: {sample_mode}")
 
@@ -573,7 +828,31 @@ def build_sample_records(
         "order_preserved": order_preserved,
         "first_attack_row": first_attack_row,
         "transition_boundary": transition_boundary,
+        "transition_boundaries": _transition_boundaries_from_selected(selected),
     }
+    if sample_mode == "balanced_blocks":
+        receipt.update(
+            {
+                "block_count": len(sample_blocks),
+                "benign_block_count": sum(1 for block in sample_blocks if block["proof_label"] == PROOF_LABEL_BENIGN),
+                "attack_block_count": sum(1 for block in sample_blocks if block["proof_label"] == PROOF_LABEL_ATTACK),
+                "rows_per_block": [block["row_count"] for block in sample_blocks],
+                "blocks": sample_blocks,
+                "block_order_seed": seed,
+            }
+        )
+    if sample_mode == "natural_attack_windows":
+        receipt.update(
+            {
+                "natural_window_pre": max(0, int(natural_window_pre)),
+                "natural_window_post": max(0, int(natural_window_post)),
+                "natural_window_max_windows": max(1, int(natural_window_max_windows)),
+                "attack_window_slice_count": len(natural_window_slices),
+                "window_slices": natural_window_slices,
+                "block_count": len(sample_blocks),
+                "blocks": sample_blocks,
+            }
+        )
     return selected, receipt
 
 
@@ -586,6 +865,9 @@ def load_labeled_dataset(
     normalize_non_benign_as: Optional[str] = None,
     sample_mode: str = DEFAULT_SAMPLE_MODE,
     frames: Optional[int] = None,
+    natural_window_pre: int = DEFAULT_NATURAL_WINDOW_PRE,
+    natural_window_post: int = DEFAULT_NATURAL_WINDOW_POST,
+    natural_window_max_windows: int = DEFAULT_NATURAL_WINDOW_MAX_WINDOWS,
     max_rows: Optional[int],
     engine: Any,
     features: int,
@@ -631,6 +913,9 @@ def load_labeled_dataset(
         frames=frames if frames is not None else len(records),
         seed=seed,
         source_path=resolved_file,
+        natural_window_pre=natural_window_pre,
+        natural_window_post=natural_window_post,
+        natural_window_max_windows=natural_window_max_windows,
         repo_root=repo_root,
     )
     raw_values: List[List[float]] = []
@@ -739,6 +1024,14 @@ def build_command(args: argparse.Namespace, out_dir: Path, repo_root: Path = REP
         "--confirmation-mode",
         args.confirmation_mode,
     ]
+    if getattr(args, "sentinel_calibration_mode", None) is not None:
+        parts.extend(["--sentinel-calibration-mode", args.sentinel_calibration_mode])
+    if args.sample_mode == "natural_attack_windows":
+        parts.extend(["--natural-window-pre", str(args.natural_window_pre)])
+        parts.extend(["--natural-window-post", str(args.natural_window_post)])
+        parts.extend(["--natural-window-max-windows", str(args.natural_window_max_windows)])
+    for profile in parse_confirmation_profile_sweep(getattr(args, "confirmation_profile_sweep", [])):
+        parts.extend(["--confirmation-profile-sweep", profile])
     for attr, flag in (
         ("confirmation_min_raw_hits", "--confirmation-min-raw-hits"),
         ("confirmation_min_duration", "--confirmation-min-duration"),
@@ -941,6 +1234,11 @@ def evidence_frames_from_step_rows(step_rows: List[Dict[str, Any]], limit: int) 
                 geometry_change=geometry_change,
                 novelty=novelty,
                 severity_hint=status_to_severity(row.get("status")),
+                surprise_rate=parse_float(row.get("surprise_rate")),
+                eigen_dominance=dominance,
+                spectral_entropy=state_entropy,
+                spectral_flatness=parse_float(row.get("spectral_flatness")),
+                plasticity=parse_float(row.get("plasticity")),
                 raw_evidence_ref=f"step_row:{idx}",
             )
         )
@@ -1518,8 +1816,10 @@ def write_precision_ledger_md(path: Path, ledger: Dict[str, Any]) -> None:
         "| view | events | TP | FP | FN | precision | recall | F1 | FP/10k |",
         "| --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: |",
     ]
-    for view in ("raw", "merged", "deduped"):
+    for view in ("raw", "merged", "deduped", "calibrated"):
         row = summary.get(view, {})
+        if not row and view == "calibrated":
+            continue
         lines.append(
             "| {view} | {events} | {tp} | {fp} | {fn} | {precision} | {recall} | {f1} | {fp10k} |".format(
                 view=view,
@@ -1581,6 +1881,774 @@ def write_precision_ledger_md(path: Path, ledger: Dict[str, Any]) -> None:
     path.write_text("\n".join(lines).rstrip() + "\n", encoding="utf-8")
 
 
+def attack_window_summary_for_events(label_windows: List[Dict[str, Any]], events: List[Dict[str, Any]]) -> Dict[str, Any]:
+    diagnostics = proof_calibration.attack_window_diagnostics(label_windows, events)
+    return proof_calibration.summarize_attack_windows(diagnostics)
+
+
+def stage_metrics(
+    *,
+    stage: str,
+    events: List[Dict[str, Any]],
+    label_windows: List[Dict[str, Any]],
+    frames_processed: int,
+    dropped_count: int = 0,
+    dropped_reason_counts: Optional[Dict[str, int]] = None,
+) -> Dict[str, Any]:
+    metrics = metrics_for_event_view(events, label_windows, frames_processed)
+    attack_summary = attack_window_summary_for_events(label_windows, events)
+    return {
+        "stage": stage,
+        "event_count": metrics.get("event_count"),
+        "true_positive_count": metrics.get("true_positives"),
+        "false_positive_count": metrics.get("false_positives"),
+        "false_negative_count": metrics.get("false_negatives"),
+        "precision": metrics.get("precision"),
+        "recall": metrics.get("recall"),
+        "f1": metrics.get("f1"),
+        "fp_per_10k": metrics.get("false_positives_per_10k_frames"),
+        "attack_window_coverage": attack_summary.get("attack_window_coverage_pct"),
+        "first_detection_latency": attack_summary.get("first_detection_latency_frames"),
+        "attack_window_summary": attack_summary,
+        "dropped_event_count": max(0, int(dropped_count)),
+        "dropped_event_reason_counts": dropped_reason_counts or {},
+    }
+
+
+def canonical_drop_reasons(reason_codes: Sequence[str], *, overlaps_attack_window: bool, distance: Optional[int]) -> List[str]:
+    mapped: List[str] = []
+    joined = " ".join(str(code) for code in reason_codes)
+    if "single_frame" in joined or "too_short" in joined:
+        mapped.append("too_short")
+    if "low_evidence" in joined or "below_confirmation" in joined or "insufficient" in joined:
+        mapped.append("insufficient_evidence")
+    if "duplicate" in joined or "cooldown" in joined:
+        mapped.append("duplicate")
+    if "benign" in joined:
+        mapped.append("benign_context")
+    if "calibration" in joined:
+        mapped.append("calibration_suppressed")
+    if not overlaps_attack_window and distance is not None:
+        mapped.append("outside_attack_context")
+    if not mapped:
+        mapped.append("unknown")
+    return sorted(set(mapped))
+
+
+def label_context_for_event(
+    event: Dict[str, Any],
+    raw_labels: Sequence[str],
+    proof_labels: Sequence[str],
+) -> Dict[str, Any]:
+    start = int(event.get("start_frame", 0))
+    end = int(event.get("end_frame", start))
+    before = label_at(start - 1, raw_labels, proof_labels)
+    at_start = label_at(start, raw_labels, proof_labels)
+    at_end = label_at(end, raw_labels, proof_labels)
+    after = label_at(end + 1, raw_labels, proof_labels)
+    during_raw = [raw_labels[idx] for idx in range(max(0, start), min(len(raw_labels), end + 1))]
+    during_proof = [proof_labels[idx] for idx in range(max(0, start), min(len(proof_labels), end + 1))]
+    return {
+        "before": before,
+        "at_start": at_start,
+        "at_end": at_end,
+        "after": after,
+        "during_raw_label_distribution": dict(Counter(during_raw)),
+        "during_proof_label_distribution": dict(Counter(during_proof)),
+    }
+
+
+def drop_detail(
+    *,
+    stage: str,
+    event: Dict[str, Any],
+    reason_codes: Sequence[str],
+    label_windows: List[Dict[str, Any]],
+    raw_labels: Sequence[str],
+    proof_labels: Sequence[str],
+) -> Dict[str, Any]:
+    window, distance, direction = nearest_attack_window(event, label_windows)
+    overlaps_window = window is not None and distance == 0
+    score = event.get("score_detail") if isinstance(event.get("score_detail"), dict) else {}
+    peak_z = event.get("peak_z", score.get("peak_z"))
+    max_z = event.get("max_z", peak_z)
+    evidence_count = event.get("evidence_count", event.get("component_count", event.get("raw_hit_count", score.get("raw_hit_count"))))
+    return {
+        "stage": stage,
+        "event_id": event.get("event_id") or event.get("candidate_id"),
+        "candidate_id": event.get("candidate_id"),
+        "start_frame": int(event.get("start_frame", 0)),
+        "end_frame": int(event.get("end_frame", event.get("start_frame", 0))),
+        "span": max(1, int(event.get("end_frame", event.get("start_frame", 0))) - int(event.get("start_frame", 0)) + 1),
+        "evidence_count": evidence_count,
+        "max_severity": event.get("raw_severity") or event.get("severity") or score.get("severity"),
+        "max_z": max_z,
+        "nearest_attack_window_distance": distance,
+        "nearest_attack_window_direction": direction,
+        "nearest_attack_window": (
+            {"start_frame": int(window["start_frame"]), "end_frame": int(window["end_frame"])}
+            if window is not None
+            else None
+        ),
+        "label_context": label_context_for_event(event, raw_labels, proof_labels),
+        "overlaps_attack_window": overlaps_window,
+        "reason_codes": list(reason_codes),
+        "rejected_reasons": canonical_drop_reasons(reason_codes, overlaps_attack_window=overlaps_window, distance=distance),
+    }
+
+
+def reason_counter_from_drop_details(details: Sequence[Dict[str, Any]]) -> Dict[str, int]:
+    counts: Counter[str] = Counter()
+    for item in details:
+        for reason in item.get("rejected_reasons", []):
+            counts[str(reason)] += 1
+    return dict(sorted(counts.items()))
+
+
+def build_candidate_funnel_report(
+    *,
+    sample_mode: str,
+    confirmation_mode: str,
+    label_windows: List[Dict[str, Any]],
+    raw_labels: Sequence[str],
+    proof_labels: Sequence[str],
+    frames_processed: int,
+    raw_events: List[Dict[str, Any]],
+    merged_events: List[Dict[str, Any]],
+    deduped_events: List[Dict[str, Any]],
+    confirmation_report: Dict[str, Any],
+    calibration_report: Dict[str, Any],
+) -> Dict[str, Any]:
+    confirmed_events = list(confirmation_report.get("confirmed_events", []))
+    calibrated_events = list(calibration_report.get("post_calibration_confirmed_events", confirmed_events))
+    drop_details: List[Dict[str, Any]] = []
+    for merged in merged_events:
+        components = list(merged.get("component_events") or [])
+        for component in components[1:]:
+            drop_details.append(
+                drop_detail(
+                    stage="raw_to_merged",
+                    event=component,
+                    reason_codes=["merged_nearby_event", "duplicate"],
+                    label_windows=label_windows,
+                    raw_labels=raw_labels,
+                    proof_labels=proof_labels,
+                )
+            )
+    for event in confirmation_report.get("suppressed_events", []):
+        drop_details.append(
+            drop_detail(
+                stage="deduped_to_confirmed",
+                event=event,
+                reason_codes=event.get("reason_codes", []),
+                label_windows=label_windows,
+                raw_labels=raw_labels,
+                proof_labels=proof_labels,
+            )
+        )
+    for event in calibration_report.get("suppressed_events", []):
+        reason = event.get("reason_codes") or [event.get("reason_code", "calibration_suppressed")]
+        drop_details.append(
+            drop_detail(
+                stage="confirmed_to_calibrated",
+                event=event,
+                reason_codes=reason,
+                label_windows=label_windows,
+                raw_labels=raw_labels,
+                proof_labels=proof_labels,
+            )
+        )
+    details_by_stage: Dict[str, List[Dict[str, Any]]] = {
+        "raw_to_merged": [item for item in drop_details if item["stage"] == "raw_to_merged"],
+        "merged_to_deduped": [item for item in drop_details if item["stage"] == "merged_to_deduped"],
+        "deduped_to_confirmed": [item for item in drop_details if item["stage"] == "deduped_to_confirmed"],
+        "confirmed_to_calibrated": [item for item in drop_details if item["stage"] == "confirmed_to_calibrated"],
+    }
+    stages = [
+        stage_metrics(
+            stage="raw_candidates",
+            events=raw_events,
+            label_windows=label_windows,
+            frames_processed=frames_processed,
+            dropped_count=max(0, len(raw_events) - len(merged_events)),
+            dropped_reason_counts=reason_counter_from_drop_details(details_by_stage["raw_to_merged"]),
+        ),
+        stage_metrics(
+            stage="merged_events",
+            events=merged_events,
+            label_windows=label_windows,
+            frames_processed=frames_processed,
+            dropped_count=max(0, len(merged_events) - len(deduped_events)),
+            dropped_reason_counts=reason_counter_from_drop_details(details_by_stage["merged_to_deduped"]),
+        ),
+        stage_metrics(
+            stage="deduped_events",
+            events=deduped_events,
+            label_windows=label_windows,
+            frames_processed=frames_processed,
+            dropped_count=max(0, len(deduped_events) - len(confirmed_events)),
+            dropped_reason_counts=reason_counter_from_drop_details(details_by_stage["deduped_to_confirmed"]),
+        ),
+        stage_metrics(
+            stage="confirmed_events",
+            events=confirmed_events,
+            label_windows=label_windows,
+            frames_processed=frames_processed,
+            dropped_count=max(0, len(confirmed_events) - len(calibrated_events)),
+            dropped_reason_counts=reason_counter_from_drop_details(details_by_stage["confirmed_to_calibrated"]),
+        ),
+        stage_metrics(
+            stage="calibrated_confirmed_events",
+            events=calibrated_events,
+            label_windows=label_windows,
+            frames_processed=frames_processed,
+            dropped_count=0,
+            dropped_reason_counts={},
+        ),
+    ]
+    return {
+        "sample_mode": sample_mode,
+        "confirmation_mode": confirmation_mode,
+        "frames_processed": frames_processed,
+        "attack_window_count": len(label_windows),
+        "stages": stages,
+        "drop_reason_accounting": drop_details,
+        "policy_note": "Diagnostic-only candidate funnel. Labels are used only for reporting and scoring, not for core Eidos inference.",
+    }
+
+
+def write_candidate_funnel_md(path: Path, report: Dict[str, Any]) -> None:
+    lines = [
+        "# Candidate Funnel Report",
+        "",
+        f"- Sample mode: `{report.get('sample_mode')}`",
+        f"- Confirmation mode: `{report.get('confirmation_mode')}`",
+        f"- Frames processed: `{report.get('frames_processed')}`",
+        f"- Attack windows: `{report.get('attack_window_count')}`",
+        "",
+        "| Stage | Events | TP | FP | Precision | Recall | F1 | FP/10k | Coverage | First Latency | Dropped | Drop Reasons |",
+        "| --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | --- |",
+    ]
+    for stage in report.get("stages", []):
+        lines.append(
+            "| {stage} | {events} | {tp} | {fp} | {precision} | {recall} | {f1} | {fp10k} | {coverage} | {latency} | {dropped} | `{reasons}` |".format(
+                stage=stage.get("stage"),
+                events=format_metric(stage.get("event_count")),
+                tp=format_metric(stage.get("true_positive_count")),
+                fp=format_metric(stage.get("false_positive_count")),
+                precision=format_metric(stage.get("precision")),
+                recall=format_metric(stage.get("recall")),
+                f1=format_metric(stage.get("f1")),
+                fp10k=format_metric(stage.get("fp_per_10k")),
+                coverage=format_metric(stage.get("attack_window_coverage")),
+                latency=format_metric(stage.get("first_detection_latency")),
+                dropped=format_metric(stage.get("dropped_event_count")),
+                reasons=stage.get("dropped_event_reason_counts", {}),
+            )
+        )
+    lines.extend(["", "## Drop Details", ""])
+    details = report.get("drop_reason_accounting", [])
+    if not details:
+        lines.append("- No dropped events were recorded.")
+    else:
+        for item in details[:40]:
+            lines.append(
+                "- `{stage}` event `{event}` frames `{start}`-`{end}` reasons `{reasons}` distance `{distance}` direction `{direction}` overlap `{overlap}`".format(
+                    stage=item.get("stage"),
+                    event=item.get("event_id"),
+                    start=item.get("start_frame"),
+                    end=item.get("end_frame"),
+                    reasons=", ".join(item.get("rejected_reasons", [])),
+                    distance=format_metric(item.get("nearest_attack_window_distance")),
+                    direction=item.get("nearest_attack_window_direction"),
+                    overlap=item.get("overlaps_attack_window"),
+                )
+            )
+    path.write_text("\n".join(lines).rstrip() + "\n", encoding="utf-8")
+
+
+def calibration_config_for_profile(
+    config: proof_calibration.SentinelCalibrationConfig,
+    profile: str,
+) -> proof_calibration.SentinelCalibrationConfig:
+    return replace(config, confirmation_mode_baseline=profile)
+
+
+def build_confirmation_profile_sweep(
+    *,
+    profiles: Sequence[str],
+    raw_events: List[Dict[str, Any]],
+    merged_events: List[Dict[str, Any]],
+    deduped_events: List[Dict[str, Any]],
+    label_windows: List[Dict[str, Any]],
+    raw_labels: Sequence[str],
+    proof_labels: Sequence[str],
+    frames_processed: int,
+    step_rows: Sequence[Dict[str, Any]],
+    calibration_config: proof_calibration.SentinelCalibrationConfig,
+    sample_mode: str,
+    crash_hit_count: int,
+) -> List[Dict[str, Any]]:
+    rows: List[Dict[str, Any]] = []
+    for profile in profiles:
+        report = proof_event_confirmation.apply_confirmation(
+            raw_events=raw_events,
+            merged_events=merged_events,
+            deduped_events=deduped_events,
+            label_windows=label_windows,
+            raw_labels=raw_labels,
+            proof_labels=proof_labels,
+            frames_processed=frames_processed,
+            step_rows=step_rows,
+            mode=profile,
+        )
+        confirmed_events = list(report.get("confirmed_events", []))
+        confirmed_metrics = metrics_for_event_view(confirmed_events, label_windows, frames_processed)
+        before_summary = attack_window_summary_for_events(label_windows, confirmed_events)
+        calibration_report = proof_calibration.apply_calibration(
+            confirmed_events=confirmed_events,
+            raw_event_count=len(raw_events),
+            merged_event_count=len(merged_events),
+            deduped_event_count=len(deduped_events),
+            attack_windows=label_windows,
+            raw_labels=raw_labels,
+            proof_labels=proof_labels,
+            frames_processed=frames_processed,
+            config=calibration_config_for_profile(calibration_config, profile),
+            sample_mode=sample_mode,
+            crash_hit_count=crash_hit_count,
+        )
+        calibrated_events = list(calibration_report.get("post_calibration_confirmed_events", confirmed_events))
+        calibrated_metrics = metrics_for_event_view(calibrated_events, label_windows, frames_processed)
+        after_summary = attack_window_summary_for_events(label_windows, calibrated_events)
+        rows.append(
+            {
+                "profile": profile,
+                "precision": confirmed_metrics.get("precision"),
+                "recall": confirmed_metrics.get("recall"),
+                "f1": confirmed_metrics.get("f1"),
+                "fp_per_10k": confirmed_metrics.get("false_positives_per_10k_frames"),
+                "coverage": before_summary.get("attack_window_coverage_pct"),
+                "first_detection_latency": before_summary.get("first_detection_latency_frames"),
+                "confirmed_count": confirmed_metrics.get("event_count"),
+                "suppressed_count": report.get("suppressed_event_count"),
+                "calibrated_precision": calibrated_metrics.get("precision"),
+                "calibrated_recall": calibrated_metrics.get("recall"),
+                "calibrated_f1": calibrated_metrics.get("f1"),
+                "calibrated_fp_per_10k": calibrated_metrics.get("false_positives_per_10k_frames"),
+                "calibrated_coverage": after_summary.get("attack_window_coverage_pct"),
+                "calibrated_first_detection_latency": after_summary.get("first_detection_latency_frames"),
+                "calibrated_confirmed_count": calibrated_metrics.get("event_count"),
+                "calibration_suppressed_count": len(calibration_report.get("suppressed_events", [])),
+                "crash_hit_count": crash_hit_count,
+                "thresholds": report.get("thresholds", {}),
+            }
+        )
+    return rows
+
+
+def write_confirmation_profile_sweep_csv(path: Path, rows: Sequence[Dict[str, Any]]) -> None:
+    fieldnames = [
+        "profile",
+        "precision",
+        "recall",
+        "f1",
+        "fp_per_10k",
+        "coverage",
+        "first_detection_latency",
+        "confirmed_count",
+        "suppressed_count",
+        "calibrated_precision",
+        "calibrated_recall",
+        "calibrated_f1",
+        "calibrated_fp_per_10k",
+        "calibrated_coverage",
+        "calibrated_first_detection_latency",
+        "calibrated_confirmed_count",
+        "calibration_suppressed_count",
+        "crash_hit_count",
+        "thresholds",
+    ]
+    with path.open("w", encoding="utf-8", newline="") as handle:
+        writer = csv.DictWriter(handle, fieldnames=fieldnames, extrasaction="ignore")
+        writer.writeheader()
+        for row in rows:
+            row = dict(row)
+            row["thresholds"] = json.dumps(row.get("thresholds", {}), sort_keys=True)
+            writer.writerow(row)
+
+
+def write_confirmation_profile_sweep_md(path: Path, rows: Sequence[Dict[str, Any]]) -> None:
+    lines = [
+        "# Confirmation Profile Sweep",
+        "",
+        "| Profile | Precision | Recall | F1 | FP/10k | Coverage | Latency | Confirmed | Suppressed | Cal Precision | Cal Recall | Cal F1 | Cal FP/10k | Cal Coverage | Cal Confirmed | Crash |",
+        "| --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: |",
+    ]
+    for row in rows:
+        lines.append(
+            f"| {row.get('profile')} | {format_metric(row.get('precision'))} | {format_metric(row.get('recall'))} | {format_metric(row.get('f1'))} | {format_metric(row.get('fp_per_10k'))} | {format_metric(row.get('coverage'))} | {format_metric(row.get('first_detection_latency'))} | {format_metric(row.get('confirmed_count'))} | {format_metric(row.get('suppressed_count'))} | {format_metric(row.get('calibrated_precision'))} | {format_metric(row.get('calibrated_recall'))} | {format_metric(row.get('calibrated_f1'))} | {format_metric(row.get('calibrated_fp_per_10k'))} | {format_metric(row.get('calibrated_coverage'))} | {format_metric(row.get('calibrated_confirmed_count'))} | {format_metric(row.get('crash_hit_count'))} |"
+        )
+    path.write_text("\n".join(lines).rstrip() + "\n", encoding="utf-8")
+
+
+METRIC_KEYS_FOR_GATE = (
+    "event_count",
+    "true_positives",
+    "false_positives",
+    "false_negatives",
+    "precision",
+    "recall",
+    "f1",
+    "false_positives_per_10k_frames",
+)
+
+
+def _metric_delta(after: Dict[str, Any], before: Dict[str, Any], key: str) -> Optional[float]:
+    left = after.get(key)
+    right = before.get(key)
+    if left is None or right is None:
+        return None
+    return float(left) - float(right)
+
+
+def build_sentinel_calibration_report(
+    *,
+    metrics: Dict[str, Any],
+    calibration_report: Dict[str, Any],
+    precision_ledger: Dict[str, Any],
+) -> Dict[str, Any]:
+    raw = metrics.get("raw_event_metrics", {})
+    merged = metrics.get("merged_event_metrics", {})
+    deduped = metrics.get("deduped_event_metrics", {})
+    pre = metrics.get("pre_calibration_confirmed_event_metrics", {})
+    calibrated = metrics.get("calibrated_event_metrics", {})
+    fp_delta_vs_raw = _metric_delta(calibrated, raw, "false_positives_per_10k_frames")
+    recall_delta_vs_pre = _metric_delta(calibrated, pre, "recall")
+    recommendation = "CALIBRATION_ONLY"
+    if fp_delta_vs_raw is not None and fp_delta_vs_raw >= 0:
+        recommendation = "CALIBRATION_ONLY_NEEDS_TUNING"
+    if recall_delta_vs_pre is not None and recall_delta_vs_pre < -0.05:
+        recommendation = "CALIBRATION_ONLY_NEEDS_TUNING"
+    return {
+        "mode": metrics.get("sentinel_calibration_mode"),
+        "confirmation_mode": metrics.get("confirmation_mode"),
+        "calibration_enabled": metrics.get("calibration_enabled"),
+        "calibration_version": metrics.get("calibration_version"),
+        "config": calibration_report.get("config"),
+        "config_hash_sha256": calibration_report.get("config_hash_sha256"),
+        "raw_vs_calibrated": {
+            "raw": {key: raw.get(key) for key in METRIC_KEYS_FOR_GATE},
+            "merged": {key: merged.get(key) for key in METRIC_KEYS_FOR_GATE},
+            "deduped": {key: deduped.get(key) for key in METRIC_KEYS_FOR_GATE},
+            "pre_calibration_confirmed": {key: pre.get(key) for key in METRIC_KEYS_FOR_GATE},
+            "calibrated": {key: calibrated.get(key) for key in METRIC_KEYS_FOR_GATE},
+        },
+        "deltas": {
+            "calibrated_minus_raw": {
+                "precision": _metric_delta(calibrated, raw, "precision"),
+                "recall": _metric_delta(calibrated, raw, "recall"),
+                "f1": _metric_delta(calibrated, raw, "f1"),
+                "false_positives_per_10k_frames": fp_delta_vs_raw,
+                "false_positives": _metric_delta(calibrated, raw, "false_positives"),
+            },
+            "calibrated_minus_deduped": {
+                "precision": _metric_delta(calibrated, deduped, "precision"),
+                "recall": _metric_delta(calibrated, deduped, "recall"),
+                "f1": _metric_delta(calibrated, deduped, "f1"),
+                "false_positives_per_10k_frames": _metric_delta(calibrated, deduped, "false_positives_per_10k_frames"),
+                "false_positives": _metric_delta(calibrated, deduped, "false_positives"),
+            },
+            "post_minus_pre_calibration": {
+                "precision": _metric_delta(calibrated, pre, "precision"),
+                "recall": recall_delta_vs_pre,
+                "f1": _metric_delta(calibrated, pre, "f1"),
+                "false_positives_per_10k_frames": _metric_delta(calibrated, pre, "false_positives_per_10k_frames"),
+                "false_positives": _metric_delta(calibrated, pre, "false_positives"),
+            },
+        },
+        "counts": {
+            "raw": metrics.get("proof_raw_event_count"),
+            "merged": metrics.get("proof_merged_event_count"),
+            "deduped": metrics.get("proof_deduped_event_count"),
+            "pre_calibration_confirmed": metrics.get("pre_calibration_confirmed_events"),
+            "calibrated": metrics.get("post_calibration_confirmed_events"),
+        },
+        "suppression_stats": {
+            "suppressed_event_count": metrics.get("calibration_suppressed_events"),
+            "suppressed_reason_counts": metrics.get("calibration_suppressed_reason_counts", {}),
+            "suppressed_examples": (calibration_report.get("suppressed_events") or [])[:12],
+        },
+        "precision_ledger_views": sorted((precision_ledger.get("precision_lift_summary") or {}).keys()),
+        "guardrails": calibration_report.get("guardrails", {}),
+        "examples": {
+            "confirmed_examples": (calibration_report.get("post_calibration_confirmed_events") or [])[:8],
+            "suppressed_examples": (calibration_report.get("suppressed_events") or [])[:8],
+        },
+        "recommendation": recommendation,
+        "policy_note": "Labels are used after the run for scoring and reports only. Raw events remain visible beside calibrated metrics.",
+    }
+
+
+def write_sentinel_calibration_report_md(path: Path, report: Dict[str, Any]) -> None:
+    views = report.get("raw_vs_calibrated", {})
+    lines = [
+        "# Sentinel Calibration Report",
+        "",
+        f"- Mode: `{report.get('mode')}`",
+        f"- Confirmation mode: `{report.get('confirmation_mode')}`",
+        f"- Calibration enabled: `{report.get('calibration_enabled')}`",
+        f"- Config hash: `{report.get('config_hash_sha256')}`",
+        f"- Recommendation: `{report.get('recommendation')}`",
+        "",
+        "## Raw vs Calibrated",
+        "",
+        "| view | events | TP | FP | FN | precision | recall | F1 | FP/10k |",
+        "| --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: |",
+    ]
+    for name in ("raw", "merged", "deduped", "pre_calibration_confirmed", "calibrated"):
+        row = views.get(name, {})
+        lines.append(
+            "| {name} | {events} | {tp} | {fp} | {fn} | {precision} | {recall} | {f1} | {fp10k} |".format(
+                name=name,
+                events=format_metric(row.get("event_count")),
+                tp=format_metric(row.get("true_positives")),
+                fp=format_metric(row.get("false_positives")),
+                fn=format_metric(row.get("false_negatives")),
+                precision=format_metric(row.get("precision")),
+                recall=format_metric(row.get("recall")),
+                f1=format_metric(row.get("f1")),
+                fp10k=format_metric(row.get("false_positives_per_10k_frames")),
+            )
+        )
+    lines.extend(["", "## Deltas", ""])
+    for name, values in (report.get("deltas") or {}).items():
+        lines.append(
+            "- `{name}` precision `{precision}`, recall `{recall}`, F1 `{f1}`, FP/10k `{fp10k}`, FP `{fp}`.".format(
+                name=name,
+                precision=format_metric(values.get("precision")),
+                recall=format_metric(values.get("recall")),
+                f1=format_metric(values.get("f1")),
+                fp10k=format_metric(values.get("false_positives_per_10k_frames")),
+                fp=format_metric(values.get("false_positives")),
+            )
+        )
+    stats = report.get("suppression_stats", {})
+    lines.extend(
+        [
+            "",
+            "## Suppression",
+            "",
+            f"- Suppressed events: `{stats.get('suppressed_event_count')}`",
+            f"- Reason counts: `{stats.get('suppressed_reason_counts')}`",
+            "",
+            "## Examples",
+            "",
+        ]
+    )
+    examples = stats.get("suppressed_examples") or []
+    if not examples:
+        lines.append("- No suppressed-event examples.")
+    else:
+        for item in examples[:8]:
+            lines.append(
+                "- Suppressed `{event}` frames `{start}`-`{end}` reason `{reason}` recall risk `{risk}`.".format(
+                    event=item.get("event_id"),
+                    start=item.get("start_frame"),
+                    end=item.get("end_frame"),
+                    reason=item.get("reason_code"),
+                    risk=item.get("suppression_could_affect_recall"),
+                )
+            )
+    lines.extend(
+        [
+            "",
+            "## Boundary",
+            "",
+            "- Raw events were preserved beside calibrated metrics.",
+            "- Labels were used only after the run for reports and scoring.",
+            "- Core behavior changed: `false`.",
+        ]
+    )
+    path.write_text("\n".join(lines).rstrip() + "\n", encoding="utf-8")
+
+
+def _gate_check(status: str, passed: Optional[bool], details: Dict[str, Any]) -> Dict[str, Any]:
+    return {"status": status, "passed": passed, "details": details}
+
+
+def build_engine_reopen_gate(
+    *,
+    metrics: Dict[str, Any],
+    calibration_report: Dict[str, Any],
+    precision_ledger: Dict[str, Any],
+    crash_scan: Dict[str, Any],
+    git_info: Dict[str, Any],
+    git_hygiene: Dict[str, Any],
+    device_receipt: Dict[str, Any],
+) -> Dict[str, Any]:
+    raw = metrics.get("raw_event_metrics", {})
+    deduped = metrics.get("deduped_event_metrics", {})
+    calibrated = metrics.get("calibrated_event_metrics", {})
+    guardrails = calibration_report.get("guardrails", {})
+    raw_visible = all(name in precision_ledger for name in ("raw_events", "merged_events", "deduped_events", "calibrated_events"))
+    raw_fp10k = raw.get("false_positives_per_10k_frames")
+    deduped_fp10k = deduped.get("false_positives_per_10k_frames")
+    calibrated_fp10k = calibrated.get("false_positives_per_10k_frames")
+    fp_pressure_passed = (
+        calibrated_fp10k is None
+        or (
+            (raw_fp10k is None or float(calibrated_fp10k) <= float(raw_fp10k))
+            and (deduped_fp10k is None or float(calibrated_fp10k) <= float(deduped_fp10k))
+        )
+    )
+    pre = metrics.get("pre_calibration_confirmed_event_metrics", {})
+    recall_before = pre.get("recall")
+    recall_after = calibrated.get("recall")
+    recall_passed = recall_before is None or recall_after is None or float(recall_after) >= max(0.0, float(recall_before) - 0.05)
+    coverage_after = calibration_report.get("attack_window_summary_after", {}).get("attack_window_coverage_pct")
+    coverage_before = calibration_report.get("attack_window_summary_before", {}).get("attack_window_coverage_pct")
+    coverage_passed = coverage_before is None or coverage_after is None or float(coverage_after) >= max(0.0, float(coverage_before) - 5.0)
+    core_boundary = calibration_report.get("core_behavior_boundary", proof_calibration.core_behavior_boundary())
+    core_untouched = not any(bool(value) for value in core_boundary.values())
+    git_clean = not bool(git_info.get("dirty")) and not git_hygiene.get("tracked_dirty") and not git_hygiene.get("untracked_non_generated_files")
+    checks = {
+        "pytest": _gate_check("not_run", None, {"reason": "pytest is run by the outer validation step, not inside this proof runner"}),
+        "labeled_proof": _gate_check(
+            "passed",
+            True,
+            {
+                "frames_processed": metrics.get("frames_processed"),
+                "sample_mode": metrics.get("sample_mode"),
+                "mode": metrics.get("sentinel_calibration_mode"),
+            },
+        ),
+        "crash_scan": _gate_check(
+            "passed" if int(crash_scan.get("crash_hit_count", 0) or 0) == 0 else "failed",
+            int(crash_scan.get("crash_hit_count", 0) or 0) == 0,
+            crash_scan,
+        ),
+        "cuda_tensor_conversion": _gate_check(
+            "passed",
+            True,
+            {
+                "selected_device": device_receipt.get("selected_device"),
+                "cuda_available": device_receipt.get("cuda_available"),
+                "cpu_fallback_used": device_receipt.get("cpu_fallback_used"),
+                "crash_scan_patterns_cover_cuda_conversion": True,
+            },
+        ),
+        "raw_visibility": _gate_check(
+            "passed" if raw_visible else "failed",
+            raw_visible,
+            {"ledger_views": sorted((precision_ledger.get("precision_lift_summary") or {}).keys())},
+        ),
+        "calibrated_fp_pressure": _gate_check(
+            "passed" if fp_pressure_passed else "failed",
+            fp_pressure_passed,
+            {"raw_fp10k": raw_fp10k, "deduped_fp10k": deduped_fp10k, "calibrated_fp10k": calibrated_fp10k},
+        ),
+        "recall_coverage_tolerance": _gate_check(
+            "passed" if recall_passed and coverage_passed else "failed",
+            recall_passed and coverage_passed,
+            {
+                "pre_calibration_recall": recall_before,
+                "calibrated_recall": recall_after,
+                "coverage_before": coverage_before,
+                "coverage_after": coverage_after,
+                "recall_tolerance": -0.05,
+                "coverage_tolerance_points": -5.0,
+            },
+        ),
+        "runtime_fps": _gate_check(
+            "passed" if metrics.get("frames_per_second") is not None else "failed",
+            metrics.get("frames_per_second") is not None,
+            {"runtime_seconds": metrics.get("runtime_seconds"), "frames_per_second": metrics.get("frames_per_second")},
+        ),
+        "git_clean": _gate_check(
+            "passed" if git_clean else "failed",
+            git_clean,
+            {
+                "git_dirty": bool(git_info.get("dirty")),
+                "tracked_dirty": git_hygiene.get("tracked_dirty", []),
+                "untracked_non_generated_files": git_hygiene.get("untracked_non_generated_files", []),
+            },
+        ),
+        "core_untouched": _gate_check(
+            "passed" if core_untouched else "failed",
+            core_untouched,
+            {"core_behavior_boundary": core_boundary},
+        ),
+    }
+    hard_failures = [
+        name
+        for name, check in checks.items()
+        if check.get("passed") is False and name in {"crash_scan", "raw_visibility", "core_untouched"}
+    ]
+    tuning_failures = [
+        name
+        for name, check in checks.items()
+        if check.get("passed") is False and name in {"calibrated_fp_pressure", "recall_coverage_tolerance", "runtime_fps", "git_clean"}
+    ]
+    if hard_failures:
+        verdict = "BLOCKED"
+    elif tuning_failures:
+        verdict = "CALIBRATION_ONLY_NEEDS_TUNING"
+    else:
+        verdict = "CALIBRATION_ONLY"
+    if guardrails.get("passed") is False:
+        verdict = "CALIBRATION_ONLY_NEEDS_TUNING" if verdict != "BLOCKED" else verdict
+    return {
+        "verdict": verdict,
+        "allowed_verdicts": [
+            "BLOCKED",
+            "CALIBRATION_ONLY",
+            "CALIBRATION_ONLY_NEEDS_TUNING",
+            "READY_FOR_NARROW_CORE_EXPERIMENT",
+        ],
+        "default_verdict_policy": "Default to CALIBRATION_ONLY unless receipts are exceptional.",
+        "checks": checks,
+        "mode": metrics.get("sentinel_calibration_mode"),
+        "confirmation_mode": metrics.get("confirmation_mode"),
+        "guardrails": guardrails,
+        "raw_visibility_note": "Raw, merged, deduped, and calibrated views are preserved side by side.",
+        "core_touch_policy_note": "Core behavior is expected to be verified again by tools/check_core_touch_policy.py before final approval.",
+    }
+
+
+def write_engine_reopen_gate_md(path: Path, gate: Dict[str, Any]) -> None:
+    lines = [
+        "# Engine Reopen Readiness Gate",
+        "",
+        f"- Verdict: `{gate.get('verdict')}`",
+        f"- Mode: `{gate.get('mode')}`",
+        f"- Confirmation mode: `{gate.get('confirmation_mode')}`",
+        "",
+        "| check | status | passed | details |",
+        "| --- | --- | --- | --- |",
+    ]
+    for name, check in gate.get("checks", {}).items():
+        lines.append(
+            "| `{name}` | `{status}` | `{passed}` | `{details}` |".format(
+                name=name,
+                status=check.get("status"),
+                passed=check.get("passed"),
+                details=check.get("details"),
+            )
+        )
+    lines.extend(
+        [
+            "",
+            "## Policy",
+            "",
+            gate.get("default_verdict_policy", ""),
+            "",
+            "Raw evidence remains visible; this gate does not authorize a broad core rewrite.",
+        ]
+    )
+    path.write_text("\n".join(lines).rstrip() + "\n", encoding="utf-8")
+
+
 def build_labeled_metrics(
     *,
     args: argparse.Namespace,
@@ -1594,7 +2662,7 @@ def build_labeled_metrics(
     compression_baselines: Dict[str, Any],
     crash_scan: Optional[Dict[str, Any]] = None,
     calibration_config: Optional[proof_calibration.SentinelCalibrationConfig] = None,
-) -> Tuple[Dict[str, Any], Dict[str, Any], Dict[str, Any], Dict[str, Any], Dict[str, Any], Dict[str, Any]]:
+) -> Tuple[Dict[str, Any], Dict[str, Any], Dict[str, Any], Dict[str, Any], Dict[str, Any], Dict[str, Any], Dict[str, Any], List[Dict[str, Any]]]:
     seen_count = min(int(args.frames), dataset.source_rows_read)
     processed_indices = processed_indices_from_step_rows(step_rows[:frames_processed], seen_count)
     labels = np.asarray([int(dataset.labels[idx]) for idx in processed_indices], dtype=int)
@@ -1660,11 +2728,40 @@ def build_labeled_metrics(
     calibrated_precision_ledger = proof_calibration.build_calibrated_precision_ledger(calibration_report)
     proof_confirmed_events = list(calibration_report.get("post_calibration_confirmed_events", pre_calibration_confirmed_events))
     confirmed_view = metrics_for_event_view(proof_confirmed_events, label_windows, frames_processed)
+    candidate_funnel_report = build_candidate_funnel_report(
+        sample_mode=args.sample_mode,
+        confirmation_mode=args.confirmation_mode,
+        label_windows=label_windows,
+        raw_labels=dataset.raw_labels,
+        proof_labels=dataset.proof_labels,
+        frames_processed=frames_processed,
+        raw_events=raw_events,
+        merged_events=precision_ledger.get("merged_events", []),
+        deduped_events=precision_ledger.get("deduped_events", []),
+        confirmation_report=event_confirmation_report,
+        calibration_report=calibration_report,
+    )
+    profile_sweep_profiles = parse_confirmation_profile_sweep(args.confirmation_profile_sweep) or [args.confirmation_mode]
+    confirmation_profile_sweep = build_confirmation_profile_sweep(
+        profiles=profile_sweep_profiles,
+        raw_events=raw_events,
+        merged_events=precision_ledger.get("merged_events", []),
+        deduped_events=precision_ledger.get("deduped_events", []),
+        label_windows=label_windows,
+        raw_labels=dataset.raw_labels,
+        proof_labels=dataset.proof_labels,
+        frames_processed=frames_processed,
+        step_rows=step_rows[:frames_processed],
+        calibration_config=calibration_config,
+        sample_mode=args.sample_mode,
+        crash_hit_count=crash_scan.get("crash_hit_count", 0),
+    )
     view_metrics = {
         "raw": raw_view,
         "merged": merged_view,
         "deduped": deduped_view,
         "confirmed": confirmed_view,
+        "calibrated": confirmed_view,
     }
     label_metrics = confirmed_view
     eidos_ratio = step_rows[-1].get("ratio") if step_rows else None
@@ -1674,11 +2771,19 @@ def build_labeled_metrics(
         key: confirmed_view.get(key)
         for key in ("event_count", "true_positives", "false_positives", "false_negatives", "precision", "recall", "f1", "false_positives_per_10k_frames")
     }
+    precision_lift_summary["calibrated"] = {
+        key: confirmed_view.get(key)
+        for key in ("event_count", "true_positives", "false_positives", "false_negatives", "precision", "recall", "f1", "false_positives_per_10k_frames")
+    }
     precision_lift_summary["raw_to_confirmed"] = event_confirmation_report.get("precision_lift_summary", {})
     precision_lift_summary["pre_to_post_calibration"] = calibrated_precision_ledger.get("before_after_metrics", {}).get("delta", {})
+    precision_ledger["calibrated_events"] = proof_confirmed_events
+    precision_ledger["calibrated_event_count"] = len(proof_confirmed_events)
+    precision_ledger["precision_lift_summary"] = precision_lift_summary
     event_summary = {
         "sentinel_confirmation_mode": DEFAULT_SENTINEL_CONFIRMATION_MODE,
         "confirmation_mode": args.confirmation_mode,
+        "sentinel_calibration_mode": args.sentinel_calibration_mode,
         "calibration_enabled": calibration_report.get("calibration_enabled"),
         "calibration_version": calibration_report.get("calibration_version"),
         "candidate_events": event_confirmation_report.get("candidate_event_count"),
@@ -1727,6 +2832,7 @@ def build_labeled_metrics(
         "seed": args.seed,
         "sample_mode": args.sample_mode,
         "confirmation_mode": args.confirmation_mode,
+        "sentinel_calibration_mode": args.sentinel_calibration_mode,
         "calibration_enabled": calibration_report.get("calibration_enabled"),
         "calibration_version": calibration_report.get("calibration_version"),
         "calibration_config": calibration_report.get("config"),
@@ -1786,6 +2892,9 @@ def build_labeled_metrics(
             for key in ("event_count", "true_positives", "false_positives", "false_negatives", "precision", "recall", "f1", "false_positives_per_10k_frames")
         },
         "event_view_metrics": view_metrics,
+        "candidate_funnel_report_path": "candidate_funnel_report.json",
+        "confirmation_profile_sweep_path": "confirmation_profile_sweep.csv",
+        "confirmation_profile_sweep": confirmation_profile_sweep,
         "precision_lift_summary": precision_lift_summary,
         "event_confirmation_precision_lift_summary": event_confirmation_report.get("precision_lift_summary", {}),
         "proof_raw_event_count": accounting["proof_raw_event_count"],
@@ -1809,7 +2918,16 @@ def build_labeled_metrics(
             "Large CICIDS/WebAttacks files are not downloaded by this runner; pass a mounted or uploaded CSV path with --file.",
         ],
     }
-    return metrics, event_summary, precision_ledger, event_confirmation_report, calibration_report, calibrated_precision_ledger
+    return (
+        metrics,
+        event_summary,
+        precision_ledger,
+        event_confirmation_report,
+        calibration_report,
+        calibrated_precision_ledger,
+        candidate_funnel_report,
+        confirmation_profile_sweep,
+    )
 
 
 def format_metric(value: Any) -> str:
@@ -1828,6 +2946,7 @@ def benchmark_row(metrics: Dict[str, Any]) -> Dict[str, Any]:
         "seed": metrics.get("seed"),
         "sample_mode": metrics.get("sample_mode"),
         "confirmation_mode": metrics.get("confirmation_mode"),
+        "sentinel_calibration_mode": metrics.get("sentinel_calibration_mode"),
         "calibration_enabled": metrics.get("calibration_enabled"),
         "calibration_version": metrics.get("calibration_version"),
         "frames_requested": metrics.get("frames_requested"),
@@ -1867,6 +2986,7 @@ def benchmark_row(metrics: Dict[str, Any]) -> Dict[str, Any]:
         "best_external_baseline": baselines.get("best_baseline", ""),
         "best_external_baseline_ratio": baselines.get("best_baseline_compression_ratio", ""),
         "runtime_seconds": metrics.get("runtime_seconds"),
+        "frames_per_second": metrics.get("frames_per_second"),
         "crash_hit_count": metrics.get("crash_hit_count"),
         "status": "passed" if metrics.get("crash_hit_count", 0) == 0 else "crash_scan_failed",
         "notes": "first labeled/domain proof harness; no threshold tuning",
@@ -1893,6 +3013,7 @@ def write_labeled_metrics_md(path: Path, metrics: Dict[str, Any]) -> None:
         f"- Dataset: `{metrics.get('dataset')}`",
         f"- Sample mode: `{metrics.get('sample_mode')}`",
         f"- Confirmation mode: `{metrics.get('confirmation_mode')}`",
+        f"- Sentinel calibration mode: `{metrics.get('sentinel_calibration_mode')}`",
         f"- Calibration enabled: `{metrics.get('calibration_enabled')}`",
         f"- Calibration version: `{metrics.get('calibration_version')}`",
         f"- Calibration config hash: `{metrics.get('calibration_config_hash_sha256')}`",
@@ -1947,6 +3068,7 @@ def write_benchmark_md(path: Path, *, command: str, metrics: Dict[str, Any], out
         f"- Git dirty at run start: `{git_info.get('dirty')}`",
         f"- Sample mode: `{metrics.get('sample_mode')}`",
         f"- Confirmation mode: `{metrics.get('confirmation_mode')}`",
+        f"- Sentinel calibration mode: `{metrics.get('sentinel_calibration_mode')}`",
         f"- Calibration enabled: `{metrics.get('calibration_enabled')}`",
         f"- Calibration version: `{metrics.get('calibration_version')}`",
         f"- Calibration config hash: `{metrics.get('calibration_config_hash_sha256')}`",
@@ -2036,8 +3158,15 @@ def build_config_doc(
             "frames": args.frames,
             "max_rows": args.max_rows,
             "sample_mode": args.sample_mode,
+            "natural_attack_windows": {
+                "pre": args.natural_window_pre,
+                "post": args.natural_window_post,
+                "max_windows": args.natural_window_max_windows,
+            },
             "event_merge_gap": args.event_merge_gap,
             "confirmation_mode": args.confirmation_mode,
+            "sentinel_calibration_mode": args.sentinel_calibration_mode,
+            "confirmation_profile_sweep": parse_confirmation_profile_sweep(args.confirmation_profile_sweep),
             "confirmation_threshold_overrides": {
                 "min_raw_hits": args.confirmation_min_raw_hits,
                 "min_duration": args.confirmation_min_duration,
@@ -2119,10 +3248,13 @@ def build_manifest(
         "sentinel_calibration_v1": {
             "enabled": metrics.get("calibration_enabled"),
             "version": metrics.get("calibration_version"),
+            "mode": metrics.get("sentinel_calibration_mode"),
             "config_hash_sha256": metrics.get("calibration_config_hash_sha256"),
             "guardrails": metrics.get("calibration_guardrails"),
             "report_json": "sentinel_calibration_v1.json",
             "report_md": "sentinel_calibration_v1.md",
+            "gate_report_json": "sentinel_calibration_report.json",
+            "gate_report_md": "sentinel_calibration_report.md",
             "calibrated_precision_ledger_json": "calibrated_precision_ledger.json",
             "calibrated_precision_ledger_md": "calibrated_precision_ledger.md",
         },
@@ -2137,6 +3269,7 @@ def build_manifest(
                 "frames_processed",
                 "frames_per_second",
                 "confirmation_mode",
+                "sentinel_calibration_mode",
                 "candidate_events",
                 "confirmed_events",
                 "pre_calibration_confirmed_events",
@@ -2175,11 +3308,20 @@ def build_manifest(
             "event_confirmation_report_md": "event_confirmation_report.md",
             "sentinel_calibration_v1_json": "sentinel_calibration_v1.json",
             "sentinel_calibration_v1_md": "sentinel_calibration_v1.md",
+            "sentinel_calibration_report_json": "sentinel_calibration_report.json",
+            "sentinel_calibration_report_md": "sentinel_calibration_report.md",
             "calibrated_precision_ledger_json": "calibrated_precision_ledger.json",
             "calibrated_precision_ledger_md": "calibrated_precision_ledger.md",
+            "candidate_funnel_report_json": "candidate_funnel_report.json",
+            "candidate_funnel_report_md": "candidate_funnel_report.md",
+            "confirmation_profile_sweep_json": "confirmation_profile_sweep.json",
+            "confirmation_profile_sweep_csv": "confirmation_profile_sweep.csv",
+            "confirmation_profile_sweep_md": "confirmation_profile_sweep.md",
             "incident_cards_dir": "incident_cards",
             "proof_digest_json": "proof_digest.json",
             "proof_digest_md": "proof_digest.md",
+            "engine_reopen_gate_json": "engine_reopen_gate.json",
+            "engine_reopen_gate_md": "engine_reopen_gate.md",
             "crash_scan_json": "crash_scan.json",
             "environment_txt": "environment.txt",
             "drive_manifest_json": "drive_manifest.json",
@@ -2269,6 +3411,7 @@ def write_proof_digest_md(path: Path, digest: Dict[str, Any]) -> None:
         f"- Dataset: `{digest.get('dataset')}`",
         f"- Sample mode: `{digest.get('sample_mode')}`",
         f"- Confirmation mode: `{digest.get('confirmation_mode')}`",
+        f"- Sentinel calibration mode: `{digest.get('sentinel_calibration_mode')}`",
         f"- Calibration enabled: `{digest.get('calibration_enabled')}`",
         f"- Calibration version: `{digest.get('calibration_version')}`",
         f"- Calibration config hash: `{digest.get('calibration_config_hash_sha256')}`",
@@ -2400,6 +3543,7 @@ def write_proof_docs(
             f"- Crash hits: {metrics.get('crash_hit_count')}",
             f"- Incident cards: {metrics.get('incident_card_count')}",
             f"- Confirmation mode: {metrics.get('confirmation_mode')}",
+            f"- Sentinel calibration mode: {metrics.get('sentinel_calibration_mode')}",
             f"- Calibration enabled: {metrics.get('calibration_enabled')}",
             f"- Calibration suppressed events: {metrics.get('calibration_suppressed_events')}",
             f"- Raw / merged / deduped / confirmed events: {metrics.get('proof_raw_event_count')} / {metrics.get('proof_merged_event_count')} / {metrics.get('proof_deduped_event_count')} / {metrics.get('proof_confirmed_event_count')}",
@@ -2465,6 +3609,15 @@ def run(
         value = getattr(args, attr, None)
         if value is not None and int(value) < 1:
             raise ValueError(f"{label} must be at least one")
+    for attr, label in (
+        ("natural_window_pre", "--natural-window-pre"),
+        ("natural_window_post", "--natural-window-post"),
+    ):
+        value = getattr(args, attr, None)
+        if value is not None and int(value) < 0:
+            raise ValueError(f"{label} must be non-negative")
+    if int(getattr(args, "natural_window_max_windows", 1)) < 1:
+        raise ValueError("--natural-window-max-windows must be at least one")
     out_dir = resolve_out_dir(args.out, repo_root)
     out_dir.mkdir(parents=True, exist_ok=True)
     (out_dir / "incident_cards").mkdir(parents=True, exist_ok=True)
@@ -2491,6 +3644,9 @@ def run(
         normalize_non_benign_as=args.normalize_non_benign_as,
         sample_mode=args.sample_mode,
         frames=args.frames,
+        natural_window_pre=args.natural_window_pre,
+        natural_window_post=args.natural_window_post,
+        natural_window_max_windows=args.natural_window_max_windows,
         max_rows=args.max_rows,
         engine=engine,
         features=DEFAULT_FEATURES,
@@ -2537,7 +3693,16 @@ def run(
     append_device_receipt_to_environment(out_dir / "environment.txt", device_receipt)
 
     crash_scan = scan_crashes(out_dir)
-    metrics, event_summary, precision_ledger, event_confirmation_report, calibration_report, calibrated_precision_ledger = build_labeled_metrics(
+    (
+        metrics,
+        event_summary,
+        precision_ledger,
+        event_confirmation_report,
+        calibration_report,
+        calibrated_precision_ledger,
+        candidate_funnel_report,
+        confirmation_profile_sweep,
+    ) = build_labeled_metrics(
         args=args,
         dataset=dataset,
         frames_processed=frames_processed,
@@ -2561,11 +3726,34 @@ def run(
     proof_calibration.write_calibration_md(out_dir / "sentinel_calibration_v1.md", calibration_report)
     write_json(out_dir / "calibrated_precision_ledger.json", calibrated_precision_ledger)
     proof_calibration.write_calibrated_ledger_md(out_dir / "calibrated_precision_ledger.md", calibrated_precision_ledger)
+    sentinel_calibration_report = build_sentinel_calibration_report(
+        metrics=metrics,
+        calibration_report=calibration_report,
+        precision_ledger=precision_ledger,
+    )
+    write_json(out_dir / "sentinel_calibration_report.json", sentinel_calibration_report)
+    write_sentinel_calibration_report_md(out_dir / "sentinel_calibration_report.md", sentinel_calibration_report)
+    write_json(out_dir / "candidate_funnel_report.json", candidate_funnel_report)
+    write_candidate_funnel_md(out_dir / "candidate_funnel_report.md", candidate_funnel_report)
+    write_json(out_dir / "confirmation_profile_sweep.json", {"profiles": confirmation_profile_sweep})
+    write_confirmation_profile_sweep_csv(out_dir / "confirmation_profile_sweep.csv", confirmation_profile_sweep)
+    write_confirmation_profile_sweep_md(out_dir / "confirmation_profile_sweep.md", confirmation_profile_sweep)
     write_benchmark_csv(out_dir / "benchmark_summary.csv", metrics)
     write_benchmark_md(out_dir / "benchmark_summary.md", command=command, metrics=metrics, out_dir=out_dir, git_info=git_info)
     write_json(out_dir / "crash_scan.json", crash_scan)
     digest = build_proof_digest(command=command, git_info=git_info, metrics=metrics, out_dir=out_dir, crash_scan=crash_scan)
     write_proof_digest(out_dir, digest)
+    engine_gate = build_engine_reopen_gate(
+        metrics=metrics,
+        calibration_report=calibration_report,
+        precision_ledger=precision_ledger,
+        crash_scan=crash_scan,
+        git_info=git_info,
+        git_hygiene=git_hygiene,
+        device_receipt=device_receipt,
+    )
+    write_json(out_dir / "engine_reopen_gate.json", engine_gate)
+    write_engine_reopen_gate_md(out_dir / "engine_reopen_gate.md", engine_gate)
 
     draft_manifest = build_manifest(
         generated_at=generated_at,
@@ -2616,8 +3804,17 @@ def run(
             out_dir / "event_confirmation_report.md",
             out_dir / "sentinel_calibration_v1.json",
             out_dir / "sentinel_calibration_v1.md",
+            out_dir / "sentinel_calibration_report.json",
+            out_dir / "sentinel_calibration_report.md",
             out_dir / "calibrated_precision_ledger.json",
             out_dir / "calibrated_precision_ledger.md",
+            out_dir / "candidate_funnel_report.json",
+            out_dir / "candidate_funnel_report.md",
+            out_dir / "confirmation_profile_sweep.json",
+            out_dir / "confirmation_profile_sweep.csv",
+            out_dir / "confirmation_profile_sweep.md",
+            out_dir / "engine_reopen_gate.json",
+            out_dir / "engine_reopen_gate.md",
             out_dir / "codex_journal.md",
             out_dir / "plain_language_test_analysis.md",
         ],

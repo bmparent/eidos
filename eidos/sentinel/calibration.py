@@ -31,6 +31,24 @@ class SentinelModeConfig:
 
 
 MODE_CONFIGS = {
+    "off": SentinelModeConfig(
+        name="off",
+        candidate_score=1_000_000.0,
+        geometry_change=1.0,
+        novelty=1.0,
+        confirmation_score=1_000_000.0,
+        min_duration=1_000_000,
+        min_candidate_frames=1_000_000,
+        repeat_window=0,
+        merge_window=0,
+        cooldown=0,
+        normal_residual_ceiling=1.0,
+        normal_geometry_ceiling=0.05,
+        normal_novelty_ceiling=0.05,
+        normal_suppression_multiplier=1.0,
+        amber_score=1_000_000.0,
+        red_score=1_000_000.0,
+    ),
     "low_noise": SentinelModeConfig(
         name="low_noise",
         candidate_score=3.0,

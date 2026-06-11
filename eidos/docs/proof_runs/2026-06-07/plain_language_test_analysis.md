@@ -123,3 +123,22 @@ This follow-up ran a CICIDS/WebAttacks calibration generalization matrix with pr
 - Drive copy: copied; folder: `G:\My Drive\Eidos_Brain_Proof_Phase\2026-06-07\sentinel_calibration_v1_generalization`; reason: `copy completed`.
 
 The validation supports continued false-positive-control work, but the decision is HOLD because balanced recall/generalization remains ambiguous and the larger natural run was not feasible in this CPU pass.
+
+## Calibration recall diagnostics - 2026-06-07
+
+This follow-up investigated why row-shuffled balanced samples had low confirmed recall even though attack-window coverage stayed high. The work stayed proof-side: diagnostics, sample construction, confirmation profile reporting, and acceptance reporting changed; core Eidos behavior did not.
+
+- Decision: `APPROVE`.
+- Best confirmation profile: `balanced`.
+- Completed proof runs: `balanced250`, `balanced1000`, `balanced_blocks250`, `balanced_blocks1000`, `transition1000`, `transition4360_max_feasible`, `natural_attack_windows`, and `natural2000`.
+- Skipped proof runs: none in this matrix. GPU-only work was not attempted because the receipts reported CPU execution.
+- Old balanced calibrated recall stayed low: `0.166667` on both `balanced250` and `balanced1000`.
+- Window-preserving `balanced_blocks` calibrated recall improved to `1.0` on both 250-row and 1000-row samples, with calibrated FP/10k still `0.0` and coverage `100.0`.
+- `natural_attack_windows` provided a feasible natural-order attack-window check: calibrated recall `1.0`, F1 `1.0`, coverage `100.0`, calibrated FP/10k `0.0`.
+- `natural2000` remained useful as benign/FP pressure, but had no attack recall signal.
+- Crash scans were clean across completed runs: aggregate `crash_hit_count = 0`.
+- Recall-protection audit reviewed `9` dropped or suppressed events; `0` overlapped attack windows and `0` were flagged as possibly hiding true attack context.
+- Artifacts: `artifacts\proof_runs\2026-06-07\calibration_recall_diagnostics`.
+- Drive: `G:\My Drive\Eidos_Brain_Proof_Phase\2026-06-07\calibration_recall_diagnostics`; success: `True`; copied files: `823`.
+
+What this means: the HOLD was mostly a sampling/metric-interpretation problem for row-shuffled balanced samples. When attack and benign row order is preserved inside blocks, recall and coverage recover while false-positive control remains clean. The looser `recall_guarded` and `high_recall` profiles did not improve attack-bearing metrics beyond `balanced`, so `balanced` remains the best proof-stage profile.

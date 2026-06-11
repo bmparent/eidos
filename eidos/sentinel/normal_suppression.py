@@ -10,14 +10,33 @@ def is_stable_normal_context(
     residual_score: float,
     geometry_change: float,
     novelty: float,
+    surprise_rate: float | None = None,
+    eigen_dominance: float | None = None,
+    spectral_entropy: float | None = None,
+    spectral_flatness: float | None = None,
+    plasticity: float | None = None,
     config: SentinelModeConfig,
 ) -> bool:
     """Return true when evidence looks like ordinary low-motion behavior."""
-    return (
+    base_stable = (
         residual_score <= config.normal_residual_ceiling
         and geometry_change <= config.normal_geometry_ceiling
         and novelty <= config.normal_novelty_ceiling
     )
+    if not base_stable:
+        return False
+    live_checks = []
+    if surprise_rate is not None:
+        live_checks.append(float(surprise_rate) <= 0.08)
+    if eigen_dominance is not None:
+        live_checks.append(float(eigen_dominance) <= 0.35)
+    if spectral_entropy is not None:
+        live_checks.append(float(spectral_entropy) >= 0.55)
+    if spectral_flatness is not None:
+        live_checks.append(float(spectral_flatness) >= 0.45)
+    if plasticity is not None:
+        live_checks.append(float(plasticity) <= 0.25)
+    return all(live_checks) if live_checks else True
 
 
 def confirmation_bar_multiplier(
@@ -25,6 +44,11 @@ def confirmation_bar_multiplier(
     residual_score: float,
     geometry_change: float,
     novelty: float,
+    surprise_rate: float | None = None,
+    eigen_dominance: float | None = None,
+    spectral_entropy: float | None = None,
+    spectral_flatness: float | None = None,
+    plasticity: float | None = None,
     config: SentinelModeConfig,
 ) -> float:
     """Raise the confirmation bar when residual evidence lacks geometry/novelty support."""
@@ -32,6 +56,11 @@ def confirmation_bar_multiplier(
         residual_score=residual_score,
         geometry_change=geometry_change,
         novelty=novelty,
+        surprise_rate=surprise_rate,
+        eigen_dominance=eigen_dominance,
+        spectral_entropy=spectral_entropy,
+        spectral_flatness=spectral_flatness,
+        plasticity=plasticity,
         config=config,
     ):
         return config.normal_suppression_multiplier
@@ -45,6 +74,11 @@ def evidence_weight(
     residual_score: float,
     geometry_change: float,
     novelty: float,
+    surprise_rate: float | None = None,
+    eigen_dominance: float | None = None,
+    spectral_entropy: float | None = None,
+    spectral_flatness: float | None = None,
+    plasticity: float | None = None,
     config: SentinelModeConfig,
 ) -> float:
     """Convert a raw spike frame into confirmation evidence."""
@@ -57,6 +91,18 @@ def evidence_weight(
         residual_score=residual_score,
         geometry_change=geometry_change,
         novelty=novelty,
+        surprise_rate=surprise_rate,
+        eigen_dominance=eigen_dominance,
+        spectral_entropy=spectral_entropy,
+        spectral_flatness=spectral_flatness,
+        plasticity=plasticity,
         config=config,
     )
-    return (1.0 + residual_lift + 0.75 * geometry_lift + 0.75 * novelty_lift) / multiplier
+    live_pressure = 0.0
+    if surprise_rate is not None:
+        live_pressure += min(max(float(surprise_rate), 0.0) * 2.0, 1.0)
+    if eigen_dominance is not None:
+        live_pressure += min(max(float(eigen_dominance) - 0.35, 0.0), 1.0)
+    if plasticity is not None:
+        live_pressure += min(max(float(plasticity) - 0.25, 0.0), 1.0)
+    return (1.0 + residual_lift + 0.75 * geometry_lift + 0.75 * novelty_lift + live_pressure) / multiplier

@@ -185,10 +185,19 @@ def test_run_writes_labeled_domain_artifacts_with_fake_engine(tmp_path, monkeypa
         "event_confirmation_report.md",
         "sentinel_calibration_v1.json",
         "sentinel_calibration_v1.md",
+        "sentinel_calibration_report.json",
+        "sentinel_calibration_report.md",
         "calibrated_precision_ledger.json",
         "calibrated_precision_ledger.md",
+        "candidate_funnel_report.json",
+        "candidate_funnel_report.md",
+        "confirmation_profile_sweep.json",
+        "confirmation_profile_sweep.csv",
+        "confirmation_profile_sweep.md",
         "proof_digest.json",
         "proof_digest.md",
+        "engine_reopen_gate.json",
+        "engine_reopen_gate.md",
         "crash_scan.json",
         "environment.txt",
         "drive_manifest.json",
@@ -208,7 +217,8 @@ def test_run_writes_labeled_domain_artifacts_with_fake_engine(tmp_path, monkeypa
     assert metrics["proof_merged_event_count"] >= 1
     assert metrics["proof_deduped_event_count"] >= 1
     assert metrics["proof_confirmed_event_count"] >= 1
-    assert {"raw", "merged", "deduped", "confirmed"} <= set(metrics["event_view_metrics"])
+    assert {"raw", "merged", "deduped", "confirmed", "calibrated"} <= set(metrics["event_view_metrics"])
+    assert metrics["sentinel_calibration_mode"] == "off"
     assert metrics["true_positives"] == 1
     assert metrics["false_positives"] == 0
     assert metrics["false_negatives"] == 0
@@ -220,7 +230,11 @@ def test_run_writes_labeled_domain_artifacts_with_fake_engine(tmp_path, monkeypa
     assert manifest["outputs"]["precision_ledger_json"] == "precision_ledger.json"
     assert manifest["outputs"]["event_confirmation_report_json"] == "event_confirmation_report.json"
     assert manifest["outputs"]["sentinel_calibration_v1_json"] == "sentinel_calibration_v1.json"
+    assert manifest["outputs"]["sentinel_calibration_report_json"] == "sentinel_calibration_report.json"
     assert manifest["outputs"]["calibrated_precision_ledger_json"] == "calibrated_precision_ledger.json"
+    assert manifest["outputs"]["engine_reopen_gate_json"] == "engine_reopen_gate.json"
+    assert manifest["outputs"]["candidate_funnel_report_json"] == "candidate_funnel_report.json"
+    assert manifest["outputs"]["confirmation_profile_sweep_csv"] == "confirmation_profile_sweep.csv"
     assert manifest["event_confirmation"]["mode"] == "balanced"
     assert manifest["sentinel_calibration_v1"]["enabled"] is False
     assert "tracked_dirty" in manifest
@@ -229,7 +243,8 @@ def test_run_writes_labeled_domain_artifacts_with_fake_engine(tmp_path, monkeypa
     assert "git_dirty_reason" in manifest
     assert manifest["device"]["selected_device"] in {"cpu", "cuda"}
     ledger = json.loads((out_dir / "precision_ledger.json").read_text(encoding="utf-8"))
-    assert {"raw", "merged", "deduped"} <= set(ledger["precision_lift_summary"])
+    assert {"raw", "merged", "deduped", "calibrated"} <= set(ledger["precision_lift_summary"])
+    assert "calibrated_events" in ledger
     confirmation_report = json.loads((out_dir / "event_confirmation_report.json").read_text(encoding="utf-8"))
     assert confirmation_report["mode"] == "balanced"
     assert "precision_lift_summary" in confirmation_report
@@ -240,6 +255,27 @@ def test_run_writes_labeled_domain_artifacts_with_fake_engine(tmp_path, monkeypa
     calibration_report = json.loads((out_dir / "sentinel_calibration_v1.json").read_text(encoding="utf-8"))
     assert calibration_report["calibration_enabled"] is False
     assert calibration_report["core_behavior_boundary"]["sentinel_thresholds_changed"] is False
+    sentinel_report = json.loads((out_dir / "sentinel_calibration_report.json").read_text(encoding="utf-8"))
+    assert sentinel_report["mode"] == "off"
+    assert {"raw", "merged", "deduped", "calibrated"} <= set(sentinel_report["raw_vs_calibrated"])
+    gate = json.loads((out_dir / "engine_reopen_gate.json").read_text(encoding="utf-8"))
+    assert gate["verdict"] in {
+        "BLOCKED",
+        "CALIBRATION_ONLY",
+        "CALIBRATION_ONLY_NEEDS_TUNING",
+        "READY_FOR_NARROW_CORE_EXPERIMENT",
+    }
+    assert {"pytest", "labeled_proof", "crash_scan", "raw_visibility", "core_untouched"} <= set(gate["checks"])
+    funnel = json.loads((out_dir / "candidate_funnel_report.json").read_text(encoding="utf-8"))
+    assert [stage["stage"] for stage in funnel["stages"]] == [
+        "raw_candidates",
+        "merged_events",
+        "deduped_events",
+        "confirmed_events",
+        "calibrated_confirmed_events",
+    ]
+    sweep = json.loads((out_dir / "confirmation_profile_sweep.json").read_text(encoding="utf-8"))
+    assert sweep["profiles"][0]["profile"] == "balanced"
 
 
 def test_calibration_config_serialization_is_conservative():
@@ -273,6 +309,50 @@ def test_calibration_config_serialization_is_conservative():
     assert payload["suppress_fully_benign_pressure"] is True
     assert payload["core_behavior_boundary"]["reservoir_dynamics_changed"] is False
     assert len(sentinel_calibration_v1.config_hash(config)) == 64
+
+
+def test_sentinel_calibration_mode_alias_controls_calibration_defaults():
+    off_args = run_labeled_domain_proof.parse_args(
+        [
+            "--dataset",
+            "cicids_webattacks",
+            "--file",
+            "tests/fixtures/cicids_webattacks_tiny.csv",
+            "--label-column",
+            "Label",
+            "--frames",
+            "10",
+            "--seed",
+            "42",
+            "--suite",
+            "smoke",
+            "--sentinel-calibration-mode",
+            "off",
+        ]
+    )
+    high_recall_args = run_labeled_domain_proof.parse_args(
+        [
+            "--dataset",
+            "cicids_webattacks",
+            "--file",
+            "tests/fixtures/cicids_webattacks_tiny.csv",
+            "--label-column",
+            "Label",
+            "--frames",
+            "10",
+            "--seed",
+            "42",
+            "--suite",
+            "smoke",
+            "--sentinel-calibration-mode",
+            "high_recall",
+        ]
+    )
+
+    assert off_args.calibration_enabled is False
+    assert off_args.confirmation_mode == "off"
+    assert high_recall_args.calibration_enabled is True
+    assert high_recall_args.confirmation_mode == "high_recall"
 
 
 def test_calibration_suppression_reason_accounting_and_raw_visibility():
@@ -508,6 +588,69 @@ def test_natural_sample_creation_replays_original_order(tmp_path):
     assert dataset.sample_receipt["order_preserved"] is True
 
 
+def test_balanced_blocks_preserves_order_inside_blocks(tmp_path):
+    fixture = tmp_path / "cicids_fixture.csv"
+    write_fixture(fixture)
+
+    dataset = run_labeled_domain_proof.load_labeled_dataset(
+        dataset="cicids_webattacks",
+        file_path=fixture,
+        label_column="Label",
+        attack_labels=["Web Attack - Brute Force"],
+        normalize_non_benign_as=None,
+        sample_mode="balanced_blocks",
+        frames=4,
+        max_rows=None,
+        engine=FakeEngine(),
+        features=4,
+        seed=7,
+        repo_root=tmp_path,
+    )
+
+    receipt = dataset.sample_receipt
+    assert receipt["mode"] == "balanced_blocks"
+    assert receipt["block_count"] == 2
+    assert receipt["benign_block_count"] == 1
+    assert receipt["attack_block_count"] == 1
+    for block in receipt["blocks"]:
+        block_indices = [
+            event["source_row_index"]
+            for event in dataset.events[block["sample_start_frame"] : block["sample_end_frame"] + 1]
+        ]
+        assert block_indices == sorted(block_indices)
+    assert sorted(dataset.proof_labels) == ["ATTACK", "ATTACK", "BENIGN", "BENIGN"]
+
+
+def test_natural_attack_windows_selects_context_and_preserves_source_order(tmp_path):
+    fixture = tmp_path / "cicids_fixture.csv"
+    write_fixture(fixture)
+
+    dataset = run_labeled_domain_proof.load_labeled_dataset(
+        dataset="cicids_webattacks",
+        file_path=fixture,
+        label_column="Label",
+        attack_labels=["Web Attack - Brute Force"],
+        normalize_non_benign_as=None,
+        sample_mode="natural_attack_windows",
+        frames=5,
+        natural_window_pre=1,
+        natural_window_post=1,
+        natural_window_max_windows=1,
+        max_rows=None,
+        engine=FakeEngine(),
+        features=4,
+        seed=7,
+        repo_root=tmp_path,
+    )
+
+    assert dataset.source_row_indices == [1, 2, 3, 4, 5]
+    assert dataset.sample_receipt["mode"] == "natural_attack_windows"
+    assert dataset.sample_receipt["attack_window_slice_count"] == 1
+    assert dataset.sample_receipt["window_slices"][0]["pre_context_rows"] == 1
+    assert dataset.sample_receipt["window_slices"][0]["post_context_rows"] == 1
+    assert dataset.sample_receipt["order_preserved"] is True
+
+
 def test_event_merging_and_duplicate_collapse():
     raw_events = [
         {"event_id": "a", "start_frame": 10, "end_frame": 12, "source": "engine_card", "severity": "AMBER"},
@@ -621,6 +764,39 @@ def test_attack_overlapping_event_remains_confirmed_in_high_recall_mode():
 
     assert report["confirmed_event_count"] == 1
     assert "confirmed_attack_overlap" in report["confirmed_events"][0]["reason_codes"]
+
+
+def test_recall_guarded_confirms_strong_short_proof_event_without_labels():
+    raw_events = [
+        {"event_id": "strong_short", "start_frame": 20, "end_frame": 20, "source": "engine_card", "severity": "RED"},
+    ]
+    merged = run_labeled_domain_proof.merge_detection_events(raw_events, merge_gap=0)
+    deduped = run_labeled_domain_proof.dedupe_detection_events(merged)
+
+    balanced = event_confirmation.apply_confirmation(
+        raw_events=raw_events,
+        merged_events=merged,
+        deduped_events=deduped,
+        label_windows=[],
+        raw_labels=["BENIGN"] * 40,
+        proof_labels=["BENIGN"] * 40,
+        frames_processed=40,
+        mode="balanced",
+    )
+    guarded = event_confirmation.apply_confirmation(
+        raw_events=raw_events,
+        merged_events=merged,
+        deduped_events=deduped,
+        label_windows=[],
+        raw_labels=["BENIGN"] * 40,
+        proof_labels=["BENIGN"] * 40,
+        frames_processed=40,
+        mode="recall_guarded",
+    )
+
+    assert balanced["confirmed_event_count"] == 0
+    assert guarded["confirmed_event_count"] == 1
+    assert guarded["confirmed_events"][0]["confirmation_mode"] == "recall_guarded"
 
 
 def test_balanced_mode_reports_precision_lift_summary():
