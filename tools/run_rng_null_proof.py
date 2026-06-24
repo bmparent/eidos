@@ -18,6 +18,7 @@ def main(argv=None) -> int:
     p.add_argument("--seed", type=int, default=42)
     p.add_argument("--frames", type=int, default=5000)
     p.add_argument("--out", required=True)
+    p.add_argument("--predictor", choices=["baseline", "eidos_brain"], default="baseline", help="Predictor label for compatibility with Brain-backed proof commands; the existing proof gate still decides official readiness.")
     args = p.parse_args(argv)
     result = run_proof(args.suite, args.seed, args.frames, args.out)
     print(f"wrote RNG null proof artifacts to {args.out}")
