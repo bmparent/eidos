@@ -1,0 +1,6 @@
+
+# RNG null proof generated artifacts
+artifacts/rng_null_proof*/
+__pycache__/
+*.py[cod]
+.pytest_cache/
