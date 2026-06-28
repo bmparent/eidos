@@ -187,13 +187,45 @@ def test_crash_scan_and_digest_record_crash_hits(tmp_path):
     out_dir = tmp_path / "proof"
     out_dir.mkdir()
     (out_dir / "engine_output.log").write_text("CRASH IN INCIDENT LOGIC\n", encoding="utf-8")
-    (out_dir / "notes.txt").write_text("can't convert cuda\nTraceback\n", encoding="utf-8")
+    (out_dir / "notes.txt").write_text(
+        "can't convert cuda\nTraceback\nRuntimeError\nValueError\nNaN\nInf\nInformation only\n",
+        encoding="utf-8",
+    )
 
     scan = run_proof_baseline.scan_crash_strings(out_dir)
 
     assert scan["status"] == "not_clean"
-    assert scan["crash_hit_count"] == 3
+    assert scan["crash_hit_count"] == 7
+    assert scan["patterns"] == [
+        "CRASH IN INCIDENT LOGIC",
+        "can't convert cuda",
+        "Traceback",
+        "RuntimeError",
+        "ValueError",
+        "NaN",
+        "Inf",
+    ]
     assert {item["path"] for item in scan["crash_hit_files"]} == {"engine_output.log", "notes.txt"}
+
+
+def test_crash_scan_separates_known_nonfatal_nan_telemetry(tmp_path):
+    out_dir = tmp_path / "proof"
+    out_dir.mkdir()
+    (out_dir / "engine_output.log").write_text(
+        "Frame 2000 | HIPP bank=INCIDENT sim=NaN chi=0.000 write=0\n",
+        encoding="utf-8",
+    )
+    (out_dir / "crash_scan.json").write_text(
+        '{"patterns": ["Traceback", "NaN"], "note": "receipt metadata"}',
+        encoding="utf-8",
+    )
+
+    scan = run_proof_baseline.scan_crash_strings(out_dir)
+
+    assert scan["status"] == "clean"
+    assert scan["crash_hit_count"] == 0
+    assert scan["warning_hit_count"] == 1
+    assert scan["warning_hit_files"][0]["path"] == "engine_output.log"
 
 
 def test_run_returns_nonzero_when_pytest_fails(tmp_path, monkeypatch):

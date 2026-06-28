@@ -17,5 +17,6 @@ artifacts/eidos_life_lab/checkpoints/*.json
 artifacts/hotfix_official_10000_colab_gpu/
 artifacts/cicids_webattacks_proof_*/
 artifacts/cicids_webattacks_samples/
+artifacts/proof_runs/
 tmp/eidos_proof_data/
 full_pytest_output.txt
