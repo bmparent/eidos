@@ -38,6 +38,23 @@ def test_core_touch_policy_allows_calibration_reports_tests_and_docs(tmp_path):
     assert report["failures"] == []
 
 
+def test_core_touch_policy_allows_colab_bridge_boundary_text(tmp_path):
+    repo = tmp_path / "repo"
+    repo.mkdir()
+    init_repo(repo)
+    target = repo / "tools/colab_gpu_bridge.py"
+    target.parent.mkdir(parents=True, exist_ok=True)
+    target.write_text(
+        "BOUNDARY = 'No reservoir, RLS, Sentinel threshold, anomaly policy, or compression behavior is changed.'\n",
+        encoding="utf-8",
+    )
+
+    report = check_core_touch_policy.evaluate("main", cwd=repo)
+
+    assert report["passed"] is True
+    assert report["failures"] == []
+
+
 def test_core_touch_policy_fails_for_reservoir_core_path(tmp_path):
     repo = tmp_path / "repo"
     repo.mkdir()

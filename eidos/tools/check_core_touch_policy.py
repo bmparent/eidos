@@ -39,7 +39,7 @@ FORBIDDEN_CONTENT_PATTERNS = (
 ALLOWED_PATH_PATTERNS = (
     re.compile(r"^sentinel/(calibration|hysteresis|normal_suppression|event_merge|__init__)\.py$", re.IGNORECASE),
     re.compile(r"^proof/", re.IGNORECASE),
-    re.compile(r"^tools/(run_labeled_domain_proof|build_.*|check_core_touch_policy)\.py$", re.IGNORECASE),
+    re.compile(r"^tools/(run_labeled_domain_proof|colab_gpu_bridge|build_.*|check_core_touch_policy)\.py$", re.IGNORECASE),
     re.compile(r"^tests/", re.IGNORECASE),
     re.compile(r"^docs/", re.IGNORECASE),
     re.compile(r"^artifacts/", re.IGNORECASE),

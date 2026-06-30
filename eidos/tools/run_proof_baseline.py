@@ -18,6 +18,7 @@ import lzma
 import math
 import os
 import platform
+import re
 import shutil
 import subprocess
 import sys
@@ -42,8 +43,20 @@ DEFAULT_OUT = Path("artifacts/proof_baseline_2026_05")
 ENGINE_FILENAME = "EIDOS_BRAIN_UNIFIED_v0_4.7.02.py"
 PROOF_MONTH = "2026-05"
 SECRET_MARKERS = ("KEY", "SECRET", "TOKEN", "PASSWORD", "CREDENTIAL", "AUTH")
-CRASH_SCAN_PATTERNS = ("CRASH IN INCIDENT LOGIC", "can't convert cuda", "Traceback")
+CRASH_SCAN_PATTERNS = (
+    "CRASH IN INCIDENT LOGIC",
+    "can't convert cuda",
+    "Traceback",
+    "RuntimeError",
+    "ValueError",
+    "NaN",
+    "Inf",
+)
 CRASH_SCAN_SUFFIXES = {".log", ".txt", ".jsonl", ".md", ".json"}
+CRASH_SCAN_IGNORED_FILES = {"proof_digest.json", "proof_digest.md", "crash_scan.json"}
+CRASH_SCAN_WARNING_REGEXES = {
+    "NaN": (re.compile(r"HIPP bank=[^|\n]*\bsim=NaN\b"),),
+}
 
 CSV_COLUMNS = [
     "suite",
@@ -1500,29 +1513,56 @@ def proof_failure_reasons(rows: List[Dict[str, Any]], pytest_result: PytestResul
     return reasons
 
 
+def count_crash_pattern(text: str, pattern: str) -> int:
+    if pattern in {"NaN", "Inf"}:
+        return len(re.findall(rf"(?<![A-Za-z0-9_]){re.escape(pattern)}(?![A-Za-z0-9_])", text))
+    return text.count(pattern)
+
+
+def count_warning_pattern(text: str, pattern: str) -> int:
+    return sum(len(regex.findall(text)) for regex in CRASH_SCAN_WARNING_REGEXES.get(pattern, ()))
+
+
 def scan_crash_strings(out_dir: Path) -> Dict[str, Any]:
-    ignored = {"proof_digest.json", "proof_digest.md"}
     hit_files: List[Dict[str, Any]] = []
+    warning_files: List[Dict[str, Any]] = []
     hit_count = 0
+    warning_count = 0
     for path in sorted(out_dir.rglob("*")):
-        if not path.is_file() or path.name in ignored or path.suffix.lower() not in CRASH_SCAN_SUFFIXES:
+        if not path.is_file() or path.name in CRASH_SCAN_IGNORED_FILES or path.suffix.lower() not in CRASH_SCAN_SUFFIXES:
             continue
         try:
             text = path.read_text(encoding="utf-8", errors="ignore")
         except Exception:
             continue
         matches = []
+        warnings = []
         for pattern in CRASH_SCAN_PATTERNS:
-            count = text.count(pattern)
-            if count:
-                matches.append({"pattern": pattern, "count": count})
-                hit_count += count
+            raw_count = count_crash_pattern(text, pattern)
+            warning_pattern_count = min(raw_count, count_warning_pattern(text, pattern))
+            crash_count = raw_count - warning_pattern_count
+            if warning_pattern_count:
+                warnings.append(
+                    {
+                        "pattern": pattern,
+                        "count": warning_pattern_count,
+                        "classification": "documented_nonfatal_telemetry",
+                    }
+                )
+                warning_count += warning_pattern_count
+            if crash_count:
+                matches.append({"pattern": pattern, "count": crash_count})
+                hit_count += crash_count
         if matches:
             hit_files.append({"path": relpath(path, out_dir), "matches": matches})
+        if warnings:
+            warning_files.append({"path": relpath(path, out_dir), "matches": warnings})
     return {
         "patterns": list(CRASH_SCAN_PATTERNS),
         "crash_hit_count": hit_count,
         "crash_hit_files": hit_files,
+        "warning_hit_count": warning_count,
+        "warning_hit_files": warning_files,
         "status": "clean" if hit_count == 0 else "not_clean",
     }
 
