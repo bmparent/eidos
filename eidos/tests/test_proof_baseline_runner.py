@@ -228,6 +228,19 @@ def test_crash_scan_separates_known_nonfatal_nan_telemetry(tmp_path):
     assert scan["warning_hit_files"][0]["path"] == "engine_output.log"
 
 
+def test_crash_scan_ignores_guardrail_metadata_receipts(tmp_path):
+    out_dir = tmp_path / "proof"
+    out_dir.mkdir()
+    metadata = "CRASH IN INCIDENT LOGIC\ncan't convert cuda\nTraceback\nRuntimeError\nValueError\nNaN\nInf\n"
+    (out_dir / "engine_reopen_gate.json").write_text(metadata, encoding="utf-8")
+    (out_dir / "engine_reopen_gate.md").write_text(metadata, encoding="utf-8")
+
+    scan = run_proof_baseline.scan_crash_strings(out_dir)
+
+    assert scan["status"] == "clean"
+    assert scan["crash_hit_count"] == 0
+
+
 def test_run_returns_nonzero_when_pytest_fails(tmp_path, monkeypatch):
     repo_root = tmp_path / "repo"
     repo_root.mkdir()

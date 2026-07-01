@@ -56,6 +56,8 @@ PROOF_LABEL_ATTACK = "ATTACK"
 BENIGN_LABELS = {"", "0", "false", "no", "normal", "benign", "none"}
 GENERATED_UNTRACKED_PREFIXES = (
     "artifacts/cicids_webattacks_proof_",
+    "artifacts/post_merge_verification_",
+    "artifacts/sentinel_calibration_guardrails_",
     "artifacts/cicids_webattacks_samples/",
     "artifacts/proof_runs/",
     "tmp/eidos_proof_data/",
