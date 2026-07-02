@@ -18,5 +18,6 @@ artifacts/hotfix_official_10000_colab_gpu/
 artifacts/cicids_webattacks_proof_*/
 artifacts/cicids_webattacks_samples/
 artifacts/proof_runs/
+artifacts/sentinel_guardrail_scale_matrix_*/
 tmp/eidos_proof_data/
 full_pytest_output.txt
