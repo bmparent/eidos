@@ -70,7 +70,16 @@ def normalize_path(path: str, *, prefix: str = "") -> str:
     return normalized.lstrip("./")
 
 
-def changed_paths(base: str, *, cwd: Path, include_worktree: bool) -> List[str]:
+def untracked_paths(*, cwd: Path) -> List[str]:
+    prefix = git_prefix(cwd=cwd)
+    return sorted(
+        normalize_path(line, prefix=prefix)
+        for line in run_git(["ls-files", "--others", "--exclude-standard"], cwd=cwd).splitlines()
+        if line.strip()
+    )
+
+
+def changed_paths(base: str, *, cwd: Path, include_worktree: bool, include_untracked: bool = False) -> List[str]:
     prefix = git_prefix(cwd=cwd)
     paths = set(
         normalize_path(line, prefix=prefix)
@@ -81,10 +90,11 @@ def changed_paths(base: str, *, cwd: Path, include_worktree: bool) -> List[str]:
         for args in (
             ["diff", "--name-only", "--diff-filter=ACMRTUXB"],
             ["diff", "--cached", "--name-only", "--diff-filter=ACMRTUXB"],
-            ["ls-files", "--others", "--exclude-standard"],
         ):
             output = run_git(args, cwd=cwd)
             paths.update(normalize_path(line, prefix=prefix) for line in output.splitlines() if line.strip())
+        if include_untracked:
+            paths.update(untracked_paths(cwd=cwd))
     return sorted(paths)
 
 
@@ -124,8 +134,15 @@ def forbidden_content_reasons(text: str) -> List[str]:
     return reasons
 
 
-def evaluate(base: str, *, cwd: Path, include_worktree: bool = True) -> Dict[str, Any]:
-    paths = changed_paths(base, cwd=cwd, include_worktree=include_worktree)
+def evaluate(
+    base: str,
+    *,
+    cwd: Path,
+    include_worktree: bool = True,
+    include_untracked: bool = False,
+) -> Dict[str, Any]:
+    paths = changed_paths(base, cwd=cwd, include_worktree=include_worktree, include_untracked=include_untracked)
+    observed_untracked = untracked_paths(cwd=cwd) if include_worktree else []
     failures: List[Dict[str, Any]] = []
     allowed: List[str] = []
     for path in paths:
@@ -148,8 +165,11 @@ def evaluate(base: str, *, cwd: Path, include_worktree: bool = True) -> Dict[str
         "generated_at_utc": utc_now(),
         "base": base,
         "include_worktree": include_worktree,
+        "include_untracked": include_untracked,
         "passed": not failures,
         "changed_paths": paths,
+        "untracked_paths": observed_untracked,
+        "untracked_policy": "reported_only" if include_worktree and not include_untracked else "checked",
         "allowed_paths": allowed,
         "failures": failures,
         "policy": {
@@ -166,6 +186,8 @@ def write_report_md(path: Path, report: Dict[str, Any]) -> None:
         f"- Base: `{report.get('base')}`",
         f"- Passed: `{report.get('passed')}`",
         f"- Include worktree: `{report.get('include_worktree')}`",
+        f"- Include untracked: `{report.get('include_untracked')}`",
+        f"- Untracked policy: `{report.get('untracked_policy')}`",
         "",
         "## Failures",
         "",
@@ -179,6 +201,16 @@ def write_report_md(path: Path, report: Dict[str, Any]) -> None:
     lines.extend(["", "## Allowed Paths", ""])
     for path_item in report.get("allowed_paths", []):
         lines.append(f"- `{path_item}`")
+    untracked = report.get("untracked_paths") or []
+    lines.extend(["", "## Untracked Paths", ""])
+    if not untracked:
+        lines.append("- None observed.")
+    else:
+        lines.append(
+            "- Reported for workspace hygiene only unless `include_untracked` is true; not treated as branch policy input by default."
+        )
+        for path_item in untracked:
+            lines.append(f"- `{path_item}`")
     path.parent.mkdir(parents=True, exist_ok=True)
     path.write_text("\n".join(lines).rstrip() + "\n", encoding="utf-8")
 
@@ -190,12 +222,22 @@ def parse_args(argv: Optional[Sequence[str]] = None) -> argparse.Namespace:
     parser.add_argument("--json-out", type=Path, default=None)
     parser.add_argument("--md-out", type=Path, default=None)
     parser.add_argument("--committed-only", action="store_true", help="Ignore unstaged/staged worktree changes.")
+    parser.add_argument(
+        "--include-untracked",
+        action="store_true",
+        help="Treat untracked files as policy input. Defaults to reporting untracked paths only.",
+    )
     return parser.parse_args(argv)
 
 
 def main(argv: Optional[Sequence[str]] = None) -> int:
     args = parse_args(argv)
-    report = evaluate(args.base, cwd=args.repo_root, include_worktree=not args.committed_only)
+    report = evaluate(
+        args.base,
+        cwd=args.repo_root,
+        include_worktree=not args.committed_only,
+        include_untracked=args.include_untracked,
+    )
     payload = json.dumps(report, indent=2, sort_keys=True) + "\n"
     if args.json_out:
         args.json_out.parent.mkdir(parents=True, exist_ok=True)

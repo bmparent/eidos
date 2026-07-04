@@ -80,12 +80,12 @@ MODE_DEFAULTS: Dict[str, ConfirmationThresholds] = {
     ),
     "strict": ConfirmationThresholds(
         mode="strict",
-        min_raw_hits=2,
-        min_duration=3,
-        min_score=4.25,
-        event_merge_gap=6,
-        cooldown_gap=20,
-        boundary_duplicate_gap=8,
+        min_raw_hits=3,
+        min_duration=4,
+        min_score=5.5,
+        event_merge_gap=4,
+        cooldown_gap=40,
+        boundary_duplicate_gap=6,
     ),
 }
 
