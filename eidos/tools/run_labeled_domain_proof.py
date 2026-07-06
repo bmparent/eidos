@@ -56,6 +56,8 @@ PROOF_LABEL_ATTACK = "ATTACK"
 BENIGN_LABELS = {"", "0", "false", "no", "normal", "benign", "none"}
 GENERATED_UNTRACKED_PREFIXES = (
     "artifacts/cicids_webattacks_proof_",
+    "artifacts/post_merge_verification_",
+    "artifacts/sentinel_calibration_guardrails_",
     "artifacts/cicids_webattacks_samples/",
     "artifacts/proof_runs/",
     "tmp/eidos_proof_data/",
@@ -2171,7 +2173,11 @@ def calibration_config_for_profile(
     config: proof_calibration.SentinelCalibrationConfig,
     profile: str,
 ) -> proof_calibration.SentinelCalibrationConfig:
-    return replace(config, confirmation_mode_baseline=profile)
+    return replace(
+        config,
+        calibration_enabled=profile != "off",
+        confirmation_mode_baseline=profile,
+    )
 
 
 def build_confirmation_profile_sweep(
@@ -2228,6 +2234,7 @@ def build_confirmation_profile_sweep(
                 "recall": confirmed_metrics.get("recall"),
                 "f1": confirmed_metrics.get("f1"),
                 "fp_per_10k": confirmed_metrics.get("false_positives_per_10k_frames"),
+                "false_positive_count": confirmed_metrics.get("false_positives"),
                 "coverage": before_summary.get("attack_window_coverage_pct"),
                 "first_detection_latency": before_summary.get("first_detection_latency_frames"),
                 "confirmed_count": confirmed_metrics.get("event_count"),
@@ -2236,6 +2243,7 @@ def build_confirmation_profile_sweep(
                 "calibrated_recall": calibrated_metrics.get("recall"),
                 "calibrated_f1": calibrated_metrics.get("f1"),
                 "calibrated_fp_per_10k": calibrated_metrics.get("false_positives_per_10k_frames"),
+                "calibrated_false_positive_count": calibrated_metrics.get("false_positives"),
                 "calibrated_coverage": after_summary.get("attack_window_coverage_pct"),
                 "calibrated_first_detection_latency": after_summary.get("first_detection_latency_frames"),
                 "calibrated_confirmed_count": calibrated_metrics.get("event_count"),
@@ -2254,6 +2262,7 @@ def write_confirmation_profile_sweep_csv(path: Path, rows: Sequence[Dict[str, An
         "recall",
         "f1",
         "fp_per_10k",
+        "false_positive_count",
         "coverage",
         "first_detection_latency",
         "confirmed_count",
@@ -2262,6 +2271,7 @@ def write_confirmation_profile_sweep_csv(path: Path, rows: Sequence[Dict[str, An
         "calibrated_recall",
         "calibrated_f1",
         "calibrated_fp_per_10k",
+        "calibrated_false_positive_count",
         "calibrated_coverage",
         "calibrated_first_detection_latency",
         "calibrated_confirmed_count",

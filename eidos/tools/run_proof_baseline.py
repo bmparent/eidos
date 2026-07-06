@@ -53,7 +53,13 @@ CRASH_SCAN_PATTERNS = (
     "Inf",
 )
 CRASH_SCAN_SUFFIXES = {".log", ".txt", ".jsonl", ".md", ".json"}
-CRASH_SCAN_IGNORED_FILES = {"proof_digest.json", "proof_digest.md", "crash_scan.json"}
+CRASH_SCAN_IGNORED_FILES = {
+    "proof_digest.json",
+    "proof_digest.md",
+    "crash_scan.json",
+    "engine_reopen_gate.json",
+    "engine_reopen_gate.md",
+}
 CRASH_SCAN_WARNING_REGEXES = {
     "NaN": (re.compile(r"HIPP bank=[^|\n]*\bsim=NaN\b"),),
 }
