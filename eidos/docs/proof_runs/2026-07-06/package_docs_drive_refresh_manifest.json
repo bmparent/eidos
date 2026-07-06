@@ -1,0 +1,49 @@
+{
+  "drive_copy_attempted": true,
+  "drive_copy_success": true,
+  "drive_root": "G:\\My Drive",
+  "drive_run_dir": "G:\\My Drive\\Eidos_Brain_Proof_Phase\\2026-07-06\\month1_final_proof_package\\docs\\proof_runs\\2026-07-06",
+  "files_copied": [
+    {
+      "copied": true,
+      "drive_path": "G:\\My Drive\\Eidos_Brain_Proof_Phase\\2026-07-06\\month1_final_proof_package\\docs\\proof_runs\\2026-07-06\\month1_final_proof_package.md",
+      "drive_sha256": "032ad604e84fb9704f0ce1533c1059320d48e3f2cf0cebf91e07c2d248a31498",
+      "path": "docs/proof_runs/2026-07-06/month1_final_proof_package.md",
+      "sha256": "032ad604e84fb9704f0ce1533c1059320d48e3f2cf0cebf91e07c2d248a31498",
+      "size_bytes": 7725
+    },
+    {
+      "copied": true,
+      "drive_path": "G:\\My Drive\\Eidos_Brain_Proof_Phase\\2026-07-06\\month1_final_proof_package\\docs\\proof_runs\\2026-07-06\\plain_language_test_analysis.md",
+      "drive_sha256": "a0b24b92942dee4c4a6d28417b3c9c68bfd5d4d4d65da54f4d8df744eabfb308",
+      "path": "docs/proof_runs/2026-07-06/plain_language_test_analysis.md",
+      "sha256": "a0b24b92942dee4c4a6d28417b3c9c68bfd5d4d4d65da54f4d8df744eabfb308",
+      "size_bytes": 3103
+    },
+    {
+      "copied": true,
+      "drive_path": "G:\\My Drive\\Eidos_Brain_Proof_Phase\\2026-07-06\\month1_final_proof_package\\docs\\proof_runs\\2026-07-06\\codex_journal.md",
+      "drive_sha256": "2cf1dc8992d74fd321c84a79cfbf58ffb8dd0a3274e0b133d7a22ec1f8888fa9",
+      "path": "docs/proof_runs/2026-07-06/codex_journal.md",
+      "sha256": "2cf1dc8992d74fd321c84a79cfbf58ffb8dd0a3274e0b133d7a22ec1f8888fa9",
+      "size_bytes": 5229
+    },
+    {
+      "copied": true,
+      "drive_path": "G:\\My Drive\\Eidos_Brain_Proof_Phase\\2026-07-06\\month1_final_proof_package\\docs\\proof_runs\\2026-07-06\\workspace_hygiene_inventory.md",
+      "drive_sha256": "ecf7e3b0ee6a1516bee8dbc566a3ac186541e7a950a511175a5e3659d80569ae",
+      "path": "docs/proof_runs/2026-07-06/workspace_hygiene_inventory.md",
+      "sha256": "ecf7e3b0ee6a1516bee8dbc566a3ac186541e7a950a511175a5e3659d80569ae",
+      "size_bytes": 3254
+    },
+    {
+      "copied": true,
+      "drive_path": "G:\\My Drive\\Eidos_Brain_Proof_Phase\\2026-07-06\\month1_final_proof_package\\docs\\proof_runs\\2026-07-06\\workspace_hygiene_drive_manifest.json",
+      "drive_sha256": "77c90f3c73115900af34a81cf13edd75c977987022a6f7376079a903af9a9ac4",
+      "path": "docs/proof_runs/2026-07-06/workspace_hygiene_drive_manifest.json",
+      "sha256": "77c90f3c73115900af34a81cf13edd75c977987022a6f7376079a903af9a9ac4",
+      "size_bytes": 441
+    }
+  ],
+  "reason": "post-package tracked doc refresh after adding workspace hygiene references"
+}

@@ -160,6 +160,24 @@ def git_receipt() -> Dict[str, Any]:
     }
 
 
+def cuda_receipt() -> Dict[str, Any]:
+    try:
+        import torch  # type: ignore
+    except Exception as exc:  # pragma: no cover - depends on local optional dependency state.
+        return {
+            "cuda_available": False,
+            "torch_available": False,
+            "reason": f"torch import failed: {exc}",
+        }
+    return {
+        "cuda_available": bool(torch.cuda.is_available()),
+        "torch_available": True,
+        "torch_version": getattr(torch, "__version__", "unknown"),
+        "device_count": int(torch.cuda.device_count()) if torch.cuda.is_available() else 0,
+        "reason": "torch reports CUDA available" if torch.cuda.is_available() else "torch reports CPU-only runtime on this machine",
+    }
+
+
 def discover_drive_root() -> Optional[Path]:
     for key in ("EIDOS_PROOF_DRIVE_DIR", "EIDOS_ARTIFACT_ROOT"):
         configured = os.environ.get(key)
@@ -409,6 +427,45 @@ def render_run_summary(runs: Dict[str, Any]) -> str:
                 drive="copied" if run.get("drive_copy_success") else "not copied",
             )
         )
+    return "\n".join(rows)
+
+
+def render_gate_table_html(gates: Sequence[Gate]) -> str:
+    rows = [
+        "<table>",
+        "<thead><tr><th>Gate</th><th>Weight</th><th>Status</th><th>Evidence</th><th>Notes</th></tr></thead>",
+        "<tbody>",
+    ]
+    for gate in gates:
+        evidence = "<br>".join(gate.evidence)
+        rows.append(
+            f"<tr><td>{gate.name}</td><td>{fmt(gate.weight)}</td><td>{gate.status}</td><td>{evidence}</td><td>{gate.notes}</td></tr>"
+        )
+    rows.extend(["</tbody>", "</table>"])
+    return "\n".join(rows)
+
+
+def render_run_summary_html(runs: Dict[str, Any]) -> str:
+    rows = [
+        "<table>",
+        "<thead><tr><th>Run</th><th>Frames</th><th>Raw FP/10k</th><th>Raw Recall</th><th>Strict Cal FP/10k</th><th>Strict Cal Recall</th><th>Crash</th><th>Drive</th></tr></thead>",
+        "<tbody>",
+    ]
+    for name, run in runs.items():
+        strict = run.get("strict_profile") or {}
+        rows.append(
+            "<tr><td>{name}</td><td>{frames}</td><td>{fp}</td><td>{recall}</td><td>{cal_fp}</td><td>{cal_recall}</td><td>{crash}</td><td>{drive}</td></tr>".format(
+                name=name,
+                frames=fmt(run.get("frames_processed")),
+                fp=fmt(run.get("fp_per_10k")),
+                recall=fmt(run.get("recall")),
+                cal_fp=fmt(strict.get("calibrated_fp_per_10k")),
+                cal_recall=fmt(strict.get("calibrated_recall")),
+                crash=fmt(run.get("crash_hit_count")),
+                drive="copied" if run.get("drive_copy_success") else "not copied",
+            )
+        )
+    rows.extend(["</tbody>", "</table>"])
     return "\n".join(rows)
 
 
@@ -740,11 +797,11 @@ th {{ background: #edf2f7; }}
 </section>
 <section>
 <h2>Gates</h2>
-{render_gate_table([Gate(**item) for item in progress['gates']])}
+{render_gate_table_html([Gate(**item) for item in progress['gates']])}
 </section>
 <section>
 <h2>July 6 Runs</h2>
-{render_run_summary(package['new_runs'])}
+{render_run_summary_html(package['new_runs'])}
 </section>
 <section>
 <h2>Remaining Gaps</h2>
@@ -786,7 +843,7 @@ def generate(args: argparse.Namespace) -> Dict[str, Any]:
         "north_star": NORTH_STAR,
         "git": git_receipt(),
         "ci_receipt": "no_ci_receipt",
-        "cuda_receipt": {"cuda_available": False, "reason": "torch reports CPU-only runtime on this machine"},
+        "cuda_receipt": cuda_receipt(),
         "core_behavior_changed": False,
         "progress_score": score,
         "gates": [gate.__dict__ for gate in gates],
