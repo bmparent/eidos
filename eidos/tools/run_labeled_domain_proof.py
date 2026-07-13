@@ -39,6 +39,7 @@ from proof import sentinel_calibration_v1 as proof_calibration
 from sentinel import EvidenceFrame, process_stream
 from tools import run_proof_baseline as proof_helpers
 from tools.domain_tuner import load_engine_module
+from operator_explanation import enrich_incident_card
 
 DEFAULT_DATASET = "cicids_webattacks"
 DEFAULT_FEATURES = 64
@@ -1535,11 +1536,11 @@ def write_incident_cards(
     written: List[str] = []
     for idx, card in enumerate(confirmation_cards, start=1):
         path = incident_dir / f"confirmed_event_{idx:03d}.json"
-        write_json(path, card)
+        write_json(path, enrich_incident_card(card))
         written.append(relpath(path, out_dir))
     for idx, card in enumerate(engine_cards or [], start=1):
         path = incident_dir / f"engine_card_{idx:03d}.json"
-        write_json(path, card)
+        write_json(path, enrich_incident_card(card))
         written.append(relpath(path, out_dir))
     if not written:
         (incident_dir / "README.md").write_text(
