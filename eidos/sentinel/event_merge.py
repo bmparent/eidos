@@ -5,6 +5,8 @@ from __future__ import annotations
 from dataclasses import dataclass, field
 from typing import Any, Dict, List
 
+from operator_explanation import enrich_incident_card
+
 
 @dataclass
 class ConfirmedEvent:
@@ -81,11 +83,14 @@ def merge_confirmed_events(events: List[ConfirmedEvent], merge_window: int) -> t
 def event_to_incident_card(event: ConfirmedEvent, *, incident_id: str | None = None) -> Dict[str, Any]:
     """Return the incident-card-compatible record for a confirmed event."""
     card_id = incident_id or f"incident_{event.event_id}"
-    return {
+    return enrich_incident_card({
         "incident_id": card_id,
         "event_id": event.event_id,
         "start_frame": event.start_frame,
         "end_frame": event.end_frame,
+        "duration": event.duration,
+        "peak_score": event.peak_score,
+        "event_count": event.event_count,
         "severity": event.severity,
         "confidence": event.confidence,
         "why_flagged": list(event.why_flagged),
@@ -93,4 +98,4 @@ def event_to_incident_card(event: ConfirmedEvent, *, incident_id: str | None = N
         "similar_past_events": list(event.similar_past_events),
         "raw_evidence_refs": list(event.raw_evidence_refs),
         "event_type": event.event_type,
-    }
+    })

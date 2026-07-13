@@ -7,6 +7,7 @@ import json
 import numpy as np
 
 from eidos_tensor_utils import to_cpu_numpy_1d
+from operator_explanation import enrich_incident_card
 
 @dataclass
 class EpisodeRecord:

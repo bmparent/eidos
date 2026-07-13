@@ -34,6 +34,8 @@ def test_confirmed_event_emits_one_incident_card_compatible_record():
         "top_drivers",
         "similar_past_events",
         "raw_evidence_refs",
+        "operator_explanation",
+        "operator_narrative",
     ):
         assert key in card
     assert card["severity"] in {"AMBER", "RED"}
