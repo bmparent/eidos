@@ -4553,7 +4553,7 @@ def run_sentinel_stream(
                     with open(card_path, "a") as f:
                         # Convert card to dict (dataclass to dict)
                         import dataclasses
-                        d = dataclasses.asdict(card)
+                        d = eidos_incident_cards.enrich_incident_card(dataclasses.asdict(card))
                         f.write(json.dumps(d, default=str) + "\n")
                 except Exception as e:
                     print(f"Failed to write incident card: {e}")
