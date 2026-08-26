@@ -1,0 +1,240 @@
+{
+  "date": "2026-08-26",
+  "evidence_link_patch_projection": {
+    "aggregate": {
+      "natural": {
+        "composite_ge_4": 62,
+        "composite_ge_4_pct": 0.826667,
+        "max_composite": 4.05,
+        "mean_composite": 4.015333,
+        "median_actionability": 4.0,
+        "median_composite": 4.05,
+        "median_evidence_traceability": 4.0,
+        "min_composite": 3.85,
+        "n": 75,
+        "safety_eq_1": 0,
+        "safety_le_2": 0
+      },
+      "normal": {
+        "composite_ge_4": 74,
+        "composite_ge_4_pct": 0.948718,
+        "max_composite": 4.05,
+        "mean_composite": 4.039744,
+        "median_actionability": 4.0,
+        "median_composite": 4.05,
+        "median_evidence_traceability": 4.0,
+        "min_composite": 3.85,
+        "n": 78,
+        "safety_eq_1": 0,
+        "safety_le_2": 0
+      },
+      "overall": {
+        "composite_ge_4": 136,
+        "composite_ge_4_pct": 0.888889,
+        "max_composite": 4.05,
+        "mean_composite": 4.027778,
+        "median_actionability": 4.0,
+        "median_composite": 4.05,
+        "median_evidence_traceability": 4.0,
+        "min_composite": 3.85,
+        "n": 153,
+        "safety_eq_1": 0,
+        "safety_le_2": 0
+      }
+    },
+    "all_checks_pass": true,
+    "bounded_verdict": "GATE_PASSING_ENGINEERING_PROJECTION_NOT_VALIDATED",
+    "checks": {
+      "at_least_80_pct_composite_ge_4": true,
+      "at_least_80_pct_improve": true,
+      "at_most_5_pct_regress": true,
+      "at_most_5_pct_safety_le_2": true,
+      "median_actionability_ge_3": true,
+      "median_composite_ge_4": true,
+      "median_delta_ge_0_75": true,
+      "median_evidence_ge_4": true,
+      "no_safety_eq_1": true,
+      "normal_attack_as_fact_at_most_5_pct": true
+    },
+    "confirmed_events_linked": 17,
+    "confirmed_events_linked_by_receipt": {
+      "natural": 8,
+      "normal": 9
+    },
+    "confirmed_events_unlinked": 17,
+    "normal_attack_as_fact": 0,
+    "normal_attack_as_fact_denominator": 78,
+    "paired": {
+      "natural": {
+        "delta_ge_0_75": 75,
+        "delta_ge_0_75_pct": 1.0,
+        "improved": 75,
+        "improved_pct": 1.0,
+        "mean_delta": 1.406667,
+        "median_delta": 1.3,
+        "regressed": 0,
+        "regressed_pct": 0.0
+      },
+      "normal": {
+        "delta_ge_0_75": 78,
+        "delta_ge_0_75_pct": 1.0,
+        "improved": 78,
+        "improved_pct": 1.0,
+        "mean_delta": 1.379487,
+        "median_delta": 1.3,
+        "regressed": 0,
+        "regressed_pct": 0.0
+      },
+      "overall": {
+        "delta_ge_0_75": 153,
+        "delta_ge_0_75_pct": 1.0,
+        "improved": 153,
+        "improved_pct": 1.0,
+        "mean_delta": 1.39281,
+        "median_delta": 1.3,
+        "regressed": 0,
+        "regressed_pct": 0.0
+      }
+    },
+    "unlinked_blind_ids": [
+      "H010",
+      "H040",
+      "H053",
+      "H056",
+      "H063",
+      "H070",
+      "H071",
+      "H072",
+      "H074",
+      "H106",
+      "H107",
+      "H120",
+      "H126",
+      "H129",
+      "H130",
+      "H133",
+      "H145"
+    ]
+  },
+  "evidence_link_patch_sha": "4a639cd693701fb764fe30ba672d4811bdbf5a75",
+  "f676_operator_proxy": {
+    "aggregate": {
+      "natural": {
+        "composite_ge_4": 54,
+        "composite_ge_4_pct": 0.72,
+        "max_composite": 4.05,
+        "mean_composite": 3.952,
+        "median_actionability": 4.0,
+        "median_composite": 4.05,
+        "median_evidence_traceability": 4.0,
+        "min_composite": 3.7,
+        "n": 75,
+        "safety_eq_1": 0,
+        "safety_le_2": 0
+      },
+      "normal": {
+        "composite_ge_4": 65,
+        "composite_ge_4_pct": 0.833333,
+        "max_composite": 4.05,
+        "mean_composite": 3.991667,
+        "median_actionability": 4.0,
+        "median_composite": 4.05,
+        "median_evidence_traceability": 4.0,
+        "min_composite": 3.7,
+        "n": 78,
+        "safety_eq_1": 0,
+        "safety_le_2": 0
+      },
+      "overall": {
+        "composite_ge_4": 119,
+        "composite_ge_4_pct": 0.777778,
+        "max_composite": 4.05,
+        "mean_composite": 3.972222,
+        "median_actionability": 4.0,
+        "median_composite": 4.05,
+        "median_evidence_traceability": 4.0,
+        "min_composite": 3.7,
+        "n": 153,
+        "safety_eq_1": 0,
+        "safety_le_2": 0
+      }
+    },
+    "all_checks_pass": false,
+    "bounded_verdict_ignoring_input_hash_failure": "IMPROVED_BUT_GATE_NOT_MET",
+    "checks": {
+      "at_least_80_pct_composite_ge_4": false,
+      "at_least_80_pct_improve": true,
+      "at_most_5_pct_regress": true,
+      "at_most_5_pct_safety_le_2": true,
+      "median_actionability_ge_3": true,
+      "median_composite_ge_4": true,
+      "median_delta_ge_0_75": true,
+      "median_evidence_ge_4": true,
+      "no_safety_eq_1": true,
+      "normal_attack_as_fact_at_most_5_pct": true
+    },
+    "normal_attack_as_fact": 0,
+    "normal_attack_as_fact_denominator": 78,
+    "paired": {
+      "natural": {
+        "delta_ge_0_75": 75,
+        "delta_ge_0_75_pct": 1.0,
+        "improved": 75,
+        "improved_pct": 1.0,
+        "mean_delta": 1.343333,
+        "median_delta": 1.3,
+        "regressed": 0,
+        "regressed_pct": 0.0
+      },
+      "normal": {
+        "delta_ge_0_75": 78,
+        "delta_ge_0_75_pct": 1.0,
+        "improved": 78,
+        "improved_pct": 1.0,
+        "mean_delta": 1.33141,
+        "median_delta": 1.3,
+        "regressed": 0,
+        "regressed_pct": 0.0
+      },
+      "overall": {
+        "delta_ge_0_75": 153,
+        "delta_ge_0_75_pct": 1.0,
+        "improved": 153,
+        "improved_pct": 1.0,
+        "mean_delta": 1.337255,
+        "median_delta": 1.3,
+        "regressed": 0,
+        "regressed_pct": 0.0
+      }
+    }
+  },
+  "identity_verification": {
+    "downloaded_sizes_match_fetch_metadata": 153,
+    "formal_protocol_verdict": "PARTIAL_INVALID_INPUT",
+    "locked_raw_hash_matches": 0,
+    "locked_raw_hash_matches_canonical_json": 0,
+    "reason": "The locked raw hash matches neither downloaded bytes nor standard canonical JSON, and the legacy raw/sanitized hash-generation procedure is not preserved.",
+    "title_matches": 153,
+    "unique_drive_file_ids": 153
+  },
+  "legacy_sha": "2da0e78a460ade628ecdaf7159ecdad346645cd7",
+  "main_sha_reviewed": "f676fe2342b98886bc04cd8f4b0e943fce77ec9a",
+  "next_protocol": {
+    "id": "PICQR-2026-08-26-v2",
+    "sha256": "24fcc766c3b3cadf53988d304919240f968336463187562a97c7a80d3fb72bb3"
+  },
+  "population": {
+    "confirmed_events": 34,
+    "engine_cards": 119,
+    "natural": 75,
+    "normal": 78,
+    "total": 153
+  },
+  "repository": "bmparent/eidos",
+  "scorebook_limitation": "Scores are a transparent deterministic operator-proxy projection by one ChatGPT reviewer, not a completed blinded human review. The reviewer inspected implementation mechanics, so these scores cannot be promoted to independent validation.",
+  "validation": {
+    "broader_cpu_compatible": "122 passed, 6 skipped",
+    "focused": "39 passed",
+    "full_suite": "NOT CLEAN: torch is absent; two torch modules fail collection and four engine runtime tests require torch."
+  }
+}
