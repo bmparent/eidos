@@ -94,6 +94,23 @@ def test_engine_card_separates_confidence_channels_and_explains_projected_featur
     assert "ISOLATE_HOST" not in explanation["next_action"]["summary"]
 
 
+def test_missing_drivers_are_not_presented_as_available_and_cicids_gets_security_steps():
+    card = enrich_incident_card(
+        {
+            "domain": "cicids_webattacks",
+            "severity": "RED",
+            "start_frame": 10,
+            "end_frame": 12,
+            "raw_evidence_refs": ["steps.csv:10"],
+        }
+    )
+
+    action = card["operator_explanation"]["next_action"]
+    assert "no ranked feature contributors" in action["steps"][0]
+    assert "authentication, network, endpoint, and change logs" in action["steps"][1]
+    assert "an anomaly evidence window" in card["operator_explanation"]["what_happened"]["summary"]
+
+
 def test_optional_renderer_is_constrained_and_falls_back_on_unsafe_claim():
     card = enrich_incident_card({"severity": "AMBER", "step": 9, "confidence": 0.8})
     explanation = card["operator_explanation"]

@@ -134,10 +134,12 @@ def _window(card: Mapping[str, Any]) -> Optional[Dict[str, int]]:
 def _what_happened(card: Mapping[str, Any]) -> Dict[str, Any]:
     severity = str(card.get("severity") or card.get("regime") or "UNKNOWN").upper()
     event_type = str(card.get("event_type") or "anomaly")
+    event_label = event_type.replace("_", " ")
+    article = "an" if event_label[:1].lower() in "aeiou" else "a"
     window = _window(card)
     if window and "start_frame" in window:
         summary = (
-            f"Eidos confirmed a {event_type.replace('_', ' ')} evidence window from frame "
+            f"Eidos confirmed {article} {event_label} evidence window from frame "
             f"{window['start_frame']} through {window['end_frame']} "
             f"({window['duration_frames']} frames), triaged as {severity}."
         )
@@ -264,14 +266,27 @@ def _next_action(card: Mapping[str, Any]) -> Dict[str, Any]:
         else f"step {window['step']}" if window and "step" in window else "the recorded event window"
     )
     references = _reference_items(card)
-    if references["total_count"]:
+    drivers = _driver_items(card)
+    if drivers and references["total_count"]:
         steps = [f"Inspect the ranked drivers and raw references for {location}."]
-    else:
+    elif drivers:
         steps = [
             f"Inspect the ranked drivers for {location} and retrieve the underlying telemetry; "
             "this card preserves no raw evidence reference."
         ]
-    if domain in {"cyber", "web"}:
+    elif references["total_count"]:
+        steps = [
+            f"Inspect the raw references for {location}; this card preserves no ranked feature contributors."
+        ]
+    else:
+        steps = [
+            f"Retrieve the underlying telemetry for {location}; this card preserves neither ranked "
+            "feature contributors nor raw evidence references."
+        ]
+    is_security_domain = domain in {"cyber", "web"} or any(
+        token in domain for token in ("cicids", "network", "intrusion")
+    )
+    if is_security_domain:
         steps.append("Correlate the window with authentication, network, endpoint, and change logs for the named assets or identities.")
     else:
         steps.append("Correlate the window with source-system logs, recent changes, and the responsible asset or process owner.")

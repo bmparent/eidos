@@ -76,6 +76,90 @@ def write_fixture(path: Path) -> None:
         writer.writerows(rows)
 
 
+def test_engine_card_event_reads_legacy_evidence_shape():
+    event = run_labeled_domain_proof.engine_card_to_event(
+        {
+            "incident_id": "inc_42",
+            "step": 42,
+            "severity": "AMBER",
+            "evidence": {
+                "drivers": [{"name": "projected_3", "value": 7.5}],
+                "exemplars": ["steps.csv:42"],
+            },
+        }
+    )
+
+    assert event["top_drivers"] == [{"name": "projected_3", "value": 7.5}]
+    assert event["raw_evidence_refs"] == ["steps.csv:42"]
+
+
+def test_confirmed_window_links_only_overlapping_engine_evidence():
+    confirmed = [{
+        "event_id": "evt_10_12",
+        "start_frame": 10,
+        "end_frame": 12,
+        "severity": "RED",
+        "top_drivers": [],
+        "raw_evidence_refs": ["step_row:10"],
+    }]
+    engine_cards = [
+        {
+            "incident_id": "inside",
+            "step": 11,
+            "evidence": {
+                "drivers": [{"name": "projected_3", "value": 7.5}],
+                "exemplars": ["steps.csv:11"],
+            },
+        },
+        {
+            "incident_id": "outside",
+            "step": 13,
+            "evidence": {
+                "drivers": [{"name": "do_not_link", "value": 99.0}],
+                "exemplars": ["steps.csv:13"],
+            },
+        },
+    ]
+
+    linked = run_labeled_domain_proof.link_confirmation_cards_to_engine_evidence(confirmed, engine_cards)
+
+    assert linked[0]["top_drivers"] == [{"name": "projected_3", "value": 7.5}]
+    assert linked[0]["raw_evidence_refs"] == ["step_row:10", "steps.csv:11"]
+    assert linked[0]["evidence_linkage"]["source_engine_card_ids"] == ["inside"]
+    assert linked[0]["evidence_linkage"]["source_steps"] == [11]
+    assert confirmed[0]["top_drivers"] == []
+
+
+def test_write_incident_cards_applies_evidence_linkage_before_explanation(tmp_path):
+    confirmed = [{
+        "event_id": "evt_10_12",
+        "start_frame": 10,
+        "end_frame": 12,
+        "severity": "RED",
+        "confidence": 0.86,
+        "why_flagged": ["candidate persisted"],
+        "top_drivers": [],
+        "raw_evidence_refs": ["step_row:10"],
+    }]
+    engine_cards = [{
+        "incident_id": "inside",
+        "step": 11,
+        "severity": "RED",
+        "evidence": {
+            "drivers": [{"name": "projected_3", "value": 7.5}],
+            "exemplars": ["steps.csv:11"],
+        },
+    }]
+
+    written = run_labeled_domain_proof.write_incident_cards(tmp_path, confirmed, engine_cards)
+    card = json.loads((tmp_path / "incident_cards" / "confirmed_event_001.json").read_text())
+
+    assert written[0] == "incident_cards/confirmed_event_001.json"
+    assert card["top_drivers"] == [{"name": "projected_3", "value": 7.5}]
+    assert card["evidence_linkage"]["source_engine_card_ids"] == ["inside"]
+    assert "projected traffic component 3" in card["operator_explanation"]["evidence"]["summary"]
+
+
 def test_load_labeled_dataset_maps_cicids_labels_and_features(tmp_path):
     fixture = tmp_path / "cicids_fixture.csv"
     write_fixture(fixture)
