@@ -1,0 +1,86 @@
+{
+  "code_commit": "fbef28ed49357a35fd8fb1c9476d8426162e4e5b",
+  "minimum_projected_synthetic_frames": 1536000,
+  "profiles": [
+    {
+      "eligible": false,
+      "frames_per_second": 38.42602952598159,
+      "input_frames": 2000,
+      "measured_peak_rss_bytes": 379121664,
+      "memory_limit_70pct_bytes": 5822322688,
+      "memory_samples": 1819,
+      "observed_scored_frames": 1800,
+      "projected_full_suite_seconds": 39972.90427733213,
+      "reservoir": 128,
+      "rss_after_bytes": 379121664,
+      "rss_before_bytes": 295006208,
+      "runtime_seconds": 46.843247199998586,
+      "selection_inputs_only": [
+        "runtime",
+        "memory"
+      ]
+    },
+    {
+      "eligible": false,
+      "frames_per_second": 32.57026197598851,
+      "input_frames": 2000,
+      "measured_peak_rss_bytes": 420675584,
+      "memory_limit_70pct_bytes": 5822322688,
+      "memory_samples": 1883,
+      "observed_scored_frames": 1800,
+      "projected_full_suite_seconds": 47159.583829334006,
+      "reservoir": 256,
+      "rss_after_bytes": 420671488,
+      "rss_before_bytes": 379121664,
+      "runtime_seconds": 55.26513730000079,
+      "selection_inputs_only": [
+        "runtime",
+        "memory"
+      ]
+    },
+    {
+      "eligible": false,
+      "frames_per_second": 32.454891217156636,
+      "input_frames": 2000,
+      "measured_peak_rss_bytes": 449929216,
+      "memory_limit_70pct_bytes": 5822322688,
+      "memory_samples": 1905,
+      "observed_scored_frames": 1800,
+      "projected_full_suite_seconds": 47327.22687999718,
+      "reservoir": 512,
+      "rss_after_bytes": 427237376,
+      "rss_before_bytes": 420671488,
+      "runtime_seconds": 55.461593999996694,
+      "selection_inputs_only": [
+        "runtime",
+        "memory"
+      ]
+    },
+    {
+      "eligible": false,
+      "frames_per_second": 16.003574458813244,
+      "input_frames": 2000,
+      "measured_peak_rss_bytes": 511639552,
+      "memory_limit_70pct_bytes": 5822322688,
+      "memory_samples": 3762,
+      "observed_scored_frames": 1800,
+      "projected_full_suite_seconds": 95978.55803733382,
+      "reservoir": 1024,
+      "rss_after_bytes": 423383040,
+      "rss_before_bytes": 427237376,
+      "runtime_seconds": 112.47487270000056,
+      "selection_inputs_only": [
+        "runtime",
+        "memory"
+      ]
+    }
+  ],
+  "projection_scope": "smoke+calibration+heldout synthetic suite only; real domains and transfer stress would add work",
+  "quality_metrics_used_for_selection": false,
+  "receipt_version": "EIDOS-GP-v1-RESOURCE-v1",
+  "selected_reservoir": null,
+  "selection_status": "BLOCKED_RESOURCE",
+  "time_budget_seconds": 21600.0,
+  "timestamp_utc": "2026-09-01T23:52:33Z"
+}
+

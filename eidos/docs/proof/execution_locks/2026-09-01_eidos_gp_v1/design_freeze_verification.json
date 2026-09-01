@@ -1,0 +1,31 @@
+{
+  "all_verified": true,
+  "files": [
+    {
+      "actual_bytes": 20838,
+      "actual_sha256": "3020b108ee947d00571a6bea6dc9d4839824b9cd2c8e2a583d82391b4172d101",
+      "expected_bytes": 20838,
+      "expected_sha256": "3020b108ee947d00571a6bea6dc9d4839824b9cd2c8e2a583d82391b4172d101",
+      "path": "eidos/docs/proof/design_freeze/meaningful_surprise_v1_spec.md",
+      "verified": true
+    },
+    {
+      "actual_bytes": 25447,
+      "actual_sha256": "a5d94d4a8e4910ea29fbe47dd8372b0990f78685841f390dfb5128bdb728f355",
+      "expected_bytes": 25447,
+      "expected_sha256": "a5d94d4a8e4910ea29fbe47dd8372b0990f78685841f390dfb5128bdb728f355",
+      "path": "eidos/docs/proof/design_freeze/grand_proof_protocol_v1.md",
+      "verified": true
+    },
+    {
+      "actual_bytes": 14881,
+      "actual_sha256": "2dfd1869f60cef8f93d4fd62a010f65d93369d2e68c66394ccf681030762e9bb",
+      "expected_bytes": 14881,
+      "expected_sha256": "2dfd1869f60cef8f93d4fd62a010f65d93369d2e68c66394ccf681030762e9bb",
+      "path": "eidos/docs/proof/design_freeze/local_codex_execution_brief_v1.md",
+      "verified": true
+    }
+  ],
+  "manifest_version": "EIDOS-DESIGN-FREEZE-v1"
+}
+

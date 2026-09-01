@@ -1,0 +1,518 @@
+{
+  "ablations": [
+    "A0_full",
+    "A1_no_hdc",
+    "A2_no_geometry",
+    "A3_no_multiscale",
+    "A4_no_thermo",
+    "A5_no_scout",
+    "A6_no_raw_escape",
+    "A7_no_voi"
+  ],
+  "alert_budget": {
+    "primary_fp_per_10k_nominal_frames": 5.0,
+    "selection_split": "calibration_only"
+  },
+  "artifact_root": "C:/Users/bmpar/OneDrive/Documents/eidos-brain-ms-gp-v1/eidos/artifacts/grand_proof_v1_20260901T233145Z",
+  "branch": "codex/eidos-meaningful-surprise-grand-proof-v1",
+  "byte_accounting": {
+    "included_components": [
+      "payload",
+      "index",
+      "cards",
+      "model_state",
+      "manifest"
+    ],
+    "payload_bytes_per_feature": {
+      "quantized_residual": 2,
+      "raw_frame_plus_full_context": 8,
+      "reference_or_null": 1,
+      "structured_residual": 4
+    },
+    "raw_dtype_bytes": 8
+  },
+  "byte_operating_points": [
+    0.1,
+    0.25,
+    0.5,
+    1.0
+  ],
+  "calibration_seeds": [
+    10,
+    11,
+    12,
+    13,
+    14,
+    15,
+    16,
+    17,
+    18,
+    19
+  ],
+  "code_commit": "fbef28ed49357a35fd8fb1c9476d8426162e4e5b",
+  "commands": {
+    "calibration": "python eidos/tools/run_grand_proof_v1.py run --stage calibration --seeds 10-19 --reservoir 128 --out C:/Users/bmpar/OneDrive/Documents/eidos-brain-ms-gp-v1/eidos/artifacts/grand_proof_v1_20260901T233145Z",
+    "heldout": "python eidos/tools/run_grand_proof_v1.py run --stage heldout --seeds 100-119 --reservoir 128 --out C:/Users/bmpar/OneDrive/Documents/eidos-brain-ms-gp-v1/eidos/artifacts/grand_proof_v1_20260901T233145Z",
+    "smoke": "python eidos/tools/run_grand_proof_v1.py run --stage smoke --seeds 0,1 --reservoir 128 --out C:/Users/bmpar/OneDrive/Documents/eidos-brain-ms-gp-v1/eidos/artifacts/grand_proof_v1_20260901T233145Z",
+    "tests": "python -m pytest -c eidos/pytest.ini eidos/tests eidos/repo/tests --junitxml=C:/Users/bmpar/OneDrive/Documents/eidos-brain-ms-gp-v1/eidos/artifacts/grand_proof_v1_20260901T233145Z/provenance/pytest_results.xml"
+  },
+  "created_at_utc": "2026-09-01T23:53:16Z",
+  "datasets": {
+    "cicids_webattacks": {
+      "drive_discovery": {
+        "exact_drive_search_results": 0,
+        "expected_sha256": "d67066211fb1689c78406f1506f4c44704ecb92088353d5c96d96d6474eb819d",
+        "query": "Thursday-WorkingHours-Morning-WebAttacks.pcap_ISCX.csv",
+        "status": "BLOCKED_DATA_MISSING"
+      },
+      "expected_sha256": "d67066211fb1689c78406f1506f4c44704ecb92088353d5c96d96d6474eb819d",
+      "path": null,
+      "status": "BLOCKED_DATA_MISSING"
+    },
+    "real_noncyber": {
+      "drive_discovery": {
+        "can_download": true,
+        "drive_file_id": "1E0-tCa_XOfb5glCYZq6lH9v8EmmgAQBf",
+        "drive_parent_folder_id": "1Exh1N2CYlfkWFzef17WP04QRyUMPSURt",
+        "license_or_readme_in_dataset_folder": false,
+        "local_byte_stream_materialized": false,
+        "local_sha256": null,
+        "mime_type": "text/csv",
+        "provider_reported_bytes": 7623837,
+        "query": "epileptic seizure recognition",
+        "raw_drive_file_found": true,
+        "reason": "The authenticated Drive connector found the raw CSV, but the folder has no LICENSE or README and the connector returned a remote file reference rather than a local byte stream suitable for hashing. Derived steps, anomaly, geometry, and surprise files were not substituted for raw data.",
+        "status": "BLOCKED_PROVENANCE_AND_LOCAL_MATERIALIZATION",
+        "title": "Epileptic Seizure Recognition.csv"
+      },
+      "path": null,
+      "reason": "raw source was found in Drive, but no license/README was found and no local byte stream was available for hashing",
+      "status": "BLOCKED_PROVENANCE_AND_LOCAL_MATERIALIZATION",
+      "verdict_cap": "SYNTHETIC_AND_CYBER_ONLY"
+    }
+  },
+  "domain_contract": {
+    "actions": [
+      "observe",
+      "review",
+      "escalate"
+    ],
+    "contract_id": "EIDOS-GP-v1-synthetic-bounded-review",
+    "costs": {
+      "bytes": 0.2,
+      "false_alert": 0.25,
+      "human_review": 0.35,
+      "latency": 0.1
+    },
+    "horizon": 64,
+    "loss": {
+      "escalate": {
+        "benign": 0.65,
+        "harmful": 0.05
+      },
+      "observe": {
+        "benign": 0.0,
+        "harmful": 1.0
+      },
+      "review": {
+        "benign": 0.2,
+        "harmful": 0.18
+      }
+    },
+    "outcomes": [
+      "benign",
+      "harmful"
+    ],
+    "provenance": "EIDOS-GP-v1 locked synthetic domain contract"
+  },
+  "domain_contract_hash": "sha256:12690bdec05a96ce21dd16f40f7ae2f89ed4700a327a9722bdde9089aaf7eb12",
+  "environment": {
+    "platform": "Windows-10-10.0.26200-SP0",
+    "python": "3.11.0 (main, Oct 24 2022, 18:26:48) [MSC v.1933 64 bit (AMD64)]"
+  },
+  "git_status_short": "",
+  "heldout_allowed": false,
+  "heldout_seeds": [
+    100,
+    101,
+    102,
+    103,
+    104,
+    105,
+    106,
+    107,
+    108,
+    109,
+    110,
+    111,
+    112,
+    113,
+    114,
+    115,
+    116,
+    117,
+    118,
+    119
+  ],
+  "implementation_trees": {
+    "eidos/repo/src": "d96389d6f99a423c31bad42489deafca2ff88560",
+    "eidos/repo/tests": "67963d012388e4d19a425f3803e1f4a4f93ca07e",
+    "eidos/tools": "ce04b59a7da0ccb4d6d06762dd2fa87dcfc65b85"
+  },
+  "locked_files": {
+    "design_freeze_manifest_v1.json": {
+      "bytes": 1891,
+      "path": "eidos/docs/proof/design_freeze/design_freeze_manifest_v1.json",
+      "sha256": "2ab8e99f66fd58a4a62f982e4d2e96b9c0fe36b0244a4bf7f65abc598089214c"
+    },
+    "grand_proof_protocol_v1.md": {
+      "bytes": 25447,
+      "path": "eidos/docs/proof/design_freeze/grand_proof_protocol_v1.md",
+      "sha256": "a5d94d4a8e4910ea29fbe47dd8372b0990f78685841f390dfb5128bdb728f355"
+    },
+    "local_codex_execution_brief_v1.md": {
+      "bytes": 14881,
+      "path": "eidos/docs/proof/design_freeze/local_codex_execution_brief_v1.md",
+      "sha256": "2dfd1869f60cef8f93d4fd62a010f65d93369d2e68c66394ccf681030762e9bb"
+    },
+    "meaningful_surprise_v1_spec.md": {
+      "bytes": 20838,
+      "path": "eidos/docs/proof/design_freeze/meaningful_surprise_v1_spec.md",
+      "sha256": "3020b108ee947d00571a6bea6dc9d4839824b9cd2c8e2a583d82391b4172d101"
+    }
+  },
+  "metric_config": {
+    "missing_value_policy": "null_or_SKIPPED_with_reason_never_zero",
+    "multiple_comparison_correction": "Holm within stage/scenario/component family",
+    "paired_bootstrap_resamples": 10000,
+    "paired_bootstrap_seed": 20260901,
+    "paired_bootstrap_unit": "seed_or_source_window",
+    "scalar_sensitivity_grid": [
+      {
+        "penalties": {
+          "FPR": 0.05,
+          "NBC": 1.0,
+          "NDL": 1.0,
+          "U": 0.5
+        },
+        "weights": {
+          "APR": 2.0,
+          "EC": 1.0,
+          "F2": 2.0,
+          "MU": 1.0,
+          "REP": 1.0
+        }
+      },
+      {
+        "penalties": {
+          "FPR": 0.1,
+          "NBC": 2.0,
+          "NDL": 0.5,
+          "U": 1.0
+        },
+        "weights": {
+          "APR": 2.0,
+          "EC": 1.0,
+          "F2": 2.0,
+          "MU": 1.0,
+          "REP": 1.0
+        }
+      },
+      {
+        "penalties": {
+          "FPR": 0.2,
+          "NBC": 0.5,
+          "NDL": 2.0,
+          "U": 0.5
+        },
+        "weights": {
+          "APR": 2.0,
+          "EC": 1.0,
+          "F2": 2.0,
+          "MU": 1.0,
+          "REP": 1.0
+        }
+      },
+      {
+        "penalties": {
+          "FPR": 0.05,
+          "NBC": 1.0,
+          "NDL": 1.0,
+          "U": 0.5
+        },
+        "weights": {
+          "APR": 1.0,
+          "EC": 1.0,
+          "F2": 1.0,
+          "MU": 2.0,
+          "REP": 1.0
+        }
+      },
+      {
+        "penalties": {
+          "FPR": 0.1,
+          "NBC": 2.0,
+          "NDL": 0.5,
+          "U": 1.0
+        },
+        "weights": {
+          "APR": 1.0,
+          "EC": 1.0,
+          "F2": 1.0,
+          "MU": 2.0,
+          "REP": 1.0
+        }
+      },
+      {
+        "penalties": {
+          "FPR": 0.2,
+          "NBC": 0.5,
+          "NDL": 2.0,
+          "U": 0.5
+        },
+        "weights": {
+          "APR": 1.0,
+          "EC": 1.0,
+          "F2": 1.0,
+          "MU": 2.0,
+          "REP": 1.0
+        }
+      },
+      {
+        "penalties": {
+          "FPR": 0.05,
+          "NBC": 1.0,
+          "NDL": 1.0,
+          "U": 0.5
+        },
+        "weights": {
+          "APR": 2.0,
+          "EC": 2.0,
+          "F2": 1.0,
+          "MU": 1.0,
+          "REP": 2.0
+        }
+      },
+      {
+        "penalties": {
+          "FPR": 0.1,
+          "NBC": 2.0,
+          "NDL": 0.5,
+          "U": 1.0
+        },
+        "weights": {
+          "APR": 2.0,
+          "EC": 2.0,
+          "F2": 1.0,
+          "MU": 1.0,
+          "REP": 2.0
+        }
+      },
+      {
+        "penalties": {
+          "FPR": 0.2,
+          "NBC": 0.5,
+          "NDL": 2.0,
+          "U": 0.5
+        },
+        "weights": {
+          "APR": 2.0,
+          "EC": 2.0,
+          "F2": 1.0,
+          "MU": 1.0,
+          "REP": 2.0
+        }
+      }
+    ]
+  },
+  "policy_config": {
+    "action_costs": {
+      "escalate": 0.8,
+      "observe": 0.0,
+      "review": 0.35
+    },
+    "coefficients": {
+      "bytes": 0.2,
+      "disagreement": 0.2,
+      "false_positive": 0.25,
+      "latency": 0.1,
+      "memory_risk": 0.7,
+      "persistence": 0.35,
+      "thermodynamic": 0.15,
+      "uncertainty": 0.2
+    },
+    "escalate_threshold": 0.65,
+    "fidelity_costs": {
+      "quantized_residual": 0.25,
+      "raw_frame_plus_full_context": 1.0,
+      "reference_or_null": 0.0,
+      "structured_residual": 0.55
+    },
+    "memory_risk_threshold": 0.65,
+    "persistence_threshold": 0.55,
+    "raw_escape_fidelity": "raw_frame_plus_full_context",
+    "raw_escape_threshold": 0.85,
+    "review_threshold": 0.25,
+    "structural_thresholds": {
+      "consensus": 0.65,
+      "geometry": 0.65,
+      "memory": 0.65,
+      "multiscale": 0.65,
+      "raw": 0.65,
+      "spectral": 0.65
+    },
+    "unknown_risk_floor": 0.1
+  },
+  "policy_config_hash": "sha256:ea5b7a3ed855857e56f320ba289c598bc949afbd546ee110129b4730ce5d8e1c",
+  "protocol_id": "EIDOS-GP-v1-2026-09-01",
+  "representation_config": {
+    "lift_ids": [
+      "raw",
+      "spectral",
+      "multiscale",
+      "geometry",
+      "memory",
+      "consensus"
+    ],
+    "min_calibration": 16,
+    "multiscale_alphas": [
+      0.5,
+      0.1,
+      0.02
+    ],
+    "nuisance_projection": "C1 raw lift only; frozen scenario projector",
+    "p_min": 0.001,
+    "past_history_limit": 2048,
+    "prediction_source": "prequential_ema_from_prior_frames",
+    "residual_definition": "past_scaled_l2_generalized_residual",
+    "spectral_window": 64
+  },
+  "representation_config_hash": "sha256:ea9d26f5d0610ad876cdb512e8e03d30622de17399ff516c9f7ce3a5cd3b0999",
+  "reservoir": 128,
+  "resource_receipt": {
+    "code_commit": "fbef28ed49357a35fd8fb1c9476d8426162e4e5b",
+    "minimum_projected_synthetic_frames": 1536000,
+    "profiles": [
+      {
+        "eligible": false,
+        "frames_per_second": 38.42602952598159,
+        "input_frames": 2000,
+        "measured_peak_rss_bytes": 379121664,
+        "memory_limit_70pct_bytes": 5822322688,
+        "memory_samples": 1819,
+        "observed_scored_frames": 1800,
+        "projected_full_suite_seconds": 39972.90427733213,
+        "reservoir": 128,
+        "rss_after_bytes": 379121664,
+        "rss_before_bytes": 295006208,
+        "runtime_seconds": 46.843247199998586,
+        "selection_inputs_only": [
+          "runtime",
+          "memory"
+        ]
+      },
+      {
+        "eligible": false,
+        "frames_per_second": 32.57026197598851,
+        "input_frames": 2000,
+        "measured_peak_rss_bytes": 420675584,
+        "memory_limit_70pct_bytes": 5822322688,
+        "memory_samples": 1883,
+        "observed_scored_frames": 1800,
+        "projected_full_suite_seconds": 47159.583829334006,
+        "reservoir": 256,
+        "rss_after_bytes": 420671488,
+        "rss_before_bytes": 379121664,
+        "runtime_seconds": 55.26513730000079,
+        "selection_inputs_only": [
+          "runtime",
+          "memory"
+        ]
+      },
+      {
+        "eligible": false,
+        "frames_per_second": 32.454891217156636,
+        "input_frames": 2000,
+        "measured_peak_rss_bytes": 449929216,
+        "memory_limit_70pct_bytes": 5822322688,
+        "memory_samples": 1905,
+        "observed_scored_frames": 1800,
+        "projected_full_suite_seconds": 47327.22687999718,
+        "reservoir": 512,
+        "rss_after_bytes": 427237376,
+        "rss_before_bytes": 420671488,
+        "runtime_seconds": 55.461593999996694,
+        "selection_inputs_only": [
+          "runtime",
+          "memory"
+        ]
+      },
+      {
+        "eligible": false,
+        "frames_per_second": 16.003574458813244,
+        "input_frames": 2000,
+        "measured_peak_rss_bytes": 511639552,
+        "memory_limit_70pct_bytes": 5822322688,
+        "memory_samples": 3762,
+        "observed_scored_frames": 1800,
+        "projected_full_suite_seconds": 95978.55803733382,
+        "reservoir": 1024,
+        "rss_after_bytes": 423383040,
+        "rss_before_bytes": 427237376,
+        "runtime_seconds": 112.47487270000056,
+        "selection_inputs_only": [
+          "runtime",
+          "memory"
+        ]
+      }
+    ],
+    "projection_scope": "smoke+calibration+heldout synthetic suite only; real domains and transfer stress would add work",
+    "quality_metrics_used_for_selection": false,
+    "receipt_version": "EIDOS-GP-v1-RESOURCE-v1",
+    "selected_reservoir": null,
+    "selection_status": "BLOCKED_RESOURCE",
+    "time_budget_seconds": 21600.0,
+    "timestamp_utc": "2026-09-01T23:52:33Z"
+  },
+  "run_lock_sha256": "9f56c52ea0a43cf2070b5a304a5f216a02cabb97d74215b09c082a120ecc8cef",
+  "scenario_config": {
+    "c1_event_amplitude": 0.95,
+    "c1_nuisance_amplitude": 0.75,
+    "features": 64,
+    "noise_sigma": 0.018,
+    "outcome_horizon": 64,
+    "repeat_amplitude": 0.58,
+    "s1_amplitude": 0.12,
+    "s2_final_amplitude": 0.38,
+    "s3_shift_amplitude": 0.42,
+    "s6_noise_sigma": 0.55,
+    "scored_frames": 5000,
+    "warmup_frames": 1000
+  },
+  "scenario_config_hash": "sha256:4678dab290d5ff88e38a332c9f523e22047a7b3f741f322d5921c758f1c8b1ee",
+  "smoke_seeds": [
+    0,
+    1
+  ],
+  "systems": [
+    "eidos_ms_full",
+    "eidos_live_current",
+    "eidos_minimal",
+    "rolling_z",
+    "ewma",
+    "cusum",
+    "isolation_forest",
+    "knn_episode"
+  ],
+  "thresholds": {
+    "cusum": 8.0,
+    "eidos_live_current": 1.5,
+    "eidos_minimal": 3.0,
+    "eidos_ms_full": 0.25,
+    "ewma": 3.0,
+    "isolation_forest": 0.65,
+    "knn_episode": 0.45,
+    "rolling_z": 3.0
+  }
+}
+

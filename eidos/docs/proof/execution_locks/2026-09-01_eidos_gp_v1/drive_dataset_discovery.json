@@ -1,0 +1,26 @@
+{
+  "receipt_version": "EIDOS-GP-v1-DRIVE-DATA-DISCOVERY-v1",
+  "timestamp_utc": "2026-09-01T23:31:45Z",
+  "cicids_webattacks": {
+    "query": "Thursday-WorkingHours-Morning-WebAttacks.pcap_ISCX.csv",
+    "exact_drive_search_results": 0,
+    "expected_sha256": "d67066211fb1689c78406f1506f4c44704ecb92088353d5c96d96d6474eb819d",
+    "status": "BLOCKED_DATA_MISSING"
+  },
+  "real_noncyber": {
+    "query": "epileptic seizure recognition",
+    "raw_drive_file_found": true,
+    "drive_file_id": "1E0-tCa_XOfb5glCYZq6lH9v8EmmgAQBf",
+    "drive_parent_folder_id": "1Exh1N2CYlfkWFzef17WP04QRyUMPSURt",
+    "title": "Epileptic Seizure Recognition.csv",
+    "mime_type": "text/csv",
+    "provider_reported_bytes": 7623837,
+    "can_download": true,
+    "license_or_readme_in_dataset_folder": false,
+    "local_byte_stream_materialized": false,
+    "local_sha256": null,
+    "status": "BLOCKED_PROVENANCE_AND_LOCAL_MATERIALIZATION",
+    "reason": "The authenticated Drive connector found the raw CSV, but the folder has no LICENSE or README and the connector returned a remote file reference rather than a local byte stream suitable for hashing. Derived steps, anomaly, geometry, and surprise files were not substituted for raw data."
+  }
+}
+

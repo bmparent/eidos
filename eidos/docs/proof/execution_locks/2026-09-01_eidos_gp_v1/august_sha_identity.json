@@ -1,0 +1,42 @@
+{
+  "gate_effect": "PICQR-v2 independent human gate blocked; engineering work may proceed.",
+  "identities": {
+    "00489e358865994ec4b40a5c5bfdfa034560773a": {
+      "parents": [
+        "6f98eebad6a60b50c85ae5fceade9f1857a88177"
+      ],
+      "present": true,
+      "subject": "Add August revival proof receipts"
+    },
+    "4a639cd693701fb764fe30ba672d4811bdbf5a75": {
+      "parents": [],
+      "present": false,
+      "subject": null
+    },
+    "6f98eebad6a60b50c85ae5fceade9f1857a88177": {
+      "parents": [
+        "f676fe2342b98886bc04cd8f4b0e943fce77ec9a"
+      ],
+      "present": true,
+      "subject": "Link confirmed events to engine evidence"
+    },
+    "f676fe2342b98886bc04cd8f4b0e943fce77ec9a": {
+      "parents": [
+        "2da0e78a460ade628ecdaf7159ecdad346645cd7"
+      ],
+      "present": true,
+      "subject": "Add operator-facing incident card explanations (#28)"
+    }
+  },
+  "mapping": {
+    "evidence_link_code": "6f98eebad6a60b50c85ae5fceade9f1857a88177",
+    "main_operator_explanation": "f676fe2342b98886bc04cd8f4b0e943fce77ec9a",
+    "picqr_v2_cited_implementation": "4a639cd693701fb764fe30ba672d4811bdbf5a75",
+    "proof_receipts": "00489e358865994ec4b40a5c5bfdfa034560773a"
+  },
+  "reason": "The fetched repository proves 6f98eeb is the evidence-link implementation and 00489e3 adds its receipts, but object 4a639cd is absent from all fetched refs. No verifiable mapping can equate the cited object with 6f98eeb.",
+  "receipt_version": "EIDOS-AUGUST-SHA-IDENTITY-v1",
+  "resolution": "UNRESOLVED",
+  "timestamp_utc": "2026-09-01T23:53:30Z"
+}
+
