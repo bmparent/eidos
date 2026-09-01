@@ -1,0 +1,38 @@
+{
+  "manifest_version": "EIDOS-DESIGN-FREEZE-v1",
+  "frozen_at_utc": "2026-09-01T00:00:00Z",
+  "scope": "Eidos Brain / Eidos Sentinel only",
+  "status": "DESIGN_LOCKED_EXECUTION_LOCK_REQUIRED",
+  "repository_baseline_inspected": "00489e358865994ec4b40a5c5bfdfa034560773a",
+  "main_baseline": "f676fe2342b98886bc04cd8f4b0e943fce77ec9a",
+  "files": [
+    {
+      "path": "eidos/docs/proof/design_freeze/meaningful_surprise_v1_spec.md",
+      "bytes": 20838,
+      "sha256": "3020b108ee947d00571a6bea6dc9d4839824b9cd2c8e2a583d82391b4172d101"
+    },
+    {
+      "path": "eidos/docs/proof/design_freeze/grand_proof_protocol_v1.md",
+      "bytes": 25447,
+      "sha256": "a5d94d4a8e4910ea29fbe47dd8372b0990f78685841f390dfb5128bdb728f355"
+    },
+    {
+      "path": "eidos/docs/proof/design_freeze/local_codex_execution_brief_v1.md",
+      "bytes": 14881,
+      "sha256": "2dfd1869f60cef8f93d4fd62a010f65d93369d2e68c66394ccf681030762e9bb"
+    }
+  ],
+  "lock_rules": [
+    "Verify every file hash before implementation and before creating the execution lock.",
+    "Do not edit these v1 files after any held-out result is opened.",
+    "Corrections require new versioned files, a reasoned diff, and a new manifest.",
+    "The design lock does not substitute for the Grand Proof run_lock.json.",
+    "No merge to main is authorized by this manifest."
+  ],
+  "known_pre_execution_holds": [
+    "Resolve or explicitly preserve as unresolved the August evidence-link implementation SHA discrepancy: local branch evidence identifies 6f98eeb/00489e3 while PICQR-v2 cites 4a639cd693701fb764fe30ba672d4811bdbf5a75.",
+    "Verify an eligible raw real non-cyber dataset; old Eidos report, binary stream, top-surprise text, and geometry JSON are not raw-source substitutes.",
+    "An actual independent operator is required for the human gate; ChatGPT and Codex are ineligible as the primary reviewer."
+  ]
+}
+
