@@ -50,6 +50,7 @@ from eidos_brain.proof.grand_proof_scenarios import (  # noqa: E402
 
 
 DEFAULT_THRESHOLDS = {
+    "eidos_ms_full": 0.25,
     "eidos_live_current": 1.5,
     "eidos_minimal": 3.0,
     "rolling_z": 3.0,
@@ -219,14 +220,21 @@ def verify_design_freeze(out: Path) -> dict[str, Any]:
     return receipt
 
 
-def dataset_receipts(cicids_path: Path | None, noncyber_path: Path | None) -> dict[str, Any]:
+def dataset_receipts(
+    cicids_path: Path | None,
+    noncyber_path: Path | None,
+    discovery_receipt: Path | None = None,
+) -> dict[str, Any]:
     expected_cicids = "d67066211fb1689c78406f1506f4c44704ecb92088353d5c96d96d6474eb819d"
+    discovery = _read_json(discovery_receipt) if discovery_receipt is not None else None
+    discovery = discovery or {}
     receipts: dict[str, Any] = {}
     if cicids_path is None or not cicids_path.is_file():
         receipts["cicids_webattacks"] = {
             "status": "BLOCKED_DATA_MISSING",
             "expected_sha256": expected_cicids,
             "path": None if cicids_path is None else str(cicids_path),
+            "drive_discovery": discovery.get("cicids_webattacks"),
         }
     else:
         actual = hashlib.sha256(cicids_path.read_bytes()).hexdigest()
@@ -239,9 +247,18 @@ def dataset_receipts(cicids_path: Path | None, noncyber_path: Path | None) -> di
         }
     if noncyber_path is None or not noncyber_path.is_file():
         receipts["real_noncyber"] = {
-            "status": "BLOCKED_DATA_MISSING",
+            "status": (
+                "BLOCKED_PROVENANCE_AND_LOCAL_MATERIALIZATION"
+                if discovery.get("real_noncyber", {}).get("raw_drive_file_found")
+                else "BLOCKED_DATA_MISSING"
+            ),
             "path": None if noncyber_path is None else str(noncyber_path),
-            "reason": "eligible raw epileptic-seizure-recognition source was not found locally",
+            "reason": (
+                "raw source was found in Drive, but no license/README was found and no local byte stream was available for hashing"
+                if discovery.get("real_noncyber", {}).get("raw_drive_file_found")
+                else "eligible raw epileptic-seizure-recognition source was not found locally"
+            ),
+            "drive_discovery": discovery.get("real_noncyber"),
             "verdict_cap": "SYNTHETIC_AND_CYBER_ONLY",
         }
     else:
@@ -348,7 +365,8 @@ def resource_profile(out: Path, *, time_budget_seconds: float) -> dict[str, Any]
         rows.append(
             {
                 "reservoir": reservoir,
-                "measured_frames": len(records),
+                "input_frames": config.total_frames,
+                "observed_scored_frames": len(records),
                 "runtime_seconds": receipt["runtime_seconds"],
                 "frames_per_second": receipt["frames_per_second"],
                 "projected_full_suite_seconds": projected,
@@ -366,8 +384,10 @@ def resource_profile(out: Path, *, time_budget_seconds: float) -> dict[str, Any]
     receipt = {
         "receipt_version": "EIDOS-GP-v1-RESOURCE-v1",
         "timestamp_utc": utc_now(),
+        "code_commit": git_output(REPO_ROOT, "rev-parse", "HEAD"),
         "time_budget_seconds": time_budget_seconds,
-        "total_projected_frames": total_suite_frames,
+        "minimum_projected_synthetic_frames": total_suite_frames,
+        "projection_scope": "smoke+calibration+heldout synthetic suite only; real domains and transfer stress would add work",
         "profiles": rows,
         "selected_reservoir": selected,
         "selection_status": "SELECTED" if selected is not None else "BLOCKED_RESOURCE",
@@ -556,6 +576,7 @@ def parse_args(argv: Sequence[str] | None = None) -> argparse.Namespace:
         item.add_argument("--out", type=Path, required=True)
         item.add_argument("--cicids-path", type=Path)
         item.add_argument("--noncyber-path", type=Path)
+        item.add_argument("--dataset-discovery-receipt", type=Path)
     sub.choices["resource-profile"].add_argument("--time-budget-seconds", type=float, default=21600.0)
     sub.choices["run"].add_argument("--stage", choices=("smoke", "calibration", "heldout"), required=True)
     sub.choices["run"].add_argument("--seeds", type=parse_seeds, required=True)
@@ -575,7 +596,7 @@ def main(argv: Sequence[str] | None = None) -> int:
     try:
         design = verify_design_freeze(out)
         identity = identity_receipt(out)
-        datasets = dataset_receipts(args.cicids_path, args.noncyber_path)
+        datasets = dataset_receipts(args.cicids_path, args.noncyber_path, args.dataset_discovery_receipt)
         write_json(out / "provenance" / "dataset_manifest.json", datasets)
         if not design["all_verified"]:
             raise RuntimeError("design-freeze verification failed")
