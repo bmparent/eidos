@@ -3996,6 +3996,7 @@ def run_sentinel_stream(
     max_geom_samples: int = 4000,
     top_k_surprises: int = 100,
     save_surprise_artifacts: bool = True,
+    proof_observer: Optional[Any] = None,
 ):
     _initialize_torch_runtime()
     print(">>> INITIALIZING SENTINEL V2.2 (UNIFIED STREAM)...")
@@ -4549,9 +4550,11 @@ def run_sentinel_stream(
         if eigen_stats is None:
             eigen_dom = None
             state_entropy = None
+            state_flatness = None
         else:
             eigen_dom = eigen_stats["dominance"]
             state_entropy = eigen_stats["state_entropy"]
+            state_flatness = eigen_stats["state_flatness"]
 
         spec_entropy = None
         spec_flatness = None
@@ -4639,6 +4642,7 @@ def run_sentinel_stream(
                     "global_bicameral_ratio": float(global_ratio),
                     "eigen_dominance": None if eigen_dom is None else float(eigen_dom),
                     "state_entropy": None if state_entropy is None else float(state_entropy),
+                    "state_flatness": None if state_flatness is None else float(state_flatness),
                     "spectral_entropy": None if spec_entropy is None else float(spec_entropy),
                     "spectral_flatness": None if spec_flatness is None else float(spec_flatness),
                     "thermo_energy": float(thermo_energy),
@@ -4696,6 +4700,58 @@ def run_sentinel_stream(
                 residual = decoded - frame_for_codec
                 residual_reconstruction_sse += float(np.sum(residual ** 2))
                 residual_reconstruction_values += int(residual.size)
+
+            # Instrumentation-only seam: the authoritative codec decision already
+            # exists, and the observer cannot feed values back into the engine.
+            if proof_observer is not None:
+                from eidos_brain.proof.frame_observer import serialized_jsonl_bytes
+
+                prediction_for_observer = best_pred.detach().cpu().numpy().astype(np.float64, copy=False)
+                source_id = token.get("source_id", session_label)
+                proof_observer.observe(
+                    {
+                        "frame_id": int(i),
+                        "timestamp": token.get("timestamp"),
+                        "source_id": source_id,
+                        "source_range": {"start_frame": int(i), "end_frame": int(i)},
+                        "frame": frame_for_codec,
+                        "best_pred": prediction_for_observer,
+                        "prediction_source": "live_eidos_consensus_best_pred",
+                        "raw_residual": frame_for_codec - prediction_for_observer,
+                        "normalized_error": float(best_err / math.sqrt(features)),
+                        "surprise_score": float(z_score),
+                        "surprise_threshold": float(eff_z_thresh),
+                        "sentinel_status": status,
+                        "sentinel_source": "live_sentinel_analyze",
+                        "sentinel_metrics": sentinel_metrics,
+                        "hdc_source": "live_hippocampus_metrics",
+                        "hdc_metrics": hdc_metrics,
+                        "thermodynamic_metrics": {
+                            "enabled": bool(EIDOS_BRAIN_CONFIG.get("thermo_enabled", False)),
+                            "energy": float(thermo_energy),
+                            "rho": float(thermo_rho),
+                            "temperature": float(thermo_temp),
+                            "lambda": float(thermo_lambda),
+                        },
+                        "codec_decision": {
+                            "mode": token.get("compression_mode"),
+                            "status": token.get("sentinel_status"),
+                            "policy_reason": token.get("policy_reason"),
+                            "quantization_scale": token.get("quantization_scale"),
+                        },
+                        "codec_serialized_bytes": serialized_jsonl_bytes(token),
+                        "source_metadata": json_sanitize(meta_dict, max_elems=128),
+                        "source_refs": [
+                            {
+                                "source_id": source_id,
+                                "frame_id": int(i),
+                                "replay_context": token.get("payload", {}).get("replay_context", {}),
+                            }
+                        ],
+                        "engine_code_hash": CODE_HASH,
+                        "engine_config_hash": config_hash,
+                    }
+                )
 
         if i % 2000 == 0:
             dom_display = "NaN" if eigen_dom is None else f"{eigen_dom:.2f}"
