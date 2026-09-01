@@ -106,7 +106,8 @@ def test_live_capture_reports_authoritative_sources(tmp_path: Path):
     assert receipt["prediction_source"] == "live_eidos_consensus_best_pred"
     assert receipt["sentinel_source"] == "live_sentinel_analyze"
     assert receipt["hdc_source"] == "live_hippocampus_metrics"
+    assert Path(receipt["engine_log_path"]).is_file()
+    assert "SENTINEL SUMMARY" in Path(receipt["engine_log_path"]).read_text(encoding="utf-8")
     assert rows[0]["prediction_source"] == "live_eidos_consensus_best_pred"
     assert "state_flatness" in rows[0]["sentinel_metrics"]
     assert rows[0]["codec_decision"]["mode"]
-

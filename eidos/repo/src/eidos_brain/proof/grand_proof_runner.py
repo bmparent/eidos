@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 from collections import deque
+from contextlib import redirect_stderr, redirect_stdout
 from dataclasses import asdict, dataclass
 from datetime import datetime, timezone
 import csv
@@ -185,6 +186,7 @@ def capture_live_scenario(
         replay_command=replay_command,
     )
     started = time.perf_counter()
+    engine_log = out_dir / "live_engine.log"
     try:
         engine.reset_runtime_state()
         engine._apply_runtime_config(
@@ -194,17 +196,19 @@ def capture_live_scenario(
                 "engine_config": engine_config,
             }
         )
-        engine.run_sentinel_stream(
-            gen_factory=lambda: scenario.online_frames(),
-            est_frames=scenario.config.total_frames,
-            features=scenario.config.features,
-            profile_label=f"gp_{scenario.scenario_id}_{scenario.seed}",
-            session_label="grand_proof_v1",
-            warmup=scenario.config.warmup_frames,
-            sample_geometry=False,
-            save_surprise_artifacts=False,
-            proof_observer=observer,
-        )
+        with engine_log.open("w", encoding="utf-8", newline="\n") as log_handle:
+            with redirect_stdout(log_handle), redirect_stderr(log_handle):
+                engine.run_sentinel_stream(
+                    gen_factory=lambda: scenario.online_frames(),
+                    est_frames=scenario.config.total_frames,
+                    features=scenario.config.features,
+                    profile_label=f"gp_{scenario.scenario_id}_{scenario.seed}",
+                    session_label="grand_proof_v1",
+                    warmup=scenario.config.warmup_frames,
+                    sample_geometry=False,
+                    save_surprise_artifacts=False,
+                    proof_observer=observer,
+                )
         status = observer.finalize()
     except Exception as exc:
         observer.close_partial(f"{type(exc).__name__}: {exc}")
@@ -214,6 +218,7 @@ def capture_live_scenario(
     receipt = {
         "status": status["status"],
         "capture_path": capture_path.as_posix(),
+        "engine_log_path": engine_log.as_posix(),
         "records": len(records),
         "runtime_seconds": elapsed,
         "frames_per_second": len(records) / max(elapsed, 1e-12),
