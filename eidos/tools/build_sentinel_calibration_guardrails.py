@@ -33,7 +33,7 @@ from tools import check_core_touch_policy
 from tools import run_proof_baseline as proof_helpers
 
 
-REQUESTED_PROFILES = ("low_noise", "balanced", "high_recall")
+REQUESTED_PROFILES = ("low_noise", "balanced", "high_recall", "strict")
 RUN_PROFILES = ("off",)
 DEFAULT_ATTACK_LABELS = ("Web Attack - Brute Force",)
 TOP_LEVEL_DRIVE_ALLOWLIST = (

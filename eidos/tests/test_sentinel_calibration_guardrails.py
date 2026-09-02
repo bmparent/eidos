@@ -55,6 +55,46 @@ def write_json(path: Path, payload) -> None:
     path.write_text(json.dumps(payload, indent=2, sort_keys=True) + "\n", encoding="utf-8")
 
 
+def test_run_labeled_command_sweeps_strict_profile(monkeypatch, tmp_path):
+    captured = {}
+
+    class Result:
+        returncode = 0
+        stdout = ""
+        stderr = ""
+
+    def fake_run(parts, **kwargs):
+        captured["parts"] = list(parts)
+        captured["kwargs"] = kwargs
+        return Result()
+
+    monkeypatch.setattr(guardrails.subprocess, "run", fake_run)
+    leg = guardrails.LegPlan(
+        name="balanced_250_cpu",
+        requested_leg="balanced 250 CPU",
+        sample_mode="balanced",
+        frames=250,
+        dataset_file=Path("fixture.csv"),
+    )
+
+    guardrails.run_labeled_command(
+        leg=leg,
+        profile="off",
+        run_dir=tmp_path / "run",
+        label_column="Label",
+        attack_labels=("Web Attack - Brute Force",),
+        seed=42,
+        repo_root=tmp_path,
+        drive_root=None,
+    )
+
+    parts = captured["parts"]
+    sweep_start = parts.index("--confirmation-profile-sweep") + 1
+    sweep = parts[sweep_start : sweep_start + len(guardrails.REQUESTED_PROFILES)]
+    assert sweep == list(guardrails.REQUESTED_PROFILES)
+    assert "strict" in sweep
+
+
 def test_leg_plan_records_large_skips_when_only_tiny_fixture_exists(tmp_path):
     dataset = tmp_path / "tiny.csv"
     normal = tmp_path / "normal.csv"

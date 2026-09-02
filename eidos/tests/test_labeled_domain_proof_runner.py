@@ -744,6 +744,60 @@ def test_single_benign_spike_is_suppressed_in_low_noise_mode():
     assert "suppressed_low_evidence_fully_benign" in reasons
 
 
+def test_strict_profile_is_stricter_than_low_noise_without_attack_overlap():
+    raw_events = [
+        {
+            "event_id": "benign_cluster_1",
+            "start_frame": 5,
+            "end_frame": 8,
+            "source": "engine_card",
+            "severity": "RED",
+        },
+        {
+            "event_id": "benign_cluster_2",
+            "start_frame": 9,
+            "end_frame": 12,
+            "source": "engine_card",
+            "severity": "RED",
+        },
+        {
+            "event_id": "benign_cluster_3",
+            "start_frame": 13,
+            "end_frame": 16,
+            "source": "engine_card",
+            "severity": "RED",
+        },
+    ]
+    merged = run_labeled_domain_proof.merge_detection_events(raw_events, merge_gap=5)
+    deduped = run_labeled_domain_proof.dedupe_detection_events(merged)
+
+    low_noise = event_confirmation.apply_confirmation(
+        raw_events=raw_events,
+        merged_events=merged,
+        deduped_events=deduped,
+        label_windows=[],
+        raw_labels=["BENIGN"] * 20,
+        proof_labels=["BENIGN"] * 20,
+        frames_processed=20,
+        mode="low_noise",
+    )
+    strict = event_confirmation.apply_confirmation(
+        raw_events=raw_events,
+        merged_events=merged,
+        deduped_events=deduped,
+        label_windows=[],
+        raw_labels=["BENIGN"] * 20,
+        proof_labels=["BENIGN"] * 20,
+        frames_processed=20,
+        mode="strict",
+    )
+
+    assert event_confirmation.get_thresholds("strict").min_score > event_confirmation.get_thresholds("low_noise").min_score
+    assert low_noise["confirmed_event_count"] == 1
+    assert strict["confirmed_event_count"] == 0
+    assert strict["suppressed_event_count"] == 1
+
+
 def test_attack_overlapping_event_remains_confirmed_in_high_recall_mode():
     raw_events = [
         {"event_id": "attack_hit", "start_frame": 50, "end_frame": 50, "source": "engine_card", "severity": "AMBER"},

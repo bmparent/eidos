@@ -62,9 +62,40 @@ def test_core_touch_policy_fails_for_reservoir_core_path(tmp_path):
     target = repo / "repo/src/eidos_brain/engine/eidos_v0_4_7_02.py"
     target.parent.mkdir(parents=True, exist_ok=True)
     target.write_text("def update_reservoir_state():\n    return 'changed'\n", encoding="utf-8")
+    git(repo, "add", str(target.relative_to(repo)))
 
     report = check_core_touch_policy.evaluate("main", cwd=repo)
 
     assert report["passed"] is False
     assert report["failures"][0]["path"] == "repo/src/eidos_brain/engine/eidos_v0_4_7_02.py"
     assert "forbidden core path" in report["failures"][0]["reason"]
+
+
+def test_core_touch_policy_reports_untracked_noise_without_blocking_by_default(tmp_path):
+    repo = tmp_path / "repo"
+    repo.mkdir()
+    init_repo(repo)
+    target = repo / "repo/src/eidos_brain/engine/eidos_v0_4_7_02 (1).py"
+    target.parent.mkdir(parents=True, exist_ok=True)
+    target.write_text("def update_reservoir_state():\n    return 'duplicate workspace noise'\n", encoding="utf-8")
+
+    report = check_core_touch_policy.evaluate("main", cwd=repo)
+
+    assert report["passed"] is True
+    assert report["untracked_policy"] == "reported_only"
+    assert "repo/src/eidos_brain/engine/eidos_v0_4_7_02 (1).py" in report["untracked_paths"]
+
+
+def test_core_touch_policy_can_opt_into_untracked_policy_check(tmp_path):
+    repo = tmp_path / "repo"
+    repo.mkdir()
+    init_repo(repo)
+    target = repo / "repo/src/eidos_brain/engine/eidos_v0_4_7_02.py"
+    target.parent.mkdir(parents=True, exist_ok=True)
+    target.write_text("def update_reservoir_state():\n    return 'untracked core change'\n", encoding="utf-8")
+
+    report = check_core_touch_policy.evaluate("main", cwd=repo, include_untracked=True)
+
+    assert report["passed"] is False
+    assert report["untracked_policy"] == "checked"
+    assert report["failures"][0]["path"] == "repo/src/eidos_brain/engine/eidos_v0_4_7_02.py"

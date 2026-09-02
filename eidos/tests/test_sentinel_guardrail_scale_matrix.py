@@ -131,7 +131,78 @@ def test_scale_leg_plan_marks_larger_cpu_legs_available_and_gpu_skip(tmp_path):
     assert by_name["balanced_250_cpu"].should_run is True
     assert by_name["transition_1k_cpu"].should_run is True
     assert by_name["natural_larger_replay_cpu"].should_run is True
+    assert by_name["natural_larger_replay_cpu"].sample_mode == "natural_attack_windows"
+    assert by_name["natural_larger_replay_cpu"].natural_window_pre == 250
+    assert by_name["natural_larger_replay_cpu"].natural_window_post == 250
     assert by_name["normal_only_negative_control"].should_run is True
     assert by_name["normal_only_negative_control"].frames == 250
     assert by_name["gpu_10k_optional"].should_run is False
     assert "CUDA unavailable" in by_name["gpu_10k_optional"].skip_reason
+
+
+def test_final_verdict_holds_when_normal_only_fp_exceeds_target(tmp_path):
+    dataset = tmp_path / "large.csv"
+    write_webattack_csv(dataset, benign=700, brute=600)
+    selected = scale.inspect_csv_dataset(dataset, repo_root=tmp_path)
+
+    verdict = scale.final_verdict(
+        selected_dataset=selected,
+        rows=[
+            {
+                "run_name": "normal_only_negative_control",
+                "profile": "strict",
+                "run_status": "completed",
+                "verdict": "ROW_HOLD_FP",
+            }
+        ],
+        skipped_legs=[],
+        core_policy={"passed": True},
+        branch_pushed=False,
+    )
+
+    assert verdict == "SCALE_HOLD_FALSE_POSITIVES"
+
+
+def test_before_after_delta_rows_compare_off_current_and_strict():
+    rows = [
+        {
+            "run_name": "normal_only_negative_control",
+            "profile": "off",
+            "fp_per_10k_benign_frames": 388.889,
+            "precision": 0.0,
+            "recall": None,
+            "f1": None,
+            "attack_window_coverage": None,
+            "calibrated_events": 35,
+            "suppressed_events": 0,
+        },
+        {
+            "run_name": "normal_only_negative_control",
+            "profile": "low_noise",
+            "fp_per_10k_benign_frames": 33.3333,
+            "precision": 0.0,
+            "recall": None,
+            "f1": None,
+            "attack_window_coverage": None,
+            "calibrated_events": 3,
+            "suppressed_events": 4,
+        },
+        {
+            "run_name": "normal_only_negative_control",
+            "profile": "strict",
+            "fp_per_10k_benign_frames": 4.0,
+            "precision": 0.0,
+            "recall": None,
+            "f1": None,
+            "attack_window_coverage": None,
+            "calibrated_events": 1,
+            "suppressed_events": 6,
+        },
+    ]
+
+    delta_rows = scale.before_after_delta_rows(rows)
+    by_comparison = {row["comparison"]: row for row in delta_rows}
+
+    assert by_comparison["off_to_current_calibrated"]["delta_fp_per_10k"] < 0
+    assert by_comparison["current_calibrated_to_tuned_calibrated"]["to_profile"] == "strict"
+    assert by_comparison["current_calibrated_to_tuned_calibrated"]["target_status"] == "stretch_pass"

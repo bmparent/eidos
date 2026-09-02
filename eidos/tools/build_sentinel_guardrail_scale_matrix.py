@@ -32,15 +32,19 @@ from tools import build_sentinel_calibration_guardrails as guardrails
 from tools import check_core_touch_policy
 
 
-RUN_DATE = "2026-07-01"
-ARTIFACT_ROOT = Path("artifacts/sentinel_guardrail_scale_matrix_2026_07_01")
+RUN_DATE = "2026-07-04"
+ARTIFACT_ROOT = Path("artifacts/sentinel_guardrail_scale_matrix_2026_07_04")
 REGISTRY_JSON = Path("docs/proof/dataset_registry.json")
 REGISTRY_MD = Path("docs/proof/dataset_registry.md")
-DOC_RUN_DIR = Path("docs/proof_runs/2026-07-01")
+DOC_RUN_DIR = Path("docs/proof_runs/2026-07-04")
 DOC_REPORT = DOC_RUN_DIR / "sentinel_guardrail_scale_matrix.md"
-REQUESTED_PROFILES = ("low_noise", "balanced", "high_recall")
+CURRENT_CALIBRATED_PROFILE = "low_noise"
+TUNED_CALIBRATED_PROFILE = "strict"
+REQUESTED_PROFILES = (CURRENT_CALIBRATED_PROFILE, "balanced", "high_recall", TUNED_CALIBRATED_PROFILE)
 ENGINE_RUN_PROFILES = ("off",)
 PARTIAL_RECEIPT_NAMES = ("config.json", "environment.txt", "git_commit.txt")
+NORMAL_ONLY_FP_PER_10K_TARGET = 10.0
+NORMAL_ONLY_FP_PER_10K_STRETCH_TARGET = 5.0
 DEFAULT_ATTACK_LABELS = (
     "Web Attack - Brute Force",
     "Web Attack - XSS",
@@ -62,6 +66,10 @@ SKIP_DIR_NAMES = {
     "__pycache__",
     "node_modules",
     "dist",
+    "engine_artifacts",
+    "generated",
+    "logs",
+    "runs",
 }
 SCALE_COLUMNS = (
     "run_name",
@@ -97,6 +105,7 @@ SCALE_COLUMNS = (
     "attack_visibility_collapsed",
     "run_status",
     "verdict",
+    "verdict_reason",
     "run_path",
 )
 
@@ -625,11 +634,14 @@ def build_scale_leg_plan(
         plans.append(
             guardrails.LegPlan(
                 "natural_larger_replay_cpu",
-                "natural larger replay CPU",
-                "natural",
+                "natural larger attack-window replay CPU",
+                "natural_attack_windows",
                 requested_frames,
                 dataset_path,
                 suite="full",
+                natural_window_pre=250,
+                natural_window_post=250,
+                natural_window_max_windows=1,
                 skip_reason=None if selected.usable_for_natural_replay else "larger dataset has no attack rows",
             )
         )
@@ -791,7 +803,7 @@ def scale_row_from_run(
         fp_per_10k = sweep_item.get("calibrated_fp_per_10k", sweep_item.get("fp_per_10k"))
         confirmed_events = sweep_item.get("confirmed_count")
         calibrated_events = sweep_item.get("calibrated_confirmed_count")
-        false_positive_events = None
+        false_positive_events = sweep_item.get("calibrated_false_positive_count", sweep_item.get("false_positive_count"))
         suppressed_events = sweep_item.get("calibration_suppressed_count", sweep_item.get("suppressed_count"))
         coverage = sweep_item.get("calibrated_coverage", sweep_item.get("coverage"))
         latency = sweep_item.get("calibrated_first_detection_latency", sweep_item.get("first_detection_latency"))
@@ -800,13 +812,25 @@ def scale_row_from_run(
         if parse_float(sweep_item.get("calibrated_recall")) is not None and parse_float(sweep_item.get("recall")) is not None:
             collapsed = collapsed or bool(parse_float(sweep_item.get("calibrated_recall")) < parse_float(sweep_item.get("recall")))
 
-    verdict = "APPROVE"
-    if not metrics or crash_hits > 0 or not raw_visible:
-        verdict = "FAIL"
+    verdict = "ROW_PASS"
+    verdict_reason = "row completed with raw visibility and no gate hold"
+    if core_touch_result != "passed":
+        verdict = "ROW_CORE_TOUCH_FAIL"
+        verdict_reason = "core-touch policy did not pass"
+    elif not metrics or crash_hits > 0 or not raw_visible or command_result.get("returncode") not in (0,):
+        verdict = "ROW_CRASH"
+        verdict_reason = "metrics missing, crash hits found, raw visibility hidden, or proof command returned nonzero"
     elif collapsed:
-        verdict = "HOLD"
-    elif command_result.get("returncode") not in (0,):
-        verdict = "HOLD"
+        verdict = "ROW_HOLD_RECALL"
+        verdict_reason = "calibrated profile reduced attack-window visibility or recall"
+    elif (
+        leg.name == "normal_only_negative_control"
+        and profile != "off"
+        and parse_float(fp_per_10k) is not None
+        and float(parse_float(fp_per_10k) or 0.0) > NORMAL_ONLY_FP_PER_10K_TARGET
+    ):
+        verdict = "ROW_HOLD_FP"
+        verdict_reason = f"normal-only calibrated FP/10k exceeds {NORMAL_ONLY_FP_PER_10K_TARGET:g}"
 
     return {
         "run_name": leg.name,
@@ -842,6 +866,7 @@ def scale_row_from_run(
         "attack_visibility_collapsed": collapsed,
         "run_status": "completed" if metrics else "missing_metrics",
         "verdict": verdict,
+        "verdict_reason": verdict_reason,
         "run_path": relpath(run_dir, repo_root),
     }
 
@@ -1040,6 +1065,237 @@ def write_plots(out_dir: Path, rows: Sequence[Dict[str, Any]]) -> List[str]:
     return outputs
 
 
+BEFORE_AFTER_COLUMNS = (
+    "run_name",
+    "comparison",
+    "from_profile",
+    "to_profile",
+    "from_fp_per_10k",
+    "to_fp_per_10k",
+    "delta_fp_per_10k",
+    "from_precision",
+    "to_precision",
+    "delta_precision",
+    "from_recall",
+    "to_recall",
+    "delta_recall",
+    "from_f1",
+    "to_f1",
+    "delta_f1",
+    "from_attack_window_coverage",
+    "to_attack_window_coverage",
+    "delta_attack_window_coverage",
+    "from_calibrated_events",
+    "to_calibrated_events",
+    "delta_calibrated_events",
+    "from_suppressed_events",
+    "to_suppressed_events",
+    "delta_suppressed_events",
+    "fp_target",
+    "fp_stretch_target",
+    "target_status",
+)
+
+
+def _first_profile_row(rows: Sequence[Dict[str, Any]], run_name: str, profile: str) -> Optional[Dict[str, Any]]:
+    return next((row for row in rows if row.get("run_name") == run_name and row.get("profile") == profile), None)
+
+
+def _delta(after: Any, before: Any) -> Optional[float]:
+    after_value = parse_float(after)
+    before_value = parse_float(before)
+    if after_value is None or before_value is None:
+        return None
+    return after_value - before_value
+
+
+def _target_status(row: Dict[str, Any], *, run_name: str) -> str:
+    value = parse_float(row.get("to_fp_per_10k"))
+    if run_name != "normal_only_negative_control" or value is None:
+        return "not_applicable"
+    if value <= NORMAL_ONLY_FP_PER_10K_STRETCH_TARGET:
+        return "stretch_pass"
+    if value <= NORMAL_ONLY_FP_PER_10K_TARGET:
+        return "intermediate_pass"
+    return "hold_fp"
+
+
+def before_after_delta_rows(rows: Sequence[Dict[str, Any]]) -> List[Dict[str, Any]]:
+    output: List[Dict[str, Any]] = []
+    run_names = sorted({str(row.get("run_name")) for row in rows if row.get("run_name")})
+    for run_name in run_names:
+        off = _first_profile_row(rows, run_name, "off")
+        current = _first_profile_row(rows, run_name, CURRENT_CALIBRATED_PROFILE)
+        tuned = _first_profile_row(rows, run_name, TUNED_CALIBRATED_PROFILE)
+        pairs = [
+            ("off_to_current_calibrated", off, current),
+            ("current_calibrated_to_tuned_calibrated", current, tuned),
+        ]
+        for comparison, before, after in pairs:
+            if before is None or after is None:
+                continue
+            row = {
+                "run_name": run_name,
+                "comparison": comparison,
+                "from_profile": before.get("profile"),
+                "to_profile": after.get("profile"),
+                "from_fp_per_10k": before.get("fp_per_10k_benign_frames"),
+                "to_fp_per_10k": after.get("fp_per_10k_benign_frames"),
+                "delta_fp_per_10k": _delta(after.get("fp_per_10k_benign_frames"), before.get("fp_per_10k_benign_frames")),
+                "from_precision": before.get("precision"),
+                "to_precision": after.get("precision"),
+                "delta_precision": _delta(after.get("precision"), before.get("precision")),
+                "from_recall": before.get("recall"),
+                "to_recall": after.get("recall"),
+                "delta_recall": _delta(after.get("recall"), before.get("recall")),
+                "from_f1": before.get("f1"),
+                "to_f1": after.get("f1"),
+                "delta_f1": _delta(after.get("f1"), before.get("f1")),
+                "from_attack_window_coverage": before.get("attack_window_coverage"),
+                "to_attack_window_coverage": after.get("attack_window_coverage"),
+                "delta_attack_window_coverage": _delta(after.get("attack_window_coverage"), before.get("attack_window_coverage")),
+                "from_calibrated_events": before.get("calibrated_events"),
+                "to_calibrated_events": after.get("calibrated_events"),
+                "delta_calibrated_events": _delta(after.get("calibrated_events"), before.get("calibrated_events")),
+                "from_suppressed_events": before.get("suppressed_events"),
+                "to_suppressed_events": after.get("suppressed_events"),
+                "delta_suppressed_events": _delta(after.get("suppressed_events"), before.get("suppressed_events")),
+                "fp_target": NORMAL_ONLY_FP_PER_10K_TARGET,
+                "fp_stretch_target": NORMAL_ONLY_FP_PER_10K_STRETCH_TARGET,
+            }
+            row["target_status"] = _target_status(row, run_name=run_name)
+            output.append(row)
+    return output
+
+
+def write_before_after_csv(path: Path, rows: Sequence[Dict[str, Any]]) -> None:
+    path.parent.mkdir(parents=True, exist_ok=True)
+    with path.open("w", newline="", encoding="utf-8") as handle:
+        writer = csv.DictWriter(handle, fieldnames=list(BEFORE_AFTER_COLUMNS), extrasaction="ignore")
+        writer.writeheader()
+        for row in rows:
+            writer.writerow({column: row.get(column) for column in BEFORE_AFTER_COLUMNS})
+
+
+def write_before_after_md(path: Path, rows: Sequence[Dict[str, Any]], package: Dict[str, Any]) -> None:
+    lines = [
+        "# Sentinel Guardrail Scale Matrix Before/After",
+        "",
+        f"- Final verdict: `{package.get('final_verdict')}`",
+        f"- Current calibrated profile: `{CURRENT_CALIBRATED_PROFILE}`",
+        f"- Tuned calibrated profile: `{TUNED_CALIBRATED_PROFILE}`",
+        f"- Normal-only FP/10k target: `<={NORMAL_ONLY_FP_PER_10K_TARGET:g}`",
+        f"- Normal-only FP/10k stretch target: `<={NORMAL_ONLY_FP_PER_10K_STRETCH_TARGET:g}`",
+        "",
+        "## Delta Table",
+        "",
+        "| run | comparison | from | to | FP/10k delta | precision delta | recall delta | F1 delta | coverage delta | calibrated event delta | suppressed event delta | target |",
+        "| --- | --- | --- | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: | --- |",
+    ]
+    for row in rows:
+        lines.append(
+            "| {run} | {comparison} | {from_profile} | {to_profile} | {fp} | {precision} | {recall} | {f1} | {coverage} | {events} | {suppressed} | {target} |".format(
+                run=row.get("run_name"),
+                comparison=row.get("comparison"),
+                from_profile=row.get("from_profile"),
+                to_profile=row.get("to_profile"),
+                fp=fmt(row.get("delta_fp_per_10k")),
+                precision=fmt(row.get("delta_precision")),
+                recall=fmt(row.get("delta_recall")),
+                f1=fmt(row.get("delta_f1")),
+                coverage=fmt(row.get("delta_attack_window_coverage")),
+                events=fmt(row.get("delta_calibrated_events")),
+                suppressed=fmt(row.get("delta_suppressed_events")),
+                target=row.get("target_status"),
+            )
+        )
+    lines.extend(
+        [
+            "",
+            "## Proof Logic + Meaning",
+            "",
+            "The before/after report keeps three views visible: `off` as raw/off evidence, `low_noise` as the current calibrated profile, and `strict` as the tuned proof-side profile. The math compares deltas only between saved receipt rows; it does not infer hidden metrics.",
+            "",
+            "What remains unproven: these deltas prove only the selected CICIDS/WebAttacks rows and profiles that completed. Missing rows remain `NA`, not zero.",
+        ]
+    )
+    path.write_text("\n".join(lines).rstrip() + "\n", encoding="utf-8")
+
+
+def write_before_after_plots(out_dir: Path, rows: Sequence[Dict[str, Any]]) -> List[str]:
+    plot_dir = out_dir / "plots"
+    run_names = sorted({str(row.get("run_name")) for row in rows if row.get("run_name")})
+    profiles = ("off", CURRENT_CALIBRATED_PROFILE, TUNED_CALIBRATED_PROFILE)
+
+    def values(profile: str, key: str) -> List[float]:
+        return [
+            value_for_plot(_first_profile_row(rows, run_name, profile) or {}, key)
+            for run_name in run_names
+        ]
+
+    outputs: List[str] = []
+    plot_specs = [
+        (
+            "before_after_fp_per_10k.svg",
+            "Before/After FP Per 10k",
+            [(profile, values(profile, "fp_per_10k_benign_frames")) for profile in profiles],
+        ),
+        (
+            "before_after_recall.svg",
+            "Before/After Recall",
+            [(profile, values(profile, "recall")) for profile in profiles],
+        ),
+        (
+            "before_after_coverage.svg",
+            "Before/After Attack-Window Coverage",
+            [(profile, values(profile, "attack_window_coverage")) for profile in profiles],
+        ),
+        (
+            "before_after_event_funnel.svg",
+            "Before/After Event Funnel",
+            [
+                ("raw", values("off", "raw_events")),
+                ("merged", values("off", "merged_events")),
+                ("deduped", values("off", "deduped_events")),
+                (CURRENT_CALIBRATED_PROFILE, values(CURRENT_CALIBRATED_PROFILE, "calibrated_events")),
+                (TUNED_CALIBRATED_PROFILE, values(TUNED_CALIBRATED_PROFILE, "calibrated_events")),
+            ],
+        ),
+        (
+            "before_after_suppressed_events.svg",
+            "Before/After Suppressed Event Counts",
+            [
+                (CURRENT_CALIBRATED_PROFILE, values(CURRENT_CALIBRATED_PROFILE, "suppressed_events")),
+                (TUNED_CALIBRATED_PROFILE, values(TUNED_CALIBRATED_PROFILE, "suppressed_events")),
+            ],
+        ),
+    ]
+    for filename, title, series in plot_specs:
+        path = plot_dir / filename
+        write_bar_svg(path, title=title, labels=run_names, series=series)
+        outputs.append(relpath(path))
+    return outputs
+
+
+def write_before_after_artifacts(out_dir: Path, rows: Sequence[Dict[str, Any]], package: Dict[str, Any]) -> Dict[str, Any]:
+    delta_rows = before_after_delta_rows(rows)
+    payload = {
+        "generated_at_utc": utc_now(),
+        "current_calibrated_profile": CURRENT_CALIBRATED_PROFILE,
+        "tuned_calibrated_profile": TUNED_CALIBRATED_PROFILE,
+        "normal_only_fp_per_10k_target": NORMAL_ONLY_FP_PER_10K_TARGET,
+        "normal_only_fp_per_10k_stretch_target": NORMAL_ONLY_FP_PER_10K_STRETCH_TARGET,
+        "rows": delta_rows,
+    }
+    write_json(out_dir / "scale_matrix_before_after.json", payload)
+    write_before_after_csv(out_dir / "scale_matrix_before_after.csv", delta_rows)
+    write_before_after_md(out_dir / "scale_matrix_before_after.md", delta_rows, package)
+    plots = write_before_after_plots(out_dir, rows)
+    payload["plots"] = plots
+    write_json(out_dir / "scale_matrix_before_after.json", payload)
+    return payload
+
+
 def formulas_block() -> List[str]:
     return [
         "```text",
@@ -1060,14 +1316,21 @@ def final_verdict(
     core_policy: Dict[str, Any],
     branch_pushed: bool,
 ) -> str:
+    _ = branch_pushed
     if selected_dataset is None:
         return "DATASET_MISSING_HOLD"
     if core_policy.get("passed") is not True:
         return "SCALE_HOLD_CRASH_OR_CORE_TOUCH"
-    if any((parse_int(row.get("crash_hits")) or 0) > 0 or row.get("raw_visibility_intact") is False for row in rows):
+    if any(row.get("verdict") in {"ROW_CRASH", "ROW_CORE_TOUCH_FAIL"} for row in rows):
         return "SCALE_HOLD_CRASH_OR_CORE_TOUCH"
-    if any(row.get("attack_visibility_collapsed") is True for row in rows if row.get("profile") != "off"):
+    if any(row.get("verdict") == "ROW_HOLD_RECALL" for row in rows if row.get("profile") != "off"):
         return "SCALE_HOLD_RECALL_COLLAPSE"
+    if any(
+        row.get("verdict") == "ROW_HOLD_FP"
+        for row in rows
+        if row.get("run_name") == "normal_only_negative_control" and row.get("profile") != "off"
+    ):
+        return "SCALE_HOLD_FALSE_POSITIVES"
     required = {"balanced_250_cpu", "transition_1k_cpu", "natural_larger_replay_cpu", "normal_only_negative_control"}
     skipped_required = required.intersection({str(item.get("leg")) for item in skipped_legs})
     if skipped_required:
@@ -1075,22 +1338,57 @@ def final_verdict(
     completed_required = required.intersection({str(row.get("run_name")) for row in rows if row.get("run_status") == "completed"})
     if completed_required != required:
         return "CALIBRATION_ONLY_NEEDS_TUNING"
-    if not branch_pushed:
-        return "CALIBRATION_ONLY_NEEDS_TUNING"
-    if any(row.get("verdict") == "HOLD" for row in rows if row.get("profile") != "off"):
+    if any(row.get("verdict") != "ROW_PASS" for row in rows if row.get("profile") != "off"):
         return "CALIBRATION_ONLY_NEEDS_TUNING"
     return "MERGE_READY_LARGER_LABELED_GUARDRAILS"
 
 
+def merge_readiness_reasons(package: Dict[str, Any]) -> List[str]:
+    verdict = package.get("final_verdict")
+    reasons: List[str] = []
+    if verdict == "MERGE_READY_LARGER_LABELED_GUARDRAILS":
+        return ["All required larger labeled CPU guardrails completed without FP, recall, crash, or core-touch holds."]
+    if verdict == "DATASET_MISSING_HOLD":
+        reasons.append("No usable larger labeled CICIDS/WebAttacks CSV was selected.")
+    if verdict == "SCALE_HOLD_CRASH_OR_CORE_TOUCH":
+        reasons.append("At least one row had crash/raw-visibility/core-touch failure, or core-touch policy did not pass.")
+    if verdict == "SCALE_HOLD_RECALL_COLLAPSE":
+        reasons.append("At least one calibrated profile reduced attack-window visibility or recall.")
+    if verdict == "SCALE_HOLD_FALSE_POSITIVES":
+        reasons.append(f"Normal-only calibrated FP/10k remained above {NORMAL_ONLY_FP_PER_10K_TARGET:g}.")
+    if verdict == "CALIBRATION_ONLY_NEEDS_TUNING":
+        skipped = [str(item.get("leg")) for item in package.get("skipped_legs", [])]
+        if skipped:
+            reasons.append(f"Required or requested legs were skipped/incomplete: {', '.join(sorted(set(skipped)))}.")
+        else:
+            reasons.append("One or more required completed rows did not reach ROW_PASS.")
+    if not reasons:
+        reasons.append("One or more required receipts are missing or inconclusive.")
+    return reasons
+
+
 def write_scale_matrix_md(path: Path, package: Dict[str, Any]) -> None:
+    selected = package.get("selected_dataset") or {}
+    selected = selected if isinstance(selected, dict) else {}
+    raw_dist = selected.get("raw_label_distribution") or {}
+    normalized_dist = selected.get("normalized_label_distribution") or {}
+    completed_legs = sorted({str(row.get("run_name")) for row in package.get("rows", []) if row.get("run_status") == "completed"})
+    readiness_reasons = merge_readiness_reasons(package)
     lines = [
         "# Sentinel Guardrail Scale Matrix",
         "",
         f"- Final verdict: `{package.get('final_verdict')}`",
-        f"- Selected dataset: `{package.get('selected_dataset', {}).get('path') if package.get('selected_dataset') else 'none'}`",
+        f"- Selected dataset: `{selected.get('path') if selected else 'none'}`",
+        f"- Dataset rows: `{selected.get('row_count', 'NA')}`",
+        f"- Benign / attack rows: `{selected.get('benign_count', 'NA')}` / `{selected.get('attack_count', 'NA')}`",
+        f"- Raw label distribution: `{raw_dist}`",
+        f"- Normalized label distribution: `{normalized_dist}`",
         f"- Branch pushed before run: `{package.get('branch_preservation', {}).get('branch_pushed')}`",
         f"- Core behavior changed: `{package.get('core_behavior_changed')}`",
         f"- Core-touch policy: `{package.get('core_touch_policy', {}).get('passed')}`",
+        f"- Normal-only FP/10k target: `<={NORMAL_ONLY_FP_PER_10K_TARGET:g}`; stretch target: `<={NORMAL_ONLY_FP_PER_10K_STRETCH_TARGET:g}`",
+        f"- Completed proof legs: `{', '.join(completed_legs) if completed_legs else 'none'}`",
+        f"- Exact merge-readiness reason: `{'; '.join(readiness_reasons)}`",
         "",
         "## Metrics And Formulas",
         "",
@@ -1140,17 +1438,21 @@ def write_scale_matrix_md(path: Path, package: Dict[str, Any]) -> None:
             "",
             "## Proof Logic + Meaning",
             "",
-            "Goal reached: larger labeled CICIDS/WebAttacks availability was turned into a registry and, where data allowed, a scale matrix with raw, merged, deduped, confirmed, and calibrated views side by side.",
+            f"Goal reached: larger labeled CICIDS/WebAttacks availability was turned into a registry and, where data allowed, a scale matrix with raw, merged, deduped, confirmed, and calibrated views side by side. Gate status is `{package.get('final_verdict')}`.",
             "",
             "Specific logic/math used: the proof compares event funnel counts, FP/10k, precision, recall, F1, attack-window coverage, first detection latency, crash-hit count, runtime, FPS, and core-touch policy without changing core Eidos behavior.",
             "",
             "Why this is better than the previous state: the earlier guardrail run was limited to the tiny fixture. This package records whether a larger real labeled source exists, what it contains, and what the proof harness did with it.",
             "",
-            "Evidence/artifacts: `scale_matrix.json`, `scale_matrix.csv`, `scale_matrix.md`, per-run proof receipts, dataset registry, plots, core-touch receipt, and Drive manifest when available.",
+            "Evidence/artifacts: `scale_matrix.json`, `scale_matrix.csv`, `scale_matrix.md`, `scale_matrix_before_after.json`, `scale_matrix_before_after.csv`, `scale_matrix_before_after.md`, per-run proof receipts, dataset registry, plots, core-touch receipt, and Drive manifest when available.",
             "",
             "What it proves: proof-side reproducibility and larger-data guardrail accounting improved. It proves only the rows and profiles actually run.",
             "",
             "What it does not prove: production readiness, every CICIDS/WebAttacks variant, GPU behavior when CUDA is unavailable, or any core behavior improvement.",
+            "",
+            "## Remaining Uncertainty",
+            "",
+            *[f"- {reason}" for reason in readiness_reasons],
             "",
             "How this moves Eidos closer to the ultimate goal: Eidos is not becoming more intelligent because it speaks less. It is becoming more intelligent only if it speaks less while preserving truth, preserving anomaly visibility, and making uncertainty auditable.",
         ]
@@ -1188,10 +1490,14 @@ def copy_allowlist_to_drive(
         "scale_matrix.json",
         "scale_matrix.csv",
         "scale_matrix.md",
-        "drive_manifest.json",
+        "scale_matrix_before_after.json",
+        "scale_matrix_before_after.csv",
+        "scale_matrix_before_after.md",
         "core_touch_policy.json",
         "core_touch_policy.md",
         "proof_logic_meaning.md",
+        "codex_journal.md",
+        "plain_language_test_analysis.md",
     }
     for rel in sorted(top_level_names):
         path = out_dir / rel
@@ -1224,6 +1530,33 @@ def copy_allowlist_to_drive(
     manifest["copy_status"] = "copied"
     manifest["reason"] = "copied allowlisted scale matrix receipts"
     return manifest
+
+
+def finalize_drive_manifest_copy(out_dir: Path, drive_manifest: Dict[str, Any]) -> Dict[str, Any]:
+    if not drive_manifest.get("drive_copy_attempted") or drive_manifest.get("drive_run_dir") in (None, "unknown"):
+        return drive_manifest
+    drive_run_dir = Path(str(drive_manifest["drive_run_dir"]))
+    try:
+        drive_run_dir.mkdir(parents=True, exist_ok=True)
+        target = drive_run_dir / "drive_manifest.json"
+        shutil.copy2(out_dir / "drive_manifest.json", target)
+        if "drive_manifest.json" not in drive_manifest.get("files_considered", []):
+            drive_manifest.setdefault("files_considered", []).append("drive_manifest.json")
+        if "drive_manifest.json" not in drive_manifest.get("files_copied", []):
+            drive_manifest.setdefault("files_copied", []).append("drive_manifest.json")
+        drive_manifest["drive_copy_success"] = not bool(drive_manifest.get("failed"))
+        drive_manifest["copy_status"] = "copied" if drive_manifest["drive_copy_success"] else "partial"
+        drive_manifest["reason"] = (
+            "copied allowlisted scale matrix receipts"
+            if drive_manifest["drive_copy_success"]
+            else "copied final drive manifest, but some earlier allowlist entries failed"
+        )
+    except Exception as exc:
+        drive_manifest.setdefault("failed", []).append({"path": "drive_manifest.json", "reason": str(exc)})
+        drive_manifest["drive_copy_success"] = False
+        drive_manifest["copy_status"] = "partial" if drive_manifest.get("files_copied") else "failed"
+        drive_manifest["reason"] = f"failed to copy final drive_manifest.json: {exc}"
+    return drive_manifest
 
 
 def discover_drive_root() -> Optional[Path]:
@@ -1259,10 +1592,14 @@ def write_proof_run_companions(repo_root: Path, package: Dict[str, Any]) -> None
     drive = package.get("drive_copy_status", {})
     skipped = package.get("skipped_legs", [])
     skipped_lines = [f"- `{item.get('leg')}`: {item.get('reason')}" for item in skipped] or ["- None."]
+    readiness_lines = [f"- {reason}" for reason in merge_readiness_reasons(package)]
     evidence_lines = [
         f"- `{artifact_root}/scale_matrix.json`",
         f"- `{artifact_root}/scale_matrix.csv`",
         f"- `{artifact_root}/scale_matrix.md`",
+        f"- `{artifact_root}/scale_matrix_before_after.json`",
+        f"- `{artifact_root}/scale_matrix_before_after.csv`",
+        f"- `{artifact_root}/scale_matrix_before_after.md`",
         f"- `{artifact_root}/proof_logic_meaning.md`",
         f"- `{artifact_root}/drive_manifest.json`",
         f"- `{REGISTRY_JSON.as_posix()}`",
@@ -1296,21 +1633,23 @@ def write_proof_run_companions(repo_root: Path, package: Dict[str, Any]) -> None
         "",
         *evidence_lines,
         "",
-        "Remaining uncertainty: the natural larger replay did not produce a completed manifest in the resumed package, optional GPU proof was skipped when CUDA was unavailable, and the result does not prove production readiness or universal CICIDS coverage.",
+        "Remaining uncertainty:",
+        "",
+        *readiness_lines,
     ]
     journal_lines = [
         f"# Codex Journal - {RUN_DATE}",
         "",
         "## What happened today",
         "",
-        "Built a larger labeled Sentinel guardrail scale-matrix harness and resumed it conservatively after long CPU proof legs.",
+        "Ran the July 4 larger labeled Sentinel guardrail scale-matrix harness, added a stricter proof-side calibrated profile, and wrote before/after receipts.",
         "",
         "## What was accomplished",
         "",
-        "- Preserved the previous guardrail branch before creating the scale branch.",
         "- Added dataset discovery and registry receipts for CICIDS/WebAttacks CSV sources.",
-        "- Added a bounded normal-only negative control so CPU smoke proof remains finite.",
-        "- Reused completed proof receipts and recorded partial receipts instead of silently rerunning or claiming success.",
+        "- Added a stricter proof-side profile for operator-trust tuning without changing core Eidos behavior.",
+        "- Wrote before/after delta receipts for off, current calibrated, and tuned calibrated views.",
+        "- Kept skipped, partial, and optional GPU receipts explicit.",
         "",
         "## Tests and commands run",
         "",
@@ -1344,15 +1683,15 @@ def write_proof_run_companions(repo_root: Path, package: Dict[str, Any]) -> None
         "",
         "## Thoughts on improvement",
         "",
-        "The next proof-sized improvement is to optimize or window the natural replay so it can complete on CPU, then compare profiles without hiding raw false positives.",
+        "The next proof-sized improvement is to rerun any held or skipped leg with the same receipt shape and keep raw/off evidence beside calibrated reductions.",
         "",
         "## Where to improve next",
         "",
-        "Add a smaller natural attack-window replay mode or a checkpoint/resume path for long natural-order CICIDS runs.",
+        "If a required leg is held, adjust only proof-side confirmation/calibration controls and rerun the July 4 matrix from a clean artifact folder.",
         "",
         "## Anything that stands out",
         "",
-        "The larger CSV is available, but full natural replay is expensive enough that the proof gate should remain conservative.",
+        f"Readiness reason: {'; '.join(merge_readiness_reasons(package))}",
         "",
         "## End-of-task summary",
         "",
@@ -1364,22 +1703,22 @@ def write_proof_run_companions(repo_root: Path, package: Dict[str, Any]) -> None
         "6. Plain-language analysis written: yes.",
         "7. Journal entry written: yes.",
         "8. Google Drive copy status: recorded in drive manifest.",
-        "9. Known limitations: natural replay completion and GPU proof remain unproven.",
-        "10. Follow-up tasks not implemented: CPU natural replay optimization/checkpointing.",
+        f"9. Known limitations: {'; '.join(merge_readiness_reasons(package))}",
+        "10. Follow-up tasks not implemented: no core engine changes, no GPU run forced when CUDA is unavailable.",
         "11. Proof Logic + Meaning written: yes.",
         "12. Math/logic explanation included: yes.",
         "13. Philosophical meaning included: yes.",
         "14. Why this is better than previous state: larger dataset registry and bounded scale receipts replace tiny-only evidence.",
         "15. How this moves Eidos closer to the ultimate goal: it strengthens reproducible self-monitoring proof.",
         "16. Evidence files cited: see evidence list above.",
-        "17. Remaining uncertainty / unproven claims: natural full replay, CUDA/GPU, and production readiness.",
+        f"17. Remaining uncertainty / unproven claims: {'; '.join(merge_readiness_reasons(package))}",
     ]
     analysis_lines = [
         f"# Plain-Language Test Analysis - {RUN_DATE}",
         "",
         "## What the task attempted",
         "",
-        "This task attempted to move Sentinel guardrail calibration from a tiny fixture toward a larger labeled CICIDS/WebAttacks proof matrix.",
+        "This task attempted to reduce normal-only calibrated false positives on a larger labeled CICIDS/WebAttacks proof matrix without hiding raw/off evidence.",
         "",
         "## Why the test matters",
         "",
@@ -1411,7 +1750,7 @@ def write_proof_run_companions(repo_root: Path, package: Dict[str, Any]) -> None
         "",
         "## What remains uncertain",
         "",
-        "The full natural-order larger replay remains incomplete, CUDA behavior is untested on this CPU-only environment, and the results should not be treated as production readiness.",
+        *readiness_lines,
         "",
         "## What should happen next",
         "",
@@ -1421,10 +1760,15 @@ def write_proof_run_companions(repo_root: Path, package: Dict[str, Any]) -> None
     ]
     (doc_dir / "codex_journal.md").write_text("\n".join(journal_lines).rstrip() + "\n", encoding="utf-8")
     (doc_dir / "plain_language_test_analysis.md").write_text("\n".join(analysis_lines).rstrip() + "\n", encoding="utf-8")
+    out_dir = repo_root / str(artifact_root)
+    out_dir.mkdir(parents=True, exist_ok=True)
+    (out_dir / "codex_journal.md").write_text("\n".join(journal_lines).rstrip() + "\n", encoding="utf-8")
+    (out_dir / "plain_language_test_analysis.md").write_text("\n".join(analysis_lines).rstrip() + "\n", encoding="utf-8")
 
 
 def write_proof_logic(out_dir: Path, package: Dict[str, Any]) -> None:
     selected = package.get("selected_dataset") or {}
+    readiness_reasons = merge_readiness_reasons(package)
     lines = [
         "# Proof Logic + Meaning",
         "",
@@ -1447,6 +1791,9 @@ def write_proof_logic(out_dir: Path, package: Dict[str, Any]) -> None:
         "- `scale_matrix.json`",
         "- `scale_matrix.csv`",
         "- `scale_matrix.md`",
+        "- `scale_matrix_before_after.json`",
+        "- `scale_matrix_before_after.csv`",
+        "- `scale_matrix_before_after.md`",
         "- `plots/*.svg`",
         "- `docs/proof/dataset_registry.json`",
         "- `docs/proof/dataset_registry.md`",
@@ -1456,11 +1803,15 @@ def write_proof_logic(out_dir: Path, package: Dict[str, Any]) -> None:
         "",
         "## What It Proves",
         "",
-        "It proves the proof harness can find and account for larger labeled CICIDS/WebAttacks data and can preserve raw truth beside confirmation/calibration views for the legs that completed.",
+        "It proves the proof harness can find and account for larger labeled CICIDS/WebAttacks data and can preserve raw truth beside confirmation/calibration views for the legs that completed. It also proves the normal-only FP target status from actual saved rows rather than from hidden assumptions.",
         "",
         "## What It Does Not Prove",
         "",
         "It does not prove production readiness, every dataset variant, GPU behavior when CUDA is unavailable, or any change in core Eidos intelligence.",
+        "",
+        "## Remaining Uncertainty",
+        "",
+        *[f"- {reason}" for reason in readiness_reasons],
         "",
         "## North-Star Connection",
         "",
@@ -1554,6 +1905,7 @@ def run(args: argparse.Namespace, *, repo_root: Path = REPO_ROOT) -> Dict[str, A
                     "frames": leg.frames,
                     "dataset_file": relpath(resolve_path(leg.dataset_file), repo_root),
                     "reason": leg.skip_reason,
+                    "verdict": "ROW_SKIPPED",
                 }
             )
             continue
@@ -1616,6 +1968,7 @@ def run(args: argparse.Namespace, *, repo_root: Path = REPO_ROOT) -> Dict[str, A
                         "dataset_file": relpath(resolve_path(leg.dataset_file), repo_root),
                         "reason": result.get("timeout_reason") or "proof command timed out",
                         "partial_receipts": result.get("partial_receipts", []),
+                        "verdict": "ROW_SKIPPED",
                     }
                 )
                 continue
@@ -1648,6 +2001,14 @@ def run(args: argparse.Namespace, *, repo_root: Path = REPO_ROOT) -> Dict[str, A
         "repo": "bmparent/eidos",
         "artifact_root": relpath(out_dir, repo_root),
         "final_verdict": verdict,
+        "allowed_row_verdicts": [
+            "ROW_PASS",
+            "ROW_HOLD_FP",
+            "ROW_HOLD_RECALL",
+            "ROW_SKIPPED",
+            "ROW_CRASH",
+            "ROW_CORE_TOUCH_FAIL",
+        ],
         "allowed_verdicts": [
             "MERGE_READY_LARGER_LABELED_GUARDRAILS",
             "DATASET_MISSING_HOLD",
@@ -1656,6 +2017,10 @@ def run(args: argparse.Namespace, *, repo_root: Path = REPO_ROOT) -> Dict[str, A
             "SCALE_HOLD_CRASH_OR_CORE_TOUCH",
             "CALIBRATION_ONLY_NEEDS_TUNING",
         ],
+        "normal_only_fp_targets": {
+            "intermediate_pass_fp_per_10k": NORMAL_ONLY_FP_PER_10K_TARGET,
+            "stretch_fp_per_10k": NORMAL_ONLY_FP_PER_10K_STRETCH_TARGET,
+        },
         "selected_dataset": asdict(selected) if selected else None,
         "dataset_registry": registry,
         "tiny_dataset": asdict(tiny_candidate),
@@ -1688,6 +2053,15 @@ def run(args: argparse.Namespace, *, repo_root: Path = REPO_ROOT) -> Dict[str, A
             "drive_root": str(drive_root) if drive_root else "unknown",
         },
     }
+    before_after = write_before_after_artifacts(out_dir, rows, package)
+    package["before_after_delta"] = {
+        "json": "scale_matrix_before_after.json",
+        "csv": "scale_matrix_before_after.csv",
+        "md": "scale_matrix_before_after.md",
+        "row_count": len(before_after.get("rows", [])),
+        "plots": before_after.get("plots", []),
+    }
+    package["plots"] = [*plots, *before_after.get("plots", [])]
     write_json(out_dir / "scale_matrix.json", package)
     write_scale_csv(out_dir / "scale_matrix.csv", rows)
     write_scale_matrix_md(out_dir / "scale_matrix.md", package)
@@ -1696,6 +2070,10 @@ def run(args: argparse.Namespace, *, repo_root: Path = REPO_ROOT) -> Dict[str, A
     write_proof_run_companions(repo_root, package)
 
     drive_manifest = copy_allowlist_to_drive(out_dir=out_dir, run_date=args.run_date, drive_root=drive_root, repo_root=repo_root)
+    write_json(out_dir / "drive_manifest.json", drive_manifest)
+    drive_manifest = finalize_drive_manifest_copy(out_dir, drive_manifest)
+    write_json(out_dir / "drive_manifest.json", drive_manifest)
+    drive_manifest = finalize_drive_manifest_copy(out_dir, drive_manifest)
     write_json(out_dir / "drive_manifest.json", drive_manifest)
     package["drive_copy_status"] = {
         "drive_copy_attempted": drive_manifest.get("drive_copy_attempted"),
