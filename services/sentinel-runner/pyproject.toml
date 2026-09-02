@@ -1,0 +1,24 @@
+[project]
+name = "eidos-sentinel-runner"
+version = "0.2.0"
+description = "Process-isolated full-engine runner for Sentinel Lab real-data experiments"
+requires-python = ">=3.11"
+dependencies = [
+  "fastapi>=0.115,<1",
+  "kagglehub>=0.3.12,<1",
+  "numpy>=1.26,<3",
+  "pandas>=2.2,<4",
+  "pyarrow>=17,<24",
+  "torch>=2.4,<3",
+  "uvicorn[standard]>=0.30,<1",
+]
+
+[project.scripts]
+eidos-sentinel-job = "sentinel_runner.cli:main"
+
+[build-system]
+requires = ["hatchling>=1.25"]
+build-backend = "hatchling.build"
+
+[tool.hatch.build.targets.wheel]
+packages = ["sentinel_runner"]
