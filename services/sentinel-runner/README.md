@@ -2,7 +2,7 @@
 
 This service is the resource-qualified execution plane for Sentinel Lab. Vercel remains the UI/control plane; this container downloads one explicitly versioned Kaggle file and runs the full `EIDOS_BRAIN_UNIFIED_v0_4.7.02.py` engine in a child process.
 
-The same package also includes `sentinel_runner.sandbox_launcher`, the standard-library bootstrap used by the Vercel Sandbox backend. It creates an isolated virtual environment, installs this locked runner package, records bootstrap failures, and then hands the immutable request to the same CLI/job implementation used by the container.
+The same package also includes `sentinel_runner.sandbox_launcher`, the bootstrap used by the Vercel Sandbox backend. It creates an isolated environment with `uv`, resolves the pinned CPU-only Torch build, records authenticated diagnostic artifacts on failure, and then hands the immutable request to the same CLI/job implementation used by the container.
 
 ## Safety boundary
 
@@ -25,7 +25,15 @@ EIDOS_JOB_ROOT=/durable/job/storage
 EIDOS_MAX_CONCURRENT_JOBS=1
 ```
 
-The Vercel project receives only:
+For the Vercel Sandbox backend, the project receives:
+
+```text
+EIDOS_EXECUTION_BACKEND=sandbox
+EIDOS_OPERATOR_TOKEN=<separate credential held by the operator>
+KAGGLE_API_TOKEN=<Kaggle API token>
+```
+
+For the external-runner fallback, the Vercel project receives:
 
 ```text
 EIDOS_RUNNER_URL=https://runner.example.com
@@ -49,4 +57,4 @@ From the repository root, build the execution image with:
 docker build -f services/sentinel-runner/Dockerfile -t eidos-sentinel-runner:0.2 .
 ```
 
-The container needs a persistent volume at `/var/lib/eidos/jobs` and enough CPU/GPU memory for the configured 2,000-unit reservoir. Production deployments should place TLS and workload/resource controls in front of the single API worker.
+The v0.2 engineering bridge uses the full engine code path with a resource-qualified 256-unit reservoir and 2,048-dimensional hippocampal state; those effective overrides are recorded in the run manifest. A future full-scale 2,000/10,000 run requires substantially larger dedicated compute. The container needs a persistent volume at `/var/lib/eidos/jobs`; production deployments should place TLS and workload/resource controls in front of the single API worker.

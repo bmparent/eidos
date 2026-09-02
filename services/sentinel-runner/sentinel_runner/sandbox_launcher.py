@@ -3,6 +3,7 @@ from __future__ import annotations
 import argparse
 import json
 import os
+import shutil
 import subprocess
 import sys
 import tempfile
@@ -13,6 +14,7 @@ from typing import Any, Dict
 
 
 PROOF_VERDICT = "BLOCKED_RESOURCE_BEFORE_HELDOUT"
+CPU_TORCH_VERSION = "2.14.0"
 
 
 def utc_now() -> str:
@@ -51,13 +53,52 @@ def command(args: argparse.Namespace) -> int:
     log_path = job_dir / "runner.log"
     request = json.loads(request_path.read_text(encoding="utf-8"))
     lock_digest = str(request.get("lockDigest", ""))
+    bootstrap_step = "locate_uv"
     try:
         status(job_dir, "BOOTSTRAPPING_RUNTIME", lockDigest=lock_digest)
         with log_path.open("a", encoding="utf-8") as log:
+            uv = shutil.which("uv")
+            if not uv:
+                raise RuntimeError("The managed Sandbox image does not expose the required uv installer.")
             if not (venv / "bin" / "python").is_file():
-                subprocess.run([sys.executable, "-m", "venv", str(venv)], cwd=repo_root, check=True, stdout=log, stderr=subprocess.STDOUT)
+                bootstrap_step = "create_virtual_environment"
                 subprocess.run(
-                    [str(venv / "bin" / "python"), "-m", "pip", "install", "--disable-pip-version-check", "--no-cache-dir", str(runner_root)],
+                    [uv, "venv", "--python", sys.executable, "--no-python-downloads", str(venv)],
+                    cwd=repo_root,
+                    check=True,
+                    stdout=log,
+                    stderr=subprocess.STDOUT,
+                )
+                bootstrap_step = "install_cpu_runtime"
+                subprocess.run(
+                    [
+                        uv,
+                        "pip",
+                        "install",
+                        "--python",
+                        str(venv / "bin" / "python"),
+                        "--no-cache",
+                        "--torch-backend",
+                        "cpu",
+                        str(runner_root),
+                    ],
+                    cwd=repo_root,
+                    check=True,
+                    stdout=log,
+                    stderr=subprocess.STDOUT,
+                )
+                bootstrap_step = "verify_cpu_runtime"
+                subprocess.run(
+                    [
+                        str(venv / "bin" / "python"),
+                        "-c",
+                        (
+                            "import torch; "
+                            f"assert torch.__version__.split('+')[0] == '{CPU_TORCH_VERSION}'; "
+                            "assert torch.version.cuda is None; "
+                            "print(f'torch={torch.__version__} backend=cpu')"
+                        ),
+                    ],
                     cwd=repo_root,
                     check=True,
                     stdout=log,
@@ -65,6 +106,7 @@ def command(args: argparse.Namespace) -> int:
                 )
             environment = os.environ.copy()
             environment["PYTHONPATH"] = os.pathsep.join((str(runner_root), str(repo_root / "eidos" / "repo" / "src"), environment.get("PYTHONPATH", "")))
+            bootstrap_step = "execute_engine_job"
             result = subprocess.run(
                 [
                     str(venv / "bin" / "python"),
@@ -83,7 +125,16 @@ def command(args: argparse.Namespace) -> int:
         return int(result.returncode)
     except Exception as exc:
         (job_dir / "bootstrap_failure_traceback.log").write_text(traceback.format_exc(), encoding="utf-8")
-        status(job_dir, "FAILED", lockDigest=lock_digest, error=type(exc).__name__, detail="Sandbox runtime bootstrap failed; inspect runner.log and the bootstrap traceback.")
+        return_code = exc.returncode if isinstance(exc, subprocess.CalledProcessError) else None
+        exit_detail = f" with exit code {return_code}" if return_code is not None else ""
+        status(
+            job_dir,
+            "FAILED",
+            lockDigest=lock_digest,
+            error="SANDBOX_BOOTSTRAP_FAILED",
+            detail=f"Sandbox bootstrap step {bootstrap_step!r} failed{exit_detail}.",
+            artifacts=["runner.log", "bootstrap_failure_traceback.log"],
+        )
         return 1
 
 
