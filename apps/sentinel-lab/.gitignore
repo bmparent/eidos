@@ -4,4 +4,5 @@ node_modules/
 artifacts/
 coverage/
 *.log
+*.tsbuildinfo
 .DS_Store
