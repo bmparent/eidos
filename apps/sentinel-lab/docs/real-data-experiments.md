@@ -56,6 +56,8 @@ Set `EIDOS_EXECUTION_BACKEND=sandbox`, `EIDOS_OPERATOR_TOKEN`, and `KAGGLE_API_T
 
 The default budget is intentionally conservative: 4 vCPU/8 GB, 45 minutes, 25,000 rows, and one concurrent job. The default dataset lock pins `dhoogla/cicids2017` version 3, `WebAttacks-Thursday-no-metadata.parquet`, and SHA-256 `7db47b2bf97ad58c3556ee25e8e1eb1e697cd391670733833865d0e84d8ed82a`. Each persistent Sandbox keeps only its newest snapshot and expires it after seven days. Terminal status and artifact reads stop the resumed VM after retrieval. Failed runs expose `runner.log` plus a traceback only through the operator-authenticated artifact route.
 
+Before accepting the detached engine process, the app verifies the managed Python interpreter and the exact launcher file. It records `launcher_command.json` with the Vercel command ID, inspects that command at a bounded cadence, and converts missing or prematurely exited launchers into an explicit failed receipt plus `launcher_failure.log`. A stale `QUEUED` job is retired automatically instead of occupying runner capacity indefinitely.
+
 The application exposes status and artifacts only through operator-authenticated route handlers. The Kaggle and Vercel credentials never enter the browser.
 
 ## External-runner fallback
