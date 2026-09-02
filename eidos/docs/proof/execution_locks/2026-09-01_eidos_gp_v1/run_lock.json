@@ -14,6 +14,17 @@
     "selection_split": "calibration_only"
   },
   "artifact_root": "C:/Users/bmpar/OneDrive/Documents/eidos-brain-ms-gp-v1/eidos/artifacts/grand_proof_v1_20260901T233145Z",
+  "baseline_config": {
+    "isolation_forest": {
+      "contamination": "auto",
+      "fit": "frozen calibration-only",
+      "heldout_requires_verified_calibration_artifact": true,
+      "max_rows_per_stream": 1024,
+      "n_estimators": 100,
+      "random_state": 20260901,
+      "smoke_fit_claim_eligible": false
+    }
+  },
   "branch": "codex/eidos-meaningful-surprise-grand-proof-v1",
   "byte_accounting": {
     "included_components": [
@@ -49,14 +60,14 @@
     18,
     19
   ],
-  "code_commit": "fbef28ed49357a35fd8fb1c9476d8426162e4e5b",
+  "code_commit": "a8d48f3d4ff43608f26c5e9d8abd24735ad76918",
   "commands": {
     "calibration": "python eidos/tools/run_grand_proof_v1.py run --stage calibration --seeds 10-19 --reservoir 128 --out C:/Users/bmpar/OneDrive/Documents/eidos-brain-ms-gp-v1/eidos/artifacts/grand_proof_v1_20260901T233145Z",
     "heldout": "python eidos/tools/run_grand_proof_v1.py run --stage heldout --seeds 100-119 --reservoir 128 --out C:/Users/bmpar/OneDrive/Documents/eidos-brain-ms-gp-v1/eidos/artifacts/grand_proof_v1_20260901T233145Z",
     "smoke": "python eidos/tools/run_grand_proof_v1.py run --stage smoke --seeds 0,1 --reservoir 128 --out C:/Users/bmpar/OneDrive/Documents/eidos-brain-ms-gp-v1/eidos/artifacts/grand_proof_v1_20260901T233145Z",
     "tests": "python -m pytest -c eidos/pytest.ini eidos/tests eidos/repo/tests --junitxml=C:/Users/bmpar/OneDrive/Documents/eidos-brain-ms-gp-v1/eidos/artifacts/grand_proof_v1_20260901T233145Z/provenance/pytest_results.xml"
   },
-  "created_at_utc": "2026-09-01T23:53:16Z",
+  "created_at_utc": "2026-09-02T00:18:19Z",
   "datasets": {
     "cicids_webattacks": {
       "drive_discovery": {
@@ -155,9 +166,9 @@
     119
   ],
   "implementation_trees": {
-    "eidos/repo/src": "d96389d6f99a423c31bad42489deafca2ff88560",
-    "eidos/repo/tests": "67963d012388e4d19a425f3803e1f4a4f93ca07e",
-    "eidos/tools": "ce04b59a7da0ccb4d6d06762dd2fa87dcfc65b85"
+    "eidos/repo/src": "6d3228e4373a712faab80827b50ded8989218138",
+    "eidos/repo/tests": "56004274951866aad5ac3e1fc41e4c84e8f03560",
+    "eidos/tools": "9d87a1c006d615ba2ec8cd594e31173ea6ae8897"
   },
   "locked_files": {
     "design_freeze_manifest_v1.json": {
@@ -474,7 +485,7 @@
     "time_budget_seconds": 21600.0,
     "timestamp_utc": "2026-09-01T23:52:33Z"
   },
-  "run_lock_sha256": "9f56c52ea0a43cf2070b5a304a5f216a02cabb97d74215b09c082a120ecc8cef",
+  "run_lock_sha256": "48c61d6e21ec0b3a7588e155e451d6116ff59f08747cf80643203a065f112b26",
   "scenario_config": {
     "c1_event_amplitude": 0.95,
     "c1_nuisance_amplitude": 0.75,
@@ -515,4 +526,3 @@
     "rolling_z": 3.0
   }
 }
-

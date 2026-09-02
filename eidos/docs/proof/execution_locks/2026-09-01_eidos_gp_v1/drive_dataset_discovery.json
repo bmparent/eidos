@@ -23,4 +23,3 @@
     "reason": "The authenticated Drive connector found the raw CSV, but the folder has no LICENSE or README and the connector returned a remote file reference rather than a local byte stream suitable for hashing. Derived steps, anomaly, geometry, and surprise files were not substituted for raw data."
   }
 }
-

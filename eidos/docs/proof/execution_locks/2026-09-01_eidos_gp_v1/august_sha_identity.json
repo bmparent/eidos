@@ -37,6 +37,5 @@
   "reason": "The fetched repository proves 6f98eeb is the evidence-link implementation and 00489e3 adds its receipts, but object 4a639cd is absent from all fetched refs. No verifiable mapping can equate the cited object with 6f98eeb.",
   "receipt_version": "EIDOS-AUGUST-SHA-IDENTITY-v1",
   "resolution": "UNRESOLVED",
-  "timestamp_utc": "2026-09-01T23:53:30Z"
+  "timestamp_utc": "2026-09-02T00:18:33Z"
 }
-
