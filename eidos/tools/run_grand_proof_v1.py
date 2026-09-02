@@ -675,12 +675,12 @@ def main(argv: Sequence[str] | None = None) -> int:
             lock = json.loads(lock_path.read_text(encoding="utf-8")) if lock_path.is_file() else None
             if args.stage in {"calibration", "heldout"} and lock is None:
                 raise RuntimeError("execution lock is required before calibration/heldout")
+            if args.stage in {"calibration", "heldout"} and not lock.get("heldout_allowed", False):
+                raise RuntimeError("calibration/heldout blocked by the locked resource-profile receipt")
             if args.stage == "heldout":
                 failures = verify_run_lock(lock, repo_root=REPO_ROOT)
                 if failures:
                     raise RuntimeError("heldout preflight failed: " + "; ".join(failures))
-                if not lock.get("heldout_allowed", False):
-                    raise RuntimeError("heldout blocked by the locked resource-profile receipt")
             reservoir = args.reservoir or (int(lock["reservoir"]) if lock else 128)
             config = ScenarioConfig.smoke() if args.stage == "smoke" else ScenarioConfig()
             runner = GrandProofRunner(

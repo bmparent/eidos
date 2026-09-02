@@ -3,7 +3,15 @@ from pathlib import Path
 import numpy as np
 
 from eidos_brain.proof.frame_observer import canonical_sha256
-from eidos_brain.proof.grand_proof_runner import GrandProofRunner, RunnerConfig, shadow_evaluate
+import pytest
+
+from eidos_brain.proof.grand_proof_runner import (
+    GrandProofRunner,
+    RunnerConfig,
+    _causal_baseline_scores,
+    _validate_stage_seeds,
+    shadow_evaluate,
+)
 from eidos_brain.proof.grand_proof_scenarios import ScenarioConfig, generate_scenario
 
 
@@ -83,3 +91,21 @@ def test_runner_writes_scenario_system_and_ablation_receipts(tmp_path: Path):
     assert (tmp_path / "captures" / "live_frame_observer.jsonl").is_file()
     assert (tmp_path / "captures" / "shadow_tokens.jsonl").is_file()
     assert (tmp_path / "statistics" / "paired_intervals.csv").is_file()
+    fit_receipt = tmp_path / "baselines" / "isolation_forest" / "engineering_smoke" / "fit_receipt.json"
+    assert fit_receipt.is_file()
+    assert '"claim_eligible": false' in fit_receipt.read_text(encoding="utf-8")
+
+
+def test_isolation_forest_never_fits_the_evaluation_stream():
+    scenario = generate_scenario("S0_nominal", seed=0, config=ScenarioConfig.smoke())
+    records = fake_records(scenario)
+    with pytest.raises(RuntimeError, match="frozen calibration-only"):
+        _causal_baseline_scores(records, "isolation_forest")
+
+
+def test_stage_seed_splits_are_enforced():
+    _validate_stage_seeds("smoke", [0, 1])
+    _validate_stage_seeds("calibration", [10, 19])
+    _validate_stage_seeds("heldout", [100, 119])
+    with pytest.raises(ValueError, match="outside the frozen split"):
+        _validate_stage_seeds("heldout", [19])

@@ -66,6 +66,12 @@ ABLATION_IDS = (
     "A7_no_voi",
 )
 BYTE_OPERATING_POINTS = (0.10, 0.25, 0.50, 1.00)
+ISOLATION_FOREST_MAX_ROWS_PER_STREAM = 1024
+STAGE_SEEDS = {
+    "smoke": frozenset((0, 1)),
+    "calibration": frozenset(range(10, 20)),
+    "heldout": frozenset(range(100, 120)),
+}
 
 
 def utc_now() -> str:
@@ -232,7 +238,12 @@ def capture_live_scenario(
     return records, receipt
 
 
-def _causal_baseline_scores(records: Sequence[Mapping[str, Any]], name: str) -> np.ndarray:
+def _causal_baseline_scores(
+    records: Sequence[Mapping[str, Any]],
+    name: str,
+    *,
+    isolation_forest_model: Any | None = None,
+) -> np.ndarray:
     frames = [np.asarray(record["frame"], dtype=np.float64) for record in records]
     residual = np.asarray([float(record["normalized_error"]) for record in records], dtype=np.float64)
     scores = np.zeros(len(records), dtype=np.float64)
@@ -293,18 +304,105 @@ def _causal_baseline_scores(records: Sequence[Mapping[str, Any]], name: str) -> 
             history.append(frame)
         return scores
     if name == "isolation_forest":
-        try:
-            from sklearn.ensemble import IsolationForest
-        except ImportError as exc:
-            raise RuntimeError("scikit-learn dependency unavailable") from exc
-        if len(frames) < 64:
-            raise RuntimeError("insufficient causal calibration rows for Isolation Forest")
-        split = min(max(32, len(frames) // 4), len(frames) - 1)
-        model = IsolationForest(n_estimators=100, random_state=20260901, contamination="auto")
-        model.fit(np.vstack(frames[:split]))
-        scores[split:] = -model.score_samples(np.vstack(frames[split:]))
+        if isolation_forest_model is None:
+            raise RuntimeError("frozen calibration-only Isolation Forest model is required")
+        scores[:] = -isolation_forest_model.score_samples(np.vstack(frames))
         return scores
     raise ValueError(f"unknown baseline: {name}")
+
+
+def _validate_stage_seeds(stage: str, seeds: Sequence[int]) -> None:
+    if stage not in STAGE_SEEDS:
+        raise ValueError(f"unknown Grand Proof stage: {stage}")
+    invalid = sorted(set(int(seed) for seed in seeds) - STAGE_SEEDS[stage])
+    if invalid:
+        raise ValueError(f"{stage} seeds outside the frozen split: {invalid}")
+
+
+def _isolation_forest_training_matrix(
+    *,
+    seeds: Sequence[int],
+    scenarios: Sequence[str],
+    scenario_config: ScenarioConfig,
+) -> np.ndarray:
+    samples: list[np.ndarray] = []
+    for scenario_id in scenarios:
+        for seed in seeds:
+            stream = generate_scenario(scenario_id, seed=int(seed), config=scenario_config)
+            frames = np.asarray(stream.frames[scenario_config.warmup_frames :], dtype=np.float64)
+            if len(frames) > ISOLATION_FOREST_MAX_ROWS_PER_STREAM:
+                indices = np.linspace(
+                    0,
+                    len(frames) - 1,
+                    num=ISOLATION_FOREST_MAX_ROWS_PER_STREAM,
+                    dtype=np.int64,
+                )
+                frames = frames[indices]
+            samples.append(frames)
+    matrix = np.vstack(samples) if samples else np.empty((0, scenario_config.features), dtype=np.float64)
+    if matrix.shape[0] < 64:
+        raise RuntimeError("insufficient calibration-only rows for Isolation Forest")
+    if not np.isfinite(matrix).all():
+        raise RuntimeError("non-finite Isolation Forest calibration matrix")
+    return matrix
+
+
+def _prepare_isolation_forest(
+    *,
+    artifact_root: Path,
+    stage: str,
+    seeds: Sequence[int],
+    scenarios: Sequence[str],
+    scenario_config: ScenarioConfig,
+) -> tuple[Any, dict[str, Any]]:
+    try:
+        import joblib
+        from sklearn.ensemble import IsolationForest
+    except ImportError as exc:
+        raise RuntimeError("scikit-learn/joblib dependency unavailable before execution lock") from exc
+
+    calibration_dir = artifact_root / "baselines" / "isolation_forest" / "calibration"
+    if stage == "heldout":
+        model_path = calibration_dir / "model.joblib"
+        receipt_path = calibration_dir / "fit_receipt.json"
+        if not model_path.is_file() or not receipt_path.is_file():
+            raise RuntimeError("held-out Isolation Forest requires a frozen calibration-stage artifact")
+        receipt = json.loads(receipt_path.read_text(encoding="utf-8"))
+        actual_hash = hashlib.sha256(model_path.read_bytes()).hexdigest()
+        if receipt.get("training_stage") != "calibration" or not receipt.get("claim_eligible", False):
+            raise RuntimeError("Isolation Forest artifact is not calibration-only and claim-eligible")
+        if actual_hash != receipt.get("model_sha256"):
+            raise RuntimeError("Isolation Forest calibration artifact hash mismatch")
+        return joblib.load(model_path), receipt
+
+    training_matrix = _isolation_forest_training_matrix(
+        seeds=seeds,
+        scenarios=scenarios,
+        scenario_config=scenario_config,
+    )
+    model = IsolationForest(n_estimators=100, random_state=20260901, contamination="auto")
+    model.fit(training_matrix)
+    fit_dir = calibration_dir if stage == "calibration" else artifact_root / "baselines" / "isolation_forest" / "engineering_smoke"
+    model_path = fit_dir / "model.joblib"
+    model_path.parent.mkdir(parents=True, exist_ok=True)
+    joblib.dump(model, model_path)
+    receipt = {
+        "receipt_version": "EIDOS-GP-v1-ISOLATION-FOREST-FIT-v1",
+        "training_stage": stage,
+        "claim_eligible": stage == "calibration",
+        "seeds": [int(seed) for seed in seeds],
+        "scenarios": list(scenarios),
+        "training_rows": int(training_matrix.shape[0]),
+        "features": int(training_matrix.shape[1]),
+        "max_rows_per_stream": ISOLATION_FOREST_MAX_ROWS_PER_STREAM,
+        "training_matrix_sha256": hashlib.sha256(training_matrix.astype("<f8", copy=False).tobytes()).hexdigest(),
+        "model_path": model_path.relative_to(artifact_root).as_posix(),
+        "model_bytes": model_path.stat().st_size,
+        "model_sha256": hashlib.sha256(model_path.read_bytes()).hexdigest(),
+        "fit_rule": "frozen calibration-only for claim stages; smoke fit is engineering-only and never claim-eligible",
+    }
+    write_json(fit_dir / "fit_receipt.json", receipt)
+    return model, receipt
 
 
 def _threshold_for(name: str, thresholds: Mapping[str, float]) -> float:
@@ -366,6 +464,8 @@ def _byte_accounting(
     records: Sequence[Mapping[str, Any]],
     fidelities: Sequence[str],
     wrappers: Sequence[Mapping[str, Any]],
+    *,
+    model_state_bytes: int = 0,
 ) -> dict[str, int | float]:
     payload_cost = {
         "reference_or_null": 1,
@@ -377,7 +477,6 @@ def _byte_accounting(
     payload_bytes = sum(payload_cost[value] * features for value in fidelities)
     index_bytes = len(records) * 8
     card_bytes = sum(len(canonical_json(wrapper).encode("utf-8")) for wrapper in wrappers)
-    model_state_bytes = 0
     manifest_bytes = len(canonical_json({"frames": len(records), "features": features}).encode("utf-8"))
     total = payload_bytes + index_bytes + card_bytes + model_state_bytes + manifest_bytes
     raw = len(records) * features * 8
@@ -403,12 +502,13 @@ def _metric_for_system(
     replay_success: bool,
     uncertainty: float,
     runtime_seconds: float,
+    model_state_bytes: int = 0,
 ) -> tuple[MetricResult, dict[str, Any]]:
     detection = detector_metrics(alerts, labels)
     reconstructed = _reconstruct(records, fidelities)
     original = np.vstack([np.asarray(record["frame"], dtype=np.float64) for record in records])
     normal_rmse, anomaly_rmse = split_rmse(original, reconstructed, labels)
-    accounting = _byte_accounting(records, fidelities, wrappers)
+    accounting = _byte_accounting(records, fidelities, wrappers, model_state_bytes=model_state_bytes)
     metric = MetricResult(
         **detection,
         apr=anomaly_preservation(fidelities, labels),
@@ -446,6 +546,8 @@ def shadow_evaluate(
     records: Sequence[Mapping[str, Any]],
     *,
     thresholds: Mapping[str, float],
+    isolation_forest_model: Any | None = None,
+    isolation_forest_receipt: Mapping[str, Any] | None = None,
 ) -> dict[str, Any]:
     labels = scenario.labels[[int(record["frame_id"]) for record in records]]
     contract = synthetic_domain_contract()
@@ -574,7 +676,11 @@ def shadow_evaluate(
     for system_id in SYSTEM_IDS[1:]:
         if system_id == "isolation_forest":
             try:
-                scores = _causal_baseline_scores(records, system_id)
+                scores = _causal_baseline_scores(
+                    records,
+                    system_id,
+                    isolation_forest_model=isolation_forest_model,
+                )
                 status = "OK"
                 reason = None
             except RuntimeError as exc:
@@ -613,6 +719,11 @@ def shadow_evaluate(
             replay_success=True,
             uncertainty=1.0,
             runtime_seconds=shadow_runtime,
+            model_state_bytes=(
+                int((isolation_forest_receipt or {}).get("model_bytes", 0))
+                if system_id == "isolation_forest"
+                else 0
+            ),
         )
         systems[system_id] = {
             "status": status,
@@ -624,6 +735,7 @@ def shadow_evaluate(
             "scores": scores.astype(float).tolist(),
             "fidelities": fidelities,
             "wrappers": wrappers,
+            "baseline_fit_receipt": dict(isolation_forest_receipt or {}) if system_id == "isolation_forest" else None,
         }
 
     compression = [compression_reference(scenario.frames, method) for method in ("raw", "gzip", "lzma", "zstd")]
@@ -655,8 +767,16 @@ class GrandProofRunner:
         self.failures: list[dict[str, Any]] = []
 
     def run(self, *, stage: str, seeds: Sequence[int], scenarios: Sequence[str] = SCENARIO_IDS) -> dict[str, Any]:
+        _validate_stage_seeds(stage, seeds)
         root = self.config.artifact_root
         root.mkdir(parents=True, exist_ok=True)
+        isolation_forest_model, isolation_forest_receipt = _prepare_isolation_forest(
+            artifact_root=root,
+            stage=stage,
+            seeds=seeds,
+            scenarios=scenarios,
+            scenario_config=self.config.scenario_config,
+        )
         all_rows: list[dict[str, Any]] = []
         for scenario_id in scenarios:
             for seed in seeds:
@@ -674,7 +794,13 @@ class GrandProofRunner:
                         code_commit=self.config.code_commit,
                         replay_command=replay_command,
                     )
-                    evaluated = shadow_evaluate(scenario, records, thresholds=self.config.thresholds)
+                    evaluated = shadow_evaluate(
+                        scenario,
+                        records,
+                        thresholds=self.config.thresholds,
+                        isolation_forest_model=isolation_forest_model,
+                        isolation_forest_receipt=isolation_forest_receipt,
+                    )
                     write_json(scenario_dir / "capture_receipt.json", capture_receipt)
                     write_json(scenario_dir / "scenario_receipt.json", evaluated["scenario"])
                     write_jsonl(
@@ -727,6 +853,16 @@ class GrandProofRunner:
                         )
                     for system_id, result in evaluated["systems"].items():
                         system_dir = scenario_dir / system_id
+                        write_json(
+                            system_dir / "system_receipt.json",
+                            {
+                                "status": result.get("status", "OK"),
+                                "skip_reason": result.get("skip_reason"),
+                                "stage": stage,
+                                "claim_eligible": stage != "smoke",
+                                "baseline_fit_receipt": result.get("baseline_fit_receipt"),
+                            },
+                        )
                         if result.get("metrics") is None:
                             write_json(system_dir / "metrics.json", result)
                             continue
@@ -971,6 +1107,17 @@ def build_run_lock(
             "missing_value_policy": "null_or_SKIPPED_with_reason_never_zero",
         },
         "systems": list(SYSTEM_IDS),
+        "baseline_config": {
+            "isolation_forest": {
+                "fit": "frozen calibration-only",
+                "n_estimators": 100,
+                "random_state": 20260901,
+                "contamination": "auto",
+                "max_rows_per_stream": ISOLATION_FOREST_MAX_ROWS_PER_STREAM,
+                "heldout_requires_verified_calibration_artifact": True,
+                "smoke_fit_claim_eligible": False,
+            }
+        },
         "ablations": list(ABLATION_IDS),
         "resource_receipt": dict(resource_receipt),
         "heldout_allowed": resource_receipt.get("selection_status") == "SELECTED",
