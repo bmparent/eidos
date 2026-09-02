@@ -1396,6 +1396,93 @@ def load_engine_incident_cards(out_dir: Path) -> List[Dict[str, Any]]:
     return cards
 
 
+def incident_card_drivers(card: Dict[str, Any]) -> List[Dict[str, Any]]:
+    """Return ranked drivers from either the compatible or legacy card shape."""
+    evidence = card.get("evidence") if isinstance(card.get("evidence"), dict) else {}
+    return list(card.get("top_drivers") or evidence.get("drivers") or [])
+
+
+def incident_card_raw_references(card: Dict[str, Any]) -> List[str]:
+    """Return raw references from either the compatible or legacy card shape."""
+    evidence = card.get("evidence") if isinstance(card.get("evidence"), dict) else {}
+    refs = list(card.get("raw_evidence_refs") or [])
+    refs.extend(evidence.get("exemplars") or [])
+    return list(dict.fromkeys(str(item) for item in refs if item is not None))
+
+
+def _driver_rank(driver: Dict[str, Any]) -> float:
+    for field in ("score", "value", "abs_residual", "residual"):
+        try:
+            return abs(float(driver.get(field)))
+        except (TypeError, ValueError):
+            continue
+    return 0.0
+
+
+def _ranked_unique_drivers(drivers: Iterable[Dict[str, Any]], limit: int = 8) -> List[Dict[str, Any]]:
+    strongest: Dict[str, Dict[str, Any]] = {}
+    for driver in drivers:
+        if not isinstance(driver, dict):
+            continue
+        raw_key = driver.get("name", driver.get("feature", driver.get("idx", driver.get("index"))))
+        key = str(raw_key if raw_key is not None else json.dumps(driver, sort_keys=True, default=str))
+        prior = strongest.get(key)
+        if prior is None or _driver_rank(driver) > _driver_rank(prior):
+            strongest[key] = copy.deepcopy(driver)
+    ranked = sorted(
+        strongest.values(),
+        key=lambda item: (-_driver_rank(item), json.dumps(item, sort_keys=True, default=str)),
+    )
+    return ranked[:limit]
+
+
+def link_confirmation_cards_to_engine_evidence(
+    confirmation_cards: List[Dict[str, Any]],
+    engine_cards: List[Dict[str, Any]],
+) -> List[Dict[str, Any]]:
+    """Attach evidence from engine cards that fall strictly inside each confirmed window.
+
+    This is a presentation/evidence-linkage step only. It does not change event
+    boundaries, severity, confidence, detector output, or calibration results.
+    """
+    linked: List[Dict[str, Any]] = []
+    for card in confirmation_cards:
+        result = copy.deepcopy(card)
+        start = int(result.get("start_frame", result.get("step", 0)))
+        end = int(result.get("end_frame", start))
+        matches = [
+            engine_card
+            for engine_card in engine_cards
+            if start <= int(engine_card.get("step", engine_card.get("start_frame", -1))) <= end
+        ]
+        if not matches:
+            linked.append(result)
+            continue
+
+        drivers: List[Dict[str, Any]] = incident_card_drivers(result)
+        references = incident_card_raw_references(result)
+        source_ids: List[str] = []
+        source_steps: List[int] = []
+        for engine_card in matches:
+            drivers.extend(incident_card_drivers(engine_card))
+            references.extend(incident_card_raw_references(engine_card))
+            source_ids.append(str(engine_card.get("incident_id") or "unknown"))
+            source_steps.append(
+                int(engine_card.get("step", engine_card.get("start_frame", -1)))
+            )
+
+        result["top_drivers"] = _ranked_unique_drivers(drivers)
+        result["raw_evidence_refs"] = list(dict.fromkeys(references))
+        result["evidence_linkage"] = {
+            "schema_version": "eidos.confirmed_event_evidence_linkage.v1",
+            "method": "strict_window_overlap",
+            "source_engine_card_ids": list(dict.fromkeys(source_ids)),
+            "source_steps": sorted(set(source_steps)),
+        }
+        linked.append(result)
+    return linked
+
+
 def engine_card_to_event(card: Dict[str, Any]) -> Dict[str, Any]:
     step = int(card.get("step", card.get("start_frame", 0)))
     return {
@@ -1404,8 +1491,8 @@ def engine_card_to_event(card: Dict[str, Any]) -> Dict[str, Any]:
         "end_frame": step,
         "source": "engine_card",
         "severity": card.get("severity", card.get("regime")),
-        "top_drivers": list(card.get("top_drivers", [])),
-        "raw_evidence_refs": list(card.get("raw_evidence_refs", [])),
+        "top_drivers": incident_card_drivers(card),
+        "raw_evidence_refs": incident_card_raw_references(card),
     }
 
 
@@ -1534,7 +1621,11 @@ def write_incident_cards(
     incident_dir = out_dir / "incident_cards"
     incident_dir.mkdir(parents=True, exist_ok=True)
     written: List[str] = []
-    for idx, card in enumerate(confirmation_cards, start=1):
+    linked_confirmation_cards = link_confirmation_cards_to_engine_evidence(
+        confirmation_cards,
+        list(engine_cards or []),
+    )
+    for idx, card in enumerate(linked_confirmation_cards, start=1):
         path = incident_dir / f"confirmed_event_{idx:03d}.json"
         write_json(path, enrich_incident_card(card))
         written.append(relpath(path, out_dir))
