@@ -105,5 +105,8 @@ export type ExperimentStatus = {
   artifacts?: string[];
   error?: string;
   detail?: string;
+  launcherCommandId?: string;
+  launcherStartedAt?: number;
+  launcherExitCode?: number;
   executionBackend?: "sandbox" | "external";
 };
