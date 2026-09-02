@@ -16,8 +16,8 @@ The frozen design hashes, tests, 16-stream smoke matrix, A0-A7 smoke ablations, 
 
 ## Validation
 
-- Focused: 23 passed, 0 failed, 0 skipped.
-- Compatible repository suites: 241 passed, 0 failed, 5 skipped.
+- Focused: 25 passed, 0 failed, 0 skipped.
+- Compatible repository suites: 243 passed, 0 failed, 5 skipped.
 - Smoke: 8 scenarios times 2 seeds; 16 complete live captures.
 - Comparisons: 256 system/ablation metric rows and 522 paired interval rows.
 - Execution lock: verified; held-out permission is false.
@@ -40,6 +40,7 @@ The locked time budget was 21,600 seconds. The projection covers only the synthe
 - Identity: object `4a639cd693701fb764fe30ba672d4811bdbf5a75` is absent from fetched refs.
 - Resources: no tested reservoir met the runtime budget.
 - Independent review: not executed, and the implementer did not self-score.
+- Baseline correction: the first smoke-only Isolation Forest rows used an in-stream engineering fit. They are retained but explicitly ineligible for a claim. The final runner forbids evaluation-stream fitting and requires a hash-verified, calibration-stage model before held-out scoring.
 
 ## Artifact locations
 

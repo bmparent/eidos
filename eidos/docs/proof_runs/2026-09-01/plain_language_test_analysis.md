@@ -23,13 +23,15 @@ A useful anomaly system must distinguish unusual inputs from changes that have c
 
 ## What passed
 
-All 23 focused tests passed. The compatible repository suites passed 241 tests, skipped 5 optional/environment-dependent tests, and failed 0. Sixteen smoke captures completed, producing 256 system/ablation metric rows and 522 paired interval rows. The execution lock and frozen document hashes verified.
+All 25 focused tests passed. The compatible repository suites passed 243 tests, skipped 5 optional/environment-dependent tests, and failed 0. Sixteen smoke captures completed, producing 256 system/ablation metric rows and 522 paired interval rows. The execution lock and frozen document hashes verified.
 
 ## What failed or blocked progress
 
 No tested reservoir met the 21,600-second projected runtime cap. The fastest was reservoir 128 at 38.426 frames/second, projecting 39,972.904 seconds for the minimum synthetic suite. Memory remained under its cap. Following the protocol, calibration and held-out evaluation were not opened.
 
 The required CICIDS file was not found. A raw seizure-recognition CSV was found in Drive, but its provenance and local byte hash could not be verified, so it was not used. The cited PICQR-v2 Git object is absent from fetched refs, and independent review was not performed.
+
+A final audit found that the original engineering-smoke Isolation Forest rows fitted an initial portion of each smoke stream. Smoke seeds are never claim-bearing, and held-out execution never opened, but those rows do not satisfy the frozen calibration-only baseline rule. They remain visible as superseded engineering diagnostics. The final runner now enforces stage seed ranges, refuses evaluation-stream fitting, records model bytes, and requires a hash-verified calibration-stage model before held-out scoring.
 
 ## What the result means
 
@@ -71,7 +73,7 @@ See `eidos/artifacts/grand_proof_v1_20260901T233145Z/provenance/`, `protocol/run
 
 ### Remaining uncertainty
 
-Held-out, real-domain, transfer, replay, GPU, and independent-review evidence is absent. Isolation Forest must be frozen from calibration-only data before any future held-out claim.
+Held-out, real-domain, transfer, replay, GPU, and independent-review evidence is absent. The corrected Isolation Forest guard is test-verified, but no calibration model exists because the resource gate correctly blocked calibration.
 
 ## What should happen next
 

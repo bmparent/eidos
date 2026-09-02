@@ -16,21 +16,21 @@ The protocol's resource gate stopped the run before calibration or held-out eval
 - Added shared-capture baselines, A0-A7 ablations, event metrics, byte accounting, effect-size/Pareto summaries, 10,000 paired seed bootstraps, and Holm correction.
 - Completed 16 smoke captures (eight scenarios times two seeds), producing 256 system/ablation metric rows and 522 paired interval rows.
 - Profiled reservoir sizes 128, 256, 512, and 1024 using runtime and memory only, then obeyed the mandatory resource stop.
-- Mirrored the finalized 1,569-file, 701,972,337-byte artifact tree to Google Drive.
+- Mirrored the finalized artifact tree to Google Drive and verified the journal/analysis mirror hashes.
 
 ## Tests and commands run
 
 All commands ran from the repository root.
 
-- `python -m pytest eidos/repo/tests/test_frame_observer.py eidos/repo/tests/test_representations.py eidos/repo/tests/test_meaningful_surprise.py eidos/repo/tests/test_grand_proof_scenarios.py eidos/repo/tests/test_grand_proof_metrics.py eidos/repo/tests/test_grand_proof_runner.py --junitxml=eidos/artifacts/grand_proof_v1_20260901T233145Z/provenance/pytest_focused.xml -q` — 23 passed.
+- `python -m pytest eidos/repo/tests/test_frame_observer.py eidos/repo/tests/test_representations.py eidos/repo/tests/test_meaningful_surprise.py eidos/repo/tests/test_grand_proof_scenarios.py eidos/repo/tests/test_grand_proof_metrics.py eidos/repo/tests/test_grand_proof_runner.py --junitxml=eidos/artifacts/grand_proof_v1_20260901T233145Z/provenance/pytest_focused.xml -q` — 25 passed.
 - `python -m pytest -c eidos/pytest.ini eidos/tests --junitxml=eidos/artifacts/grand_proof_v1_20260901T233145Z/provenance/pytest_legacy_tree.xml -q` — 140 passed, 1 skipped.
-- `python -m pytest -c eidos/pytest.ini eidos/repo/tests --junitxml=eidos/artifacts/grand_proof_v1_20260901T233145Z/provenance/pytest_repo_tree.xml -q` — 101 passed, 4 skipped.
+- `python -m pytest -c eidos/pytest.ini eidos/repo/tests --junitxml=eidos/artifacts/grand_proof_v1_20260901T233145Z/provenance/pytest_repo_tree.xml -q` — 103 passed, 4 skipped.
 - `python eidos/tools/run_grand_proof_v1.py preflight --dataset-discovery-receipt eidos/artifacts/grand_proof_v1_20260901T233145Z/provenance/drive_dataset_discovery.json --out eidos/artifacts/grand_proof_v1_20260901T233145Z` — passed.
 - `python eidos/tools/run_grand_proof_v1.py run --stage smoke --seeds 0,1 --reservoir 128 --dataset-discovery-receipt eidos/artifacts/grand_proof_v1_20260901T233145Z/provenance/drive_dataset_discovery.json --out eidos/artifacts/grand_proof_v1_20260901T233145Z` — completed.
 - `python eidos/tools/run_grand_proof_v1.py resource-profile --time-budget-seconds 21600 --dataset-discovery-receipt eidos/artifacts/grand_proof_v1_20260901T233145Z/provenance/drive_dataset_discovery.json --out eidos/artifacts/grand_proof_v1_20260901T233145Z` — completed with `BLOCKED_RESOURCE`.
 - `python eidos/tools/run_grand_proof_v1.py lock ...`, `verify ...`, and `finalize ...` — completed; execution lock verified.
 
-The combined compatible-suite receipt records 241 passed, 5 skipped, and 0 failed across 246 tests. A superseded single-process attempt is preserved because optional-dependency test stubs polluted `sys.modules`; both test trees pass in fresh processes.
+The combined compatible-suite receipt records 243 passed, 5 skipped, and 0 failed across 248 tests. A superseded single-process attempt is preserved because optional-dependency test stubs polluted `sys.modules`; both test trees pass in fresh processes.
 
 ## Problems encountered
 
@@ -40,6 +40,7 @@ The combined compatible-suite receipt records 241 passed, 5 skipped, and 0 faile
 - Git object `4a639cd693701fb764fe30ba672d4811bdbf5a75` is absent from all fetched refs, so the PICQR-v2 identity is unresolved.
 - Independent review was not performed. The implementer did not self-score G6.
 - A first smoke attempt exposed Windows console encoding of a Unicode arrow; a UTF-8 log capture fix was added. A second run exposed omitted policy/representation configuration in the execution-lock surface; the final run regenerated and verified the complete lock. Both superseded attempts remain receipted.
+- A final audit found that the original engineering-smoke Isolation Forest rows used an initial-stream fit. Those smoke-only rows are retained and marked ineligible for claims. The final runner now enforces frozen stage seeds, prohibits fitting evaluation records, counts model-state bytes, blocks calibration when resources are ineligible, and requires a hash-verified calibration artifact for held-out scoring.
 
 ## What changed
 
@@ -115,7 +116,7 @@ It strengthens the parts of the claim that Eidos monitors internal state, preser
 
 ### Remaining uncertainty
 
-Held-out synthetic results, real cyber results, real non-cyber results, transfer stress, deterministic replay, and independent operator scoring remain unproven. GPU performance was not tested. The Isolation Forest baseline must be frozen from calibration-only data before any future held-out claim. Smoke measurements are engineering receipts, not a proof-gate pass.
+Held-out synthetic results, real cyber results, real non-cyber results, transfer stress, deterministic replay, and independent operator scoring remain unproven. GPU performance was not tested. The corrected Isolation Forest guard is tested, but no calibration model was created because calibration remained resource-blocked. Smoke measurements are engineering receipts, not a proof-gate pass.
 
 ## Artifacts generated
 
@@ -123,7 +124,7 @@ The complete local artifact tree is `eidos/artifacts/grand_proof_v1_20260901T233
 
 ## Google Drive archive status
 
-Drive copy succeeded to `G:\My Drive\Eidos_Brain_Proof_Phase\2026-09-01\grand_proof_v1_20260901T233145Z`. All 1,569 finalized files were considered and no files were recorded as skipped.
+Drive copy succeeded to `G:\My Drive\Eidos_Brain_Proof_Phase\2026-09-01\grand_proof_v1_20260901T233145Z`. The final manifest records the exact file count; no files were recorded as skipped.
 
 ## Thoughts on improvement
 
@@ -141,9 +142,9 @@ The 128-unit reservoir was the fastest tested configuration at 38.426 frames/sec
 
 1. Files changed: observer seam, six proof modules, one CLI, six focused test modules, four frozen design files, execution-lock receipts, and proof-run documentation.
 2. Whether core behavior changed: no; the default live engine and all decision policies remain unchanged.
-3. Tests added or skipped: six focused test modules added; final totals were 23/23 focused passed and 241 passed, 5 skipped, 0 failed in compatible repository suites.
+3. Tests added or skipped: six focused test modules added; final totals were 25/25 focused passed and 243 passed, 5 skipped, 0 failed in compatible repository suites.
 4. Repo-root commands run: pytest commands and the Grand Proof `preflight`, `run --stage smoke`, `resource-profile`, `lock`, `verify`, and `finalize` commands listed above.
-5. Artifacts generated: 1,569 files totaling 701,972,337 bytes.
+5. Artifacts generated: the finalized manifest records every file, size, and SHA-256; the tree was mirrored to Drive.
 6. Local artifact folder path: `eidos/artifacts/grand_proof_v1_20260901T233145Z/`.
 7. Google Drive copy status: succeeded; no recorded skips.
 8. Plain-language analysis written: yes, locally and in the artifact tree.
