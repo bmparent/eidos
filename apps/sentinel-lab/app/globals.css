@@ -254,6 +254,39 @@ main { flex: 1; }
 .dispatch-receipt span { color: var(--teal); font-size: 8px; letter-spacing: .1em; }
 .dispatch-receipt strong { overflow-wrap: anywhere; }
 .dispatch-receipt small { color: var(--dim); }
+.job-monitor { margin-top: 22px; border-top: 1px solid var(--rule); padding-top: 19px; }
+.job-monitor-head { display: flex; justify-content: space-between; gap: 16px; align-items: flex-start; }
+.job-monitor-head > div { min-width: 0; display: grid; gap: 5px; }
+.job-monitor-head span, .artifact-actions > span { color: var(--teal); font-size: 8px; letter-spacing: .11em; }
+.job-monitor-head strong { font-size: 11px; overflow-wrap: anywhere; }
+.job-monitor-head small { color: var(--dim); font-size: 7px; letter-spacing: .1em; white-space: nowrap; }
+.job-stage { margin-top: 16px; border: 1px solid var(--rule); padding: 12px; display: flex; align-items: center; gap: 11px; }
+.job-stage > span { width: 9px; height: 9px; flex: 0 0 auto; border-radius: 50%; background: var(--dim); }
+.job-stage > span.active { background: var(--amber); box-shadow: 0 0 0 4px rgba(243, 165, 27, .1); animation: pulse 1.2s ease-in-out infinite; }
+.job-stage > span.complete { background: var(--teal); box-shadow: 0 0 0 4px rgba(73, 185, 159, .1); }
+.job-stage > span.failed { background: var(--red); box-shadow: 0 0 0 4px rgba(219, 104, 76, .1); }
+.job-stage div { display: grid; gap: 4px; }
+.job-stage b { color: var(--ivory); font-family: var(--serif); font-size: 15px; font-weight: 400; text-transform: capitalize; }
+.job-stage small { color: var(--dim); font-size: 8px; }
+.job-progress { margin: 10px 0 0; display: grid; grid-template-columns: repeat(5, 1fr); gap: 4px; }
+.job-progress i { display: block; height: 2px; background: var(--rule); }
+.job-progress i.reached { background: var(--amber); }
+.job-detail, .job-proof-note { color: var(--dim); font-family: var(--serif); font-size: 12px; line-height: 1.45; }
+.job-failure { border-left: 1px solid var(--red); color: #efb2a4; font-family: var(--serif); font-size: 12px; line-height: 1.4; padding-left: 10px; }
+.job-failure b { color: var(--red); display: block; font-family: var(--mono); font-size: 8px; letter-spacing: .1em; margin-bottom: 5px; }
+.metric-receipt { margin-top: 17px; display: grid; grid-template-columns: repeat(2, 1fr); border: 1px solid var(--rule); }
+.metric-receipt > div { min-height: 69px; display: flex; flex-direction: column; justify-content: space-between; padding: 10px; border-right: 1px solid var(--rule-soft); border-bottom: 1px solid var(--rule-soft); }
+.metric-receipt > div:nth-child(2n) { border-right: 0; }
+.metric-receipt > div:nth-last-of-type(-n + 2) { border-bottom: 0; }
+.metric-receipt span { color: var(--dim); font-size: 7px; letter-spacing: .09em; }
+.metric-receipt strong { color: var(--ivory); font-family: var(--serif); font-size: 24px; font-weight: 400; }
+.metric-receipt > p { grid-column: 1 / -1; border-top: 1px solid var(--rule); color: var(--stone); font-family: var(--serif); font-size: 11px; line-height: 1.45; margin: 0; padding: 10px; }
+.artifact-actions { margin-top: 17px; display: grid; grid-template-columns: 1fr; gap: 6px; }
+.artifact-actions > span { margin-bottom: 3px; }
+.artifact-actions button { min-height: 35px; border: 1px solid var(--rule); background: transparent; color: var(--stone); text-align: left; padding: 0 10px; cursor: pointer; font-size: 8px; letter-spacing: .06em; }
+.artifact-actions button:hover { border-color: var(--teal); color: var(--ivory); }
+.artifact-actions button:disabled { opacity: .55; cursor: wait; }
+.job-proof-note { border-top: 1px solid var(--rule-soft); margin: 16px 0 0; padding-top: 12px; font-style: italic; }
 .honesty-bar { display: grid; grid-template-columns: auto 1fr auto 1fr; gap: 18px; border: 1px solid var(--rule); border-top: 0; padding: 20px 23px; align-items: start; }
 .honesty-bar span { color: var(--amber); font-size: 8px; line-height: 1.5; letter-spacing: .1em; }
 .honesty-bar p { color: var(--stone); font-family: var(--serif); font-size: 13px; line-height: 1.45; margin: 0; }

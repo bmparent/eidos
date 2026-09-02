@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { ExperimentRunMonitor } from "@/components/experiment-run-monitor";
 import { cloneDefaultExperiment } from "@/lib/experiments/shared";
 import type { DatasetSearchResult, ExperimentSpec, LockedExperiment, RunnerDispatch } from "@/lib/experiments/types";
 
@@ -115,7 +116,7 @@ export function RealDataLab() {
           <h2 id="real-data-title">Real data,<br />sealed claims.</h2>
         </div>
         <div className="real-data-thesis">
-          <p>This path prepares a pinned Kaggle file for the full Torch reservoir/HDC engine. Labels never enter the engine stream, evaluation waits until predictions are frozen, and the held-out partition stays untouched.</p>
+          <p>This path prepares a pinned Kaggle file for the full Torch reservoir/HDC engine, then launches an isolated Vercel Sandbox or attached runner. Labels never enter the engine stream, evaluation waits until predictions are frozen, and the held-out partition stays untouched.</p>
           <div className="class-badges"><span>REAL_DATA_ENGINEERING</span><span>GATES REMAIN LOCKED</span></div>
         </div>
       </div>
@@ -126,7 +127,7 @@ export function RealDataLab() {
         <div><b>01</b><span>Kaggle version + exact file</span><small>immutable source</small></div>
         <div><b>02</b><span>Label vault + causal order</span><small>no engine access</small></div>
         <div><b>03</b><span>Calibration-only transform</span><small>holdout excluded</small></div>
-        <div><b>04</b><span>Full Eidos 0.4.7.02</span><small>external compute</small></div>
+        <div><b>04</b><span>Full Eidos 0.4.7.02</span><small>isolated compute</small></div>
       </div>
 
       <div className="real-workspace">
@@ -168,8 +169,8 @@ export function RealDataLab() {
           <label className="operator-token"><span>OPERATOR CREDENTIAL</span><input type="password" autoComplete="off" value={operatorToken} onChange={(event) => setOperatorToken(event.target.value)} placeholder="Required only when dispatch is enabled" /></label>
           <button className="prepare-button" onClick={prepareLock} disabled={preparing}>{preparing ? "Computing SHA-256 lock…" : "Prepare immutable run lock"}</button>
 
-          {lock && <div className="lock-result"><span>SPEC SHA-256</span><code>{lock.digest}</code><div className="preflight-issues">{lock.issues.map((issue) => <p className={issue.severity} key={issue.code}><b>{issue.code} · {issue.severity}</b>{issue.message}</p>)}</div><button className="dispatch-button" disabled={!lock.readyToDispatch || dispatching} onClick={dispatchRun}>{dispatching ? "Dispatching…" : lock.runnerConfigured ? "Dispatch to full engine" : "Runner attachment required"}</button></div>}
-          {dispatch && <div className="dispatch-receipt"><span>JOB ACCEPTED</span><strong>{dispatch.jobId}</strong><small>{dispatch.status} · {dispatch.evidenceClass}</small></div>}
+          {lock && <div className="lock-result"><span>SPEC SHA-256 · {(lock.executionBackend || "unattached").toUpperCase()}</span><code>{lock.digest}</code><div className="preflight-issues">{lock.issues.map((issue) => <p className={issue.severity} key={issue.code}><b>{issue.code} · {issue.severity}</b>{issue.message}</p>)}</div><button className="dispatch-button" disabled={!lock.readyToDispatch || dispatching} onClick={dispatchRun}>{dispatching ? "Launching isolated compute…" : lock.runnerConfigured ? `Launch ${lock.executionBackend === "sandbox" ? "Sandbox" : "full-engine"} run` : "Execution backend required"}</button></div>}
+          {dispatch ? <ExperimentRunMonitor dispatch={dispatch} operatorToken={operatorToken} onError={setError} /> : null}
         </aside>
       </div>
 

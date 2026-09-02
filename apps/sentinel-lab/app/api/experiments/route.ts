@@ -1,10 +1,11 @@
 import { LOCK_SCHEMA, preflightIssues, validateExperimentSpec } from "@/lib/experiments/shared";
 import { sha256Canonical } from "@/lib/experiments/lock";
-import { dispatchLockedExperiment, isRunnerConfigured } from "@/lib/experiments/runner";
+import { dispatchLockedExperiment, getExecutionReadiness } from "@/lib/experiments/runner";
 import { authorizeOperator, isOperatorAuthConfigured } from "@/lib/experiments/operator-auth";
 import type { ExperimentSpec, LockedExperiment, PreflightIssue } from "@/lib/experiments/types";
 
 export const runtime = "nodejs";
+export const maxDuration = 300;
 
 export async function POST(request: Request) {
   try {
@@ -15,16 +16,17 @@ export async function POST(request: Request) {
     if (typeof body?.lockDigest !== "string" || body.lockDigest !== digest) {
       return Response.json({ error: "RUN_LOCK_MISMATCH", detail: "Prepare a new run lock after changing any experiment field." }, { status: 409 });
     }
-    const runnerConfigured = isRunnerConfigured();
-    const issues = preflightIssues(spec, runnerConfigured, isOperatorAuthConfigured()) as PreflightIssue[];
+    const execution = getExecutionReadiness(spec);
+    const issues = preflightIssues(spec, execution, isOperatorAuthConfigured()) as PreflightIssue[];
     const lock: LockedExperiment = {
       schema: LOCK_SCHEMA,
       algorithm: "sha256",
       digest,
       spec,
       issues,
-      runnerConfigured,
-      readyToDispatch: runnerConfigured && !issues.some((issue) => issue.severity === "blocker"),
+      runnerConfigured: execution.configured,
+      executionBackend: execution.backend,
+      readyToDispatch: execution.configured && !issues.some((issue) => issue.severity === "blocker"),
     };
     if (!lock.readyToDispatch) {
       return Response.json(
@@ -36,7 +38,7 @@ export async function POST(request: Request) {
     return Response.json(dispatch, { status: 202, headers: { "Cache-Control": "no-store", "X-Eidos-Evidence-Class": "real-data-engineering" } });
   } catch (error) {
     const message = error instanceof Error ? error.message : "Experiment dispatch failed.";
-    const status = message === "RUNNER_NOT_CONFIGURED" || message === "OPERATOR_AUTH_NOT_CONFIGURED" ? 503 : message === "OPERATOR_AUTH_REQUIRED" ? 401 : 400;
+    const status = message === "RUNNER_CAPACITY_OCCUPIED" ? 429 : message === "RUNNER_NOT_CONFIGURED" || message.endsWith("_NOT_CONFIGURED") ? 503 : message === "OPERATOR_AUTH_REQUIRED" ? 401 : 400;
     return Response.json({ error: message }, { status, headers: { "Cache-Control": "no-store" } });
   }
 }

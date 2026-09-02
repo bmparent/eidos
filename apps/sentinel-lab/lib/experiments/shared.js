@@ -173,8 +173,17 @@ export function validateExperimentSpec(input) {
   };
 }
 
-export function preflightIssues(spec, runnerConfigured, operatorAuthConfigured = false) {
+export function preflightIssues(spec, runnerState, operatorAuthConfigured = false) {
   const issues = [];
+  const execution = typeof runnerState === "boolean"
+    ? {
+        configured: runnerState,
+        blockers: runnerState ? [] : [{
+          code: "RUNNER_NOT_CONFIGURED",
+          message: "The run can be preregistered now, but dispatch is blocked until a resource-qualified execution backend is configured.",
+        }],
+      }
+    : runnerState;
   if (!spec.dataset.expectedSha256) {
     issues.push({
       severity: "notice",
@@ -196,11 +205,14 @@ export function preflightIssues(spec, runnerConfigured, operatorAuthConfigured =
       message: "Rows will remain in the exact order delivered by the pinned Kaggle file; no shuffle or balancing is permitted.",
     });
   }
-  if (!runnerConfigured) {
+  for (const blocker of execution?.blockers || []) {
+    issues.push({ severity: "blocker", code: blocker.code, message: blocker.message });
+  }
+  if (!execution?.configured && !(execution?.blockers || []).length) {
     issues.push({
       severity: "blocker",
       code: "RUNNER_NOT_CONFIGURED",
-      message: "The run can be preregistered now, but dispatch is blocked until EIDOS_RUNNER_URL and EIDOS_RUNNER_TOKEN are configured on Vercel.",
+      message: "The run can be preregistered now, but dispatch is blocked until a resource-qualified execution backend is configured.",
     });
   }
   if (!operatorAuthConfigured) {

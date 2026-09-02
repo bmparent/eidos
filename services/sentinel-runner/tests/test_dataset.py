@@ -31,6 +31,7 @@ class DatasetTests(unittest.TestCase):
         first_frame, metadata = next(iter(prepared.make_gen_factory()()))
         self.assertEqual(first_frame.shape, (64,))
         self.assertFalse(any(key.lower() in {"label", "attack", "class", "target"} for key in metadata))
+        self.assertNotIn("split", metadata)
         self.assertFalse(prepared.receipt["label_isolation"]["heldout_sent_to_engine"])
         self.assertEqual(prepared.frames.shape[0], 800)
         self.assertEqual(prepared.label_vault.holdout_rows, 200)

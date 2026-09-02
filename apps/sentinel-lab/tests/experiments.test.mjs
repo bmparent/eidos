@@ -37,3 +37,18 @@ test("preflight blocks dispatch without changing scientific readiness", () => {
   assert.ok(issues.some((issue) => issue.code === "RUNNER_NOT_CONFIGURED" && issue.severity === "blocker"));
   assert.ok(issues.some((issue) => issue.code === "AUTO_NUMERIC_FEATURES" && issue.severity === "warning"));
 });
+
+test("backend-specific blockers remain explicit and fail closed", () => {
+  const spec = validateExperimentSpec(cloneDefaultExperiment());
+  const issues = preflightIssues(spec, {
+    backend: "sandbox",
+    configured: false,
+    blockers: [
+      { code: "KAGGLE_CREDENTIAL_NOT_CONFIGURED", message: "Kaggle credential is absent." },
+      { code: "SANDBOX_AUTH_NOT_AVAILABLE", message: "Sandbox authentication is absent." },
+    ],
+  }, true);
+  assert.ok(issues.some((issue) => issue.code === "KAGGLE_CREDENTIAL_NOT_CONFIGURED" && issue.severity === "blocker"));
+  assert.ok(issues.some((issue) => issue.code === "SANDBOX_AUTH_NOT_AVAILABLE" && issue.severity === "blocker"));
+  assert.equal(issues.some((issue) => issue.code === "OPERATOR_AUTH_NOT_CONFIGURED"), false);
+});

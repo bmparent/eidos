@@ -5,10 +5,11 @@
 Sentinel Lab is split deliberately:
 
 1. The Next.js application on Vercel searches the catalog, validates operator input, computes a canonical experiment lock, and displays status/artifacts.
-2. The external runner owns Kaggle credentials, dataset bytes, Torch, resource limits, durable job directories, and the full Eidos engine process.
-3. Kaggle is an input registry, not a live backend. The runner downloads an explicit version and exact file once per locked job.
+2. The primary execution adapter launches one persistent Vercel Sandbox per experiment. The Sandbox clones the exact deployment commit and owns Kaggle credentials, dataset bytes, Torch, resource limits, job artifacts, and the full Eidos process.
+3. A FastAPI/Docker runner remains available when experiments outgrow Sandbox or need dedicated GPU/durable infrastructure.
+4. Kaggle is an input registry, not a live backend. The runner downloads an explicit version and exact file once per locked job.
 
-Vercel must not execute the full engine inside a request. A 2,000-unit reservoir plus HDC state is a resource-qualified batch workload, and the current `run_stream_once` helper temporarily replaces module-global configuration. The runner therefore gives each request a separate child process.
+The Next.js request does not execute the full engine. A 2,000-unit reservoir plus HDC state is a resource-qualified batch workload, and the current `run_stream_once` helper temporarily replaces module-global configuration. The request starts an isolated VM process and returns a job receipt; the interface polls status separately.
 
 ## Evidence states
 
@@ -47,10 +48,18 @@ The runner constructs two objects:
 - `PreparedDataset`: transformed frames, source row indices, and label-free metadata.
 - `LabelVault`: evaluation labels and a one-way commitment to held-out labels/row indices.
 
-Only `PreparedDataset.make_gen_factory()` is passed to `run_stream_once`. After the engine returns step rows, `evaluate_frozen_predictions` aligns evaluation frames and opens evaluation labels. The trace exported to the application contains scores and thresholds but no labels. Held-out labels are never evaluated in this evidence class.
+Only `PreparedDataset.make_gen_factory()` is passed to `run_stream_once`; its metadata contains neither labels nor calibration/evaluation membership. After the engine returns step rows, `evaluate_frozen_predictions` aligns evaluation frames and opens evaluation labels. The trace exported to the application contains scores and thresholds but no labels. Held-out labels are never evaluated in this evidence class.
 
-## Deployment contract
+## Vercel Sandbox deployment contract
 
-Vercel requires `EIDOS_RUNNER_URL`, `EIDOS_RUNNER_TOKEN`, and a separate `EIDOS_OPERATOR_TOKEN`. The browser supplies the operator credential only for dispatch/status calls; Vercel uses the runner credential server-to-server. The runner requires the runner bearer token, `KAGGLE_API_TOKEN`, a canonical engine path, persistent job storage, and a conservative concurrency limit. TLS, network restrictions, resource quotas, and artifact retention belong to the runner deployment.
+Set `EIDOS_EXECUTION_BACKEND=sandbox`, `EIDOS_OPERATOR_TOKEN`, and `KAGGLE_API_TOKEN` in Vercel. Git-based deployments supply `VERCEL_GIT_COMMIT_SHA` automatically; a manual deployment must set `EIDOS_SOURCE_COMMIT` to an exact 40-character SHA. Optional budget variables control vCPU, session timeout, maximum rows, and concurrency.
 
-Until both Vercel variables exist, the application can prepare and export an experiment lock but returns `RUNNER_NOT_CONFIGURED` instead of pretending a full-engine run occurred.
+The default budget is intentionally conservative: 4 vCPU/8 GB, 45 minutes, 25,000 rows, and one concurrent job. Each persistent Sandbox keeps only its newest snapshot and expires it after seven days. Terminal status and artifact reads stop the resumed VM after retrieval.
+
+The application exposes status and artifacts only through operator-authenticated route handlers. The Kaggle and Vercel credentials never enter the browser.
+
+## External-runner fallback
+
+Set `EIDOS_EXECUTION_BACKEND=external`, `EIDOS_RUNNER_URL`, `EIDOS_RUNNER_TOKEN`, and a separate `EIDOS_OPERATOR_TOKEN`. The browser supplies the operator credential only for dispatch/status calls; Vercel uses the runner credential server-to-server. The runner requires its bearer token, `KAGGLE_API_TOKEN`, a canonical engine path, persistent job storage, and a conservative concurrency limit. TLS, network restrictions, resource quotas, and artifact retention belong to that deployment.
+
+Until every selected-backend preflight condition passes, the application can prepare an experiment lock but refuses dispatch instead of pretending a full-engine run occurred.

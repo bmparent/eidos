@@ -52,6 +52,7 @@ export type LockedExperiment = {
   spec: ExperimentSpec;
   issues: PreflightIssue[];
   runnerConfigured: boolean;
+  executionBackend: "sandbox" | "external" | null;
   readyToDispatch: boolean;
 };
 
@@ -70,6 +71,39 @@ export type RunnerDispatch = {
   jobId: string;
   status: string;
   statusUrl?: string;
+  executionBackend?: "sandbox" | "external";
   evidenceClass: EvidenceClass;
   proofVerdict: "BLOCKED_RESOURCE_BEFORE_HELDOUT";
+};
+
+export type ExperimentMetrics = {
+  evaluation_rows_expected: number;
+  evaluation_rows_scored: number;
+  confusion: { tp: number; fp: number; fn: number; tn: number };
+  recall: number;
+  precision: number;
+  false_positive_rate: number;
+  roc_auc: number | null;
+  average_precision: number | null;
+  mean_detection_delay_frames: number | null;
+  missed_attack_windows: number;
+  labels_unsealed_after_prediction_freeze: true;
+  heldout_evaluated: false;
+};
+
+export type ExperimentStatus = {
+  schema: string;
+  jobId: string;
+  status: string;
+  updatedAt: string;
+  evidenceClass: EvidenceClass;
+  proofVerdict: "BLOCKED_RESOURCE_BEFORE_HELDOUT";
+  gatesAdvanced: 0;
+  lockDigest?: string;
+  rowsSentToEngine?: number;
+  metrics?: ExperimentMetrics;
+  artifacts?: string[];
+  error?: string;
+  detail?: string;
+  executionBackend?: "sandbox" | "external";
 };

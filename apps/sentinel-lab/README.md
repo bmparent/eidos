@@ -13,21 +13,24 @@ An evidence-first Next.js operator console for the Eidos Brain / Sentinel Grand 
 - Keeps G0–G6 locked and the current verdict at `BLOCKED_RESOURCE_BEFORE_HELDOUT`.
 - Searches the public Kaggle catalog and pins an explicit dataset version plus exact file path.
 - Produces a canonical SHA-256 real-data experiment lock.
-- Enforces calibration/evaluation/sealed-held-out partitions and dispatches only to a separately configured full-engine runner.
+- Enforces calibration/evaluation/sealed-held-out partitions and dispatches to an isolated Vercel Sandbox or a separately configured external runner.
 - Ships the process-isolated Python runner under `services/sentinel-runner` for `EIDOS_BRAIN_UNIFIED_v0_4.7.02.py`.
+- Polls live job stages, renders frozen-prediction metrics, and retrieves authenticated audit artifacts in the app.
 
 ## What it does not do
 
-The browser-facing smoke simulator still does not run the full Torch reservoir/HDC engine. Real-data requests are sent to the separate runner only when `EIDOS_RUNNER_URL` and `EIDOS_RUNNER_TOKEN` are configured. Even a successful real-data engineering run cannot establish Grand Proof acceptance, held-out generalization, or production readiness.
+The browser-facing smoke simulator still does not run the full Torch reservoir/HDC engine. The real-data tab launches isolated compute only when the selected backend, Kaggle credential, exact Git commit, and operator authorization all pass preflight. Even a successful real-data engineering run cannot establish Grand Proof acceptance, held-out generalization, or production readiness.
 
 ## Real-data safety contract
 
 - Kaggle downloads use `owner/dataset/versions/N` and an exact file path; missing files fail closed.
-- Labels are removed before engine frames and metadata are generated.
+- Labels and split membership are removed before engine frames and metadata are generated.
 - Missing-value, mean, and scale parameters are fit on calibration rows only.
 - Evaluation labels are opened only after the full engine returns frozen predictions.
 - Held-out rows are digest-committed but excluded from engineering execution.
 - Each full-engine job runs in its own process because the current engine helper temporarily replaces module-global configuration.
+- The Sandbox backend clones the deployment's exact Git commit, receives Kaggle credentials only as server-side environment state, and retains one expiring snapshot per job.
+- The default Sandbox budget is one concurrent job, 4 vCPU/8 GB, 25,000 rows, and 45 minutes.
 - Dispatch and status APIs require a separate operator bearer token so the public lab cannot launch compute jobs.
 - Every result remains `REAL_DATA_ENGINEERING`, advances zero gates, and preserves `BLOCKED_RESOURCE_BEFORE_HELDOUT`.
 
@@ -52,4 +55,4 @@ For a repeatable browser pass, point `CHROME_BIN` at Chrome or Chrome Headless S
 
 ## Repository placement
 
-The app lives at `apps/sentinel-lab`. The external execution service lives at `services/sentinel-runner` and imports the repository's canonical monolithic 0.4.7.02 engine. Development occurs on a feature branch; `main` is changed only through review and merge.
+The app lives at `apps/sentinel-lab`. The execution package lives at `services/sentinel-runner` and imports the repository's canonical monolithic 0.4.7.02 engine. Vercel Sandbox is the primary backend; the FastAPI/Docker service remains an external-compute fallback. Development occurs on a feature branch; `main` is changed only through review and merge.

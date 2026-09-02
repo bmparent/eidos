@@ -95,7 +95,6 @@ class PreparedDataset:
     def make_gen_factory(self) -> Callable[[], Iterable[Tuple[np.ndarray, Dict[str, Any]]]]:
         frames = self.frames
         rows = self.source_rows
-        calibration_rows = self.calibration_rows
         dataset_receipt = self.receipt
 
         def _gen() -> Iterable[Tuple[np.ndarray, Dict[str, Any]]]:
@@ -106,7 +105,6 @@ class PreparedDataset:
                     "dataset_version": dataset_receipt["dataset"]["version"],
                     "dataset_file_sha256": dataset_receipt["dataset"]["file_sha256"],
                     "source_row_index": int(rows[index]),
-                    "split": "calibration" if index < calibration_rows else "evaluation",
                 }
 
         return _gen
@@ -236,6 +234,7 @@ def prepare_dataframe(frame: pd.DataFrame, spec: ExperimentSpec, *, file_sha256:
         "label_isolation": {
             "label_column": contract.label_column,
             "engine_metadata_contains_labels": False,
+            "engine_metadata_contains_split_membership": False,
             "evaluation_unseal": "after_prediction_freeze",
             "heldout_sent_to_engine": False,
             "heldout_commitment_sha256": commitment,

@@ -2,6 +2,8 @@
 
 This service is the resource-qualified execution plane for Sentinel Lab. Vercel remains the UI/control plane; this container downloads one explicitly versioned Kaggle file and runs the full `EIDOS_BRAIN_UNIFIED_v0_4.7.02.py` engine in a child process.
 
+The same package also includes `sentinel_runner.sandbox_launcher`, the standard-library bootstrap used by the Vercel Sandbox backend. It creates an isolated virtual environment, installs this locked runner package, records bootstrap failures, and then hands the immutable request to the same CLI/job implementation used by the container.
+
 ## Safety boundary
 
 - Every request carries a canonical SHA-256 run lock, recomputed by the runner.

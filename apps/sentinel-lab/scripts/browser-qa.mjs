@@ -257,6 +257,14 @@ try {
   const expectedUnauthorizedErrors = consoleErrors.splice(errorsBeforeUnauthorizedDispatch);
   assert(expectedUnauthorizedErrors.every((message) => message.includes("503")), `Unexpected error during operator-auth check: ${expectedUnauthorizedErrors.join(" | ")}`);
 
+  const errorsBeforeUnauthorizedArtifact = consoleErrors.length;
+  const unauthorizedArtifact = await evaluate(client, `fetch('/api/experiments/rd-aaaaaaaaaaaa-bbbbbbbb/artifacts/metrics.json')
+    .then(async (response)=>({status:response.status,body:await response.json()}))`);
+  assert(unauthorizedArtifact.status === 503, "Public artifact retrieval was not closed when operator auth is unconfigured");
+  assert(unauthorizedArtifact.body.error === "OPERATOR_AUTH_NOT_CONFIGURED", "Artifact-auth rejection was not explicit");
+  const expectedArtifactErrors = consoleErrors.splice(errorsBeforeUnauthorizedArtifact);
+  assert(expectedArtifactErrors.every((message) => message.includes("503")), `Unexpected error during artifact-auth check: ${expectedArtifactErrors.join(" | ")}`);
+
   const errorsBeforeInvalidExperiment = consoleErrors.length;
   const invalidExperiment = await evaluate(client, `fetch('/api/experiments/preflight', {
     method: 'POST', headers: {'Content-Type':'application/json'},
@@ -317,6 +325,7 @@ try {
       canonicalRunLock: true,
       runnerBlockerVisible: true,
       publicDispatchClosed: true,
+      publicArtifactRetrievalClosed: true,
       pathTraversalRejected: true,
       mobileNoPageOverflow: true,
       realDataMobileNoPageOverflow: true,
