@@ -1,6 +1,6 @@
 [project]
 name = "eidos-sentinel-runner"
-version = "0.2.0"
+version = "0.2.1"
 description = "Process-isolated full-engine runner for Sentinel Lab real-data experiments"
 requires-python = ">=3.11"
 dependencies = [
@@ -9,7 +9,7 @@ dependencies = [
   "numpy>=1.26,<3",
   "pandas>=2.2,<4",
   "pyarrow>=17,<24",
-  "torch>=2.4,<3",
+  "torch==2.14.0",
   "uvicorn[standard]>=0.30,<1",
 ]
 

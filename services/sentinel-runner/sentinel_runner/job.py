@@ -101,5 +101,11 @@ def run_job(request_path: Path, job_dir: Path) -> int:
         return 0
     except Exception as exc:
         (job_dir / "failure_traceback.log").write_text(traceback.format_exc(), encoding="utf-8")
-        update_status(job_dir, "FAILED", error=type(exc).__name__, detail=str(exc))
+        update_status(
+            job_dir,
+            "FAILED",
+            error=type(exc).__name__,
+            detail=str(exc),
+            artifacts=["runner.log", "failure_traceback.log"],
+        )
         return 1

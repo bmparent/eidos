@@ -11,6 +11,9 @@ export const SANDBOX_ARTIFACTS = {
   "dataset_receipt.json": "application/json; charset=utf-8",
   "metrics.json": "application/json; charset=utf-8",
   "evaluation_trace.jsonl": "application/x-ndjson; charset=utf-8",
+  "runner.log": "text/plain; charset=utf-8",
+  "bootstrap_failure_traceback.log": "text/plain; charset=utf-8",
+  "failure_traceback.log": "text/plain; charset=utf-8",
 } as const;
 
 type ArtifactName = keyof typeof SANDBOX_ARTIFACTS;
@@ -100,7 +103,7 @@ export async function dispatchSandboxExperiment(lock: LockedExperiment): Promise
   const sandbox = await Sandbox.create({
     name,
     source: source(),
-    runtime: "python3.13",
+    image: "vercel/sandbox/python:3.14",
     resources: { vcpus },
     timeout,
     persistent: true,

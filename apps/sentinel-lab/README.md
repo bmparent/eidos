@@ -30,7 +30,10 @@ The browser-facing smoke simulator still does not run the full Torch reservoir/H
 - Held-out rows are digest-committed but excluded from engineering execution.
 - Each full-engine job runs in its own process because the current engine helper temporarily replaces module-global configuration.
 - The Sandbox backend clones the deployment's exact Git commit, receives Kaggle credentials only as server-side environment state, and retains one expiring snapshot per job.
+- The verified default lock is CIC-IDS2017 version 3, `WebAttacks-Thursday-no-metadata.parquet`, with its exact SHA-256 digest.
+- The Sandbox executes the full Eidos 0.4.7.02 code path with the documented small CPU profile: 256 reservoir units and 2,048 hippocampal dimensions.
 - The default Sandbox budget is one concurrent job, 4 vCPU/8 GB, 25,000 rows, and 45 minutes.
+- Bootstrap and engine failures make their diagnostic logs available only through the operator-authenticated artifact API.
 - Dispatch and status APIs require a separate operator bearer token so the public lab cannot launch compute jobs.
 - Every result remains `REAL_DATA_ENGINEERING`, advances zero gates, and preserves `BLOCKED_RESOURCE_BEFORE_HELDOUT`.
 

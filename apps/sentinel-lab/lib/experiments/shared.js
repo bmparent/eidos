@@ -5,8 +5,8 @@ export const CURATED_DATASETS = [
   {
     ref: "dhoogla/cicids2017",
     title: "CIC-IDS2017",
-    subtitle: "Protocol fixture · version 1 · labeled network-flow telemetry",
-    version: 1,
+    subtitle: "Verified fixture · version 3 · labeled network-flow telemetry",
+    version: 3,
     totalBytes: null,
     usabilityRating: 10,
     source: "curated",
@@ -20,16 +20,17 @@ export const DEFAULT_EXPERIMENT_SPEC = {
   dataset: {
     provider: "kaggle",
     ref: "dhoogla/cicids2017",
-    version: 1,
+    version: 3,
     file: "WebAttacks-Thursday-no-metadata.parquet",
+    expectedSha256: "7db47b2bf97ad58c3556ee25e8e1eb1e697cd391670733833865d0e84d8ed82a",
   },
   dataContract: {
     labelColumn: "Label",
     negativeLabels: ["BENIGN"],
     orderMode: "source",
-    excludedColumns: ["Flow ID", "Source IP", "Destination IP", "Timestamp"],
+    excludedColumns: [],
     featureColumns: [],
-    maxRows: 5000,
+    maxRows: 25000,
   },
   split: {
     calibration: 0.2,
@@ -205,6 +206,11 @@ export function preflightIssues(spec, runnerState, operatorAuthConfigured = fals
       message: "Rows will remain in the exact order delivered by the pinned Kaggle file; no shuffle or balancing is permitted.",
     });
   }
+  issues.push({
+    severity: "notice",
+    code: "RESOURCE_QUALIFIED_PROFILE",
+    message: "The full Eidos 0.4.7.02 code path will use the locked small CPU engineering profile: 256 reservoir units and 2,048 hippocampal dimensions. This changes no proof gate.",
+  });
   for (const blocker of execution?.blockers || []) {
     issues.push({ severity: "blocker", code: blocker.code, message: blocker.message });
   }
