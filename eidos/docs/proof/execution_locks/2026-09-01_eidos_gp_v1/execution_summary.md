@@ -46,6 +46,7 @@ The locked time budget was 21,600 seconds. The projection covers only the synthe
 
 - Local: `eidos/artifacts/grand_proof_v1_20260901T233145Z/`
 - Google Drive: `G:\My Drive\Eidos_Brain_Proof_Phase\2026-09-01\grand_proof_v1_20260901T233145Z`
+- Drive integrity: all 1,570 entries in the pre-reconciliation manifest were byte/hash checked; 17 stale or missing files were replaced and all 1,570 then verified. See `drive_reconciliation.json`.
 
 ## Proof Logic + Meaning
 

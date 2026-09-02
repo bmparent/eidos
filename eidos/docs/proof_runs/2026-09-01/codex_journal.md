@@ -124,7 +124,7 @@ The complete local artifact tree is `eidos/artifacts/grand_proof_v1_20260901T233
 
 ## Google Drive archive status
 
-Drive copy succeeded to `G:\My Drive\Eidos_Brain_Proof_Phase\2026-09-01\grand_proof_v1_20260901T233145Z`. The final manifest records the exact file count; no files were recorded as skipped.
+Drive copy succeeded to `G:\My Drive\Eidos_Brain_Proof_Phase\2026-09-01\grand_proof_v1_20260901T233145Z`. A full manifest reconciliation found 17 stale or missing Drive files despite the earlier optimistic status, replaced them, and then byte/hash verified all 1,570 pre-reconciliation manifest entries with zero failures. The reconciliation receipt itself was added afterward and verified separately.
 
 ## Thoughts on improvement
 

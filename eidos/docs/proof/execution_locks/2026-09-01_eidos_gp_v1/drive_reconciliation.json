@@ -1,0 +1,13 @@
+{
+  "receipt_version": "EIDOS-GP-v1-DRIVE-RECONCILIATION-v1",
+  "timestamp_utc": "2026-09-02T00:26:48Z",
+  "local_artifact_root": "eidos/artifacts/grand_proof_v1_20260901T233145Z",
+  "drive_run_dir": "G:\\My Drive\\Eidos_Brain_Proof_Phase\\2026-09-01\\grand_proof_v1_20260901T233145Z",
+  "manifest_entries_checked": 1570,
+  "missing_or_hash_mismatched_files_replaced": 17,
+  "entries_verified_after_replacement": 1570,
+  "verification_failures": [],
+  "method": "For each artifact_manifest.json entry, compare Drive existence, byte count, and SHA-256; copy only missing or mismatched files; then re-hash the Drive file.",
+  "supersedes": "The earlier optimistic drive_manifest copy-success assertion for integrity purposes.",
+  "result": "FULL_MANIFEST_VERIFIED"
+}
