@@ -1,5 +1,6 @@
 import { Sandbox } from "@vercel/sandbox";
 import type { ExperimentStatus, LockedExperiment, RunnerDispatch } from "@/lib/experiments/types";
+import { withDispatchStage } from "@/lib/experiments/dispatch-diagnostics";
 import {
   ACTIVE_SANDBOX_STATUSES,
   LAUNCHER_FAILURE_FILENAME,
@@ -181,7 +182,7 @@ async function enforceCapacity() {
 
 export async function dispatchSandboxExperiment(lock: LockedExperiment): Promise<RunnerDispatch> {
   const kaggleToken = required("KAGGLE_API_TOKEN");
-  await enforceCapacity();
+  await withDispatchStage("sandbox_capacity", () => enforceCapacity());
   const jobId = newJobId(lock.digest);
   const name = sandboxName(jobId);
   const timeout = integerSetting("EIDOS_SANDBOX_TIMEOUT_MS", 2_700_000, 300_000, 86_400_000);
@@ -202,7 +203,7 @@ export async function dispatchSandboxExperiment(lock: LockedExperiment): Promise
     executionBackend: "sandbox",
   };
 
-  const sandbox = await Sandbox.create({
+  const sandbox = await withDispatchStage("sandbox_allocation", () => Sandbox.create({
     name,
     source: source(),
     image: "vercel/sandbox/python:3.14",
@@ -221,45 +222,47 @@ export async function dispatchSandboxExperiment(lock: LockedExperiment): Promise
       EIDOS_MAX_CONCURRENT_JOBS: "1",
     },
     ...credentials(),
-  });
+  }));
 
   try {
-    await sandbox.fs.mkdir(directory, { recursive: true });
-    await sandbox.writeFiles([
-      {
-        path: requestPath,
-        content: JSON.stringify({ schema: "eidos.sentinel-runner.request.v0.2", lockDigest: lock.digest, spec: lock.spec }, null, 2) + "\n",
-      },
-      { path: `${directory}/status.json`, content: JSON.stringify(initialStatus, null, 2) + "\n" },
-    ]);
-    const interpreter = await verifySandboxLauncher(sandbox, launcherPath, repoRoot);
-    await writeJson(sandbox, `${directory}/status.json`, {
-      ...initialStatus,
-      status: "BOOTSTRAPPING_RUNTIME",
-      updatedAt: new Date().toISOString(),
-      detail: "Sandbox Python and launcher source verified; starting the detached engine process.",
-    });
-    const command = await sandbox.runCommand({
-      cmd: interpreter,
-      args: [
-        launcherPath,
-        "--request",
-        requestPath,
-        "--job-dir",
-        directory,
-        "--repo-root",
-        repoRoot,
-      ],
-      cwd: repoRoot,
-      detached: true,
-      timeoutMs: Math.max(240_000, timeout - 30_000),
-    });
-    await writeJson(sandbox, `${directory}/${LAUNCHER_RECEIPT_FILENAME}`, {
-      schema: LAUNCHER_RECEIPT_SCHEMA,
-      jobId,
-      commandId: command.cmdId,
-      startedAt: command.startedAt,
-    } satisfies LauncherReceipt);
+    await withDispatchStage("sandbox_bootstrap", async () => {
+      await sandbox.fs.mkdir(directory, { recursive: true });
+      await sandbox.writeFiles([
+        {
+          path: requestPath,
+          content: JSON.stringify({ schema: "eidos.sentinel-runner.request.v0.2", lockDigest: lock.digest, spec: lock.spec }, null, 2) + "\n",
+        },
+        { path: `${directory}/status.json`, content: JSON.stringify(initialStatus, null, 2) + "\n" },
+      ]);
+      const interpreter = await verifySandboxLauncher(sandbox, launcherPath, repoRoot);
+      await writeJson(sandbox, `${directory}/status.json`, {
+        ...initialStatus,
+        status: "BOOTSTRAPPING_RUNTIME",
+        updatedAt: new Date().toISOString(),
+        detail: "Sandbox Python and launcher source verified; starting the detached engine process.",
+      });
+      const command = await sandbox.runCommand({
+        cmd: interpreter,
+        args: [
+          launcherPath,
+          "--request",
+          requestPath,
+          "--job-dir",
+          directory,
+          "--repo-root",
+          repoRoot,
+        ],
+        cwd: repoRoot,
+        detached: true,
+        timeoutMs: Math.max(240_000, timeout - 30_000),
+      });
+      await writeJson(sandbox, `${directory}/${LAUNCHER_RECEIPT_FILENAME}`, {
+        schema: LAUNCHER_RECEIPT_SCHEMA,
+        jobId,
+        commandId: command.cmdId,
+        startedAt: command.startedAt,
+      } satisfies LauncherReceipt);
+    }, { jobId });
   } catch (error) {
     await sandbox.stop().catch(() => undefined);
     throw error;
