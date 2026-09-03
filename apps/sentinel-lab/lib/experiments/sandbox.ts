@@ -1,6 +1,7 @@
 import { Sandbox } from "@vercel/sandbox";
 import type { ExperimentStatus, LockedExperiment, RunnerDispatch } from "@/lib/experiments/types";
 import { withDispatchStage } from "@/lib/experiments/dispatch-diagnostics";
+import { SANDBOX_ROOT, sandboxRepositoryRoot } from "@/lib/experiments/sandbox-paths";
 import {
   ACTIVE_SANDBOX_STATUSES,
   LAUNCHER_FAILURE_FILENAME,
@@ -71,7 +72,7 @@ function sandboxName(jobId: string) {
 }
 
 function jobDirectory(jobId: string) {
-  return `/vercel/sandbox/jobs/${jobId}`;
+  return `${SANDBOX_ROOT}/jobs/${jobId}`;
 }
 
 function isNotFound(error: unknown) {
@@ -130,6 +131,7 @@ async function persistLauncherFailure(
 
 async function verifySandboxLauncher(sandbox: Sandbox, launcherPath: string, repoRoot: string) {
   const probe = "from pathlib import Path; import sys; path=Path(sys.argv[1]); assert path.is_file(), f'launcher missing: {path}'; print(sys.executable)";
+  const attempts: string[] = [];
   for (const interpreter of ["python", "python3"]) {
     try {
       const result = await sandbox.runCommand({
@@ -139,11 +141,17 @@ async function verifySandboxLauncher(sandbox: Sandbox, launcherPath: string, rep
         timeoutMs: 30_000,
       });
       if (result.exitCode === 0) return interpreter;
-    } catch {
+      const output = await result.output("both").catch(() => "");
+      attempts.push(`${interpreter}: exit=${result.exitCode}; ${diagnosticMessage(output || "no output")}`);
+    } catch (error) {
+      attempts.push(`${interpreter}: ${diagnosticMessage(error)}`);
       // Try the other conventional interpreter name before failing closed.
     }
   }
-  throw new Error("SANDBOX_LAUNCHER_PREFLIGHT_FAILED");
+  throw Object.assign(
+    new Error(`Sandbox launcher preflight failed. ${attempts.join(" | ")}`),
+    { code: "SANDBOX_LAUNCHER_PREFLIGHT_FAILED" },
+  );
 }
 
 function newJobId(lockDigest: string) {
@@ -187,7 +195,8 @@ export async function dispatchSandboxExperiment(lock: LockedExperiment): Promise
   const name = sandboxName(jobId);
   const timeout = integerSetting("EIDOS_SANDBOX_TIMEOUT_MS", 2_700_000, 300_000, 86_400_000);
   const vcpus = integerSetting("EIDOS_SANDBOX_VCPUS", 4, 1, 8);
-  const repoRoot = "/vercel/sandbox";
+  const repositorySource = source();
+  const repoRoot = sandboxRepositoryRoot(repositorySource.url);
   const directory = jobDirectory(jobId);
   const requestPath = `${directory}/request.json`;
   const launcherPath = `${repoRoot}/services/sentinel-runner/sentinel_runner/sandbox_launcher.py`;
@@ -205,7 +214,7 @@ export async function dispatchSandboxExperiment(lock: LockedExperiment): Promise
 
   const sandbox = await withDispatchStage("sandbox_allocation", () => Sandbox.create({
     name,
-    source: source(),
+    source: repositorySource,
     image: "vercel/sandbox/python:3.14",
     resources: { vcpus },
     timeout,
@@ -218,7 +227,7 @@ export async function dispatchSandboxExperiment(lock: LockedExperiment): Promise
       PYTHONUNBUFFERED: "1",
       PYTHONPATH: `${repoRoot}/services/sentinel-runner:${repoRoot}/eidos/repo/src`,
       EIDOS_ENGINE_PATH: `${repoRoot}/eidos/EIDOS_BRAIN_UNIFIED_v0_4.7.02.py`,
-      EIDOS_JOB_ROOT: `${repoRoot}/jobs`,
+      EIDOS_JOB_ROOT: `${SANDBOX_ROOT}/jobs`,
       EIDOS_MAX_CONCURRENT_JOBS: "1",
     },
     ...credentials(),
@@ -264,6 +273,14 @@ export async function dispatchSandboxExperiment(lock: LockedExperiment): Promise
       } satisfies LauncherReceipt);
     }, { jobId });
   } catch (error) {
+    await persistLauncherFailure(
+      sandbox,
+      jobId,
+      initialStatus,
+      "SANDBOX_BOOTSTRAP_FAILED",
+      `The Sandbox was allocated, but launcher bootstrap failed. Inspect ${LAUNCHER_FAILURE_FILENAME}.`,
+      diagnosticMessage(error),
+    ).catch(() => undefined);
     await sandbox.stop().catch(() => undefined);
     throw error;
   }
