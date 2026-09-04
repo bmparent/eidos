@@ -1,0 +1,25 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1080" height="600" viewBox="0 0 1080 600">
+<rect width="1080" height="600" fill="#f4f5f1"/>
+<text x="45" y="60" font-family="sans-serif" font-size="28" fill="#183330">Controlled memory — evidence status</text>
+<text x="45" y="96" font-family="sans-serif" font-size="17">8 neurons | 192 trajectories | utility untested</text>
+<circle cx="58" cy="144" r="8" fill="#24725f"/>
+<text x="82" y="150" font-family="sans-serif" font-size="18" fill="#183330">Frozen evaluator and inputs</text>
+<text x="790" y="150" font-family="sans-serif" font-size="17" fill="#24725f">passed</text>
+<circle cx="58" cy="197" r="8" fill="#24725f"/>
+<text x="82" y="203" font-family="sans-serif" font-size="18" fill="#183330">Actual listen adapter / reset</text>
+<text x="790" y="203" font-family="sans-serif" font-size="17" fill="#24725f">passed</text>
+<circle cx="58" cy="250" r="8" fill="#24725f"/>
+<text x="82" y="256" font-family="sans-serif" font-size="18" fill="#183330">Exact scalar and nonnormal controls</text>
+<text x="790" y="256" font-family="sans-serif" font-size="17" fill="#24725f">passed</text>
+<circle cx="58" cy="303" r="8" fill="#24725f"/>
+<text x="82" y="309" font-family="sans-serif" font-size="18" fill="#183330">Declared numerical trajectories</text>
+<text x="790" y="309" font-family="sans-serif" font-size="17" fill="#24725f">passed</text>
+<circle cx="58" cy="356" r="8" fill="#24725f"/>
+<text x="82" y="362" font-family="sans-serif" font-size="18" fill="#183330">Full-horizon precision checks</text>
+<text x="790" y="362" font-family="sans-serif" font-size="17" fill="#24725f">passed</text>
+<circle cx="58" cy="409" r="8" fill="#a16a28"/>
+<text x="82" y="415" font-family="sans-serif" font-size="18" fill="#183330">Operational utility gate</text>
+<text x="790" y="415" font-family="sans-serif" font-size="17" fill="#a16a28">missing</text>
+<text x="45" y="510" font-family="sans-serif" font-size="17">Global proof readiness: unknown — full project gates not reassessed.</text>
+<text x="45" y="550" font-family="sans-serif" font-size="15">Reproducibility is truth that can be revisited. Numerical fidelity is not a utility gate.</text>
+</svg>

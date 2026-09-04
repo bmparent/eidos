@@ -1,0 +1,42 @@
+{
+  "status": "complete",
+  "started_utc": "2026-09-04T21:08:28.039725+00:00",
+  "protocol_sha256": "dee56838e6a7e534869517731630b18cac819b0272f7f1a94ffa0a53f8b01118",
+  "completed_trials": [
+    "default_zero_7",
+    "default_impulse_7",
+    "default_driven_7",
+    "default_project_7",
+    "slow_zero_7",
+    "slow_impulse_7",
+    "slow_driven_7",
+    "slow_project_7",
+    "bands_zero_7",
+    "bands_impulse_7",
+    "bands_driven_7",
+    "bands_project_7",
+    "default_zero_19",
+    "default_impulse_19",
+    "default_driven_19",
+    "default_project_19",
+    "slow_zero_19",
+    "slow_impulse_19",
+    "slow_driven_19",
+    "slow_project_19",
+    "bands_zero_19",
+    "bands_impulse_19",
+    "bands_driven_19",
+    "bands_project_19"
+  ],
+  "completed_precision": [
+    "default_zero_7",
+    "default_driven_7",
+    "slow_zero_7",
+    "slow_driven_7",
+    "bands_zero_7",
+    "bands_driven_7"
+  ],
+  "failures": [],
+  "finished_utc": "2026-09-04T21:32:59.101474+00:00",
+  "elapsed_seconds": 1471.047000000006
+}

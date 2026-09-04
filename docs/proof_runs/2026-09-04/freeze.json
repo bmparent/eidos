@@ -1,0 +1,41 @@
+{
+  "utc": "2026-09-04T21:07:33.448989+00:00",
+  "protocol_sha256": "dee56838e6a7e534869517731630b18cac819b0272f7f1a94ffa0a53f8b01118",
+  "inputs": {
+    "bands.npz": "dc077b37467ad402d254d3696dcd42261aee04d988c7f2d274aaa552d007422d",
+    "bands_driven_19.npz": "bb77af671b1cc709d355f85e4f71fb58a53b0b9886916971256180f711f07ab0",
+    "bands_driven_7.npz": "ccf4a006423dafaf383179d4e48f4b8e896f7592506d8e1dae513b128006fc9e",
+    "bands_impulse_19.npz": "442d7cd7b9654c84464bc762c0f4a278f7ae04b9c55abe12027957100e9afe75",
+    "bands_impulse_7.npz": "11b357da570ece26312e431546e72881e5ef9723d8c6292d695353077a962c62",
+    "bands_project_19.npz": "739f741efb5768f0be0e6da6e7ef7bf607b3b6f7388b2a1d439a91ea992bcb94",
+    "bands_project_7.npz": "e1712eab30e120da9c5ede5adfc8675bf21497602c7905966f304becf561f547",
+    "bands_zero_19.npz": "5834c974ca3b4b8a87b82a949d2f2ebacb67d53a8e230a2a0334402cf4443725",
+    "bands_zero_7.npz": "c0c3b09f7e91696deeaf5c3bc30ae349ff8d6c66ce881c04918427387592ad85",
+    "default.npz": "bdbc49348788e2954d324e0a022a4ab426c4d7d006a72b540fbd3a24ce8895cd",
+    "default_driven_19.npz": "4f3154d9c71496cba8a94493c0c1c7ce2adb52f9cf82ab2e38df867067607092",
+    "default_driven_7.npz": "0e2d533e0a7831d5c193de7082b866346dba1c8b7cc9796014a2773970d38897",
+    "default_impulse_19.npz": "6fff1234b03ab8cf371a684cbfc5819169ec274b2a97225aab76fd30843495fd",
+    "default_impulse_7.npz": "bb4aec8abb5e03bf0d88018dbffd6d9123d2f1e90a211be71ace86e6a7d4e62c",
+    "default_project_19.npz": "bd04b6c11cb25c5318b66fa7c5be31a19cb8dee53c160f4b0e48f8a2080fc3f0",
+    "default_project_7.npz": "90bac81e3ac813c247fa139a517e36173b7c19547cb1b712fc024c2df970845e",
+    "default_zero_19.npz": "1a0aee72047cc819365b957c59417ec65a6d41f66da0400de6ff86ef9d90ed3f",
+    "default_zero_7.npz": "317d6c7c034a51b56b791adacaf2c8eda07433eae0f04cd2179d1011bd892c7b",
+    "normalization_19.json": "1cfb5e8c2b3d681ee2e57afaa8ff806f533f7af7494e32e3f8cd218e399b624e",
+    "normalization_7.json": "1cfb5e8c2b3d681ee2e57afaa8ff806f533f7af7494e32e3f8cd218e399b624e",
+    "slow.npz": "a85ebacb52c77a25f32da9668d5f47b83ae6a781e4464d6efe46ace27fc5b172",
+    "slow_driven_19.npz": "307365f61d30e448681796fd26ac63fca172f2674e5b1e79c6e79074edafd0f7",
+    "slow_driven_7.npz": "d6f28114071888da16f1444c9dadc18227e4d33f6ad74610e3ff879dc2c999e4",
+    "slow_impulse_19.npz": "80cb07e033d8164840475f8524b5c1fb6bdfba832cc09989a788c5d85708e6d9",
+    "slow_impulse_7.npz": "9e0e94b2868ad3204615a7b141653b24b343ab61153c8a10f8535425c36fb539",
+    "slow_project_19.npz": "8078607af2e8ad970be131ce1938e6b5e85a677f176756f4035952c977421c84",
+    "slow_project_7.npz": "e4f630a566ae81a02ff60ecc0a522ee87ef18597fc576333565b866894bbce71",
+    "slow_zero_19.npz": "2840cb180d246434cad0e87da1e4a8fb352dd062fb314a698f3e5385b6a0760e",
+    "slow_zero_7.npz": "107c10e4ce70baf213443eed73db48666c7e5da27e934b226efcea17b30a0d27"
+  },
+  "source_hashes": {
+    "proof/memory_core.py": "334465fb35977fa21012a5ce47db514be0372584047afb31e5f49c3530c5ee92",
+    "proof/memory_benchmark.py": "836dbfb3bad5534f0701fdc8cb29b1e135345cea2e8a774e90dab024065cb0d9",
+    "tests/test_memory_benchmark.py": "963b32ca675cf445bc08cba728c26318a5a9845ae028fcac2aa9bb301892729d",
+    "eidos/repo/src/eidos_brain/engine/eidos_v0_4_7_02.py": "93c6bbeb6bdb46fde88191b223843367370c56d855c6b53489720ca53bbb8286"
+  }
+}
