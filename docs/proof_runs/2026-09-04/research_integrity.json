@@ -1,0 +1,20 @@
+{
+  "zip_sha256": "ebfd677dd541d5fcc10a495955897dbc71cee9b061f2d13f3bbe9d84214a10bf",
+  "manifest_checks": {
+    "Eidos_Quantized_Memory_Research.pdf": true,
+    "README.md": true,
+    "calibration.json": true,
+    "freeze.json": true,
+    "implementation-evidence.md": true,
+    "input_inventory.json": true,
+    "protocol.json": true,
+    "report-source.md": true,
+    "research-history.json": true,
+    "results.json": true,
+    "search-log.json": true,
+    "sharpness_results.json": true,
+    "source-ledger.json": true,
+    "verify.py": true,
+    "verify_sharpness.py": true
+  }
+}

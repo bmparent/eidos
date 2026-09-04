@@ -10,6 +10,7 @@ Start here when you need to understand what `/eidos` contains and what the curre
 - `eidos/docs/proof_runs/` - plain-language run notes, Codex journals, Drive status, and test summaries by date.
 - `eidos/docs/proof/merge_state_report_2026_06_07.md` - merge-state audit for proof branches and GitHub integration status.
 - `eidos/AUDIT/` - static audit maps for the core loop, reservoir, predictor, normalization, surprise gate, and artifact receipts.
+- `docs/controlled_memory_benchmark.md` - isolated state-rounding benchmark, frozen protocol, exact controls, and reproduction commands.
 - `eidos/artifacts/` - repo-local proof receipts, including manifests, summaries, ledgers, reports, and Drive-copy records.
 
 ## Proof Posture
