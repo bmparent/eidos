@@ -1,0 +1,27 @@
+{
+  "milestone": "memory utility data readiness",
+  "implementation_status": "passed",
+  "chronological_utility_status": "blocked",
+  "adoption_decision": "inconclusive",
+  "source_rows": 170366,
+  "benign_rows": 168186,
+  "attack_rows": 2180,
+  "invalid_durations": 11,
+  "source_sha256": "d67066211fb1689c78406f1506f4c44704ecb92088353d5c96d96d6474eb819d",
+  "runtime_overhead_ceiling_fraction": 0.1,
+  "candidate_runtime_ratio_measured": null,
+  "minimum_useful_task_effect": null,
+  "precision": null,
+  "recall": null,
+  "false_positive_events": null,
+  "metrics_null_reason": "No detector or candidate utility replay was performed.",
+  "blockers": [
+    "Missing timestamps",
+    "11 negative durations require documented treatment",
+    "Chronological cutoff/gap not validated or frozen",
+    "Minimum useful task effect not established",
+    "Actual Sentinel label-blind integration/evaluator not implemented"
+  ],
+  "core_behavior_changed": false,
+  "next_decisive_step": "Recover timestamped source; retain explicit invalid-row receipts; validate availability-based split; freeze label-blind Sentinel utility evaluator and effect requirement under the user 10% runtime budget."
+}

@@ -1,0 +1,27 @@
+{
+  "dataset_sha256": "d67066211fb1689c78406f1506f4c44704ecb92088353d5c96d96d6474eb819d",
+  "feature_columns": [
+    "Flow Duration",
+    "Total Fwd Packets",
+    "Total Length of Fwd Packets"
+  ],
+  "timestamp_column": "Timestamp",
+  "timestamp_format": null,
+  "exploration_cutoff": null,
+  "gap_seconds": null,
+  "ordering": "stable flow completion time = timestamp + Flow Duration in microseconds; source row breaks ties",
+  "preprocessing": "fit prefix only; replay prefix, gap and suffix with frozen scaler",
+  "state_handoff": "continuous; reset once before prefix; no reset at evaluation boundary",
+  "labels": "separate scoring_labels.npz; never pass labels, IPs or label windows to model",
+  "prediction_targets": "one-step targets must stay within their own partition",
+  "adoption_status": "inconclusive",
+  "acceptable_overhead_threshold": null,
+  "smallest_useful_effect": null,
+  "reason": "Project FP reduction/recall preservation objective exists, but no task-specific effect magnitude or overhead budget is established.",
+  "blockers": [
+    "missing_or_ambiguous_timestamp_column",
+    "invalid_flow_duration",
+    "exploration_cutoff_not_frozen",
+    "overlap_gap_not_frozen"
+  ]
+}

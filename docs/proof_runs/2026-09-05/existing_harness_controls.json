@@ -1,0 +1,55 @@
+{
+  "normalization": {
+    "source": "eidos\\tools\\run_labeled_domain_proof.py",
+    "sha256": "12878fbde2be015c8bffab6e8d133a5a0acfca8276ede109e88a8386d5419d71",
+    "function": "standardize_matrix",
+    "line": 555,
+    "fixed_prefix": [
+      0,
+      2
+    ],
+    "suffix_before": [
+      4
+    ],
+    "suffix_after": [
+      100
+    ],
+    "normalized_prefix_before": [
+      [
+        -1.224744871391589
+      ],
+      [
+        0.0
+      ]
+    ],
+    "normalized_prefix_after": [
+      [
+        -0.728422786026054
+      ],
+      [
+        -0.6855743868480508
+      ]
+    ],
+    "prefix_changed_with_suffix": true
+  },
+  "calibration": {
+    "source": "eidos\\proof\\sentinel_calibration_v1.py",
+    "sha256": "32845f8178f48914e4fd1006658b4fb1a707ecd41351a644950473716a8228c6",
+    "function": "_reason_for_suppression",
+    "same_event": {
+      "event_id": "same-event",
+      "start_frame": 1,
+      "end_frame": 1,
+      "component_count": 1
+    },
+    "without_attack_windows": [
+      "benign_only_pressure",
+      null
+    ],
+    "with_overlapping_attack_window": [
+      null,
+      null
+    ],
+    "meaning": "Existing proof-stage accounting intentionally uses labels; it cannot stand in for label-blind operational detection."
+  }
+}
