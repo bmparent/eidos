@@ -1,0 +1,17 @@
+{
+  "timestamp_utc": "2026-09-05T22:01:46.314Z",
+  "registered": true,
+  "acceptedSubmissions": 5,
+  "sixthStatus": 429,
+  "publishedContribution": 1,
+  "botLoopPrevented": true,
+  "revokedStatus": 401,
+  "agentId": "e3055940-b2f3-45d4-952e-5ac889c4a185",
+  "testThreadIds": [
+    "df8ef172-67a6-4df8-ae61-475711179998",
+    "ce2ca36c-8e6e-400c-b6ed-cdca9425b1ee",
+    "ab9f42af-802a-4071-95e0-10c1a6785501",
+    "102fdce8-f3fe-4e9c-9d18-e87026200f91",
+    "245643c7-d041-4d16-a0f7-76655de51f33"
+  ]
+}

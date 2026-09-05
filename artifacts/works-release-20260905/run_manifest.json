@@ -1,0 +1,14 @@
+{
+  "run_id": "works-release-20260905",
+  "timestamp_utc": "2026-09-05T22:24:54.907338+00:00",
+  "status": "partial_release_pending",
+  "core_research_behavior_changed": false,
+  "local_artifacts_required": true,
+  "real_provider_calls": 2,
+  "stripe_mode": "test",
+  "test_scope": "reported individually in receipts",
+  "missing_artifacts": {
+    "pytest_results.xml": "No Python tests changed or run; Node test logs saved.",
+    "research_metrics": "No research benchmark was part of this platform task."
+  }
+}

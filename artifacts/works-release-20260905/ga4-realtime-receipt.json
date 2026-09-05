@@ -1,0 +1,29 @@
+{
+  "observed_utc": "2026-09-05T22:00:00Z",
+  "source": "Authenticated Google Analytics Realtime UI",
+  "accountId": "386114675",
+  "propertyId": "552876683",
+  "propertyName": "Eidos Works",
+  "streamId": "15725877773",
+  "streamUrl": "https://eidos-works.com",
+  "measurementId": "G-8N7Y7EM4CS",
+  "enhancedMeasurement": false,
+  "observations": {
+    "page_view": 3,
+    "question_submit": 1,
+    "first_visit": 1,
+    "session_start": 1,
+    "purchase": 1
+  },
+  "purchaseObservedLater": true,
+  "environment": "Pages validation preview, QA traffic",
+  "beforeConsentScriptCount": 0,
+  "afterDeclineScriptCount": 0,
+  "afterGrantScriptCount": 1,
+  "afterRegrantScriptCount": 1,
+  "limitations": [
+    "QA events are not production sales.",
+    "User-agent traffic classification is heuristic; registered agent API contributions emit no browser conversion events.",
+    "Production receipt remains to be checked."
+  ]
+}

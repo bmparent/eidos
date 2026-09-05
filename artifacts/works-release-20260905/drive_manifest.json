@@ -1,0 +1,188 @@
+{
+  "drive_copy_attempted": true,
+  "drive_copy_success": true,
+  "drive_root": "G:\\My Drive",
+  "drive_run_dir": "G:\\My Drive\\Eidos_Brain_Proof_Phase\\2026-09-05\\works-release-20260905",
+  "reason": "Copied to configured mounted Drive and verified local mirror hashes; cloud synchronization completion is not independently verified.",
+  "files_considered": [
+    "agent-deployed-smoke.json",
+    "ai-deployed-smoke.json",
+    "ai-provider-smoke.json",
+    "build-final.log",
+    "build.txt",
+    "cinematic-starter-test-download.zip",
+    "codex_journal.md",
+    "community-deployed-smoke.json",
+    "configuration-receipt.json",
+    "eidos_progress_dashboard.html",
+    "eidos_progress_meter.json",
+    "eidos_progress_meter.md",
+    "eidos_progress_meter.svg",
+    "environment-before.json",
+    "environment.txt",
+    "ga4-realtime-receipt.json",
+    "git_commit.txt",
+    "inquiry-service-smoke.json",
+    "lint-final.log",
+    "lint.log",
+    "lint.txt",
+    "plain_language_test_analysis.md",
+    "preview-configuration.json",
+    "preview-deployment.json",
+    "preview-relay-configuration.json",
+    "proactive-storage-smoke.json",
+    "production-before.json",
+    "proof_logic_ledger.json",
+    "proof_logic_ledger.md",
+    "run_manifest.json",
+    "storage-smoke.json",
+    "stripe-deployed-smoke.json",
+    "tests-final.log",
+    "tests.log",
+    "tests.txt"
+  ],
+  "files_copied": [
+    {
+      "path": "agent-deployed-smoke.json",
+      "sha256": "5157be8dc912bc8e48191dbcb46e0ae7721d3dac7ff680ecdae2a650e69c817e"
+    },
+    {
+      "path": "ai-deployed-smoke.json",
+      "sha256": "70bba3e3f38babf79784f6a3b83903d5091d017cccf3f6f8d60dd64a0025e9b0"
+    },
+    {
+      "path": "ai-provider-smoke.json",
+      "sha256": "cda92d708b085ce3283c1d34367e78f157036c8008e360e0c606aa79ddd8e812"
+    },
+    {
+      "path": "build-final.log",
+      "sha256": "957554849e3282d4dd4da6d27e1414a966d3f5741c286cb7ca8e19a7944f34d0"
+    },
+    {
+      "path": "build.txt",
+      "sha256": "ea329f9a76d56245dff70be2ef3c54f254a4399801f13732093dfc55fc5a3a16"
+    },
+    {
+      "path": "cinematic-starter-test-download.zip",
+      "sha256": "c5723e4908f8aff386f50ec41c59dfa673a8e4280c46f2eed2399e30ee5f7988"
+    },
+    {
+      "path": "codex_journal.md",
+      "sha256": "9755d57543a8c7d34bd88958e151737648a361c50d1ce189430171165db7a038"
+    },
+    {
+      "path": "community-deployed-smoke.json",
+      "sha256": "2ff46432062322d819f7a8d4de74a9467d56e84521bc3f509bd9f1805db24610"
+    },
+    {
+      "path": "configuration-receipt.json",
+      "sha256": "34d8f4406aa35c4080abd7068b05899f3d141f6fbcf925dcce6cc84a40b70f21"
+    },
+    {
+      "path": "eidos_progress_dashboard.html",
+      "sha256": "54aeb0c122c1ef7521b6b3ef906cb32618127283ea426cb3375433d4fbbcdf30"
+    },
+    {
+      "path": "eidos_progress_meter.json",
+      "sha256": "0776659eb571493ac2dc056217ec9a9b40bc7401c0c6da141b455cf50410389f"
+    },
+    {
+      "path": "eidos_progress_meter.md",
+      "sha256": "c7786a3857ffa17b773b423863066e5b70d0a69c5e621205e6ae7b838821a7b4"
+    },
+    {
+      "path": "eidos_progress_meter.svg",
+      "sha256": "df7720a3794e385294681f99ee07ef0e71158011fffe65df2d262cff39a0da5c"
+    },
+    {
+      "path": "environment-before.json",
+      "sha256": "d231d8c72d109626755a6a2e16b50d6663b92dd5372af4e84227669188d3de59"
+    },
+    {
+      "path": "environment.txt",
+      "sha256": "945cef7245e278ecfec3c7176aa80c857749d87d49b47345e8bcd1241a46adfc"
+    },
+    {
+      "path": "ga4-realtime-receipt.json",
+      "sha256": "589f01ed632fbd24711dbd1532f88a35e009665f4a92ddf2f677e1e03723f609"
+    },
+    {
+      "path": "git_commit.txt",
+      "sha256": "916ed3a0f400017df4ee3cd9dfeea7de64f521c403af99c1ccc1095c2684c73c"
+    },
+    {
+      "path": "inquiry-service-smoke.json",
+      "sha256": "d07eece80b52351b5f80c0cd84db18824cb1df113c1af0a122cf245f3a21f893"
+    },
+    {
+      "path": "lint-final.log",
+      "sha256": "9a216ee216ffece65f8c7311a6df581a1485d1725ca017f4227f18213940a6eb"
+    },
+    {
+      "path": "lint.log",
+      "sha256": "9a216ee216ffece65f8c7311a6df581a1485d1725ca017f4227f18213940a6eb"
+    },
+    {
+      "path": "lint.txt",
+      "sha256": "9a216ee216ffece65f8c7311a6df581a1485d1725ca017f4227f18213940a6eb"
+    },
+    {
+      "path": "plain_language_test_analysis.md",
+      "sha256": "709e2089d73eb9b1b17bdc3a2030191398c64b9469fd0658385116eaa2a1c3f1"
+    },
+    {
+      "path": "preview-configuration.json",
+      "sha256": "9a2d580ad105e0c48e41e504e63055023d1f2d85a9b24d3ca78713ec4bcafdb4"
+    },
+    {
+      "path": "preview-deployment.json",
+      "sha256": "5720acf6d3ebf479a9db72984605e24bd3b576632e3134c94223df62401fec0a"
+    },
+    {
+      "path": "preview-relay-configuration.json",
+      "sha256": "34b5c2b6bbe0049cd861af30c01040279c77c3851607fadd99620772512dfa50"
+    },
+    {
+      "path": "proactive-storage-smoke.json",
+      "sha256": "00da00d62c33b43a8a0cf0ecce0f0d40c1f7a89bbad6bc7134a48a76c2c94274"
+    },
+    {
+      "path": "production-before.json",
+      "sha256": "cb8cb9afff71661378b2e678d017da7ebe71ecff1910e11365b21ccab0d03bf9"
+    },
+    {
+      "path": "proof_logic_ledger.json",
+      "sha256": "0776659eb571493ac2dc056217ec9a9b40bc7401c0c6da141b455cf50410389f"
+    },
+    {
+      "path": "proof_logic_ledger.md",
+      "sha256": "345331f3c16df4507e6ed02963f6b2703cf2c5c164416a5c285f5e212afaa8c0"
+    },
+    {
+      "path": "run_manifest.json",
+      "sha256": "084c1d6d4e2888bc98144e3036323d8b0d4c590dbd1786c50c9bc937669e89da"
+    },
+    {
+      "path": "storage-smoke.json",
+      "sha256": "e1e9adf18f9fc95a9ba6a35c29fe36a859e85e88f329739f3efa7efa2dfbf43e"
+    },
+    {
+      "path": "stripe-deployed-smoke.json",
+      "sha256": "dc07fee975cf385280591870a440ca4480a56cce62577a8dee71c0099e4872dd"
+    },
+    {
+      "path": "tests-final.log",
+      "sha256": "0fdcc75cf9689e20a23c41ca97bef9649092ecd0967f7ecca321c6f1c45bb81e"
+    },
+    {
+      "path": "tests.log",
+      "sha256": "d328f7b5bc5fd78120b91ebb9a2e5d8ac8bef4c2fd676c916e8f548cebf0dc48"
+    },
+    {
+      "path": "tests.txt",
+      "sha256": "f2a13fd3e83e4f1db5af43bd62a1b8770d60579265f843c74d6c827e9abb7b44"
+    }
+  ],
+  "files_skipped": [],
+  "timestamp_utc": "2026-09-05T22:24:54.907338+00:00"
+}
