@@ -1,61 +1,69 @@
-# Eidos Works service validation — 2026-09-05
+# Eidos Works production handoff - 2026-09-05
 
-The hosted preview now connects the cinematic website to Sentinel, remote storage, opt-in AI, moderated community and Stripe test fulfillment. Both free Turso allocations were provisioned after explicit owner acceptance of the service terms. The inquiry test reached the configured studio Gmail inbox with a matching receipt. GA4 Realtime received actual page/question/purchase events for the validation preview. Paid test checkout returned the promised five-file ZIP; cancel/unpaid, refund and dispute paths denied downloads. No real-money test purchase was made.
+The website and backend are deployed. All independent release checks are complete. Purchasing is disabled while Stripe live-key creation waits for email verification; the overall goal remains partial.
 
-The authoritative website project is Cloudflare Pages `eidosworks`, direct-upload branch `main`. Its original rollback deployment is `eeddf874-7035-4718-8fe7-4c734aed486c`. The Lab rollback deployment is `dpl_DR6RwDA5gsvhLWi8GcRXJ9PrJCZF`, research commit `6bb0b980349f94c55a6ca1ca9665737570c0fd01`. Original dirty worktrees were preserved; this work uses isolated branches for website PR 6 and backend PR 37.
+## Production and merged changes
+- Website: https://eidos-works.com; Cloudflare Pages project eidosworks, deployment e3082c39-08b0-4175-8366-3bb674bce1c8, source c9e35f43c5c4c8abd90a4a11ffdceea49d603af9.
+- Backend: https://eidos-sentinel-lab.vercel.app; Vercel deployment dpl_CYejLjAxv8qeVfhxgrUioJWZxBee, source a2642d3985c2590cd6f4e4bbb335673499bc4c1e.
+- Merged: website PR 6, backend PR 37, maintenance fix PR 7 and Contact spacing fix PR 8. Merged commit IDs are in release-state.json.
+- Rollback: Cloudflare eeddf874-7035-4718-8fe7-4c734aed486c; Vercel dpl_DR6RwDA5gsvhLWi8GcRXJ9PrJCZF. Preserve platform databases and payment records during rollback.
+- Original dirty checkouts were preserved. Snapshot remains independently gated. The research interface still shows BLOCKED_RESOURCE_BEFORE_HELDOUT and zero advanced gates.
 
-## What passed and what failed
+## Active configuration
+Separate free Turso production and validation databases are migrated. Community, moderation, agent access, source answers, optional AI, inquiry delivery and consent-gated analytics are active. The hourly workflow (17 minutes past each hour) passed from the default branch in run 33997382547 with ok=true and suggestions=0. It requires independent platform and maintenance secrets.
 
-The service checks listed above passed. The original `redirect: error` option failed in the actual Workers runtime; supported manual redirects plus explicit 3xx rejection fixed it. A Miniflare regression test now proves the runtime accepts the relay. An early runtime redirect mock test failed because Miniflare's mock fetch adapter followed a redirect; redirect rejection is covered by the focused relay unit test, while the runtime test covers supported options. A browser reply acknowledgement was overwritten by the next Turnstile callback and is now retained, with a regression test. Early CLI/API authentication attempts failed; authorized OAuth/provider UI configuration resolved service access. Stripe's live-key verification email still requires its browser confirmation; Chrome reported an extension popup blocking the mail tab.
+GA4 account 386114675, property 552876683 (Eidos Works), stream 15725877773, measurement G-8N7Y7EM4CS. Enhanced Measurement is off. Realtime confirmed production page views, assistant events and generate_lead; the lead's page_location was https://eidos-works.com/contact/. generate_lead and purchase are key events, with no invented monetary lead value. Traffic type is registered as an event-scoped custom dimension. Preview QA uses traffic_type=qa; production QA in an ordinary browser can classify as human and must not be interpreted as organic conversions.
 
-## Configuration
+AI model: gpt-4.1-nano-2025-04-14. Explicit visitor activation, maximum 320 output tokens, five attempts per visitor/day, 20,000 conservative reserved tokens/day, one call and no retries. Three real smoke calls were made across direct, preview and production checks. The direct response reported 221 input/40 output/261 total tokens. Production storage records one request and 2,006 reserved tokens. Source answers use zero model tokens; duplicate and failure paths retain the documented bounds.
 
-GA4: account 386114675, Eidos Works property 552876683, production stream 15725877773 at https://eidos-works.com, measurement G-8N7Y7EM4CS. Enhanced Measurement off. AI: gpt-4.1-nano-2025-04-14, output cap 320, five attempts/visitor/day, 20,000 reserved tokens/day, one call, no retries. Production AI and proactive flags are configured true for the next deployment; production shop stays false until its separate live key/webhook is ready. The maintenance repository secret is set for the hourly default-branch workflow.
+## Stripe and delivery evidence
+Stripe TEST checkout paid 2,900 cents USD and received the correct 6,012-byte ZIP containing index.html, styles.css, script.js, README.md and LICENSE.txt. SHA-256: c5723e4908f8aff386f50ec41c59dfa673a8e4280c46f2eed2399e30ee5f7988. Canceled/unpaid checkout, a real test refund and a separate test dispute each received download 403. An API-retrieved event locally re-signed with the test webhook secret was idempotent; this was not a provider resend. Required async-success handling is subscribed and covered by automated tests; an asynchronous payment method was not used for the real card checkout.
 
-## Tests and commands run
+The production inquiry test reached the configured studio inbox (Gmail message 1a073c1c396c6d57) with the exact test label; SPF and DKIM passed. The site success message alone was not treated as proof. Product fulfillment is an on-screen download; automatic purchase-email delivery is not claimed.
 
-- `npm --prefix apps/sentinel-lab run works:migrate` — passed against production Turso.
-- `node --env-file=apps/sentinel-lab/.env.validation.local apps/sentinel-lab/scripts/migrate-works.mjs` — passed against separate validation Turso.
-- `node --env-file=apps/sentinel-lab/.env.local --import ./apps/sentinel-lab/node_modules/tsx/dist/loader.mjs apps/sentinel-lab/scripts/verify-works-storage.ts` — passed.
-- `node --env-file=apps/sentinel-lab/.env.validation.local --import ./apps/sentinel-lab/node_modules/tsx/dist/loader.mjs apps/sentinel-lab/scripts/verify-works-proactive.ts` — passed; owned fixtures removed.
-- `npm --prefix apps/sentinel-lab run lint` — passed.
-- `npm --prefix apps/sentinel-lab test` — 21 passed (17 existing research/UI tests, four platform tests).
-- `npm --prefix apps/sentinel-lab run build` — passed.
-- Companion website: `npm run test:platform` — 17 passed; `npm run test:analytics` — one passed; Snapshot smoke, lint, build, prerender, editorial, Insights dist, URLs, Functions build — passed.
+## Remaining action
+Chrome reports another extension popup open on the Gmail verification tab. Dismiss that popup and complete the Stripe verification email in the same Chrome browser, or reply that it is dismissed so the verification flow can resume. No new terms approval is needed. The pending restricted key is named Eidos Works Cinematic Starter production. After verification: capture it securely, configure the separate LIVE webhook at https://eidos-works.com/api/shop/webhook with the four documented event types, enable EIDOS_SHOP_ENABLED in production, redeploy Sentinel and verify a live 29 USD checkout without making a real-money payment. Test credentials must remain confined to validation.
+
+## Validation
+- Backend: npm --prefix apps/sentinel-lab run works:migrate; npm --prefix apps/sentinel-lab test; npm --prefix apps/sentinel-lab run lint; npm --prefix apps/sentinel-lab run build.
+- Separate validation migration: node --env-file=apps/sentinel-lab/.env.validation.local apps/sentinel-lab/scripts/migrate-works.mjs.
+- Remote storage: node --env-file=apps/sentinel-lab/.env.local --import ./apps/sentinel-lab/node_modules/tsx/dist/loader.mjs apps/sentinel-lab/scripts/verify-works-storage.ts.
+- Proactive fixtures: node --env-file=apps/sentinel-lab/.env.validation.local --import ./apps/sentinel-lab/node_modules/tsx/dist/loader.mjs apps/sentinel-lab/scripts/verify-works-proactive.ts.
+- Website: npm run test:platform; npm run test:analytics; npm run test:snapshot; npm run lint; npm run build; npm run verify:prerender; npm run verify:editorial; npm run validate:insights:dist; npm run verify:urls; npm run build:functions.
+- Final CSS check: npm run build and npm run verify:prerender, followed by browser measurement on local build and production.
+- Deployment: node node_modules/wrangler/bin/wrangler.js pages deploy dist --project-name eidosworks --branch main --commit-hash c9e35f43c5c4c8abd90a4a11ffdceea49d603af9 --commit-dirty=false.
+All commands ran from the relevant repository root. All listed checks passed. Lab tests: 21. Website platform tests: 17, analytics: one, plus Snapshot smoke. No extra algorithm tests were added for the CSS-only follow-up; browser checks, build, prerender and CI cover it.
+
+## Changed files and artifacts
+Website changes include relay runtime handling, consent/navigation tracking, inquiry route and private email Worker, deterministic kit generation, reply acknowledgement, the hourly workflow, Contact spacing, focused tests and release docs. Backend adds remote service verification scripts and documentation; research/model code is unchanged.
+
+Local evidence: artifacts/works-release-20260905 in the backend checkout and artifacts/release-20260905 in the website checkout. The backend folder includes the journal, plain-language analysis, proof ledger, progress SVG/HTML, JSON receipts, raw test logs and test ZIP. Journals/analysis also live under docs/proof_runs/2026-09-05. Drive destination: G:/My Drive/Eidos_Brain_Proof_Phase/2026-09-05/works-release-20260905. See drive_manifest.json for the copied file list and verified hashes.
 
 ## Proof Logic + Meaning
 
 ### Goal reached
-The platform service-validation gate passed. The overall public release is partial until merged deployments and final production checks are recorded.
+Seven of eight platform release gates passed. The site and backend are deployed and verified. Live Stripe setup is blocked by an unfinished account verification step, so purchasing remains disabled and the overall goal is partial.
 
 ### Previous state
-The existing implementation had passing local tests but no verified durable production allocation, analytics stream receipt, provider delivery, or completed hosted payment flow. The deployed relay failed in Cloudflare despite passing Node mocks.
+Local checks existed, but durable production storage, hosted provider behavior, real payment fulfillment, delivery, and analytics receipt had not been established. The relay failed in the actual Workers runtime.
 
 ### Technical logic utilized
-A dedicated remote libSQL adapter uses atomic quota updates and transactional payment/event writes. Separate credentials and databases isolate production from validation. Cloudflare transport preserves body/signatures, rejects redirects, and authenticates to Sentinel. Explicit AI activation reserves a conservative token bound before one provider call. Signed Stripe events grant or revoke a receipt-hash entitlement; browser redirects grant nothing. Human-reviewed publication controls community pages and feeds. The inquiry Worker fixes its destination and acknowledges only provider acceptance.
+Remote libSQL transactions enforce atomic quotas and durable event/entitlement writes. Independent service credentials protect the Pages-to-Sentinel relay, moderation and maintenance. The AI path reserves budget before one explicit provider call. Signed Stripe events grant or revoke receipt-hash entitlements. Review controls public community visibility. The private inquiry Worker fixes the destination and acknowledges provider acceptance. Scheduled maintenance now calls the authenticated backend directly after GitHub requests through the site returned 403.
 
 ### Math / scoring logic
-Quota acceptance is atomic: accept only when used + requested <= limit. Thirty concurrent requests of 100 against a 750 limit accepted seven (700 reserved). AI reservation = UTF8_bytes(provider_payload) + 512 + 320; the deployed smoke reserved 2,060, and its duplicate added zero. Direct provider usage was 221 input + 40 output = 261 tokens. Public suggestions satisfy daily_total <= 10; nine fixtures were accepted after one earlier suggestion, and the second pass added zero. Payment requires paid status, correct order/session/product metadata, USD and 2,900 cents. No overall Eidos research-readiness percentage is computed because this platform task does not evaluate the research gates.
+Quota acceptance requires used + requested <= limit. Thirty concurrent reservations of 100 against a 750 cap accepted seven, reserving 700. AI reservation = UTF8_bytes(provider_payload) + 512 + 320. Preview reserved 2,060 and its duplicate added zero; the production browser call reserved 2,006. The direct provider reported 221 input + 40 output = 261 tokens. Proactive suggestions satisfy daily_total <= 10. Payment entitlement requires paid status, matching product/order/session metadata, currency USD, and amount 2,900 cents. Research readiness is null because no research gates were evaluated.
 
 ### Philosophical meaning
-Reproducibility means truth that can be revisited. Restraint before automation means quotas, author consent, review and revocation remain operational constraints, not documentation promises.
+Reproducibility is truth that can be revisited. Restraint before automation means that consent, moderation, quotas, revocation and explicit limits govern the deployed system.
 
 ### Why this is better
-The evidence now includes real hosted services and durable state rather than only mocks. A Workers-specific failure was reproduced and corrected. Paid, unpaid, duplicated, refunded and disputed paths have distinct observed outcomes. The reply confirmation remains visible after verification refresh.
+Real hosted receipts now support the release. A Workers-specific redirect failure, lost reply acknowledgement, GitHub maintenance failure and mobile Contact overlap were corrected and verified. A browser redirect is distinguished from a paid entitlement; a delivered test inquiry is distinguished from a customer lead.
 
 ### How this moves Eidos closer to the north-star goal
-This milestone strengthens reproducible operation and human-readable receipts around the public Sentinel platform. It does not establish that Eidos Brain learns or compresses streams better, preserves anomalies, or beats other detectors/compressors. Core reservoir, RLS, thresholds, Sentinel labels, research executor and experiment artifacts were not changed.
+Eidos Brain is a self-monitoring streaming intelligence codec. It learns live streams, compresses predictable behavior, preserves meaningful anomalies, monitors its own internal state, and emits human-readable incident receipts. This platform milestone strengthens reproducible operation and auditable receipts around that work. It does not prove stream learning, compression, anomaly preservation or detector superiority. Core research behavior was unchanged.
 
 ### Evidence
-`storage-smoke.json`, `ai-provider-smoke.json`, `ai-deployed-smoke.json`, `community-deployed-smoke.json`, `agent-deployed-smoke.json`, `proactive-storage-smoke.json`, `stripe-deployed-smoke.json`, `inquiry-service-smoke.json`, `ga4-realtime-receipt.json`, `tests-final.log`, `lint-final.log`, and `build-final.log` in `artifacts/works-release-20260905/`. Website runtime and browser-form regression tests are in the companion PR.
+See production-http-receipt.json, production-browser-receipt.json, backend-production-receipt.json, maintenance-production-receipt.json, production-inquiry-receipt.json, ga4-realtime-receipt.json, storage-smoke.json, ai-provider-smoke.json, ai-deployed-smoke.json, community-deployed-smoke.json, agent-deployed-smoke.json, proactive-storage-smoke.json, stripe-deployed-smoke.json and the final test/build logs.
 
 ### Remaining uncertainty
-Final production deployment, live Stripe credential activation and production browser checks remain pending at this checkpoint. Stripe receipts are test-mode simulations, not revenue. Proactive time eligibility used synthetic aged fixtures against remote validation storage, not a natural 24-hour user wait. Traffic classification by user agent is heuristic. No research benchmark, GPU run, compression ratio, anomaly metric, or held-out proof was performed.
-
-## Local and Drive artifacts
-
-Receipts are saved in `artifacts/works-release-20260905/`; this analysis and journal are also in `docs/proof_runs/2026-09-05/`. `drive_manifest.json` records the actual mirror result. Keys, bearer receipts and database tokens are excluded.
-
-## Next step
-
-Complete live Stripe verification, merge verified PRs, deploy backend before the Pages relay, check production and update this checkpoint with deployment receipts. Research performance remains outside this release's claims.
+Live Stripe key/webhook activation is unfinished. All demonstrated purchases are TEST mode, not revenue. Proactive time eligibility used synthetic aged fixtures against remote validation storage. No natural 24-hour wait, physical mobile-device test, GPU benchmark, compression metric or held-out proof was performed. Bot classification is heuristic. Mounted Drive copies are hash-verified; cloud synchronization completion is not independently verified.

@@ -1,0 +1,89 @@
+{
+  "timestamp_utc": "2026-09-05T23:13:31.737Z",
+  "site": {
+    "url": "https://eidos-works.com",
+    "deploymentId": "e3082c39-08b0-4175-8366-3bb674bce1c8",
+    "deploymentUrl": "https://e3082c39.eidosworks.pages.dev",
+    "commit": "c9e35f43c5c4c8abd90a4a11ffdceea49d603af9",
+    "deployedAt": "2026-09-05T23:08:50.082225Z"
+  },
+  "method": "Production documents in genuine fixed-size browser iframes; Contact also verified with an explicit browser viewport.",
+  "viewports": [
+    {
+      "width": 320,
+      "height": 568,
+      "checks": [
+        "home",
+        "consent",
+        "menu",
+        "assistant scroll"
+      ]
+    },
+    {
+      "width": 390,
+      "height": 844,
+      "checks": [
+        "home",
+        "product headline control",
+        "contact form"
+      ]
+    },
+    {
+      "width": 812,
+      "height": 375,
+      "checks": [
+        "home",
+        "navigation",
+        "assistant scroll"
+      ]
+    },
+    {
+      "width": 1440,
+      "height": 900,
+      "checks": [
+        "home",
+        "navigation",
+        "artwork"
+      ]
+    }
+  ],
+  "horizontalOverflow": false,
+  "measuredContentWidths": {
+    "narrow": 305,
+    "portrait": 375,
+    "desktop": 1425
+  },
+  "note": "Classic scrollbars consume 15 pixels; each measured document width equaled its content viewport width.",
+  "contactFix": {
+    "sourceCommit": "d5bf751b4345eed7be8dc02761cfd169a5899a2c",
+    "productionCss": "/assets/index-57HRWBvW.css",
+    "width": 390,
+    "height": 844,
+    "headerBottom": 83.6,
+    "labelTop": 135,
+    "documentWidth": 375,
+    "passed": true
+  },
+  "productionAI": {
+    "explicitClick": true,
+    "label": "AI-generated follow-up",
+    "answerIncludedSource": true,
+    "globalRequests": 1,
+    "reservedTokens": 2006,
+    "rawAnswerSaved": false
+  },
+  "research": {
+    "url": "https://eidos-sentinel-lab.vercel.app",
+    "interfaceLoaded": true,
+    "traceAndIncidentReceiptVisible": true,
+    "verdict": "BLOCKED_RESOURCE_BEFORE_HELDOUT",
+    "gatesAdvanced": 0,
+    "heldOutOpened": false,
+    "researchExecutorInvoked": false
+  },
+  "limitations": [
+    "No physical iOS/Android device or touch keyboard test.",
+    "User-agent bot classification is heuristic.",
+    "Purchasing remains disabled pending live Stripe verification."
+  ]
+}

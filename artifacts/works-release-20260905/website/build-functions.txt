@@ -1,0 +1,8 @@
+
+> brent-parent-intelligence-studio@1.1.0 build:functions
+> wrangler pages functions build functions --outfile .wrangler/eidos-functions.js
+
+
+ ⛅️ wrangler 4.98.0 (update available 4.129.0)
+──────────────────────────────────────────────
+✨ Compiled Worker successfully

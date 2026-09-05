@@ -1,0 +1,5 @@
+
+> brent-parent-intelligence-studio@1.1.0 test:snapshot
+> node --import tsx scripts/smoke-snapshot.ts
+
+Snapshot validation and Stripe signature checks passed.

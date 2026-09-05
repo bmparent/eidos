@@ -1,0 +1,227 @@
+{
+  "timestamp_utc": "2026-09-05T23:13:31.737Z",
+  "commit": "c9e35f43c5c4c8abd90a4a11ffdceea49d603af9",
+  "deployment": "e3082c39-08b0-4175-8366-3bb674bce1c8",
+  "routes": [
+    {
+      "path": "/",
+      "status": 200,
+      "robots": null,
+      "canonical": "https://eidos-works.com/"
+    },
+    {
+      "path": "/work",
+      "status": 200,
+      "robots": null,
+      "canonical": "https://eidos-works.com/work"
+    },
+    {
+      "path": "/work/nighttime-spectaculars",
+      "status": 200,
+      "robots": null,
+      "canonical": "https://eidos-works.com/work/nighttime-spectaculars"
+    },
+    {
+      "path": "/work/holidays-in-hollywood",
+      "status": 200,
+      "robots": null,
+      "canonical": "https://eidos-works.com/work/holidays-in-hollywood"
+    },
+    {
+      "path": "/about",
+      "status": 200,
+      "robots": null,
+      "canonical": "https://eidos-works.com/about"
+    },
+    {
+      "path": "/lab",
+      "status": 200,
+      "robots": null,
+      "canonical": "https://eidos-works.com/lab"
+    },
+    {
+      "path": "/insights",
+      "status": 200,
+      "robots": null,
+      "canonical": "https://eidos-works.com/insights"
+    },
+    {
+      "path": "/insights/storefront-proof-loop-ux-assets-operations",
+      "status": 200,
+      "robots": null,
+      "canonical": "https://eidos-works.com/insights/storefront-proof-loop-ux-assets-operations"
+    },
+    {
+      "path": "/community",
+      "status": 200,
+      "robots": null,
+      "canonical": "https://eidos-works.com/community"
+    },
+    {
+      "path": "/community/agents",
+      "status": 200,
+      "robots": null,
+      "canonical": "https://eidos-works.com/community/agents"
+    },
+    {
+      "path": "/shop/cinematic-starter",
+      "status": 200,
+      "robots": null,
+      "canonical": "https://eidos-works.com/shop/cinematic-starter"
+    },
+    {
+      "path": "/contact",
+      "status": 200,
+      "robots": null,
+      "canonical": "https://eidos-works.com/contact"
+    },
+    {
+      "path": "/kit-preview/",
+      "status": 200,
+      "robots": "noindex, follow",
+      "canonical": null
+    },
+    {
+      "path": "/robots.txt",
+      "status": 200,
+      "robots": null,
+      "canonical": null
+    },
+    {
+      "path": "/sitemap.xml",
+      "status": 200,
+      "robots": null,
+      "canonical": null
+    },
+    {
+      "path": "/community/sitemap.xml",
+      "status": 200,
+      "robots": null,
+      "canonical": null
+    },
+    {
+      "path": "/api/public-config",
+      "status": 200,
+      "robots": null,
+      "canonical": null
+    }
+  ],
+  "config": {
+    "gaMeasurementId": "G-8N7Y7EM4CS",
+    "turnstileSiteKey": "0x4AAAAAAEpi_WVq3Q1gpr5z",
+    "communityReady": true,
+    "aiReady": true,
+    "shopReady": false,
+    "localTest": false
+  },
+  "maintenanceUnauthorizedStatus": 401,
+  "initialDeployment": {
+    "commit": "e744f1219e1468d754282e74e80b6a52a9959887",
+    "deployment": "84174fbc",
+    "timestamp_utc": "2026-09-05T22:33:32.742Z"
+  },
+  "finalRecheck": [
+    {
+      "path": "/",
+      "status": 200,
+      "canonical": "https://eidos-works.com/",
+      "noindex": false
+    },
+    {
+      "path": "/work",
+      "status": 200,
+      "canonical": "https://eidos-works.com/work",
+      "noindex": false
+    },
+    {
+      "path": "/work/nighttime-spectaculars",
+      "status": 200,
+      "canonical": "https://eidos-works.com/work/nighttime-spectaculars",
+      "noindex": false
+    },
+    {
+      "path": "/work/holidays-in-hollywood",
+      "status": 200,
+      "canonical": "https://eidos-works.com/work/holidays-in-hollywood",
+      "noindex": false
+    },
+    {
+      "path": "/about",
+      "status": 200,
+      "canonical": "https://eidos-works.com/about",
+      "noindex": false
+    },
+    {
+      "path": "/lab",
+      "status": 200,
+      "canonical": "https://eidos-works.com/lab",
+      "noindex": false
+    },
+    {
+      "path": "/insights",
+      "status": 200,
+      "canonical": "https://eidos-works.com/insights",
+      "noindex": false
+    },
+    {
+      "path": "/insights/storefront-proof-loop-ux-assets-operations",
+      "status": 200,
+      "canonical": "https://eidos-works.com/insights/storefront-proof-loop-ux-assets-operations",
+      "noindex": false
+    },
+    {
+      "path": "/community",
+      "status": 200,
+      "canonical": "https://eidos-works.com/community",
+      "noindex": false
+    },
+    {
+      "path": "/community/agents",
+      "status": 200,
+      "canonical": "https://eidos-works.com/community/agents",
+      "noindex": false
+    },
+    {
+      "path": "/shop/cinematic-starter",
+      "status": 200,
+      "canonical": "https://eidos-works.com/shop/cinematic-starter",
+      "noindex": false
+    },
+    {
+      "path": "/contact",
+      "status": 200,
+      "canonical": "https://eidos-works.com/contact",
+      "noindex": false
+    },
+    {
+      "path": "/kit-preview/",
+      "status": 200,
+      "canonical": null,
+      "noindex": true
+    },
+    {
+      "path": "/robots.txt",
+      "status": 200,
+      "canonical": null,
+      "noindex": false
+    },
+    {
+      "path": "/sitemap.xml",
+      "status": 200,
+      "canonical": null,
+      "noindex": false
+    },
+    {
+      "path": "/community/sitemap.xml",
+      "status": 200,
+      "canonical": null,
+      "noindex": false
+    },
+    {
+      "path": "/api/public-config",
+      "status": 200,
+      "canonical": null,
+      "noindex": false
+    }
+  ]
+}

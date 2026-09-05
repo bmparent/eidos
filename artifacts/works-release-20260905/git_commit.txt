@@ -1,1 +1,3 @@
-9a2caa7b7afeebb8bfadd4c67f8e614d156485ca
+Backend deployed: a2642d3985c2590cd6f4e4bbb335673499bc4c1e
+Website deployed: c9e35f43c5c4c8abd90a4a11ffdceea49d603af9
+Final documentation may be committed after these deployment sources.
