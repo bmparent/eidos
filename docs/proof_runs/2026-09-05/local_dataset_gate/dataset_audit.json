@@ -1,0 +1,49 @@
+{
+  "source_name": "Thursday-WorkingHours-Morning-WebAttacks.pcap_ISCX.csv",
+  "source_sha256": "d67066211fb1689c78406f1506f4c44704ecb92088353d5c96d96d6474eb819d",
+  "source_bytes": 52023263,
+  "rows": 170366,
+  "feature_columns": [
+    "Flow Duration",
+    "Total Fwd Packets",
+    "Total Length of Fwd Packets"
+  ],
+  "duplicate_headers": {
+    "Fwd Header Length": 2
+  },
+  "bad_required_columns": [],
+  "label_counts": {
+    "BENIGN": 168186,
+    "Web Attack \ufffd Brute Force": 1507,
+    "Web Attack \ufffd XSS": 652,
+    "Web Attack \ufffd Sql Injection": 21
+  },
+  "unknown_labels": {},
+  "benign_rows": 168186,
+  "attack_rows": 2180,
+  "finite_feature_values": {
+    "Flow Duration": 170366,
+    "Total Fwd Packets": 170366,
+    "Total Length of Fwd Packets": 170366
+  },
+  "errors": {
+    "invalid_flow_duration": 11
+  },
+  "timestamp_column": "Timestamp",
+  "timestamp_format": null,
+  "timestamp_available": false,
+  "availability_order_reversals": null,
+  "maximum_flow_duration_seconds": 119.999993,
+  "blockers": [
+    "missing_or_ambiguous_timestamp_column",
+    "invalid_flow_duration"
+  ],
+  "schema_status": "blocked",
+  "chronology": "unknown",
+  "raw_data_saved": false,
+  "limitations": [
+    "Local byte identity is not publisher checksum authentication.",
+    "Labels are the supplied CICIDS research labels, not independently relabeled truth.",
+    "A valid schema does not establish operational utility or a valid holdout."
+  ]
+}

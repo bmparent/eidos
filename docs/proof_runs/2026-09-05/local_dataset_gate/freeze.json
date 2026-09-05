@@ -1,0 +1,10 @@
+{
+  "created_utc": "2026-09-05T19:57:52.174981+00:00",
+  "files": {
+    "dataset_audit.json": "e8e92e1eb5df0b8f3a56ba73818d508f6c8f19d4d4a20661095e2e70a8b35b4c",
+    "evaluator.py": "52ede0515b208c1af7860550a5f2322b65219c4d23d6fc8a78e645c2b7f290b0",
+    "protocol.json": "16f64ecf011f8c5f4b8d0e79da142ac56ee571a325998bf0dcdc106d728985ce",
+    "run_manifest.json": "0ba6568425677f478fc25a21783c4bb2aa8027fb8992029f807d4a11fed5e45f"
+  },
+  "scope": "Immutable data-preparation receipt; not a frozen utility evaluator."
+}

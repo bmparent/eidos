@@ -1,0 +1,41 @@
+{
+  "targeted_memory_and_data": {
+    "tests": 32,
+    "errors": 0,
+    "failures": 0,
+    "skipped": 0,
+    "seconds": 71.483
+  },
+  "new_data_tests": 21,
+  "package": {
+    "tests": 82,
+    "errors": 0,
+    "failures": 0,
+    "skipped": 4,
+    "seconds": 84.562
+  },
+  "root": {
+    "tests": 46,
+    "errors": 0,
+    "failures": 5,
+    "skipped": 0,
+    "seconds": 49.894
+  },
+  "full_collection": {
+    "collected": 271,
+    "errors": 6
+  },
+  "package_skip_reasons": [
+    "ffprobe unavailable",
+    "websockets installed; missing-dependency guard skipped",
+    "pubsub installed; missing-dependency guard skipped",
+    "GCS installed; missing-dependency guard skipped"
+  ],
+  "preexisting_failures": "Five RNG proof tests cannot import top-level operator_explanation; six collection errors are UTF-16 doctest text and five unavailable sentinel_runner imports.",
+  "baseline_evidence": "../2026-09-04/validation.json, clean baseline 6bb0b980349f94c55a6ca1ca9665737570c0fd01",
+  "overall_repository_gate": "partial; same baseline failures remain",
+  "data_gate_exit_code": 2,
+  "data_gate_freeze_verified": true,
+  "core_behavior_changed": false,
+  "prior_numerical_evaluator_changed": false
+}
