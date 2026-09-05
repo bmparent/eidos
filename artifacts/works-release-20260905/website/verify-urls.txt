@@ -1,0 +1,5 @@
+
+> brent-parent-intelligence-studio@1.1.0 verify:urls
+> node scripts/verify-urls.mjs
+
+Verified 13 public source files against 18 required and 8 forbidden references.

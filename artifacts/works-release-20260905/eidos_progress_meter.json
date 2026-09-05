@@ -1,42 +1,50 @@
 {
   "scope": "Eidos Works platform release only",
-  "timestamp_utc": "2026-09-05T22:24:54.907338+00:00",
+  "timestamp_utc": "2026-09-05T23:13:31.737Z",
   "overall_eidos_research_readiness": null,
   "reason": "Research proof gates were not evaluated by this platform task.",
   "gates": [
     {
       "name": "Durable storage",
-      "status": "passed"
+      "status": "passed",
+      "evidence": "storage-smoke.json"
     },
     {
       "name": "Provider and AI bounds",
-      "status": "passed"
+      "status": "passed",
+      "evidence": "production-browser-receipt.json"
     },
     {
       "name": "Community and agent controls",
-      "status": "passed"
+      "status": "passed",
+      "evidence": "agent-deployed-smoke.json"
     },
     {
       "name": "Stripe test fulfillment and revocation",
-      "status": "passed"
+      "status": "passed",
+      "evidence": "stripe-deployed-smoke.json"
     },
     {
       "name": "Analytics and inquiry receipts",
-      "status": "passed"
+      "status": "passed",
+      "evidence": "ga4-realtime-receipt.json"
     },
     {
       "name": "Final automated checks",
-      "status": "passed"
+      "status": "passed",
+      "evidence": "tests-final.log"
     },
     {
       "name": "Live Stripe configuration",
-      "status": "partial"
+      "status": "blocked",
+      "evidence": "release-handoff.md"
     },
     {
       "name": "Production release and browser checks",
-      "status": "missing"
+      "status": "passed",
+      "evidence": "production-browser-receipt.json"
     }
   ],
-  "passed_gates": 6,
+  "passed_gates": 7,
   "total_gates": 8
 }

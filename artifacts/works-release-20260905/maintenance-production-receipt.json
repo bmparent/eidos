@@ -1,0 +1,33 @@
+{
+  "timestamp_utc": "2026-09-05T23:13:31.737Z",
+  "cron": "17 * * * *",
+  "endpoint": "https://eidos-sentinel-lab.vercel.app/api/works/v1/api/community/maintenance",
+  "requires": [
+    "EIDOS_MAINTENANCE_TOKEN",
+    "EIDOS_PLATFORM_TOKEN"
+  ],
+  "branchRun": {
+    "id": 33997147456,
+    "status": "success",
+    "response": {
+      "ok": true,
+      "suggestions": 0
+    }
+  },
+  "defaultBranchRun": {
+    "id": 33997382547,
+    "commit": "ca0c7dd7cfc36fca91671cae3fb2e0c5d67f7f06",
+    "status": "success",
+    "response": {
+      "ok": true,
+      "suggestions": 0
+    }
+  },
+  "previousFailures": [
+    33996317957,
+    33997034919
+  ],
+  "previousFailureReason": "GitHub runner received 403 through the website URL. Same request passed locally. Exact front-door rejection mechanism was not established.",
+  "fix": "Direct authenticated backend call; application authentication retained. Missing credentials now fail visibly.",
+  "pr": 7
+}

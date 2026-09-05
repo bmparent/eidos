@@ -3,11 +3,14 @@
   "drive_copy_success": true,
   "drive_root": "G:\\My Drive",
   "drive_run_dir": "G:\\My Drive\\Eidos_Brain_Proof_Phase\\2026-09-05\\works-release-20260905",
-  "reason": "Copied to configured mounted Drive and verified local mirror hashes; cloud synchronization completion is not independently verified.",
+  "reason": "Copied to configured mounted Drive and verified every file hash. Cloud synchronization completion is not independently verified.",
   "files_considered": [
     "agent-deployed-smoke.json",
     "ai-deployed-smoke.json",
     "ai-provider-smoke.json",
+    "artifact-validation.json",
+    "artifact_manifest.json",
+    "backend-production-receipt.json",
     "build-final.log",
     "build.txt",
     "cinematic-starter-test-download.zip",
@@ -26,163 +29,230 @@
     "lint-final.log",
     "lint.log",
     "lint.txt",
+    "maintenance-production-receipt.json",
     "plain_language_test_analysis.md",
     "preview-configuration.json",
     "preview-deployment.json",
     "preview-relay-configuration.json",
     "proactive-storage-smoke.json",
     "production-before.json",
+    "production-browser-receipt.json",
+    "production-http-receipt.json",
+    "production-inquiry-receipt.json",
     "proof_logic_ledger.json",
     "proof_logic_ledger.md",
+    "release-handoff.md",
+    "release-state.json",
     "run_manifest.json",
     "storage-smoke.json",
     "stripe-deployed-smoke.json",
     "tests-final.log",
     "tests.log",
-    "tests.txt"
+    "tests.txt",
+    "website\\analytics-final.log",
+    "website\\analytics-tests.log",
+    "website\\build-contact-spacing.log",
+    "website\\build-final.log",
+    "website\\build-functions.txt",
+    "website\\build.log",
+    "website\\build.txt",
+    "website\\contact-pr-body.md",
+    "website\\editorial-final.log",
+    "website\\functions-final.log",
+    "website\\ga4-realtime-receipt.json",
+    "website\\inquiry-service-smoke.json",
+    "website\\insights-final.log",
+    "website\\lint-final.log",
+    "website\\lint.txt",
+    "website\\maintenance-pr-body.md",
+    "website\\maintenance-production-receipt.json",
+    "website\\platform-final.log",
+    "website\\platform-tests.log",
+    "website\\platform-tests.txt",
+    "website\\prerender-contact-spacing.log",
+    "website\\prerender-final.log",
+    "website\\production-browser-receipt.json",
+    "website\\production-http-receipt.json",
+    "website\\production-inquiry-receipt.json",
+    "website\\release-handoff.md",
+    "website\\release-state.json",
+    "website\\responsive-harness.mjs",
+    "website\\snapshot-final.log",
+    "website\\stripe-inventory.json",
+    "website\\test-snapshot.txt",
+    "website\\urls-final.log",
+    "website\\validate-insights-dist.txt",
+    "website\\validate-insights.txt",
+    "website\\verify-editorial.txt",
+    "website\\verify-prerender.txt",
+    "website\\verify-urls.txt"
   ],
   "files_copied": [
-    {
-      "path": "agent-deployed-smoke.json",
-      "sha256": "5157be8dc912bc8e48191dbcb46e0ae7721d3dac7ff680ecdae2a650e69c817e"
-    },
-    {
-      "path": "ai-deployed-smoke.json",
-      "sha256": "70bba3e3f38babf79784f6a3b83903d5091d017cccf3f6f8d60dd64a0025e9b0"
-    },
-    {
-      "path": "ai-provider-smoke.json",
-      "sha256": "cda92d708b085ce3283c1d34367e78f157036c8008e360e0c606aa79ddd8e812"
-    },
-    {
-      "path": "build-final.log",
-      "sha256": "957554849e3282d4dd4da6d27e1414a966d3f5741c286cb7ca8e19a7944f34d0"
-    },
-    {
-      "path": "build.txt",
-      "sha256": "ea329f9a76d56245dff70be2ef3c54f254a4399801f13732093dfc55fc5a3a16"
-    },
-    {
-      "path": "cinematic-starter-test-download.zip",
-      "sha256": "c5723e4908f8aff386f50ec41c59dfa673a8e4280c46f2eed2399e30ee5f7988"
-    },
-    {
-      "path": "codex_journal.md",
-      "sha256": "9755d57543a8c7d34bd88958e151737648a361c50d1ce189430171165db7a038"
-    },
-    {
-      "path": "community-deployed-smoke.json",
-      "sha256": "2ff46432062322d819f7a8d4de74a9467d56e84521bc3f509bd9f1805db24610"
-    },
-    {
-      "path": "configuration-receipt.json",
-      "sha256": "34d8f4406aa35c4080abd7068b05899f3d141f6fbcf925dcce6cc84a40b70f21"
-    },
-    {
-      "path": "eidos_progress_dashboard.html",
-      "sha256": "54aeb0c122c1ef7521b6b3ef906cb32618127283ea426cb3375433d4fbbcdf30"
-    },
-    {
-      "path": "eidos_progress_meter.json",
-      "sha256": "0776659eb571493ac2dc056217ec9a9b40bc7401c0c6da141b455cf50410389f"
-    },
-    {
-      "path": "eidos_progress_meter.md",
-      "sha256": "c7786a3857ffa17b773b423863066e5b70d0a69c5e621205e6ae7b838821a7b4"
-    },
-    {
-      "path": "eidos_progress_meter.svg",
-      "sha256": "df7720a3794e385294681f99ee07ef0e71158011fffe65df2d262cff39a0da5c"
-    },
-    {
-      "path": "environment-before.json",
-      "sha256": "d231d8c72d109626755a6a2e16b50d6663b92dd5372af4e84227669188d3de59"
-    },
-    {
-      "path": "environment.txt",
-      "sha256": "945cef7245e278ecfec3c7176aa80c857749d87d49b47345e8bcd1241a46adfc"
-    },
-    {
-      "path": "ga4-realtime-receipt.json",
-      "sha256": "589f01ed632fbd24711dbd1532f88a35e009665f4a92ddf2f677e1e03723f609"
-    },
-    {
-      "path": "git_commit.txt",
-      "sha256": "916ed3a0f400017df4ee3cd9dfeea7de64f521c403af99c1ccc1095c2684c73c"
-    },
-    {
-      "path": "inquiry-service-smoke.json",
-      "sha256": "d07eece80b52351b5f80c0cd84db18824cb1df113c1af0a122cf245f3a21f893"
-    },
-    {
-      "path": "lint-final.log",
-      "sha256": "9a216ee216ffece65f8c7311a6df581a1485d1725ca017f4227f18213940a6eb"
-    },
-    {
-      "path": "lint.log",
-      "sha256": "9a216ee216ffece65f8c7311a6df581a1485d1725ca017f4227f18213940a6eb"
-    },
-    {
-      "path": "lint.txt",
-      "sha256": "9a216ee216ffece65f8c7311a6df581a1485d1725ca017f4227f18213940a6eb"
-    },
-    {
-      "path": "plain_language_test_analysis.md",
-      "sha256": "709e2089d73eb9b1b17bdc3a2030191398c64b9469fd0658385116eaa2a1c3f1"
-    },
-    {
-      "path": "preview-configuration.json",
-      "sha256": "9a2d580ad105e0c48e41e504e63055023d1f2d85a9b24d3ca78713ec4bcafdb4"
-    },
-    {
-      "path": "preview-deployment.json",
-      "sha256": "5720acf6d3ebf479a9db72984605e24bd3b576632e3134c94223df62401fec0a"
-    },
-    {
-      "path": "preview-relay-configuration.json",
-      "sha256": "34b5c2b6bbe0049cd861af30c01040279c77c3851607fadd99620772512dfa50"
-    },
-    {
-      "path": "proactive-storage-smoke.json",
-      "sha256": "00da00d62c33b43a8a0cf0ecce0f0d40c1f7a89bbad6bc7134a48a76c2c94274"
-    },
-    {
-      "path": "production-before.json",
-      "sha256": "cb8cb9afff71661378b2e678d017da7ebe71ecff1910e11365b21ccab0d03bf9"
-    },
-    {
-      "path": "proof_logic_ledger.json",
-      "sha256": "0776659eb571493ac2dc056217ec9a9b40bc7401c0c6da141b455cf50410389f"
-    },
-    {
-      "path": "proof_logic_ledger.md",
-      "sha256": "345331f3c16df4507e6ed02963f6b2703cf2c5c164416a5c285f5e212afaa8c0"
-    },
-    {
-      "path": "run_manifest.json",
-      "sha256": "084c1d6d4e2888bc98144e3036323d8b0d4c590dbd1786c50c9bc937669e89da"
-    },
-    {
-      "path": "storage-smoke.json",
-      "sha256": "e1e9adf18f9fc95a9ba6a35c29fe36a859e85e88f329739f3efa7efa2dfbf43e"
-    },
-    {
-      "path": "stripe-deployed-smoke.json",
-      "sha256": "dc07fee975cf385280591870a440ca4480a56cce62577a8dee71c0099e4872dd"
-    },
-    {
-      "path": "tests-final.log",
-      "sha256": "0fdcc75cf9689e20a23c41ca97bef9649092ecd0967f7ecca321c6f1c45bb81e"
-    },
-    {
-      "path": "tests.log",
-      "sha256": "d328f7b5bc5fd78120b91ebb9a2e5d8ac8bef4c2fd676c916e8f548cebf0dc48"
-    },
-    {
-      "path": "tests.txt",
-      "sha256": "f2a13fd3e83e4f1db5af43bd62a1b8770d60579265f843c74d6c827e9abb7b44"
-    }
+    "agent-deployed-smoke.json",
+    "ai-deployed-smoke.json",
+    "ai-provider-smoke.json",
+    "artifact-validation.json",
+    "artifact_manifest.json",
+    "backend-production-receipt.json",
+    "build-final.log",
+    "build.txt",
+    "cinematic-starter-test-download.zip",
+    "codex_journal.md",
+    "community-deployed-smoke.json",
+    "configuration-receipt.json",
+    "eidos_progress_dashboard.html",
+    "eidos_progress_meter.json",
+    "eidos_progress_meter.md",
+    "eidos_progress_meter.svg",
+    "environment-before.json",
+    "environment.txt",
+    "ga4-realtime-receipt.json",
+    "git_commit.txt",
+    "inquiry-service-smoke.json",
+    "lint-final.log",
+    "lint.log",
+    "lint.txt",
+    "maintenance-production-receipt.json",
+    "plain_language_test_analysis.md",
+    "preview-configuration.json",
+    "preview-deployment.json",
+    "preview-relay-configuration.json",
+    "proactive-storage-smoke.json",
+    "production-before.json",
+    "production-browser-receipt.json",
+    "production-http-receipt.json",
+    "production-inquiry-receipt.json",
+    "proof_logic_ledger.json",
+    "proof_logic_ledger.md",
+    "release-handoff.md",
+    "release-state.json",
+    "run_manifest.json",
+    "storage-smoke.json",
+    "stripe-deployed-smoke.json",
+    "tests-final.log",
+    "tests.log",
+    "tests.txt",
+    "website\\analytics-final.log",
+    "website\\analytics-tests.log",
+    "website\\build-contact-spacing.log",
+    "website\\build-final.log",
+    "website\\build-functions.txt",
+    "website\\build.log",
+    "website\\build.txt",
+    "website\\contact-pr-body.md",
+    "website\\editorial-final.log",
+    "website\\functions-final.log",
+    "website\\ga4-realtime-receipt.json",
+    "website\\inquiry-service-smoke.json",
+    "website\\insights-final.log",
+    "website\\lint-final.log",
+    "website\\lint.txt",
+    "website\\maintenance-pr-body.md",
+    "website\\maintenance-production-receipt.json",
+    "website\\platform-final.log",
+    "website\\platform-tests.log",
+    "website\\platform-tests.txt",
+    "website\\prerender-contact-spacing.log",
+    "website\\prerender-final.log",
+    "website\\production-browser-receipt.json",
+    "website\\production-http-receipt.json",
+    "website\\production-inquiry-receipt.json",
+    "website\\release-handoff.md",
+    "website\\release-state.json",
+    "website\\responsive-harness.mjs",
+    "website\\snapshot-final.log",
+    "website\\stripe-inventory.json",
+    "website\\test-snapshot.txt",
+    "website\\urls-final.log",
+    "website\\validate-insights-dist.txt",
+    "website\\validate-insights.txt",
+    "website\\verify-editorial.txt",
+    "website\\verify-prerender.txt",
+    "website\\verify-urls.txt"
   ],
   "files_skipped": [],
-  "timestamp_utc": "2026-09-05T22:24:54.907338+00:00"
+  "checksums": {
+    "agent-deployed-smoke.json": "5157be8dc912bc8e48191dbcb46e0ae7721d3dac7ff680ecdae2a650e69c817e",
+    "ai-deployed-smoke.json": "70bba3e3f38babf79784f6a3b83903d5091d017cccf3f6f8d60dd64a0025e9b0",
+    "ai-provider-smoke.json": "cda92d708b085ce3283c1d34367e78f157036c8008e360e0c606aa79ddd8e812",
+    "artifact-validation.json": "999967a741d20e37cc7b933cb41184dfb28dfb178de16e9b1493397e39f4e968",
+    "artifact_manifest.json": "0b7a45a9c0d8d8c0cc63f7bd6c4010a0df900b5148c4bcecc745f13b7391ae9f",
+    "backend-production-receipt.json": "371ecf5d4deb0d309c11c8470dc652956c68eac322169818e14f6a6fdd7f536d",
+    "build-final.log": "957554849e3282d4dd4da6d27e1414a966d3f5741c286cb7ca8e19a7944f34d0",
+    "build.txt": "ea329f9a76d56245dff70be2ef3c54f254a4399801f13732093dfc55fc5a3a16",
+    "cinematic-starter-test-download.zip": "c5723e4908f8aff386f50ec41c59dfa673a8e4280c46f2eed2399e30ee5f7988",
+    "codex_journal.md": "f8afe57d09acf65c67ab608c9845bb64451dbda40311d7648bf814a20cc2325d",
+    "community-deployed-smoke.json": "2ff46432062322d819f7a8d4de74a9467d56e84521bc3f509bd9f1805db24610",
+    "configuration-receipt.json": "34d8f4406aa35c4080abd7068b05899f3d141f6fbcf925dcce6cc84a40b70f21",
+    "eidos_progress_dashboard.html": "d3e442ed62e75f5516ba0301a79a56e1558bf592b777870cc2b3bf63fd560ea6",
+    "eidos_progress_meter.json": "cdecf34fc5bf9d9d3df22b2be48983e2a0929a83614ccaf41258faed688aae5b",
+    "eidos_progress_meter.md": "eec566178179b12881fbf47068579b72a9c30e5a34e941faa368bc407a2a9158",
+    "eidos_progress_meter.svg": "91ce592e834328c92802788d5a298cd968359fcbb3b85861f7d3ff1eb6d88971",
+    "environment-before.json": "d231d8c72d109626755a6a2e16b50d6663b92dd5372af4e84227669188d3de59",
+    "environment.txt": "945cef7245e278ecfec3c7176aa80c857749d87d49b47345e8bcd1241a46adfc",
+    "ga4-realtime-receipt.json": "ac121650153787b1bbfcc6dffed79a306e76d29017d48b3c4b0b72459a66eafb",
+    "git_commit.txt": "25b9f362171d7f9faab31d0d8a69db83df41c511e9ecefc249e16c99e8a351e5",
+    "inquiry-service-smoke.json": "d07eece80b52351b5f80c0cd84db18824cb1df113c1af0a122cf245f3a21f893",
+    "lint-final.log": "9a216ee216ffece65f8c7311a6df581a1485d1725ca017f4227f18213940a6eb",
+    "lint.log": "9a216ee216ffece65f8c7311a6df581a1485d1725ca017f4227f18213940a6eb",
+    "lint.txt": "9a216ee216ffece65f8c7311a6df581a1485d1725ca017f4227f18213940a6eb",
+    "maintenance-production-receipt.json": "fb79b7cae7dc5f5562cdd913a07e0127ad9ac49f2bf7ea1c1dea1e552cbdad88",
+    "plain_language_test_analysis.md": "1d495a0ede97504f22f8e760f395d425712333a2dcf0b3006dff76dca80b2e61",
+    "preview-configuration.json": "9a2d580ad105e0c48e41e504e63055023d1f2d85a9b24d3ca78713ec4bcafdb4",
+    "preview-deployment.json": "5720acf6d3ebf479a9db72984605e24bd3b576632e3134c94223df62401fec0a",
+    "preview-relay-configuration.json": "34b5c2b6bbe0049cd861af30c01040279c77c3851607fadd99620772512dfa50",
+    "proactive-storage-smoke.json": "00da00d62c33b43a8a0cf0ecce0f0d40c1f7a89bbad6bc7134a48a76c2c94274",
+    "production-before.json": "cb8cb9afff71661378b2e678d017da7ebe71ecff1910e11365b21ccab0d03bf9",
+    "production-browser-receipt.json": "9d0499bbdaf9a7ced07ad16a53a970433040544c7ec51371dc247d9311830256",
+    "production-http-receipt.json": "72f259529b5eb230a80614355d010b59042c78b8bb114c3d56415a228aed7516",
+    "production-inquiry-receipt.json": "beda50ec3f132866c3eeba630e978313064de7f3571fb1799acf86d3c1b9ea4a",
+    "proof_logic_ledger.json": "cdecf34fc5bf9d9d3df22b2be48983e2a0929a83614ccaf41258faed688aae5b",
+    "proof_logic_ledger.md": "b242f33b8e7ad23aeb6c68cab1b56f343f752fa7dc15941322668f0b40e1d1d4",
+    "release-handoff.md": "1d495a0ede97504f22f8e760f395d425712333a2dcf0b3006dff76dca80b2e61",
+    "release-state.json": "a50535bf42afb0e5ed6ed31ca43fae96b8d34716ddf53d2976d6357cb78deb97",
+    "run_manifest.json": "a6cbb9b6854cc8f172ff808dd49f61b011f521bacf76db5300833d40411081ba",
+    "storage-smoke.json": "e1e9adf18f9fc95a9ba6a35c29fe36a859e85e88f329739f3efa7efa2dfbf43e",
+    "stripe-deployed-smoke.json": "dc07fee975cf385280591870a440ca4480a56cce62577a8dee71c0099e4872dd",
+    "tests-final.log": "0fdcc75cf9689e20a23c41ca97bef9649092ecd0967f7ecca321c6f1c45bb81e",
+    "tests.log": "d328f7b5bc5fd78120b91ebb9a2e5d8ac8bef4c2fd676c916e8f548cebf0dc48",
+    "tests.txt": "f2a13fd3e83e4f1db5af43bd62a1b8770d60579265f843c74d6c827e9abb7b44",
+    "website\\analytics-final.log": "70ea43c875ba2afcbad87c30ec0bd3d4572b5b48dcc05c7bef78ba81cf861786",
+    "website\\analytics-tests.log": "6b80601d4672f7ea76f90f26438c41e6b138aaba843424c4259aac8eb2ed587b",
+    "website\\build-contact-spacing.log": "5eabf4347b648524cc75e3aae6a14c873bbc3091687de6bd2267cf98c5eae9d3",
+    "website\\build-final.log": "c41d196a94154a3d3ebdfcb23936f78694496ab07e0e45d378b06dcb78f60907",
+    "website\\build-functions.txt": "99351355c4bbd378e5b91a9879abf8ee05c637d3565221d3bc6c848f6f8fb2d4",
+    "website\\build.log": "c65ef4207e4242dad90f3b8361e479a9bc61643bae28ee627825c0d121894a54",
+    "website\\build.txt": "73f338bbc59cbf65de3d5fa0dc922af3eacf0b2abbb4ac7852c4dfd8bd262acc",
+    "website\\contact-pr-body.md": "4fa7ad89503c444ee292e91d1075686f40e953d9949bc88022cc21b06cb9f1d0",
+    "website\\editorial-final.log": "e2cdd4b8d05fef9cf8a338bd433d4a7ae2a896744265dc15a2358de47723d0c8",
+    "website\\functions-final.log": "99351355c4bbd378e5b91a9879abf8ee05c637d3565221d3bc6c848f6f8fb2d4",
+    "website\\ga4-realtime-receipt.json": "ac121650153787b1bbfcc6dffed79a306e76d29017d48b3c4b0b72459a66eafb",
+    "website\\inquiry-service-smoke.json": "d07eece80b52351b5f80c0cd84db18824cb1df113c1af0a122cf245f3a21f893",
+    "website\\insights-final.log": "319427390705da8599884461194752df3b39840b619efc49cb27627a2fce88c4",
+    "website\\lint-final.log": "aa488371b2e81d8f57f9ebe644e9fcda864374b837ae2f2e9ca1ebcd05a4d962",
+    "website\\lint.txt": "aa488371b2e81d8f57f9ebe644e9fcda864374b837ae2f2e9ca1ebcd05a4d962",
+    "website\\maintenance-pr-body.md": "015a3cb5bf6e982f3220b117902aab467e438a77e56f337bc9ceffca80f438d0",
+    "website\\maintenance-production-receipt.json": "fb79b7cae7dc5f5562cdd913a07e0127ad9ac49f2bf7ea1c1dea1e552cbdad88",
+    "website\\platform-final.log": "786a68e2ff7aaa8dc717173762767e857cbe8615f1e79cd8bdcab280071dd81b",
+    "website\\platform-tests.log": "b2be928e19daf4929e74be0de1f8ff2e4171e233f0845a7e39b43f825ba4ce98",
+    "website\\platform-tests.txt": "3ec4092a6814ce68c15adb58264b535e4641d3921996ee1fef4f7cfd065c23b1",
+    "website\\prerender-contact-spacing.log": "1ddafa6fb0e17af3a3304b9d4778de20fc4a4cd00645a40e2ed9bbdda3d1056d",
+    "website\\prerender-final.log": "1ddafa6fb0e17af3a3304b9d4778de20fc4a4cd00645a40e2ed9bbdda3d1056d",
+    "website\\production-browser-receipt.json": "9d0499bbdaf9a7ced07ad16a53a970433040544c7ec51371dc247d9311830256",
+    "website\\production-http-receipt.json": "72f259529b5eb230a80614355d010b59042c78b8bb114c3d56415a228aed7516",
+    "website\\production-inquiry-receipt.json": "beda50ec3f132866c3eeba630e978313064de7f3571fb1799acf86d3c1b9ea4a",
+    "website\\release-handoff.md": "1d495a0ede97504f22f8e760f395d425712333a2dcf0b3006dff76dca80b2e61",
+    "website\\release-state.json": "a50535bf42afb0e5ed6ed31ca43fae96b8d34716ddf53d2976d6357cb78deb97",
+    "website\\responsive-harness.mjs": "b89518c70224a5b0bbc4eeffc9b0bdf35be6da436d327be469ba36da50eafeed",
+    "website\\snapshot-final.log": "d694e8652d51bc823629eff883212cef6a0bd920c34e19be7ab6e1da66ffbd9f",
+    "website\\stripe-inventory.json": "32c7970b731b1b4d47e44a13ae93431b1ece68bfb978e00021d9e0ea54c83d42",
+    "website\\test-snapshot.txt": "d694e8652d51bc823629eff883212cef6a0bd920c34e19be7ab6e1da66ffbd9f",
+    "website\\urls-final.log": "b719f4549d6edc45fa9a07747fdd868d66c5bd6e1333dd8491b8a1b10bf64c31",
+    "website\\validate-insights-dist.txt": "319427390705da8599884461194752df3b39840b619efc49cb27627a2fce88c4",
+    "website\\validate-insights.txt": "7b132237f3b2fd755f530a56a87cec9535d7a9f9e7d697cf16c8f01f3dcf757c",
+    "website\\verify-editorial.txt": "e2cdd4b8d05fef9cf8a338bd433d4a7ae2a896744265dc15a2358de47723d0c8",
+    "website\\verify-prerender.txt": "1ddafa6fb0e17af3a3304b9d4778de20fc4a4cd00645a40e2ed9bbdda3d1056d",
+    "website\\verify-urls.txt": "b719f4549d6edc45fa9a07747fdd868d66c5bd6e1333dd8491b8a1b10bf64c31"
+  },
+  "timestamp_utc": "2026-09-05T23:16:18.596Z"
 }

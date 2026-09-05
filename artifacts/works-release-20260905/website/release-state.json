@@ -1,0 +1,47 @@
+{
+  "timestamp_utc": "2026-09-05T23:13:31.737Z",
+  "status": "deployed_live_stripe_pending",
+  "site": {
+    "url": "https://eidos-works.com",
+    "deploymentId": "e3082c39-08b0-4175-8366-3bb674bce1c8",
+    "deploymentUrl": "https://e3082c39.eidosworks.pages.dev",
+    "commit": "c9e35f43c5c4c8abd90a4a11ffdceea49d603af9",
+    "deployedAt": "2026-09-05T23:08:50.082225Z"
+  },
+  "backend": {
+    "timestamp_utc": "2026-09-05T22:30:27.260Z",
+    "deploymentId": "dpl_CYejLjAxv8qeVfhxgrUioJWZxBee",
+    "commit": "a2642d3985c2590cd6f4e4bbb335673499bc4c1e",
+    "productionUrl": "https://eidos-sentinel-lab.vercel.app",
+    "healthStatus": 200,
+    "unauthenticatedStatus": 401,
+    "publicConfig": {
+      "gaMeasurementId": "G-8N7Y7EM4CS",
+      "turnstileSiteKey": "0x4AAAAAAEpi_WVq3Q1gpr5z",
+      "communityReady": true,
+      "aiReady": true,
+      "shopReady": false,
+      "localTest": false
+    }
+  },
+  "mergedPRs": {
+    "website6": "e744f1219e1468d754282e74e80b6a52a9959887",
+    "backend37": "a2642d3985c2590cd6f4e4bbb335673499bc4c1e",
+    "maintenance7": "ca0c7dd7cfc36fca91671cae3fb2e0c5d67f7f06",
+    "spacing8": "c9e35f43c5c4c8abd90a4a11ffdceea49d603af9"
+  },
+  "active": [
+    "cinematic website",
+    "published-source assistant",
+    "opt-in bounded AI",
+    "durable community and moderation",
+    "registered agents",
+    "hourly maintenance",
+    "provider-confirmed inquiry delivery",
+    "consent-gated GA4"
+  ],
+  "disabled": [
+    "production purchasing"
+  ],
+  "blocker": "Stripe restricted live-key creation is waiting for email verification in the same Chrome browser. An extension popup blocks the Gmail tab."
+}

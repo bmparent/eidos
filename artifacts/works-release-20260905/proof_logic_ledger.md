@@ -1,28 +1,28 @@
 ## Proof Logic + Meaning
 
 ### Goal reached
-The platform service-validation gate passed. The overall public release is partial until merged deployments and final production checks are recorded.
+Seven of eight platform release gates passed. The site and backend are deployed and verified. Live Stripe setup is blocked by an unfinished account verification step, so purchasing remains disabled and the overall goal is partial.
 
 ### Previous state
-The existing implementation had passing local tests but no verified durable production allocation, analytics stream receipt, provider delivery, or completed hosted payment flow. The deployed relay failed in Cloudflare despite passing Node mocks.
+Local checks existed, but durable production storage, hosted provider behavior, real payment fulfillment, delivery, and analytics receipt had not been established. The relay failed in the actual Workers runtime.
 
 ### Technical logic utilized
-A dedicated remote libSQL adapter uses atomic quota updates and transactional payment/event writes. Separate credentials and databases isolate production from validation. Cloudflare transport preserves body/signatures, rejects redirects, and authenticates to Sentinel. Explicit AI activation reserves a conservative token bound before one provider call. Signed Stripe events grant or revoke a receipt-hash entitlement; browser redirects grant nothing. Human-reviewed publication controls community pages and feeds. The inquiry Worker fixes its destination and acknowledges only provider acceptance.
+Remote libSQL transactions enforce atomic quotas and durable event/entitlement writes. Independent service credentials protect the Pages-to-Sentinel relay, moderation and maintenance. The AI path reserves budget before one explicit provider call. Signed Stripe events grant or revoke receipt-hash entitlements. Review controls public community visibility. The private inquiry Worker fixes the destination and acknowledges provider acceptance. Scheduled maintenance now calls the authenticated backend directly after GitHub requests through the site returned 403.
 
 ### Math / scoring logic
-Quota acceptance is atomic: accept only when used + requested <= limit. Thirty concurrent requests of 100 against a 750 limit accepted seven (700 reserved). AI reservation = UTF8_bytes(provider_payload) + 512 + 320; the deployed smoke reserved 2,060, and its duplicate added zero. Direct provider usage was 221 input + 40 output = 261 tokens. Public suggestions satisfy daily_total <= 10; nine fixtures were accepted after one earlier suggestion, and the second pass added zero. Payment requires paid status, correct order/session/product metadata, USD and 2,900 cents. No overall Eidos research-readiness percentage is computed because this platform task does not evaluate the research gates.
+Quota acceptance requires used + requested <= limit. Thirty concurrent reservations of 100 against a 750 cap accepted seven, reserving 700. AI reservation = UTF8_bytes(provider_payload) + 512 + 320. Preview reserved 2,060 and its duplicate added zero; the production browser call reserved 2,006. The direct provider reported 221 input + 40 output = 261 tokens. Proactive suggestions satisfy daily_total <= 10. Payment entitlement requires paid status, matching product/order/session metadata, currency USD, and amount 2,900 cents. Research readiness is null because no research gates were evaluated.
 
 ### Philosophical meaning
-Reproducibility means truth that can be revisited. Restraint before automation means quotas, author consent, review and revocation remain operational constraints, not documentation promises.
+Reproducibility is truth that can be revisited. Restraint before automation means that consent, moderation, quotas, revocation and explicit limits govern the deployed system.
 
 ### Why this is better
-The evidence now includes real hosted services and durable state rather than only mocks. A Workers-specific failure was reproduced and corrected. Paid, unpaid, duplicated, refunded and disputed paths have distinct observed outcomes. The reply confirmation remains visible after verification refresh.
+Real hosted receipts now support the release. A Workers-specific redirect failure, lost reply acknowledgement, GitHub maintenance failure and mobile Contact overlap were corrected and verified. A browser redirect is distinguished from a paid entitlement; a delivered test inquiry is distinguished from a customer lead.
 
 ### How this moves Eidos closer to the north-star goal
-This milestone strengthens reproducible operation and human-readable receipts around the public Sentinel platform. It does not establish that Eidos Brain learns or compresses streams better, preserves anomalies, or beats other detectors/compressors. Core reservoir, RLS, thresholds, Sentinel labels, research executor and experiment artifacts were not changed.
+Eidos Brain is a self-monitoring streaming intelligence codec. It learns live streams, compresses predictable behavior, preserves meaningful anomalies, monitors its own internal state, and emits human-readable incident receipts. This platform milestone strengthens reproducible operation and auditable receipts around that work. It does not prove stream learning, compression, anomaly preservation or detector superiority. Core research behavior was unchanged.
 
 ### Evidence
-`storage-smoke.json`, `ai-provider-smoke.json`, `ai-deployed-smoke.json`, `community-deployed-smoke.json`, `agent-deployed-smoke.json`, `proactive-storage-smoke.json`, `stripe-deployed-smoke.json`, `inquiry-service-smoke.json`, `ga4-realtime-receipt.json`, `tests-final.log`, `lint-final.log`, and `build-final.log` in `artifacts/works-release-20260905/`. Website runtime and browser-form regression tests are in the companion PR.
+See production-http-receipt.json, production-browser-receipt.json, backend-production-receipt.json, maintenance-production-receipt.json, production-inquiry-receipt.json, ga4-realtime-receipt.json, storage-smoke.json, ai-provider-smoke.json, ai-deployed-smoke.json, community-deployed-smoke.json, agent-deployed-smoke.json, proactive-storage-smoke.json, stripe-deployed-smoke.json and the final test/build logs.
 
 ### Remaining uncertainty
-Final production deployment, live Stripe credential activation and production browser checks remain pending at this checkpoint. Stripe receipts are test-mode simulations, not revenue. Proactive time eligibility used synthetic aged fixtures against remote validation storage, not a natural 24-hour user wait. Traffic classification by user agent is heuristic. No research benchmark, GPU run, compression ratio, anomaly metric, or held-out proof was performed.
+Live Stripe key/webhook activation is unfinished. All demonstrated purchases are TEST mode, not revenue. Proactive time eligibility used synthetic aged fixtures against remote validation storage. No natural 24-hour wait, physical mobile-device test, GPU benchmark, compression metric or held-out proof was performed. Bot classification is heuristic. Mounted Drive copies are hash-verified; cloud synchronization completion is not independently verified.

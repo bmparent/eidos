@@ -1,0 +1,6 @@
+
+> brent-parent-intelligence-studio@1.1.0 verify:editorial
+> node scripts/verify-editorial.mjs
+
+Editorial verification passed for 25 routes.
+Homepage density: {"sections":6,"h2":6,"h3":8,"articles":2,"buttons":8,"links":44,"images":4}
