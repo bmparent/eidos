@@ -40,6 +40,12 @@ Published-source answers and public source suggestions use zero model tokens. AI
 
 Shared handlers are vendored from `bmparent/brent-parent-intelligence-studio`; use that repository's `scripts/export-sentinel-platform.mjs` to refresh them. Review changes in both pull requests. Reverting an application deployment must preserve database and Stripe records.
 
-## Current activation blockers
+## Verified service setup (September 5, 2026)
 
-OpenAI Platform rejected the authorized new-key request without a detailed cause; no key was created or written. This environment has no Vercel/Cloudflare configuration credentials or remote database/Stripe credentials. The connected Vercel app can inspect deployments but has not provided secret-setting access. Account setup and live end-to-end verification are therefore outstanding; all paid features remain disabled by default.
+Separate free Turso Starter databases `eidos-works-production` and `eidos-works-validation` are provisioned and migrated. Production/preview credentials remain separate. Dedicated rate, moderation, relay, maintenance and Turnstile credentials are configured; the GitHub hourly maintenance secret is set.
+
+GA4 property `552876683` and stream `15725877773` belong to https://eidos-works.com; measurement `G-8N7Y7EM4CS`. Authenticated Realtime received actual preview page/question/purchase events. Enhanced Measurement is disabled. AI uses `gpt-4.1-nano-2025-04-14`, max 320 output tokens, five attempts/visitor/day and a 20,000 daily conservative reservation budget. The deployed smoke passed with 2,060 reserved tokens and no additional reservation on replay. The direct provider usage receipt is 221 input + 40 output = 261 tokens.
+
+Real Stripe test checkout, ZIP delivery, canceled/unpaid denial, duplicate-event replay, refund and dispute revocation passed. Guest/reply moderation, feed visibility/removal, agent rate limits and revocation passed against the deployed preview. Proactive eligibility and caps passed with synthetic aged records against remote validation libSQL. A private Cloudflare inquiry Worker delivered a matching receipt to the configured studio inbox.
+
+AI and proactive enable flags are configured for the next production deployment. Shop remains gated pending live Stripe key verification. No release is claimed at this checkpoint. See `artifacts/works-release-20260905/` and `docs/proof_runs/2026-09-05/` for actual receipts, limits, journal and Drive copy status. Research behavior was untouched.

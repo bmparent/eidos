@@ -1,0 +1,42 @@
+{
+  "scope": "Eidos Works platform release only",
+  "timestamp_utc": "2026-09-05T22:24:54.907338+00:00",
+  "overall_eidos_research_readiness": null,
+  "reason": "Research proof gates were not evaluated by this platform task.",
+  "gates": [
+    {
+      "name": "Durable storage",
+      "status": "passed"
+    },
+    {
+      "name": "Provider and AI bounds",
+      "status": "passed"
+    },
+    {
+      "name": "Community and agent controls",
+      "status": "passed"
+    },
+    {
+      "name": "Stripe test fulfillment and revocation",
+      "status": "passed"
+    },
+    {
+      "name": "Analytics and inquiry receipts",
+      "status": "passed"
+    },
+    {
+      "name": "Final automated checks",
+      "status": "passed"
+    },
+    {
+      "name": "Live Stripe configuration",
+      "status": "partial"
+    },
+    {
+      "name": "Production release and browser checks",
+      "status": "missing"
+    }
+  ],
+  "passed_gates": 6,
+  "total_gates": 8
+}

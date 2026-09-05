@@ -1,0 +1,18 @@
+{
+  "timestamp": "2026-09-05T21:27:00.580Z",
+  "status": 200,
+  "state": "sent",
+  "submitted": true,
+  "receipt": "d955a5c7-15b3-49bc-91d6-a11d609b38f1",
+  "marker": "EW-20260905-INQUIRY-01",
+  "environment": "Cloudflare Pages release preview",
+  "deliveryVerified": true,
+  "gmailMessageId": "1a07377b4ecc60ed",
+  "gmailLabels": [
+    "INBOX"
+  ],
+  "inboxReferenceMatched": true,
+  "spf": "pass",
+  "dkim": "pass",
+  "providerMessageId": "NpcmOSHV9MjmnrmvrUEnN7rEys7zQljzLmCH@eidos-works.com"
+}

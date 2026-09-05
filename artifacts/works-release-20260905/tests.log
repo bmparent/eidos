@@ -1,0 +1,41 @@
+
+> eidos-sentinel-lab@0.2.0 test
+> node --test tests/*.test.mjs && node --import tsx --test tests/*.test.ts
+
+✔ default real-data spec produces a stable canonical lock (11.3701ms)
+✔ sandbox git sources resolve beneath the provider working directory (3.2736ms)
+✔ real-data spec requires version and rejects path traversal (0.8897ms)
+✔ proof and label-isolation locks cannot be relaxed (0.9801ms)
+✔ preflight blocks dispatch without changing scientific readiness (1.9804ms)
+✔ backend-specific blockers remain explicit and fail closed (0.7677ms)
+✔ stale launcher receipts fail closed without advancing proof gates (8.3792ms)
+✔ launcher command inspection is rate limited (0.9203ms)
+✔ sandbox allocation errors return a stable diagnostic response instead of a generic 400 (2.2765ms)
+✔ dispatch diagnostics preserve useful provider context while redacting credentials (2.1594ms)
+✔ known capacity and configuration failures retain their public contracts (0.7201ms)
+✔ request parse failures and stage wrappers remain explicit (2.5357ms)
+✔ engineering smoke is deterministic for a locked request (84.5679ms)
+✔ held-out seeds are inaccessible (2.3734ms)
+✔ smoke output cannot advance proof gates (20.7513ms)
+✔ incident language remains calibrated (28.0328ms)
+✔ all registered engineering scenarios return finite traces (173.7391ms)
+ℹ tests 17
+ℹ suites 0
+ℹ pass 17
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 699.1821
+✔ Relay authentication, exact origins, routes and method gates (78.8046ms)
+✔ Published answers work with no database, model key or outbound fetch (7.7853ms)
+✔ Real libSQL adapter reserves atomically and rolls back failed batches (65.8919ms)
+✔ Sentinel quota and idempotency prevent repeated model calls (71.2891ms)
+ℹ tests 4
+ℹ suites 0
+ℹ pass 4
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 1637.3302

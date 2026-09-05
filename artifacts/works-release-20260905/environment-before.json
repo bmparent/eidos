@@ -1,0 +1,30 @@
+{
+  "kind": "environment",
+  "status": 200,
+  "names": [
+    {
+      "key": "KAGGLE_API_TOKEN",
+      "target": [
+        "production"
+      ]
+    },
+    {
+      "key": "EIDOS_SOURCE_REPOSITORY",
+      "target": [
+        "production"
+      ]
+    },
+    {
+      "key": "EIDOS_OPERATOR_TOKEN",
+      "target": [
+        "production"
+      ]
+    },
+    {
+      "key": "EIDOS_EXECUTION_BACKEND",
+      "target": [
+        "production"
+      ]
+    }
+  ]
+}
