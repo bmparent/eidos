@@ -1,0 +1,64 @@
+{
+  "schema": "eidos.sentinel-lab.audit.v0.1",
+  "incidentDiagnosticId": "bc3250d7-32bd-4062-9605-6f7c87691b51",
+  "baseCommit": "ba5bac3a549014ff31a7121cc5f1cfbedee0afee",
+  "appTestsPassed": 39,
+  "runnerTestsPassed": 26,
+  "localLauncher": {
+    "jobId": "rd-8a14916b3ea7-a0d17003",
+    "completedAt": "2026-09-06T21:18:20Z",
+    "status": "COMPLETED_ENGINEERING",
+    "environment": {
+      "platform": "Linux-6.18.35-x86_64-with-glibc2.39",
+      "python": "3.14.6"
+    },
+    "torch": "2.14.0+cpu",
+    "installer": "uv pip install --no-cache --torch-backend cpu",
+    "lockDigest": "8a14916b3ea7a0cf2ce766ba2a8c8e126745f8f7907b0ceccb2a7df8476cf0a5",
+    "engineCodeSha256": "d1d8db7b5f8e70c0ae6abc96575295620a27ea2943fa50209317d264da50ef50",
+    "engineRows": 800,
+    "geometryPoints": 360,
+    "immutableArtifactCount": 24,
+    "artifactHashMismatches": [],
+    "metricsMatchDirectRun": true,
+    "metrics": {
+      "average_precision": null,
+      "confusion": {
+        "fn": 0,
+        "fp": 301,
+        "tn": 299,
+        "tp": 0
+      },
+      "evaluation_rows_expected": 600,
+      "evaluation_rows_scored": 600,
+      "evidence_class": "REAL_DATA_ENGINEERING",
+      "false_positive_rate": 0.5016666666666667,
+      "gates_advanced": 0,
+      "heldout_evaluated": false,
+      "labels_unsealed_after_prediction_freeze": true,
+      "limitations": [
+        "Engineering evaluation only; held-out generalization is untested.",
+        "Detection delay counts consecutive ordered rows, not elapsed time.",
+        "Source-file order is not independently verified chronology.",
+        "Only one class is present; class-separation performance cannot be established."
+      ],
+      "mean_detection_delay_frames": null,
+      "missed_attack_windows": 0,
+      "negative_rows": 600,
+      "order_basis": "source",
+      "positive_rows": 0,
+      "precision": 0.0,
+      "prediction_coverage_complete": true,
+      "prediction_trace_sha256": "38050640bb64eaddc43df2f1a8027416664d992b8386884f8ea0dbe5b3a58b06",
+      "proof_verdict": "BLOCKED_RESOURCE_BEFORE_HELDOUT",
+      "recall": null,
+      "roc_auc": null,
+      "schema": "eidos.sentinel-runner.metrics.v0.2"
+    }
+  },
+  "runtimeSourceHashes": {
+    "sandbox_launcher.py": "569123ac59b9b3edc3538cfd20e81b3bd530db7c77106d029b6c309825541aeb",
+    "job.py": "ca5d0b73f1e78181a6bcca0798bef2ceb3b01d2157347919c0d65e76166abadd"
+  },
+  "liveVercelPostReleaseRun": "not verified: operator session and Sandbox identity unavailable in this workspace"
+}

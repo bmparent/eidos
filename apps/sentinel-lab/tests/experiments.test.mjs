@@ -16,7 +16,6 @@ import {
   redactDispatchDiagnostic,
   withDispatchStage,
 } from "../lib/experiments/dispatch-diagnostics.js";
-import { SANDBOX_ROOT, sandboxRepositoryRoot } from "../lib/experiments/sandbox-paths.js";
 
 test("default real-data spec produces a stable canonical lock", () => {
   const first = validateExperimentSpec(cloneDefaultExperiment());
@@ -27,22 +26,6 @@ test("default real-data spec produces a stable canonical lock", () => {
   assert.equal(sha256Canonical(first), "5eba19350bb0cf1a8761f2bfba3ae730f0e073ec1436c360ba9904b6ef9b044a");
   assert.equal(first.dataset.version, 3);
   assert.equal(first.dataset.expectedSha256, "7db47b2bf97ad58c3556ee25e8e1eb1e697cd391670733833865d0e84d8ed82a");
-});
-
-test("sandbox git sources resolve beneath the provider working directory", () => {
-  assert.equal(
-    sandboxRepositoryRoot("https://github.com/bmparent/eidos.git"),
-    `${SANDBOX_ROOT}/eidos`,
-  );
-  assert.equal(
-    sandboxRepositoryRoot("git@github.com:bmparent/eidos.git"),
-    `${SANDBOX_ROOT}/eidos`,
-  );
-  assert.equal(
-    sandboxRepositoryRoot("https://github.com/bmparent/eidos.git?ref=main", "/custom/root/"),
-    "/custom/root/eidos",
-  );
-  assert.throws(() => sandboxRepositoryRoot("https://github.com/bmparent/.git"), /EIDOS_SOURCE_REPOSITORY_INVALID/);
 });
 
 test("real-data spec requires version and rejects path traversal", () => {

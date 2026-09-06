@@ -9,7 +9,8 @@ export const ACTIVE_SANDBOX_STATUSES = new Set([
 export const TERMINAL_SANDBOX_STATUSES = new Set(["COMPLETED_ENGINEERING", "FAILED", "EXPIRED"]);
 export const LAUNCHER_RECEIPT_FILENAME = "launcher_command.json";
 export const LAUNCHER_FAILURE_FILENAME = "launcher_failure.log";
-export const LAUNCHER_RECEIPT_GRACE_MS = 60_000;
+// Source probes can use two 30-second interpreter attempts before detaching.
+export const LAUNCHER_RECEIPT_GRACE_MS = 120_000;
 export const LAUNCHER_CHECK_INTERVAL_MS = 30_000;
 
 export function statusIsOlderThan(status, maximumAgeMs, now = Date.now()) {

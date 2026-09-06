@@ -199,7 +199,7 @@ export function RealDataLab() {
         </fieldset></div>
 
         <aside className="run-lock-panel">
-          <div className="real-section-head"><div><p className="eyebrow">REVIEW & LAUNCH</p><h3>Your experiment</h3></div><span>{lock ? lock.readyToDispatch ? "READY TO LAUNCH" : "SETUP NEEDED" : "NOT CHECKED"}</span></div>
+          <div className="real-section-head"><div><p className="eyebrow">REVIEW & LAUNCH</p><h3>Your experiment</h3></div><span>{lock ? lock.readyToDispatch ? "SETTINGS READY" : "SETUP NEEDED" : "NOT CHECKED"}</span></div>
           <p className="selected-source"><strong>{spec.dataset.ref} · v{spec.dataset.version || "?"}</strong><span>{spec.dataset.file || "Choose an exact file"}</span><span>Up to {spec.dataContract.maxRows.toLocaleString()} rows · seed {spec.engine.seed}</span></p>
           <div className="split-ledger">
             <div><span>CALIBRATION</span><strong>20%</strong><small>fit transforms only</small></div>
@@ -213,7 +213,7 @@ export function RealDataLab() {
             <div><dt>PROOF EFFECT</dt><dd>Zero accepting gates</dd></div>
           </dl>
           <label className="operator-token"><span>Operator access token</span><input type="password" autoComplete="off" value={operatorToken} onChange={(event) => setOperatorToken(event.target.value)} placeholder="Enter to launch or retrieve a run" /></label>
-          <p className="token-note">Kept in memory for this page only. Checking readiness needs no token and starts no compute.</p>
+          <p className="token-note">Kept in memory for this page only. Readiness checks your settings. Compute startup and dataset access are verified after launch.</p>
           <button className="prepare-button" onClick={prepareLock} disabled={preparing || dispatching}>{preparing ? "Checking settings…" : "Check readiness & lock settings"}</button>
 
           {lock && <div className="lock-result" aria-live="polite"><span>SETTINGS LOCKED · {(lock.executionBackend || "unattached").toUpperCase()}</span><code>{lock.digest}</code><button className="outline-button" onClick={() => downloadJson(lock, `eidos-run-lock-${lock.digest.slice(0, 12)}.json`)}>Download run settings</button><div className="preflight-issues">{lock.issues.filter((issue) => issue.severity === "blocker").map((issue) => <p className="blocker" key={issue.code}><b>Setup needed</b>{issue.message}</p>)}</div><details className="readiness-details"><summary>Data checks & technical details</summary><div className="preflight-issues">{lock.issues.filter((issue) => issue.severity !== "blocker").map((issue) => <p className={issue.severity} key={issue.code}>{issue.message}</p>)}</div></details><button className="dispatch-button" disabled={!lock.readyToDispatch || !operatorToken.trim() || dispatching || Boolean(dispatch)} onClick={dispatchRun}>{dispatching ? "Starting engine… this may take a few minutes" : dispatch ? "Run receipt available below" : !lock.readyToDispatch ? "Resolve setup before launching" : !operatorToken.trim() ? "Enter operator token to launch" : "Launch full-engine experiment"}</button></div>}

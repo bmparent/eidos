@@ -10,13 +10,24 @@ import pandas as pd
 
 from sentinel_runner.dataset import prepare_dataframe, sha256_file
 from sentinel_runner.diagnostics import engine_telemetry
-from sentinel_runner.job import atomic_json, run_job
+from sentinel_runner.job import artifact_digests, atomic_json, run_job
 from sentinel_runner.profiles import EXECUTION_PROFILES
 from sentinel_runner.spec import ExperimentSpec, lock_digest
 from test_spec import fixture_spec
 
 
 class ReceiptTests(unittest.TestCase):
+    def test_manifest_hashes_only_immutable_artifacts(self):
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            for name in ("status.json", "run_manifest.json", "launcher_command.json", "runner.log", "source_receipt.json", "metrics.json"):
+                (root / name).write_text("{}")
+            hashes = artifact_digests(root)
+            self.assertEqual(set(hashes), {"source_receipt.json", "metrics.json"})
+            (root / "launcher_command.json").write_text('{"lastCheckedAt":123}')
+            (root / "runner.log").write_text("process ended")
+            self.assertEqual(artifact_digests(root), hashes)
+
     def test_telemetry_never_exports_labels_or_input_snippets(self):
         row = {"step": 1, "z": 2.0, "label": "ATTACK", "snippet": "private", "vector": [1, 2], "thermo_temp": float("nan")}
         self.assertEqual(list(engine_telemetry([row])), [{"step": 1, "z": 2.0, "thermo_temp": None}])
