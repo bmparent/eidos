@@ -45,12 +45,14 @@ Kaggle credentials belong on the runner, not in the browser. `KAGGLE_API_TOKEN` 
 
 ## Local verification
 
-From this directory:
+From the repository root, using Python 3.14 and the pinned CPU dependencies:
 
 ```bash
-PYTHONPATH=. python -m unittest discover -s tests -v
-python scripts/verify_full_engine.py --profile cpu_engineering --output /tmp/eidos-standard
-python scripts/verify_full_engine.py --profile cpu_mechanisms --output /tmp/eidos-mechanisms
+python -m pip install uv
+uv pip install --python python --torch-backend cpu services/sentinel-runner
+python -m unittest discover -s services/sentinel-runner/tests -v
+python services/sentinel-runner/scripts/verify_full_engine.py --profile cpu_engineering --output artifacts/sentinel-ci/cpu_engineering
+python services/sentinel-runner/scripts/verify_full_engine.py --profile cpu_mechanisms --output artifacts/sentinel-ci/cpu_mechanisms
 ```
 
 The full-engine script generates 1,000 synthetic rows locally and runs 800 through the actual Torch engine, scoring all 600 evaluation rows while excluding the 200-row holdout. It emits the input, metrics, effective configuration, code/input hashes, and measured geometry/telemetry. These are integration checks, not real-world detection validation.

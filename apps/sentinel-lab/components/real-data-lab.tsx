@@ -39,6 +39,7 @@ export function RealDataLab() {
   const [resumeId, setResumeId] = useState("");
   const [finished, setFinished] = useState(false);
   const busy = useRef(false);
+  const launchAttempt = useRef<{ digest: string; key: string } | null>(null);
   const profile = engineProfile(spec);
   const onTerminal = useCallback(() => setFinished(true), []);
   const [engineStatus, setEngineStatus] = useState<ExperimentStatus | null>(null);
@@ -48,6 +49,12 @@ export function RealDataLab() {
     try {
       const saved = JSON.parse(sessionStorage.getItem("eidos.lab.active-job") || "null");
       if (saved && JOB_ID.test(saved.jobId)) setDispatch(saved);
+      const pending = JSON.parse(sessionStorage.getItem("eidos.lab.launch-attempt") || "null");
+      if (pending?.lock?.digest && /^[a-zA-Z0-9_-]{16,128}$/.test(pending.key)) {
+        launchAttempt.current = { digest: pending.lock.digest, key: pending.key };
+        setSpec(pending.lock.spec);
+        setLock(pending.lock);
+      }
     } catch { /* Storage is optional; credentials are never persisted. */ }
   }, []);
 
@@ -70,6 +77,8 @@ export function RealDataLab() {
     setLock(null);
     setFinished(false);
     setError(null);
+    launchAttempt.current = null;
+    try { sessionStorage.removeItem("eidos.lab.launch-attempt"); } catch { /* Optional recovery. */ }
     try { sessionStorage.removeItem("eidos.lab.active-job"); } catch { /* Optional local receipt only. */ }
   }
 
@@ -128,9 +137,15 @@ export function RealDataLab() {
     setDispatching(true);
     setError(null);
     try {
+      if (!launchAttempt.current || launchAttempt.current.digest !== lock.digest) {
+        launchAttempt.current = { digest: lock.digest, key: crypto.randomUUID() };
+      }
+      // Persist intent before sending. The token stays exclusively in memory.
+      // A reload or lost response retries the same reservation, never a new job.
+      try { sessionStorage.setItem("eidos.lab.launch-attempt", JSON.stringify({ key: launchAttempt.current.key, lock })); } catch { /* In-page retries still retain the key. */ }
       const body = await requestJson<RunnerDispatch>("/api/experiments", {
         method: "POST",
-        headers: { "Content-Type": "application/json", Authorization: `Bearer ${operatorToken}` },
+        headers: { "Content-Type": "application/json", Authorization: `Bearer ${operatorToken}`, "Idempotency-Key": launchAttempt.current.key },
         body: JSON.stringify({ spec: lock.spec, lockDigest: lock.digest }),
       }, 310_000);
       rememberJob(body);

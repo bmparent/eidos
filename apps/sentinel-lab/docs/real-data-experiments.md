@@ -78,7 +78,7 @@ Before accepting the detached engine process, the app probes the provider's actu
 
 Status and artifact operations are pinned to a single SDK Session so a read cannot silently resume an expired process. Snapshot retrieval explicitly resumes a stopped Sandbox for reading, then stops that retrieval session even if the read fails. Active-run downloads leave compute running. Expired active receipts are committed as `EXPIRED`, preserving the same terminal result on subsequent reads. Immutable manifest hashes exclude the changing launcher polling receipt and process log.
 
-The settings preflight starts no compute. `SETTINGS READY` establishes configuration validity; it does not establish Sandbox allocation, runtime installation, Kaggle access, or successful engine execution. The current list-and-count capacity check is advisory across simultaneous dispatch requests; strict multi-instance admission still requires a shared queue or admission controller.
+The settings preflight starts no compute. `SETTINGS READY` establishes configuration validity; it does not establish Sandbox allocation, runtime installation, Kaggle access, or successful engine execution. [Shared libSQL admission](shared-admission.md) now atomically reserves job capacity across function instances. A persisted retry key returns the same job after a lost response or reload. Provider reconciliation recovers abandoned reservations without treating an uncertain allocation as spare capacity. The existing database settings are required; an in-memory or filesystem lock is never used for hosted admission.
 
 The application exposes status and artifacts only through operator-authenticated route handlers. The Kaggle and Vercel credentials never enter the browser.
 

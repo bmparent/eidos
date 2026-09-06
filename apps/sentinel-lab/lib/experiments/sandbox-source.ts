@@ -1,4 +1,5 @@
 import type { Session } from "@vercel/sandbox";
+import { isAbsolute } from "node:path";
 import { redactDispatchDiagnostic } from "./dispatch-diagnostics.js";
 
 // Probe from the provider's actual cwd. Managed images and source layouts can
@@ -50,7 +51,7 @@ export async function verifySandboxSource(session: Pick<Session, "runCommand">, 
       const result = await session.runCommand({ cmd: interpreter, args: ["-c", SOURCE_PROBE, revision], timeoutMs: 30_000 });
       if (result.exitCode !== 0) throw new Error(await result.output("both"));
       const receipt = JSON.parse(await result.stdout()) as SourceReceipt;
-      if (receipt.commit !== revision.toLowerCase() || !receipt.repositoryRoot?.startsWith("/") || !receipt.interpreter?.startsWith("/")) {
+      if (receipt.commit !== revision.toLowerCase() || typeof receipt.repositoryRoot !== "string" || !isAbsolute(receipt.repositoryRoot) || typeof receipt.interpreter !== "string" || !isAbsolute(receipt.interpreter)) {
         throw new Error("Invalid source verification receipt");
       }
       return receipt;
