@@ -3,6 +3,7 @@ import type { ExperimentStatus, LockedExperiment, RunnerDispatch } from "@/lib/e
 import { redactDispatchDiagnostic, withDispatchStage } from "@/lib/experiments/dispatch-diagnostics";
 import { verifySandboxSource } from "./sandbox-source";
 import { AdmissionStore, admissionConfigured, sharedAdmission } from "./admission";
+import { ARTIFACT_VERIFIER } from "./artifact-verifier";
 import {
   ACTIVE_SANDBOX_STATUSES,
   LAUNCHER_FAILURE_FILENAME,
@@ -29,6 +30,7 @@ function jobSession(sandbox: Sandbox): JobSession {
 }
 
 export const SANDBOX_ARTIFACTS = {
+  "artifact_verification.json": "application/json; charset=utf-8",
   "source_receipt.json": "application/json; charset=utf-8",
   "run_manifest.json": "application/json; charset=utf-8",
   "dataset_receipt.json": "application/json; charset=utf-8",
@@ -422,7 +424,9 @@ async function reconcileSandboxStatus(sandbox: JobSession, jobId: string, wasSto
 
 export async function fetchSandboxStatus(jobId: string): Promise<ExperimentStatus> {
   try {
-    return await withReadableSession(jobId, (session, wasStopped) => reconcileSandboxStatus(session, jobId, wasStopped));
+    const status = await withReadableSession(jobId, (session, wasStopped) => reconcileSandboxStatus(session, jobId, wasStopped));
+    if (status.status === "COMPLETED_ENGINEERING") status.artifacts = [...new Set([...(status.artifacts || []), "artifact_verification.json"])];
+    return status;
   } catch (error) {
     if (!(error instanceof Error) || error.message !== "Experiment job not found." || !admissionConfigured()) throw error;
     const store = sharedAdmission();
@@ -458,6 +462,19 @@ async function withReadableSession<T>(jobId: string, read: (session: JobSession,
 
 export async function fetchSandboxArtifact(jobId: string, artifactName: string) {
   if (!Object.hasOwn(SANDBOX_ARTIFACTS, artifactName)) throw new Error("Artifact not found.");
+  if (artifactName === "artifact_verification.json") {
+    const verification = await withReadableSession(jobId, async (sandbox, wasStopped) => {
+      const status = await readStatus(sandbox, jobId);
+      if (status.status !== "COMPLETED_ENGINEERING") throw new Error("Artifact not found.");
+      const command = await sandbox.runCommand({ cmd: "python", args: ["-c", ARTIFACT_VERIFIER, jobDirectory(jobId)] });
+      if (command.exitCode !== 0) throw new Error("Immutable artifact verification failed. Retry retrieval or inspect the run manifest.");
+      return { ...JSON.parse(await command.stdout()), resumedForRetrieval: wasStopped, status: status.status };
+    });
+    // Read provider metadata with auto-resume disabled after the finally block
+    // has stopped retrieval compute. A receipt never claims cleanup on intent.
+    const provider = await existingSandbox(jobId);
+    return { body: Buffer.from(JSON.stringify({ ...verification, providerStatusAfterRetrieval: provider.status, verifiedAt: new Date().toISOString() }, null, 2) + "\n"), contentType: SANDBOX_ARTIFACTS[artifactName], filename: artifactName };
+  }
   return withReadableSession(jobId, async (sandbox) => {
     try {
       const body = await sandbox.fs.readFile(`${jobDirectory(jobId)}/${artifactName}`);
