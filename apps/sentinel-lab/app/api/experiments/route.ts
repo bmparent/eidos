@@ -4,6 +4,7 @@ import { dispatchLockedExperiment, getExecutionReadiness } from "@/lib/experimen
 import { authorizeOperator, isOperatorAuthConfigured } from "@/lib/experiments/operator-auth";
 import { dispatchDiagnostic, normalizeDispatchFailure } from "@/lib/experiments/dispatch-diagnostics";
 import type { ExperimentSpec, LockedExperiment, PreflightIssue } from "@/lib/experiments/types";
+import { readExperimentJson, RequestBodyError } from "@/lib/experiments/request-body";
 
 export const runtime = "nodejs";
 export const maxDuration = 300;
@@ -26,7 +27,7 @@ export async function POST(request: Request) {
   try {
     authorizeOperator(request);
     stage = "request_parse";
-    const body = await request.json();
+    const body = await readExperimentJson(request);
     stage = "request_validation";
     const spec = validateExperimentSpec(body?.spec) as ExperimentSpec;
     const digest = sha256Canonical(spec);
@@ -67,6 +68,7 @@ export async function POST(request: Request) {
     }));
     return Response.json(dispatch, { status: 202, headers: { "Cache-Control": "no-store", "X-Eidos-Evidence-Class": "real-data-engineering" } });
   } catch (error) {
+    if (error instanceof RequestBodyError) return Response.json({ error: error.message }, { status: error.status, headers: { "Cache-Control": "no-store" } });
     const failure = normalizeDispatchFailure(error, { diagnosticId, stage });
     console.error(JSON.stringify({
       level: "error",

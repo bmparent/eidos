@@ -1,3 +1,5 @@
+import { ENGINE_PROFILES, engineProfile } from "./profiles.js";
+
 export const EXPERIMENT_SCHEMA = "eidos.sentinel-lab.experiment.v0.2";
 export const LOCK_SCHEMA = "eidos.sentinel-lab.lock.v0.2";
 
@@ -100,7 +102,7 @@ export function validateExperimentSpec(input) {
   if (!/^[a-z0-9][a-z0-9_-]{0,38}\/[a-z0-9][a-z0-9._-]{0,79}$/.test(ref)) {
     throw new Error("dataset.ref must use the Kaggle owner/dataset form.");
   }
-  const version = Number(dataset.version);
+  const version = dataset.version;
   if (!Number.isSafeInteger(version) || version < 1) throw new Error("dataset.version must pin a positive integer version.");
   const file = cleanDatasetPath(dataset.file);
   let expectedSha256;
@@ -118,7 +120,7 @@ export function validateExperimentSpec(input) {
   const orderColumn = data.orderMode === "column" ? requireString(data.orderColumn, "dataContract.orderColumn", 160) : undefined;
   const excludedColumns = stringList(data.excludedColumns, "dataContract.excludedColumns");
   const featureColumns = stringList(data.featureColumns, "dataContract.featureColumns");
-  const maxRows = Number(data.maxRows);
+  const maxRows = data.maxRows;
   if (!Number.isSafeInteger(maxRows) || maxRows < 1000 || maxRows > 2_000_000) {
     throw new Error("dataContract.maxRows must be an integer from 1,000 to 2,000,000.");
   }
@@ -126,21 +128,23 @@ export function validateExperimentSpec(input) {
 
   const split = requireObject(root.split, "split");
   exactKeys(split, ["calibration", "evaluation", "sealedHoldout"], "split");
-  const calibration = Number(split.calibration);
-  const evaluation = Number(split.evaluation);
-  const sealedHoldout = Number(split.sealedHoldout);
+  const calibration = split.calibration;
+  const evaluation = split.evaluation;
+  const sealedHoldout = split.sealedHoldout;
   for (const [name, value] of [["calibration", calibration], ["evaluation", evaluation], ["sealedHoldout", sealedHoldout]]) {
     if (!Number.isFinite(value) || value < 0.1 || value > 0.8) throw new Error(`split.${name} must be between 0.1 and 0.8.`);
   }
   if (Math.abs(calibration + evaluation + sealedHoldout - 1) > 1e-9) throw new Error("Experiment splits must total exactly 1.0.");
 
   const engine = requireObject(root.engine, "engine");
-  exactKeys(engine, ["version", "features", "seed", "configProfile"], "engine");
+  exactKeys(engine, ["version", "features", "seed", "configProfile", "executionProfile"], "engine");
   if (engine.version !== "0.4.7.02") throw new Error("engine.version must remain locked to 0.4.7.02 in v0.2.");
-  if (Number(engine.features) !== 64) throw new Error("engine.features must remain locked to 64 in v0.2.");
-  const seed = Number(engine.seed);
+  if (engine.features !== 64) throw new Error("engine.features must remain locked to 64 in v0.2.");
+  const seed = engine.seed;
   if (seed !== 0 && seed !== 1) throw new Error("Real-data engineering runs are restricted to seeds 0 and 1.");
   if (engine.configProfile !== "cicids_webattacks") throw new Error("engine.configProfile must remain cicids_webattacks in v0.2.");
+  const executionProfile = engine.executionProfile === undefined ? "cpu_engineering" : engine.executionProfile;
+  if (typeof executionProfile !== "string" || !Object.hasOwn(ENGINE_PROFILES, executionProfile)) throw new Error("Unsupported engine execution profile.");
 
   const protocol = requireObject(root.protocol, "protocol");
   exactKeys(protocol, ["labelPolicy", "normalization", "projection", "heldoutPolicy", "proofVerdict"], "protocol");
@@ -169,7 +173,7 @@ export function validateExperimentSpec(input) {
       maxRows,
     },
     split: { calibration, evaluation, sealedHoldout },
-    engine: { version: "0.4.7.02", features: 64, seed, configProfile: "cicids_webattacks" },
+    engine: { version: "0.4.7.02", features: 64, seed, configProfile: "cicids_webattacks", ...(executionProfile !== "cpu_engineering" ? { executionProfile } : {}) },
     protocol: locks,
   };
 }
@@ -201,15 +205,15 @@ export function preflightIssues(spec, runnerState, operatorAuthConfigured = fals
   }
   if (spec.dataContract.orderMode === "source") {
     issues.push({
-      severity: "notice",
+      severity: "warning",
       code: "SOURCE_ORDER_LOCKED",
-      message: "Rows will remain in the exact order delivered by the pinned Kaggle file; no shuffle or balancing is permitted.",
+      message: "Rows stay in file order. This file's chronology has not been verified; results describe ordered observations, not elapsed-time detection or operational utility.",
     });
   }
   issues.push({
     severity: "notice",
     code: "RESOURCE_QUALIFIED_PROFILE",
-    message: "The full Eidos 0.4.7.02 code path will use the locked small CPU engineering profile: 256 reservoir units and 2,048 hippocampal dimensions. This changes no proof gate.",
+    message: `${engineProfile(spec).label}: ${engineProfile(spec).reservoir.toLocaleString()} reservoir units, ${engineProfile(spec).hippocampus_dim.toLocaleString()} memory dimensions, ${engineProfile(spec).fractal_bands} leak band(s), TraceSeal ${engineProfile(spec).trace_seal_enabled ? "on (experimental)" : "off"}. No proof gate advances.`,
   });
   for (const blocker of execution?.blockers || []) {
     issues.push({ severity: "blocker", code: blocker.code, message: blocker.message });

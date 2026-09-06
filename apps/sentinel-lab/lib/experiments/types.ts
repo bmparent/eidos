@@ -1,4 +1,5 @@
 export type EvidenceClass = "REAL_DATA_ENGINEERING";
+export type ExecutionProfile = "cpu_engineering" | "cpu_mechanisms" | "full_capacity";
 
 export type ExperimentSpec = {
   schema: "eidos.sentinel-lab.experiment.v0.2";
@@ -29,6 +30,7 @@ export type ExperimentSpec = {
     features: 64;
     seed: 0 | 1;
     configProfile: "cicids_webattacks";
+    executionProfile?: ExecutionProfile;
   };
   protocol: {
     labelPolicy: "sealed_until_prediction_freeze";
@@ -80,15 +82,37 @@ export type ExperimentMetrics = {
   evaluation_rows_expected: number;
   evaluation_rows_scored: number;
   confusion: { tp: number; fp: number; fn: number; tn: number };
-  recall: number;
-  precision: number;
-  false_positive_rate: number;
+  recall: number | null;
+  precision: number | null;
+  false_positive_rate: number | null;
   roc_auc: number | null;
   average_precision: number | null;
   mean_detection_delay_frames: number | null;
   missed_attack_windows: number;
   labels_unsealed_after_prediction_freeze: true;
   heldout_evaluated: false;
+  prediction_coverage_complete?: boolean;
+  positive_rows?: number;
+  negative_rows?: number;
+  limitations?: string[];
+};
+
+export type EngineDiagnostics = {
+  execution_profile: ExecutionProfile;
+  code_sha256: string;
+  reservoir_units: number;
+  memory_dimensions: number;
+  leak_bands: number;
+  trace_seal_enabled: boolean;
+  thermodynamics_enabled: boolean;
+  processed_rows: number;
+  surprise_rows: number;
+  memory_writes: number;
+  statistics: Record<string, { samples: number; mean: number; min: number; max: number }>;
+  trace: Array<Record<string, number | boolean | null>>;
+  trace_sampling?: string;
+  geometry?: { method: string; variance_explained: number; states_sha256: string; points: Array<{ step: number; x: number; y: number; z: number }> } | null;
+  scope: string;
 };
 
 export type ExperimentStatus = {
@@ -102,6 +126,7 @@ export type ExperimentStatus = {
   lockDigest?: string;
   rowsSentToEngine?: number;
   metrics?: ExperimentMetrics;
+  engineDiagnostics?: EngineDiagnostics;
   artifacts?: string[];
   error?: string;
   detail?: string;

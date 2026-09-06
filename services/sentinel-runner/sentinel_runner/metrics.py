@@ -37,8 +37,12 @@ def average_precision(labels: np.ndarray, scores: np.ndarray) -> float | None:
     order = np.argsort(-scores, kind="mergesort")
     ordered = labels[order]
     tp = np.cumsum(ordered == 1)
-    precision = tp / np.arange(1, len(ordered) + 1)
-    return float(np.sum(precision[ordered == 1]) / positives)
+    # Integrate recall increments at distinct thresholds. Equal scores must
+    # never gain ranking information from source-row order.
+    ends = np.r_[np.flatnonzero(np.diff(scores[order])), len(order) - 1]
+    precision = tp[ends] / (ends + 1)
+    recall_increments = np.diff(np.r_[0, tp[ends]]) / positives
+    return float(np.sum(precision * recall_increments))
 
 
 def _delays(labels: np.ndarray, predictions: np.ndarray) -> Tuple[float | None, int]:
@@ -68,19 +72,36 @@ def evaluate_frozen_predictions(step_rows: Sequence[Dict[str, Any]], dataset: Pr
         start + index: int(label)
         for index, label in enumerate(dataset.label_vault.evaluation_labels)
     }
+    aligned = {}
+    for row in step_rows:
+        step = row.get("step")
+        if isinstance(step, bool) or not isinstance(step, (int, np.integer)):
+            raise RuntimeError("INVALID_PREDICTION_STEP: engine steps must be integers")
+        if step < 0 or step >= end:
+            raise RuntimeError("PREDICTION_OUTSIDE_ENGINE_PARTITION: unexpected or held-out step")
+        if step < start:
+            continue
+        if step in aligned:
+            raise RuntimeError("DUPLICATE_EVALUATION_PREDICTION")
+        try:
+            score = float(row["z"])
+            threshold = float(row["z_thresh_eff"])
+        except (KeyError, TypeError, ValueError) as exc:
+            raise RuntimeError("INVALID_EVALUATION_PREDICTION") from exc
+        if not np.isfinite(score) or not np.isfinite(threshold):
+            raise RuntimeError("NONFINITE_EVALUATION_PREDICTION")
+        if "is_surprise" in row and (type(row["is_surprise"]) is not bool or row["is_surprise"] != bool(score >= threshold)):
+            raise RuntimeError("PREDICTION_DECISION_MISMATCH")
+        aligned[int(step)] = (row, score, threshold)
+    if len(aligned) != dataset.evaluation_rows:
+        raise RuntimeError(f"INCOMPLETE_EVALUATION_PREDICTIONS: expected {dataset.evaluation_rows}, received {len(aligned)}")
+
     rows = []
     labels = []
     scores = []
     thresholds = []
-    for row in step_rows:
-        try:
-            step = int(row.get("step"))
-            score = float(row.get("z"))
-            threshold = float(row.get("z_thresh_eff"))
-        except (TypeError, ValueError):
-            continue
-        if step < start or step >= end or step not in labels_by_step or not np.isfinite(score) or not np.isfinite(threshold):
-            continue
+    for step in range(start, end):
+        row, score, threshold = aligned[step]
         labels.append(labels_by_step[step])
         scores.append(score)
         thresholds.append(threshold)
@@ -111,14 +132,24 @@ def evaluate_frozen_predictions(step_rows: Sequence[Dict[str, Any]], dataset: Pr
         "evaluation_rows_expected": dataset.evaluation_rows,
         "evaluation_rows_scored": len(rows),
         "confusion": {"tp": tp, "fp": fp, "fn": fn, "tn": tn},
-        "recall": tp / max(tp + fn, 1),
-        "precision": tp / max(tp + fp, 1),
-        "false_positive_rate": fp / max(fp + tn, 1),
+        "recall": tp / (tp + fn) if tp + fn else None,
+        "precision": tp / (tp + fp) if tp + fp else None,
+        "false_positive_rate": fp / (fp + tn) if fp + tn else None,
         "roc_auc": roc_auc(y, score_values),
         "average_precision": average_precision(y, score_values),
         "mean_detection_delay_frames": delay,
         "missed_attack_windows": missed_windows,
         "labels_unsealed_after_prediction_freeze": True,
         "heldout_evaluated": False,
+        "prediction_coverage_complete": True,
+        "positive_rows": int(np.sum(y == 1)),
+        "negative_rows": int(np.sum(y == 0)),
+        "order_basis": dataset.receipt["order"]["mode"],
+        "limitations": [
+            "Engineering evaluation only; held-out generalization is untested.",
+            "Detection delay counts consecutive ordered rows, not elapsed time.",
+            *(["Source-file order is not independently verified chronology."] if dataset.receipt["order"]["mode"] == "source" else []),
+            *(["Only one class is present; class-separation performance cannot be established."] if len(np.unique(y)) < 2 else []),
+        ],
     }
     return metrics, rows
