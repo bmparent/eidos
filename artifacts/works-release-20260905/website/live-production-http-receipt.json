@@ -1,0 +1,110 @@
+{
+  "timestamp_utc": "2026-09-06T00:03:43.024Z",
+  "backendActivationDeployment": "dpl_79c6nau9dEzs6bWhCPasUx2nQJME",
+  "websiteDeployment": "e3082c39-08b0-4175-8366-3bb674bce1c8",
+  "routes": [
+    {
+      "path": "/",
+      "status": 200,
+      "canonical": "https://eidos-works.com/",
+      "noindex": false
+    },
+    {
+      "path": "/work",
+      "status": 200,
+      "canonical": "https://eidos-works.com/work",
+      "noindex": false
+    },
+    {
+      "path": "/work/nighttime-spectaculars",
+      "status": 200,
+      "canonical": "https://eidos-works.com/work/nighttime-spectaculars",
+      "noindex": false
+    },
+    {
+      "path": "/work/holidays-in-hollywood",
+      "status": 200,
+      "canonical": "https://eidos-works.com/work/holidays-in-hollywood",
+      "noindex": false
+    },
+    {
+      "path": "/about",
+      "status": 200,
+      "canonical": "https://eidos-works.com/about",
+      "noindex": false
+    },
+    {
+      "path": "/lab",
+      "status": 200,
+      "canonical": "https://eidos-works.com/lab",
+      "noindex": false
+    },
+    {
+      "path": "/insights",
+      "status": 200,
+      "canonical": "https://eidos-works.com/insights",
+      "noindex": false
+    },
+    {
+      "path": "/insights/storefront-proof-loop-ux-assets-operations",
+      "status": 200,
+      "canonical": "https://eidos-works.com/insights/storefront-proof-loop-ux-assets-operations",
+      "noindex": false
+    },
+    {
+      "path": "/community",
+      "status": 200,
+      "canonical": "https://eidos-works.com/community",
+      "noindex": false
+    },
+    {
+      "path": "/community/agents",
+      "status": 200,
+      "canonical": "https://eidos-works.com/community/agents",
+      "noindex": false
+    },
+    {
+      "path": "/shop/cinematic-starter",
+      "status": 200,
+      "canonical": "https://eidos-works.com/shop/cinematic-starter",
+      "noindex": false
+    },
+    {
+      "path": "/contact",
+      "status": 200,
+      "canonical": "https://eidos-works.com/contact",
+      "noindex": false
+    },
+    {
+      "path": "/kit-preview/",
+      "status": 200,
+      "canonical": null,
+      "noindex": true
+    },
+    {
+      "path": "/robots.txt",
+      "status": 200,
+      "canonical": null,
+      "noindex": false
+    },
+    {
+      "path": "/sitemap.xml",
+      "status": 200,
+      "canonical": null,
+      "noindex": false
+    },
+    {
+      "path": "/community/sitemap.xml",
+      "status": 200,
+      "canonical": null,
+      "noindex": false
+    },
+    {
+      "path": "/api/public-config",
+      "status": 200,
+      "canonical": null,
+      "noindex": false
+    }
+  ],
+  "allPassed": true
+}
