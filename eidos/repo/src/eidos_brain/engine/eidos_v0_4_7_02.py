@@ -1391,7 +1391,7 @@ class RLS_Reservoir:
                 alpha_vec[idx] = a
                 start += sz
 
-            self.alpha = alpha_vec.to(device)
+            self.alpha = alpha_vec.to(device=device, dtype=self.state.dtype)
         else:
             self.alpha = torch.tensor(leak_rate, device=device)
 

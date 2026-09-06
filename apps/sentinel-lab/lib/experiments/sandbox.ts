@@ -22,6 +22,8 @@ export const SANDBOX_ARTIFACTS = {
   "dataset_receipt.json": "application/json; charset=utf-8",
   "metrics.json": "application/json; charset=utf-8",
   "evaluation_trace.jsonl": "application/x-ndjson; charset=utf-8",
+  "engine_diagnostics.json": "application/json; charset=utf-8",
+  "engine_trace.jsonl": "application/x-ndjson; charset=utf-8",
   "runner.log": "text/plain; charset=utf-8",
   "launcher_failure.log": "text/plain; charset=utf-8",
   "bootstrap_failure_traceback.log": "text/plain; charset=utf-8",
@@ -396,7 +398,7 @@ export async function fetchSandboxStatus(jobId: string): Promise<ExperimentStatu
 }
 
 export async function fetchSandboxArtifact(jobId: string, artifactName: string) {
-  if (!(artifactName in SANDBOX_ARTIFACTS)) throw new Error("Artifact not found.");
+  if (!Object.hasOwn(SANDBOX_ARTIFACTS, artifactName)) throw new Error("Artifact not found.");
   const sandbox = await existingSandbox(jobId);
   try {
     const body = await sandbox.fs.readFile(`${jobDirectory(jobId)}/${artifactName}`);

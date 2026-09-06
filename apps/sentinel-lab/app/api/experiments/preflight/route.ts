@@ -3,12 +3,13 @@ import { sha256Canonical } from "@/lib/experiments/lock";
 import { getExecutionReadiness } from "@/lib/experiments/runner";
 import { isOperatorAuthConfigured } from "@/lib/experiments/operator-auth";
 import type { ExperimentSpec } from "@/lib/experiments/types";
+import { readExperimentJson, RequestBodyError } from "@/lib/experiments/request-body";
 
 export const runtime = "nodejs";
 
 export async function POST(request: Request) {
   try {
-    const spec = validateExperimentSpec(await request.json()) as ExperimentSpec;
+    const spec = validateExperimentSpec(await readExperimentJson(request)) as ExperimentSpec;
     const execution = getExecutionReadiness(spec);
     const issues = preflightIssues(spec, execution, isOperatorAuthConfigured());
     const lock = {
@@ -24,6 +25,6 @@ export async function POST(request: Request) {
     return Response.json(lock, { headers: { "Cache-Control": "no-store", "X-Eidos-Evidence-Class": "real-data-engineering" } });
   } catch (error) {
     const message = error instanceof Error ? error.message : "Invalid real-data experiment request.";
-    return Response.json({ error: message }, { status: 400, headers: { "Cache-Control": "no-store" } });
+    return Response.json({ error: message }, { status: error instanceof RequestBodyError ? error.status : 400, headers: { "Cache-Control": "no-store" } });
   }
 }

@@ -44,6 +44,7 @@ export function getExecutionReadiness(spec?: ExperimentSpec): ExecutionReadiness
   const requested = process.env.EIDOS_EXECUTION_BACKEND?.trim().toLowerCase();
   if (requested === "sandbox") {
     const blockers: ExecutionBlocker[] = [];
+    if (spec?.engine.executionProfile === "full_capacity") blockers.push({ code: "FULL_CAPACITY_REQUIRES_DEDICATED_RUNNER", message: "Select the standard or mechanism-study profile here. The full-size reservoir requires a dedicated external runner with its larger resource budget enabled." });
     if (!process.env.KAGGLE_API_TOKEN?.trim()) blockers.push({ code: "KAGGLE_CREDENTIAL_NOT_CONFIGURED", message: "Add KAGGLE_API_TOKEN to the Vercel project before dispatching a real dataset job." });
     if (!sourceCommitConfigured()) blockers.push({ code: "SOURCE_COMMIT_NOT_PINNED", message: "The Sandbox must clone an exact Git commit. Deploy through Git integration or set EIDOS_SOURCE_COMMIT to a 40-character commit SHA." });
     if (!sandboxCredentialsAvailable()) blockers.push({ code: "SANDBOX_AUTH_NOT_AVAILABLE", message: "Vercel Sandbox authentication is unavailable. Deploy on Vercel or provide scoped VERCEL_TOKEN, VERCEL_TEAM_ID, and VERCEL_PROJECT_ID values." });
@@ -54,6 +55,7 @@ export function getExecutionReadiness(spec?: ExperimentSpec): ExecutionReadiness
   const hasExternalSignal = Boolean(process.env.EIDOS_RUNNER_URL?.trim() || process.env.EIDOS_RUNNER_TOKEN?.trim() || requested === "external");
   if (hasExternalSignal) {
     const blockers: ExecutionBlocker[] = [];
+    if (spec?.engine.executionProfile === "full_capacity" && process.env.EIDOS_ENABLE_FULL_CAPACITY !== "1") blockers.push({ code: "FULL_CAPACITY_NOT_ENABLED", message: "The full-size profile is locked until EIDOS_ENABLE_FULL_CAPACITY=1 is configured on both the control plane and the dedicated runner." });
     try {
       if (!externalConfiguration()) blockers.push({ code: "EXTERNAL_RUNNER_NOT_CONFIGURED", message: "Set both EIDOS_RUNNER_URL and EIDOS_RUNNER_TOKEN for the external execution backend." });
     } catch (error) {

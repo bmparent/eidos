@@ -36,6 +36,29 @@ def fixture_spec():
 
 
 class SpecTests(unittest.TestCase):
+    def test_profiles_are_locked_and_default_digest_is_unchanged(self):
+        self.assertEqual(lock_digest(ExperimentSpec.from_dict(fixture_spec())), "5eba19350bb0cf1a8761f2bfba3ae730f0e073ec1436c360ba9904b6ef9b044a")
+        value = fixture_spec()
+        value["engine"]["executionProfile"] = "cpu_mechanisms"
+        parsed = ExperimentSpec.from_dict(value)
+        self.assertEqual(parsed.engine.execution_profile, "cpu_mechanisms")
+        self.assertNotEqual(lock_digest(parsed), lock_digest(ExperimentSpec.from_dict(fixture_spec())))
+        value["engine"]["executionProfile"] = "__proto__"
+        with self.assertRaises(ValueError):
+            ExperimentSpec.from_dict(value)
+
+    def test_boolean_seeds_and_nonfinite_splits_are_rejected(self):
+        for seed in (True, False, 0.0, "0", None):
+            value = fixture_spec()
+            value["engine"]["seed"] = seed
+            with self.assertRaises(ValueError):
+                ExperimentSpec.from_dict(value)
+        for fraction in (float("nan"), float("inf"), "0.2", None):
+            value = fixture_spec()
+            value["split"]["calibration"] = fraction
+            with self.assertRaises(ValueError):
+                ExperimentSpec.from_dict(value)
+
     def test_lock_round_trip_and_tamper_rejection(self):
         spec = ExperimentSpec.from_dict(fixture_spec())
         digest = lock_digest(spec)

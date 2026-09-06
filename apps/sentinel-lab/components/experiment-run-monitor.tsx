@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import type { ExperimentStatus, RunnerDispatch } from "@/lib/experiments/types";
+import { downloadJson, LabRequestError, requestJson } from "@/lib/experiments/client";
 
 const STAGES = [
   "QUEUED",
@@ -25,51 +26,62 @@ type Props = {
   dispatch: RunnerDispatch;
   operatorToken: string;
   onError: (message: string) => void;
+  onTerminal: () => void;
+  onStatus: (status: ExperimentStatus) => void;
 };
 
-export function ExperimentRunMonitor({ dispatch, operatorToken, onError }: Props) {
+export function ExperimentRunMonitor({ dispatch, operatorToken, onError, onTerminal, onStatus }: Props) {
   const [status, setStatus] = useState<ExperimentStatus | null>(null);
   const [downloading, setDownloading] = useState<string | null>(null);
+  const [pollError, setPollError] = useState<string | null>(null);
+  const [retry, setRetry] = useState(0);
 
   useEffect(() => {
     let cancelled = false;
     let timeout: ReturnType<typeof setTimeout> | undefined;
     let consecutiveFailures = 0;
+    const controller = new AbortController();
+    if (!operatorToken.trim()) return;
+    setPollError(null);
 
     async function poll() {
       try {
-        const response = await fetch(`/api/experiments/${dispatch.jobId}`, {
-          cache: "no-store",
+        const next = await requestJson<ExperimentStatus>(`/api/experiments/${dispatch.jobId}`, {
           headers: { Authorization: `Bearer ${operatorToken}` },
-        });
-        const body = await response.json();
-        if (!response.ok) throw new Error(body.error || "Experiment status lookup failed.");
+          signal: controller.signal,
+        }, 125_000);
         if (cancelled) return;
+        if (next.jobId !== dispatch.jobId || ![...STAGES, "FAILED", "EXPIRED"].includes(next.status)) throw new Error("The server returned an unrecognized job receipt.");
         consecutiveFailures = 0;
-        const next = body as ExperimentStatus;
+        setPollError(null);
         setStatus(next);
-        if (!TERMINAL.has(next.status)) timeout = setTimeout(poll, 4_000);
+        onStatus(next);
+        if (TERMINAL.has(next.status)) onTerminal();
+        else timeout = setTimeout(poll, 8_000);
       } catch (error) {
         if (cancelled) return;
         consecutiveFailures += 1;
-        if (consecutiveFailures < 3) timeout = setTimeout(poll, 4_000);
-        else onError(error instanceof Error ? error.message : "Experiment status lookup failed.");
+        const unauthorized = error instanceof LabRequestError && [401, 403].includes(error.status);
+        if (consecutiveFailures < 3 && !unauthorized) timeout = setTimeout(poll, 4_000 * consecutiveFailures);
+        else setPollError(unauthorized ? "Operator token rejected. Re-enter it above, then check status again." : error instanceof Error ? error.message : "Experiment status lookup failed.");
       }
     }
 
     void poll();
     return () => {
       cancelled = true;
+      controller.abort();
       if (timeout) clearTimeout(timeout);
     };
-  }, [dispatch.jobId, onError, operatorToken]);
+  }, [dispatch.jobId, onTerminal, onStatus, operatorToken, retry]);
 
   async function downloadArtifact(artifactName: string) {
     setDownloading(artifactName);
     try {
       const response = await fetch(`/api/experiments/${dispatch.jobId}/artifacts/${encodeURIComponent(artifactName)}`, {
         cache: "no-store",
-        headers: { Authorization: `Bearer ${operatorToken}` },
+          headers: { Authorization: `Bearer ${operatorToken}` },
+          signal: AbortSignal.timeout(125_000),
       });
       if (!response.ok) {
         const body = await response.json().catch(() => ({}));
@@ -95,16 +107,19 @@ export function ExperimentRunMonitor({ dispatch, operatorToken, onError }: Props
   return (
     <section className="job-monitor" aria-labelledby="job-monitor-title">
       <div className="job-monitor-head">
-        <div><span>JOB ACCEPTED</span><strong id="job-monitor-title">{dispatch.jobId}</strong></div>
-        <small>{(status?.executionBackend || dispatch.executionBackend || "external").toUpperCase()} COMPUTE</small>
+        <div><span>RUN RECEIPT</span><strong id="job-monitor-title">{dispatch.jobId}</strong></div>
+        <small>{status?.executionBackend || dispatch.executionBackend ? `${(status?.executionBackend || dispatch.executionBackend)?.toUpperCase()} COMPUTE` : "AWAITING BACKEND"}</small>
       </div>
+      <button className="outline-button" onClick={() => downloadJson(dispatch, `eidos-job-${dispatch.jobId}.json`)}>Save job receipt</button>
+      {!operatorToken.trim() && <p className="job-detail" role="status">Enter your operator token above to reconnect. Your job can continue while this page is closed.</p>}
+      {pollError && <div className="poll-recovery" role="alert"><strong>Status updates paused</strong><p>{pollError}</p><p>The last receipt below may be out of date. This does not mean the engine stopped.</p><button className="outline-button" onClick={() => setRetry((value) => value + 1)}>Retry status check</button></div>}
 
       <div className="job-stage" aria-live="polite">
         <span className={TERMINAL.has(current) ? current === "COMPLETED_ENGINEERING" ? "complete" : "failed" : "active"} />
         <div><b>{readableStatus(current)}</b><small>{status?.updatedAt ? `updated ${new Date(status.updatedAt).toLocaleTimeString()}` : "waiting for first runner receipt"}</small></div>
       </div>
 
-      <div className="job-progress" aria-label={`Experiment progress: ${readableStatus(current)}`}>
+      <div className="job-progress" aria-label={`Experiment stages, not time remaining: ${readableStatus(current)}`}>
         {STAGES.slice(0, -1).map((stage, index) => <i key={stage} className={index <= stageIndex ? "reached" : ""} />)}
       </div>
 
@@ -120,8 +135,13 @@ export function ExperimentRunMonitor({ dispatch, operatorToken, onError }: Props
           <div><span>FALSE POSITIVE RATE</span><strong>{ratio(metrics.false_positive_rate)}</strong></div>
           <div><span>DETECTION DELAY</span><strong>{metrics.mean_detection_delay_frames === null ? "N/A" : `${metrics.mean_detection_delay_frames.toFixed(1)} fr`}</strong></div>
           <p>{metrics.evaluation_rows_scored.toLocaleString()} frozen predictions scored · TP {metrics.confusion.tp} · FP {metrics.confusion.fp} · FN {metrics.confusion.fn} · TN {metrics.confusion.tn}</p>
+          <p>{metrics.prediction_coverage_complete ? "Complete evaluation coverage verified." : "Legacy receipt: complete coverage was not enforced by this runner."} N/A means the metric cannot be estimated.</p>
+          <div className="metric-explainer"><p><b>Recall</b> — the share of labeled attacks detected.</p><p><b>Precision</b> — the share of alerts that match labeled attacks.</p><p><b>False positive rate</b> — benign observations that triggered alerts.</p></div>
+          {metrics.limitations?.map((item) => <p key={item}>{item}</p>)}
         </div>
       ) : null}
+
+      {status?.engineDiagnostics && <div className="engine-receipt"><h4>What the engine actually used</h4><dl><div><dt>Reservoir / memory</dt><dd>{status.engineDiagnostics.reservoir_units.toLocaleString()} / {status.engineDiagnostics.memory_dimensions.toLocaleString()}</dd></div><div><dt>Time scales / TraceSeal</dt><dd>{status.engineDiagnostics.leak_bands} / {status.engineDiagnostics.trace_seal_enabled ? "on" : "off"}</dd></div><div><dt>Memory writes</dt><dd>{status.engineDiagnostics.memory_writes.toLocaleString()}</dd></div><div><dt>Regulation</dt><dd>{status.engineDiagnostics.thermodynamics_enabled ? "active" : "off"}</dd></div></dl><p>{status.engineDiagnostics.scope}</p></div>}
 
       {status?.artifacts?.length ? (
         <div className="artifact-actions">

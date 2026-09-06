@@ -12,6 +12,8 @@ from typing import Any, Dict, Iterable
 
 from .dataset import prepare_kaggle_dataset, sha256_file
 from .engine_bridge import run_full_engine
+from .diagnostics import engine_telemetry, summarize_engine
+from .profiles import require_profile_capacity
 from .metrics import evaluate_frozen_predictions
 from .spec import ExperimentEnvelope, PROOF_VERDICT
 
@@ -64,6 +66,7 @@ def run_job(request_path: Path, job_dir: Path) -> int:
     try:
         request = json.loads(request_path.read_text(encoding="utf-8"))
         envelope = ExperimentEnvelope.from_dict(request)
+        require_profile_capacity(envelope.spec.engine.execution_profile)
         update_status(job_dir, "PREPARING_DATASET", lockDigest=envelope.lock_digest)
         prepared = prepare_kaggle_dataset(envelope.spec, job_dir / "input")
         atomic_json(job_dir / "dataset_receipt.json", prepared.receipt)
@@ -71,8 +74,13 @@ def run_job(request_path: Path, job_dir: Path) -> int:
         update_status(job_dir, "RUNNING_FULL_ENGINE", lockDigest=envelope.lock_digest, rowsSentToEngine=int(prepared.frames.shape[0]))
         results, engine_receipt = run_full_engine(prepared, envelope.spec, job_dir / "engine_artifacts")
         step_rows = list(results.get("step_rows") or [])
-        update_status(job_dir, "EVALUATING_FROZEN_PREDICTIONS", lockDigest=envelope.lock_digest)
+        write_jsonl(job_dir / "engine_trace.jsonl", engine_telemetry(step_rows))
+        prediction_digest = sha256_file(job_dir / "engine_trace.jsonl")
+        update_status(job_dir, "EVALUATING_FROZEN_PREDICTIONS", lockDigest=envelope.lock_digest, predictionTraceSha256=prediction_digest)
         metrics, trace_rows = evaluate_frozen_predictions(step_rows, prepared)
+        metrics["prediction_trace_sha256"] = prediction_digest
+        diagnostics = summarize_engine(step_rows, engine_receipt, results.get("lab_geometry"))
+        atomic_json(job_dir / "engine_diagnostics.json", diagnostics)
         atomic_json(job_dir / "metrics.json", metrics)
         write_jsonl(job_dir / "evaluation_trace.jsonl", trace_rows)
 
@@ -96,7 +104,9 @@ def run_job(request_path: Path, job_dir: Path) -> int:
             "COMPLETED_ENGINEERING",
             lockDigest=envelope.lock_digest,
             metrics=metrics,
-            artifacts=["run_manifest.json", "dataset_receipt.json", "metrics.json", "evaluation_trace.jsonl"],
+            engineDiagnostics=diagnostics,
+            rowsSentToEngine=int(prepared.frames.shape[0]),
+            artifacts=["run_manifest.json", "dataset_receipt.json", "metrics.json", "evaluation_trace.jsonl", "engine_diagnostics.json", "engine_trace.jsonl"],
         )
         return 0
     except Exception as exc:

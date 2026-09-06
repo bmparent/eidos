@@ -10,7 +10,7 @@ The same package also includes `sentinel_runner.sandbox_launcher`, the bootstrap
 - The exact Kaggle dataset version and file path are mandatory. Missing files fail closed; no "first file" fallback exists.
 - Labels are removed before frames or metadata enter the Eidos engine.
 - Imputation and z-score parameters are fit on the calibration partition only.
-- Evaluation labels are used only after the engine returns frozen step predictions.
+- Prediction telemetry is committed and hashed before evaluation labels are used. Missing, duplicate, non-finite, out-of-partition, or inconsistent evaluation predictions fail closed.
 - The sealed holdout partition is committed by digest and never sent to the engineering run.
 - Every job is a separate Python process because the current engine's programmatic helper temporarily replaces module-global configuration.
 - Results remain `REAL_DATA_ENGINEERING`, keep G0-G6 locked, and preserve `BLOCKED_RESOURCE_BEFORE_HELDOUT`.
@@ -49,7 +49,11 @@ From this directory:
 
 ```bash
 PYTHONPATH=. python -m unittest discover -s tests -v
+python scripts/verify_full_engine.py --profile cpu_engineering --output /tmp/eidos-standard
+python scripts/verify_full_engine.py --profile cpu_mechanisms --output /tmp/eidos-mechanisms
 ```
+
+The full-engine script generates 1,000 synthetic rows locally and runs 800 through the actual Torch engine, scoring all 600 evaluation rows while excluding the 200-row holdout. It emits the input, metrics, effective configuration, code/input hashes, and measured geometry/telemetry. These are integration checks, not real-world detection validation.
 
 From the repository root, build the execution image with:
 
@@ -57,4 +61,6 @@ From the repository root, build the execution image with:
 docker build -f services/sentinel-runner/Dockerfile -t eidos-sentinel-runner:0.2 .
 ```
 
-The v0.2 engineering bridge uses the full engine code path with a resource-qualified 256-unit reservoir and 2,048-dimensional hippocampal state; those effective overrides are recorded in the run manifest. A future full-scale 2,000/10,000 run requires substantially larger dedicated compute. The container needs a persistent volume at `/var/lib/eidos/jobs`; production deployments should place TLS and workload/resource controls in front of the single API worker.
+The bridge accepts only the profiles in `sentinel_runner/profiles.py`: standard 256/2,048, experimental 256/2,048 with four leak bands and TraceSeal, and full-size 2,000/10,000. Requested overrides must match the configuration returned by the engine. The full-size profile requires `EIDOS_ENABLE_FULL_CAPACITY=1` on both this runner and the control plane, and substantially larger dedicated compute; it has not been qualified by the included checks. See [the complete contract](../../apps/sentinel-lab/docs/real-data-experiments.md).
+
+Authenticated artifact retrieval includes `engine_trace.jsonl`, `engine_diagnostics.json`, evaluation metrics/trace, manifests, and failure logs. The container needs a persistent volume at `/var/lib/eidos/jobs`; production deployments should place TLS and workload/resource controls in front of the API worker. The existing active-job scan is not a distributed admission lock; concurrent multi-instance deployment requires a queue or shared admission controller.
