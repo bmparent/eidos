@@ -2,6 +2,7 @@ import { FileSystem, Sandbox, type Session } from "@vercel/sandbox";
 import type { ExperimentStatus, LockedExperiment, RunnerDispatch } from "@/lib/experiments/types";
 import { redactDispatchDiagnostic, withDispatchStage } from "@/lib/experiments/dispatch-diagnostics";
 import { verifySandboxSource } from "./sandbox-source";
+import { AdmissionStore, admissionConfigured, sharedAdmission } from "./admission";
 import {
   ACTIVE_SANDBOX_STATUSES,
   LAUNCHER_FAILURE_FILENAME,
@@ -148,11 +149,6 @@ async function persistLauncherFailure(
   return failed;
 }
 
-function newJobId(lockDigest: string) {
-  const suffix = crypto.randomUUID().replaceAll("-", "").slice(0, 8);
-  return `rd-${lockDigest.slice(0, 12)}-${suffix}`;
-}
-
 async function existingSandbox(jobId: string) {
   try {
     return await Sandbox.get({ name: sandboxName(jobId), resume: false, ...credentials() });
@@ -162,10 +158,23 @@ async function existingSandbox(jobId: string) {
   }
 }
 
-async function enforceCapacity() {
+async function enforceCapacity(admission: AdmissionStore) {
   const maximum = integerSetting("EIDOS_MAX_CONCURRENT_JOBS", 1, 1, 10);
   const listing = await Sandbox.list({ tags: { eidos: "sentinel" }, ...credentials() });
   const sandboxes = await listing.toArray();
+  // Recover allocations abandoned by a terminated request. Never free an
+  // uncertain allocation merely because a lease expired: inspect the provider
+  // after the full dispatch + compute deadline. Outages fail closed.
+  for (const reservation of await admission.active()) {
+    if (!await admission.expired(reservation.jobId)) continue;
+    try {
+      const existing = await existingSandbox(reservation.jobId);
+      if (["stopped", "failed", "aborted"].includes(existing.status)) await admission.release(reservation.jobId);
+    } catch (error) {
+      if (error instanceof Error && error.message === "Experiment job not found.") await admission.release(reservation.jobId);
+      else throw error;
+    }
+  }
   let active = 0;
   for (const candidate of sandboxes) {
     if (candidate.status !== "pending" && candidate.status !== "running") continue;
@@ -179,14 +188,35 @@ async function enforceCapacity() {
   if (active >= maximum) throw new Error("RUNNER_CAPACITY_OCCUPIED");
 }
 
-export async function dispatchSandboxExperiment(lock: LockedExperiment): Promise<RunnerDispatch> {
+export async function dispatchSandboxExperiment(lock: LockedExperiment, retryKey: string, admission = sharedAdmission()): Promise<RunnerDispatch> {
   const kaggleToken = required("KAGGLE_API_TOKEN");
-  await withDispatchStage("sandbox_capacity", () => enforceCapacity());
-  const jobId = newJobId(lock.digest);
-  const name = sandboxName(jobId);
   const timeout = integerSetting("EIDOS_SANDBOX_TIMEOUT_MS", 2_700_000, 300_000, 86_400_000);
   const vcpus = integerSetting("EIDOS_SANDBOX_VCPUS", 4, 1, 8);
   const repositorySource = source();
+  const maximum = integerSetting("EIDOS_MAX_CONCURRENT_JOBS", 1, 1, 10);
+  // Return a prior receipt before provider capacity checks, even while its
+  // allocation is in flight or the provider is temporarily unavailable.
+  const prior = await admission.reserve(retryKey, lock.digest, repositorySource.revision, maximum)
+    .catch(async (error) => {
+      if (!(error instanceof Error) || error.message !== "RUNNER_CAPACITY_OCCUPIED") throw error;
+      await withDispatchStage("sandbox_capacity", () => enforceCapacity(admission));
+      return admission.reserve(retryKey, lock.digest, repositorySource.revision, maximum);
+    });
+  const jobId = prior.admission.jobId;
+  const receipt: RunnerDispatch = {
+    jobId, status: prior.acquired ? "BOOTSTRAPPING_RUNTIME" : "QUEUED",
+    statusUrl: `/api/experiments/${jobId}`, executionBackend: "sandbox",
+    evidenceClass: "REAL_DATA_ENGINEERING", proofVerdict: "BLOCKED_RESOURCE_BEFORE_HELDOUT",
+  };
+  if (!prior.acquired) return receipt;
+  const name = sandboxName(jobId);
+  try {
+    await withDispatchStage("sandbox_capacity", () => enforceCapacity(admission));
+  } catch (error) {
+    await admission.release(jobId);
+    throw error;
+  }
+  await admission.beginAllocation(prior.admission, timeout);
   const directory = jobDirectory(jobId);
   const requestPath = `${directory}/request.json`;
   const initialStatus: ExperimentStatus = {
@@ -218,7 +248,7 @@ export async function dispatchSandboxExperiment(lock: LockedExperiment): Promise
       EIDOS_MAX_CONCURRENT_JOBS: "1",
     },
     ...credentials(),
-  }));
+  }), { jobId });
   const sandbox = jobSession(allocated);
 
   try {
@@ -278,18 +308,11 @@ export async function dispatchSandboxExperiment(lock: LockedExperiment): Promise
       `The Sandbox was allocated, but launcher bootstrap failed. Inspect ${LAUNCHER_FAILURE_FILENAME}.`,
       diagnosticMessage(error),
     ).catch(() => undefined);
-    await sandbox.stop().catch(() => undefined);
+    await sandbox.stop().then(() => admission.release(jobId)).catch(() => undefined);
     throw error;
   }
-
-  return {
-    jobId,
-    status: "BOOTSTRAPPING_RUNTIME",
-    statusUrl: `/api/experiments/${jobId}`,
-    executionBackend: "sandbox",
-    evidenceClass: "REAL_DATA_ENGINEERING",
-    proofVerdict: "BLOCKED_RESOURCE_BEFORE_HELDOUT",
-  };
+  await admission.running(jobId);
+  return receipt;
 }
 
 async function reconcileSandboxStatus(sandbox: JobSession, jobId: string, wasStopped: boolean): Promise<ExperimentStatus> {
@@ -390,12 +413,32 @@ async function reconcileSandboxStatus(sandbox: JobSession, jobId: string, wasSto
     }
   }
   status.executionBackend = "sandbox";
-  if (TERMINAL_SANDBOX_STATUSES.has(status.status) && sandbox.status === "running") await sandbox.stop().catch(() => undefined);
+  if (TERMINAL_SANDBOX_STATUSES.has(status.status) && sandbox.status === "running") {
+    await sandbox.stop();
+    if (admissionConfigured()) await sharedAdmission().release(jobId);
+  }
   return status;
 }
 
 export async function fetchSandboxStatus(jobId: string): Promise<ExperimentStatus> {
-  return withReadableSession(jobId, (session, wasStopped) => reconcileSandboxStatus(session, jobId, wasStopped));
+  try {
+    return await withReadableSession(jobId, (session, wasStopped) => reconcileSandboxStatus(session, jobId, wasStopped));
+  } catch (error) {
+    if (!(error instanceof Error) || error.message !== "Experiment job not found." || !admissionConfigured()) throw error;
+    const store = sharedAdmission();
+    const receipt = await store.lookup(jobId);
+    if (!receipt) throw error;
+    const expired = ["ABANDONED", "TERMINAL"].includes(receipt.phase) || await store.expired(jobId);
+    if (expired) await store.release(jobId);
+    return {
+      schema: "eidos.sentinel-runner.status.v0.2", jobId,
+      status: expired ? "EXPIRED" : "QUEUED", updatedAt: new Date(expired ? Math.min(Date.now(), receipt.expiresAt) : receipt.createdAt).toISOString(),
+      lockDigest: receipt.lockDigest, executionBackend: "sandbox", evidenceClass: "REAL_DATA_ENGINEERING",
+      proofVerdict: "BLOCKED_RESOURCE_BEFORE_HELDOUT", gatesAdvanced: 0,
+      ...(expired ? { error: "ALLOCATION_RESERVATION_EXPIRED", detail: "The launch reservation ended without a retrievable Sandbox. Save this receipt, then prepare a new experiment." }
+        : { detail: "A shared launch reservation exists. Allocation is pending or its response was interrupted; keep checking this job rather than starting another." }),
+    };
+  }
 }
 
 async function withReadableSession<T>(jobId: string, read: (session: JobSession, wasStopped: boolean) => Promise<T>): Promise<T> {
@@ -409,7 +452,7 @@ async function withReadableSession<T>(jobId: string, read: (session: JobSession,
   } finally {
     // A resumed snapshot is for retrieval only; detached processes do not
     // survive a stop. Never stop an active experiment merely to read a file.
-    if (wasStopped && session.status === "running") await session.stop().catch(() => undefined);
+    if (wasStopped && session.status === "running") await session.stop();
   }
 }
 

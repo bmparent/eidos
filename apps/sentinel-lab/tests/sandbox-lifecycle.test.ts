@@ -6,6 +6,8 @@ import { cloneDefaultExperiment } from "../lib/experiments/shared.js";
 import type { LockedExperiment } from "../lib/experiments/types";
 import { GET as download } from "../app/api/experiments/[jobId]/artifacts/[artifactName]/route";
 import { GET as getStatus } from "../app/api/experiments/[jobId]/route";
+import { createClient } from "@libsql/client";
+import { AdmissionStore } from "../lib/experiments/admission";
 
 const jobId = "rd-5eba19350bb0-feedface";
 const dir = `/vercel/sandbox/jobs/${jobId}`;
@@ -51,13 +53,19 @@ test.afterEach(() => mock.restoreAll());
 test("dispatch uses the verified checkout and commits its source and command receipts", async () => {
   const p = provider();
   const old = { ...process.env };
+  const client = createClient({ url: ":memory:" });
   try {
     process.env.KAGGLE_API_TOKEN = "test-only";
     process.env.EIDOS_SOURCE_COMMIT = revision;
     delete process.env.VERCEL_GIT_COMMIT_SHA;
     mock.method(Sandbox, "list", async () => ({ toArray: async () => [] }));
     mock.method(Sandbox, "create", async () => p.sandbox);
-    const result = await dispatchSandboxExperiment({ digest: "5eba19350bb0" + "0".repeat(52), spec: cloneDefaultExperiment() } as LockedExperiment);
+    const admission = new AdmissionStore(client, "test");
+    const lock = { digest: "5eba19350bb0" + "0".repeat(52), spec: cloneDefaultExperiment() } as LockedExperiment;
+    const result = await dispatchSandboxExperiment(lock, "stable-launch-request", admission);
+    const retry = await dispatchSandboxExperiment(lock, "stable-launch-request", admission);
+    assert.equal(retry.jobId, result.jobId);
+    assert.equal(p.commands.length, 2, "retry cannot start another launcher");
     assert.equal(result.status, "BOOTSTRAPPING_RUNTIME");
     assert.equal(p.commands[0].cwd, undefined);
     assert.equal(p.commands[1].cwd, root);
@@ -65,7 +73,7 @@ test("dispatch uses the verified checkout and commits its source and command rec
     assert.ok(p.files.has(`/vercel/sandbox/jobs/${result.jobId}/source_receipt.json`));
     assert.ok(p.files.has(`/vercel/sandbox/jobs/${result.jobId}/launcher_command.json`));
     assert.equal(p.stops(), 0);
-  } finally { for (const key of Object.keys(process.env)) if (!(key in old)) delete process.env[key]; Object.assign(process.env, old); }
+  } finally { client.close(); for (const key of Object.keys(process.env)) if (!(key in old)) delete process.env[key]; Object.assign(process.env, old); }
 });
 
 test("reading or missing an artifact never stops a running experiment", async () => {

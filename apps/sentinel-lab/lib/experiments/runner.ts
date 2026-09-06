@@ -1,4 +1,5 @@
 import type { ExperimentSpec, ExperimentStatus, LockedExperiment, RunnerDispatch } from "@/lib/experiments/types";
+import { admissionConfigured, validateRetryKey } from "./admission";
 
 const JOB_ID = /^[a-z0-9][a-z0-9_-]{7,95}$/i;
 
@@ -44,6 +45,7 @@ export function getExecutionReadiness(spec?: ExperimentSpec): ExecutionReadiness
   const requested = process.env.EIDOS_EXECUTION_BACKEND?.trim().toLowerCase();
   if (requested === "sandbox") {
     const blockers: ExecutionBlocker[] = [];
+    if (!admissionConfigured()) blockers.push({ code: "ADMISSION_DATABASE_NOT_CONFIGURED", message: "Shared launch admission requires the existing EIDOS_DATABASE_URL and EIDOS_DATABASE_AUTH_TOKEN settings. No compute will start until durable capacity control is available." });
     if (spec?.engine.executionProfile === "full_capacity") blockers.push({ code: "FULL_CAPACITY_REQUIRES_DEDICATED_RUNNER", message: "Select the standard or mechanism-study profile here. The full-size reservoir requires a dedicated external runner with its larger resource budget enabled." });
     if (!process.env.KAGGLE_API_TOKEN?.trim()) blockers.push({ code: "KAGGLE_CREDENTIAL_NOT_CONFIGURED", message: "Add KAGGLE_API_TOKEN to the Vercel project before dispatching a real dataset job." });
     if (!sourceCommitConfigured()) blockers.push({ code: "SOURCE_COMMIT_NOT_PINNED", message: "The Sandbox must clone an exact Git commit. Deploy through Git integration or set EIDOS_SOURCE_COMMIT to a 40-character commit SHA." });
@@ -93,16 +95,17 @@ async function runnerFetch(path: string, init?: RequestInit) {
   return body;
 }
 
-export async function dispatchLockedExperiment(lock: LockedExperiment): Promise<RunnerDispatch> {
+export async function dispatchLockedExperiment(lock: LockedExperiment, retryKey: string): Promise<RunnerDispatch> {
+  validateRetryKey(retryKey);
   const readiness = getExecutionReadiness(lock.spec);
   if (!readiness.configured) throw new Error(readiness.blockers[0]?.code || "RUNNER_NOT_CONFIGURED");
   if (readiness.backend === "sandbox") {
     const { dispatchSandboxExperiment } = await import("@/lib/experiments/sandbox");
-    return dispatchSandboxExperiment(lock);
+    return dispatchSandboxExperiment(lock, retryKey);
   }
   return runnerFetch("/v1/experiments", {
     method: "POST",
-    headers: { "Content-Type": "application/json", "Idempotency-Key": crypto.randomUUID() },
+    headers: { "Content-Type": "application/json", "Idempotency-Key": retryKey },
     body: JSON.stringify({ schema: "eidos.sentinel-runner.request.v0.2", lockDigest: lock.digest, spec: lock.spec satisfies ExperimentSpec }),
   }) as Promise<RunnerDispatch>;
 }

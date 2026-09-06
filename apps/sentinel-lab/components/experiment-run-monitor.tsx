@@ -19,7 +19,11 @@ function readableStatus(value: string) {
 }
 
 function ratio(value: number | null | undefined) {
-  return value === null || value === undefined ? "N/A" : value.toFixed(3);
+  return typeof value === "number" && Number.isFinite(value) ? value.toFixed(3) : "N/A";
+}
+
+function count(value: number | null | undefined) {
+  return typeof value === "number" && Number.isFinite(value) ? value.toLocaleString() : "N/A";
 }
 
 type Props = {
@@ -85,7 +89,7 @@ export function ExperimentRunMonitor({ dispatch, operatorToken, onError, onTermi
       });
       if (!response.ok) {
         const body = await response.json().catch(() => ({}));
-        throw new Error(body.error || "Artifact download failed.");
+        throw new Error(body.detail || body.error || "Artifact download failed. Retry retrieval with your operator token.");
       }
       const href = URL.createObjectURL(await response.blob());
       const anchor = document.createElement("a");
@@ -133,8 +137,8 @@ export function ExperimentRunMonitor({ dispatch, operatorToken, onError, onTermi
           <div><span>PRECISION</span><strong>{ratio(metrics.precision)}</strong></div>
           <div><span>RECALL</span><strong>{ratio(metrics.recall)}</strong></div>
           <div><span>FALSE POSITIVE RATE</span><strong>{ratio(metrics.false_positive_rate)}</strong></div>
-          <div><span>DETECTION DELAY</span><strong>{metrics.mean_detection_delay_frames === null ? "N/A" : `${metrics.mean_detection_delay_frames.toFixed(1)} fr`}</strong></div>
-          <p>{metrics.evaluation_rows_scored.toLocaleString()} frozen predictions scored · TP {metrics.confusion.tp} · FP {metrics.confusion.fp} · FN {metrics.confusion.fn} · TN {metrics.confusion.tn}</p>
+          <div><span>DETECTION DELAY</span><strong>{typeof metrics.mean_detection_delay_frames === "number" && Number.isFinite(metrics.mean_detection_delay_frames) ? `${metrics.mean_detection_delay_frames.toFixed(1)} fr` : "N/A"}</strong></div>
+          <p>{count(metrics.evaluation_rows_scored)} frozen predictions scored · TP {count(metrics.confusion?.tp)} · FP {count(metrics.confusion?.fp)} · FN {count(metrics.confusion?.fn)} · TN {count(metrics.confusion?.tn)}</p>
           <p>{metrics.prediction_coverage_complete ? "Complete evaluation coverage verified." : "Legacy receipt: complete coverage was not enforced by this runner."} N/A means the metric cannot be estimated.</p>
           <div className="metric-explainer"><p><b>Recall</b> — the share of labeled attacks detected.</p><p><b>Precision</b> — the share of alerts that match labeled attacks.</p><p><b>False positive rate</b> — benign observations that triggered alerts.</p></div>
           {metrics.limitations?.map((item) => <p key={item}>{item}</p>)}
