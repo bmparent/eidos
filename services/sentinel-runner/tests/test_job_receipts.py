@@ -55,6 +55,10 @@ class ReceiptTests(unittest.TestCase):
             with self.assertRaises(HTTPException) as rejected:
                 get_artifact(job_id, "runner.log", None)
             self.assertEqual(rejected.exception.status_code, 401)
+            for invalid in ("test-only", "Basic test-only", "Bearer different", "Bearer λ"):
+                with self.assertRaises(HTTPException) as rejected:
+                    get_artifact(job_id, "runner.log", invalid)
+                self.assertEqual(rejected.exception.status_code, 401)
             self.assertEqual(str(get_artifact(job_id, "runner.log", "Bearer test-only").path), str(root / "runner.log"))
             with self.assertRaises(HTTPException):
                 get_artifact(job_id, "../request.json", "Bearer test-only")

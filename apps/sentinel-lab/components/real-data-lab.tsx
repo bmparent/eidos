@@ -186,7 +186,7 @@ export function RealDataLab() {
             <label className="wide"><span>EXPECTED FILE SHA-256 <i>optional first-run pin</i></span><input value={spec.dataset.expectedSha256 || ""} placeholder="Runner records the digest when blank" onChange={(event) => revise((current) => ({ ...current, dataset: { ...current.dataset, expectedSha256: event.target.value || undefined } }))} /></label>
           </div>
           </details>
-          <p className="source-order-note">File order is preserved, but chronology is unverified. This example can test engine behavior; it cannot establish operational detection performance.</p>
+          <p className="source-order-note">{spec.dataContract.orderMode === "source" ? "File order is preserved, but chronology is unverified." : "Rows will be sorted by your locked ordering column. Verify its meaning and units before interpreting detection delays."} This experiment can test engine behavior; it cannot establish operational detection performance.</p>
         </fieldset></div>
 
         <aside className="run-lock-panel">

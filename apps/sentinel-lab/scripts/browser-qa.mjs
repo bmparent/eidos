@@ -159,12 +159,16 @@ try {
     selects: document.querySelectorAll('select').length
   })`);
   assert(initial.title === "Eidos / Sentinel Lab", "Unexpected page title");
-  assert(initial.h1?.includes("Proof is blocked"), "Hero did not render");
-  assert(initial.text.replace(/\s/g, "").includes("BLOCKED_RESOURCE_BEFORE_HELDOUT"), "Verdict is missing");
-  assert(initial.text.includes("Engineering smoke does not advance proof gates"), "Proof disclaimer is missing");
+  assert(initial.h1?.includes("Follow the signal"), "Hero did not render");
+  assert(initial.text.includes("Held-out proof pending"), "Research status is missing");
+  assert(initial.text.toUpperCase().includes("ENGINEERING EVIDENCE DOES NOT ADVANCE PROOF GATES"), "Proof disclaimer is missing");
+  assert(initial.text.includes("RECORDED EXAMPLE"), "Reference activity is not labeled");
   assert(initial.selects === 3, "Expected three configuration selectors");
   assert(initial.overlays === 0, "Framework error overlay detected");
   const desktopPath = await screenshot(client, "sentinel-lab-desktop.png");
+
+  await evaluate(client, `(() => { [...document.querySelectorAll('.primary-nav button')].find((button) => button.innerText.trim() === 'Quick demo').click(); return true; })()`);
+  await waitForExpression(client, "document.querySelector('.config-rail select') !== null");
 
   await evaluate(client, `(() => {
     const selects = document.querySelectorAll('.config-rail select');
@@ -203,13 +207,13 @@ try {
   const expectedNetworkErrors = consoleErrors.splice(errorsBeforeHeldOutCheck);
   assert(expectedNetworkErrors.every((message) => message.includes("400")), `Unexpected error during negative API check: ${expectedNetworkErrors.join(" | ")}`);
 
-  await evaluate(client, `(() => { [...document.querySelectorAll('.primary-nav button')].find((button) => button.innerText.trim().toLowerCase() === 'gates').click(); return true; })()`);
+  await evaluate(client, `(() => { [...document.querySelectorAll('.primary-nav button')].find((button) => button.innerText.trim() === 'Proof gates').click(); return true; })()`);
   await waitForExpression(client, "document.querySelectorAll('.gate-list article').length === 7");
   assert(await evaluate(client, "[...document.querySelectorAll('.locked-badge')].every((node) => node.innerText === 'LOCKED')"), "A proof gate appeared unlocked");
-  await evaluate(client, `(() => { [...document.querySelectorAll('.primary-nav button')].find((button) => button.innerText.trim().toLowerCase() === 'compare').click(); return true; })()`);
+  await evaluate(client, `(() => { [...document.querySelectorAll('.primary-nav button')].find((button) => button.innerText.trim() === 'Compare demo').click(); return true; })()`);
   await waitForExpression(client, "document.querySelectorAll('.comparison-table tbody tr').length === 4");
 
-  await evaluate(client, `(() => { [...document.querySelectorAll('.primary-nav button')].find((button) => button.innerText.trim().toLowerCase() === 'real-data').click(); return true; })()`);
+  await evaluate(client, `(() => { [...document.querySelectorAll('.primary-nav button')].find((button) => button.innerText.trim() === 'Run experiment').click(); return true; })()`);
   await waitForExpression(client, "document.querySelector('.real-data-page') !== null");
   const realDataInitial = await evaluate(client, `({
     heading: document.querySelector('.real-data-intro h2')?.innerText,
@@ -217,14 +221,17 @@ try {
     runnerText: document.querySelector('.run-lock-panel')?.innerText,
     heldoutText: document.querySelector('.split-ledger .sealed')?.innerText
   })`);
-  assert(realDataInitial.heading?.includes("Real data"), "Real-data workspace heading is missing");
+  assert(realDataInitial.heading?.includes("Run an experiment"), "Real-data workspace heading is missing");
   assert(realDataInitial.stages === 4, "Expected four real-data pipeline stages");
   assert(realDataInitial.heldoutText?.includes("not sent to engine"), "Held-out exclusion is not visible");
 
+  await evaluate(client, "document.querySelector('.source-options summary').click()");
   await evaluate(client, "document.querySelector('.dataset-search button').click()");
   await waitForExpression(client, "document.querySelectorAll('.dataset-results button').length > 0", 20_000);
   assert(await evaluate(client, "document.querySelector('.search-note')?.innerText.length > 0"), "Dataset lookup returned no source note");
   await evaluate(client, "document.querySelector('.dataset-results button').click()");
+  assert(await evaluate(client, "document.querySelector('.selected-source').innerText.includes('Choose an exact file')"), "Catalog selection retained an unrelated file");
+  await evaluate(client, "document.querySelector('.starter-dataset button').click()");
 
   await evaluate(client, "document.querySelector('.prepare-button').click()");
   await waitForExpression(client, "document.querySelector('.lock-result > code')?.innerText.length === 64");
@@ -235,7 +242,7 @@ try {
     dispatchText: document.querySelector('.dispatch-button')?.innerText
   })`);
   assert(/^[a-f0-9]{64}$/.test(preflight.digest), "Experiment lock is not a SHA-256 digest");
-  assert(preflight.blocker?.includes("RUNNER_NOT_CONFIGURED") || preflight.blocker?.includes("resource-qualified"), "Missing runner blocker is not explicit");
+  assert(preflight.blocker?.includes("EIDOS_EXECUTION_BACKEND") || preflight.blocker?.includes("resource-qualified"), "Missing runner blocker is not explicit");
   assert(preflight.dispatchDisabled, "Real-data dispatch should remain disabled without a runner");
 
   const errorsBeforeUnauthorizedDispatch = consoleErrors.length;
@@ -289,7 +296,7 @@ try {
     bodyWidth: document.body.scrollWidth,
     viewport: innerWidth,
     menuVisible: getComputedStyle(document.querySelector('.menu-button')).display !== 'none',
-    desktopEvidenceVisible: getComputedStyle(document.querySelector('.desktop-evidence')).display !== 'none'
+    desktopEvidenceVisible: document.querySelector('.desktop-evidence') ? getComputedStyle(document.querySelector('.desktop-evidence')).display !== 'none' : false
   })`);
   assert(mobile.bodyWidth <= mobile.viewport, `Mobile layout overflows: ${mobile.bodyWidth}px / ${mobile.viewport}px`);
   assert(mobile.menuVisible, "Mobile menu control is hidden");
@@ -297,7 +304,7 @@ try {
   const mobilePath = await screenshot(client, "sentinel-lab-mobile.png");
   await evaluate(client, "document.querySelector('.menu-button').click()");
   await waitForExpression(client, "getComputedStyle(document.querySelector('.primary-nav')).display === 'grid'");
-  await evaluate(client, `(() => { [...document.querySelectorAll('.primary-nav button')].find((button) => button.innerText.trim().toLowerCase() === 'real-data').click(); return true; })()`);
+  await evaluate(client, `(() => { [...document.querySelectorAll('.primary-nav button')].find((button) => button.innerText.trim() === 'Run experiment').click(); return true; })()`);
   await waitForExpression(client, "document.querySelector('.real-data-page') !== null");
   const realDataMobile = await evaluate(client, `({bodyWidth: document.body.scrollWidth, viewport: innerWidth, stages: document.querySelectorAll('.real-pipeline > div').length})`);
   assert(realDataMobile.bodyWidth <= realDataMobile.viewport, `Real-data mobile layout overflows: ${realDataMobile.bodyWidth}px / ${realDataMobile.viewport}px`);
