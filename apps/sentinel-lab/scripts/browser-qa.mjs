@@ -1,5 +1,5 @@
 import { spawn } from "node:child_process";
-import { mkdirSync, mkdtempSync, rmSync, writeFileSync } from "node:fs";
+import { mkdirSync, mkdtempSync, rmSync, writeFileSync, readFileSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { join, resolve } from "node:path";
 
@@ -18,6 +18,7 @@ const server = spawn(process.execPath, [join(root, "node_modules/next/dist/bin/n
   env: process.env,
   stdio: ["ignore", "pipe", "pipe"],
   detached: true,
+  windowsHide: true,
 });
 const chrome = spawn(chromeBin, [
   "--headless",
@@ -27,7 +28,7 @@ const chrome = spawn(chromeBin, [
   `--user-data-dir=${profileDir}`,
   "--remote-debugging-port=9333",
   "about:blank",
-], { stdio: ["ignore", "pipe", "pipe"], detached: true });
+], { stdio: ["ignore", "pipe", "pipe"], detached: true, windowsHide: true });
 
 let serverLog = "";
 let chromeLog = "";
@@ -96,7 +97,7 @@ async function connect(webSocketUrl) {
 
 async function evaluate(client, expression) {
   const result = await client.send("Runtime.evaluate", { expression, awaitPromise: true, returnByValue: true });
-  if (result.exceptionDetails) throw new Error(result.exceptionDetails.text || "Browser evaluation failed");
+  if (result.exceptionDetails) throw new Error(result.exceptionDetails.exception?.description || result.exceptionDetails.text || "Browser evaluation failed");
   return result.result.value;
 }
 
@@ -165,9 +166,16 @@ try {
   assert(initial.text.includes("RECORDED EXAMPLE"), "Reference activity is not labeled");
   assert(initial.selects === 3, "Expected three configuration selectors");
   assert(initial.overlays === 0, "Framework error overlay detected");
+  await client.send("Emulation.setEmulatedMedia", { features: [{ name: "prefers-reduced-motion", value: "reduce" }] });
+  await waitForExpression(client, "document.querySelector('.observatory-controls button[aria-pressed]')?.getAttribute('aria-pressed') === 'false'");
+  const frameBefore = await evaluate(client, "Number(document.querySelector('.trajectory-slider input').value)");
+  await evaluate(client, "document.querySelector('.trajectory-slider input').focus()");
+  await client.send("Input.dispatchKeyEvent", { type: "keyDown", key: "ArrowRight", code: "ArrowRight", windowsVirtualKeyCode: 39 });
+  await client.send("Input.dispatchKeyEvent", { type: "keyUp", key: "ArrowRight", code: "ArrowRight", windowsVirtualKeyCode: 39 });
+  assert(await evaluate(client, "Number(document.querySelector('.trajectory-slider input').value)") === frameBefore + 1, "Frame slider did not respond to keyboard input");
   const desktopPath = await screenshot(client, "sentinel-lab-desktop.png");
 
-  await evaluate(client, `(() => { [...document.querySelectorAll('.primary-nav button')].find((button) => button.innerText.trim() === 'Quick demo').click(); return true; })()`);
+  await evaluate(client, `(() => { [...document.querySelectorAll('.primary-nav button')].find((button) => button.textContent.trim() === 'Quick demo').click(); return true; })()`);
   await waitForExpression(client, "document.querySelector('.config-rail select') !== null");
 
   await evaluate(client, `(() => {
@@ -207,13 +215,13 @@ try {
   const expectedNetworkErrors = consoleErrors.splice(errorsBeforeHeldOutCheck);
   assert(expectedNetworkErrors.every((message) => message.includes("400")), `Unexpected error during negative API check: ${expectedNetworkErrors.join(" | ")}`);
 
-  await evaluate(client, `(() => { [...document.querySelectorAll('.primary-nav button')].find((button) => button.innerText.trim() === 'Proof gates').click(); return true; })()`);
+  await evaluate(client, `(() => { [...document.querySelectorAll('.primary-nav button')].find((button) => button.textContent.trim() === 'Proof gates').click(); return true; })()`);
   await waitForExpression(client, "document.querySelectorAll('.gate-list article').length === 7");
   assert(await evaluate(client, "[...document.querySelectorAll('.locked-badge')].every((node) => node.innerText === 'LOCKED')"), "A proof gate appeared unlocked");
-  await evaluate(client, `(() => { [...document.querySelectorAll('.primary-nav button')].find((button) => button.innerText.trim() === 'Compare demo').click(); return true; })()`);
+  await evaluate(client, `(() => { [...document.querySelectorAll('.primary-nav button')].find((button) => button.textContent.trim() === 'Compare demo').click(); return true; })()`);
   await waitForExpression(client, "document.querySelectorAll('.comparison-table tbody tr').length === 4");
 
-  await evaluate(client, `(() => { [...document.querySelectorAll('.primary-nav button')].find((button) => button.innerText.trim() === 'Run experiment').click(); return true; })()`);
+  await evaluate(client, `(() => { [...document.querySelectorAll('.primary-nav button')].find((button) => button.textContent.trim() === 'Run experiment').click(); return true; })()`);
   await waitForExpression(client, "document.querySelector('.real-data-page') !== null");
   const realDataInitial = await evaluate(client, `({
     heading: document.querySelector('.real-data-intro h2')?.innerText,
@@ -290,6 +298,91 @@ try {
   assert(expectedExperimentErrors.every((message) => message.includes("400")), `Unexpected error during invalid experiment check: ${expectedExperimentErrors.join(" | ")}`);
   const realDataPath = await screenshot(client, "sentinel-lab-real-data-desktop.png");
 
+  // Controlled browser fixtures qualify UI behavior only. They never allocate
+  // provider compute or stand in for the authenticated production acceptance run.
+  const fixtureJob = "rd-aaaaaaaaaaaa-bbbbbbbb";
+  let fixtureStatus = "RUNNING_FULL_ENGINE";
+  let fixtureUnavailable = false;
+  let fixturePartialMetrics = false;
+  const fixtureDiagnostics = JSON.parse(readFileSync(join(root, "lib/experiments/reference-run.json"), "utf8")).diagnostics;
+  const launchKeys = [], downloads = [];
+  client.on("Fetch.requestPaused", async ({ requestId, request }) => {
+    const path = new URL(request.url).pathname;
+    let code = 200, body;
+    if (path.endsWith("/preflight")) {
+      body = await fetch(appUrl + path, { method: "POST", headers: { "content-type": "application/json" }, body: request.postData }).then(response => response.json());
+      body.readyToDispatch = true; body.executionBackend = "sandbox";
+      body.issues = body.issues.filter(issue => issue.severity !== "blocker");
+    } else if (path === "/api/experiments") {
+      launchKeys.push(request.headers["Idempotency-Key"] ?? request.headers["idempotency-key"]);
+      code = 202;
+      body = { jobId: fixtureJob, status: "QUEUED", executionBackend: "sandbox", evidenceClass: "REAL_DATA_ENGINEERING", proofVerdict: "BLOCKED_RESOURCE_BEFORE_HELDOUT" };
+    } else if (path.includes("/artifacts/")) {
+      downloads.push(path.split("/").at(-1));
+      body = { fixture: true, jobId: fixtureJob };
+    } else if (fixtureUnavailable) {
+      code = 503; body = { error: "FIXTURE_PROVIDER_UNAVAILABLE", detail: "Temporary provider outage. Retry status retrieval; compute may still be running." };
+    } else {
+      body = { schema: "eidos.sentinel-runner.status.v0.2", jobId: fixtureJob, status: fixtureStatus, updatedAt: new Date().toISOString(), gatesAdvanced: 0,
+        executionBackend: "sandbox", artifacts: ["source_receipt.json", "metrics.json"],
+        ...(fixtureStatus === "FAILED" ? { error: "FIXTURE_LAUNCHER_EXITED", detail: "The launcher exited before completion. Retrieve the receipt, then prepare a new experiment." } : {}),
+        ...(fixtureStatus === "COMPLETED_ENGINEERING" ? { engineDiagnostics: fixtureDiagnostics, metrics: fixturePartialMetrics ? { limitations: ["Fixture: metrics were not recorded."] } : {
+          evaluation_rows_scored: 600, evaluation_rows_expected: 600, prediction_coverage_complete: true, confusion: { tp: 0, fp: 301, fn: 0, tn: 299 },
+          precision: 0, recall: null, roc_auc: null, average_precision: null, false_positive_rate: 301 / 600, mean_detection_delay_frames: null,
+          limitations: ["Controlled UI fixture; no production compute was run."] } } : {}),
+      };
+    }
+    await client.send("Fetch.fulfillRequest", { requestId, responseCode: code, responseHeaders: [{ name: "Content-Type", value: "application/json" }], body: Buffer.from(JSON.stringify(body)).toString("base64") });
+  });
+  await client.send("Fetch.enable", { patterns: [{ urlPattern: appUrl + "/api/experiments*" }] });
+  const setToken = () => evaluate(client, `(() => { const input = document.querySelector('.operator-token input'); Object.getOwnPropertyDescriptor(HTMLInputElement.prototype, 'value').set.call(input, 'browser-fixture-token'); input.dispatchEvent(new Event('input', {bubbles:true})); return true; })()`);
+  await setToken();
+  await evaluate(client, "document.querySelector('.prepare-button').click()");
+  await waitForExpression(client, "document.querySelector('.dispatch-button')?.disabled === false");
+  await evaluate(client, "document.querySelector('.dispatch-button').click()");
+  await waitForExpression(client, "document.querySelector('.job-stage b')?.textContent === 'running full engine'");
+  assert(launchKeys.length === 1 && /^[a-zA-Z0-9_-]{16,128}$/.test(launchKeys[0]), "Stable dispatch key was not sent");
+  const stored = await evaluate(client, "({ receipt: JSON.parse(sessionStorage.getItem('eidos.lab.active-job')), intent: JSON.parse(sessionStorage.getItem('eidos.lab.launch-attempt')), leaked: Object.values(sessionStorage).some(value => value.includes('browser-fixture-token')) })");
+  assert(stored.receipt.jobId === fixtureJob && stored.intent.key === launchKeys[0] && !stored.leaked, "Recovery receipt or credential isolation failed");
+  await evaluate(client, "[...document.querySelectorAll('.artifact-actions button')].find(button => button.textContent === 'source_receipt.json').click()");
+  await waitForExpression(client, "document.querySelector('.artifact-actions button')?.textContent === 'source_receipt.json'");
+  assert(downloads.includes("source_receipt.json"), "Active artifact download was not requested");
+  assert(await evaluate(client, "document.querySelector('.job-stage b').textContent === 'running full engine'"), "Active download changed rendered job state");
+  const progressPath = await screenshot(client, "sentinel-lab-fixture-progress.png");
+
+  await load(client, appUrl);
+  assert(await evaluate(client, "document.querySelector('.operator-token input').value === ''"), "Operator token survived reload");
+  assert(await evaluate(client, `document.querySelector('#job-monitor-title').textContent === '${fixtureJob}'`), "Reload lost the job");
+  fixtureStatus = "COMPLETED_ENGINEERING";
+  await setToken();
+  await waitForExpression(client, "document.querySelector('.job-stage b')?.textContent === 'completed engineering'");
+  assert(await evaluate(client, "document.querySelector('.metric-receipt').innerText.includes('FP 301') && document.querySelector('.metric-receipt').innerText.includes('N/A')"), "Known result values were misrepresented");
+  assert(await evaluate(client, `!document.querySelector('.observatory').textContent.includes('RECORDED EXAMPLE') && document.querySelector('.observatory').textContent.includes('${fixtureJob}')`), "Completed diagnostics did not replace the example with the identified job");
+  const completedPath = await screenshot(client, "sentinel-lab-fixture-completed.png");
+
+  fixturePartialMetrics = true;
+  await load(client, appUrl); await setToken();
+  await waitForExpression(client, "document.querySelector('.metric-receipt')?.textContent.includes('Fixture: metrics were not recorded.')");
+  assert(await evaluate(client, "document.querySelector('.metric-receipt').innerText.includes('N/A frozen predictions scored')"), "Missing metrics were not handled honestly");
+
+  fixtureStatus = "FAILED";
+  await load(client, appUrl); await setToken();
+  await waitForExpression(client, "document.querySelector('.job-failure')?.textContent.includes('FIXTURE_LAUNCHER_EXITED')");
+  const failurePath = await screenshot(client, "sentinel-lab-fixture-failure.png");
+  fixtureUnavailable = true;
+  await load(client, appUrl); await setToken();
+  await waitForExpression(client, "document.querySelector('.poll-recovery')?.textContent.includes('Status updates paused')", 30_000);
+  fixtureUnavailable = false;
+  fixtureStatus = "COMPLETED_ENGINEERING";
+  await evaluate(client, "document.querySelector('.poll-recovery button').click()");
+  await waitForExpression(client, "document.querySelector('.job-stage b')?.textContent === 'completed engineering'");
+  await evaluate(client, "[...document.querySelectorAll('.run-lock-panel > .outline-button')].find(button => button.textContent === 'Prepare another experiment').click()");
+  await waitForExpression(client, "document.querySelector('.job-monitor') === null");
+  assert(await evaluate(client, "sessionStorage.getItem('eidos.lab.launch-attempt') === null"), "Explicit new run did not clear the old intent");
+  await client.send("Fetch.disable");
+  const fixtureErrors = consoleErrors.filter(message => message.includes("503"));
+  for (const message of fixtureErrors) consoleErrors.splice(consoleErrors.indexOf(message), 1);
+
   await setViewport(client, 390, 844, true);
   await load(client, appUrl);
   const mobile = await evaluate(client, `({
@@ -304,7 +397,7 @@ try {
   const mobilePath = await screenshot(client, "sentinel-lab-mobile.png");
   await evaluate(client, "document.querySelector('.menu-button').click()");
   await waitForExpression(client, "getComputedStyle(document.querySelector('.primary-nav')).display === 'grid'");
-  await evaluate(client, `(() => { [...document.querySelectorAll('.primary-nav button')].find((button) => button.innerText.trim() === 'Run experiment').click(); return true; })()`);
+  await evaluate(client, `(() => { [...document.querySelectorAll('.primary-nav button')].find((button) => button.textContent.trim() === 'Run experiment').click(); return true; })()`);
   await waitForExpression(client, "document.querySelector('.real-data-page') !== null");
   const realDataMobile = await evaluate(client, `({bodyWidth: document.body.scrollWidth, viewport: innerWidth, stages: document.querySelectorAll('.real-pipeline > div').length})`);
   assert(realDataMobile.bodyWidth <= realDataMobile.viewport, `Real-data mobile layout overflows: ${realDataMobile.bodyWidth}px / ${realDataMobile.viewport}px`);
@@ -340,6 +433,8 @@ try {
     },
     realDataPath,
     realDataMobilePath,
+    lifecycleFixtures: { productionCompute: false, stableLaunchKey: true, reloadReconnect: true, credentialsNotPersisted: true, activeDownload: true, completedMetrics: true, undefinedMetrics: true, actionableFailure: true, providerRetry: true, explicitNewIntent: true, recordedVersusRunDiagnostics: true, keyboardFrameControl: true, reducedMotion: true },
+    progressPath, completedPath, failurePath,
   };
   writeFileSync(join(artifactsDir, "browser-qa.json"), JSON.stringify(report, null, 2));
   process.stdout.write(`${JSON.stringify(report, null, 2)}\n`);
@@ -348,11 +443,17 @@ try {
   process.stderr.write(`Server log:\n${serverLog.slice(-4000)}\nChrome log:\n${chromeLog.slice(-4000)}\n`);
   process.exitCode = 1;
 } finally {
-  if (client?.socket) client.socket.close();
+  if (client?.socket) {
+    // Request browser shutdown before killing the owned launcher so Chromium
+    // closes its profile handles on Windows as well as on Linux.
+    void client.send("Browser.close").catch(() => undefined);
+    client.socket.close();
+  }
   for (const child of [server, chrome]) {
     if (!child.pid) continue;
     try { process.kill(-child.pid, "SIGKILL"); } catch { child.kill("SIGKILL"); }
   }
-  await delay(150);
-  rmSync(profileDir, { recursive: true, force: true });
+  await delay(500);
+  try { rmSync(profileDir, { recursive: true, force: true, maxRetries: 10, retryDelay: 100 }); }
+  catch { process.stderr.write("Temporary browser profile cleanup deferred: " + profileDir + "\n"); }
 }
