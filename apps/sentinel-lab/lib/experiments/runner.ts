@@ -119,6 +119,8 @@ export async function fetchExperimentStatus(jobId: string) {
 
 export async function fetchExperimentArtifact(jobId: string, artifactName: string) {
   if (!JOB_ID.test(jobId)) throw new Error("Invalid experiment job ID.");
+  const { SANDBOX_ARTIFACTS } = await import("@/lib/experiments/sandbox");
+  if (!Object.hasOwn(SANDBOX_ARTIFACTS, artifactName)) throw new Error("Artifact not found.");
   const readiness = getExecutionReadiness();
   if (readiness.backend === "sandbox") {
     const { fetchSandboxArtifact } = await import("@/lib/experiments/sandbox");

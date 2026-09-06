@@ -41,7 +41,7 @@ def write_jsonl(path: Path, rows: Iterable[Dict[str, Any]]) -> None:
 def artifact_digests(job_dir: Path) -> Dict[str, Dict[str, Any]]:
     result = {}
     for path in sorted(job_dir.rglob("*")):
-        if not path.is_file() or path.name in {"status.json", "run_manifest.json"} or "input" in path.parts:
+        if not path.is_file() or path.name in {"status.json", "run_manifest.json", "launcher_command.json", "runner.log"} or "input" in path.parts:
             continue
         relative = path.relative_to(job_dir).as_posix()
         result[relative] = {"sha256": sha256_file(path), "bytes": path.stat().st_size}
@@ -106,7 +106,7 @@ def run_job(request_path: Path, job_dir: Path) -> int:
             metrics=metrics,
             engineDiagnostics=diagnostics,
             rowsSentToEngine=int(prepared.frames.shape[0]),
-            artifacts=["run_manifest.json", "dataset_receipt.json", "metrics.json", "evaluation_trace.jsonl", "engine_diagnostics.json", "engine_trace.jsonl"],
+            artifacts=[name for name in ("source_receipt.json", "run_manifest.json", "dataset_receipt.json", "metrics.json", "evaluation_trace.jsonl", "engine_diagnostics.json", "engine_trace.jsonl") if (job_dir / name).is_file()],
         )
         return 0
     except Exception as exc:
@@ -116,6 +116,6 @@ def run_job(request_path: Path, job_dir: Path) -> int:
             "FAILED",
             error=type(exc).__name__,
             detail=str(exc),
-            artifacts=["runner.log", "failure_traceback.log"],
+            artifacts=[name for name in ("source_receipt.json", "runner.log", "failure_traceback.log") if (job_dir / name).is_file()],
         )
         return 1

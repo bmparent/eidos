@@ -1,7 +1,7 @@
-import { Sandbox } from "@vercel/sandbox";
+import { FileSystem, Sandbox, type Session } from "@vercel/sandbox";
 import type { ExperimentStatus, LockedExperiment, RunnerDispatch } from "@/lib/experiments/types";
-import { withDispatchStage } from "@/lib/experiments/dispatch-diagnostics";
-import { SANDBOX_ROOT, sandboxRepositoryRoot } from "@/lib/experiments/sandbox-paths";
+import { redactDispatchDiagnostic, withDispatchStage } from "@/lib/experiments/dispatch-diagnostics";
+import { verifySandboxSource } from "./sandbox-source";
 import {
   ACTIVE_SANDBOX_STATUSES,
   LAUNCHER_FAILURE_FILENAME,
@@ -16,8 +16,19 @@ import {
 const JOB_ID = /^rd-[a-f0-9]{12}-[a-f0-9]{8}$/;
 const COMMIT_SHA = /^[a-f0-9]{40}$/i;
 const LAUNCHER_RECEIPT_SCHEMA = "eidos.sentinel-lab.launcher-command.v0.2";
+const SANDBOX_ROOT = "/vercel/sandbox";
+
+type JobSession = Session & { fs: FileSystem };
+
+function jobSession(sandbox: Sandbox): JobSession {
+  const session = sandbox.currentSession();
+  // Pin all operations to this VM. Sandbox-level reads auto-resume stopped
+  // sessions, which could otherwise revive an expired job during monitoring.
+  return Object.assign(session, { fs: new FileSystem(session) });
+}
 
 export const SANDBOX_ARTIFACTS = {
+  "source_receipt.json": "application/json; charset=utf-8",
   "run_manifest.json": "application/json; charset=utf-8",
   "dataset_receipt.json": "application/json; charset=utf-8",
   "metrics.json": "application/json; charset=utf-8",
@@ -78,15 +89,21 @@ function jobDirectory(jobId: string) {
 }
 
 function isNotFound(error: unknown) {
+  if (error && typeof error === "object") {
+    const value = error as { response?: { status?: number }; status?: number; statusCode?: number; code?: string };
+    const status = value.response?.status ?? value.statusCode ?? value.status;
+    if (status !== undefined) return status === 404;
+    if (value.code === "ENOENT") return true;
+  }
   const message = error instanceof Error ? error.message : String(error);
-  return /not.?found|enoent|404/i.test(message);
+  return /\bnot[ _-]?found\b|\benoent\b|\b404\b/i.test(message);
 }
 
-async function readStatus(sandbox: Sandbox, jobId: string) {
+async function readStatus(sandbox: JobSession, jobId: string) {
   return JSON.parse(await sandbox.fs.readFile(`${jobDirectory(jobId)}/status.json`, "utf8")) as ExperimentStatus;
 }
 
-async function readLauncherReceipt(sandbox: Sandbox, jobId: string): Promise<LauncherReceipt | null> {
+async function readLauncherReceipt(sandbox: JobSession, jobId: string): Promise<LauncherReceipt | null> {
   try {
     const receipt = JSON.parse(
       await sandbox.fs.readFile(`${jobDirectory(jobId)}/${LAUNCHER_RECEIPT_FILENAME}`, "utf8"),
@@ -99,17 +116,17 @@ async function readLauncherReceipt(sandbox: Sandbox, jobId: string): Promise<Lau
   }
 }
 
-async function writeJson(sandbox: Sandbox, path: string, value: unknown) {
+async function writeJson(sandbox: JobSession, path: string, value: unknown) {
   await sandbox.writeFiles([{ path, content: JSON.stringify(value, null, 2) + "\n" }]);
 }
 
 function diagnosticMessage(error: unknown) {
   const value = error instanceof Error ? `${error.name}: ${error.message}` : String(error);
-  return value.replace(/[\r\n]+/g, " ").slice(0, 2_000);
+  return redactDispatchDiagnostic(value);
 }
 
 async function persistLauncherFailure(
-  sandbox: Sandbox,
+  sandbox: JobSession,
   jobId: string,
   status: ExperimentStatus,
   error: string,
@@ -131,31 +148,6 @@ async function persistLauncherFailure(
   return failed;
 }
 
-async function verifySandboxLauncher(sandbox: Sandbox, launcherPath: string, repoRoot: string) {
-  const probe = "from pathlib import Path; import sys; path=Path(sys.argv[1]); assert path.is_file(), f'launcher missing: {path}'; print(sys.executable)";
-  const attempts: string[] = [];
-  for (const interpreter of ["python", "python3"]) {
-    try {
-      const result = await sandbox.runCommand({
-        cmd: interpreter,
-        args: ["-c", probe, launcherPath],
-        cwd: repoRoot,
-        timeoutMs: 30_000,
-      });
-      if (result.exitCode === 0) return interpreter;
-      const output = await result.output("both").catch(() => "");
-      attempts.push(`${interpreter}: exit=${result.exitCode}; ${diagnosticMessage(output || "no output")}`);
-    } catch (error) {
-      attempts.push(`${interpreter}: ${diagnosticMessage(error)}`);
-      // Try the other conventional interpreter name before failing closed.
-    }
-  }
-  throw Object.assign(
-    new Error(`Sandbox launcher preflight failed. ${attempts.join(" | ")}`),
-    { code: "SANDBOX_LAUNCHER_PREFLIGHT_FAILED" },
-  );
-}
-
 function newJobId(lockDigest: string) {
   const suffix = crypto.randomUUID().replaceAll("-", "").slice(0, 8);
   return `rd-${lockDigest.slice(0, 12)}-${suffix}`;
@@ -165,8 +157,7 @@ async function existingSandbox(jobId: string) {
   try {
     return await Sandbox.get({ name: sandboxName(jobId), resume: false, ...credentials() });
   } catch (error) {
-    const message = error instanceof Error ? error.message : String(error);
-    if (/not.?found|404/i.test(message)) throw new Error("Experiment job not found.");
+    if (isNotFound(error)) throw new Error("Experiment job not found.");
     throw error;
   }
 }
@@ -180,9 +171,7 @@ async function enforceCapacity() {
     if (candidate.status !== "pending" && candidate.status !== "running") continue;
     const match = /^eidos-(rd-[a-f0-9]{12}-[a-f0-9]{8})$/.exec(candidate.name);
     if (match) {
-      const reconciled = await existingSandbox(match[1])
-        .then((sandbox) => reconcileSandboxStatus(sandbox, match[1]))
-        .catch(() => null);
+      const reconciled = await fetchSandboxStatus(match[1]).catch(() => null);
       if (reconciled && TERMINAL_SANDBOX_STATUSES.has(reconciled.status)) continue;
     }
     active += 1;
@@ -198,10 +187,8 @@ export async function dispatchSandboxExperiment(lock: LockedExperiment): Promise
   const timeout = integerSetting("EIDOS_SANDBOX_TIMEOUT_MS", 2_700_000, 300_000, 86_400_000);
   const vcpus = integerSetting("EIDOS_SANDBOX_VCPUS", 4, 1, 8);
   const repositorySource = source();
-  const repoRoot = sandboxRepositoryRoot(repositorySource.url);
   const directory = jobDirectory(jobId);
   const requestPath = `${directory}/request.json`;
-  const launcherPath = `${repoRoot}/services/sentinel-runner/sentinel_runner/sandbox_launcher.py`;
   const initialStatus: ExperimentStatus = {
     schema: "eidos.sentinel-runner.status.v0.2",
     jobId,
@@ -214,7 +201,7 @@ export async function dispatchSandboxExperiment(lock: LockedExperiment): Promise
     executionBackend: "sandbox",
   };
 
-  const sandbox = await withDispatchStage("sandbox_allocation", () => Sandbox.create({
+  const allocated = await withDispatchStage("sandbox_allocation", () => Sandbox.create({
     name,
     source: repositorySource,
     image: "vercel/sandbox/python:3.14",
@@ -227,13 +214,12 @@ export async function dispatchSandboxExperiment(lock: LockedExperiment): Promise
     env: {
       KAGGLE_API_TOKEN: kaggleToken,
       PYTHONUNBUFFERED: "1",
-      PYTHONPATH: `${repoRoot}/services/sentinel-runner:${repoRoot}/eidos/repo/src`,
-      EIDOS_ENGINE_PATH: `${repoRoot}/eidos/EIDOS_BRAIN_UNIFIED_v0_4.7.02.py`,
       EIDOS_JOB_ROOT: `${SANDBOX_ROOT}/jobs`,
       EIDOS_MAX_CONCURRENT_JOBS: "1",
     },
     ...credentials(),
   }));
+  const sandbox = jobSession(allocated);
 
   try {
     await withDispatchStage("sandbox_bootstrap", async () => {
@@ -245,12 +231,17 @@ export async function dispatchSandboxExperiment(lock: LockedExperiment): Promise
         },
         { path: `${directory}/status.json`, content: JSON.stringify(initialStatus, null, 2) + "\n" },
       ]);
-      const interpreter = await verifySandboxLauncher(sandbox, launcherPath, repoRoot);
+      const verified = await verifySandboxSource(sandbox, repositorySource.revision);
+      const { repositoryRoot: repoRoot, launcherPath, interpreter } = verified;
+      await writeJson(sandbox, `${directory}/source_receipt.json`, {
+        schema: "eidos.sentinel-lab.source.v0.1", jobId, verifiedAt: new Date().toISOString(), ...verified,
+      });
+      initialStatus.artifacts = ["source_receipt.json"];
       await writeJson(sandbox, `${directory}/status.json`, {
         ...initialStatus,
         status: "BOOTSTRAPPING_RUNTIME",
         updatedAt: new Date().toISOString(),
-        detail: "Sandbox Python and launcher source verified; starting the detached engine process.",
+        detail: "Checkout, commit, and launcher verified; installing the CPU runtime.",
       });
       const command = await sandbox.runCommand({
         cmd: interpreter,
@@ -264,6 +255,10 @@ export async function dispatchSandboxExperiment(lock: LockedExperiment): Promise
           repoRoot,
         ],
         cwd: repoRoot,
+        env: {
+          PYTHONPATH: `${repoRoot}/services/sentinel-runner:${repoRoot}/eidos/repo/src`,
+          EIDOS_ENGINE_PATH: `${repoRoot}/eidos/EIDOS_BRAIN_UNIFIED_v0_4.7.02.py`,
+        },
         detached: true,
         timeoutMs: Math.max(240_000, timeout - 30_000),
       });
@@ -289,7 +284,7 @@ export async function dispatchSandboxExperiment(lock: LockedExperiment): Promise
 
   return {
     jobId,
-    status: "QUEUED",
+    status: "BOOTSTRAPPING_RUNTIME",
     statusUrl: `/api/experiments/${jobId}`,
     executionBackend: "sandbox",
     evidenceClass: "REAL_DATA_ENGINEERING",
@@ -297,14 +292,13 @@ export async function dispatchSandboxExperiment(lock: LockedExperiment): Promise
   };
 }
 
-async function reconcileSandboxStatus(sandbox: Sandbox, jobId: string): Promise<ExperimentStatus> {
-  const wasStopped = ["stopped", "failed", "aborted"].includes(sandbox.status);
+async function reconcileSandboxStatus(sandbox: JobSession, jobId: string, wasStopped: boolean): Promise<ExperimentStatus> {
   let status: ExperimentStatus;
   try {
     status = await readStatus(sandbox, jobId);
   } catch (error) {
-    if (wasStopped) {
-      return {
+    if (wasStopped && isNotFound(error)) {
+      status = {
         schema: "eidos.sentinel-runner.status.v0.2",
         jobId,
         status: "EXPIRED",
@@ -316,6 +310,8 @@ async function reconcileSandboxStatus(sandbox: Sandbox, jobId: string): Promise<
         detail: "The compute session ended before a readable status artifact was committed.",
         executionBackend: "sandbox",
       };
+      await writeJson(sandbox, `${jobDirectory(jobId)}/status.json`, status);
+      return status;
     }
     throw error;
   }
@@ -324,9 +320,11 @@ async function reconcileSandboxStatus(sandbox: Sandbox, jobId: string): Promise<
     status = {
       ...status,
       status: "EXPIRED",
+      updatedAt: new Date().toISOString(),
       error: "SANDBOX_SESSION_EXPIRED",
       detail: "The compute session reached its resource deadline before the engine job completed.",
     };
+    await writeJson(sandbox, `${jobDirectory(jobId)}/status.json`, status);
   }
 
   if (!wasStopped && ACTIVE_SANDBOX_STATUSES.has(status.status)) {
@@ -337,7 +335,7 @@ async function reconcileSandboxStatus(sandbox: Sandbox, jobId: string): Promise<
         jobId,
         status,
         "SANDBOX_LAUNCHER_RECEIPT_TIMEOUT",
-        "The Sandbox was allocated, but no detached launcher receipt appeared within 60 seconds.",
+        `The Sandbox was allocated, but no detached launcher receipt appeared within ${LAUNCHER_RECEIPT_GRACE_MS / 1000} seconds.`,
         `job=${jobId}\nNo ${LAUNCHER_RECEIPT_FILENAME} was committed before the startup deadline.`,
       );
     } else if (receipt) {
@@ -352,6 +350,9 @@ async function reconcileSandboxStatus(sandbox: Sandbox, jobId: string): Promise<
         } satisfies LauncherReceipt);
 
         if ("error" in inspection) {
+          // A provider outage is not evidence that the engine failed. Preserve
+          // the running job and let the monitor retry the lookup.
+          if (!isNotFound(inspection.error)) throw inspection.error;
           if (statusIsOlderThan(status, LAUNCHER_RECEIPT_GRACE_MS)) {
             status = await persistLauncherFailure(
               sandbox,
@@ -394,20 +395,33 @@ async function reconcileSandboxStatus(sandbox: Sandbox, jobId: string): Promise<
 }
 
 export async function fetchSandboxStatus(jobId: string): Promise<ExperimentStatus> {
-  return reconcileSandboxStatus(await existingSandbox(jobId), jobId);
+  return withReadableSession(jobId, (session, wasStopped) => reconcileSandboxStatus(session, jobId, wasStopped));
+}
+
+async function withReadableSession<T>(jobId: string, read: (session: JobSession, wasStopped: boolean) => Promise<T>): Promise<T> {
+  let sandbox = await existingSandbox(jobId);
+  if (["pending", "stopping", "snapshotting"].includes(sandbox.status)) throw new Error("SANDBOX_SESSION_TRANSITIONING");
+  const wasStopped = ["stopped", "failed", "aborted"].includes(sandbox.status);
+  if (wasStopped) sandbox = await Sandbox.get({ name: sandboxName(jobId), resume: true, ...credentials() });
+  const session = jobSession(sandbox);
+  try {
+    return await read(session, wasStopped);
+  } finally {
+    // A resumed snapshot is for retrieval only; detached processes do not
+    // survive a stop. Never stop an active experiment merely to read a file.
+    if (wasStopped && session.status === "running") await session.stop().catch(() => undefined);
+  }
 }
 
 export async function fetchSandboxArtifact(jobId: string, artifactName: string) {
   if (!Object.hasOwn(SANDBOX_ARTIFACTS, artifactName)) throw new Error("Artifact not found.");
-  const sandbox = await existingSandbox(jobId);
-  try {
-    const body = await sandbox.fs.readFile(`${jobDirectory(jobId)}/${artifactName}`);
-    return { body, contentType: SANDBOX_ARTIFACTS[artifactName as ArtifactName], filename: artifactName };
-  } catch (error) {
-    const message = error instanceof Error ? error.message : String(error);
-    if (/not.?found|enoent|404/i.test(message)) throw new Error("Artifact not found.");
-    throw error;
-  } finally {
-    if (sandbox.status === "running") await sandbox.stop().catch(() => undefined);
-  }
+  return withReadableSession(jobId, async (sandbox) => {
+    try {
+      const body = await sandbox.fs.readFile(`${jobDirectory(jobId)}/${artifactName}`);
+      return { body, contentType: SANDBOX_ARTIFACTS[artifactName as ArtifactName], filename: artifactName };
+    } catch (error) {
+      if (isNotFound(error)) throw new Error("Artifact not found.");
+      throw error;
+    }
+  });
 }
