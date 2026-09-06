@@ -107,8 +107,8 @@ export function ExperimentRunMonitor({ dispatch, operatorToken, onError, onTermi
   return (
     <section className="job-monitor" aria-labelledby="job-monitor-title">
       <div className="job-monitor-head">
-        <div><span>JOB ACCEPTED</span><strong id="job-monitor-title">{dispatch.jobId}</strong></div>
-        <small>{(status?.executionBackend || dispatch.executionBackend || "external").toUpperCase()} COMPUTE</small>
+        <div><span>RUN RECEIPT</span><strong id="job-monitor-title">{dispatch.jobId}</strong></div>
+        <small>{status?.executionBackend || dispatch.executionBackend ? `${(status?.executionBackend || dispatch.executionBackend)?.toUpperCase()} COMPUTE` : "AWAITING BACKEND"}</small>
       </div>
       <button className="outline-button" onClick={() => downloadJson(dispatch, `eidos-job-${dispatch.jobId}.json`)}>Save job receipt</button>
       {!operatorToken.trim() && <p className="job-detail" role="status">Enter your operator token above to reconnect. Your job can continue while this page is closed.</p>}

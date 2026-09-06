@@ -64,6 +64,15 @@ export function RealDataLab() {
     setError(null);
   }
 
+  function stopMonitoring() {
+    setDispatch(null);
+    setEngineStatus(null);
+    setLock(null);
+    setFinished(false);
+    setError(null);
+    try { sessionStorage.removeItem("eidos.lab.active-job"); } catch { /* Optional local receipt only. */ }
+  }
+
   function revise(mutator: (current: ExperimentSpec) => ExperimentSpec) {
     setSpec((current) => mutator(current));
     setLock(null);
@@ -208,7 +217,7 @@ export function RealDataLab() {
           <button className="prepare-button" onClick={prepareLock} disabled={preparing || dispatching}>{preparing ? "Checking settings…" : "Check readiness & lock settings"}</button>
 
           {lock && <div className="lock-result" aria-live="polite"><span>SETTINGS LOCKED · {(lock.executionBackend || "unattached").toUpperCase()}</span><code>{lock.digest}</code><button className="outline-button" onClick={() => downloadJson(lock, `eidos-run-lock-${lock.digest.slice(0, 12)}.json`)}>Download run settings</button><div className="preflight-issues">{lock.issues.filter((issue) => issue.severity === "blocker").map((issue) => <p className="blocker" key={issue.code}><b>Setup needed</b>{issue.message}</p>)}</div><details className="readiness-details"><summary>Data checks & technical details</summary><div className="preflight-issues">{lock.issues.filter((issue) => issue.severity !== "blocker").map((issue) => <p className={issue.severity} key={issue.code}>{issue.message}</p>)}</div></details><button className="dispatch-button" disabled={!lock.readyToDispatch || !operatorToken.trim() || dispatching || Boolean(dispatch)} onClick={dispatchRun}>{dispatching ? "Starting engine… this may take a few minutes" : dispatch ? "Run receipt available below" : !lock.readyToDispatch ? "Resolve setup before launching" : !operatorToken.trim() ? "Enter operator token to launch" : "Launch full-engine experiment"}</button></div>}
-          {dispatch ? <><ExperimentRunMonitor key={dispatch.jobId} dispatch={dispatch} operatorToken={operatorToken} onError={setError} onTerminal={onTerminal} onStatus={onStatus} />{finished && <button className="outline-button" onClick={() => { setDispatch(null); setLock(null); setFinished(false); try { sessionStorage.removeItem("eidos.lab.active-job"); } catch { /* Optional local receipt only. */ } }}>Prepare another experiment</button>}</> : null}
+          {dispatch ? <><ExperimentRunMonitor key={dispatch.jobId} dispatch={dispatch} operatorToken={operatorToken} onError={setError} onTerminal={onTerminal} onStatus={onStatus} /><button className="outline-button" onClick={stopMonitoring}>{finished ? "Prepare another experiment" : "Stop monitoring this run"}</button>{!finished && <p className="token-note">Stopping monitoring does not cancel the engine. Save the receipt above to reconnect later.</p>}</> : null}
           <details className="resume-run"><summary>Resume an existing run</summary><label><span>Job ID</span><input value={resumeId} onChange={(event) => setResumeId(event.target.value)} placeholder="rd-…" /></label><button className="outline-button" onClick={resumeJob}>Check this run</button><p>Your last receipt is remembered in this tab. After a reload, enter your operator token again.</p></details>
         </aside>
       </div>
