@@ -50,6 +50,24 @@ function provider(state = "running", receipt: Record<string, unknown> = initial)
 
 test.afterEach(() => mock.restoreAll());
 
+test("full immutable verification resumes only a completed snapshot and reports provider cleanup", async () => {
+  const p = provider("stopped", { ...initial, status: "COMPLETED_ENGINEERING" });
+  mock.method(p.session, "runCommand", async () => ({ exitCode: 0, stdout: async () => JSON.stringify({ allMatched: true, declaredCount: 25, matchedCount: 25 }) }));
+  const receipt = JSON.parse((await fetchSandboxArtifact(jobId, "artifact_verification.json")).body.toString());
+  assert.equal(receipt.allMatched, true);
+  assert.equal(receipt.resumedForRetrieval, true);
+  assert.equal(receipt.providerStatusAfterRetrieval, "stopped");
+  assert.equal(p.stops(), 1);
+  assert.equal(p.resumes(), 1);
+});
+
+test("immutable verification is unavailable for active jobs and does not stop them", async () => {
+  const p = provider();
+  await assert.rejects(fetchSandboxArtifact(jobId, "artifact_verification.json"), /Artifact not found/);
+  assert.equal(p.stops(), 0);
+  assert.equal(p.commands.length, 0);
+});
+
 test("dispatch uses the verified checkout and commits its source and command receipts", async () => {
   const p = provider();
   const old = { ...process.env };

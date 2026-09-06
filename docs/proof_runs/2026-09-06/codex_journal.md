@@ -74,3 +74,13 @@ Successful orchestration does not establish a useful detector. False positives r
 15. North-star: reproducible execution and explainable receipts.
 16. Evidence files: listed above.
 17. Unproven: detection utility, held-out generalization and authenticated production lifecycle.
+
+## Authenticated live follow-up at 23:49 UTC
+
+Brent supplied operator access in the production password field. Job rd-8a14916b3ea7-696b7427 completed on release 31b1a895182b35a1c376a3e532ade9d3107aa13d. Seven authenticated downloads were saved under artifacts/sentinel-production-live-20260906. Their exposed immutable hashes, four Git source hashes, locked dataset split and 600 frozen-prediction correspondences passed `node apps/sentinel-lab/scripts/verify-live-evidence.mjs`.
+
+A read-only authenticated receipt now verifies all declared immutable files inside a completed snapshot, with path and byte limits and provider status read after cleanup. No core engine, thresholds, labels or split changed. App tests passed: 46 total. Type checking and the production build passed. Existing runner checks are unchanged and run in release CI. Full live verification of the new receipt and reload/reconnect remains pending deployment at this journal checkpoint.
+
+### Proof Logic + Meaning
+
+The execution gate passed where it was previously access-blocked. SHA-256 and byte-count equality bind evidence to files; 600/600 prediction correspondences bind evaluation to the frozen trace. FPR = 301/600 = 50.17%; recall and AUC are null because no positive examples exist. This is reproducibility and honest accounting, not a useful-detector claim. It strengthens reproducible execution and inspection of internal state in Eidos's streaming codec north star. Held-out data remains excluded and gates advanced remain zero. See apps/sentinel-lab/docs/audit-2026-09-06-live.md for detailed logic and limits. The live Drive supplement will be copied after final retrieval; the earlier audit mirror remains preserved.
