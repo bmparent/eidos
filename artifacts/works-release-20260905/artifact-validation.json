@@ -1,7 +1,7 @@
 {
-  "timestamp_utc": "2026-09-05T23:16:18.596Z",
-  "filesScanned": 83,
-  "jsonFilesParsed": 33,
+  "timestamp_utc": "2026-09-06T00:05:19.801Z",
+  "filesScanned": 136,
+  "jsonFilesParsed": 57,
   "knownCredentialLeaks": 0,
   "privateKeyBlocks": 0,
   "secretValuesWritten": false,

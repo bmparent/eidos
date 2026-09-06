@@ -1,6 +1,6 @@
 {
   "scope": "Eidos Works platform release only",
-  "timestamp_utc": "2026-09-05T23:13:31.737Z",
+  "timestamp_utc": "2026-09-06T00:03:43.024Z",
   "overall_eidos_research_readiness": null,
   "reason": "Research proof gates were not evaluated by this platform task.",
   "gates": [
@@ -36,8 +36,8 @@
     },
     {
       "name": "Live Stripe configuration",
-      "status": "blocked",
-      "evidence": "release-handoff.md"
+      "status": "passed",
+      "evidence": "stripe-live-browser-receipt.json"
     },
     {
       "name": "Production release and browser checks",
@@ -45,6 +45,6 @@
       "evidence": "production-browser-receipt.json"
     }
   ],
-  "passed_gates": 7,
+  "passed_gates": 8,
   "total_gates": 8
 }

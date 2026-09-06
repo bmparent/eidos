@@ -1,0 +1,13 @@
+{
+  "timestamp_utc": "2026-09-05T23:58:16.807Z",
+  "projectId": "prj_5aL0COF1DONfPKI4fv25NitAdkOE",
+  "target": "production",
+  "keys": [
+    "STRIPE_SECRET_KEY",
+    "EIDOS_KIT_WEBHOOK_SECRET",
+    "EIDOS_SHOP_ENABLED"
+  ],
+  "previewUntouched": true,
+  "shopEnabled": true,
+  "secretsPrinted": false
+}

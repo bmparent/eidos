@@ -83,7 +83,15 @@
   },
   "limitations": [
     "No physical iOS/Android device or touch keyboard test.",
-    "User-agent bot classification is heuristic.",
-    "Purchasing remains disabled pending live Stripe verification."
-  ]
+    "User-agent bot classification is heuristic."
+  ],
+  "liveCheckout": {
+    "checked_utc": "2026-09-06T00:03:43.024Z",
+    "evidence": "stripe-live-browser-receipt.json",
+    "checkoutOpened": true,
+    "amount": "29.00 USD",
+    "cancelLinkWorked": true,
+    "paymentMade": false,
+    "sessionExpired": true
+  }
 }

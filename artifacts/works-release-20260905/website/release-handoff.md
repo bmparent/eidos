@@ -1,11 +1,11 @@
 # Eidos Works production handoff - 2026-09-05
 
-The website and backend are deployed. All independent release checks are complete. Purchasing is disabled while Stripe live-key creation waits for email verification; the overall goal remains partial.
+The website and backend are deployed. All eight platform release gates passed, including separate LIVE Stripe activation. Production purchasing is enabled; no real-money purchase was made during verification.
 
 ## Production and merged changes
 - Website: https://eidos-works.com; Cloudflare Pages project eidosworks, deployment e3082c39-08b0-4175-8366-3bb674bce1c8, source c9e35f43c5c4c8abd90a4a11ffdceea49d603af9.
-- Backend: https://eidos-sentinel-lab.vercel.app; Vercel deployment dpl_CYejLjAxv8qeVfhxgrUioJWZxBee, source a2642d3985c2590cd6f4e4bbb335673499bc4c1e.
-- Merged: website PR 6, backend PR 37, maintenance fix PR 7 and Contact spacing fix PR 8. Merged commit IDs are in release-state.json.
+- Backend: https://eidos-sentinel-lab.vercel.app; Vercel activation deployment dpl_79c6nau9dEzs6bWhCPasUx2nQJME, source 4de48cf149e07d25195130b20e0b52a36533ee09. Later documentation-only merges may create equivalent deployments without changing the verified application code.
+- Merged: website PR 6, backend PR 37, maintenance fix PR 7, Contact spacing fix PR 8, and documentation PRs 9 (website) and 39 (backend). Merged commit IDs are in release-state.json.
 - Rollback: Cloudflare eeddf874-7035-4718-8fe7-4c734aed486c; Vercel dpl_DR6RwDA5gsvhLWi8GcRXJ9PrJCZF. Preserve platform databases and payment records during rollback.
 - Original dirty checkouts were preserved. Snapshot remains independently gated. The research interface still shows BLOCKED_RESOURCE_BEFORE_HELDOUT and zero advanced gates.
 
@@ -21,8 +21,10 @@ Stripe TEST checkout paid 2,900 cents USD and received the correct 6,012-byte ZI
 
 The production inquiry test reached the configured studio inbox (Gmail message 1a073c1c396c6d57) with the exact test label; SPF and DKIM passed. The site success message alone was not treated as proof. Product fulfillment is an on-screen download; automatic purchase-email delivery is not claimed.
 
-## Remaining action
-Chrome reports another extension popup open on the Gmail verification tab. Dismiss that popup and complete the Stripe verification email in the same Chrome browser, or reply that it is dismissed so the verification flow can resume. No new terms approval is needed. The pending restricted key is named Eidos Works Cinematic Starter production. After verification: capture it securely, configure the separate LIVE webhook at https://eidos-works.com/api/shop/webhook with the four documented event types, enable EIDOS_SHOP_ENABLED in production, redeploy Sentinel and verify a live 29 USD checkout without making a real-money payment. Test credentials must remain confined to validation.
+## Live activation completed
+Production purchasing is enabled in LIVE mode. The dedicated restricted key and separate webhook we_1UCTRjKC8pRG5Tr9KUpT4H8F serve https://eidos-works.com/api/shop/webhook with checkout.session.completed, checkout.session.async_payment_succeeded, charge.refunded and charge.dispute.created. Test/live keys, signing secrets and databases remain separate. The deployed browser opened the correct one-website license at $29.00 USD. Authenticated Stripe readback confirmed 2,900 cents, USD, card payment, and unpaid status; the durable order remained pending. The browser cancel link returned to the product. The verification session was then expired, and download returned 403 before and after expiration. No real-money payment was made. A synthetic ignored event signed with the live secret returned 200; unsigned and test-secret-signed requests returned 400 and created no entitlement or event record. This checks the production relay and signing configuration, not a provider-generated live payment event.
+
+No release blocker remains. No paid subscription was selected.
 
 ## Validation
 - Backend: npm --prefix apps/sentinel-lab run works:migrate; npm --prefix apps/sentinel-lab test; npm --prefix apps/sentinel-lab run lint; npm --prefix apps/sentinel-lab run build.
@@ -42,7 +44,7 @@ Local evidence: artifacts/works-release-20260905 in the backend checkout and art
 ## Proof Logic + Meaning
 
 ### Goal reached
-Seven of eight platform release gates passed. The site and backend are deployed and verified. Live Stripe setup is blocked by an unfinished account verification step, so purchasing remains disabled and the overall goal is partial.
+All eight platform release gates passed. The site, backend, live checkout configuration and unpaid-access protection are deployed and verified. Payment fulfillment, refunds and disputes were exercised using real Stripe TEST transactions; no live revenue claim is made.
 
 ### Previous state
 Local checks existed, but durable production storage, hosted provider behavior, real payment fulfillment, delivery, and analytics receipt had not been established. The relay failed in the actual Workers runtime.
@@ -63,7 +65,7 @@ Real hosted receipts now support the release. A Workers-specific redirect failur
 Eidos Brain is a self-monitoring streaming intelligence codec. It learns live streams, compresses predictable behavior, preserves meaningful anomalies, monitors its own internal state, and emits human-readable incident receipts. This platform milestone strengthens reproducible operation and auditable receipts around that work. It does not prove stream learning, compression, anomaly preservation or detector superiority. Core research behavior was unchanged.
 
 ### Evidence
-See production-http-receipt.json, production-browser-receipt.json, backend-production-receipt.json, maintenance-production-receipt.json, production-inquiry-receipt.json, ga4-realtime-receipt.json, storage-smoke.json, ai-provider-smoke.json, ai-deployed-smoke.json, community-deployed-smoke.json, agent-deployed-smoke.json, proactive-storage-smoke.json, stripe-deployed-smoke.json and the final test/build logs.
+See stripe-live-browser-receipt.json, stripe-live-configuration.json, backend-live-production-receipt.json, production-http-receipt.json, production-browser-receipt.json, backend-production-receipt.json, maintenance-production-receipt.json, production-inquiry-receipt.json, ga4-realtime-receipt.json, storage-smoke.json, ai-provider-smoke.json, ai-deployed-smoke.json, community-deployed-smoke.json, agent-deployed-smoke.json, proactive-storage-smoke.json, stripe-deployed-smoke.json and the final test/build logs.
 
 ### Remaining uncertainty
-Live Stripe key/webhook activation is unfinished. All demonstrated purchases are TEST mode, not revenue. Proactive time eligibility used synthetic aged fixtures against remote validation storage. No natural 24-hour wait, physical mobile-device test, GPU benchmark, compression metric or held-out proof was performed. Bot classification is heuristic. Mounted Drive copies are hash-verified; cloud synchronization completion is not independently verified.
+LIVE purchasing is configured and an unpaid production checkout was verified. All paid verification transactions were TEST mode; no live payment or revenue was created. Proactive time eligibility used synthetic aged fixtures against remote validation storage. No natural 24-hour wait, physical mobile-device test, GPU benchmark, compression metric or held-out proof was performed. Bot classification is heuristic. Mounted Drive copies are hash-verified; cloud synchronization completion is not independently verified.

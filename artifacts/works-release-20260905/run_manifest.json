@@ -1,17 +1,17 @@
 {
   "run_id": "works-release-20260905",
-  "timestamp_utc": "2026-09-05T23:13:31.737Z",
-  "status": "deployed_live_stripe_pending",
+  "timestamp_utc": "2026-09-06T00:03:43.024Z",
+  "status": "complete",
   "core_research_behavior_changed": false,
   "local_artifacts_required": true,
   "real_provider_calls": 3,
-  "stripe_mode": "test",
+  "stripe_mode": "live production; test validation",
   "test_scope": "reported individually in receipts",
   "missing_artifacts": {
     "pytest_results.xml": "No Python tests changed or run; Node test logs saved.",
     "research_metrics": "No research benchmark was part of this platform task."
   },
-  "production_shop_enabled": false,
+  "production_shop_enabled": true,
   "production_ai_enabled": true,
   "production_proactive_enabled": true,
   "site": {
@@ -21,6 +21,8 @@
     "commit": "c9e35f43c5c4c8abd90a4a11ffdceea49d603af9",
     "deployedAt": "2026-09-05T23:08:50.082225Z"
   },
-  "backendCommit": "a2642d3985c2590cd6f4e4bbb335673499bc4c1e",
-  "defaultBranchMaintenanceRun": 33997382547
+  "backendCommit": "4de48cf149e07d25195130b20e0b52a36533ee09",
+  "defaultBranchMaintenanceRun": 33997382547,
+  "backendActivationDeployment": "dpl_79c6nau9dEzs6bWhCPasUx2nQJME",
+  "live_paid_transactions_created": 0
 }
