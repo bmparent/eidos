@@ -1,0 +1,73 @@
+{
+  "timestamp_utc": "2026-09-06T23:24:47.142Z",
+  "url": "https://eidos-sentinel-lab.vercel.app",
+  "preflight": {
+    "httpStatus": 200,
+    "readyToDispatch": true,
+    "executionBackend": "sandbox",
+    "digest": "8a14916b3ea7a0cf2ce766ba2a8c8e126745f8f7907b0ceccb2a7df8476cf0a5",
+    "blockers": []
+  },
+  "unauthorizedReads": [
+    {
+      "path": "/api/experiments/rd-aaaaaaaaaaaa-bbbbbbbb",
+      "status": 401,
+      "error": "OPERATOR_AUTH_REQUIRED",
+      "diagnosticId": "22aa22fa-f978-4354-84d8-6a9a8cadd60a"
+    },
+    {
+      "path": "/api/experiments/rd-aaaaaaaaaaaa-bbbbbbbb/artifacts/metrics.json",
+      "status": 401,
+      "error": "OPERATOR_AUTH_REQUIRED",
+      "diagnosticId": "9c7dc8d5-15e9-490c-9c4b-c25cf7a7ebdd"
+    }
+  ],
+  "unauthorizedDispatch": {
+    "status": 401,
+    "diagnosticId": "1651408b-0f9b-40b4-8750-354e50d91625",
+    "error": "OPERATOR_AUTH_REQUIRED"
+  },
+  "pinnedSpec": {
+    "schema": "eidos.sentinel-lab.experiment.v0.2",
+    "evidenceClass": "REAL_DATA_ENGINEERING",
+    "dataset": {
+      "provider": "kaggle",
+      "ref": "dhoogla/cicids2017",
+      "version": 3,
+      "file": "WebAttacks-Thursday-no-metadata.parquet",
+      "expectedSha256": "7db47b2bf97ad58c3556ee25e8e1eb1e697cd391670733833865d0e84d8ed82a"
+    },
+    "dataContract": {
+      "labelColumn": "Label",
+      "negativeLabels": [
+        "BENIGN"
+      ],
+      "orderMode": "source",
+      "excludedColumns": [],
+      "featureColumns": [],
+      "maxRows": 1000
+    },
+    "split": {
+      "calibration": 0.2,
+      "evaluation": 0.6,
+      "sealedHoldout": 0.2
+    },
+    "engine": {
+      "version": "0.4.7.02",
+      "features": 64,
+      "seed": 0,
+      "configProfile": "cicids_webattacks"
+    },
+    "protocol": {
+      "labelPolicy": "sealed_until_prediction_freeze",
+      "normalization": "calibration_only_zscore",
+      "projection": "seeded_gaussian_or_pad",
+      "heldoutPolicy": "exclude_from_engineering_run",
+      "proofVerdict": "BLOCKED_RESOURCE_BEFORE_HELDOUT"
+    }
+  },
+  "authenticatedLiveJob": null,
+  "realComputeAllocated": false,
+  "verdict": "ACCESS_BLOCKED",
+  "reason": "The configured non-revealable production operator secret is not available in this task. Settings and authentication checks are not a successful production experiment."
+}

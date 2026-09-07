@@ -1,0 +1,49 @@
+{
+  "schema": "eidos.audit-progress.v0.1",
+  "overallProofReadinessScore": null,
+  "reason": "Scientific gates were not evaluated.",
+  "gatesAdvanced": 0,
+  "proofGates": [
+    {
+      "gate": "G0",
+      "status": "locked"
+    },
+    {
+      "gate": "G1",
+      "status": "locked"
+    },
+    {
+      "gate": "G2",
+      "status": "locked"
+    },
+    {
+      "gate": "G3",
+      "status": "locked"
+    },
+    {
+      "gate": "G4",
+      "status": "locked"
+    },
+    {
+      "gate": "G5",
+      "status": "locked"
+    },
+    {
+      "gate": "G6",
+      "status": "locked"
+    }
+  ],
+  "liveWorkflow": "VERIFIED_ENGINEERING_WORKFLOW",
+  "engineering": {
+    "execution": "passed",
+    "source": "passed",
+    "coverage": "passed",
+    "admission": "passed",
+    "retrieval": "passed"
+  },
+  "evidence": [
+    "final-audit.json",
+    "live-evidence-verification.json",
+    "artifact_verification.json"
+  ]
+}

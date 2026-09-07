@@ -1,0 +1,16 @@
+{
+  "schema": "eidos.sentinel-lab.source.v0.1",
+  "jobId": "rd-8a14916b3ea7-696b7427",
+  "verifiedAt": "2026-09-06T23:33:01.396Z",
+  "repositoryRoot": "/vercel/eidos",
+  "workingDirectory": "/vercel",
+  "commit": "31b1a895182b35a1c376a3e532ade9d3107aa13d",
+  "interpreter": "/usr/bin/python",
+  "launcherPath": "/vercel/eidos/services/sentinel-runner/sentinel_runner/sandbox_launcher.py",
+  "files": {
+    "services/sentinel-runner/sentinel_runner/sandbox_launcher.py": "569123ac59b9b3edc3538cfd20e81b3bd530db7c77106d029b6c309825541aeb",
+    "services/sentinel-runner/pyproject.toml": "15209e3ac19198db1d92e0c42af194a4b11874c3ea745a7c0f19b93c2ace47d8",
+    "eidos/EIDOS_BRAIN_UNIFIED_v0_4.7.02.py": "d1d8db7b5f8e70c0ae6abc96575295620a27ea2943fa50209317d264da50ef50",
+    "eidos/repo/src/eidos_brain/engine/eidos_v0_4_7_02.py": "2f3b4530c36acdff0441077df8fa419c01f198ea11a5a7ddf9de5a8a8fd05d7d"
+  }
+}

@@ -1,0 +1,22 @@
+{
+  "schema": "eidos.audit-manifest.v0.1",
+  "runId": "sentinel-production-audit-20260906",
+  "commit": "31b1a895182b35a1c376a3e532ade9d3107aa13d",
+  "startedFrom": "4d17d8bac43d2beb235f4abcc2adbf271781be51",
+  "output": "artifacts\\sentinel-production-audit-20260906",
+  "evidenceClass": "ENGINEERING_AUDIT",
+  "gatesAdvanced": 0,
+  "liveJobId": null,
+  "rawSensitiveDataIncluded": false,
+  "missingArtifacts": [
+    "live/source_receipt.json",
+    "live/run_manifest.json",
+    "live/dataset_receipt.json",
+    "live/metrics.json",
+    "live/engine_trace.jsonl",
+    "live/evaluation_trace.jsonl",
+    "live/engine_diagnostics.json"
+  ],
+  "missingReason": "Operator access unavailable; no live job was launched.",
+  "pytestXml": "Not generated: this task used Node test and Python unittest. Full test logs retained."
+}

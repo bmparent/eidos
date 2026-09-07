@@ -1,0 +1,10 @@
+{
+  "timestamp_utc": "2026-09-06T23:28:27.106Z",
+  "localManifestEntries": 41,
+  "localManifestHashMismatches": [],
+  "driveFilesVerified": 42,
+  "driveHashMismatches": [],
+  "driveManifestCopied": true,
+  "liveImmutableArtifactCount": 0,
+  "liveArtifactReason": "Operator authentication unavailable"
+}

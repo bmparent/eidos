@@ -1,0 +1,71 @@
+
+> eidos-sentinel-lab@0.2.0 test
+> node --test tests/*.test.mjs && node --import tsx --test tests/*.test.ts
+
+✔ default real-data spec produces a stable canonical lock (10.4442ms)
+✔ real-data spec requires version and rejects path traversal (13.2496ms)
+✔ proof and label-isolation locks cannot be relaxed (1.1822ms)
+✔ preflight blocks dispatch without changing scientific readiness (545.4246ms)
+✔ backend-specific blockers remain explicit and fail closed (34.8496ms)
+✔ stale launcher receipts fail closed without advancing proof gates (13.3907ms)
+✔ launcher command inspection is rate limited (1.1308ms)
+✔ sandbox allocation errors return a stable diagnostic response instead of a generic 400 (2.3004ms)
+✔ dispatch diagnostics preserve useful provider context while redacting credentials (5.5044ms)
+✔ known capacity and configuration failures retain their public contracts (1.8903ms)
+✔ request parse failures and stage wrappers remain explicit (2.5381ms)
+✔ engineering smoke is deterministic for a locked request (179.1856ms)
+✔ held-out seeds are inaccessible (2.0057ms)
+✔ smoke output cannot advance proof gates (28.5487ms)
+✔ incident language remains calibrated (151.934ms)
+✔ all registered engineering scenarios return finite traces (290.0143ms)
+ℹ tests 16
+ℹ suites 0
+ℹ pass 16
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 1642.187
+✔ independent clients cannot exceed capacity and retries return the same job (968.1365ms)
+✔ abandoned reservations recover, stale allocators are fenced and old retry keys never relaunch (18.3535ms)
+✔ allocation uncertainty retains its slot beyond expiry until provider reconciliation (38.2769ms)
+✔ admission fails closed without remote storage or a valid retry key (21.0463ms)
+✔ immutable verifier checks bytes, missing and forbidden paths without opening raw inputs (3741.1414ms)
+{"level":"info","event":"experiment_dispatch_started","route":"/api/experiments","diagnosticId":"07d0021e-b4b4-4099-b3fa-bb443ad9b7ea","requestId":null}
+{"level":"error","event":"experiment_dispatch_failed","route":"/api/experiments","diagnosticId":"07d0021e-b4b4-4099-b3fa-bb443ad9b7ea","requestId":null,"stage":"operator_auth","code":"OPERATOR_AUTH_REQUIRED","status":401,"retryable":false,"durationMs":4,"diagnostic":{"type":"Error","message":"OPERATOR_AUTH_REQUIRED"}}
+✔ changing a dataset source invalidates inherited hashes, filenames and unknown versions (10.6268ms)
+✔ only explicit numeric values and allowlisted engine profiles can be locked (8.3335ms)
+✔ operator and full-capacity gates stay closed before any dispatch (379.1701ms)
+✔ bounded JSON handling rejects malformed and chunked oversized requests (258.6355ms)
+{"event":"experiment_artifact_failed","diagnosticId":"ef768880-53b3-42c9-a2c6-597f5eddd762","code":"OPERATOR_AUTH_REQUIRED","status":401,"diagnostic":{"type":"Error","message":"OPERATOR_AUTH_REQUIRED"}}
+{"event":"experiment_artifact_failed","diagnosticId":"33f0021f-f843-4725-94e0-4c4460f44e1a","code":"Artifact not found.","status":404,"diagnostic":{"type":"Error","message":"Artifact not found."}}
+{"event":"experiment_status_failed","diagnosticId":"f167ec05-d171-47f3-af3b-bc4c408f50f8","code":"EXPERIMENT_STATUS_UNAVAILABLE","status":502,"diagnostic":{"type":"Error","message":"503 token=[REDACTED]"}}
+✔ full immutable verification resumes only a completed snapshot and reports provider cleanup (102.6241ms)
+✔ immutable verification is unavailable for active jobs and does not stop them (3.2386ms)
+✔ dispatch uses the verified checkout and commits its source and command receipts (134.4861ms)
+✔ reading or missing an artifact never stops a running experiment (6.5767ms)
+✔ stopped snapshot retrieval cleans up after runner.log (25.5998ms)
+✔ stopped snapshot retrieval cleans up after metrics.json (3.071ms)
+✔ expired active receipts are persisted once and survive later retrieval (5.6704ms)
+✔ transient monitoring and snapshot read failures do not fabricate engine failure or expiry (5.2615ms)
+✔ confirmed launcher exit commits a failure and releases compute (14.858ms)
+✔ completed receipts retain results and stop compute (8.4335ms)
+✔ artifact and status routes enforce authentication, byte delivery, allowlists and retryable errors (573.1172ms)
+✔ source probe verifies a real Git checkout in the provider cwd (6712.6126ms)
+✔ source probe verifies a real Git checkout in a child directory (7665.8726ms)
+✔ source verification blocks wrong commit (7922.357ms)
+✔ source verification blocks changed source (9264.6661ms)
+✔ source verification blocks missing launcher (11972.352ms)
+✔ source verification blocks ambiguous checkout (13926.2271ms)
+✔ Relay authentication, exact origins, routes and method gates (232.959ms)
+✔ Published answers work with no database, model key or outbound fetch (19.0072ms)
+✔ Real libSQL adapter reserves atomically and rolls back failed batches (104.6709ms)
+✔ Sentinel quota and idempotency prevent repeated model calls (154.8888ms)
+ℹ tests 30
+ℹ suites 0
+ℹ pass 30
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 59572.0901

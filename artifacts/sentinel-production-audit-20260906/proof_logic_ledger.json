@@ -1,0 +1,29 @@
+{
+  "goal": "Authenticated production experiment workflow",
+  "status": "blocked",
+  "passedEngineeringChecks": [
+    "Atomic shared job admission",
+    "Stable retry identity",
+    "Abandoned reservation recovery and stale-owner fencing",
+    "43 app tests and 26 runner tests",
+    "Build and two CPU profile fixtures",
+    "Rendered lifecycle, mobile, keyboard and reduced motion",
+    "Exact production commit verified"
+  ],
+  "math": [
+    "occupied=count(RESERVED+ALLOCATING+RUNNING)",
+    "admit iff occupied < configured capacity, in one write transaction",
+    "same retry key => same job ID",
+    "FPR in previous local slice = 301/(301+299) = 0.5016667",
+    "gatesAdvanced = 0"
+  ],
+  "principle": "Restraint before execution; truth that can be revisited.",
+  "northStar": "Strengthens reproducible execution and understandable incident/evidence receipts.",
+  "unproven": [
+    "No authenticated production allocation, engine completion, source or artifact verification, or snapshot retrieval yet.",
+    "UI failure/provider tests used controlled fixtures.",
+    "External-runner distributed admission and a global quota over retrieval VMs are not qualified.",
+    "Optional workflow upload patch not applied: GitHub credential lacks workflow scope.",
+    "Automatic approval review blocked cleanup of three owned QA browser profiles; they remain."
+  ]
+}

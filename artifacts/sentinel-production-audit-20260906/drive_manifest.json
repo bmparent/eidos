@@ -1,0 +1,265 @@
+{
+  "drive_copy_attempted": true,
+  "drive_copy_success": true,
+  "drive_root": "G:\\My Drive",
+  "drive_run_dir": "G:\\My Drive\\Eidos_Brain_Proof_Phase\\2026-09-06\\sentinel-production-audit-20260906",
+  "reason": "Copied to the configured mounted Drive with SHA-256 verification.",
+  "files_considered": [
+    "app-tests-final.log",
+    "app-tests.log",
+    "artifact_manifest.json",
+    "audit-receipt.json",
+    "browser\\browser-qa.json",
+    "browser\\sentinel-lab-desktop.png",
+    "browser\\sentinel-lab-fixture-completed.png",
+    "browser\\sentinel-lab-fixture-failure.png",
+    "browser\\sentinel-lab-fixture-progress.png",
+    "browser\\sentinel-lab-mobile.png",
+    "browser\\sentinel-lab-real-data-desktop.png",
+    "browser\\sentinel-lab-real-data-mobile.png",
+    "browser-qa-complete.log",
+    "browser-qa-final.log",
+    "browser-qa.log",
+    "build-audit-receipt.mjs",
+    "build.log",
+    "ci-34066469815.log",
+    "codex_journal.md",
+    "eidos_progress_dashboard.html",
+    "eidos_progress_meter.json",
+    "eidos_progress_meter.md",
+    "eidos_progress_meter.svg",
+    "environment.txt",
+    "final-audit.json",
+    "final-report.md",
+    "finalize-evidence.mjs",
+    "git_commit.txt",
+    "merge-ci-34066729127.log",
+    "merge-ci.json",
+    "optional-ci-evidence.patch",
+    "pinned-run-lock.json",
+    "plain_language_test_analysis.md",
+    "pr-body.md",
+    "production-access-verification.json",
+    "production-deployment.json",
+    "proof_logic_ledger.json",
+    "proof_logic_ledger.md",
+    "pull-request.json",
+    "run_manifest.json",
+    "shared-admission-verification.json",
+    "typecheck.log"
+  ],
+  "files_copied": [
+    {
+      "path": "app-tests-final.log",
+      "sha256": "6cc513e16d0ee6a743012a958976fa5911c1150163b9837f009965a907c05d89",
+      "bytes": 4917
+    },
+    {
+      "path": "app-tests.log",
+      "sha256": "e62f4401f1b5822037e0b443c720399961a8a17e41e9c781bbbdb46eea191c0b",
+      "bytes": 7318
+    },
+    {
+      "path": "artifact_manifest.json",
+      "sha256": "d1a8d7c3a895b52034ada5abc6ae67bb11459068382c9c4aeca19f910573cb8a",
+      "bytes": 6732
+    },
+    {
+      "path": "audit-receipt.json",
+      "sha256": "c58cc87b27f705e94d9e309ba9739a520474515d866d14843ffba9be4142727a",
+      "bytes": 4416
+    },
+    {
+      "path": "browser/browser-qa.json",
+      "sha256": "96a3c0b7c1ce1a0310d2540af9ecf81391d22a91aeda3955adcc66a60ecc8e68",
+      "bytes": 2032
+    },
+    {
+      "path": "browser/sentinel-lab-desktop.png",
+      "sha256": "ba2d604853bd7046f15e8497ab429eb2838621ed635af6bf30ab69ceae0a7681",
+      "bytes": 544391
+    },
+    {
+      "path": "browser/sentinel-lab-fixture-completed.png",
+      "sha256": "d2f44a07c812875fcdb73d057709c0550ce9ffe05f0246409715d39df8b13be1",
+      "bytes": 643716
+    },
+    {
+      "path": "browser/sentinel-lab-fixture-failure.png",
+      "sha256": "211e11d20dcb86545c7cfd5f2eda1991587ed148bda9ac51a10ab790c037d92e",
+      "bytes": 607508
+    },
+    {
+      "path": "browser/sentinel-lab-fixture-progress.png",
+      "sha256": "a886c2ccbfbadb57a6d78f01d4d9c7c3076427f1247019f0976cac869b48264d",
+      "bytes": 650057
+    },
+    {
+      "path": "browser/sentinel-lab-mobile.png",
+      "sha256": "0f244280909bf6414d45a00efb9ccbfc23e338d25109596d4337e44e517dda6f",
+      "bytes": 300418
+    },
+    {
+      "path": "browser/sentinel-lab-real-data-desktop.png",
+      "sha256": "c497fc4b39a777a3d6155fb4bd7f168983e5c349aa5edc8bf4ba45df7493ff7f",
+      "bytes": 644020
+    },
+    {
+      "path": "browser/sentinel-lab-real-data-mobile.png",
+      "sha256": "0f244280909bf6414d45a00efb9ccbfc23e338d25109596d4337e44e517dda6f",
+      "bytes": 300418
+    },
+    {
+      "path": "browser-qa-complete.log",
+      "sha256": "8553cb844c17ffb1bcc10c30c690e4a6adf83e3b7602d22c4654ef099f7ec45e",
+      "bytes": 2256
+    },
+    {
+      "path": "browser-qa-final.log",
+      "sha256": "e79c6ec6ff9241f6a344e0e75fff22395308980e5fdc293251937a83d8954bbf",
+      "bytes": 2150
+    },
+    {
+      "path": "browser-qa.log",
+      "sha256": "33348b0d90bf94a39d73538f3411febc7f8d6c571065f627f9649cf1ed49e2be",
+      "bytes": 1243
+    },
+    {
+      "path": "build-audit-receipt.mjs",
+      "sha256": "cd5016ab9b27f405d12643311b9c6330cee6b1c3ec1bd5b6be44f0ea38927a5b",
+      "bytes": 2423
+    },
+    {
+      "path": "build.log",
+      "sha256": "9e52a7aae54c7c27579ebd195fb28b3f8796e657a4f708d7b5b5eb5a355b23e9",
+      "bytes": 975
+    },
+    {
+      "path": "ci-34066469815.log",
+      "sha256": "863b3b59eb7bd21749de407c6435f5ec494b5f34511b6893f770a4f570ac21b9",
+      "bytes": 158188
+    },
+    {
+      "path": "codex_journal.md",
+      "sha256": "0d7e76f16e7fe3f8dbb204cdaad6b8203b044994cca5c923b461d01cf8c895aa",
+      "bytes": 8883
+    },
+    {
+      "path": "eidos_progress_dashboard.html",
+      "sha256": "de680335be739a585bbd84d1b63e1cc3ffff6d87d1406799a370b18a2315854d",
+      "bytes": 1329
+    },
+    {
+      "path": "eidos_progress_meter.json",
+      "sha256": "e5b69d5b8c0fb3581ddb87ea34bf48034e1552e3ad875280a1a5928aeabd77f7",
+      "bytes": 1097
+    },
+    {
+      "path": "eidos_progress_meter.md",
+      "sha256": "cf327767ea649dd09c5f7d570d2ee2238b526b713858f99f479c7c07e6599f5a",
+      "bytes": 315
+    },
+    {
+      "path": "eidos_progress_meter.svg",
+      "sha256": "4cce71ce3628460d12a527b5439de240848fee8c6b76799b1438b1bd35cafef2",
+      "bytes": 1138
+    },
+    {
+      "path": "environment.txt",
+      "sha256": "826bdfda60d0fddcdbbec07d7a3ab99dfc8cf43f9d33e87bd901d40a873afa91",
+      "bytes": 254
+    },
+    {
+      "path": "final-audit.json",
+      "sha256": "dd08273e1f64ebf062e2ee53c56af6cf6005518fe08367a89b8b3bf430a3b015",
+      "bytes": 3136
+    },
+    {
+      "path": "final-report.md",
+      "sha256": "9183cab4d0168d16e7a498675fc88073ea88186cfddc4d6ee3519f6e921bd42c",
+      "bytes": 1475
+    },
+    {
+      "path": "finalize-evidence.mjs",
+      "sha256": "407044258f8ef524f679c497125a30f66d8f15a5a8f92858b1ca54595e459a44",
+      "bytes": 12913
+    },
+    {
+      "path": "git_commit.txt",
+      "sha256": "28065838ec5536325dd57aa1bc2bab8036afb9a9d5f499a8870ce11103049864",
+      "bytes": 41
+    },
+    {
+      "path": "merge-ci-34066729127.log",
+      "sha256": "0c212b1e884edbd6f2235017292f6e9b49f726bb8be8aff6aedeb9d5cf0e5773",
+      "bytes": 155169
+    },
+    {
+      "path": "merge-ci.json",
+      "sha256": "bc82bb7885ad246a2edbf894924e54d1b367e48b9bec4efdbb07faa755823e80",
+      "bytes": 166
+    },
+    {
+      "path": "optional-ci-evidence.patch",
+      "sha256": "34b5db9f5593cad5b26dc7994ae5c8ad44b3580159e2f5c52a76115806c81682",
+      "bytes": 3063
+    },
+    {
+      "path": "pinned-run-lock.json",
+      "sha256": "aa33725e0cfa1a4214976be267a9b8f9816746f6e6a6c409ff5161fd92b2cd2f",
+      "bytes": 2087
+    },
+    {
+      "path": "plain_language_test_analysis.md",
+      "sha256": "cc262c4982256c82a6e7c8f7bc33ee08f0e793f86a647b0b0694fac424e9d052",
+      "bytes": 4436
+    },
+    {
+      "path": "pr-body.md",
+      "sha256": "243c8db542e78d6692f1fbfde131287dec53d9335a159ed4af3ebbe0e1536c66",
+      "bytes": 2182
+    },
+    {
+      "path": "production-access-verification.json",
+      "sha256": "91c475502beac9a93cb79c724dfc670481ccb8659ed9ad9799011a96efb60e4d",
+      "bytes": 2295
+    },
+    {
+      "path": "production-deployment.json",
+      "sha256": "c92b71a895ba05e6e2309b6f41faefabeeb0e6bdc0b2ece6f89db3beccf10d12",
+      "bytes": 521
+    },
+    {
+      "path": "proof_logic_ledger.json",
+      "sha256": "c977f33ad401e90377201484f338e840cbc9e0248f8a83e48445b439ff1ad325",
+      "bytes": 1367
+    },
+    {
+      "path": "proof_logic_ledger.md",
+      "sha256": "46385583344de8067456b42bd538aeea7feab49f7529825ff38d41e1007bac37",
+      "bytes": 909
+    },
+    {
+      "path": "pull-request.json",
+      "sha256": "4ef96759ce533363481fdec9ab4c7fb0166e3a00de0d49ef845beebc25b0dbd3",
+      "bytes": 168
+    },
+    {
+      "path": "run_manifest.json",
+      "sha256": "eb79bc991373258fb0cd7fb526bf65c52a33077eb1d6b3fb65d28d9f52fc721b",
+      "bytes": 822
+    },
+    {
+      "path": "shared-admission-verification.json",
+      "sha256": "5f61aa639aa288d971ff2dfe0189225a7ce1969cc0d3743f157314e50f10504b",
+      "bytes": 486
+    },
+    {
+      "path": "typecheck.log",
+      "sha256": "3929b4937eed09d6a6f04edab6e7d3125b668cf8946241dd6878c04dd86db810",
+      "bytes": 717
+    }
+  ],
+  "files_skipped": [],
+  "timestamp_utc": "2026-09-06T23:28:15.482Z"
+}
