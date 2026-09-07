@@ -1,5 +1,7 @@
 # Production workflow audit follow-up
 
+Historical checkpoint: the access-dependent checks below were subsequently resolved. See the [completed live audit](audit-2026-09-06-live.md), [September 7 closeout](audit-2026-09-07-closeout.json), and [25-file verification receipt](audit-2026-09-07-artifact-verification.json). This checkpoint's original results remain preserved below.
+
 Baseline inspected: `4d17d8bac43d2beb235f4abcc2adbf271781be51` (PR #42). Vercel production was READY on that exact commit at the start of this audit. Work uses an isolated checkout and preserves the original dirty Eidos checkout and all Eidos Works work.
 
 ## Changes

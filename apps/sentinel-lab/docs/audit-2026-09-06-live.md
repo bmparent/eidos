@@ -25,7 +25,7 @@ node apps/sentinel-lab/scripts/verify-live-evidence.mjs artifacts/sentinel-produ
 ## Proof Logic + Meaning
 
 ### Goal reached
-Authenticated production execution and seven original downloads passed. Full snapshot verification and reload/reconnect are being checked against this same job after the receipt release; their final results belong in the live evidence package, not an inferred success flag.
+Authenticated production execution and seven original downloads passed. Closeout on September 7 confirmed authenticated reconnect to the same completed job and a successful `artifact_verification.json` download: all 25 declared immutable hashes and byte counts match; the provider reports `stopped` after snapshot retrieval. See [the closeout receipt](audit-2026-09-07-closeout.json) and [full hash receipt](audit-2026-09-07-artifact-verification.json). The prior reload restored the same job and lock on September 6; after that browser tab closed, September 7 reconnect used the saved job ID in a fresh production tab.
 
 ### Previous state
 Only local real-data execution and controlled lifecycle tests had passed. Operator access was missing, and internal immutable hashes were not exposed for independent audit retrieval.
