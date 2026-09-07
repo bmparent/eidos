@@ -1,0 +1,64 @@
+{
+  "schema": "eidos.sentinel-lab.lock.v0.2",
+  "algorithm": "sha256",
+  "digest": "8a14916b3ea7a0cf2ce766ba2a8c8e126745f8f7907b0ceccb2a7df8476cf0a5",
+  "spec": {
+    "schema": "eidos.sentinel-lab.experiment.v0.2",
+    "evidenceClass": "REAL_DATA_ENGINEERING",
+    "dataset": {
+      "provider": "kaggle",
+      "ref": "dhoogla/cicids2017",
+      "version": 3,
+      "file": "WebAttacks-Thursday-no-metadata.parquet",
+      "expectedSha256": "7db47b2bf97ad58c3556ee25e8e1eb1e697cd391670733833865d0e84d8ed82a"
+    },
+    "dataContract": {
+      "labelColumn": "Label",
+      "negativeLabels": [
+        "BENIGN"
+      ],
+      "orderMode": "source",
+      "excludedColumns": [],
+      "featureColumns": [],
+      "maxRows": 1000
+    },
+    "split": {
+      "calibration": 0.2,
+      "evaluation": 0.6,
+      "sealedHoldout": 0.2
+    },
+    "engine": {
+      "version": "0.4.7.02",
+      "features": 64,
+      "seed": 0,
+      "configProfile": "cicids_webattacks"
+    },
+    "protocol": {
+      "labelPolicy": "sealed_until_prediction_freeze",
+      "normalization": "calibration_only_zscore",
+      "projection": "seeded_gaussian_or_pad",
+      "heldoutPolicy": "exclude_from_engineering_run",
+      "proofVerdict": "BLOCKED_RESOURCE_BEFORE_HELDOUT"
+    }
+  },
+  "issues": [
+    {
+      "severity": "warning",
+      "code": "AUTO_NUMERIC_FEATURES",
+      "message": "The runner will select numeric columns after removing the label, order, excluded, and label-like columns, then record the resolved schema."
+    },
+    {
+      "severity": "warning",
+      "code": "SOURCE_ORDER_LOCKED",
+      "message": "Rows stay in file order. This file's chronology has not been verified; results describe ordered observations, not elapsed-time detection or operational utility."
+    },
+    {
+      "severity": "notice",
+      "code": "RESOURCE_QUALIFIED_PROFILE",
+      "message": "Standard engine: 256 reservoir units, 2,048 memory dimensions, 1 leak band(s), TraceSeal off. No proof gate advances."
+    }
+  ],
+  "runnerConfigured": true,
+  "executionBackend": "sandbox",
+  "readyToDispatch": true
+}

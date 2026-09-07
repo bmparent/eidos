@@ -1,0 +1,96 @@
+
+> eidos-sentinel-lab@0.2.0 test
+> node --test tests/*.test.mjs && node --import tsx --test tests/*.test.ts
+
+✔ default real-data spec produces a stable canonical lock (92.9205ms)
+✔ real-data spec requires version and rejects path traversal (67.6337ms)
+✔ proof and label-isolation locks cannot be relaxed (7.9117ms)
+✔ preflight blocks dispatch without changing scientific readiness (389.3791ms)
+✔ backend-specific blockers remain explicit and fail closed (7.2243ms)
+✔ stale launcher receipts fail closed without advancing proof gates (39.0203ms)
+✔ launcher command inspection is rate limited (1.6043ms)
+✔ sandbox allocation errors return a stable diagnostic response instead of a generic 400 (3.1663ms)
+✔ dispatch diagnostics preserve useful provider context while redacting credentials (11.8429ms)
+✔ known capacity and configuration failures retain their public contracts (1.5491ms)
+✔ request parse failures and stage wrappers remain explicit (2.8864ms)
+✔ engineering smoke is deterministic for a locked request (316.2689ms)
+✔ held-out seeds are inaccessible (30.6941ms)
+✔ smoke output cannot advance proof gates (89.3882ms)
+✔ incident language remains calibrated (80.7946ms)
+✔ all registered engineering scenarios return finite traces (628.2459ms)
+ℹ tests 16
+ℹ suites 0
+ℹ pass 16
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 3023.4883
+✖ independent clients cannot exceed capacity and retries return the same job (1700.788ms)
+✔ abandoned reservations recover, stale allocators are fenced and old retry keys never relaunch (92.9297ms)
+✔ allocation uncertainty retains its slot beyond expiry until provider reconciliation (268.8033ms)
+✔ admission fails closed without remote storage or a valid retry key (304.1878ms)
+{"level":"info","event":"experiment_dispatch_started","route":"/api/experiments","diagnosticId":"06a1a66d-aeeb-4e2e-bb80-4ca39b20ab4d","requestId":null}
+{"level":"error","event":"experiment_dispatch_failed","route":"/api/experiments","diagnosticId":"06a1a66d-aeeb-4e2e-bb80-4ca39b20ab4d","requestId":null,"stage":"operator_auth","code":"OPERATOR_AUTH_REQUIRED","status":401,"retryable":false,"durationMs":13,"diagnostic":{"type":"Error","message":"OPERATOR_AUTH_REQUIRED"}}
+✔ changing a dataset source invalidates inherited hashes, filenames and unknown versions (24.2214ms)
+✔ only explicit numeric values and allowlisted engine profiles can be locked (130.1675ms)
+✔ operator and full-capacity gates stay closed before any dispatch (532.3838ms)
+✔ bounded JSON handling rejects malformed and chunked oversized requests (707.7153ms)
+{"event":"experiment_artifact_failed","diagnosticId":"0f6da020-c471-44c9-8547-ac57528fe43c","code":"OPERATOR_AUTH_REQUIRED","status":401,"diagnostic":{"type":"Error","message":"OPERATOR_AUTH_REQUIRED"}}
+{"event":"experiment_artifact_failed","diagnosticId":"dd181421-2a1a-4580-bb0c-aeabd7a567d4","code":"Artifact not found.","status":404,"diagnostic":{"type":"Error","message":"Artifact not found."}}
+{"event":"experiment_status_failed","diagnosticId":"4c16a854-a434-4462-96fe-1631c9ec9e5e","code":"EXPERIMENT_STATUS_UNAVAILABLE","status":502,"diagnostic":{"type":"Error","message":"503 token=[REDACTED]"}}
+✔ dispatch uses the verified checkout and commits its source and command receipts (174.2723ms)
+✔ reading or missing an artifact never stops a running experiment (14.084ms)
+✔ stopped snapshot retrieval cleans up after runner.log (3.6222ms)
+✔ stopped snapshot retrieval cleans up after metrics.json (43.0895ms)
+✔ expired active receipts are persisted once and survive later retrieval (23.4884ms)
+✔ transient monitoring and snapshot read failures do not fabricate engine failure or expiry (41.8711ms)
+✔ confirmed launcher exit commits a failure and releases compute (7.652ms)
+✔ completed receipts retain results and stop compute (54.1275ms)
+✔ artifact and status routes enforce authentication, byte delivery, allowlists and retryable errors (260.589ms)
+✖ source probe verifies a real Git checkout in the provider cwd (24682.291ms)
+✖ source probe verifies a real Git checkout in a child directory (13364.5347ms)
+✔ source verification blocks wrong commit (10312.8975ms)
+✔ source verification blocks changed source (7797.8215ms)
+✔ source verification blocks missing launcher (12030.7821ms)
+✔ source verification blocks ambiguous checkout (15211.2622ms)
+✔ Relay authentication, exact origins, routes and method gates (464.996ms)
+✔ Published answers work with no database, model key or outbound fetch (73.6019ms)
+✔ Real libSQL adapter reserves atomically and rolls back failed batches (659.0118ms)
+✔ Sentinel quota and idempotency prevent repeated model calls (390.2245ms)
+ℹ tests 27
+ℹ suites 0
+ℹ pass 24
+ℹ fail 3
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 122051.1988
+
+✖ failing tests:
+
+test at tests\admission.test.ts:1:350
+✖ independent clients cannot exceed capacity and retries return the same job (1700.788ms)
+  [Error: EBUSY: resource busy or locked, unlink 'C:\Users\bmpar\AppData\Local\Temp\sentinel-admission-2FNrQz\shared.db'] { errno: -4082, code: 'EBUSY', syscall: 'unlink', path: 'C:\\Users\\bmpar\\AppData\\Local\\Temp\\sentinel-admission-2FNrQz\\shared.db' }
+
+test at tests\sandbox-source.test.ts:1:1808
+✖ source probe verifies a real Git checkout in the provider cwd (24682.291ms)
+  Error: Sandbox source verification failed. python: Invalid source verification receipt | python3: Python was not found; run without arguments to install from the Microsoft Store, or disable this shortcut from Settings > Apps > Advanced app settings > App execution aliases. 
+      at verifySandboxSource (C:\Users\bmpar\codex-worktrees\sentinel-audit-20260906\apps\sentinel-lab\lib\experiments\sandbox-source.ts:61:23)
+      at process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+      at async TestContext.<anonymous> (C:\Users\bmpar\codex-worktrees\sentinel-audit-20260906\apps\sentinel-lab\tests\sandbox-source.test.ts:46:21)
+      at async Test.run (node:internal/test_runner/test:1125:7)
+      at async startSubtestAfterBootstrap (node:internal/test_runner/harness:358:3) {
+    code: 'SANDBOX_SOURCE_VERIFICATION_FAILED'
+  }
+
+test at tests\sandbox-source.test.ts:1:1808
+✖ source probe verifies a real Git checkout in a child directory (13364.5347ms)
+  Error: Sandbox source verification failed. python: Invalid source verification receipt | python3: Python was not found; run without arguments to install from the Microsoft Store, or disable this shortcut from Settings > Apps > Advanced app settings > App execution aliases. 
+      at verifySandboxSource (C:\Users\bmpar\codex-worktrees\sentinel-audit-20260906\apps\sentinel-lab\lib\experiments\sandbox-source.ts:61:23)
+      at process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+      at async TestContext.<anonymous> (C:\Users\bmpar\codex-worktrees\sentinel-audit-20260906\apps\sentinel-lab\tests\sandbox-source.test.ts:46:21)
+      at async Test.run (node:internal/test_runner/test:1125:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:787:7) {
+    code: 'SANDBOX_SOURCE_VERIFICATION_FAILED'
+  }

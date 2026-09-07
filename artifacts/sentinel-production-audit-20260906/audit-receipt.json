@@ -1,0 +1,127 @@
+{
+  "schema": "eidos.sentinel-lab.audit.v0.2",
+  "timestamp_utc": "2026-09-06T23:19:55.842Z",
+  "baselineCommit": "4d17d8bac43d2beb235f4abcc2adbf271781be51",
+  "pullRequest": "https://github.com/bmparent/eidos/pull/43",
+  "implementationCommit": "ca15fd6d6376d7674dbf7057f504fc829738e8a9",
+  "appTestsPassed": 43,
+  "runnerTestsPassed": 26,
+  "ci": "https://github.com/bmparent/eidos/actions/runs/34066469815",
+  "build": "passed",
+  "sharedAdmission": {
+    "timestamp_utc": "2026-09-06T23:02:13.862Z",
+    "status": "PASS",
+    "backend": "remote libSQL validation database",
+    "scope": "sentinel-audit-1788735729934",
+    "independentClients": 12,
+    "competingRequests": 12,
+    "capacity": 1,
+    "admitted": 1,
+    "rejected": 11,
+    "retries": 12,
+    "duplicateJobs": 0,
+    "abandonedReservationRecovered": true,
+    "staleAllocatorFenced": true,
+    "uncertainAllocationRetainsCapacity": true,
+    "realSandboxAllocations": 0,
+    "proofGatesAdvanced": 0
+  },
+  "browser": {
+    "status": "PASS",
+    "viewports": [
+      [
+        1440,
+        1000
+      ],
+      [
+        390,
+        844
+      ]
+    ],
+    "meaningfulContent": true,
+    "noFrameworkOverlay": true,
+    "noConsoleErrors": true,
+    "smokeRunInteraction": true,
+    "heldOutSeedRejected": true,
+    "allSevenGatesLocked": true,
+    "compareRows": 4,
+    "realDataStages": 4,
+    "kaggleLookupPath": true,
+    "canonicalRunLock": true,
+    "runnerBlockerVisible": true,
+    "publicDispatchClosed": true,
+    "publicArtifactRetrievalClosed": true,
+    "pathTraversalRejected": true,
+    "mobileNoPageOverflow": true,
+    "realDataMobileNoPageOverflow": true,
+    "mobileMenuOpens": true,
+    "productionCompute": false,
+    "stableLaunchKey": true,
+    "reloadReconnect": true,
+    "credentialsNotPersisted": true,
+    "activeDownload": true,
+    "completedMetrics": true,
+    "undefinedMetrics": true,
+    "actionableFailure": true,
+    "providerRetry": true,
+    "explicitNewIntent": true,
+    "recordedVersusRunDiagnostics": true,
+    "keyboardFrameControl": true,
+    "reducedMotion": true
+  },
+  "live": {
+    "jobId": null,
+    "stageTransitions": [],
+    "outcome": "ACCESS_BLOCKED",
+    "reason": "The configured non-revealable production operator secret is not available in this task. Settings and authentication checks are not a successful production experiment.",
+    "preflight": {
+      "httpStatus": 200,
+      "readyToDispatch": true,
+      "executionBackend": "sandbox",
+      "digest": "8a14916b3ea7a0cf2ce766ba2a8c8e126745f8f7907b0ceccb2a7df8476cf0a5",
+      "blockers": []
+    },
+    "unauthorizedDispatch": {
+      "status": 401,
+      "diagnosticId": "dc75da31-b4e8-4cd4-b49e-284dfc262752",
+      "error": "OPERATOR_AUTH_REQUIRED"
+    },
+    "unauthorizedReads": [
+      {
+        "path": "/api/experiments/rd-aaaaaaaaaaaa-bbbbbbbb",
+        "status": 401,
+        "error": "OPERATOR_AUTH_REQUIRED",
+        "diagnosticId": "1a3447ea-b663-4db0-b0e2-246e9708b40b"
+      },
+      {
+        "path": "/api/experiments/rd-aaaaaaaaaaaa-bbbbbbbb/artifacts/metrics.json",
+        "status": 401,
+        "error": "OPERATOR_AUTH_REQUIRED",
+        "diagnosticId": "428c91bd-17be-4dfa-881e-7d1cd09afa23"
+      }
+    ]
+  },
+  "immutableArtifacts": {
+    "liveHashesVerified": 0,
+    "reason": "No authenticated production job or artifacts were available. Earlier local 24-artifact verification belongs to PR #42 and was not rerun here."
+  },
+  "scientificBoundaries": {
+    "coreBehaviorChanged": false,
+    "split": [
+      0.2,
+      0.6,
+      0.2
+    ],
+    "heldoutEvaluated": false,
+    "gatesAdvanced": 0,
+    "newDetectionQualityClaim": false
+  },
+  "limitations": [
+    "Authenticated live allocation, engine completion, source receipt, snapshot retrieval and artifact hashes remain unverified.",
+    "Controlled lifecycle fixtures do not establish provider behavior.",
+    "Strict admission covers Sandbox experiment jobs; transient snapshot retrieval VMs are not a global provider VM quota.",
+    "Optional external-runner multi-instance admission remains outside this production Sandbox change.",
+    "Optional CI browser-artifact upload patch could not be pushed because the GitHub OAuth credential lacks workflow scope. Existing CI and local browser checks passed.",
+    "Automatic approval review blocked optional cleanup of three owned temporary QA browser profiles; no further cleanup was attempted."
+  ]
+}

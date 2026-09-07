@@ -1,0 +1,146 @@
+{
+  "schema": "eidos.sentinel-lab.final-live-audit.v0.1",
+  "timestamp": "2026-09-07T20:31:51.324Z",
+  "status": "VERIFIED_ENGINEERING_WORKFLOW",
+  "jobId": "rd-8a14916b3ea7-696b7427",
+  "diagnosticId": "9ca66d3f-2ed2-427c-940d-0eb971a94b01",
+  "executionCommit": "31b1a895182b35a1c376a3e532ade9d3107aa13d",
+  "retrievalDeployment": {
+    "id": "dpl_EYfEsVmB7DxG2voHbwRtemqFxHQR",
+    "url": "eidos-sentinel-tz21e8k5n-1brentbm-1876s-projects.vercel.app",
+    "alias": [
+      "eidos-sentinel-lab.vercel.app",
+      "eidos-sentinel-lab-1brentbm-1876s-projects.vercel.app",
+      "eidos-sentinel-lab-git-main-1brentbm-1876s-projects.vercel.app"
+    ],
+    "commit": "9f4fc52ef79d36b9e268e124413afc1ae2f1f857",
+    "state": "READY",
+    "target": "production",
+    "verifiedAt": "2026-09-06T23:56:52.935Z"
+  },
+  "observedOutcome": "COMPLETED_ENGINEERING",
+  "sourceHashesVerified": 4,
+  "downloadedArtifacts": 7,
+  "immutableFilesDeclared": 25,
+  "immutableFilesVerified": 25,
+  "localEvidence": {
+    "schema": "eidos.sentinel-lab.live-evidence-verification.v0.1",
+    "verifiedAt": "2026-09-07T20:31:51.154Z",
+    "jobId": "rd-8a14916b3ea7-696b7427",
+    "diagnosticId": "9ca66d3f-2ed2-427c-940d-0eb971a94b01",
+    "executionCommit": "31b1a895182b35a1c376a3e532ade9d3107aa13d",
+    "lockDigest": "8a14916b3ea7a0cf2ce766ba2a8c8e126745f8f7907b0ceccb2a7df8476cf0a5",
+    "downloadedImmutableCount": 6,
+    "declaredImmutableCount": 25,
+    "fullSnapshotVerification": "passed",
+    "sourceHashes": [
+      {
+        "path": "services/sentinel-runner/sentinel_runner/sandbox_launcher.py",
+        "sha256": "569123ac59b9b3edc3538cfd20e81b3bd530db7c77106d029b6c309825541aeb"
+      },
+      {
+        "path": "services/sentinel-runner/pyproject.toml",
+        "sha256": "15209e3ac19198db1d92e0c42af194a4b11874c3ea745a7c0f19b93c2ace47d8"
+      },
+      {
+        "path": "eidos/EIDOS_BRAIN_UNIFIED_v0_4.7.02.py",
+        "sha256": "d1d8db7b5f8e70c0ae6abc96575295620a27ea2943fa50209317d264da50ef50"
+      },
+      {
+        "path": "eidos/repo/src/eidos_brain/engine/eidos_v0_4_7_02.py",
+        "sha256": "2f3b4530c36acdff0441077df8fa419c01f198ea11a5a7ddf9de5a8a8fd05d7d"
+      }
+    ],
+    "downloaded": [
+      "dataset_receipt.json",
+      "engine_diagnostics.json",
+      "engine_trace.jsonl",
+      "evaluation_trace.jsonl",
+      "metrics.json",
+      "source_receipt.json"
+    ],
+    "evaluationRows": 600,
+    "predictionCorrespondence": "600 matching frozen engine predictions",
+    "falsePositiveRate": 0.5016666666666667,
+    "confusion": {
+      "fn": 0,
+      "fp": 301,
+      "tn": 299,
+      "tp": 0
+    },
+    "recall": null,
+    "rocAuc": null,
+    "heldoutEvaluated": false,
+    "gatesAdvanced": 0,
+    "localChecksPassed": true
+  },
+  "lifecycle": {
+    "schema": "eidos.sentinel-lab.live-lifecycle.v0.1",
+    "jobId": "rd-8a14916b3ea7-696b7427",
+    "observedAt": "2026-09-07T20:18:47.430Z",
+    "reloadRestoredSameJob": true,
+    "reloadRestoredSameLock": true,
+    "credentialClearedOnReload": true,
+    "reloadObservationDate": "2026-09-06",
+    "authenticatedReconnect": true,
+    "reconnectMode": "Saved job ID entered in a fresh production tab after the previous tab closed",
+    "completedResultPreserved": true,
+    "observatoryShowsCompletedJob": true,
+    "evaluationRowsScored": 600,
+    "falsePositiveCountDisplayed": 301,
+    "sourceArtifactDownloads": 7,
+    "fullVerificationDownload": true,
+    "resumedForRetrieval": true,
+    "providerStatusAfterRetrieval": "stopped",
+    "activeDownloadLiveObservation": false,
+    "activeDownloadEvidence": "Controlled regression; the bounded live run completed before an active download was observed",
+    "source": "Authenticated production UI and artifact_verification.json"
+  },
+  "validation": {
+    "appTests": 46,
+    "runnerTests": 26,
+    "mergeCI": "passed",
+    "typecheck": "passed",
+    "build": "passed",
+    "browser": "controlled fixtures passed",
+    "independentDatabaseClients": 12,
+    "capacity": 1,
+    "admitted": 1,
+    "rejected": 11,
+    "duplicateJobs": 0
+  },
+  "coreBehaviorChanged": false,
+  "proofGatesAdvanced": 0,
+  "limits": [
+    "Only benign evaluation examples: 301 false positives / 600 benign rows; recall and ROC AUC cannot be estimated.",
+    "Zero scientific proof gates advanced; overall scientific readiness is unknown. Held-out data remains excluded.",
+    "Observed live stages were runtime bootstrapping and completed engineering. Intermediate stages passed between observations.",
+    "Active-download preservation, retryable outages, crashes and expiry were verified with controlled regressions, not deliberately induced in production.",
+    "Shared admission covers experiment jobs; a global cap including all short retrieval VMs and the optional external runner backend remains outside this qualification.",
+    "Provider snapshots have seven-day expiry. Local and Drive receipts preserve evidence beyond that lifecycle.",
+    "The optional browser CI workflow patch was not applied because the GitHub credential lacked workflow scope; the rendered suite passed locally.",
+    "Automatic approval review blocked optional deletion of three QA browser profiles; they were left in place."
+  ],
+  "currentProductionDeployment": {
+    "id": "dpl_E4h7W4qLAgn5sd3ptPh4ihzAjPYy",
+    "url": "eidos-sentinel-kr54nwpks-1brentbm-1876s-projects.vercel.app",
+    "alias": [
+      "eidos-sentinel-lab.vercel.app",
+      "eidos-sentinel-lab-1brentbm-1876s-projects.vercel.app",
+      "eidos-sentinel-lab-git-main-1brentbm-1876s-projects.vercel.app"
+    ],
+    "commit": "771076ab2b2c0487d9abe4d19522cde7fa6e6b3a",
+    "state": "READY",
+    "target": "production",
+    "verifiedAt": "2026-09-07T20:30:36.316Z"
+  },
+  "closeoutRelease": {
+    "mergeCommit": {
+      "oid": "771076ab2b2c0487d9abe4d19522cde7fa6e6b3a"
+    },
+    "mergedAt": "2026-09-07T20:28:57Z",
+    "number": 45,
+    "state": "MERGED",
+    "url": "https://github.com/bmparent/eidos/pull/45"
+  }
+}

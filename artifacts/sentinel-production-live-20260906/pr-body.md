@@ -1,0 +1,5 @@
+The authenticated 1,000-row production experiment completed, but its manifest declares internal immutable artifacts that the original seven downloads cannot independently verify. This adds a bounded, operator-authenticated artifact_verification.json receipt for completed snapshots, checks all declared byte counts and SHA-256 hashes without exposing arbitrary files, and records provider status after retrieval cleanup. Existing snapshots can be verified without another experiment.
+
+The live job is rd-8a14916b3ea7-696b7427 on PR #43's merge commit. Seven original downloads, four source hashes and all 600 frozen-prediction correspondences passed. FPR remains 301/600 (50.17%), recall/AUC are null, held-out data is excluded and zero proof gates advance. No core engine behavior changed.
+
+Validation: 46 app tests, TypeScript, production build and local evidence verifier passed. New regression cases cover hash mismatches, missing/forbidden paths, active-job protection and stopped-session cleanup. The existing release CI also checks the unchanged runner. Full production hash receipt/reconnect verification will be recorded after deployment.
