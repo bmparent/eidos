@@ -30,7 +30,7 @@ export const onRequestPost = guarded(async ({ request, env }) => {
     );
   await database.batch([
     database
-      .prepare('UPDATE eidos_members SET newsletter=0 WHERE id=?')
+      .prepare('UPDATE eidos_email_members SET newsletter=0 WHERE id=?')
       .bind(row.member_id),
     database
       .prepare(

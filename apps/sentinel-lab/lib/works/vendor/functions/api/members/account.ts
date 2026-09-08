@@ -70,7 +70,7 @@ export const onRequestPost = guarded(async ({ request, env }) => {
       throw new HttpError(400, 'Choose your delivery preference.');
     await database
       .prepare(
-        'UPDATE eidos_members SET newsletter=?,newsletter_after=CASE WHEN newsletter=0 AND ?=1 THEN ? ELSE newsletter_after END WHERE id=?',
+        'UPDATE eidos_email_members SET newsletter=?,newsletter_after=CASE WHEN newsletter=0 AND ?=1 THEN ? ELSE newsletter_after END WHERE id=?',
       )
       .bind(
         input.newsletter ? 1 : 0,

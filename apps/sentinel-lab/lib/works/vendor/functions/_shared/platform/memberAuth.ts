@@ -70,7 +70,7 @@ export async function memberFromRequest(
       throw new HttpError(401, 'Use email sign-in to manage your account.');
     const member = await db(env)
       .prepare(
-        'SELECT m.* FROM eidos_members m JOIN eidos_member_keys k ON k.member_id=m.id WHERE k.key_hash=? AND k.revoked=0 AND m.disabled=0',
+        'SELECT m.* FROM eidos_email_members m JOIN eidos_member_keys k ON k.member_id=m.id WHERE k.key_hash=? AND k.revoked=0 AND m.disabled=0',
       )
       .bind(await hash(bearer))
       .first<Member>();
@@ -81,7 +81,7 @@ export async function memberFromRequest(
   if (!/^[a-f0-9]{64}$/.test(token)) return null;
   return db(env)
     .prepare(
-      'SELECT m.* FROM eidos_members m JOIN eidos_member_sessions s ON s.member_id=m.id WHERE s.token_hash=? AND s.expires>? AND m.disabled=0',
+      'SELECT m.* FROM eidos_email_members m JOIN eidos_member_sessions s ON s.member_id=m.id WHERE s.token_hash=? AND s.expires>? AND m.disabled=0',
     )
     .bind(await hash(token), Math.floor(Date.now() / 1000))
     .first<Member>();

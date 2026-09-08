@@ -64,14 +64,14 @@ export const onRequestPost = guarded(async ({ request, env }) => {
         'This sign-in link has expired or was already used. Request a new one.',
       );
     let member = await database
-      .prepare('SELECT * FROM eidos_members WHERE email=? AND disabled=0')
+      .prepare('SELECT * FROM eidos_email_members WHERE email=? AND disabled=0')
       .bind(link.email)
       .first<Member>();
     if (!member) {
       if (!link.username)
         throw new HttpError(400, 'Create an account to continue.');
       const taken = await database
-        .prepare('SELECT id FROM eidos_members WHERE username=?')
+        .prepare('SELECT id FROM eidos_email_members WHERE username=?')
         .bind(link.username)
         .first();
       if (taken)
@@ -83,7 +83,7 @@ export const onRequestPost = guarded(async ({ request, env }) => {
         id = crypto.randomUUID();
       await database
         .prepare(
-          'INSERT OR IGNORE INTO eidos_members(id,email,username,kind,created_at,newsletter,newsletter_after) VALUES(?,?,?,?,?,?,?)',
+          'INSERT OR IGNORE INTO eidos_email_members(id,email,username,kind,created_at,newsletter,newsletter_after) VALUES(?,?,?,?,?,?,?)',
         )
         .bind(
           id,
@@ -96,7 +96,7 @@ export const onRequestPost = guarded(async ({ request, env }) => {
         )
         .run();
       member = await database
-        .prepare('SELECT * FROM eidos_members WHERE email=? AND disabled=0')
+        .prepare('SELECT * FROM eidos_email_members WHERE email=? AND disabled=0')
         .bind(link.email)
         .first<Member>();
       if (!member)
@@ -141,7 +141,7 @@ export const onRequestPost = guarded(async ({ request, env }) => {
     );
   await challenge(request, env, input.challenge, 'member');
   const existing = await database
-    .prepare('SELECT id FROM eidos_members WHERE email=? AND disabled=0')
+    .prepare('SELECT id FROM eidos_email_members WHERE email=? AND disabled=0')
     .bind(email)
     .first();
   const generic = {
@@ -153,7 +153,7 @@ export const onRequestPost = guarded(async ({ request, env }) => {
     name &&
     !existing &&
     (await database
-      .prepare('SELECT id FROM eidos_members WHERE username=?')
+      .prepare('SELECT id FROM eidos_email_members WHERE username=?')
       .bind(name)
       .first())
   )

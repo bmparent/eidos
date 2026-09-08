@@ -26,7 +26,7 @@ export async function recordMentions(
   for (const name of names) {
     const target = await db(env)
       .prepare(
-        'SELECT id FROM eidos_members WHERE username=? AND disabled=0 AND id<>?',
+        'SELECT id FROM eidos_email_members WHERE username=? AND disabled=0 AND id<>?',
       )
       .bind(name, senderId)
       .first<{ id: string }>();
