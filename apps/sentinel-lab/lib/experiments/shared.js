@@ -229,7 +229,7 @@ export function preflightIssues(spec, runnerState, operatorAuthConfigured = fals
     issues.push({
       severity: "blocker",
       code: "OPERATOR_AUTH_NOT_CONFIGURED",
-      message: "Dispatch stays closed until EIDOS_OPERATOR_TOKEN is configured on Vercel; this prevents a public page from starting expensive engine jobs.",
+      message: "Dispatch stays closed until operator authorization or an approved test-access grant is configured on Vercel; this prevents a public page from starting expensive engine jobs.",
     });
   }
   return issues;

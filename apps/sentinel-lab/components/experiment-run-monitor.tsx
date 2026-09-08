@@ -67,7 +67,7 @@ export function ExperimentRunMonitor({ dispatch, operatorToken, onError, onTermi
         consecutiveFailures += 1;
         const unauthorized = error instanceof LabRequestError && [401, 403].includes(error.status);
         if (consecutiveFailures < 3 && !unauthorized) timeout = setTimeout(poll, 4_000 * consecutiveFailures);
-        else setPollError(unauthorized ? "Operator token rejected. Re-enter it above, then check status again." : error instanceof Error ? error.message : "Experiment status lookup failed.");
+        else setPollError(unauthorized ? "Access key rejected. Re-enter it above, then check status again." : error instanceof Error ? error.message : "Experiment status lookup failed.");
       }
     }
 
