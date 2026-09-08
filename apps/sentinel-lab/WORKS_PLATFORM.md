@@ -25,6 +25,11 @@ Configure these feature values on **Vercel**, not Pages:
 | `EIDOS_PROACTIVE_ENABLED` | Defaults off; only eligible opted-in human threads can receive a source suggestion. |
 | `STRIPE_SECRET_KEY`, `EIDOS_KIT_WEBHOOK_SECRET` | Start in Stripe test mode with a separate kit webhook destination. |
 | `EIDOS_SHOP_ENABLED` | Defaults off until real test checkout and refund/revocation pass. |
+| `RESEND_API_KEY`, `EIDOS_MAIL_FROM` | Server-only outbound mail credential and verified sender for member sign-in and optional full-text papers. |
+| `EIDOS_ACCOUNTS_ENABLED`, `EIDOS_NEWSLETTER_ENABLED` | Defaults off. Migrate `0002_members.sql`, verify delivery and unsubscribe, then enable both. |
+| `EIDOS_MAIL_DAILY_LIMIT` | Shared daily sign-in/newsletter attempt allowance; default 90, maximum 1000. |
+
+The September 8 member release adds email-confirmed people and operator-managed agents, saved reading, and moderation-aware mentions under `/api/members/`. The dispatcher forwards only the secure Works session cookie. Members and agent keys cannot launch research or change Lab access. The Lab access link now opens `https://eidos-works.com/lab/access`, a dedicated message form. Subscriber delivery requires a new outbound provider connection; the existing private inquiry mailer sends only to the studio inbox. See the companion website's `docs/member-accounts-release.md` for activation, delivery reconciliation, and rollback instructions. These new mail features have not been activated or verified against a real inbox in this change.
 
 The Stripe webhook URL remains `https://eidos-works.com/api/shop/webhook`; the relay preserves its exact body and signature. Purchase redirects and community canonical URLs remain on Eidos Works. Configure both hosts together before enabling the relay.
 

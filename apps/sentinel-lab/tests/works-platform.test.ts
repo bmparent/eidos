@@ -4,7 +4,7 @@ import { createClient } from '@libsql/client';
 import { readFileSync } from 'node:fs';
 import { adaptDatabase } from '../lib/works/database';
 import { dispatchWorks } from '../lib/works/dispatch';
-import { reserve, type PlatformEnv } from '../lib/works/vendor/functions/_shared/platform/core';
+import { hash, reserve, type PlatformEnv } from '../lib/works/vendor/functions/_shared/platform/core';
 
 const secret = 'local-test-relay-key-at-least-32-characters';
 const source = { EIDOS_PLATFORM_TOKEN: secret, PUBLIC_SITE_URL: 'https://eidos-works.com' };
@@ -19,6 +19,7 @@ function request(path: string, input?: unknown, extra: Record<string,string> = {
 async function setup() {
   const client = createClient({ url: ':memory:' });
   await client.executeMultiple(readFileSync('lib/works/vendor/migrations/0001_eidos_platform.sql', 'utf8'));
+  await client.executeMultiple(readFileSync('lib/works/vendor/migrations/0002_members.sql', 'utf8'));
   return { client, db: adaptDatabase(client) };
 }
 await test('Relay authentication, exact origins, routes and method gates', async () => {
@@ -28,6 +29,25 @@ await test('Relay authentication, exact origins, routes and method gates', async
   assert.equal((await dispatchWorks(request('/api/experiments'), source)).status, 404);
   assert.equal((await dispatchWorks(request('/api/assistant'), source)).status, 405);
   assert.equal((await dispatchWorks(request('/api/assistant', {question:'test'}, {origin:'https://attacker.example'}), source, {})).status, 403);
+});
+await test('Member sign-in survives the authenticated relay and libSQL consumes links exactly once', async () => {
+  const {client,db}=await setup();
+  const env:PlatformEnv={EIDOS_RUNTIME:'sentinel',EIDOS_DB:db,EIDOS_ACCOUNTS_ENABLED:'true',RESEND_API_KEY:'test-only',EIDOS_MAIL_FROM:'Eidos <papers@example.test>',TURNSTILE_SITE_KEY:'test',TURNSTILE_SECRET_KEY:'test',EIDOS_RATE_SECRET:'test-only-rate-secret-longer-than-32-characters',PUBLIC_SITE_URL:source.PUBLIC_SITE_URL};
+  const token='a'.repeat(64);
+  try {
+    await db.prepare('INSERT INTO eidos_signin_links(token_hash,email,username,kind,newsletter,expires) VALUES(?,?,?,?,?,?)').bind(await hash(token),'relay@example.test','relay_member','person',1,Math.floor(Date.now()/1000)+900).run();
+    const verified=await dispatchWorks(request('/api/members/auth',{action:'verify',token}),source,env);
+    assert.equal(verified.status,200);
+    const cookie=verified.headers.get('set-cookie')!;assert.match(cookie,/^__Host-eidos_session=/);assert.match(cookie,/; Secure$/);
+    assert.equal((await dispatchWorks(request('/api/members/auth',{action:'verify',token}),source,env)).status,400);
+    const own=await (await dispatchWorks(request('/api/members/account',undefined,{cookie}),source,env)).json();assert.equal(own.member.username,'relay_member');
+    assert.equal((await dispatchWorks(request('/api/members/account',{action:'bookmark',slug:'useful-paper',saved:true},{cookie}),source,env)).status,200);
+    const saved=await (await dispatchWorks(request('/api/members/account',undefined,{cookie}),source,env)).json();assert.equal(saved.saved[0].slug,'useful-paper');
+    const anonymous=await (await dispatchWorks(request('/api/members/account'),source,env)).json();assert.equal(anonymous.member,null);
+    const logout=await dispatchWorks(request('/api/members/auth',{action:'logout'},{cookie}),source,env);assert.match(logout.headers.get('set-cookie')!,/Max-Age=0; Secure$/);
+    assert.equal((await (await dispatchWorks(request('/api/members/account',undefined,{cookie}),source,env)).json()).member,null);
+    assert.equal((await dispatchWorks(request('/api/members/unsubscribe'),source,env)).status,405);
+  }finally{client.close();}
 });
 await test('Published answers work with no database, model key or outbound fetch', async () => {
   const original = globalThis.fetch;

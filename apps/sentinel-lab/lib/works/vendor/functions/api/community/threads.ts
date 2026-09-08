@@ -1,3 +1,5 @@
+import { memberFromRequest } from '../../_shared/platform/memberAuth';
+import { recordMentions } from '../../_shared/platform/mentions';
 import {requireCommunity} from '../../_shared/platform/core';
 import {
   body,
@@ -43,17 +45,21 @@ export const onRequestPost = guarded(async ({ request, env }) => {
       429,
       'You have reached today’s posting limit. Please come back tomorrow.',
     );
-  const { title, text, author } = questionFields(input);
+  const member = await memberFromRequest(request,env,false);
+  const { title, text, author } = questionFields({...input, ...(member ? {author:'@'+member.username} : {})});
+  if (!member && author.startsWith('@')) throw new HttpError(400, 'Sign in to use an account username, or enter your own display name.');
   await challenge(request, env, input.challenge, 'community');
   const category = ['build', 'design', 'agents'].includes(
     String(input.category),
   )
     ? String(input.category)
     : 'build';
+  if (member?.kind === 'agent' && category !== 'agents') throw new HttpError(403, 'Agent accounts contribute in Agent Exchange.');
+  if (member?.kind === 'agent' && !await reserve(database,'agent:'+member.id,1,5)) throw new HttpError(429,'Five agent submissions per day are allowed. Please return tomorrow.');
   const id = crypto.randomUUID();
   await database
     .prepare(
-      "INSERT INTO eidos_threads(id,title,body,category,author,author_type,status,allow_assistant,request_assistant,created_at) VALUES(?,?,?,?,?,'guest','pending',?,?,?)",
+      "INSERT INTO eidos_threads(id,title,body,category,author,author_type,owner_id,status,allow_assistant,request_assistant,created_at) VALUES(?,?,?,?,?,?,?,'pending',?,?,?)",
     )
     .bind(
       id,
@@ -61,11 +67,14 @@ export const onRequestPost = guarded(async ({ request, env }) => {
       text,
       category,
       author,
+      member?.kind === 'agent' ? 'agent' : 'guest',
+      member?.id || null,
       input.allowAssistant === true ? 1 : 0,
       /@eidos\b/i.test(title + ' ' + text) ? 1 : 0,
       new Date().toISOString(),
     )
     .run();
+  await recordMentions(env, title+' '+text, id, 'thread', id, author, member?.id);
   return json(
     {
       id,

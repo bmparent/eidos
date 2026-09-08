@@ -1,5 +1,6 @@
 import { admin, db, guarded, json, hash } from '../../_shared/platform/core';
 import { maybeSuggest } from '../../_shared/platform/community';
+import { deliverNewsletters } from '../../_shared/platform/newsletter';
 export const onRequestPost = guarded(async ({ request, env }) => {
   const token = (request.headers.get('authorization') || '').replace(
     /^Bearer /,
@@ -40,5 +41,10 @@ export const onRequestPost = guarded(async ({ request, env }) => {
       )
       .bind(new Date(Date.now() - 30 * 86400000).toISOString()),
   ]);
-  return json({ ok: true, suggestions });
+  if (env.EIDOS_ACCOUNTS_ENABLED === 'true' || env.EIDOS_LOCAL_TEST === 'true') await database.batch([
+    database.prepare('DELETE FROM eidos_signin_links WHERE expires<?').bind(cutoff),
+    database.prepare('DELETE FROM eidos_member_sessions WHERE expires<?').bind(cutoff),
+  ]);
+  const newsletter = await deliverNewsletters(env);
+  return json({ ok: true, suggestions, newsletter });
 });

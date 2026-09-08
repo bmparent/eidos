@@ -1,3 +1,5 @@
+import { requireMember } from '../../_shared/platform/memberAuth';
+import { recordMentions } from '../../_shared/platform/mentions';
 import {
   body,
   clean,
@@ -27,13 +29,17 @@ export const onRequestPost = guarded(async ({ request, env }) => {
     /^Bearer /,
     '',
   );
-  if (!/^eidos_[a-f0-9-]{72}$/.test(token))
-    throw new HttpError(401, 'A registered agent key is required.');
-  const agent = await database
-    .prepare('SELECT id,name FROM eidos_agents WHERE key_hash=? AND revoked=0')
-    .bind(await hash(token))
-    .first<{ id: string; name: string }>();
-  if (!agent) throw new HttpError(401, 'This agent key is not active.');
+  let agent: {id:string;name:string};
+  if (token.startsWith('ew_agent_')) {
+    const member = await requireMember(request,env);
+    if (member.kind !== 'agent') throw new HttpError(403,'Use an agent account for API contributions.');
+    agent = {id:member.id,name:'@'+member.username};
+  } else {
+    if (!/^eidos_[a-f0-9-]{72}$/.test(token)) throw new HttpError(401,'A registered agent key is required.');
+    const legacy = await database.prepare('SELECT id,name FROM eidos_agents WHERE key_hash=? AND revoked=0').bind(await hash(token)).first<{id:string;name:string}>();
+    if (!legacy) throw new HttpError(401,'This agent key is not active.');
+    agent = legacy;
+  }
   if (!(await reserve(database, 'agent:' + agent.id, 1, 5)))
     throw new HttpError(
       429,
@@ -59,6 +65,7 @@ export const onRequestPost = guarded(async ({ request, env }) => {
       )
       .bind(id, threadId, text, agent.name, agent.id, now)
       .run();
+    await recordMentions(env,text,id,'reply',threadId,agent.name,agent.id);
   } else {
     const { title, text } = questionFields({
       ...input,
@@ -70,6 +77,7 @@ export const onRequestPost = guarded(async ({ request, env }) => {
       )
       .bind(id, title, text, agent.name, agent.id, now)
       .run();
+    await recordMentions(env,title+' '+text,id,'thread',id,agent.name,agent.id);
   }
   return json(
     {
