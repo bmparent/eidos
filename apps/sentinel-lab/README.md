@@ -38,8 +38,23 @@ The browser-facing smoke simulator still does not run the full Torch reservoir/H
 - Sandbox supports the standard 256/2,048 CPU profile and an experimental four-band + TraceSeal profile. The 2,000/10,000 profile requires an explicitly enabled dedicated external runner. See [profile contracts](docs/real-data-experiments.md#engine-profiles-and-observations).
 - The default Sandbox budget is one concurrent job, 4 vCPU/8 GB, 25,000 rows, and 45 minutes.
 - Bootstrap and engine failures make their diagnostic logs available only through the operator-authenticated artifact API.
-- Dispatch and status APIs require a separate operator bearer token so the public lab cannot launch compute jobs.
+- Dispatch and status APIs require either the separate operator bearer token or an unexpired, approved test grant so the public lab cannot launch compute jobs.
 - Every result remains `REAL_DATA_ENGINEERING`, advances zero gates, and preserves `BLOCKED_RESOURCE_BEFORE_HELDOUT`.
+
+## Reviewed test access
+
+The public Eidos Works Lab page accepts test-access requests. Approved pilots can receive an individually revocable, expiring key without sharing `EIDOS_OPERATOR_TOKEN`.
+
+1. Generate a high-entropy raw key and its SHA-256 digest on a trusted machine.
+2. Send the raw key to the approved tester once; do not store it in the repository or Vercel.
+3. Add only `{ "id", "sha256", "expiresAt" }` to the JSON array in `EIDOS_TEST_ACCESS_GRANTS` and redeploy.
+4. Remove the grant to revoke access. Expired or malformed grants fail closed.
+
+```bash
+node -e 'const {randomBytes,createHash}=require("node:crypto");const key="eidos_test_"+randomBytes(24).toString("base64url");console.log(JSON.stringify({key,sha256:createHash("sha256").update(key).digest("hex")}))'
+```
+
+Test keys pass through the same bearer-token path, concurrency limits, immutable lock, isolated compute, artifact authentication, and held-out restrictions as the operator credential. They do not grant access to environment secrets or advance proof gates.
 
 ## Local checks
 
