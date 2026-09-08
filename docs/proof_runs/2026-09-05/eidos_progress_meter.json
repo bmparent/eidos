@@ -1,0 +1,52 @@
+{
+  "overall_proof_readiness_score": null,
+  "score_reason": "No aggregate readiness recomputed; local checks do not accept the eight global proof gates.",
+  "gates": [
+    {
+      "gate": "Numerical baseline evidence",
+      "status": "evidence_exists",
+      "evidence": "prior_numerical_evidence/decision_report.md"
+    },
+    {
+      "gate": "Prefix/label isolation checks",
+      "status": "passed",
+      "evidence": "pytest_results.xml"
+    },
+    {
+      "gate": "Labeled source audited",
+      "status": "passed",
+      "evidence": "local_dataset_gate/dataset_audit.json"
+    },
+    {
+      "gate": "Chronological utility data",
+      "status": "blocked",
+      "evidence": "local_dataset_gate/run_manifest.json"
+    },
+    {
+      "gate": "Runtime requirement: +10%",
+      "status": "specified",
+      "evidence": "utility_requirements.json"
+    },
+    {
+      "gate": "Actual detection utility",
+      "status": "untested",
+      "evidence": "decision.json"
+    }
+  ],
+  "north_star": "Learn live streams; compress predictable behavior; preserve anomalies; monitor state; explain incidents.",
+  "metrics": {
+    "source_rows": 170366,
+    "attack_labeled_rows": 2180,
+    "invalid_durations": 11,
+    "runtime_budget_extra_percent": 10,
+    "observed_runtime_overhead": null,
+    "raw_events": null,
+    "merged_events": null,
+    "deduped_events": null,
+    "calibrated_events": null,
+    "precision": null,
+    "recall": null,
+    "false_positive_events": null
+  },
+  "unknown_reason": "No detector ran in this follow-up; no model outcome is zero-filled."
+}

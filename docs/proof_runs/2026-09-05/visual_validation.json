@@ -1,0 +1,14 @@
+{
+  "browser": "headless Microsoft Edge via Playwright",
+  "viewport": [
+    1180,
+    1050
+  ],
+  "title": "Eidos utility evidence",
+  "table_rows_including_header": 7,
+  "horizontal_overflow": false,
+  "screenshot": "eidos_progress_dashboard.png",
+  "svg_xml_valid": true,
+  "visual_review": "Inspected rendered dashboard: labels legible, statuses explicit, unknown metrics not zero-filled, no clipped content.",
+  "artifact_links": "All local dashboard links resolved except Drive receipt, which is created during final copy."
+}

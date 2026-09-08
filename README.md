@@ -11,6 +11,7 @@ Start here when you need to understand what `/eidos` contains and what the curre
 - `eidos/docs/proof/merge_state_report_2026_06_07.md` - merge-state audit for proof branches and GitHub integration status.
 - `eidos/AUDIT/` - static audit maps for the core loop, reservoir, predictor, normalization, surprise gate, and artifact receipts.
 - `docs/controlled_memory_benchmark.md` - isolated state-rounding benchmark, frozen protocol, exact controls, and reproduction commands.
+- `docs/memory_utility_readiness.md` - chronological data preparation, label-isolation checks, and explicit utility blockers.
 - `eidos/artifacts/` - repo-local proof receipts, including manifests, summaries, ledgers, reports, and Drive-copy records.
 
 ## Proof Posture

@@ -1,0 +1,68 @@
+{
+  "targeted": {
+    "tests": "11",
+    "failures": "0",
+    "errors": "0",
+    "skipped": "0",
+    "time": "23.520"
+  },
+  "package_suite": {
+    "tests": "82",
+    "failures": "0",
+    "errors": "0",
+    "skipped": "4",
+    "time": "67.403"
+  },
+  "root_focused": {
+    "tests": "24",
+    "failures": "5",
+    "errors": "0",
+    "skipped": "0",
+    "time": "37.024"
+  },
+  "root_collection_after_fix": {
+    "tests": "6",
+    "failures": "0",
+    "errors": "6",
+    "skipped": "0",
+    "time": "25.693"
+  },
+  "baseline_root_focused": {
+    "tests": "14",
+    "failures": "5",
+    "errors": "0",
+    "skipped": "0",
+    "time": "1.717"
+  },
+  "baseline_collection": {
+    "tests": "6",
+    "failures": "0",
+    "errors": "6",
+    "skipped": "0",
+    "time": "35.119"
+  },
+  "baseline_commit": "6bb0b980349f94c55a6ca1ca9665737570c0fd01",
+  "overall_repository_gate": "partial: six collection errors and five RNG proof failures reproduced on clean baseline",
+  "collection_error_reasons": [
+    "UTF-16 eidos/test_report.txt collected as doctest",
+    "sentinel_runner service package unavailable in this environment (five modules)"
+  ],
+  "rng_failure_reason": "eidos/sentinel/event_merge.py imports operator_explanation as a top-level module",
+  "targeted_new_tests": "10 frozen numerical/adapter/protocol checks plus one test-package collision regression",
+  "skips": [
+    "ffprobe unavailable",
+    "websockets installed: missing-dependency guard skipped",
+    "pubsub installed: missing-dependency guard skipped",
+    "GCS installed: missing-dependency guard skipped"
+  ],
+  "numeric_evaluator_changed_after_freeze": false,
+  "post_freeze_test_only_fix": "tests/conftest.py exposes root and legacy proof package paths during collection; no numerical execution changes",
+  "artifact_integrity": {
+    "status": "passed",
+    "raw_hashes_verified": 24,
+    "trajectory_metrics_recomputed": 192,
+    "protocol_and_source_freeze_verified": true,
+    "figure_review": "Visually inspected PNG; policy, seed, leak, precision, units, zero handling and overhead labeled.",
+    "scope": "Integrity and metric agreement; not independent reproduction of all dynamics."
+  }
+}

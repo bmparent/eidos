@@ -1,0 +1,21 @@
+{
+  "milestone": "utility data readiness",
+  "status": "partial",
+  "logic": "Explicit availability, prefix-only fitting, separate labels, immutable audit.",
+  "meaning": "Honesty before optimization",
+  "evidence": [
+    "prior_numerical_evidence/decision_report.md",
+    "pytest_results.xml",
+    "local_dataset_gate/dataset_audit.json",
+    "local_dataset_gate/run_manifest.json",
+    "utility_requirements.json",
+    "decision.json"
+  ],
+  "unproven": [
+    "Missing timestamps",
+    "11 negative durations require documented treatment",
+    "Chronological cutoff/gap not validated or frozen",
+    "Minimum useful task effect not established",
+    "Actual Sentinel label-blind integration/evaluator not implemented"
+  ]
+}
