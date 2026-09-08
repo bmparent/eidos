@@ -2,6 +2,7 @@ import {
   db,
   escapeHtml as e,
   hash,
+  HttpError,
   readText,
   record,
   siteOrigin,
@@ -80,6 +81,16 @@ export function publicationText(p: Publication, site: string) {
     `${site}/insights/${p.slug}`,
   ].join('\n\n');
 }
+/** Operators may select the same static feed on their hosting origin when the
+ * public site's bot protection challenges server requests. Customer links keep
+ * using PUBLIC_SITE_URL. Never derive this URL from a request or follow redirects. */
+function publicationFeedUrl(env: PlatformEnv) {
+  if (!env.EIDOS_PUBLICATION_FEED_URL) return siteOrigin(env) + '/insights-feed.json';
+  const url = new URL(env.EIDOS_PUBLICATION_FEED_URL);
+  if (url.protocol !== 'https:' || url.username || url.password || url.search || url.hash || url.pathname !== '/insights-feed.json')
+    throw Error('Invalid configured publication feed URL');
+  return url.href;
+}
 /** The existing authenticated hourly maintenance job delivers yesterday's complete
  * articles, with a per-member daily identity, durable claims, and provider deduplication. */
 export async function deliverNewsletters(env: PlatformEnv) {
@@ -95,11 +106,11 @@ export async function deliverNewsletters(env: PlatformEnv) {
     now = Math.floor(Date.now() / 1000);
   const day = new Date().toISOString().slice(0, 10),
     cutoff = day + 'T00:00:00.000Z';
-  const response = await fetch(site + '/insights-feed.json', {
+  const response = await fetch(publicationFeedUrl(env), {
     redirect: 'error',
     signal: AbortSignal.timeout(8000),
   });
-  if (!response.ok) throw Error('Publication feed unavailable');
+  if (!response.ok) throw new HttpError(503, `Publication feed unavailable (HTTP ${response.status}).`);
   const feed = JSON.parse(await readText(response, 4_000_000)) as {
     items: Publication[];
   };
