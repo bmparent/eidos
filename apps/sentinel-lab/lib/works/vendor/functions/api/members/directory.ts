@@ -7,7 +7,7 @@ export const onRequestGet = guarded(async ({ request, env }) => {
     throw new HttpError(400, 'Enter at least two username characters.');
   const { results } = await db(env)
     .prepare(
-      'SELECT username,kind,created_at FROM eidos_members WHERE disabled=0 AND substr(username,1,?)=? ORDER BY username LIMIT 8',
+      'SELECT username,kind,created_at FROM eidos_email_members WHERE disabled=0 AND substr(username,1,?)=? ORDER BY username LIMIT 8',
     )
     .bind(q.length, q)
     .all();

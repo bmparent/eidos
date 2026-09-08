@@ -119,7 +119,7 @@ export async function deliverNewsletters(env: PlatformEnv) {
     .run();
   const { results: members } = await database
     .prepare(
-      `SELECT m.* FROM eidos_members m WHERE newsletter=1 AND disabled=0 AND newsletter_after<?
+      `SELECT m.* FROM eidos_email_members m WHERE newsletter=1 AND disabled=0 AND newsletter_after<?
     AND NOT EXISTS(SELECT 1 FROM eidos_mail_deliveries d WHERE d.member_id=m.id AND (d.id='digest:'||m.id||':'||? OR d.status IN ('pending','uncertain')))
     ORDER BY newsletter_after LIMIT 10`,
     )
@@ -157,7 +157,7 @@ export async function deliverNewsletters(env: PlatformEnv) {
   }
   const { results: pending } = await database
     .prepare(
-      "SELECT d.* FROM eidos_mail_deliveries d JOIN eidos_members m ON m.id=d.member_id WHERE d.status='pending' AND d.claimed_until<? AND m.newsletter=1 AND m.disabled=0 ORDER BY d.created_at LIMIT 10",
+      "SELECT d.* FROM eidos_mail_deliveries d JOIN eidos_email_members m ON m.id=d.member_id WHERE d.status='pending' AND d.claimed_until<? AND m.newsletter=1 AND m.disabled=0 ORDER BY d.created_at LIMIT 10",
     )
     .bind(now)
     .all<Delivery>();
@@ -172,7 +172,7 @@ export async function deliverNewsletters(env: PlatformEnv) {
     if (!claim) continue;
     const subscribed = await database
       .prepare(
-        'SELECT id FROM eidos_members WHERE id=? AND newsletter=1 AND disabled=0',
+        'SELECT id FROM eidos_email_members WHERE id=? AND newsletter=1 AND disabled=0',
       )
       .bind(d.member_id)
       .first();
@@ -191,7 +191,7 @@ export async function deliverNewsletters(env: PlatformEnv) {
           .bind(provider, d.id),
         database
           .prepare(
-            'UPDATE eidos_members SET newsletter_after=MAX(newsletter_after,?) WHERE id=?',
+            'UPDATE eidos_email_members SET newsletter_after=MAX(newsletter_after,?) WHERE id=?',
           )
           .bind(d.through_date, d.member_id),
       ]);

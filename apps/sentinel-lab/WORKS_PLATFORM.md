@@ -39,6 +39,8 @@ Published-source answers and public source suggestions use zero model tokens. AI
 
 ## Validation and release
 
+The member release uses `eidos_email_members` to coexist with the earlier Clerk `eidos_members(id, display_name, created_at)` table. Migration `0002_members.sql` preserves that legacy table, its records and agent ownership links, and the independent `sentinel_lab_admissions` table. Tests now start with a legacy record and verify successful email sign-in after repeated additive migration without changing that record.
+
 `npm run lint`, `npm test`, and `npm run build` cover the Lab and new platform. Tests include actual libSQL atomic reservations/transaction rollback, relay authentication/origins, disabled-feature behavior, and a mocked bounded model response with idempotency. These do not prove live GA4, Stripe, database provisioning, or OpenAI billing access.
 
 `GET /api/works/v1/health` exposes only the service identifier/version. After preview deployment, verify this URL and the unchanged Lab UI. Then configure environment values and run the actual checkout, moderation, analytics receipt and optional model smoke tests before production activation.

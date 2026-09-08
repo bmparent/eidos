@@ -18,8 +18,12 @@ function request(path: string, input?: unknown, extra: Record<string,string> = {
 }
 async function setup() {
   const client = createClient({ url: ':memory:' });
+  await client.executeMultiple("CREATE TABLE eidos_members(id TEXT PRIMARY KEY, display_name TEXT NOT NULL, created_at TEXT NOT NULL); INSERT INTO eidos_members VALUES('legacy-user','Existing member','2026-09-07');");
   await client.executeMultiple(readFileSync('lib/works/vendor/migrations/0001_eidos_platform.sql', 'utf8'));
   await client.executeMultiple(readFileSync('lib/works/vendor/migrations/0002_members.sql', 'utf8'));
+  await client.executeMultiple(readFileSync('lib/works/vendor/migrations/0002_members.sql', 'utf8'));
+  const legacy = await client.execute('SELECT * FROM eidos_members');
+  assert.deepEqual({ ...legacy.rows[0] }, { id: 'legacy-user', display_name: 'Existing member', created_at: '2026-09-07' });
   return { client, db: adaptDatabase(client) };
 }
 await test('Relay authentication, exact origins, routes and method gates', async () => {
