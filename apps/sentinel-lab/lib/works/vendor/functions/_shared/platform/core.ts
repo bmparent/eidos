@@ -24,9 +24,15 @@ export interface PlatformEnv {
   EIDOS_LOCAL_TEST?: string;
   GA_MEASUREMENT_ID?: string;
   PUBLIC_SITE_URL?: string;
+  EIDOS_PUBLICATION_FEED_URL?: string;
   STRIPE_SECRET_KEY?: string;
   EIDOS_KIT_WEBHOOK_SECRET?: string;
   EIDOS_SHOP_ENABLED?: string;
+  EIDOS_ACCOUNTS_ENABLED?: string;
+  EIDOS_NEWSLETTER_ENABLED?: string;
+  EIDOS_MAIL_DAILY_LIMIT?: string;
+  EIDOS_MAIL_FROM?: string;
+  RESEND_API_KEY?: string;
 }
 export type Context = {
   request: Request;
@@ -74,7 +80,7 @@ export function guarded(handler: (context: Context) => Promise<Response>) {
     }
   };
 }
-export async function readText(request: Request, max = 12000) {
+export async function readText(request: Pick<Request, 'headers' | 'body'>, max = 12000) {
   if (Number(request.headers.get('content-length')) > max)
     throw new HttpError(413, 'The request is too large.');
   const reader = request.body?.getReader();

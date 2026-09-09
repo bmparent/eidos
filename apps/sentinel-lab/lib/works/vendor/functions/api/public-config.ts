@@ -1,4 +1,5 @@
 import { guarded, json, local, communityAvailable } from '../_shared/platform/core';
+import { accountsReady } from '../_shared/platform/memberAuth';
 export const onRequestGet = guarded(async ({ request, env }) =>
   json({
     gaMeasurementId: /^G-[A-Z0-9]{5,20}$/.test(env.GA_MEASUREMENT_ID || '')
@@ -6,6 +7,7 @@ export const onRequestGet = guarded(async ({ request, env }) =>
       : '',
     turnstileSiteKey: env.TURNSTILE_SITE_KEY || '',
     communityReady: communityAvailable(request,env),
+    accountsReady: accountsReady(request,env),
     aiReady: Boolean(
       env.EIDOS_RUNTIME === 'sentinel' &&
       env.EIDOS_AI_ENABLED === 'true' &&

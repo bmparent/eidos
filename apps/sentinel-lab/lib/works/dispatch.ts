@@ -1,3 +1,7 @@
+import * as memberAuth from './vendor/functions/api/members/auth';
+import * as memberAccount from './vendor/functions/api/members/account';
+import * as memberDirectory from './vendor/functions/api/members/directory';
+import * as memberUnsubscribe from './vendor/functions/api/members/unsubscribe';
 import { timingSafeEqual } from 'node:crypto';
 import { platformDatabase } from './database';
 import { json, readText, type Context, type PlatformEnv } from './vendor/functions/_shared/platform/core';
@@ -19,6 +23,8 @@ import * as thread from './vendor/functions/community/thread/[id]';
 type Handler = (context: Context) => Promise<Response>;
 type Module = { onRequestGet?: Handler; onRequestPost?: Handler };
 const routes: Record<string, Module> = {
+  '/api/members/auth': memberAuth, '/api/members/account': memberAccount,
+  '/api/members/directory': memberDirectory, '/api/members/unsubscribe': memberUnsubscribe,
   '/api/assistant': assistant, '/api/public-config': config,
   '/api/community/threads': threads, '/api/community/replies': replies,
   '/api/community/agents': agents, '/api/community/moderate': moderate,
@@ -31,6 +37,8 @@ const names = [
   'EIDOS_ADMIN_TOKEN', 'EIDOS_RATE_SECRET', 'OPENAI_API_KEY', 'EIDOS_ASSISTANT_MODEL',
   'EIDOS_AI_ENABLED', 'EIDOS_AI_DAILY_TOKENS', 'EIDOS_PROACTIVE_ENABLED', 'EIDOS_MAINTENANCE_TOKEN',
   'TURNSTILE_SITE_KEY', 'TURNSTILE_SECRET_KEY', 'GA_MEASUREMENT_ID', 'PUBLIC_SITE_URL',
+  'EIDOS_ACCOUNTS_ENABLED', 'EIDOS_NEWSLETTER_ENABLED', 'EIDOS_MAIL_DAILY_LIMIT', 'EIDOS_MAIL_FROM', 'RESEND_API_KEY',
+  'EIDOS_PUBLICATION_FEED_URL',
   'STRIPE_SECRET_KEY', 'EIDOS_KIT_WEBHOOK_SECRET', 'EIDOS_SHOP_ENABLED',
 ] as const;
 export function platformEnvironment(source: Record<string, string | undefined> = process.env): PlatformEnv {
@@ -67,6 +75,8 @@ export async function dispatchWorks(request: Request, source: Record<string, str
       const value = request.headers.get(name);
       if (value) headers.set(name, value);
     }
+    const session = (request.headers.get('cookie') || '').split(';').map(s=>s.trim()).find(s=>/^__Host-eidos_session=[a-f0-9]{64}$/.test(s));
+    if (session) headers.set('cookie',session);
     headers.set('CF-Connecting-IP', request.headers.get('x-eidos-client-ip') || 'unknown');
     const payload = request.method === 'POST' ? await readText(request, path === '/api/shop/webhook' ? 64000 : 12000) : undefined;
     const forwarded = new Request(actualSite + path + inputUrl.search, {

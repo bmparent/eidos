@@ -25,6 +25,12 @@ Configure these feature values on **Vercel**, not Pages:
 | `EIDOS_PROACTIVE_ENABLED` | Defaults off; only eligible opted-in human threads can receive a source suggestion. |
 | `STRIPE_SECRET_KEY`, `EIDOS_KIT_WEBHOOK_SECRET` | Start in Stripe test mode with a separate kit webhook destination. |
 | `EIDOS_SHOP_ENABLED` | Defaults off until real test checkout and refund/revocation pass. |
+| `RESEND_API_KEY`, `EIDOS_MAIL_FROM` | Server-only outbound mail credential and verified sender for member sign-in and optional full-text papers. |
+| `EIDOS_ACCOUNTS_ENABLED`, `EIDOS_NEWSLETTER_ENABLED` | Defaults off. Migrate `0002_members.sql`, verify delivery and unsubscribe, then enable both. |
+| `EIDOS_MAIL_DAILY_LIMIT` | Shared daily sign-in/newsletter attempt allowance; default 90, maximum 1000. |
+| `EIDOS_PUBLICATION_FEED_URL` | Optional HTTPS static-feed address. Production uses `https://eidosworks.pages.dev/insights-feed.json` to read the identical published artifact when the custom domain challenges server traffic. Email links retain `PUBLIC_SITE_URL`. |
+
+The September 8 member release adds email-confirmed people and operator-managed agents, saved reading, and moderation-aware mentions under `/api/members/`. The dispatcher forwards only the secure Works session cookie. Members and agent keys cannot launch research or change Lab access. The Lab access link now opens `https://eidos-works.com/lab/access`, a dedicated message form. Subscriber delivery requires a new outbound provider connection; the existing private inquiry mailer sends only to the studio inbox. See the companion website's `docs/member-accounts-release.md` for activation, delivery reconciliation, and rollback instructions. These new mail features have not been activated or verified against a real inbox in this change.
 
 The Stripe webhook URL remains `https://eidos-works.com/api/shop/webhook`; the relay preserves its exact body and signature. Purchase redirects and community canonical URLs remain on Eidos Works. Configure both hosts together before enabling the relay.
 
@@ -33,6 +39,8 @@ The Stripe webhook URL remains `https://eidos-works.com/api/shop/webhook`; the r
 Published-source answers and public source suggestions use zero model tokens. AI follow-up requires an explicit visitor click, limits the question and two history entries, selects at most three brief public facts, and requests at most 320 output tokens. There are no tools, browsing, recursive bot exchanges, or automatic retries. Five enhanced requests per visitor/day and an atomic global token reservation bound usage. Duplicate request IDs return the stored answer. A missing database/key/budget returns clearly labeled source information and never makes an unmetered provider request.
 
 ## Validation and release
+
+The member release uses `eidos_email_members` to coexist with the earlier Clerk `eidos_members(id, display_name, created_at)` table. Migration `0002_members.sql` preserves that legacy table, its records and agent ownership links, and the independent `sentinel_lab_admissions` table. Tests now start with a legacy record and verify successful email sign-in after repeated additive migration without changing that record.
 
 `npm run lint`, `npm test`, and `npm run build` cover the Lab and new platform. Tests include actual libSQL atomic reservations/transaction rollback, relay authentication/origins, disabled-feature behavior, and a mocked bounded model response with idempotency. These do not prove live GA4, Stripe, database provisioning, or OpenAI billing access.
 
