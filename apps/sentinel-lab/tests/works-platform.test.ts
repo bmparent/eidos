@@ -5,9 +5,33 @@ import { readFileSync } from 'node:fs';
 import { adaptDatabase } from '../lib/works/database';
 import { dispatchWorks } from '../lib/works/dispatch';
 import { hash, reserve, type PlatformEnv } from '../lib/works/vendor/functions/_shared/platform/core';
+import { createProject } from '../lib/works/vendor/src/playground/model';
 
 const secret = 'local-test-relay-key-at-least-32-characters';
 const source = { EIDOS_PLATFORM_TOKEN: secret, PUBLIC_SITE_URL: 'https://eidos-works.com' };
+test('Playground initializes only its tables and libSQL concurrent saves have one winner', async () => {
+  const {client,db}=await setup();
+  const env:PlatformEnv={EIDOS_RUNTIME:'sentinel',EIDOS_DB:db,EIDOS_ACCOUNTS_ENABLED:'true',RESEND_API_KEY:'test-only',EIDOS_MAIL_FROM:'Eidos <papers@example.test>',TURNSTILE_SITE_KEY:'test',TURNSTILE_SECRET_KEY:'test',PUBLIC_SITE_URL:source.PUBLIC_SITE_URL};
+  const token='b'.repeat(64);
+  env.EIDOS_RATE_SECRET='test-only-rate-secret-longer-than-32-characters';
+  try {
+    await db.prepare('INSERT INTO eidos_email_members(id,email,username,kind,created_at,newsletter_after) VALUES(?,?,?,?,?,?)').bind('pg-owner','pg@example.test','pg_owner','person','2026-09-09','2026-09-09').run();
+    await db.prepare('INSERT INTO eidos_member_sessions(token_hash,member_id,expires) VALUES(?,?,?)').bind(await hash(token),'pg-owner',Math.floor(Date.now()/1000)+3600).run();
+    const headers={cookie:'__Host-eidos_session='+token}, document=createProject();
+    document.sections[1].image='data:image/png;base64,iVBORw0KGgo=';
+    const first=await dispatchWorks(request('/api/playground/projects',{document},headers),source,env);
+    assert.equal(first.status,200,await first.clone().text());const saved=await first.json();
+    const results=await Promise.all(['one','two'].map(name=>dispatchWorks(request('/api/playground/projects',{id:saved.id,expectedRevision:saved.revision,document:{...document,name}},headers),source,env)));
+    assert.deepEqual(results.map(r=>r.status).sort(),[200,409]);
+    const reopened=await dispatchWorks(request('/api/playground/projects?id='+saved.id+'&revision='+saved.revision,undefined,headers),source,env);
+    assert.deepEqual((await reopened.json()).document,document);
+    const current=await (await dispatchWorks(request('/api/playground/projects?id='+saved.id,undefined,headers),source,env)).json();
+    const restored=await dispatchWorks(request('/api/playground/projects',{id:saved.id,expectedRevision:current.head,document},headers),source,env);
+    assert.equal(restored.status,200);
+    assert.equal((await client.execute('SELECT COUNT(*) n FROM eidos_pg_revisions')).rows[0].n,3);
+    assert.equal((await client.execute('SELECT display_name FROM eidos_members')).rows[0].display_name,'Existing member');
+  }finally{client.close();}
+});
 function request(path: string, input?: unknown, extra: Record<string,string> = {}) {
   return new Request('https://eidos-sentinel-lab.vercel.app/api/works/v1' + path, {
     method: input === undefined ? 'GET' : 'POST',
