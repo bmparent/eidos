@@ -15,6 +15,16 @@ dependencies = [
 
 [project.scripts]
 eidos-sentinel-job = "sentinel_runner.cli:main"
+eidos-guided-job = "sentinel_runner.guided.cli:main"
+
+[project.optional-dependencies]
+guided = [
+  "openpyxl>=3.1,<4",
+  "pypdf>=5,<7",
+  "scikit-learn>=1.6,<2",
+  "sentence-transformers>=4.1,<6",
+  "psutil>=5.9,<8",
+]
 
 [build-system]
 requires = ["hatchling>=1.25"]

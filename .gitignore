@@ -4,3 +4,11 @@ artifacts/rng_null_proof*/
 __pycache__/
 *.py[cod]
 .pytest_cache/
+.venv-guided/
+artifacts/guided-jobs/
+artifacts/guided-local.db*
+artifacts/sentinel-guided-private/
+artifacts-guided-*.log
+
+.vercel
+.env*

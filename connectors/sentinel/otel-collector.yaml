@@ -1,0 +1,46 @@
+# OpenTelemetry Contrib collector. Set both values through the collector environment.
+# Keep the scoped key out of this file. JSON encoding is required by this adapter.
+extensions:
+  file_storage/sentinel:
+    directory: ./sentinel-collector-state
+receivers:
+  otlp:
+    protocols:
+      grpc:
+        endpoint: 127.0.0.1:4317
+      http:
+        endpoint: 127.0.0.1:4318
+processors:
+  memory_limiter:
+    check_interval: 1s
+    limit_mib: 128
+    spike_limit_mib: 32
+  batch:
+    send_batch_size: 24
+    send_batch_max_size: 100
+    timeout: 30s
+exporters:
+  otlphttp/sentinel:
+    metrics_endpoint: ${env:EIDOS_INGEST_URL}/v1/metrics
+    encoding: json
+    compression: none
+    headers:
+      Authorization: Bearer ${env:EIDOS_INGEST_KEY}
+    timeout: 30s
+    retry_on_failure:
+      enabled: true
+      initial_interval: 5s
+      max_interval: 60s
+      max_elapsed_time: 0s
+    sending_queue:
+      enabled: true
+      num_consumers: 1
+      queue_size: 100
+      storage: file_storage/sentinel
+service:
+  extensions: [file_storage/sentinel]
+  pipelines:
+    metrics:
+      receivers: [otlp]
+      processors: [memory_limiter, batch]
+      exporters: [otlphttp/sentinel]
