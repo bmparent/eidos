@@ -1,0 +1,19 @@
+{
+  "numpy": "1.26.4",
+  "pandas": "2.2.3",
+  "torch": "2.6.0+cpu",
+  "scipy": "1.15.2",
+  "scikit-learn": "1.6.1",
+  "psutil": "5.9.4",
+  "pypdf": "6.18.0",
+  "openpyxl": "3.1.2",
+  "pyarrow": "17.0.0",
+  "fastapi": "0.115.12",
+  "kagglehub": "0.4.3",
+  "uvicorn": "0.34.0",
+  "matplotlib": "3.6.3",
+  "sentence-transformers": "4.1.0",
+  "transformers": "4.51.3",
+  "huggingface-hub": "0.30.2",
+  "tokenizers": "0.21.1"
+}

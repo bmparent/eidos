@@ -1,0 +1,109 @@
+{
+  "base": "http://127.0.0.1:3210",
+  "browser": "Playwright Chromium",
+  "reason": "Browser plugin not available",
+  "startedAt": "2026-09-08T23:51:34.013Z",
+  "checks": [
+    {
+      "name": "approved pilot login",
+      "status": "passed"
+    },
+    {
+      "name": "real browser CSV upload and parser completion",
+      "status": "passed"
+    },
+    {
+      "name": "confirmed chronology, entity, units and interpretation",
+      "status": "passed"
+    },
+    {
+      "name": "actual Torch analysis through persisted result",
+      "status": "passed"
+    },
+    {
+      "name": "original record drill-down",
+      "status": "passed"
+    },
+    {
+      "name": "grounded result question",
+      "status": "passed"
+    },
+    {
+      "name": "review saved separately from frozen output",
+      "status": "passed"
+    },
+    {
+      "name": "download authenticated result",
+      "status": "passed"
+    },
+    {
+      "name": "mobile layout has no document overflow",
+      "status": "passed"
+    },
+    {
+      "name": "keyboard navigation and reduced motion",
+      "status": "passed"
+    },
+    {
+      "name": "refresh and saved-run recovery",
+      "status": "passed"
+    },
+    {
+      "name": "second user cannot access every first-user resource",
+      "status": "passed"
+    }
+  ],
+  "screenshots": [
+    "before-production.png",
+    "01-add-data-desktop.png",
+    "02-confirm-schema.png",
+    "03-analyze.png",
+    "04-investigate-desktop.png",
+    "05-evidence-and-question.png",
+    "06-investigate-mobile.png",
+    "07-saved-run-mobile.png"
+  ],
+  "errors": [],
+  "productionBefore": {
+    "title": "Eidos / Sentinel Lab",
+    "url": "https://eidos-sentinel-lab.vercel.app/"
+  },
+  "runId": "gj-ed90d703b72a85337cd81ba98c5650ab",
+  "datasetId": "ds-dc9522cef1c3e1a61aba4de9b8d89439",
+  "engine": {
+    "class": "RLS_Reservoir",
+    "codeSha256": "d1d8db7b5f8e70c0ae6abc96575295620a27ea2943fa50209317d264da50ef50",
+    "config": {
+      "domain": "confirmed_named_measurements",
+      "features": 2,
+      "forgetting": 0.995,
+      "fractalBands": 1,
+      "leak": 0.1,
+      "learning": "skip anomalous observations",
+      "projection": null,
+      "reservoir": 64,
+      "seed": 42,
+      "spectralRadius": 0.9,
+      "threshold": 5
+    },
+    "policy": "eidos.causal-rls.v1",
+    "processIsolation": 1,
+    "torchVersion": "2.6.0+cpu"
+  },
+  "metrics": {
+    "elapsedSeconds": 7.563000000000102,
+    "evaluatedForecasts": 96,
+    "forecastMAE": 2.8253720492466017,
+    "intervalCount": 96,
+    "intervalCoverage": 0.8958333333333334,
+    "intervalMeanWidth": 4.730272677758893,
+    "llmCalls": 0,
+    "llmCostUSD": 0,
+    "persistenceMAE": 2.2657600220534615,
+    "precision": null,
+    "recall": null,
+    "rowsPerSecond": 15.866719555731638
+  },
+  "status": "passed",
+  "finishedAt": "2026-09-08T23:52:23.628Z"
+}

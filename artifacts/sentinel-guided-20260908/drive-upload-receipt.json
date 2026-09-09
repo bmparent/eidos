@@ -1,0 +1,19 @@
+{
+  "path": "C:\\Users\\bmpar\\codex-worktrees\\sentinel-guided-analysis-20260908\\artifacts\\eidos-sentinel-guided-evidence-20260908.zip",
+  "fileCount": 267,
+  "bytes": 38997233,
+  "sha256": "cb93d0930afa46aecdee1a84faf25a01bc8726e95ba649d2cca7d8fcb50bd044",
+  "md5": "ed36e9c57eabc798fa96b73507c239e1",
+  "zipReadback": "all entries match local bytes",
+  "sidecarPolicy": "Drive upload receipts are created after archive upload and stored beside the archive.",
+  "driveFileId": "1UfvFhnS81DMj2_hjmsipEKmx6HOHKmOX",
+  "url": "https://drive.google.com/file/d/1UfvFhnS81DMj2_hjmsipEKmx6HOHKmOX/view",
+  "folderId": "16ObF_8iSYgJsKPQPrRnBh20hK68F1fuC",
+  "folderUrl": "https://drive.google.com/drive/folders/16ObF_8iSYgJsKPQPrRnBh20hK68F1fuC",
+  "providerUploadAccepted": true,
+  "metadataReadbackBytes": 38997233,
+  "authenticatedRawReadbackBytes": 38997233,
+  "remoteByteHash": null,
+  "remoteByteHashReason": "Connector returns a sediment file reference; server checksum fields were not exposed. Upload acceptance and remote size verified; local ZIP and all entries hash/readback verified.",
+  "timestamp_utc": "2026-09-09T01:48:37.335820+00:00"
+}

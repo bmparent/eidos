@@ -1,0 +1,29 @@
+{
+  "checkedAt": "2026-09-09T01:48:38.932853+00:00",
+  "project": "prj_5aL0COF1DONfPKI4fv25NitAdkOE",
+  "rootDirectory": "apps/sentinel-lab",
+  "productionEnvironmentUnchangedSincePrePreviewSnapshot": true,
+  "changedProductionKeys": [],
+  "beforeFingerprint": "c065e04ae06ff4c7dbf38fcd7bcf5eadc9c3007230d669fae8b3bdf9415cbd78",
+  "afterFingerprint": "c065e04ae06ff4c7dbf38fcd7bcf5eadc9c3007230d669fae8b3bdf9415cbd78",
+  "taskBranchPreviewVariables": [
+    {
+      "key": "EIDOS_TEST_ACCESS_GRANTS",
+      "target": [
+        "preview"
+      ],
+      "gitBranch": "codex/sentinel-guided-analysis-20260908",
+      "type": "encrypted"
+    },
+    {
+      "key": "EIDOS_GUIDED_SCOPE",
+      "target": [
+        "preview"
+      ],
+      "gitBranch": "codex/sentinel-guided-analysis-20260908",
+      "type": "encrypted"
+    }
+  ],
+  "productionDeployment": "233a1d8404d6b9be806cdf9c45a5ac861123e871 from separate upstream member task; no production deployment by guided implementation",
+  "limits": "configuration equality is not proof of runtime behavior; actual preview workers have separate receipts"
+}

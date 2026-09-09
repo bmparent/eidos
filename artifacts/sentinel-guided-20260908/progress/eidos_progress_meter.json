@@ -1,0 +1,33 @@
+{
+  "createdAt": "2026-09-09T01:35:39.843828+00:00",
+  "sourceCommit": "24e00500431a654e167618fa6ca7543405865c45",
+  "milestones": [
+    {
+      "name": "Private guided analysis",
+      "status": "passed",
+      "evidence": "../preview-final/browser-receipt.json"
+    },
+    {
+      "name": "Causal forecasts and frozen evaluation",
+      "status": "passed",
+      "evidence": "../runner-final.xml",
+      "operationalQualification": "failed"
+    },
+    {
+      "name": "Scoped telemetry and replay",
+      "status": "local passed; hosted processing blocked",
+      "evidence": "../stream-release-local/receipt.json"
+    },
+    {
+      "name": "Semantic source retrieval",
+      "status": "local and hosted document path passed",
+      "evidence": "../semantic-final/receipt.json"
+    }
+  ],
+  "overallResearchReadinessScore": null,
+  "reason": "Research gates not audited/accepted in this task",
+  "researchGatesAdvanced": 0,
+  "operationalAlertQuality": "failed",
+  "hostedComputeAcceptance": "partial; HTTP 402 payment_required",
+  "productionPromotion": "not authorized; hosted gate incomplete"
+}

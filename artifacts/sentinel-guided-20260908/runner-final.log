@@ -1,0 +1,23 @@
+============================= test session starts =============================
+platform win32 -- Python 3.11.0, pytest-9.0.3, pluggy-1.6.0
+rootdir: C:\Users\bmpar\codex-worktrees\sentinel-guided-analysis-20260908\services\sentinel-runner
+configfile: pyproject.toml
+collected 37 items
+
+services\sentinel-runner\tests\test_dataset.py ....                      [ 10%]
+services\sentinel-runner\tests\test_engine_bridge.py .                   [ 13%]
+services\sentinel-runner\tests\test_engine_profiles.py ...               [ 21%]
+services\sentinel-runner\tests\test_guided.py ...........                [ 51%]
+services\sentinel-runner\tests\test_job_receipts.py ....                 [ 62%]
+services\sentinel-runner\tests\test_metrics.py ...                       [ 70%]
+services\sentinel-runner\tests\test_sandbox_launcher.py ......           [ 86%]
+services\sentinel-runner\tests\test_spec.py .....                        [100%]
+
+============================== warnings summary ===============================
+tests/test_engine_profiles.py::ProfileTests::test_actual_multiband_reservoir_preserves_numeric_type
+  C:\Python311\Lib\site-packages\PyPDF2\__init__.py:21: DeprecationWarning: PyPDF2 is deprecated. Please move to the pypdf library instead.
+    warnings.warn(
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+- generated xml file: C:\Users\bmpar\codex-worktrees\sentinel-guided-analysis-20260908\artifacts\sentinel-guided-20260908\runner-final.xml -
+================== 37 passed, 1 warning in 68.51s (0:01:08) ===================

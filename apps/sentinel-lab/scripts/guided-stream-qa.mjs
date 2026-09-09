@@ -21,7 +21,7 @@ async function api(path,body,key=keys.bob,expected=200){
 }
 async function settle(job){for(let i=0;i<180;i++){job=await api(`jobs/${job.id}`);if(['completed','failed','cancelled','expired'].includes(job.status))return job;if(job.status==='queued')job=await api(`jobs/${job.id}/resume`,{},keys.bob);await nap(2000);}throw Error('bounded job polling expired')}
 try{
- const {monitor,key}=await api('monitors',{name:'Synthetic connector acceptance',target:'service.latency',unit:'ms',synthetic:true,autoProcess:false},keys.bob,201);
+ const {monitor,key}=await api('monitors',{name:`Synthetic connector acceptance ${crypto.randomUUID().slice(0,8)}`,target:'service.latency',unit:'ms',synthetic:true,autoProcess:false},keys.bob,201);
  receipt.sourceId=monitor.id;
  const events=Array.from({length:60},(_,i)=>({id:`integration-${i}`,eventTime:new Date(Date.UTC(2026,7,1)+i*60000+(i>=45?600000:0)).toISOString(),value:i===40?100:40+Math.sin(i),attributes:{fixture:'synthetic'}}));events[55].eventTime=events[30].eventTime;
  const first=await api(`telemetry/${monitor.id}`,{events:events.slice(0,30)},key);check('first batch has contiguous acknowledged offsets',first.accepted===30&&first.lastOffset===30);

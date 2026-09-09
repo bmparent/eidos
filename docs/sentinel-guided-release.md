@@ -2,6 +2,16 @@
 
 This is an additive product engineering release. The guided workflow is `/`; the existing Kaggle workflow, engine observatory, historical receipts and research gates remain at `/research`. Production promotion requires the final release decision. No sealed Grand Proof data is used.
 
+## Observed release status
+
+All four milestones are implemented in draft [PR #52](https://github.com/bmparent/eidos/pull/52). Final runtime candidate: `24e00500431a654e167618fa6ca7543405865c45`; [protected preview](https://eidos-sentinel-913uebwxm-1brentbm-1876s-projects.vercel.app). Local acceptance covers every supported adapter, causal invariants, actual semantic encoding, full Torch checkpoint replay, cancellation and the official OpenTelemetry Collector. Current CI runner/verify and Vercel build passed. The final source also passes hosted reviewed-history, private ingress/OTLP, revocation, mobile health and explicit allocation-failure checks.
+
+Actual hosted CSV/Torch and semantic document/retrieval passed at `da14cc77e988555fd7b607d0cb9b24ba5f5f8dc9`. Later Sandbox creation returned **HTTP 402 `payment_required`**. The remaining hosted URL confirmation/analysis, checkpointed telemetry processing and a complete final-SHA compute repeat are **blocked**, not passed. The causal/parser/semantic/telemetry/UI runtime files match the successful compute-tested source; the final changes are reviewed-history context and explicit provider rejection handling, tested separately. See `candidate-source-comparison.json` and `preview-budget/receipt.json`. The provider rejection now produces a terminal failed job and releases admission; unknown allocation outcomes still hold capacity until reconciled or cancelled.
+
+External action: restore Sandbox creation for the owning Vercel project through its usage/billing settings or provider quota reset, then rerun the hosted scripts below. The receipt does not establish which billing meter was exhausted or its reset time. [Vercel documents Sandbox quotas and paused creation](https://vercel.com/docs/sandbox/pricing). No plan change, purchase or production promotion was performed. The PR remains draft until the external hosted gate is completed.
+
+Frozen final operational qualification also **failed** for every Eidos variant. Default Eidos MAE was 0.9866 versus persistence 1.0326 on the synthetic final periods, while precision was 0.60 and false alerts/day 16.7033 (required at most 1). The hosted service fixture favored persistence: MAE 2.2658 versus Eidos 2.8254. Every baseline, raw/merged count, interval width and period range remains visible. No research gate advanced and no post-final numerical tuning occurred.
+
 ## Architecture and supported envelope
 
 `/api/lab/v1/*` authenticates each operation, stores private input bytes and hashes in the existing libSQL service, and records a stable job before allocation. Jobs share the existing Sandbox admission slot. A pinned Git revision runs the actual canonical Torch `RLS_Reservoir` through a separately versioned causal adapter. Documents use a pinned Sentence Transformer encoder; unordered tables use explicitly identified Isolation Forest and median/MAD baselines. Those methods never masquerade as temporal Eidos runs.
@@ -61,9 +71,19 @@ npm run lint --prefix apps/sentinel-lab
 npm run build --prefix apps/sentinel-lab
 node apps/sentinel-lab/scripts/guided-browser-qa.mjs
 node apps/sentinel-lab/scripts/guided-formats-qa.mjs
+node apps/sentinel-lab/scripts/guided-stream-qa.mjs
+node apps/sentinel-lab/scripts/guided-cancel-qa.mjs
+node apps/sentinel-lab/scripts/guided-history-qa.mjs
+.venv-guided/Scripts/python.exe services/sentinel-runner/scripts/guided_semantic_audit.py
 ```
 
 Browser scripts use installed Playwright or `PLAYWRIGHT_MODULE` and optional `CHROME_BIN`; `EIDOS_QA_URL` selects an authenticated preview. Scripts exercise real API/runner execution, not mocked successful responses. The evaluation uses `guided_evaluate.py plan`, `development`, `freeze`, `final` in order; plan/freeze are write-once and final refuses repeated consumption. Preserve receipts when changing a later protocol. Initial Windows validation used Python 3.11/Torch 2.6 CPU; hosted qualification must identify its actual Python/Torch separately.
+
+For a protected preview, `EIDOS_QA_ACCESS_FILE` points to an ignored private JSON file containing an authorized temporary preview-access URL; it must never be committed or archived. This only grants deployment access. Separate Lab QA credentials remain in the ignored `artifacts/sentinel-guided-private/local-access.json`. An expired grant must be reissued for this preview branch. Use `EIDOS_QA_TAG` for a new output directory and preserve previous attempts. `EIDOS_QA_FILES=URL_ONLY` reruns the remaining public URL/browser matrix; use the normal format list for a fresh full matrix. `guided-preview-budget-qa.mjs` specifically tests the observed 402 rejection and must not be used as a successful compute test after billing is restored.
+
+The immutable evaluation source is available at `272befb` and in `evaluation/frozen-code.zip`; its exact hashes are verified against the acceptance freeze. Reproduce in a **new separate checkout**, never overwrite the consumed final artifact folder. `requirements-evaluation.txt` records the local Python 3.11 numerical environment. That compatibility run deliberately used Torch 2.6 CPU with the package installed `--no-deps`; this differs from the package's hosted Torch 2.14 pin. Install the recorded requirements using the official CPU wheel index, then install `services/sentinel-runner` with `--no-deps -e` only for that explicitly labeled reproduction. A normal supported install uses the package's declared dependencies and will use Torch 2.14. Cross-runtime numerical identity is not claimed. No sealed research input is required by either path.
+
+See `artifacts/sentinel-guided-20260908/before-after.html`, `requirement-to-evidence.md`, `manifest.json`, `drive_manifest.json` and `progress/` for captures, evidence inventory, archive status and the separate engineering/operational/research statuses. The raw ZIP contains 420 original evaluation files with per-file hashes; compact review receipts are committed, while large generated archives and fixtures remain repo-local and in the verified Drive mirror.
 
 ## Connector and rollback
 

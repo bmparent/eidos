@@ -1,0 +1,899 @@
+{
+  "timestamp": "2026-09-09T00:12:01.603869+00:00",
+  "results": [
+    {
+      "method": "eidos_adapt_all",
+      "forecastMAE": {
+        "mean": 0.9831476274454797,
+        "minPeriod": 0.9487407354692367,
+        "maxPeriod": 1.0296723085916024,
+        "independentPeriods": 3
+      },
+      "incidentRecall": {
+        "mean": 0.8000000000000002,
+        "minPeriod": 0.8,
+        "maxPeriod": 0.8,
+        "independentPeriods": 3
+      },
+      "incidentPrecision": {
+        "mean": 0.6,
+        "minPeriod": 0.6,
+        "maxPeriod": 0.6,
+        "independentPeriods": 3
+      },
+      "falseAlertsPerOperatingDay": {
+        "mean": 18.461538461538463,
+        "minPeriod": 17.142857142857142,
+        "maxPeriod": 19.780219780219777,
+        "independentPeriods": 3
+      },
+      "intervalCoverage": {
+        "mean": 0.8766788766788767,
+        "minPeriod": 0.868131868131868,
+        "maxPeriod": 0.881868131868132,
+        "independentPeriods": 3
+      },
+      "intervalMeanWidth": {
+        "mean": 2.9000270445871212,
+        "minPeriod": 2.7369500803502267,
+        "maxPeriod": 3.1017183709997247,
+        "independentPeriods": 3
+      },
+      "meanDetectionDelaySeconds": {
+        "mean": 0.0,
+        "minPeriod": 0.0,
+        "maxPeriod": 0.0,
+        "independentPeriods": 3
+      }
+    },
+    {
+      "method": "eidos_multiscale",
+      "forecastMAE": {
+        "mean": 0.9723336040788858,
+        "minPeriod": 0.9090295066145595,
+        "maxPeriod": 1.0207647469108776,
+        "independentPeriods": 3
+      },
+      "incidentRecall": {
+        "mean": 0.8000000000000002,
+        "minPeriod": 0.8,
+        "maxPeriod": 0.8,
+        "independentPeriods": 3
+      },
+      "incidentPrecision": {
+        "mean": 0.6,
+        "minPeriod": 0.6,
+        "maxPeriod": 0.6,
+        "independentPeriods": 3
+      },
+      "falseAlertsPerOperatingDay": {
+        "mean": 17.582417582417584,
+        "minPeriod": 14.505494505494505,
+        "maxPeriod": 22.41758241758242,
+        "independentPeriods": 3
+      },
+      "intervalCoverage": {
+        "mean": 0.8601953601953601,
+        "minPeriod": 0.8589743589743589,
+        "maxPeriod": 0.8608058608058607,
+        "independentPeriods": 3
+      },
+      "intervalMeanWidth": {
+        "mean": 2.08641569247088,
+        "minPeriod": 2.0307374378033427,
+        "maxPeriod": 2.1326391464024934,
+        "independentPeriods": 3
+      },
+      "meanDetectionDelaySeconds": {
+        "mean": 0.0,
+        "minPeriod": 0.0,
+        "maxPeriod": 0.0,
+        "independentPeriods": 3
+      }
+    },
+    {
+      "method": "eidos_none",
+      "forecastMAE": {
+        "mean": 0.9865540956496986,
+        "minPeriod": 0.9484652124571109,
+        "maxPeriod": 1.0322563080250546,
+        "independentPeriods": 3
+      },
+      "incidentRecall": {
+        "mean": 0.8000000000000002,
+        "minPeriod": 0.8,
+        "maxPeriod": 0.8,
+        "independentPeriods": 3
+      },
+      "incidentPrecision": {
+        "mean": 0.6,
+        "minPeriod": 0.6,
+        "maxPeriod": 0.6,
+        "independentPeriods": 3
+      },
+      "falseAlertsPerOperatingDay": {
+        "mean": 16.703296703296704,
+        "minPeriod": 14.505494505494505,
+        "maxPeriod": 21.098901098901102,
+        "independentPeriods": 3
+      },
+      "intervalCoverage": {
+        "mean": 0.8577533577533577,
+        "minPeriod": 0.8562271062271062,
+        "maxPeriod": 0.8589743589743589,
+        "independentPeriods": 3
+      },
+      "intervalMeanWidth": {
+        "mean": 2.1034863581378227,
+        "minPeriod": 2.0692785126409468,
+        "maxPeriod": 2.124368336479496,
+        "independentPeriods": 3
+      },
+      "meanDetectionDelaySeconds": {
+        "mean": 0.0,
+        "minPeriod": 0.0,
+        "maxPeriod": 0.0,
+        "independentPeriods": 3
+      }
+    },
+    {
+      "method": "eidos_regulation",
+      "forecastMAE": {
+        "mean": 1.0072315555166362,
+        "minPeriod": 0.983705071755302,
+        "maxPeriod": 1.0404767862212212,
+        "independentPeriods": 3
+      },
+      "incidentRecall": {
+        "mean": 0.8000000000000002,
+        "minPeriod": 0.8,
+        "maxPeriod": 0.8,
+        "independentPeriods": 3
+      },
+      "incidentPrecision": {
+        "mean": 0.5555555555555555,
+        "minPeriod": 0.4666666666666666,
+        "maxPeriod": 0.6,
+        "independentPeriods": 3
+      },
+      "falseAlertsPerOperatingDay": {
+        "mean": 18.46153846153846,
+        "minPeriod": 14.505494505494505,
+        "maxPeriod": 23.736263736263737,
+        "independentPeriods": 3
+      },
+      "intervalCoverage": {
+        "mean": 0.8443223443223443,
+        "minPeriod": 0.8333333333333333,
+        "maxPeriod": 0.8498168498168498,
+        "independentPeriods": 3
+      },
+      "intervalMeanWidth": {
+        "mean": 2.157739750711166,
+        "minPeriod": 2.1319068745268486,
+        "maxPeriod": 2.189442065686872,
+        "independentPeriods": 3
+      },
+      "meanDetectionDelaySeconds": {
+        "mean": 0.0,
+        "minPeriod": 0.0,
+        "maxPeriod": 0.0,
+        "independentPeriods": 3
+      }
+    },
+    {
+      "method": "isolation_forest_prefix",
+      "forecastMAE": {
+        "mean": null,
+        "minPeriod": null,
+        "maxPeriod": null,
+        "independentPeriods": 0
+      },
+      "incidentRecall": {
+        "mean": 0.5333333333333333,
+        "minPeriod": 0.0,
+        "maxPeriod": 0.8666666666666666,
+        "independentPeriods": 3
+      },
+      "incidentPrecision": {
+        "mean": 0.28745831665999727,
+        "minPeriod": 0.0,
+        "maxPeriod": 0.44145658263305315,
+        "independentPeriods": 3
+      },
+      "falseAlertsPerOperatingDay": {
+        "mean": 38.681318681318686,
+        "minPeriod": 21.0989010989011,
+        "maxPeriod": 54.065934065934066,
+        "independentPeriods": 3
+      },
+      "intervalCoverage": {
+        "mean": null,
+        "minPeriod": null,
+        "maxPeriod": null,
+        "independentPeriods": 0
+      },
+      "intervalMeanWidth": {
+        "mean": null,
+        "minPeriod": null,
+        "maxPeriod": null,
+        "independentPeriods": 0
+      },
+      "meanDetectionDelaySeconds": {
+        "mean": 26.25,
+        "minPeriod": 0.0,
+        "maxPeriod": 52.5,
+        "independentPeriods": 2
+      }
+    },
+    {
+      "method": "persistence",
+      "forecastMAE": {
+        "mean": 1.0326287594631631,
+        "minPeriod": 0.964644216623285,
+        "maxPeriod": 1.1018495843484488,
+        "independentPeriods": 3
+      },
+      "incidentRecall": {
+        "mean": 0.8000000000000002,
+        "minPeriod": 0.8,
+        "maxPeriod": 0.8,
+        "independentPeriods": 3
+      },
+      "incidentPrecision": {
+        "mean": 0.6,
+        "minPeriod": 0.6,
+        "maxPeriod": 0.6,
+        "independentPeriods": 3
+      },
+      "falseAlertsPerOperatingDay": {
+        "mean": 14.505494505494505,
+        "minPeriod": 11.868131868131869,
+        "maxPeriod": 17.142857142857142,
+        "independentPeriods": 3
+      },
+      "intervalCoverage": {
+        "mean": 0.854090354090354,
+        "minPeriod": 0.8461538461538461,
+        "maxPeriod": 0.858058608058608,
+        "independentPeriods": 3
+      },
+      "intervalMeanWidth": {
+        "mean": 2.0746320684494783,
+        "minPeriod": 2.0534643527920355,
+        "maxPeriod": 2.106459834993045,
+        "independentPeriods": 3
+      },
+      "meanDetectionDelaySeconds": {
+        "mean": 0.0,
+        "minPeriod": 0.0,
+        "maxPeriod": 0.0,
+        "independentPeriods": 3
+      }
+    },
+    {
+      "method": "robust_prefix",
+      "forecastMAE": {
+        "mean": null,
+        "minPeriod": null,
+        "maxPeriod": null,
+        "independentPeriods": 0
+      },
+      "incidentRecall": {
+        "mean": 1.0,
+        "minPeriod": 1.0,
+        "maxPeriod": 1.0,
+        "independentPeriods": 3
+      },
+      "incidentPrecision": {
+        "mean": 0.8333333333333334,
+        "minPeriod": 0.8333333333333334,
+        "maxPeriod": 0.8333333333333334,
+        "independentPeriods": 3
+      },
+      "falseAlertsPerOperatingDay": {
+        "mean": 14.065934065934066,
+        "minPeriod": 13.186813186813188,
+        "maxPeriod": 14.505494505494505,
+        "independentPeriods": 3
+      },
+      "intervalCoverage": {
+        "mean": null,
+        "minPeriod": null,
+        "maxPeriod": null,
+        "independentPeriods": 0
+      },
+      "intervalMeanWidth": {
+        "mean": null,
+        "minPeriod": null,
+        "maxPeriod": null,
+        "independentPeriods": 0
+      },
+      "meanDetectionDelaySeconds": {
+        "mean": 0.0,
+        "minPeriod": 0.0,
+        "maxPeriod": 0.0,
+        "independentPeriods": 3
+      }
+    },
+    {
+      "method": "seasonal_12",
+      "forecastMAE": {
+        "mean": 1.844590596531793,
+        "minPeriod": 1.7918325829896578,
+        "maxPeriod": 1.8847933561806838,
+        "independentPeriods": 3
+      },
+      "incidentRecall": {
+        "mean": 1.0,
+        "minPeriod": 1.0,
+        "maxPeriod": 1.0,
+        "independentPeriods": 3
+      },
+      "incidentPrecision": {
+        "mean": 0.5509259259259259,
+        "minPeriod": 0.5277777777777778,
+        "maxPeriod": 0.5833333333333334,
+        "independentPeriods": 3
+      },
+      "falseAlertsPerOperatingDay": {
+        "mean": 24.615384615384613,
+        "minPeriod": 21.0989010989011,
+        "maxPeriod": 27.69230769230769,
+        "independentPeriods": 3
+      },
+      "intervalCoverage": {
+        "mean": 0.8131868131868133,
+        "minPeriod": 0.8095238095238094,
+        "maxPeriod": 0.8195970695970696,
+        "independentPeriods": 3
+      },
+      "intervalMeanWidth": {
+        "mean": 1.8824406237665865,
+        "minPeriod": 1.7848223873508577,
+        "maxPeriod": 2.002979998554776,
+        "independentPeriods": 3
+      },
+      "meanDetectionDelaySeconds": {
+        "mean": 0.0,
+        "minPeriod": 0.0,
+        "maxPeriod": 0.0,
+        "independentPeriods": 3
+      }
+    }
+  ],
+  "ablations": [
+    {
+      "seed": 211,
+      "scenario": "benign_repetition",
+      "memory": {
+        "detectionChanged": 0,
+        "writes": {
+          "GLOBAL": 156
+        },
+        "mechanism": "canonical HippocampusHDC content recall with no safety suppression"
+      },
+      "traceSeal": {
+        "rawAlertEvents": 0,
+        "mergedIncidents": 0,
+        "truePositiveIncidents": 0,
+        "falsePositiveIncidents": 0,
+        "truthIncidents": 0,
+        "detectedTruthIncidents": 0,
+        "incidentRecall": null,
+        "incidentPrecision": null,
+        "falseAlertsPerOperatingDay": 0.0,
+        "operatingSeconds": 9360,
+        "meanDetectionDelaySeconds": null
+      },
+      "overheadSeconds": 0.37153889999990497
+    },
+    {
+      "seed": 211,
+      "scenario": "harmful_repetition",
+      "memory": {
+        "detectionChanged": 0,
+        "writes": {
+          "GLOBAL": 156
+        },
+        "mechanism": "canonical HippocampusHDC content recall with no safety suppression"
+      },
+      "traceSeal": {
+        "rawAlertEvents": 6,
+        "mergedIncidents": 6,
+        "truePositiveIncidents": 3,
+        "falsePositiveIncidents": 3,
+        "truthIncidents": 3,
+        "detectedTruthIncidents": 3,
+        "incidentRecall": 1.0,
+        "incidentPrecision": 0.5,
+        "falseAlertsPerOperatingDay": 27.692307692307693,
+        "operatingSeconds": 9360,
+        "meanDetectionDelaySeconds": 0.0
+      },
+      "overheadSeconds": 0.38275119999980234
+    },
+    {
+      "seed": 211,
+      "scenario": "isolated_spike",
+      "memory": {
+        "detectionChanged": 0,
+        "writes": {
+          "GLOBAL": 156
+        },
+        "mechanism": "canonical HippocampusHDC content recall with no safety suppression"
+      },
+      "traceSeal": {
+        "rawAlertEvents": 2,
+        "mergedIncidents": 1,
+        "truePositiveIncidents": 1,
+        "falsePositiveIncidents": 0,
+        "truthIncidents": 1,
+        "detectedTruthIncidents": 1,
+        "incidentRecall": 1.0,
+        "incidentPrecision": 1.0,
+        "falseAlertsPerOperatingDay": 0.0,
+        "operatingSeconds": 9360,
+        "meanDetectionDelaySeconds": 0.0
+      },
+      "overheadSeconds": 0.5006876999996166
+    },
+    {
+      "seed": 211,
+      "scenario": "slow_drift",
+      "memory": {
+        "detectionChanged": 0,
+        "writes": {
+          "GLOBAL": 156
+        },
+        "mechanism": "canonical HippocampusHDC content recall with no safety suppression"
+      },
+      "traceSeal": {
+        "rawAlertEvents": 0,
+        "mergedIncidents": 0,
+        "truePositiveIncidents": 0,
+        "falsePositiveIncidents": 0,
+        "truthIncidents": 1,
+        "detectedTruthIncidents": 0,
+        "incidentRecall": 0.0,
+        "incidentPrecision": null,
+        "falseAlertsPerOperatingDay": 0.0,
+        "operatingSeconds": 9360,
+        "meanDetectionDelaySeconds": null
+      },
+      "overheadSeconds": 0.39461670000036975
+    },
+    {
+      "seed": 211,
+      "scenario": "regime_shift",
+      "memory": {
+        "detectionChanged": 0,
+        "writes": {
+          "GLOBAL": 156
+        },
+        "mechanism": "canonical HippocampusHDC content recall with no safety suppression"
+      },
+      "traceSeal": {
+        "rawAlertEvents": 1,
+        "mergedIncidents": 1,
+        "truePositiveIncidents": 1,
+        "falsePositiveIncidents": 0,
+        "truthIncidents": 1,
+        "detectedTruthIncidents": 1,
+        "incidentRecall": 1.0,
+        "incidentPrecision": 1.0,
+        "falseAlertsPerOperatingDay": 0.0,
+        "operatingSeconds": 9360,
+        "meanDetectionDelaySeconds": 0.0
+      },
+      "overheadSeconds": 0.28539550000004965
+    },
+    {
+      "seed": 211,
+      "scenario": "noisy_interval",
+      "memory": {
+        "detectionChanged": 0,
+        "writes": {
+          "GLOBAL": 156
+        },
+        "mechanism": "canonical HippocampusHDC content recall with no safety suppression"
+      },
+      "traceSeal": {
+        "rawAlertEvents": 5,
+        "mergedIncidents": 3,
+        "truePositiveIncidents": 0,
+        "falsePositiveIncidents": 3,
+        "truthIncidents": 0,
+        "detectedTruthIncidents": 0,
+        "incidentRecall": null,
+        "incidentPrecision": 0.0,
+        "falseAlertsPerOperatingDay": 27.692307692307693,
+        "operatingSeconds": 9360,
+        "meanDetectionDelaySeconds": null
+      },
+      "overheadSeconds": 0.20170509999934438
+    },
+    {
+      "seed": 211,
+      "scenario": "contaminated_calibration",
+      "memory": {
+        "detectionChanged": 0,
+        "writes": {
+          "GLOBAL": 156
+        },
+        "mechanism": "canonical HippocampusHDC content recall with no safety suppression"
+      },
+      "traceSeal": {
+        "rawAlertEvents": 2,
+        "mergedIncidents": 2,
+        "truePositiveIncidents": 1,
+        "falsePositiveIncidents": 1,
+        "truthIncidents": 1,
+        "detectedTruthIncidents": 1,
+        "incidentRecall": 1.0,
+        "incidentPrecision": 0.5,
+        "falseAlertsPerOperatingDay": 9.23076923076923,
+        "operatingSeconds": 9360,
+        "meanDetectionDelaySeconds": 0.0
+      },
+      "overheadSeconds": 0.29709339999953954
+    },
+    {
+      "seed": 223,
+      "scenario": "benign_repetition",
+      "memory": {
+        "detectionChanged": 0,
+        "writes": {
+          "GLOBAL": 156
+        },
+        "mechanism": "canonical HippocampusHDC content recall with no safety suppression"
+      },
+      "traceSeal": {
+        "rawAlertEvents": 0,
+        "mergedIncidents": 0,
+        "truePositiveIncidents": 0,
+        "falsePositiveIncidents": 0,
+        "truthIncidents": 0,
+        "detectedTruthIncidents": 0,
+        "incidentRecall": null,
+        "incidentPrecision": null,
+        "falseAlertsPerOperatingDay": 0.0,
+        "operatingSeconds": 9360,
+        "meanDetectionDelaySeconds": null
+      },
+      "overheadSeconds": 0.5147028000001228
+    },
+    {
+      "seed": 223,
+      "scenario": "harmful_repetition",
+      "memory": {
+        "detectionChanged": 0,
+        "writes": {
+          "GLOBAL": 156
+        },
+        "mechanism": "canonical HippocampusHDC content recall with no safety suppression"
+      },
+      "traceSeal": {
+        "rawAlertEvents": 6,
+        "mergedIncidents": 6,
+        "truePositiveIncidents": 3,
+        "falsePositiveIncidents": 3,
+        "truthIncidents": 3,
+        "detectedTruthIncidents": 3,
+        "incidentRecall": 1.0,
+        "incidentPrecision": 0.5,
+        "falseAlertsPerOperatingDay": 27.692307692307693,
+        "operatingSeconds": 9360,
+        "meanDetectionDelaySeconds": 0.0
+      },
+      "overheadSeconds": 0.4674241000002439
+    },
+    {
+      "seed": 223,
+      "scenario": "isolated_spike",
+      "memory": {
+        "detectionChanged": 0,
+        "writes": {
+          "GLOBAL": 156
+        },
+        "mechanism": "canonical HippocampusHDC content recall with no safety suppression"
+      },
+      "traceSeal": {
+        "rawAlertEvents": 2,
+        "mergedIncidents": 1,
+        "truePositiveIncidents": 1,
+        "falsePositiveIncidents": 0,
+        "truthIncidents": 1,
+        "detectedTruthIncidents": 1,
+        "incidentRecall": 1.0,
+        "incidentPrecision": 1.0,
+        "falseAlertsPerOperatingDay": 0.0,
+        "operatingSeconds": 9360,
+        "meanDetectionDelaySeconds": 0.0
+      },
+      "overheadSeconds": 0.45765750000009575
+    },
+    {
+      "seed": 223,
+      "scenario": "slow_drift",
+      "memory": {
+        "detectionChanged": 0,
+        "writes": {
+          "GLOBAL": 156
+        },
+        "mechanism": "canonical HippocampusHDC content recall with no safety suppression"
+      },
+      "traceSeal": {
+        "rawAlertEvents": 0,
+        "mergedIncidents": 0,
+        "truePositiveIncidents": 0,
+        "falsePositiveIncidents": 0,
+        "truthIncidents": 1,
+        "detectedTruthIncidents": 0,
+        "incidentRecall": 0.0,
+        "incidentPrecision": null,
+        "falseAlertsPerOperatingDay": 0.0,
+        "operatingSeconds": 9360,
+        "meanDetectionDelaySeconds": null
+      },
+      "overheadSeconds": 0.4290048000002571
+    },
+    {
+      "seed": 223,
+      "scenario": "regime_shift",
+      "memory": {
+        "detectionChanged": 0,
+        "writes": {
+          "GLOBAL": 156
+        },
+        "mechanism": "canonical HippocampusHDC content recall with no safety suppression"
+      },
+      "traceSeal": {
+        "rawAlertEvents": 1,
+        "mergedIncidents": 1,
+        "truePositiveIncidents": 1,
+        "falsePositiveIncidents": 0,
+        "truthIncidents": 1,
+        "detectedTruthIncidents": 1,
+        "incidentRecall": 1.0,
+        "incidentPrecision": 1.0,
+        "falseAlertsPerOperatingDay": 0.0,
+        "operatingSeconds": 9360,
+        "meanDetectionDelaySeconds": 0.0
+      },
+      "overheadSeconds": 0.3004621000000043
+    },
+    {
+      "seed": 223,
+      "scenario": "noisy_interval",
+      "memory": {
+        "detectionChanged": 0,
+        "writes": {
+          "GLOBAL": 156
+        },
+        "mechanism": "canonical HippocampusHDC content recall with no safety suppression"
+      },
+      "traceSeal": {
+        "rawAlertEvents": 11,
+        "mergedIncidents": 2,
+        "truePositiveIncidents": 0,
+        "falsePositiveIncidents": 2,
+        "truthIncidents": 0,
+        "detectedTruthIncidents": 0,
+        "incidentRecall": null,
+        "incidentPrecision": 0.0,
+        "falseAlertsPerOperatingDay": 18.46153846153846,
+        "operatingSeconds": 9360,
+        "meanDetectionDelaySeconds": null
+      },
+      "overheadSeconds": 0.22339419999934762
+    },
+    {
+      "seed": 223,
+      "scenario": "contaminated_calibration",
+      "memory": {
+        "detectionChanged": 0,
+        "writes": {
+          "GLOBAL": 156
+        },
+        "mechanism": "canonical HippocampusHDC content recall with no safety suppression"
+      },
+      "traceSeal": {
+        "rawAlertEvents": 2,
+        "mergedIncidents": 2,
+        "truePositiveIncidents": 1,
+        "falsePositiveIncidents": 1,
+        "truthIncidents": 1,
+        "detectedTruthIncidents": 1,
+        "incidentRecall": 1.0,
+        "incidentPrecision": 0.5,
+        "falseAlertsPerOperatingDay": 9.23076923076923,
+        "operatingSeconds": 9360,
+        "meanDetectionDelaySeconds": 0.0
+      },
+      "overheadSeconds": 0.3520151000002443
+    },
+    {
+      "seed": 227,
+      "scenario": "benign_repetition",
+      "memory": {
+        "detectionChanged": 0,
+        "writes": {
+          "GLOBAL": 156
+        },
+        "mechanism": "canonical HippocampusHDC content recall with no safety suppression"
+      },
+      "traceSeal": {
+        "rawAlertEvents": 0,
+        "mergedIncidents": 0,
+        "truePositiveIncidents": 0,
+        "falsePositiveIncidents": 0,
+        "truthIncidents": 0,
+        "detectedTruthIncidents": 0,
+        "incidentRecall": null,
+        "incidentPrecision": null,
+        "falseAlertsPerOperatingDay": 0.0,
+        "operatingSeconds": 9360,
+        "meanDetectionDelaySeconds": null
+      },
+      "overheadSeconds": 0.3911083000002691
+    },
+    {
+      "seed": 227,
+      "scenario": "harmful_repetition",
+      "memory": {
+        "detectionChanged": 0,
+        "writes": {
+          "GLOBAL": 156
+        },
+        "mechanism": "canonical HippocampusHDC content recall with no safety suppression"
+      },
+      "traceSeal": {
+        "rawAlertEvents": 6,
+        "mergedIncidents": 6,
+        "truePositiveIncidents": 3,
+        "falsePositiveIncidents": 3,
+        "truthIncidents": 3,
+        "detectedTruthIncidents": 3,
+        "incidentRecall": 1.0,
+        "incidentPrecision": 0.5,
+        "falseAlertsPerOperatingDay": 27.692307692307693,
+        "operatingSeconds": 9360,
+        "meanDetectionDelaySeconds": 0.0
+      },
+      "overheadSeconds": 0.364508399999977
+    },
+    {
+      "seed": 227,
+      "scenario": "isolated_spike",
+      "memory": {
+        "detectionChanged": 0,
+        "writes": {
+          "GLOBAL": 156
+        },
+        "mechanism": "canonical HippocampusHDC content recall with no safety suppression"
+      },
+      "traceSeal": {
+        "rawAlertEvents": 2,
+        "mergedIncidents": 1,
+        "truePositiveIncidents": 1,
+        "falsePositiveIncidents": 0,
+        "truthIncidents": 1,
+        "detectedTruthIncidents": 1,
+        "incidentRecall": 1.0,
+        "incidentPrecision": 1.0,
+        "falseAlertsPerOperatingDay": 0.0,
+        "operatingSeconds": 9360,
+        "meanDetectionDelaySeconds": 0.0
+      },
+      "overheadSeconds": 0.500958300000093
+    },
+    {
+      "seed": 227,
+      "scenario": "slow_drift",
+      "memory": {
+        "detectionChanged": 0,
+        "writes": {
+          "GLOBAL": 156
+        },
+        "mechanism": "canonical HippocampusHDC content recall with no safety suppression"
+      },
+      "traceSeal": {
+        "rawAlertEvents": 0,
+        "mergedIncidents": 0,
+        "truePositiveIncidents": 0,
+        "falsePositiveIncidents": 0,
+        "truthIncidents": 1,
+        "detectedTruthIncidents": 0,
+        "incidentRecall": 0.0,
+        "incidentPrecision": null,
+        "falseAlertsPerOperatingDay": 0.0,
+        "operatingSeconds": 9360,
+        "meanDetectionDelaySeconds": null
+      },
+      "overheadSeconds": 0.35723460000008345
+    },
+    {
+      "seed": 227,
+      "scenario": "regime_shift",
+      "memory": {
+        "detectionChanged": 0,
+        "writes": {
+          "GLOBAL": 156
+        },
+        "mechanism": "canonical HippocampusHDC content recall with no safety suppression"
+      },
+      "traceSeal": {
+        "rawAlertEvents": 1,
+        "mergedIncidents": 1,
+        "truePositiveIncidents": 1,
+        "falsePositiveIncidents": 0,
+        "truthIncidents": 1,
+        "detectedTruthIncidents": 1,
+        "incidentRecall": 1.0,
+        "incidentPrecision": 1.0,
+        "falseAlertsPerOperatingDay": 0.0,
+        "operatingSeconds": 9360,
+        "meanDetectionDelaySeconds": 0.0
+      },
+      "overheadSeconds": 0.1269731000002139
+    },
+    {
+      "seed": 227,
+      "scenario": "noisy_interval",
+      "memory": {
+        "detectionChanged": 0,
+        "writes": {
+          "GLOBAL": 156
+        },
+        "mechanism": "canonical HippocampusHDC content recall with no safety suppression"
+      },
+      "traceSeal": {
+        "rawAlertEvents": 22,
+        "mergedIncidents": 9,
+        "truePositiveIncidents": 0,
+        "falsePositiveIncidents": 9,
+        "truthIncidents": 0,
+        "detectedTruthIncidents": 0,
+        "incidentRecall": null,
+        "incidentPrecision": 0.0,
+        "falseAlertsPerOperatingDay": 83.07692307692308,
+        "operatingSeconds": 9360,
+        "meanDetectionDelaySeconds": null
+      },
+      "overheadSeconds": 0.1373822999994445
+    },
+    {
+      "seed": 227,
+      "scenario": "contaminated_calibration",
+      "memory": {
+        "detectionChanged": 0,
+        "writes": {
+          "GLOBAL": 156
+        },
+        "mechanism": "canonical HippocampusHDC content recall with no safety suppression"
+      },
+      "traceSeal": {
+        "rawAlertEvents": 2,
+        "mergedIncidents": 2,
+        "truePositiveIncidents": 1,
+        "falsePositiveIncidents": 1,
+        "truthIncidents": 1,
+        "detectedTruthIncidents": 1,
+        "incidentRecall": 1.0,
+        "incidentPrecision": 0.5,
+        "falseAlertsPerOperatingDay": 9.23076923076923,
+        "operatingSeconds": 9360,
+        "meanDetectionDelaySeconds": 0.0
+      },
+      "overheadSeconds": 0.16461619999972754
+    }
+  ],
+  "peakResidentBytes": 364937216,
+  "memoryLimitReason": "peak_wset available on Windows; hosted peak measured separately",
+  "costUSD": null,
+  "costReason": "provider billing is not attributed to these local CPU runs",
+  "synthetic": 1,
+  "researchGatesAdvanced": 0,
+  "uncertainty": "ranges of seed-period means; not a population CI; scenarios correlated within a period"
+}

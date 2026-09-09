@@ -1,0 +1,22 @@
+{
+  "hostedComputeTestedSource": "da14cc77e988555fd7b607d0cb9b24ba5f5f8dc9",
+  "finalCandidate": "24e00500431a654e167618fa6ca7543405865c45",
+  "unchangedRuntimeFiles": {
+    "services/sentinel-runner/sentinel_runner/guided/causal.py": true,
+    "services/sentinel-runner/sentinel_runner/guided/semantic.py": true,
+    "services/sentinel-runner/sentinel_runner/guided/ingestion.py": true,
+    "services/sentinel-runner/sentinel_runner/guided/telemetry.py": true,
+    "services/sentinel-runner/sentinel_runner/guided/cli.py": true,
+    "apps/sentinel-lab/components/guided-lab.tsx": true,
+    "apps/sentinel-lab/lib/guided/fetch-source.ts": true,
+    "apps/sentinel-lab/lib/guided/telemetry.ts": true
+  },
+  "changedFiles": [
+    "apps/sentinel-lab/lib/guided/api.ts",
+    "apps/sentinel-lab/lib/guided/jobs.ts",
+    "apps/sentinel-lab/scripts/guided-history-qa.mjs",
+    "services/sentinel-runner/scripts/guided_semantic_audit.py"
+  ],
+  "finalChanges": "Reviewed-history context and definitive allocation-rejection handling, with actual preview acceptance receipts. Full compute retest blocked by HTTP 402 payment_required.",
+  "noRuntimeEquivalenceClaimForChangedFiles": true
+}

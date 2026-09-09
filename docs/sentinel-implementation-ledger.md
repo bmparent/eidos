@@ -5,7 +5,7 @@ Working branch: `codex/sentinel-guided-analysis-20260908`.
 Isolated root: `C:/Users/bmpar/codex-worktrees/sentinel-guided-analysis-20260908`.
 Baseline and production: `be02b6cba3579eb10412f7d148e22e62a48a87df`, Vercel deployment `dpl_5MF1AcvzUtUEzJ8fDKfbU6Vfdsc9`, READY.
 Original checkout has extensive uncommitted/OneDrive residue and was not modified.
-Open PR #48 supplies separate Works member services; inspect/reuse contracts without merging or changing its unrelated work. PR #36 is unrelated memory research.
+The separate Works member release was integrated through upstream PR #51. Those production changes belong to that task. PR #36 remains unrelated memory research.
 
 ## Execution sequence
 
@@ -17,21 +17,26 @@ Open PR #48 supplies separate Works member services; inspect/reuse contracts wit
 
 ## Requirement to evidence
 
-| Requirement | Milestone | Status | Code / planned location | Acceptance evidence / dependency |
+Receipts below are in `artifacts/sentinel-guided-20260908/`. “Passed” applies only to the named check.
+
+| Requirement | Milestone | Observed status | Receipt | Code |
 |---|---|---|---|---|
-| CSV, XLSX, Parquet, JSON/JSONL, logs, text PDF | 1,4 | implementing | runner guided ingestion | Browser upload, parse, saved result and source drilldown; malformed/oversize/image PDF rejection |
-| Kaggle and public URL ingestion | 1,4 | existing Kaggle; extending | existing experiments; guided fetcher | Real public input and unsafe redirect/private destination tests |
-| Schema, timestamps, entities, missingness, units | 1 | implementing | versioned guided contract | Confirmation and unordered/temporal boundary tests |
-| Private datasets, jobs, results, feedback | 1 | implementing | lab-owned libSQL tables | Two-user negative access across all resources |
-| Durable admission, retry, cancellation, recovery | 1,3 | existing admission; extending | AdmissionStore plus guided jobs | Independent clients, lost response, cancellation and restart tests |
-| Actual Torch execution | 1,2 | legacy confirmed in code | canonical RLS reservoir plus causal adapter | Source/input/config hashes and real execution receipts |
-| Causal forecasts and score before update | 2 | implementing | guided causal engine | Future perturbation, issue ledger, original units and rolling coverage |
-| Baselines and ablations | 2 | pending | implementation-only evaluation | Frozen development/validation/final partitions, all outcomes retained |
-| Continuous telemetry | 3 | pending | guided monitors and collector | Late/duplicate/gap/backpressure/restart/replay accounting |
-| Semantic embedding and retrieval | 4 | pending | runner document adapter | Full passage influence, semantic similarity, owner-scoped vectors/cache |
-| Grounded questions and incidents | 1,4 | pending | deterministic findings/retrieval | Every number/reference resolves; no generated code or instructions from data |
-| Accessible guided UX, history, comparisons | all | pending | guided UI, existing research route | Desktop/mobile/keyboard/reduced-motion/screenshots |
-| Preview, migration, rollback, PR | all | pending | release docs and scripts | Tested commit, preview evidence, additive schema, no production promotion |
+| Guided CSV workflow, chronology, Torch, source, mobile, reload, two-user isolation | 1,2 | passed | `preview-final/browser-receipt.json` | `apps/sentinel-lab/components/guided-lab.tsx` |
+| XLSX upload and original records | 1 | listed adapter checks passed; later failure retained and resolved in later receipt | `formats/receipt.json` | `services/sentinel-runner/sentinel_runner/guided/ingestion.py` |
+| Parquet, JSON, JSONL, structured log upload | 1 | listed adapter checks passed; later failure retained and resolved in later receipt | `formats-verified/receipt.json` | `services/sentinel-runner/sentinel_runner/guided/ingestion.py` |
+| Text, HTML, text PDF, plain log semantic retrieval | 4 | listed adapter checks passed; later failure retained and resolved in later receipt | `documents-verified/receipt.json` | `services/sentinel-runner/sentinel_runner/guided/semantic.py` |
+| Real downloadable URL, web page, patterns, unsafe redirect rejection | 1,4 | passed | `urls-cold-server/receipt.json` | `apps/sentinel-lab/lib/guided/fetch-source.ts; patterns.ts` |
+| Hosted semantic retrieval and public imports | 4 | semantic upload/retrieval passed; later URL confirmation blocked by provider HTTP 402 | `preview-formats/receipt.json` | `services/sentinel-runner/sentinel_runner/guided/semantic.py` |
+| Causal invariance, labels, irregular/entity boundaries, ingestion failures | 1,2 | evidence_exists | `runner-final.xml` | `services/sentinel-runner/tests/test_guided.py` |
+| Frozen final baselines and memory/multiscale/regulation/TraceSeal ablations | 2 | measured; operational qualification failed | `evaluation/qualification.json` | `services/sentinel-runner/scripts/guided_evaluate.py` |
+| State-equivalent real stream replay, late/gap/backpressure/reset/revocation | 3 | passed | `stream/receipt.json` | `apps/sentinel-lab/lib/guided/telemetry.ts` |
+| Hosted ingress, scoped keys and browser health; processing blocked by billing | 3 | ingress/security/billing-failure checks passed; hosted model processing blocked HTTP 402 | `preview-budget/receipt.json` | `services/sentinel-runner/sentinel_runner/guided/telemetry.py` |
+| Historical reviewed outcomes with owner scope and immutable metrics | 1,4 | passed | `reviewed-history/receipt.json` | `apps/sentinel-lab/lib/guided/api.ts` |
+| Official Collector forwarding and configuration validation | 3 | passed | `collector/receipt.json` | `connectors/sentinel/` |
+| Cancellation, same-intent retry and subsequent real job | 1,3 | passed | `cancellation/receipt.json` | `apps/sentinel-lab/lib/guided/jobs.ts` |
+| Actual legacy selection and semantic suffix/cache audit | 2,4 | passed | `semantic-final/receipt.json` | `services/sentinel-runner/scripts/guided_semantic_audit.py` |
+| Legacy full engine engineering and mechanisms regression | 2 | evidence_exists | `legacy-standard.log; legacy-mechanisms.log` | `services/sentinel-runner/scripts/verify_full_engine.py` |
+| Account contracts, concurrent stores, private resources, pinned public IPv4 | 1,3 | evidence_exists | `app-final-test.log` | `apps/sentinel-lab/tests/guided.test.ts` |
 
 ## Decisions and boundaries
 
@@ -43,14 +48,14 @@ Open PR #48 supplies separate Works member services; inspect/reuse contracts wit
 - `EIDOS_PROOF_DRIVE_DIR=G:/My Drive` exists. Mirror only new sanitized implementation artifacts; leave historical Drive files intact.
 - Drive historical audit read: `1DbuWi_KNHUDsdlPNttscOLPfnV8comGg`, dated 2026-09-06. Its then-missing live acceptance is historical context, not current deployment evidence.
 
-## Checkpoint
+## Final checkpoint
 
-2026-09-08 evening checkpoint: all four implementation paths exist. CSV, XLSX, Parquet, JSON, JSONL and numeric logs passed real browser upload/parse/causal analysis/download/source drill-down. Desktop/mobile/keyboard/reduced-motion, reload recovery, source queries and cross-user negative access passed. Document indexing ran with the real pinned encoder; remaining document/retrieval browser matrix is running. Scoped telemetry storage and Python checkpoint replay tests pass; live connector integration remains in progress.
+2026-09-08: all four milestones implemented. PR #52 is a draft release candidate on `codex/sentinel-guided-analysis-20260908`; candidate source `24e00500431a654e167618fa6ca7543405865c45`. Preview: https://eidos-sentinel-913uebwxm-1brentbm-1876s-projects.vercel.app.
 
-Current local validation: 37 runner tests plus 14 subtests passed, 39 app TypeScript tests passed, lint/type check and production build passed. New causal invariants include fixed 24-row calibration, future-value perturbation and future-append invariance. Source/worker/app changes remain separate from legacy engine files. The legacy full-engine smoke reached completion but its console output failed under Windows cp1252; rerun with PYTHONIOENCODING=utf-8, preserving the failure log.
+Local runner 37 tests and app 16 JavaScript plus 42 TypeScript tests passed; current CI verify/runner and Vercel build passed. All supported file adapters and URL/pattern workflows have real local browser/worker/source receipts. Official OpenTelemetry 0.160.0 forwarded three synthetic measurements; cancellation, label/forecast invariants, two-user ownership, genuine semantic suffix influence and real checkpoint replay passed. Actual hosted CSV/Torch and document/retrieval passed at `da14cc7`; the final candidate adds reviewed-history evidence and proper terminal handling for definitive provider allocation rejection.
 
-Independent development/validation/final synthetic periods were declared in `evaluation/partition-plan.json`. Acceptance was frozen after validation and before final generation. All four Eidos variants failed the final operational qualification gates (precision/false alerts; regulation also coverage). No model tuning after final consumption. Retain results and keep every mechanism experimental. No sealed research inputs opened and zero research gates advanced.
+External gate: Vercel returned HTTP 402 `payment_required` on new Sandbox creation. Full final-SHA hosted compute, hosted URL confirmation/analysis completion and hosted checkpointed telemetry processing remain blocked. Actual hosted ingress, OTLP, duplicate handling, source revocation, mobile health, reviewed history and explicit billing-failure behavior passed on the final candidate. No service purchase, paid-plan change, alternative-account bypass or production promotion occurred. Restore Sandbox creation through the owning project's Vercel usage/billing settings or provider quota reset, then rerun the documented hosted acceptance scripts.
 
-Upstream merged member PRs #48/#49 during this work. Current `origin/main` is `86dcaef`; the approved member table is now `eidos_email_members`. The new authorization adapter has been aligned; integrate upstream before publishing the candidate. Production config was snapshotted before preview-only setup. The first preview environment request failed because the feature branch was not yet pushed; no provider settings changed in that attempt.
+All four Eidos variants failed the immutable final operational qualification; default precision .60 and false alerts/day 16.7033 exceed the accepted burden. No final tuning or sealed-data access. Legacy core behavior and proof gates remain unchanged; this engineering work advances zero research gates. `candidate-source-comparison.json` records which runtime files match the hosted compute-tested source.
 
-Host disk pressure blocked extraction of the official OpenTelemetry 0.160.0 executable (download checksum verified). Only this task's transient files may be compacted/removed; preserve source, user work and all proof receipts. Connector validation, preview Sandbox execution, release PR and final Drive archive are still required. No completion claim or production promotion has been made.
+Failures are preserved beside corrected receipts. Raw evaluation was losslessly compacted (420 files, per-file hashes); the official test Collector executable was removed after validation to recover host disk space. New artifact mirror status and checksums are recorded in `drive_manifest.json`. Historical Drive archives and the original dirty checkout were preserved.

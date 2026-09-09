@@ -1,0 +1,45 @@
+{
+  "base": "https://eidos-sentinel-fzu9k32yh-1brentbm-1876s-projects.vercel.app",
+  "startedAt": "2026-09-09T01:06:26.740Z",
+  "checks": [
+    {
+      "name": "incident-notes.txt",
+      "status": "passed",
+      "runId": "gj-7f6a3f70c2eb7edde32d0728dfeaf66d",
+      "datasetId": "ds-d3d7b9a84d922c1b849dad17cc9d3ca9",
+      "method": "Sentence Transformer semantic embedding and cosine passage retrieval",
+      "inputSha256": "62442d4073e5ff8f43d5b70b744c8220474036969ce5226166146ec191dc6d1e",
+      "records": 3
+    },
+    {
+      "name": "oversize browser rejection",
+      "status": "passed"
+    },
+    {
+      "name": "malformed parser failure visible in browser",
+      "status": "passed"
+    },
+    {
+      "name": "URL rejection 127.0.0.1",
+      "status": "passed",
+      "http": 400,
+      "message": "A public IPv4 destination is required; private, local and special-use addresses are blocked."
+    },
+    {
+      "name": "URL rejection 169.254.169.254",
+      "status": "passed",
+      "http": 400,
+      "message": "A public IPv4 destination is required; private, local and special-use addresses are blocked."
+    },
+    {
+      "name": "URL rejection httpbin.org",
+      "status": "passed",
+      "http": 400,
+      "message": "A public IPv4 destination is required; private, local and special-use addresses are blocked."
+    }
+  ],
+  "errors": [],
+  "status": "failed",
+  "failure": "locator.waitFor: Timeout 300000ms exceeded.\nCall log:\n\u001b[2m  - waiting for getByRole('heading', { name: 'Analyze', exact: true }) to be visible\u001b[22m\n",
+  "finishedAt": "2026-09-09T01:14:20.723Z"
+}

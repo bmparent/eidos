@@ -1,0 +1,28 @@
+{
+  "created": "2026-09-08T23:54:53.661513+00:00",
+  "development": [
+    73
+  ],
+  "validation": [
+    107,
+    109
+  ],
+  "final": [
+    211,
+    223,
+    227
+  ],
+  "scenarios": [
+    "benign_repetition",
+    "harmful_repetition",
+    "isolated_spike",
+    "slow_drift",
+    "regime_shift",
+    "noisy_interval",
+    "contaminated_calibration"
+  ],
+  "generatorSha256": "9bdc35cb6700a888ed94fcdb6c94c8d7c328fd3ab73fe2a1048b30588c98f194",
+  "sampling": "180 one-minute events per entity/period; first24 calibration; no overlapping entities across partitions",
+  "labelPolicy": "Only evaluator reads synthetic event labels; never model selection, normalization, learning or thresholds",
+  "prohibitedInputs": "No CICIDS, Grand Proof or sealed research data"
+}
