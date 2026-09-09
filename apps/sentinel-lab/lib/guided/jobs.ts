@@ -103,7 +103,7 @@ export async function startJob(owner: string, id: string, store = guidedStore())
     provider.failureReceipt = { stage: allocationStage, httpStatus: httpStatus ?? null, code, errorType: failure.name || "Error" };
     // An explicit allocation rejection cannot have launched this worker. Do
     // not turn a quota/auth/validation rejection into an occupied mystery job.
-    if (!local() && allocationStage === "create" && httpStatus && [400, 401, 403, 404, 413, 422, 429].includes(httpStatus)) {
+    if (!local() && allocationStage === "create" && httpStatus && [400, 401, 402, 403, 404, 413, 422, 429].includes(httpStatus)) {
       await gate.release(reservation.jobId);
       await store.updateJob(owner, id, "failed", { provider, error: `Sandbox allocation was rejected (HTTP ${httpStatus}; ${code}). No worker started. Check provider access or budget, then retry from the saved source.` }, lease);
       return store.job(owner, id);
