@@ -152,7 +152,8 @@ export async function handleGuided(request: Request, path: string[]) {
           return json(publicJob(await startJob(user.id, job.id, store)), 202);
         }
         const finding = run.findings.find((f: Document) => f.id === input.findingId) || run.findings[0];
-        const feedback = (await store.list(user.id, "feedback")).filter(f => f.runId === id && f.findingId === finding?.id);
+        const ownedReviews = await store.list(user.id, "feedback");
+        const feedback = ownedReviews.filter(f => f.runId === id && f.findingId === finding?.id);
         const members: Document[] = finding?.members || [];
         const citations = members.slice(0, 20).map(member => {
           const index = dataset.recordIds.indexOf(member.recordId);
@@ -164,7 +165,8 @@ export async function handleGuided(request: Request, path: string[]) {
           answer: finding ? `${finding.what} ${finding.basis}. ${finding.whyItMatters} ${finding.nextAction}` : "This run has no flagged findings. That does not establish safety.",
           citations, reviews: feedback, grouping: finding?.grouping, limitations: finding?.uncertainty || run.limitations,
           similarHistoricalEvents: (await store.list(user.id, "run")).filter(other => other.id !== id).flatMap(other =>
-            (other.findings || []).filter((f: Document) => f.entity === finding?.entity && f.detector === finding?.detector).slice(0, 3).map((f: Document) => ({ runId: other.id, findingId: f.id, basis: "same entity and detector; contextual similarity only" }))).slice(0, 5) });
+            (other.findings || []).filter((f: Document) => f.entity === finding?.entity && f.detector === finding?.detector).slice(0, 3).map((f: Document) => ({ runId: other.id, findingId: f.id, basis: "same entity and detector; contextual similarity only",
+              reviewedOutcomes: ownedReviews.filter(review => review.runId === other.id && review.findingId === f.id).map(review => ({ review: review.review, note: review.note, reviewedAt: review.reviewedAt, scope: review.scope })) }))).slice(0, 5) });
       }
     }
     if (resource === "feedback" && method === "GET") return json(await store.list(user.id, "feedback"));

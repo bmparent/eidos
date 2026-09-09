@@ -3,12 +3,14 @@ import ast
 import hashlib
 import json
 import subprocess
+import textwrap
 from pathlib import Path
 
 import numpy as np
 import torch
 from sentinel_runner.engine_bridge import discover_engine_path, load_engine
 from sentinel_runner.guided.semantic import ENCODER, encode
+from sentinel_runner.guided.causal import baseline
 
 
 def main():
@@ -50,6 +52,20 @@ def main():
     after_variance = beta * variance + (1 - beta) * (residual - after_mu) ** 2
     after_score = (residual - after_mu) / after_variance ** .5
     assert after_score < prior_score
+    # Execute the actual legacy EMA/history/MAD/score block on controlled history.
+    start = source.index("        ema_count += 1")
+    end = source.index("\n", source.index("        z_score = abs(best_err - ema_err) / sigma", start))
+    block = textwrap.dedent(source[start:end])
+    history = [.8, 1., 1.2] * 10
+    center, scale = baseline(history)
+    causal_prior_score = (10. - center) / scale
+    legacy_scope = {"np": np, "math": __import__("math"), "ema_count": 30, "ema_err": 1., "ema_alpha": .01,
+                    "best_err": 10., "residual_history": history.copy(), "MAD_WINDOW": 128, "EIDOS_BRAIN_CONFIG": {"trace_seal_sigma_taper": "none"}}
+    exec(compile(block, str(engine_path), "exec"), legacy_scope)
+    assert len(legacy_scope["residual_history"]) == 31
+    assert legacy_scope["z_score"] < causal_prior_score
+    bridge = Path("services/sentinel-runner/sentinel_runner/engine_bridge.py").read_text()
+    assert '"domain": "cicids_webattacks"' in bridge and 'features=64' in bridge
     receipt = {"status": "passed", "encoder": ENCODER, "legacyEngineSha256": hashlib.sha256(engine_path.read_bytes()).hexdigest(),
                "sourceCommit": subprocess.check_output(["git", "rev-parse", "HEAD"], text=True).strip(),
                "legacy64PrefixIdentical": bool(legacy_identical), "semanticSuffixVectorDistance": float(np.linalg.norm(vectors[0] - vectors[1])),
@@ -58,6 +74,12 @@ def main():
                "legacySelectionExecutedASTLines": [n.lineno for n in nodes], "observations": [0., 10.], "legacySelectedPredictions": selected,
                "scoreOrderControlledMathExample": {"prior": prior_score, "afterCurrentUpdate": after_score, "beta": beta,
                    "scope": "controlled arithmetic illustration, not an empirical benefit or exact full legacy MAD-history trace"},
+               "actualLegacyBaselineBlock": {"firstLine": source[:start].count("\n") + 1, "lastLine": source[:end].count("\n") + 1,
+                   "causalPriorScore": causal_prior_score, "legacyAfterCurrentScore": legacy_scope["z_score"],
+                   "historyBefore": 30, "historyAfter": len(legacy_scope["residual_history"]), "legacyEmaAfter": legacy_scope["ema_err"],
+                   "meaning": "actual old score block versus actual new prior baseline, controlled input; interpretability audit, not utility evidence"},
+               "legacyBridge": {"domain": "cicids_webattacks", "features": 64, "sha256": hashlib.sha256(bridge.encode()).hexdigest(),
+                   "preserved": True, "newGuidedProfile": "confirmed_named_measurements with direct selected feature count"},
                "legacyUnmodified": True, "llmCalls": 0, "researchGatesAdvanced": 0}
     (out / "receipt.json").write_text(json.dumps(receipt, indent=2), encoding="utf-8")
     print(json.dumps(receipt, indent=2))
