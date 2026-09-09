@@ -3,6 +3,7 @@
 extensions:
   file_storage/sentinel:
     directory: ./sentinel-collector-state
+    create_directory: true
 receivers:
   otlp:
     protocols:
