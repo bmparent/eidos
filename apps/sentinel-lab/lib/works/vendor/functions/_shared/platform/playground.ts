@@ -1,6 +1,7 @@
 import { clean, db, hash, HttpError, type PlatformEnv } from './core';
 import { validateProject, type Project } from '../../../src/playground/model';
 import schema from './playgroundSchema';
+import { cloudPreflight } from '../../../src/playground/limits';
 import type { Database } from './core';
 const initialized = new WeakMap<Database,Promise<unknown>>();
 // Additive, transactional feature initialization on the existing database. No earlier schema is altered.
@@ -39,7 +40,8 @@ export async function saveProject(env: PlatformEnv, owner: string, input: Record
   const database = db(env);
   let document: Project;
   try { document = validateProject(input.document); } catch (error) { throw new HttpError(400, (error as Error).message); }
-  if (new TextEncoder().encode(JSON.stringify(document)).length > 2_000_000) throw new HttpError(413, 'Cloud projects must be under 2 MB. Use smaller images; your local copy is safe.');
+  const preflight = cloudPreflight(document);
+  if (!preflight.allowed) throw new HttpError(413, preflight.message);
   const now = new Date().toISOString(), revisionId = crypto.randomUUID();
   const project = input.id ? await ownedProject(env, owner, input.id) : null;
   if (project && project.head !== input.expectedRevision) throw new HttpError(409, 'A newer revision exists. Reopen it or save your local work as a new project.');
