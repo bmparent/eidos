@@ -24,6 +24,7 @@ export interface PlatformEnv {
   EIDOS_LOCAL_TEST?: string;
   GA_MEASUREMENT_ID?: string;
   PUBLIC_SITE_URL?: string;
+  EIDOS_PUBLICATION_FEED_URL?: string;
   STRIPE_SECRET_KEY?: string;
   EIDOS_KIT_WEBHOOK_SECRET?: string;
   EIDOS_SHOP_ENABLED?: string;

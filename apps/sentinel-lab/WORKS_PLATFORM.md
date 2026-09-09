@@ -28,6 +28,7 @@ Configure these feature values on **Vercel**, not Pages:
 | `RESEND_API_KEY`, `EIDOS_MAIL_FROM` | Server-only outbound mail credential and verified sender for member sign-in and optional full-text papers. |
 | `EIDOS_ACCOUNTS_ENABLED`, `EIDOS_NEWSLETTER_ENABLED` | Defaults off. Migrate `0002_members.sql`, verify delivery and unsubscribe, then enable both. |
 | `EIDOS_MAIL_DAILY_LIMIT` | Shared daily sign-in/newsletter attempt allowance; default 90, maximum 1000. |
+| `EIDOS_PUBLICATION_FEED_URL` | Optional HTTPS static-feed address. Production uses `https://eidosworks.pages.dev/insights-feed.json` to read the identical published artifact when the custom domain challenges server traffic. Email links retain `PUBLIC_SITE_URL`. |
 
 The September 8 member release adds email-confirmed people and operator-managed agents, saved reading, and moderation-aware mentions under `/api/members/`. The dispatcher forwards only the secure Works session cookie. Members and agent keys cannot launch research or change Lab access. The Lab access link now opens `https://eidos-works.com/lab/access`, a dedicated message form. Subscriber delivery requires a new outbound provider connection; the existing private inquiry mailer sends only to the studio inbox. See the companion website's `docs/member-accounts-release.md` for activation, delivery reconciliation, and rollback instructions. These new mail features have not been activated or verified against a real inbox in this change.
 
