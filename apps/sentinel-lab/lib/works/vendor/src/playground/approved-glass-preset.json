@@ -1,0 +1,11 @@
+{
+  "id": "eidos-edge-light-v4",
+  "name": "Eidos liquid glass — approved edge light",
+  "approvedDate": "2026-09-09",
+  "lens": { "edgeBend": 16, "magnification": 1.03, "frostPx": 1.2, "saturation": 1.2, "rimWidthPx": 19, "rimHeightRatio": 0.25, "mapSmoothingPx": 0.55 },
+  "light": { "reachPx": 170, "falloffPx": 115, "bevelPx": 7, "whitePeak": 0.72, "colourPeak": 0.32, "whiteDepthPx": 0.9, "whiteWidthPx": 0.85, "colourDepthPx": 2.8, "colourWidthPx": 1.35, "spectralSpreadPx": 48, "spectralSeparationPx": 30, "greenBalance": 0.84, "pressBoost": 0.18, "darkDimming": 0.12, "pixelRatioCap": 1.5 },
+  "contact": { "hoverScale": 0.5, "pressScale": 4.3, "fullDepthPx": 3, "zeroDepthPx": 22, "textureSize": 96, "minFootprintPx": 150, "maxFootprintPx": 240, "widthRatio": 0.24 },
+  "springs": { "x": 48, "y": 48, "light": 28, "hover": 25, "press": 32, "flow": 18, "material": 24 },
+  "scroll": { "velocityScale": 1100, "bendBoost": 0.014, "rimRest": 0.42, "rimBoost": 0.1 },
+  "site": { "solidThroughPx": 4, "fullyLiquidAtPx": 72, "solidColour": "#0f2530", "desktopRadiusPx": 29, "mobileRadiusPx": 23 }
+}
