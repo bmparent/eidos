@@ -1,0 +1,18 @@
+{
+  "drive_copy_attempted": false,
+  "drive_copy_success": false,
+  "drive_root": "G:/My Drive",
+  "drive_run_dir": "unknown",
+  "reason": "Configured Drive exists, but G: and C: report zero free bytes. Browser installation and runtime initialization failed for disk space. No mirror copy attempted.",
+  "files_considered": [
+    "codex_journal.md",
+    "plain_language_test_analysis.md",
+    "drive_manifest.json"
+  ],
+  "files_copied": [],
+  "files_skipped": [
+    "codex_journal.md",
+    "plain_language_test_analysis.md"
+  ],
+  "timestamp_utc": "2026-09-09T20:46:25.463710+00:00"
+}
