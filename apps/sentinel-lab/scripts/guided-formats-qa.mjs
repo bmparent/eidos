@@ -6,6 +6,7 @@ const {chromium}=require(process.env.PLAYWRIGHT_MODULE || "playwright");
 const root=resolve(import.meta.dirname,"../../..");
 const out=resolve(root,`artifacts/sentinel-guided-20260908/${process.env.EIDOS_QA_TAG || 'formats'}`); mkdirSync(out,{recursive:true});
 const base=process.env.EIDOS_QA_URL || "http://127.0.0.1:3210";
+const access=process.env.EIDOS_QA_ACCESS_FILE ? JSON.parse(readFileSync(process.env.EIDOS_QA_ACCESS_FILE,"utf8")).url : null;
 const keys=JSON.parse(readFileSync(resolve(root,"artifacts/sentinel-guided-private/local-access.json"),"utf8"));
 const browser=await chromium.launch({headless:true,...(process.env.CHROME_BIN?{executablePath:process.env.CHROME_BIN}:{})});
 const context=await browser.newContext({viewport:{width:1365,height:950},reducedMotion:"reduce"});
@@ -35,6 +36,7 @@ async function datasetFlow(filename,{documents=false,url=false,temporal=true}={}
   }
   await page.getByRole('button',{name:'Confirm interpretation',exact:false}).click();
   await page.getByRole('heading',{name:'Analyze',exact:true}).waitFor({timeout:300000});
+  if(!documents && !temporal)await page.getByRole('radio',{name:'Explore patterns',exact:false}).check();
   await page.getByRole('button',{name:'Run analysis',exact:false}).click();
   await page.getByRole('heading',{name:'Investigate',exact:true}).waitFor({timeout:300000});
   const view=page.getByRole('button',{name:/^View [rp]/}).first();
@@ -43,6 +45,7 @@ async function datasetFlow(filename,{documents=false,url=false,temporal=true}={}
   const file=await downloading;const safe=filename.split('/').pop().replaceAll(/[^\w.-]/g,'_');await file.saveAs(resolve(out,`${safe}-result.json`));
   const result=JSON.parse(readFileSync(resolve(out,`${safe}-result.json`),'utf8'));
   if(!result.receipt?.processIsolation || !result.inputSha256)throw Error('Missing execution receipt');
+  if(!documents && !temporal && !result.patterns?.pairs.length)throw Error('Pattern association evidence missing');
   if(documents){
     if(!result.encoder?.includes('c9745ed')||result.vectors[0].length!==384)throw Error('Real semantic encoder missing');
     await page.getByLabel('Question',{exact:true}).fill('What evidence describes database delays after the cache was unavailable?');
@@ -56,9 +59,10 @@ async function datasetFlow(filename,{documents=false,url=false,temporal=true}={}
   console.log(`${filename} browser -> parser -> analysis -> persisted result -> source passed`);
 }
 try {
+  if(access)await page.goto(access,{waitUntil:'domcontentloaded',timeout:60000});
   await page.goto(base,{waitUntil:'networkidle'});await page.getByLabel('Access key',{exact:true}).fill(keys.alice);await page.getByRole('button',{name:'Sign in',exact:true}).click();await page.getByText('Signed in · pilot access').waitFor();
   const names=(process.env.EIDOS_QA_FILES || 'service-latency.xlsx,service-latency.parquet,service-latency.json,service-latency.jsonl,service.log,incident-notes.txt,incident-notes.html,incident-notes.pdf,plain.log').split(',');
-  for(const name of names)await datasetFlow(name,{documents:name.startsWith('incident-')||name==='plain.log'});
+  for(const name of names.filter(n=>n!=='URL_ONLY'))await datasetFlow(name,{documents:name.startsWith('incident-')||name==='plain.log'});
   await page.getByRole('button',{name:/^01Add data$/}).click();
   await page.getByLabel('Upload data file').setInputFiles(resolve(root,'artifacts/sentinel-guided-20260908/fixtures/oversize.csv'));await page.getByRole('alert').filter({hasText:'2 MB'}).waitFor();
   receipt.checks.push({name:'oversize browser rejection',status:'passed'});await page.getByRole('button',{name:'Dismiss',exact:true}).click();

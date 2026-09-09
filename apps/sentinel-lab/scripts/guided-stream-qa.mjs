@@ -6,9 +6,12 @@ const require=createRequire(import.meta.url),{chromium}=require(process.env.PLAY
 const root=resolve(import.meta.dirname,'../../..'),base=process.env.EIDOS_QA_URL || 'http://127.0.0.1:3210';
 const out=resolve(root,`artifacts/sentinel-guided-20260908/${process.env.EIDOS_QA_TAG || 'stream'}`);mkdirSync(out,{recursive:true});
 const privateDir=resolve(root,'artifacts/sentinel-guided-private');
+const access=process.env.EIDOS_QA_ACCESS_FILE ? JSON.parse(readFileSync(process.env.EIDOS_QA_ACCESS_FILE,'utf8')).url : null;
 const keys=JSON.parse(readFileSync(resolve(privateDir,'local-access.json')));
 const browser=await chromium.launch({headless:true,...(process.env.CHROME_BIN?{executablePath:process.env.CHROME_BIN}:{})});
 let context=await browser.newContext(),page;
+async function authorizePreview(){if(access){const p=await context.newPage();await p.goto(access,{waitUntil:'domcontentloaded',timeout:60000});await p.close();}}
+await authorizePreview();
 const receipt={base,startedAt:new Date().toISOString(),checks:[]};
 const check=(name,value=true)=>{if(!value)throw Error(name);receipt.checks.push({name,status:'passed'});console.log(name)};
 const nap=ms=>new Promise(r=>setTimeout(r,ms));
@@ -28,7 +31,7 @@ try{
  check('other owner cannot read source',(await api(`monitors/${monitor.id}`,undefined,keys.alice,0)).status===404);
  let job=await api(`monitors/${monitor.id}/process`,{},keys.bob,202);receipt.firstJobId=job.id;
  // Close the requesting client. An entirely new context recovers persisted work.
- await context.close();context=await browser.newContext();job=await settle(job);check('worker and durable result survive client interruption',job.status==='completed');
+ await context.close();context=await browser.newContext();await authorizePreview();job=await settle(job);check('worker and durable result survive client interruption',job.status==='completed');
  let state=await api(`monitors/${monitor.id}`);check('warmup and first checkpoint persisted',state.processedOffset===30&&state.warmupRemaining===0);
  await api(`telemetry/${monitor.id}`,{events:events.slice(30)},key);
  job=await settle(await api(`monitors/${monitor.id}/process`,{},keys.bob,202));check('second batch resumes existing model',job.status==='completed');

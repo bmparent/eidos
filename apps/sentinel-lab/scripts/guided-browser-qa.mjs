@@ -5,9 +5,10 @@ import { resolve } from "node:path";
 const require = createRequire(import.meta.url);
 const { chromium } = require(process.env.PLAYWRIGHT_MODULE || "playwright");
 const root = resolve(import.meta.dirname, "../../..");
-const output = resolve(root, "artifacts/sentinel-guided-20260908/browser");
+const output = resolve(root, `artifacts/sentinel-guided-20260908/${process.env.EIDOS_QA_TAG || "browser"}`);
 mkdirSync(output, { recursive: true });
 const base = process.env.EIDOS_QA_URL || "http://127.0.0.1:3210";
+const access = process.env.EIDOS_QA_ACCESS_FILE ? JSON.parse(readFileSync(process.env.EIDOS_QA_ACCESS_FILE, "utf8")).url : null;
 const keys = JSON.parse(readFileSync(resolve(root, "artifacts/sentinel-guided-private/local-access.json"), "utf8"));
 const browser = await chromium.launch({ headless: true, ...(process.env.CHROME_BIN ? { executablePath: process.env.CHROME_BIN } : {}) });
 const context = await browser.newContext({ viewport: { width: 1440, height: 1000 }, reducedMotion: "reduce" });
@@ -21,6 +22,7 @@ try {
   await page.goto("https://eidos-sentinel-lab.vercel.app", { waitUntil: "domcontentloaded", timeout: 60000 });
   await screenshot("before-production");
   receipt.productionBefore = { title: await page.title(), url: page.url() };
+  if (access) await page.goto(access, { waitUntil: "domcontentloaded", timeout: 60000 });
   await page.goto(base, { waitUntil: "networkidle", timeout: 60000 });
   await page.getByRole("heading", { name: "Understand what changed." }).waitFor();
   await screenshot("01-add-data-desktop");
@@ -86,6 +88,7 @@ try {
   await screenshot("07-saved-run-mobile");
   await check("second user cannot access every first-user resource", async () => {
     const bob = await browser.newContext();
+    if (access) await bob.request.get(access);
     for (const path of [`datasets/${receipt.datasetId}`, `datasets/${receipt.datasetId}/source`, `runs/${receipt.runId}`, `runs/${receipt.runId}/download`, `jobs/${receipt.runId}`]) {
       const response = await bob.request.get(`${base}/api/lab/v1/${path}`, { headers: { Authorization: `Bearer ${keys.bob}` } });
       if (response.status() !== 404) throw Error(`${path} returned ${response.status()} for second user`);

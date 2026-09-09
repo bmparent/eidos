@@ -28,8 +28,11 @@ export async function validateDestination(value: string, resolver = lookup) {
     throw new LabError(400, "Authenticated sources require a configured connector; do not paste secret URLs.");
   const host = url.hostname.replace(/^\[|\]$/g, "");
   const addresses = await resolver(host, { all: true, verbatim: true }).catch(() => { throw new LabError(400, "The source hostname could not be resolved."); });
-  if (!addresses.length || addresses.some(a => !publicAddress(a.address))) throw new LabError(400, "Private, local and special-use destinations are blocked.");
-  return { url, address: addresses[0] };
+  const ipv4 = addresses.filter(a => a.family === 4);
+  if (!ipv4.length || ipv4.some(a => !publicAddress(a.address))) throw new LabError(400, "A public IPv4 destination is required; private, local and special-use addresses are blocked.");
+  // Only this validated IPv4 address is handed to the pinned connection. A
+  // dual-stack public hostname is supported without enabling IPv6 transitions.
+  return { url, address: ipv4[0] };
 }
 
 export async function fetchSource(value: string, redirects = 0): Promise<{ content: Buffer; source: string; filename: string; contentType: string }> {

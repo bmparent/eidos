@@ -6,10 +6,33 @@ import { principal, requireSameOrigin } from "../lib/guided/auth";
 import { mkdtempSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
+import { summarizePatterns } from "../lib/guided/patterns";
 import { publicAddress, validateDestination } from "../lib/guided/fetch-source";
 import { createMonitor, ingest, commitTelemetry, revokeKeys, otlpEvents } from "../lib/guided/telemetry";
 
 const makeStore = () => new GuidedStore(createClient({ url: "file::memory:" }), "test-guided");
+
+test("pattern descriptions exclude missing pairs and preserve original record references", () => {
+  const result = summarizePatterns({ records: [{ x: 1, y: 2 }, { x: 2, y: 4 }, { x: 3, y: 6 }, { x: null, y: 100 }], recordIds: ['r1','r2','r3','r4'] }, { features: ['x','y'] });
+  assert.equal(result.pairs[0].completePairs, 3); assert.equal(result.pairs[0].correlation, 1);
+  assert.deepEqual(result.pairs[0].sourceRecords, ['r1','r2','r3']);
+});
+
+test("existing Eidos member credentials remain owner-bound and immediately revocable", async () => {
+  const store = makeStore(); await store.initialize();
+  await store.client.batch([
+    "CREATE TABLE eidos_email_members(id TEXT PRIMARY KEY,disabled INTEGER)",
+    "CREATE TABLE eidos_member_keys(member_id TEXT,key_hash TEXT,revoked INTEGER)",
+    "CREATE TABLE eidos_member_sessions(member_id TEXT,token_hash TEXT,expires INTEGER)",
+    "INSERT INTO eidos_email_members VALUES ('member-a',0)",
+  ]);
+  const token = 'ew_agent_' + 'b'.repeat(64);
+  await store.client.execute({ sql: "INSERT INTO eidos_member_keys VALUES (?,?,0)", args: ['member-a', hash(token)] });
+  const request = new Request('https://lab.example/api', { headers: { Authorization: `Bearer ${token}` } });
+  assert.equal((await principal(request, store)).id, 'member:member-a');
+  await store.client.execute('UPDATE eidos_member_keys SET revoked=1');
+  await assert.rejects(principal(request, store), /Sign in/); store.client.close();
+});
 
 test("independent database clients share one retry identity and dispatch lease", async () => {
   const directory = mkdtempSync(join(tmpdir(), "eidos-guided-test-"));
@@ -67,6 +90,10 @@ test("canonical input identity ignores object key order but preserves values", (
 test("public fetch rejects private, metadata, special-use and redirect targets", async () => {
   for (const ip of ["127.0.0.1", "10.0.0.1", "169.254.169.254", "172.16.0.1", "192.168.1.1", "100.64.0.1", "::1", "::ffff:127.0.0.1", "fe80::1", "2001:db8::1"]) assert.equal(publicAddress(ip), false, ip);
   assert.equal(publicAddress("8.8.8.8"), true);
+  const dualStack = (async () => [{ address: "2606:4700:4700::1111", family: 6 }, { address: "8.8.8.8", family: 4 }]) as any;
+  assert.deepEqual((await validateDestination("https://example.com/data", dualStack)).address, { address: "8.8.8.8", family: 4 });
+  await assert.rejects(validateDestination("https://example.com/data", (async () => [{ address: "::1", family: 6 }]) as any));
+  await assert.rejects(validateDestination("https://example.com/data", (async () => [{ address: "8.8.8.8", family: 4 }, { address: "127.0.0.1", family: 4 }]) as any));
   const privateResolver = (async () => [{ address: "10.0.0.1", family: 4 }]) as any;
   for (const url of ["http://example.com/data", "https://user:pass@example.com", "https://example.com:444/a", "https://example.com/data?token=secret", "https://example.com"]) {
     await assert.rejects(validateDestination(url, privateResolver));

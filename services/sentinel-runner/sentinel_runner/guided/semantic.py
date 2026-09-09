@@ -28,7 +28,10 @@ def encode(texts: list[str], cache_dir: Path) -> list[list[float]]:
                 continue
         missing.append((i, path))
     if missing:
-        model = SentenceTransformer(MODEL, revision=REVISION, device="cpu", trust_remote_code=False)
+        try:
+            model = SentenceTransformer(MODEL, revision=REVISION, device="cpu", trust_remote_code=False, local_files_only=True)
+        except OSError:
+            model = SentenceTransformer(MODEL, revision=REVISION, device="cpu", trust_remote_code=False)
         # Long words can exceed the encoder window even in a 100-word passage.
         # Embed every token window, then pool; never silently truncate a suffix.
         pieces, ranges = [], []

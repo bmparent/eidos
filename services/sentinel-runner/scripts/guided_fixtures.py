@@ -30,6 +30,7 @@ def main():
     with (directory / "incident-notes.pdf").open("wb") as output: writer.write(output)
     logs = "\n".join(f"{row.timestamp.replace(' ', 'T')} host=api-a latency_ms={row.latency_ms} load={row.load} status=200 request={i} event=measurement" for i, row in enumerate(frame.itertuples(index=False)))
     (directory / "service.log").write_text(logs, encoding="utf-8")
+    (directory / "plain.log").write_text("2026-08-01T00:00:00Z request=abcd1234 The database connection failed after the cache was unavailable.\n2026-08-01T00:01:00Z request=defg5678 The database connection failed after the cache was unavailable.\n2026-08-01T00:02:00Z request=hijk9999 The garden irrigation timer opened the valve.\n", encoding="utf-8")
     (directory / "malformed.json").write_text("{not valid json", encoding="utf-8")
     (directory / "oversize.csv").write_bytes(b"a,b\n" + b"1,2\n" * 500001)
     events = [{"id": f"synthetic-service-{i}", "eventTime": row.timestamp, "value": float(row.latency_ms), "attributes": {"fixture": "synthetic"}} for i, row in enumerate(frame.itertuples(index=False))]

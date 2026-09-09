@@ -7,6 +7,7 @@ import { Sandbox, FileSystem } from "@vercel/sandbox";
 import { AdmissionStore, sharedAdmission } from "../experiments/admission";
 import { verifySandboxSource } from "../experiments/sandbox-source";
 import { guidedStore, hash, LabError, LIMITS, type Document, type GuidedStore } from "./store";
+import { summarizePatterns } from "./patterns";
 
 const terminal = new Set(["completed", "failed", "cancelled", "expired"]);
 const local = () => process.env.EIDOS_GUIDED_LOCAL === "1" && !process.env.VERCEL;
@@ -134,6 +135,7 @@ async function publish(owner: string, job: Document, result: Document, store: Gu
     result = { datasetId: dataset.id, confirmed: result };
   } else if (job.request.operation === "analyze") {
     await store.put(owner, "run", job.id, { ...result, id: job.id, datasetId: job.request.datasetId,
+      ...(job.request.options?.mode === "patterns" && job.request.dataset.kind === "table" ? { patterns: summarizePatterns(job.request.dataset, job.request.mapping) } : {}),
       inputSha256: job.request.dataset.sha256, createdAt: new Date(Number(job.created)).toISOString(), expiresAt: new Date(Number(job.expires)).toISOString() });
     result = { runId: job.id, receipt: result.receipt };
   } else if (job.request.operation === "telemetry") {
