@@ -51,6 +51,7 @@ export async function startJob(owner: string, id: string, store = guidedStore())
   if (!reserved.acquired) return store.job(owner, id);
   await gate.beginAllocation(reservation, LIMITS.jobSeconds * 1000);
   const payload = JSON.stringify({ ...job.request, sourceCommit: revision });
+  let allocationStage = "create";
   try {
     if (local()) {
       await mkdir(provider.directory, { recursive: true });
@@ -80,6 +81,7 @@ export async function startJob(owner: string, id: string, store = guidedStore())
         tags: { eidos: "sentinel", evidence: "product-engineering", job: reservation.jobId },
         env: { PYTHONUNBUFFERED: "1", PYTHONIOENCODING: "utf-8", OMP_NUM_THREADS: "1", MKL_NUM_THREADS: "1", HF_HUB_DISABLE_TELEMETRY: "1",
           ...(callbackOrigin ? { EIDOS_CALLBACK_URL: `${callbackOrigin}/api/lab/v1/worker/${id}`, EIDOS_CALLBACK_TOKEN: callbackToken } : {}) }, ...credentials() });
+      allocationStage = "bootstrap";
       const session = allocated.currentSession();
       const fs = new FileSystem(session);
       const verified = await verifySandboxSource(session, revision);
@@ -94,10 +96,21 @@ export async function startJob(owner: string, id: string, store = guidedStore())
     }
     await gate.running(reservation.jobId);
     await store.updateJob(owner, id, "running", { provider, error: "" }, lease);
-  } catch {
+  } catch (error) {
+    const failure = error as { response?: { status?: number }; status?: number; statusCode?: number; json?: { error?: { code?: string }; code?: string }; name?: string };
+    const httpStatus = failure.response?.status ?? failure.statusCode ?? failure.status;
+    const code = String(failure.json?.error?.code || failure.json?.code || "unknown").replace(/[^a-zA-Z0-9_-]/g, "").slice(0, 80);
+    provider.failureReceipt = { stage: allocationStage, httpStatus: httpStatus ?? null, code, errorType: failure.name || "Error" };
+    // An explicit allocation rejection cannot have launched this worker. Do
+    // not turn a quota/auth/validation rejection into an occupied mystery job.
+    if (!local() && allocationStage === "create" && httpStatus && [400, 401, 403, 404, 413, 422, 429].includes(httpStatus)) {
+      await gate.release(reservation.jobId);
+      await store.updateJob(owner, id, "failed", { provider, error: `Sandbox allocation was rejected (HTTP ${httpStatus}; ${code}). No worker started. Check provider access or budget, then retry from the saved source.` }, lease);
+      return store.job(owner, id);
+    }
     // Provider allocation may have succeeded despite a lost response. Keep the
     // admission occupied; polling reconciles the deterministic provider name.
-    await store.updateJob(owner, id, "preparing", { provider, error: "Worker allocation or bootstrap was interrupted. Resume this job to reconcile its stable identity." }, lease);
+    await store.updateJob(owner, id, "preparing", { provider, error: `Worker allocation or bootstrap was interrupted (${allocationStage}; HTTP ${httpStatus ?? "unknown"}; ${code}). Resume this job to reconcile its stable identity.` }, lease);
   }
   return store.job(owner, id);
 }
