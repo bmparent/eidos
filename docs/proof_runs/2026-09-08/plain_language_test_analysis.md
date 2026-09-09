@@ -1,6 +1,6 @@
 # Plain-language release test analysis — 2026-09-08
 
-The configured Google Drive copy failed because the mounted drive reported no free space (`ENOSPC`). The complete artifact set remains local. No existing files were deleted to make room.
+The mounted Google Drive copy failed with `ENOSPC`, but direct connector upload of the complete ZIP succeeded. Provider metadata verified its name, folder and byte count. The complete artifact set also remains local. No existing files were deleted to make room. See drive_manifest.json for the remote file and verification boundary.
 
 The release makes free member accounts and optional complete-article emails available on Eidos Works. The important test was whether a customer could receive real mail and whether the actual hourly server job could run, while the existing store, inquiry and Lab systems remained intact.
 

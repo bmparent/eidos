@@ -50,7 +50,7 @@ Receipts reside in `artifacts/members-release-20260908` in both release worktree
 
 ## Remaining gate and rollback
 
-The configured Google Drive mirror failed with `ENOSPC` before copying a file. No user files were deleted. All evidence remains in the two local release worktrees; `drive_manifest.json` records the failed attempt. Drive archival is incomplete until storage is available.
+The mounted Google Drive copy initially failed with `ENOSPC`. The complete ZIP archive was then uploaded directly through the connected Drive account, and provider metadata confirmed its name, expected size and destination folder. [Drive archive](https://drive.google.com/file/d/15F62XqrJaFKoYgNp7Wiq4KzmcyCF0dS9/view?usp=drivesdk). No user files were deleted. Both local receipt folders and `drive_manifest.json` preserve the evidence and the failed mounted-copy attempt.
 
 The prepared production signup at https://eidos-works.com/account requires the user to complete Cloudflare's “Verify you are human” check and request the email. Then verify the confirmation, private saved reading/preferences and logout in that live browser. A successful deployed configuration or controlled inbox check does not substitute for this gate.
 

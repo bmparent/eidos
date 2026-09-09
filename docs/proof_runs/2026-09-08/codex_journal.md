@@ -51,7 +51,7 @@ Both worktrees: artifacts/members-release-20260908; backend docs/proof_runs/2026
 
 ## Google Drive archive status
 
-The actual archive attempt failed with `ENOSPC` before copying any file. All artifacts remain local. No existing Drive content was removed; remote archival remains incomplete.
+The mounted copy failed with `ENOSPC` before copying any file. The complete ZIP was then uploaded directly through the Drive connector; metadata readback confirmed the intended folder, name and byte count. Remote archive: https://drive.google.com/file/d/15F62XqrJaFKoYgNp7Wiq4KzmcyCF0dS9/view?usp=drivesdk. All artifacts also remain local. No existing content was removed. Remote checksum was not exposed by the connector; local ZIP integrity and SHA-256 were checked.
 
 Configured root is G:\My Drive. The archive operation and per-file hash checks are recorded in drive_manifest.json. Destination: Eidos_Brain_Proof_Phase/2026-09-08/members-release-20260908. Do not infer remote cloud synchronization solely from a successful mounted-drive copy.
 
