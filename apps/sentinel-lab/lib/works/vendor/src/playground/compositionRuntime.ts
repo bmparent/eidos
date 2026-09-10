@@ -26,6 +26,11 @@ export function compositionRuntime(initial: { editing: boolean; bridge: boolean;
       .pg-compose-target{outline:3px dashed #bce886;outline-offset:-5px}
       .pg-compose-before{box-shadow:0 -4px #bce886!important}.pg-compose-after{box-shadow:0 4px #bce886!important}
       .pg-compose-dragging{cursor:grabbing!important;user-select:none}
+      @media(max-width:640px){
+        .pg-hero.pg-composed{padding-top:64px}
+        .pg-composed .pg-part:not(.pg-part-image){padding-top:48px}
+        .pg-compose-handle{min-height:44px}
+      }
     `;
     document.head.append(style);
     const handles: HTMLButtonElement[] = [];
