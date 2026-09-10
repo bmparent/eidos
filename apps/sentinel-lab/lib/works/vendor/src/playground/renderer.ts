@@ -20,6 +20,12 @@ export function art(): string {
 }
 export function pageMarkup(p: Project): string {
   const esc = escapeHtml;
+  const image = (s: Project["sections"][number], logo = false) => {
+    if(!s.image)return '';
+    const img=`<img class="pg-image${logo?' pg-brand-image':''}" src="${esc(s.image)}" alt="${esc(s.media?.decorative?'':s.alt)}"${s.id==='hero'||logo?'':' loading="lazy"'}>`;
+    return s.media ? `<span class="pg-media-frame${logo?' pg-logo-frame':''}">${img}<span class="pg-media-tint" aria-hidden="true"></span></span>` : img;
+  };
+
   const visible = (id: string) =>
     p.sections.some((s) => s.id === id && s.visible);
   const button = (s: Project["sections"][number], outline = false) =>
@@ -34,7 +40,7 @@ export function pageMarkup(p: Project): string {
         return '<main id="page-main" tabindex="-1">';
       if (s.id === "footer" && !s.visible) return "</main>";
       if (s.id === "header")
-        return `<header class="pg-header${p.rendererVersion === RENDERER ? ' ew-glass-header' : ''}" ${attrs}>${p.rendererVersion === RENDERER ? `<div class="ew-header__inner">${glassMarkup}` : '<canvas aria-hidden="true"></canvas>'}<a class="pg-logo ew-brand" href="#page-main">${esc(s.title)}</a><button class="pg-menu ew-menu-toggle" aria-label="Toggle navigation" aria-expanded="false" aria-controls="page-nav">Menu</button><nav class="pg-nav ew-nav" id="page-nav" aria-label="Page navigation">${s.description
+        return `<header class="pg-header${p.rendererVersion === RENDERER ? ' ew-glass-header' : ''}" ${attrs}>${p.rendererVersion === RENDERER ? `<div class="ew-header__inner">${glassMarkup}` : '<canvas aria-hidden="true"></canvas>'}<a class="pg-logo ew-brand" href="#page-main">${s.image ? image(s,true) : esc(s.title)}</a><button class="pg-menu ew-menu-toggle" aria-label="Toggle navigation" aria-expanded="false" aria-controls="page-nav">Menu</button><nav class="pg-nav ew-nav" id="page-nav" aria-label="Page navigation">${s.description
           .split("|")
           .slice(0, 2)
           .map((v, i) =>
@@ -46,9 +52,9 @@ export function pageMarkup(p: Project): string {
             "",
           )}${button(s, true)}</nav>${p.rendererVersion === RENDERER ? '</div>' : ''}</header><main id="page-main" tabindex="-1">`;
       if (s.id === "hero")
-        return `<section class="pg-hero ${s.layout}" ${attrs}><div class="pg-copy"><h1>${esc(s.title)}</h1><p>${esc(s.description)}</p>${button(s)}</div>${s.image ? `<img class="pg-image" src="${esc(s.image)}" alt="${esc(s.alt)}">` : art()}</section>`;
+        return `<section class="pg-hero ${s.layout}" ${attrs}><div class="pg-copy"><h1>${esc(s.title)}</h1><p>${esc(s.description)}</p>${button(s)}</div>${s.image ? image(s) : art()}</section>`;
       if (s.id === "services")
-        return `<section class="pg-services" aria-label="${esc(s.title)}" ${attrs}>${s.description
+        return `<section class="pg-services" aria-label="${esc(s.title)}" ${attrs}>${s.image?`<div class="pg-section-media">${image(s)}</div>`:""}${s.description
           .split("\n")
           .filter(Boolean)
           .slice(0, 6)
@@ -58,9 +64,9 @@ export function pageMarkup(p: Project): string {
           )
           .join("")}</section>`;
       if (s.id === "work")
-        return `<section class="pg-work" ${attrs}><h2 class="pg-section-title">${esc(s.title)}</h2><p>${esc(s.description)}</p>${s.image ? `<img class="pg-image" src="${esc(s.image)}" alt="${esc(s.alt)}" loading="lazy">` : `<div class="pg-studies"><figure class="pg-study"><div class="pg-study-art">${art()}</div><figcaption>Form study / 01</figcaption></figure><figure class="pg-study"><div class="pg-study-art">${art()}</div><figcaption>Color study / 02</figcaption></figure></div>`}</section>`;
+        return `<section class="pg-work" ${attrs}><h2 class="pg-section-title">${esc(s.title)}</h2><p>${esc(s.description)}</p>${s.image ? image(s) : `<div class="pg-studies"><figure class="pg-study"><div class="pg-study-art">${art()}</div><figcaption>Form study / 01</figcaption></figure><figure class="pg-study"><div class="pg-study-art">${art()}</div><figcaption>Color study / 02</figcaption></figure></div>`}</section>`;
       if (s.id === "contact")
-        return `<section class="pg-contact" ${attrs}><h2 class="pg-section-title">${esc(s.title)}</h2><div><p>${esc(s.description)}</p>${button(s)}</div></section>`;
+        return `<section class="pg-contact" ${attrs}>${s.image?`<div class="pg-section-media">${image(s)}</div>`:""}<h2 class="pg-section-title">${esc(s.title)}</h2><div><p>${esc(s.description)}</p>${button(s)}</div></section>`;
       return `</main><footer class="pg-footer" ${attrs}><strong>${esc(s.title)}</strong><span>${esc(s.description)}</span></footer>`;
     })
     .join("")}</div>`;
@@ -81,7 +87,11 @@ export function runtimeScript(
 ): string {
   return `${glassScript}\n(${pageRuntime.toString()})(${JSON.stringify(runtimeConfig(p, editing, selected, bridge)).replace(/</g, "\\u003c")});`;
 }
-export function renderedStyles(p: Project) { return pageStyles + (p.rendererVersion === RENDERER ? glassStyles + `
+function mediaStyles(p: Project) {
+  const settings=p.sections.filter(s=>s.media&&s.image);if(!settings.length)return '';
+  return `.pg-media-frame{display:block;position:relative;overflow:hidden;border-radius:var(--radius);min-width:0}.pg-media-frame>.pg-image{width:100%;height:100%;display:block}.pg-media-tint{position:absolute;inset:0;pointer-events:none}.pg-logo-frame{width:140px;height:40px;border-radius:0}.pg-brand-image{max-height:40px}.pg-services,.pg-contact{position:relative;isolation:isolate}.pg-section-media{position:absolute;inset:0;z-index:-1;overflow:hidden}.pg-section-media .pg-media-frame{height:100%}.pg-section-media .pg-image{height:100%}` + settings.map(s=>{const m=s.media!;return `#${s.id} .pg-media-frame>.pg-image{object-fit:${m.fit};object-position:${m.x}% ${m.y}%;transform:scale(${m.zoom})}#${s.id} .pg-media-tint{background:${m.tint};opacity:${m.opacity}}@media(max-width:640px){#${s.id} .pg-media-frame>.pg-image{object-position:${m.mobileX??m.x}% ${m.mobileY??m.y}%}}`;}).join('');
+}
+export function renderedStyles(p: Project) { return pageStyles + mediaStyles(p) + (p.rendererVersion === RENDERER ? glassStyles + `
 .pg-header.ew-glass-header{padding:0;background:transparent;backdrop-filter:none;-webkit-backdrop-filter:none;isolation:auto;box-shadow:none}
 .pg-header.ew-glass-header:before{display:none}
 .pg-header .ew-header__inner{width:100%;display:flex;align-items:center;justify-content:space-between;padding:18px 28px;min-height:64px}

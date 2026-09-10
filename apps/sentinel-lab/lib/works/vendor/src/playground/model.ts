@@ -1,3 +1,4 @@
+import { validateMedia, validateBrand, type MediaSettings, type BrandKit } from "./media";
 import approved from "./approved-glass-preset.json";
 export const VERSION = 1;
 export const LEGACY_RENDERER = "eidos-portable-glass-1.0.0";
@@ -20,6 +21,7 @@ export const labels: Record<SectionType, string> = {
   footer: "Footer",
 };
 export type Section = {
+  media?: MediaSettings;
   id: SectionType;
   visible: boolean;
   title: string;
@@ -31,6 +33,7 @@ export type Section = {
   alt: string;
 };
 export type Project = {
+  brand?: BrandKit;
   schemaVersion: 1;
   rendererVersion: string;
   template: "landing" | "homepage" | "portfolio";
@@ -244,12 +247,14 @@ export function validateProject(input: unknown): Project {
       layout: choice(s.layout, ["split", "center"] as const),
       image,
       alt: string(s.alt, 300),
+      ...(s.media === undefined ? {} : {media: validateMedia(s.media)}),
     };
   });
   if (sections[0].id !== "header" || sections[5].id !== "footer")
     throw new Error("Header and footer must stay at the ends of the page.");
   return {
     schemaVersion: 1,
+    ...(p.brand === undefined ? {} : {brand:validateBrand(p.brand)}),
     rendererVersion: String(p.rendererVersion),
     template: choice(p.template, ["landing", "homepage", "portfolio"] as const),
     name: string(p.name, 100),
@@ -304,7 +309,7 @@ export function projectWarnings(p: Project): string[] {
       "Page text contrast is below 4.5:1. Adjust the background or text color.",
     );
   for (const s of p.sections.filter((s) => s.visible)) {
-    if (s.image && !s.alt.trim())
+    if (s.image && !s.alt.trim() && !s.media?.decorative)
       out.push(`${labels[s.id]} image needs a description.`);
     if (
       s.href.startsWith("#") &&
