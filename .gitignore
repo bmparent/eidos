@@ -4,3 +4,16 @@ artifacts/rng_null_proof*/
 __pycache__/
 *.py[cod]
 .pytest_cache/
+.venv-guided/
+artifacts/guided-jobs/
+artifacts/guided-local.db*
+artifacts/sentinel-guided-private/
+artifacts-guided-*.log
+
+.vercel
+.env*
+
+# Large generated guided-analysis evidence is retained locally and in its Drive
+# archive. Compact reports, metrics, receipts and browser captures are reviewed.
+/artifacts/eidos-sentinel-guided-evidence-20260908.zip
+/artifacts/sentinel-guided-20260908/

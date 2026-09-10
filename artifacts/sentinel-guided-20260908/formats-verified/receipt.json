@@ -1,0 +1,46 @@
+{
+  "base": "http://127.0.0.1:3210",
+  "startedAt": "2026-09-09T00:03:37.406Z",
+  "checks": [
+    {
+      "name": "service-latency.parquet",
+      "status": "passed",
+      "runId": "gj-4a528fc28e26e2c07cc00ba33db11a07",
+      "datasetId": "ds-7312844705965cf1e674497448e79ed0",
+      "method": "Causal canonical Torch RLS reservoir with historically selected persistence baseline",
+      "inputSha256": "c3fcc9bd0bd0a6abf9cd324e4ea8215811f6323fba3356d16a3bf86657201bbc",
+      "records": 96
+    },
+    {
+      "name": "service-latency.json",
+      "status": "passed",
+      "runId": "gj-3fcfdd9e036b43217c77dbc2a4311299",
+      "datasetId": "ds-c5aa05545735fb347148a1710bbcf81a",
+      "method": "Causal canonical Torch RLS reservoir with historically selected persistence baseline",
+      "inputSha256": "6add0d87f8429ee2ef735b26311d9862f8153a129ac1603007c6a8edf21779f3",
+      "records": 96
+    },
+    {
+      "name": "service-latency.jsonl",
+      "status": "passed",
+      "runId": "gj-e331897d4a030e57447c4b0f5c975046",
+      "datasetId": "ds-de62e7e2c64ee551fba516bd36520538",
+      "method": "Causal canonical Torch RLS reservoir with historically selected persistence baseline",
+      "inputSha256": "0ff856ac29db84d9e2a75b37b4b83a1babb4a8a3b3ca7d7db660f16bdc595b81",
+      "records": 96
+    },
+    {
+      "name": "service.log",
+      "status": "passed",
+      "runId": "gj-f006a8ab4d2b8356a8808efcb30c2bf7",
+      "datasetId": "ds-069aca3ab78b2c256a60b0b0f5326407",
+      "method": "Causal canonical Torch RLS reservoir with historically selected persistence baseline",
+      "inputSha256": "8cd98b498e343488967664b34ed44d77796a7940cb50fe56e45f355ceb18e607",
+      "records": 96
+    }
+  ],
+  "errors": [],
+  "status": "failed",
+  "failure": "locator.fill: Timeout 30000ms exceeded.\nCall log:\n\u001b[2m  - waiting for getByLabel('Question', { exact: true })\u001b[22m\n",
+  "finishedAt": "2026-09-09T00:10:07.935Z"
+}

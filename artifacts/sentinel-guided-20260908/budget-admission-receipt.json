@@ -1,0 +1,14 @@
+{
+  "status": "passed",
+  "checkedAt": "2026-09-09T01:39:21.689Z",
+  "jobId": "gj-e05ac239a52a90b9d34193a16816e632",
+  "providerFailure": {
+    "stage": "create",
+    "httpStatus": 402,
+    "code": "payment_required",
+    "errorType": "Error"
+  },
+  "jobStatus": "failed",
+  "admissionPhase": "TERMINAL",
+  "effect": "Actual HTTP 402 rejection is terminal and holds no shared compute slot; no worker result exists"
+}

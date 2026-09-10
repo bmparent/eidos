@@ -1,0 +1,17 @@
+{
+  "base": "https://eidos-sentinel-keipc60rb-1brentbm-1876s-projects.vercel.app",
+  "http": 200,
+  "result": {
+    "id": "gj-285c56da4f0db951dc381ab2b08be699",
+    "status": "cancelled",
+    "createdAt": 1788916422553,
+    "updatedAt": 1788916986122,
+    "operation": "parse",
+    "error": "Cancelled by the workspace owner.",
+    "result": null,
+    "bounds": {
+      "maximumSeconds": 900,
+      "progressKind": "stage; not a completion estimate"
+    }
+  }
+}

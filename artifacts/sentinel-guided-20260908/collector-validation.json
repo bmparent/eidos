@@ -1,0 +1,7 @@
+{
+  "version": "0.160.0",
+  "exitCode": 0,
+  "configuration": "connectors/sentinel/otel-collector.yaml",
+  "serviceInstalled": false,
+  "validationTimestamp": "2026-09-09T00:24:42.7867540Z"
+}

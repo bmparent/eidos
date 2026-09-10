@@ -1,0 +1,51 @@
+{
+  "freezeSha256": "4acb1c2510bc88d8136c4b5cff8617b4568b896605fb5caad2d1d15f635c7f88",
+  "finalSummarySha256": "ebc660dbf806594a5ba4aefe105660ebea7d6faeb133f3b6fe11cb3197cf0fc0",
+  "decisions": [
+    {
+      "method": "eidos_adapt_all",
+      "gates": {
+        "MAE": 1,
+        "recall": 1,
+        "precision": 0,
+        "falseAlerts": 0,
+        "coverage": 1
+      },
+      "qualified": 0
+    },
+    {
+      "method": "eidos_multiscale",
+      "gates": {
+        "MAE": 1,
+        "recall": 1,
+        "precision": 0,
+        "falseAlerts": 0,
+        "coverage": 1
+      },
+      "qualified": 0
+    },
+    {
+      "method": "eidos_none",
+      "gates": {
+        "MAE": 1,
+        "recall": 1,
+        "precision": 0,
+        "falseAlerts": 0,
+        "coverage": 1
+      },
+      "qualified": 0
+    },
+    {
+      "method": "eidos_regulation",
+      "gates": {
+        "MAE": 1,
+        "recall": 1,
+        "precision": 0,
+        "falseAlerts": 0,
+        "coverage": 0
+      },
+      "qualified": 0
+    }
+  ],
+  "researchGatesAdvanced": 0
+}

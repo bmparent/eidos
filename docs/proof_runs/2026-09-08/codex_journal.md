@@ -70,3 +70,8 @@ Both real release blockers were integration mismatches, not research-engine issu
 ## End-of-task summary
 
 Files changed, commands, core-behavior boundary, evidence, math, meaning and remaining uncertainty are recorded above and in release-handoff.md. No research benchmark, metric, proof score or dashboard was generated. Drive status is explicit in drive_manifest.json.
+
+
+## Sentinel guided implementation
+
+Separate task entry: [Sentinel guided codex journal.md](sentinel_guided_codex_journal.md). The existing Works release entry above is preserved. All four product paths are implemented; full hosted compute remains blocked by Vercel HTTP 402. Local integration and partial hosted receipts, frozen qualification failures, source hashes and Drive status are documented in that entry.

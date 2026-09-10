@@ -1,0 +1,71 @@
+{
+  "base": "https://eidos-sentinel-913uebwxm-1brentbm-1876s-projects.vercel.app",
+  "startedAt": "2026-09-09T01:27:30.964Z",
+  "checks": [
+    {
+      "name": "hosted private monitor created",
+      "status": "passed"
+    },
+    {
+      "name": "real HTTPS ingress stores original points",
+      "status": "passed"
+    },
+    {
+      "name": "identical retries preserve offsets",
+      "status": "passed"
+    },
+    {
+      "name": "changed duplicate rejects whole batch",
+      "status": "passed"
+    },
+    {
+      "name": "ingest key cannot read private results",
+      "status": "passed"
+    },
+    {
+      "name": "other owner cannot read source",
+      "status": "passed"
+    },
+    {
+      "name": "hosted OTLP JSON endpoint accepts a scoped metric",
+      "status": "passed"
+    },
+    {
+      "name": "ingress remains distinct from processed model evidence",
+      "status": "passed"
+    },
+    {
+      "name": "hosted monitor fits mobile viewport",
+      "status": "passed"
+    },
+    {
+      "name": "billing rejection is explicit and terminal",
+      "status": "passed"
+    },
+    {
+      "name": "rejected job cannot appear as a successful run",
+      "status": "passed"
+    },
+    {
+      "name": "test source credential revoked",
+      "status": "passed"
+    }
+  ],
+  "hostedProcessing": "blocked: HTTP 402 payment_required; no simulated outcome",
+  "allocation": {
+    "id": "gj-e05ac239a52a90b9d34193a16816e632",
+    "status": "failed",
+    "createdAt": 1788917259609,
+    "updatedAt": 1788917259873,
+    "operation": "telemetry",
+    "error": "Sandbox allocation was rejected (HTTP 402; payment_required). No worker started. Check provider access or budget, then retry from the saved source.",
+    "result": null,
+    "bounds": {
+      "maximumSeconds": 900,
+      "progressKind": "stage; not a completion estimate"
+    }
+  },
+  "monitorId": "source-06cf1561-c242-4d07-a190-fbca7701e89d",
+  "status": "passed",
+  "finishedAt": "2026-09-09T01:27:40.970Z"
+}
