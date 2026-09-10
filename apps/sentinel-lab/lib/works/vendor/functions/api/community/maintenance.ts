@@ -46,5 +46,10 @@ export const onRequestPost = guarded(async ({ request, env }) => {
     database.prepare('DELETE FROM eidos_member_sessions WHERE expires<?').bind(cutoff),
   ]);
   const newsletter = await deliverNewsletters(env);
+  if (env.EIDOS_PASSWORD_AUTH_ENABLED === 'true') await database.batch([
+    database.prepare('DELETE FROM eidos_member_auth_tokens WHERE expires<?').bind(cutoff),
+    database.prepare('DELETE FROM eidos_member_oauth_flows WHERE expires<?').bind(cutoff),
+    database.prepare('DELETE FROM eidos_member_google_signup WHERE expires<?').bind(cutoff),
+  ]);
   return json({ ok: true, suggestions, newsletter });
 });

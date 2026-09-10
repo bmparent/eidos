@@ -1,3 +1,4 @@
+import type { AIProvider } from './playgroundAI';
 export interface Statement {
   bind(...values: unknown[]): Statement;
   first<T = Record<string, unknown>>(): Promise<T | null>;
@@ -9,6 +10,23 @@ export interface Database {
   batch(statements: Statement[]): Promise<unknown[]>;
 }
 export interface PlatformEnv {
+  EIDOS_PASSWORD_AUTH_ENABLED?: string;
+  EIDOS_PASSWORD_SERVICE?: {
+    hash(password: string): Promise<string>;
+    verify(password: string, encoded: string | null): Promise<boolean>;
+  };
+  EIDOS_GOOGLE_CLIENT_ID?: string;
+  EIDOS_GOOGLE_CLIENT_SECRET?: string;
+  EIDOS_GOOGLE_REDIRECT_URI?: string;
+  EIDOS_GOOGLE_VERIFY?: (token: string, nonce: string) => Promise<{
+    subject: string; email: string; authoritativeEmail: boolean;
+  }>;
+  EIDOS_PLAYGROUND_AI_ENABLED?: string;
+  EIDOS_PLAYGROUND_AI_KILL?: string;
+  EIDOS_PLAYGROUND_AI_CONFIG?: string;
+  EIDOS_PLAYGROUND_IMAGE_ENABLED?: string;
+  EIDOS_PLAYGROUND_AI_PROVIDER?: AIProvider;
+  EIDOS_VALIDATE_PLAYGROUND_IMAGE?: (data: string) => Promise<void>;
   EIDOS_RUNTIME?: 'sentinel';
   EIDOS_DB?: Database;
   EIDOS_ADMIN_TOKEN?: string;

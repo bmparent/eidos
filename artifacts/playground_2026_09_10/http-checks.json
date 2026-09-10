@@ -1,0 +1,47 @@
+[
+  {
+    "scope": "Preview",
+    "url": "https://c62ec1f4.eidosworks.pages.dev/playground/",
+    "status": "PASS",
+    "httpStatus": 200,
+    "cfRay": "a38f29487ef19d81-MIA",
+    "identity": "anonymous GET; availability only",
+    "checkedAt": "2026-09-10T14:35:47.906Z"
+  },
+  {
+    "scope": "Preview",
+    "url": "https://6d88bdf7.eidosworks.pages.dev/playground/",
+    "status": "PASS",
+    "httpStatus": 200,
+    "cfRay": "a38f294b2a2d650a-MIA",
+    "identity": "anonymous GET; availability only",
+    "checkedAt": "2026-09-10T14:35:48.399Z"
+  },
+  {
+    "scope": "Preview",
+    "url": "https://8dbced92.eidosworks.pages.dev/playground/",
+    "status": "PASS",
+    "httpStatus": 200,
+    "cfRay": "a38f294df87857f6-MIA",
+    "identity": "anonymous GET; availability only",
+    "checkedAt": "2026-09-10T14:35:48.822Z"
+  },
+  {
+    "scope": "Preview",
+    "url": "https://733dc787.eidosworks.pages.dev/playground/",
+    "status": "PASS",
+    "httpStatus": 200,
+    "cfRay": "a38f29504aeba4c1-MIA",
+    "identity": "anonymous GET; availability only",
+    "checkedAt": "2026-09-10T14:35:49.031Z"
+  },
+  {
+    "scope": "Production",
+    "url": "https://eidos-works.com/playground/",
+    "status": "PASS",
+    "httpStatus": 200,
+    "cfRay": "a38f29519e1d95d2-MIA",
+    "identity": "anonymous GET; availability only",
+    "checkedAt": "2026-09-10T14:35:49.311Z"
+  }
+]

@@ -1,10 +1,10 @@
 import {
-  validateProject,
+  validateProject, mediaSlots, safeHref, onColor,
   RENDERER,
   projectWarnings,
   type Project,
 } from "./model";
-import { pageDocument, pageMarkup, runtimeScript, tokensCss, renderedStyles } from "./renderer";
+import { escapeHtml, pageDocument, pageMarkup, runtimeScript, tokensCss, renderedStyles } from "./renderer";
 import { glassScript } from './glassBundle';
 import approved from "./approved-glass-preset.json";
 export type ExportFile = { name: string; data: Uint8Array };
@@ -16,19 +16,25 @@ export function headerFiles(input: Project): ExportFile[] {
   const markup=pageMarkup(p).match(/<header\b[\s\S]*?<\/header>/)?.[0];
   if(!markup) throw new Error('Header is unavailable.');
   const css=tokensCss(p).replace(':root',':host')+renderedStyles(p)+':host{display:block;position:sticky;top:16px;z-index:50;color:var(--header-text);font:16px/1.6 Arial,sans-serif}.pg-header{margin:0;top:0;width:100%;max-width:none}';
-  const script=glassScript+`;if(!customElements.get('eidos-glass-header'))customElements.define('eidos-glass-header',class extends HTMLElement{connectedCallback(){if(this.cleanup)return;const root=this.shadowRoot||this.attachShadow({mode:'open'});root.innerHTML=${JSON.stringify('<style>'+css+'</style>'+markup)};const stop=EidosGlass.mount(${JSON.stringify(p.glass)},root);const menu=root.querySelector('.pg-menu'),nav=root.querySelector('.pg-nav');const abort=new AbortController();const close=()=>{nav?.classList.remove('open','is-open');menu?.setAttribute('aria-expanded','false')};menu?.addEventListener('click',()=>{const open=nav.classList.toggle('open');nav.classList.toggle('is-open',open);menu.setAttribute('aria-expanded',String(open))},{signal:abort.signal});root.addEventListener('keydown',e=>{if(e.key==='Escape'){close();menu?.focus()}},{signal:abort.signal});root.addEventListener('click',e=>{const a=e.target.closest('a');if(!a)return;close();if(a.hash&&a.origin===location.origin&&a.pathname===location.pathname){const target=document.getElementById(decodeURIComponent(a.hash.slice(1)));if(target){e.preventDefault();target.scrollIntoView({behavior:matchMedia('(prefers-reduced-motion: reduce)').matches?'instant':'smooth'});target.focus({preventScroll:true})}}},{signal:abort.signal});this.cleanup=()=>{stop();abort.abort()}}disconnectedCallback(){this.cleanup?.();this.cleanup=null}});`;
+  const script=glassScript+`;if(!customElements.get('eidos-glass-header'))customElements.define('eidos-glass-header',class extends HTMLElement{connectedCallback(){if(this.cleanup)return;const root=this.shadowRoot||this.attachShadow({mode:'open'});root.innerHTML=${JSON.stringify('<style>'+css+'</style>'+markup)};const stop=EidosGlass.mount(${JSON.stringify(p.glass)},root);const menu=root.querySelector('.pg-menu'),nav=root.querySelector('.pg-nav');const abort=new AbortController();const close=()=>{nav?.classList.remove('open','is-open');menu?.setAttribute('aria-expanded','false')};menu?.addEventListener('click',()=>{const open=nav.classList.toggle('open');nav.classList.toggle('is-open',open);menu.setAttribute('aria-expanded',String(open))},{signal:abort.signal});document.addEventListener('keydown',e=>{if(e.key==='Escape'&&menu?.getAttribute('aria-expanded')==='true'){close();menu?.focus()}},{signal:abort.signal});root.addEventListener('click',e=>{const a=e.target.closest('a');if(!a)return;close();if(a.hash&&a.origin===location.origin&&a.pathname===location.pathname){const target=document.getElementById(decodeURIComponent(a.hash.slice(1)));if(target){e.preventDefault();target.scrollIntoView({behavior:matchMedia('(prefers-reduced-motion: reduce)').matches?'instant':'smooth'});target.focus({preventScroll:true})}}},{signal:abort.signal});this.cleanup=()=>{stop();abort.abort()}}disconnectedCallback(){this.cleanup?.();this.cleanup=null}});`;
+  const h=p.sections[0],esc=escapeHtml;
+  const nav=h.navigation||h.description.split('|').slice(0,2).map((label,i)=>({label,href:i?'#services':'#work'}));
+  const fallback=`<nav class="eidos-header-fallback" aria-label="Page navigation"><a href="#page-main">${esc(h.title)}</a>${nav.map(n=>`<a href="${esc(safeHref(n.href))}">${esc(n.label)}</a>`).join('')}${h.cta?`<a href="${esc(safeHref(h.href))}">${esc(h.cta)}</a>`:''}</nav>`;
+  const snippet=`<link rel="stylesheet" href="eidos-header.css"><eidos-glass-header>${fallback}</eidos-glass-header><script src="eidos-header.js" defer></script>`;
   return Object.entries({
     'eidos-header.js':script,
-    'index.html':'<!doctype html><html lang="en"><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Header installation example</title><style>body{margin:24px;background:#f5f5ef}main{min-height:200vh;padding-top:80px}</style><eidos-glass-header></eidos-glass-header><main id="hero" tabindex="-1"><h1>Your page content</h1><p>Scroll to try your exported header.</p></main><script src="eidos-header.js" defer></script></html>',
+    'header.html':snippet,
+    'eidos-header.css':`eidos-glass-header{display:block;position:sticky;top:16px;z-index:50}eidos-glass-header>.eidos-header-fallback{display:flex;flex-wrap:wrap;align-items:center;gap:20px;padding:18px;background:${p.glass.solid};color:${onColor(p.glass.solid)};border-radius:${p.glass.radius}px}eidos-glass-header>.eidos-header-fallback a{color:inherit;min-height:44px;display:inline-flex;align-items:center}`, 
+    'index.html':'<!doctype html><html lang="en"><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Header installation example</title><style>body{margin:24px;background:#f5f5ef}main{min-height:200vh;padding-top:80px}</style>'+snippet+'<main id="hero" tabindex="-1"><h1>Your page content</h1><p>Scroll to try your exported header.</p></main></html>',
     'project.json':JSON.stringify(p,null,2),
-    'README.md':'# Eidos header component\n\nCopy eidos-header.js to your site. Add <eidos-glass-header></eidos-glass-header> where the header belongs, then load <script src="eidos-header.js" defer></script> once. Serve from your own origin. Styles are isolated in a Shadow DOM. The host is sticky; avoid overflow containers that prevent sticky positioning. Its scroll transition follows the window.\n\nUse project.json to edit and re-export. Supply real destination elements for fragment links or set full page links before export. Include one header per page. Review your CSP for scripts, inline component styles, SVG filters, and data images. Test in your host page and target browsers. Without JavaScript this custom element does not render; supply your own fallback navigation when required.\n\nThis is a vanilla HTML component, not a validated InkSoft or CMS integration. Those require separate platform validation.\n',
+    'README.md':'# Eidos header component\n\nCopy eidos-header.js and eidos-header.css to your site and paste header.html where the header belongs. Keep the included light-DOM navigation: it provides a solid, keyboard-accessible fallback before JavaScript runs or when scripts are blocked. Serve from your own origin. Styles are isolated in a Shadow DOM. The host is sticky; avoid overflow containers that prevent sticky positioning. Its scroll transition follows the window.\n\nUse project.json to edit and re-export. Supply real destination elements for fragment links or set full page links before export. Include one header per page. Review your CSP for scripts, inline component styles, SVG filters, and data images. Test in your host page and target browsers. The included fallback navigation remains visible without JavaScript. Component styles require your CSP to allow inline styles or the exact generated style hash; if scripts are blocked, fallback navigation still works.\n\nThis is a vanilla HTML component, not a validated InkSoft or CMS integration. Those require separate platform validation.\n',
   }).map(([name,value])=>({name,data:encode(value)}));
 }
 export function exportFiles(input: Project): ExportFile[] {
   const p = validateProject(input),
     project = structuredClone(p),
     assets: ExportFile[] = [];
-  for (const s of project.sections)
+  for (const s of mediaSlots(project))
     if (s.image) {
       const match = /^data:image\/(png|jpeg|webp);base64,(.+)$/.exec(s.image)!;
       const name = `assets/${s.id}.${match[1] === "jpeg" ? "jpg" : match[1]}`;

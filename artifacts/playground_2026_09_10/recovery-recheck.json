@@ -1,0 +1,58 @@
+[
+  {
+    "scope": "Local",
+    "browser": "chromium",
+    "identity": "intercepted alice/bob API fixtures; no external authentication",
+    "scenario": "two tabs 409 preserves newer cloud and stale local work",
+    "status": "PASS"
+  },
+  {
+    "scope": "Local",
+    "browser": "chromium",
+    "identity": "intercepted alice/bob API fixtures; no external authentication",
+    "scenario": "offline and expired session preserve local design and export",
+    "status": "PASS"
+  },
+  {
+    "scope": "Local",
+    "browser": "chromium",
+    "identity": "intercepted alice/bob API fixtures; no external authentication",
+    "scenario": "account switch blocks saving the previous owner design",
+    "status": "PASS"
+  },
+  {
+    "scope": "Local",
+    "browser": "chromium",
+    "identity": "intercepted alice/bob API fixtures; no external authentication",
+    "scenario": "revision preview leaves head; explicit restore and Save creates head",
+    "status": "PASS"
+  },
+  {
+    "scope": "Local",
+    "browser": "chromium",
+    "identity": "intercepted alice/bob API fixtures; no external authentication",
+    "scenario": "Save as new keeps original cloud head intact",
+    "status": "PASS"
+  },
+  {
+    "scope": "Local",
+    "browser": "chromium",
+    "identity": "intercepted alice/bob API fixtures; no external authentication",
+    "scenario": "late cloud open ignored across same-template replacement",
+    "status": "PASS"
+  },
+  {
+    "scope": "Local",
+    "browser": "chromium",
+    "identity": "intercepted alice/bob API fixtures; no external authentication",
+    "scenario": "late JSON import ignored after a newer local edit",
+    "status": "PASS"
+  },
+  {
+    "scope": "Local",
+    "browser": "chromium",
+    "identity": "intercepted alice/bob API fixtures; no external authentication",
+    "scenario": "late image decode ignored after document changes",
+    "status": "PASS"
+  }
+]
