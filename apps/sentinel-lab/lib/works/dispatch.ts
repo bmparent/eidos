@@ -1,3 +1,4 @@
+import { validatePlaygroundImage } from './playgroundImage';
 import * as memberAuth from './vendor/functions/api/members/auth';
 import * as playgroundProjects from './vendor/functions/api/playground/projects';
 import * as playgroundCheckout from './vendor/functions/api/playground/checkout';
@@ -50,7 +51,7 @@ const names = [
 ] as const;
 export function platformEnvironment(source: Record<string, string | undefined> = process.env): PlatformEnv {
   const selected = Object.fromEntries(names.map(name => [name, source[name]]));
-  return { ...selected, EIDOS_RUNTIME: 'sentinel', EIDOS_DB: platformDatabase(source) };
+  return { ...selected, EIDOS_RUNTIME: 'sentinel', EIDOS_VALIDATE_PLAYGROUND_IMAGE: validatePlaygroundImage, EIDOS_DB: platformDatabase(source) };
 }
 function authenticated(request: Request, expected?: string) {
   const actual = request.headers.get('x-eidos-platform-token') || '';

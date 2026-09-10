@@ -1,6 +1,6 @@
 import { clean, db, hash, HttpError, type PlatformEnv } from './core';
 import { validateProject, type Project } from '../../../src/playground/model';
-import schema from './playgroundSchema';
+import schema, { assetQuota } from './playgroundSchema';
 import { cloudPreflight } from '../../../src/playground/limits';
 import type { Database } from './core';
 const initialized = new WeakMap<Database,Promise<unknown>>();
@@ -8,7 +8,7 @@ const initialized = new WeakMap<Database,Promise<unknown>>();
 export async function ensurePlayground(env: PlatformEnv) {
   const database=db(env);
   let ready=initialized.get(database);
-  if(!ready) {ready=database.batch(schema.split(';').map(s=>s.trim()).filter(Boolean).map(s=>database.prepare(s)));initialized.set(database,ready);}
+  if(!ready) {ready=database.batch([...schema.split(';').map(s=>s.trim()).filter(Boolean),assetQuota].map(s=>database.prepare(s)));initialized.set(database,ready);}
   try{await ready;}catch(error){initialized.delete(database);throw error;}
 }
 
@@ -42,6 +42,16 @@ export async function saveProject(env: PlatformEnv, owner: string, input: Record
   try { document = validateProject(input.document); } catch (error) { throw new HttpError(400, (error as Error).message); }
   const preflight = cloudPreflight(document);
   if (!preflight.allowed) throw new HttpError(413, preflight.message);
+  const mediaBytes = document.sections.reduce((n,s)=>n+s.image.length,0);
+  if(mediaBytes > 1_800_000) throw new HttpError(413, 'This page exceeds its 1.8 MB embedded-image allowance. Local content and exports are preserved.');
+  for(const section of document.sections) if(section.image) {
+    const digest = await hash(section.image);
+    const exists = await database.prepare('SELECT hash FROM eidos_pg_assets WHERE owner_id=? AND hash=?').bind(owner,digest).first();
+    if(!exists) {
+      if(!env.EIDOS_VALIDATE_PLAYGROUND_IMAGE) throw new HttpError(503, 'Account image validation is unavailable. Keep editing locally and retry Save later.');
+      try { await env.EIDOS_VALIDATE_PLAYGROUND_IMAGE(section.image); } catch { throw new HttpError(400, 'This image could not be decoded safely. Choose a smaller PNG, JPEG or WebP. Your local design is preserved.'); }
+    }
+  }
   const now = new Date().toISOString(), revisionId = crypto.randomUUID();
   const project = input.id ? await ownedProject(env, owner, input.id) : null;
   if (project && project.head !== input.expectedRevision) throw new HttpError(409, 'A newer revision exists. Reopen it or save your local work as a new project.');
@@ -62,7 +72,7 @@ export async function saveProject(env: PlatformEnv, owner: string, input: Record
   if (!project) statements.push(database.prepare('INSERT INTO eidos_pg_projects(id,owner_id,name,head,created_at,updated_at) VALUES(?,?,?,?,?,?)').bind(id,owner,document.name,revisionId,now,now));
   statements.push(database.prepare('INSERT INTO eidos_pg_revisions(id,project_id,parent,document,created_at) SELECT ?,id,?,?,? FROM eidos_pg_projects WHERE id=? AND owner_id=? AND head=?').bind(revisionId,project?.head || null,JSON.stringify(stored),now,id,owner,project?.head || revisionId));
   statements.push(database.prepare('UPDATE eidos_pg_projects SET name=?,head=?,updated_at=? WHERE id=? AND owner_id=? AND head=? AND EXISTS(SELECT 1 FROM eidos_pg_revisions WHERE id=?)').bind(document.name,revisionId,now,id,owner,project?.head || revisionId,revisionId));
-  await database.batch(statements);
+  try { await database.batch(statements); } catch(error) { if(String(error).includes('Playground owner image quota')) throw new HttpError(413,'Your account has reached its 40 MB image storage limit. Your local work and earlier revisions are preserved.'); throw error; }
   const saved = await database.prepare('SELECT id FROM eidos_pg_revisions WHERE id=?').bind(revisionId).first();
   if (!saved) throw new HttpError(409, 'Another tab saved first. Your edits are still on this device. Save them as a new project or reopen the latest revision.');
   return { id, revision: revisionId, name: document.name, updatedAt: now };

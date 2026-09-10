@@ -9,7 +9,7 @@ try {
   const directory = new URL('../lib/works/vendor/migrations/', import.meta.url);
   for (const name of (await readdir(directory)).filter(n=>/^\d+.*\.sql$/.test(n)).sort()) {
     const schema = await readFile(new URL(name,directory),'utf8');
-    await client.batch(schema.split(';').map(s => s.trim()).filter(Boolean), 'write');
+    await client.batch(name === '0004_playground_asset_quota.sql' ? [schema] : schema.split(';').map(s => s.trim()).filter(Boolean), 'write');
   }
   console.log('Applied the additive Eidos Works schema.');
 } finally { client.close(); }
