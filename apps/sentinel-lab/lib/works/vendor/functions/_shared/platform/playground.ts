@@ -1,5 +1,5 @@
 import { clean, db, hash, HttpError, type PlatformEnv } from './core';
-import { validateProject, type Project } from '../../../src/playground/model';
+import { validateProject, mediaSlots, type Project } from '../../../src/playground/model';
 import schema, { assetQuota } from './playgroundSchema';
 import { cloudPreflight } from '../../../src/playground/limits';
 import type { Database } from './core';
@@ -29,7 +29,7 @@ export async function projectRevision(env: PlatformEnv, owner: string, projectId
   const revision = await db(env).prepare('SELECT * FROM eidos_pg_revisions WHERE id=? AND project_id=?').bind(revisionId ? identifier(revisionId) : project.head, project.id).first<Revision>();
   if (!revision) throw new HttpError(404, 'Revision not found.');
   const document = JSON.parse(revision.document) as Project;
-  for (const section of document.sections) if (section.image.startsWith('asset:')) {
+  for (const section of mediaSlots(document)) if (section.image.startsWith('asset:')) {
     const asset = await db(env).prepare('SELECT data FROM eidos_pg_assets WHERE owner_id=? AND hash=?').bind(owner, section.image.slice(6)).first<{data:string}>();
     if (!asset) throw new HttpError(503, 'An image is unavailable. Your local copy is unchanged.');
     section.image = asset.data;
@@ -42,9 +42,9 @@ export async function saveProject(env: PlatformEnv, owner: string, input: Record
   try { document = validateProject(input.document); } catch (error) { throw new HttpError(400, (error as Error).message); }
   const preflight = cloudPreflight(document);
   if (!preflight.allowed) throw new HttpError(413, preflight.message);
-  const mediaBytes = document.sections.reduce((n,s)=>n+s.image.length,0);
+  const mediaBytes = mediaSlots(document).reduce((n,s)=>n+s.image.length,0);
   if(mediaBytes > 1_800_000) throw new HttpError(413, 'This page exceeds its 1.8 MB embedded-image allowance. Local content and exports are preserved.');
-  for(const section of document.sections) if(section.image) {
+  for(const section of mediaSlots(document)) if(section.image) {
     const digest = await hash(section.image);
     const exists = await database.prepare('SELECT hash FROM eidos_pg_assets WHERE owner_id=? AND hash=?').bind(owner,digest).first();
     if(!exists) {
@@ -64,7 +64,7 @@ export async function saveProject(env: PlatformEnv, owner: string, input: Record
   const id = project?.id || crypto.randomUUID();
   const stored = structuredClone(document);
   const statements = [];
-  for (const section of stored.sections) if (section.image) {
+  for (const section of mediaSlots(stored)) if (section.image) {
     const digest = await hash(section.image);
     statements.push(database.prepare('INSERT OR IGNORE INTO eidos_pg_assets(owner_id,hash,data) VALUES(?,?,?)').bind(owner,digest,section.image));
     section.image = 'asset:' + digest;
