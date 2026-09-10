@@ -17,6 +17,7 @@ export function compositionRuntime(initial: { editing: boolean; bridge: boolean;
     style.dataset.compositionEditor = 'true';
     style.textContent = `
       .pg-part[data-composition-part]{outline-offset:4px}
+      .pg-part.pg-compose-empty{min-height:44px}
       .pg-part.pg-part-selected{outline:2px solid #bce886}
       .pg-compose-handle{position:absolute;top:0;right:0;z-index:4;background:#15242c;color:#f5f8f4;border:1px solid #bce886;border-radius:7px;font:600 12px/1.2 Arial,sans-serif;min-width:44px;min-height:32px;padding:7px 10px;touch-action:none;cursor:grab;pointer-events:auto;box-shadow:0 2px 6px #0004}
       .pg-compose-handle:focus-visible{outline:3px solid #fff;outline-offset:2px}
@@ -28,6 +29,7 @@ export function compositionRuntime(initial: { editing: boolean; bridge: boolean;
     `;
     document.head.append(style);
     const handles: HTMLButtonElement[] = [];
+    const emptyParts: HTMLElement[] = [];
     let hud: HTMLElement | null = null;
     let gesture: { pointer: number; x: number; y: number; part: string; root: HTMLElement; handle: HTMLButtonElement; stamp: string; moved: boolean } | null = null;
     type Destination = { placement: string } | { before: string | null };
@@ -86,6 +88,9 @@ export function compositionRuntime(initial: { editing: boolean; bridge: boolean;
     for (const root of roots) {
       for (const el of root.querySelectorAll<HTMLElement>('[data-composition-part]')) {
         const part = el.dataset.compositionPart!;
+        if (part !== 'image' && !el.textContent?.trim() && !el.querySelector('a,img')) {
+          el.classList.add('pg-compose-empty'); emptyParts.push(el);
+        }
         if (part === selected) el.classList.add('pg-part-selected');
         const handle = document.createElement('button');
         handle.type = 'button'; handle.className = 'pg-compose-handle'; handle.textContent = `↕ ${labels[part]}`;
@@ -145,7 +150,7 @@ export function compositionRuntime(initial: { editing: boolean; bridge: boolean;
     }, options);
     document.addEventListener('dragend', reset, options);
     document.addEventListener('dragleave', event => { if (!event.relatedTarget) reset(); }, options);
-    cleanup = () => { reset(); abort.abort(); handles.forEach(handle => handle.remove()); style.remove(); };
+    cleanup = () => { reset(); abort.abort(); handles.forEach(handle => handle.remove()); emptyParts.forEach(el => el.classList.remove('pg-compose-empty')); style.remove(); };
   }
   mount();
   window.addEventListener('message', event => {
