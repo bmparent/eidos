@@ -1,6 +1,6 @@
 import { validateMedia, validateBrand, type MediaSettings, type BrandKit } from "./media";
 import approved from "./approved-glass-preset.json";
-export const VERSION = 1;
+export const VERSION = 2;
 export const LEGACY_RENDERER = "eidos-portable-glass-1.0.0";
 export const RENDERER = "eidos-original-glass-2.0.0";
 export const sectionTypes = [
@@ -9,7 +9,7 @@ export const sectionTypes = [
   "services",
   "work",
   "contact",
-  "footer",
+  "footer", "about", "faq", "gallery", "testimonials", "pricing",
 ] as const;
 export type SectionType = (typeof sectionTypes)[number];
 export const labels: Record<SectionType, string> = {
@@ -18,11 +18,21 @@ export const labels: Record<SectionType, string> = {
   services: "Services",
   work: "Selected work",
   contact: "Contact",
-  footer: "Footer",
+  footer: "Footer", about: "About", faq: "FAQ", gallery: "Gallery", testimonials: "Testimonials", pricing: "Services / pricing",
 };
+export type SectionStyle = { spacing: number; align: 'left'|'center'|'right'; background: string; mobileSpacing?: number; mobileAlign?: 'left'|'center'|'right' };
+export type Card = {id:string;title:string;description:string;image:string;alt:string;media?:MediaSettings};
+export const sectionKind = (s: Section): SectionType => s.type || s.id as SectionType;
+export const mediaSlots = (p:Project): (Section|Card)[] => p.sections.flatMap(s=>[s,...(s.cards||[])]);
+export function upgradeProject(p:Project):Project { return validateProject({...p,schemaVersion:2,sections:p.sections.map(s=>({...s,type:sectionKind(s)}))}); }
+export function newBlock(type:SectionType):Section { return {...makeSection(type,labels[type]),id:'block-'+crypto.randomUUID(),type,...(['faq','gallery','testimonials','pricing'].includes(type)?{cards:[]}: {})}; }
 export type Section = {
   media?: MediaSettings;
-  id: SectionType;
+  id: string;
+  type?: SectionType;
+  style?: SectionStyle;
+  cards?: Card[];
+  navigation?: {label:string;href:string}[];
   visible: boolean;
   title: string;
   description: string;
@@ -34,9 +44,9 @@ export type Section = {
 };
 export type Project = {
   brand?: BrandKit;
-  schemaVersion: 1;
+  schemaVersion: 1 | 2;
   rendererVersion: string;
-  template: "landing" | "homepage" | "portfolio";
+  template: "landing" | "homepage" | "portfolio" | "about" | "contact";
   name: string;
   tokens: {
     background: string;
@@ -159,6 +169,12 @@ export function createProject(
     p.sections[1].title = "Thoughtful work.\nLasting impressions.";
     p.sections[2].visible = false;
   }
+  if(template === 'about' || template === 'contact') {
+    p.schemaVersion=2;p.name=template==='about'?'About page':'Contact page';p.sections=p.sections.map(s=>({...s,type:sectionKind(s)}));
+    p.sections[1].title=template==='about'?'About your business':'Let us talk';p.sections[1].description='Add your own story and the details visitors need.';
+    if(template==='about') p.sections.splice(2,0,{...newBlock('about'),title:'Our story',description:'Describe your business in your own words.'});
+    if(template==='contact'){p.sections[2].visible=false;p.sections[3].visible=false;p.sections[4].description='Replace the sample email with your contact address. This link opens an email app; no form is connected.';}
+  }
   return p;
 }
 const record = (v: unknown): Record<string, unknown> => {
@@ -203,18 +219,20 @@ export function safeHref(value: string): string {
 }
 export function validateProject(input: unknown): Project {
   const p = record(input);
-  if (p.schemaVersion !== VERSION || ![RENDERER, LEGACY_RENDERER].includes(String(p.rendererVersion)))
+  if (![1, VERSION].includes(Number(p.schemaVersion)) || ![RENDERER, LEGACY_RENDERER].includes(String(p.rendererVersion)))
     throw new Error(
       "This project needs a different Playground version. Your current design is unchanged.",
     );
   const t = record(p.tokens),
     g = record(p.glass);
-  if (!Array.isArray(p.sections) || p.sections.length !== 6)
-    throw new Error("Project must contain its six supported sections.");
+  if (!Array.isArray(p.sections) || (p.schemaVersion===1 ? p.sections.length!==6 : p.sections.length<3 || p.sections.length>16))
+    throw new Error("Version 1 requires six sections; version 2 supports 3 to 16.");
   const seen = new Set<string>();
   const sections = p.sections.map((value) => {
     const s = record(value),
-      id = choice(s.id, sectionTypes);
+      id = p.schemaVersion===1 ? choice(s.id, sectionTypes.slice(0,6)) : string(s.id,80);
+    if(!/^[a-z][a-z0-9-]*$/.test(id)||["page-main","page-nav","page-root"].includes(id))throw Error("Invalid or reserved section identity.");
+    const type = p.schemaVersion===1 ? id as SectionType : choice(s.type,sectionTypes);
     if (seen.has(id)) throw new Error("Duplicate section.");
     seen.add(id);
     const image = string(s.image, 4_500_000);
@@ -239,6 +257,7 @@ export function validateProject(input: unknown): Project {
       );
     return {
       id,
+      ...(p.schemaVersion===2 ? {type,...validateStructure(s)} : {}),
       visible: bool(s.visible),
       title: string(s.title, 240),
       description: string(s.description),
@@ -250,13 +269,15 @@ export function validateProject(input: unknown): Project {
       ...(s.media === undefined ? {} : {media: validateMedia(s.media)}),
     };
   });
-  if (sections[0].id !== "header" || sections[5].id !== "footer")
+  if (sectionKind(sections[0]) !== "header" || sectionKind(sections[sections.length-1]) !== "footer" || sections.filter(s=>sectionKind(s)==="header").length!==1 || sections.filter(s=>sectionKind(s)==="footer").length!==1 || sections.filter(s=>sectionKind(s)==="hero").length!==1)
     throw new Error("Header and footer must stay at the ends of the page.");
+  const identities=sections.flatMap(s=>[s.id,...(s.cards||[]).map(c=>c.id)]);
+  if(new Set(identities).size!==identities.length)throw Error("Duplicate page identity.");
   return {
-    schemaVersion: 1,
+    schemaVersion: p.schemaVersion as 1|2,
     ...(p.brand === undefined ? {} : {brand:validateBrand(p.brand)}),
     rendererVersion: String(p.rendererVersion),
-    template: choice(p.template, ["landing", "homepage", "portfolio"] as const),
+    template: choice(p.template, ["landing", "homepage", "portfolio", "about", "contact"] as const),
     name: string(p.name, 100),
     tokens: {
       background: color(t.background),
@@ -285,6 +306,13 @@ export function validateProject(input: unknown): Project {
     sections,
   };
 }
+function validateStructure(s:Record<string,unknown>):Pick<Section,'style'|'cards'|'navigation'> {
+ const out:Pick<Section,'style'|'cards'|'navigation'>={};
+ if(s.style!==undefined){const v=record(s.style);out.style={spacing:number(v.spacing,0,160),align:choice(v.align,['left','center','right']),background:v.background===''?'':color(v.background),...(v.mobileSpacing===undefined?{}:{mobileSpacing:number(v.mobileSpacing,0,160)}),...(v.mobileAlign===undefined?{}:{mobileAlign:choice(v.mobileAlign,['left','center','right'] as const)})};}
+ if(s.navigation!==undefined){if(!Array.isArray(s.navigation)||s.navigation.length>6)throw Error('Navigation supports at most six links.');out.navigation=s.navigation.map(v=>{const n=record(v),href=string(n.href,1000);if(href&&safeHref(href)==='#'&&href!=='#')throw Error('Unsafe navigation destination.');return {label:string(n.label,60),href};});}
+ if(s.cards!==undefined){if(!Array.isArray(s.cards)||s.cards.length>12)throw Error('A block supports up to twelve cards.');const seen=new Set<string>();out.cards=s.cards.map(v=>{const c=record(v),id=string(c.id,80);if(!/^card-[a-z0-9-]+$/.test(id)||seen.has(id))throw Error('Invalid or duplicate card identity.');seen.add(id);const fixture=createProject();fixture.sections[1]={...fixture.sections[1],image:c.image as string,alt:c.alt as string,...(c.media===undefined?{}:{media:c.media as MediaSettings})};const valid=validateProject(fixture).sections[1];return {id,title:string(c.title,240),description:string(c.description,2000),image:valid.image,alt:valid.alt,...(valid.media?{media:valid.media}:{})};});}
+ return out;
+}
 export function contrast(a: string, b: string): number {
   const luminance = (hex: string) => {
     const c = [1, 3, 5]
@@ -300,7 +328,7 @@ export const onColor = (hex: string) =>
   contrast(hex, "#111111") > contrast(hex, "#ffffff") ? "#111111" : "#ffffff";
 export function projectWarnings(p: Project): string[] {
   const out: string[] = [];
-  if (!p.sections.find((s) => s.id === "hero")?.visible)
+  if (!p.sections.find((s) => sectionKind(s) === "hero")?.visible)
     out.push(
       "The hero is hidden. Add a visible page heading before publishing.",
     );
@@ -310,7 +338,7 @@ export function projectWarnings(p: Project): string[] {
     );
   for (const s of p.sections.filter((s) => s.visible)) {
     if (s.image && !s.alt.trim() && !s.media?.decorative)
-      out.push(`${labels[s.id]} image needs a description.`);
+      out.push(`${labels[sectionKind(s)]} image needs a description.`);
     if (
       s.href.startsWith("#") &&
       s.href !== "#" &&
@@ -318,9 +346,23 @@ export function projectWarnings(p: Project): string[] {
         (target) => target.id === s.href.slice(1) && target.visible,
       )
     )
-      out.push(`${labels[s.id]} links to a hidden section.`);
+      out.push(`${labels[sectionKind(s)]} links to a hidden section.`);
     if (s.href.includes("example.com"))
       out.push("Replace the sample contact email before publishing.");
+  }
+  for(const s of p.sections.filter(s=>s.visible)) {
+    for(const link of [...(s.navigation||[]),...(s.cta?[{label:s.cta,href:s.href}]:[])]) {
+      if(!link.label.trim())out.push('A navigation link needs an accessible label.');
+      if(!link.href||link.href==='#'||link.href.includes('example.com'))out.push('Replace unresolved links and sample destinations.');
+      if(link.href.startsWith('#')&&link.href!=='#'&&!p.sections.some(t=>t.visible&&t.id===link.href.slice(1))&&link.href!=='#page-main')out.push('A navigation destination is missing or hidden.');
+    }
+    for(const item of [s,...(s.cards||[])]) {
+      if(item.image&&!item.alt.trim()&&!item.media?.decorative)out.push('An image needs alternative text or decorative classification.');
+      if(/\S{50,}/.test(item.title+' '+item.description))out.push('Long unbroken text may overflow on small screens.');
+      if(/replace|your own|sample|placeholder/i.test(item.title+' '+item.description))out.push('Review remaining placeholder copy before publishing.');
+    }
+    if(['testimonials','pricing','gallery','faq'].includes(sectionKind(s))&&!s.cards?.length)out.push(labels[sectionKind(s)]+' is empty; add your own content.');
+    if(sectionKind(s)==='contact')out.push('Contact links are not a connected form. Review the destination and test it.');
   }
   return [...new Set(out)];
 }
