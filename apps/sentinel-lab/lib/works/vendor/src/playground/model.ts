@@ -1,6 +1,7 @@
 import { validateMedia, validateBrand, type MediaSettings, type BrandKit } from "./media";
 import approved from "./approved-glass-preset.json";
-export const VERSION = 2;
+import { validateComposition, type Composition } from './compositionSchema';
+export const VERSION = 3;
 export const LEGACY_RENDERER = "eidos-portable-glass-1.0.0";
 export const RENDERER = "eidos-original-glass-2.0.0";
 export const sectionTypes = [
@@ -24,9 +25,10 @@ export type SectionStyle = { spacing: number; align: 'left'|'center'|'right'; ba
 export type Card = {id:string;title:string;description:string;image:string;alt:string;media?:MediaSettings};
 export const sectionKind = (s: Section): SectionType => s.type || s.id as SectionType;
 export const mediaSlots = (p:Project): (Section|Card)[] => p.sections.flatMap(s=>[s,...(s.cards||[])]);
-export function upgradeProject(p:Project):Project { return validateProject({...p,schemaVersion:2,sections:p.sections.map(s=>({...s,type:sectionKind(s)}))}); }
+export function upgradeProject(p:Project):Project { return p.schemaVersion === 3 ? p : validateProject({...p,schemaVersion:2,sections:p.sections.map(s=>({...s,type:sectionKind(s)}))}); }
 export function newBlock(type:SectionType):Section { return {...makeSection(type,labels[type]),id:'block-'+crypto.randomUUID(),type,...(['faq','gallery','testimonials','pricing'].includes(type)?{cards:[]}: {})}; }
 export type Section = {
+  composition?: Composition;
   media?: MediaSettings;
   id: string;
   type?: SectionType;
@@ -44,7 +46,7 @@ export type Section = {
 };
 export type Project = {
   brand?: BrandKit;
-  schemaVersion: 1 | 2;
+  schemaVersion: 1 | 2 | 3;
   rendererVersion: string;
   template: "landing" | "homepage" | "portfolio" | "about" | "contact";
   name: string;
@@ -219,20 +221,22 @@ export function safeHref(value: string): string {
 }
 export function validateProject(input: unknown): Project {
   const p = record(input);
-  if (![1, VERSION].includes(Number(p.schemaVersion)) || ![RENDERER, LEGACY_RENDERER].includes(String(p.rendererVersion)))
+  if (![1, 2, VERSION].includes(p.schemaVersion as number) || ![RENDERER, LEGACY_RENDERER].includes(String(p.rendererVersion)))
     throw new Error(
       "This project needs a different Playground version. Your current design is unchanged.",
     );
   const t = record(p.tokens),
     g = record(p.glass);
   if (!Array.isArray(p.sections) || (p.schemaVersion===1 ? p.sections.length!==6 : p.sections.length<3 || p.sections.length>16))
-    throw new Error("Version 1 requires six sections; version 2 supports 3 to 16.");
+    throw new Error("Version 1 requires six sections; versions 2 and 3 support 3 to 16.");
   const seen = new Set<string>();
   const sections = p.sections.map((value) => {
     const s = record(value),
       id = p.schemaVersion===1 ? choice(s.id, sectionTypes.slice(0,6)) : string(s.id,80);
     if(!/^[a-z][a-z0-9-]*$/.test(id)||["page-main","page-nav","page-root"].includes(id))throw Error("Invalid or reserved section identity.");
     const type = p.schemaVersion===1 ? id as SectionType : choice(s.type,sectionTypes);
+    if (s.composition !== undefined && (p.schemaVersion !== 3 || type !== 'hero')) throw Error('Spatial composition requires a version 3 hero.');
+    if (p.schemaVersion === 3 && type === 'hero' && s.composition === undefined) throw Error('Version 3 heroes require composition settings.');
     if (seen.has(id)) throw new Error("Duplicate section.");
     seen.add(id);
     const image = string(s.image, 4_500_000);
@@ -257,7 +261,8 @@ export function validateProject(input: unknown): Project {
       );
     return {
       id,
-      ...(p.schemaVersion===2 ? {type,...validateStructure(s)} : {}),
+      ...(p.schemaVersion!==1 ? {type,...validateStructure(s)} : {}),
+      ...(s.composition === undefined ? {} : {composition:validateComposition(s.composition)}),
       visible: bool(s.visible),
       title: string(s.title, 240),
       description: string(s.description),
@@ -274,7 +279,7 @@ export function validateProject(input: unknown): Project {
   const identities=sections.flatMap(s=>[s.id,...(s.cards||[]).map(c=>c.id)]);
   if(new Set(identities).size!==identities.length)throw Error("Duplicate page identity.");
   return {
-    schemaVersion: p.schemaVersion as 1|2,
+    schemaVersion: p.schemaVersion as 1|2|3,
     ...(p.brand === undefined ? {} : {brand:validateBrand(p.brand)}),
     rendererVersion: String(p.rendererVersion),
     template: choice(p.template, ["landing", "homepage", "portfolio", "about", "contact"] as const),
@@ -337,6 +342,8 @@ export function projectWarnings(p: Project): string[] {
       "Page text contrast is below 4.5:1. Adjust the background or text color.",
     );
   for (const s of p.sections.filter((s) => s.visible)) {
+    if (s.composition && (s.composition.placement === 'background' || s.composition.mobilePlacement === 'background'))
+      out.push('Review hero text over the actual image at desktop and mobile sizes. An overlay does not guarantee sufficient contrast.');
     if (s.image && !s.alt.trim() && !s.media?.decorative)
       out.push(`${labels[sectionKind(s)]} image needs a description.`);
     if (
