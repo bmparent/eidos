@@ -1,0 +1,82 @@
+[
+  {
+    "baseRefName": "main",
+    "headRefName": "codex/playground-reliability-20260909",
+    "headRefOid": "cfe9682a3a341ec56ca1c53a8431f84922e5c1d8",
+    "isDraft": true,
+    "number": 28,
+    "statusCheckRollup": [
+      {
+        "__typename": "CheckRun",
+        "completedAt": "2026-09-10T13:27:44Z",
+        "conclusion": "SUCCESS",
+        "detailsUrl": "https://github.com/bmparent/brent-parent-intelligence-studio/actions/runs/34482703491/job/102889186549",
+        "name": "verify",
+        "startedAt": "2026-09-10T13:27:04Z",
+        "status": "COMPLETED",
+        "workflowName": "Site quality"
+      }
+    ],
+    "url": "https://github.com/bmparent/brent-parent-intelligence-studio/pull/28"
+  },
+  {
+    "baseRefName": "codex/playground-reliability-20260909",
+    "headRefName": "codex/playground-media-20260910",
+    "headRefOid": "3eb26fa1efc09a7416b55728a957dd2c2b690822",
+    "isDraft": true,
+    "number": 31,
+    "statusCheckRollup": [
+      {
+        "__typename": "CheckRun",
+        "completedAt": "2026-09-10T13:44:17Z",
+        "conclusion": "SUCCESS",
+        "detailsUrl": "https://github.com/bmparent/brent-parent-intelligence-studio/actions/runs/34484445837/job/102895060663",
+        "name": "verify",
+        "startedAt": "2026-09-10T13:43:41Z",
+        "status": "COMPLETED",
+        "workflowName": "Site quality"
+      }
+    ],
+    "url": "https://github.com/bmparent/brent-parent-intelligence-studio/pull/31"
+  },
+  {
+    "baseRefName": "codex/playground-media-20260910",
+    "headRefName": "codex/playground-structure-20260910",
+    "headRefOid": "cfdb58f98324bca2e3f22bd6b5be844b0ebc4cb9",
+    "isDraft": true,
+    "number": 32,
+    "statusCheckRollup": [
+      {
+        "__typename": "CheckRun",
+        "completedAt": "2026-09-10T13:59:58Z",
+        "conclusion": "SUCCESS",
+        "detailsUrl": "https://github.com/bmparent/brent-parent-intelligence-studio/actions/runs/34486087017/job/102900616819",
+        "name": "verify",
+        "startedAt": "2026-09-10T13:59:14Z",
+        "status": "COMPLETED",
+        "workflowName": "Site quality"
+      }
+    ],
+    "url": "https://github.com/bmparent/brent-parent-intelligence-studio/pull/32"
+  },
+  {
+    "baseRefName": "codex/playground-structure-20260910",
+    "headRefName": "codex/playground-ai-20260910",
+    "headRefOid": "39ba1fa2de678e2e7012427c5500ee67792111a6",
+    "isDraft": true,
+    "number": 33,
+    "statusCheckRollup": [
+      {
+        "__typename": "CheckRun",
+        "completedAt": "2026-09-10T14:21:50Z",
+        "conclusion": "SUCCESS",
+        "detailsUrl": "https://github.com/bmparent/brent-parent-intelligence-studio/actions/runs/34488484550/job/102908771692",
+        "name": "verify",
+        "startedAt": "2026-09-10T14:21:15Z",
+        "status": "COMPLETED",
+        "workflowName": "Site quality"
+      }
+    ],
+    "url": "https://github.com/bmparent/brent-parent-intelligence-studio/pull/33"
+  }
+]

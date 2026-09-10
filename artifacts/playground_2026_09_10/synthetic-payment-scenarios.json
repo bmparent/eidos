@@ -1,0 +1,29 @@
+{
+  "scope": "Local",
+  "status": "PASS",
+  "identity": "dedicated in-memory alice/bobby fixtures",
+  "providerGenerated": false,
+  "amountCents": 100,
+  "currency": "usd",
+  "scenarios": [
+    "pending download denied",
+    "expired pending download denied",
+    "async failed download denied",
+    "invalid signature denied",
+    "wrong amount denied",
+    "cross-account download denied",
+    "duplicate paid event idempotent",
+    "dispute revocation blocks download",
+    "earlier paid success does not regrant after dispute",
+    "live Playground key rejected"
+  ],
+  "events": [
+    "evt_pending_expired",
+    "evt_pending_failed",
+    "evt_bad",
+    "evt_wrong",
+    "evt_paid",
+    "evt_dispute",
+    "evt_late"
+  ]
+}

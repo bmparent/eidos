@@ -1,0 +1,15 @@
+{
+  "scope": "Production/Preview configuration inspection only",
+  "observedDate": "2026-09-10",
+  "method": "Vercel CLI env names captured without values, isolated npm cache",
+  "playgroundStripeKeyPresent": false,
+  "playgroundWebhookSecretPresent": false,
+  "playgroundTestAmountPresent": false,
+  "playgroundAiEnvNamesPresent": false,
+  "previewAccountsEnabledNamePresent": false,
+  "productionAccountsEnabledNamePresent": true,
+  "databaseBindingPresentBoth": true,
+  "mutationsPerformed": false,
+  "providerInferenceCalls": 0,
+  "providerPaymentCheckouts": 0
+}

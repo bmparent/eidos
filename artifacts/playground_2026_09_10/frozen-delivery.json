@@ -1,0 +1,17 @@
+{
+  "scope": "Local",
+  "status": "PASS",
+  "identity": "local normal signup fixtures alice/bobby; not external member sign-in",
+  "eventSource": "signed synthetic fixture",
+  "sessionId": "cs_test_fixture",
+  "paidEventId": "evt_paid",
+  "providerCallsMocked": 1,
+  "orderId": "38542fa1-661f-477f-ac91-8757ab49511f",
+  "revisionId": "ceb9046f-251a-4108-89bb-07c3fe859d8a",
+  "amountCents": 100,
+  "currency": "usd",
+  "frozenSha256": "221656d19bd5ad7f487ee91bb3052186ed805f8dcdb498d63bfbec0576e5c451",
+  "deliveredSha256": "221656d19bd5ad7f487ee91bb3052186ed805f8dcdb498d63bfbec0576e5c451",
+  "bytes": 45823,
+  "editedAfterCheckout": true
+}
