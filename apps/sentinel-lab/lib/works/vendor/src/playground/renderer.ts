@@ -2,6 +2,8 @@ import { type Project, type Card, sectionKind, mediaSlots, onColor, safeHref, RE
 import { pageStyles } from "./pageStyles";
 import { pageRuntime } from "./runtime";
 import { glassScript, glassStyles, glassMarkup } from './glassBundle';
+import { compositionMarkup, compositionStyles } from './compositionRenderer';
+import { compositionRuntime } from './compositionRuntime';
 export const escapeHtml = (v: string) =>
   v.replace(
     /[&<>"']/g,
@@ -52,6 +54,8 @@ export function pageMarkup(p: Project): string {
           .join(
             "",
           )}${button(s, true)}</nav>${p.rendererVersion === RENDERER ? '</div>' : ''}</header><main id="page-main" tabindex="-1">`;
+      if (kind === 'hero' && s.composition)
+        return compositionMarkup(s, {title:`<h1>${esc(s.title)}</h1>`,description:s.description?`<p>${esc(s.description)}</p>`:'',cta:button(s),image:`<div class="pg-composition-visual">${s.image ? image(s) : art()}</div>`});
       if (kind === "hero")
         return `<section class="pg-hero ${s.layout}" ${attrs}><div class="pg-copy"><h1>${esc(s.title)}</h1><p>${esc(s.description)}</p>${button(s)}</div>${s.image ? image(s) : art()}</section>`;
       if (kind === "services")
@@ -90,7 +94,7 @@ export function runtimeScript(
   selected = "",
   bridge = false,
 ): string {
-  return `${glassScript}\n(${pageRuntime.toString()})(${JSON.stringify(runtimeConfig(p, editing, selected, bridge)).replace(/</g, "\\u003c")});`;
+  return `${glassScript}\n(${pageRuntime.toString()})(${JSON.stringify(runtimeConfig(p, editing, selected, bridge)).replace(/</g, "\\u003c")});${bridge ? `\n(${compositionRuntime.toString()})(${JSON.stringify({editing,bridge})});` : ''}`;
 }
 function mediaStyles(p: Project) {
   const settings=mediaSlots(p).filter(s=>s.media&&s.image);if(!settings.length)return '';
@@ -100,7 +104,7 @@ function structureStyles(p:Project) {
  if(p.schemaVersion===1)return '';
  return '.pg-block{padding:var(--space) 0}.pg-cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,240px),1fr));gap:24px}.pg-card{min-width:0;overflow-wrap:anywhere}.pg-card .pg-media-frame{height:260px}.pg-card p,.pg-block p{white-space:pre-line}.pg-card summary{cursor:pointer;padding:12px 0}.pg-block>.pg-media-frame{max-height:600px}section{overflow-wrap:anywhere}' + p.sections.filter(s=>s.style).map(s=>{const v=s.style!;return `#${s.id}{padding-block:${v.spacing}px;text-align:${v.align};${v.background?'background:'+v.background+';':''}}@media(max-width:640px){#${s.id}{padding-block:${v.mobileSpacing??v.spacing}px;text-align:${v.mobileAlign??v.align}}}`}).join('');
 }
-export function renderedStyles(p: Project) { return pageStyles + structureStyles(p) + mediaStyles(p) + (p.rendererVersion === RENDERER ? glassStyles + `
+export function renderedStyles(p: Project) { return pageStyles + structureStyles(p) + mediaStyles(p) + compositionStyles(p.sections) + (p.rendererVersion === RENDERER ? glassStyles + `
 .pg-header.ew-glass-header{padding:0;background:transparent;backdrop-filter:none;-webkit-backdrop-filter:none;isolation:auto;box-shadow:none}
 .pg-header.ew-glass-header:before{display:none}
 .pg-header .ew-header__inner{width:100%;display:flex;align-items:center;justify-content:space-between;padding:18px 28px;min-height:64px}

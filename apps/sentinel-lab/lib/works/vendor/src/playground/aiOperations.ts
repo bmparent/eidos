@@ -11,7 +11,7 @@ export function validateProposal(value:unknown):Proposal {
 }
 export function aiContext(p:Project,selected:string,scope:'section'|'page') {
  const s=p.sections.find(s=>s.id===selected);if(!s)throw Error('Select a section first.');
- return {schemaVersion:p.schemaVersion,rendererVersion:p.rendererVersion,template:p.template,scope,section:{id:s.id,type:sectionKind(s),title:s.title,description:s.description,cta:s.cta,href:s.href,layout:s.layout,...(s.style?{style:s.style}:{})},tokens:p.tokens,brand:p.brand||null};
+ return {schemaVersion:p.schemaVersion,rendererVersion:p.rendererVersion,template:p.template,scope,section:{id:s.id,type:sectionKind(s),title:s.title,description:s.description,cta:s.cta,href:s.href,layout:s.layout,...(s.style?{style:s.style}:{}),...(s.composition?{composition:s.composition}:{})},tokens:p.tokens,brand:p.brand||null};
 }
 export function applyProposal(p:Project,selected:string,scope:'section'|'page',value:unknown):Project {
  const proposal=validateProposal(value),next=structuredClone(p),s=next.sections.find(s=>s.id===selected);if(!s)throw Error('The selected section is gone.');
@@ -23,8 +23,9 @@ export function applyProposal(p:Project,selected:string,scope:'section'|'page',v
    Object.assign(next.tokens,{[key]:['spacing','typeScale'].includes(key)?Number(value):value});
   }else{
    const key=field.slice(8);if(key==='title'&&['header','footer'].includes(sectionKind(s))&&locks.includes('name'))throw Error('The brand name is locked.');
+   if(s.composition&&['layout','spacing','align'].includes(key))throw Error('Use the spatial layout controls for this hero; legacy AI layout fields cannot change it.');
    if(key==='href'&&value&&safeHref(value)==='#'&&value!=='#')throw Error('AI proposed an unsafe link.');
-   if(key==='spacing'||key==='align'){if(p.schemaVersion!==2||['header','footer'].includes(sectionKind(s)))throw Error('Section layout is unavailable here.');s.style={spacing:p.tokens.spacing,align:'left',background:'',...s.style,[key]:key==='spacing'?Number(value):value} as Section['style'];}
+   if(key==='spacing'||key==='align'){if(p.schemaVersion===1||['header','footer'].includes(sectionKind(s)))throw Error('Section layout is unavailable here.');s.style={spacing:p.tokens.spacing,align:'left',background:'',...s.style,[key]:key==='spacing'?Number(value):value} as Section['style'];}
    else Object.assign(s,{[key]:value});
   }
  }
