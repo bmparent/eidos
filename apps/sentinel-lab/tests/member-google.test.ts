@@ -86,5 +86,11 @@ await test('Google links authoritative email to the existing verified member and
     flow = await begin(env, sessionCookie(response), 'link', pass);
     assert.match((await callback(context(env, undefined, flow.cookie + '; ' + sessionCookie(response), '?state=' + flow.state + '&code=test'))).headers.get('location')!, /oauth=collision$/);
     assert.equal((await client.execute('SELECT subject FROM eidos_member_google')).rows[0].subject, 'google-owner');
+    identity.email = 'new@thirdparty.test';
+    flow = await begin(env);
+    assert.match((await callback(context(env, undefined, flow.cookie, '?state=' + flow.state + '&code=test'))).headers.get('location')!, /oauth=signup-required$/);
+    assert.equal((await client.execute('SELECT COUNT(*) n FROM eidos_member_google_signup')).rows[0].n, 0);
+    assert.equal((await client.execute('SELECT COUNT(*) n FROM eidos_email_members')).rows[0].n, 1);
+    assert.equal((await client.execute("SELECT COUNT(*) n FROM eidos_member_oauth_flows WHERE consumed=2 AND (nonce<>'' OR verifier<>'')")).rows[0].n, 0);
   } finally { globalThis.fetch = original; client.close(); }
 });

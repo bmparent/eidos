@@ -4,6 +4,8 @@ import { readFileSync } from 'node:fs';
 import { createClient } from '@libsql/client';
 import { adaptDatabase, databaseConfiguration } from '../lib/works/database';
 import { passwordService } from '../lib/works/passwords';
+import { validatePlaygroundImage } from '../lib/works/playgroundImage';
+import sharp from 'sharp';
 import { hash, type Context, type PlatformEnv } from '../lib/works/vendor/functions/_shared/platform/core';
 import { onRequestPost as credentials } from '../lib/works/vendor/functions/api/members/credentials';
 import { onRequestPost as magic } from '../lib/works/vendor/functions/api/members/auth';
@@ -165,4 +167,52 @@ await test('Reset expiry and single-use admission fail closed, and repeated logi
     for (let i = 0; i < 11; i++) statuses.push((await credentials(context(env, { action: 'login', identifier: user.name, password: 'bad' }))).status);
     assert.deepEqual(statuses, [...Array(10).fill(401), 429]);
   } finally { client.close(); }
+});
+
+await test('Concurrent application saves cannot exceed the account project cap', async () => {
+  const { client, env } = await setup();
+  try {
+    const user = await signup(env);
+    for (let i = 0; i < 19; i++) await payload(await save(context(env, { document: createProject() }, user.cookie)));
+    // Both requests observe the last available slot before either writes, as two
+    // remote requests can. Only the schedule is controlled; database writes are real.
+    let arrivals = 0, release!: () => void;
+    const ready = new Promise<void>(resolve => { release = resolve; });
+    const original = env.EIDOS_DB!;
+    const raced = { ...env, EIDOS_DB: { ...original, prepare(sql: string) {
+      const statement = original.prepare(sql);
+      if (sql !== 'SELECT COUNT(*) AS n FROM eidos_pg_projects WHERE owner_id=?') return statement;
+      const originalBind = statement.bind.bind(statement);
+      statement.bind = (...args: unknown[]) => {
+        const bound = originalBind(...args), first = bound.first.bind(bound);
+        bound.first = async <T>() => { const result = await first<T>(); if (++arrivals === 2) release(); await ready; return result; };
+        return bound;
+      };
+      return statement;
+    } } };
+    const documents = await Promise.all([0, 255].map(async red => {
+      const document = createProject();
+      const image = await sharp({ create: { width: 1, height: 1, channels: 4, background: { r: red, g: 100, b: 50, alpha: 1 } } }).png().toBuffer();
+      document.sections.find(s => s.id === 'hero')!.image = 'data:image/png;base64,' + image.toString('base64');
+      return document;
+    }));
+    const results = await Promise.all(documents.map(document => save(context({ ...raced, EIDOS_VALIDATE_PLAYGROUND_IMAGE: validatePlaygroundImage }, { document }, user.cookie))));
+    assert.deepEqual(results.map(r => r.status).sort(), [200, 409]);
+    assert.equal((await payload(await projects(context(env, undefined, user.cookie)))).projects.length, 20);
+    assert.equal((await client.execute('SELECT COUNT(*) n FROM eidos_pg_projects')).rows[0].n, 20);
+    assert.equal((await client.execute('SELECT COUNT(*) n FROM eidos_pg_assets')).rows[0].n, 1, 'The rejected save must not leave an orphan image');
+  } finally { client.close(); }
+});
+
+await test('Expired sessions stop reading saved work and a fresh password login preserves ownership', async () => {
+  const { client, env } = await setup(); const originalNow = Date.now;
+  try {
+    const user = await signup(env), saved = await payload(await save(context(env, { document: createProject() }, user.cookie)));
+    Date.now = () => originalNow() + 31 * 86400000;
+    assert.equal((await payload(await account(context(env, undefined, user.cookie)))).member, null);
+    assert.equal((await projects(context(env, undefined, user.cookie, '/api/playground/projects?id=' + saved.id))).status, 401);
+    Date.now = originalNow;
+    const login = await credentials(context(env, { action: 'login', identifier: user.email, password: pass })); await payload(login);
+    assert.equal((await payload(await projects(context(env, undefined, cookieOf(login), '/api/playground/projects?id=' + saved.id)))).id, saved.id);
+  } finally { Date.now = originalNow; client.close(); }
 });

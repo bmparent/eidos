@@ -80,7 +80,7 @@ export const onRequestGet = guarded(async ({ request, env }) => {
       const byEmail = await database.prepare('SELECT * FROM eidos_email_members WHERE email=?').bind(email).first<Member & { disabled: number }>();
       // Google is authoritative for Gmail or verified Workspace domains only.
       // Third-party Google emails must first prove control through Eidos email login.
-      if (!identity.authoritativeEmail) return redirect('link-required');
+      if (!identity.authoritativeEmail) return redirect(byEmail ? 'link-required' : 'signup-required');
       member = byEmail;
     }
     if (member?.disabled) throw Error('Disabled account');

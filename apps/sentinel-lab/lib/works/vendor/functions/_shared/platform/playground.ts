@@ -64,16 +64,20 @@ export async function saveProject(env: PlatformEnv, owner: string, input: Record
   const id = project?.id || crypto.randomUUID();
   const stored = structuredClone(document);
   const statements = [];
+  // Recheck admission inside the write transaction: concurrent requests can both
+  // observe the same last slot during the earlier, user-friendly preflight.
+  if (!project) statements.push(database.prepare('INSERT INTO eidos_pg_projects(id,owner_id,name,head,created_at,updated_at) SELECT ?,?,?,?,?,? WHERE (SELECT COUNT(*) FROM eidos_pg_projects WHERE owner_id=?)<20').bind(id,owner,document.name,revisionId,now,now,owner));
   for (const section of mediaSlots(stored)) if (section.image) {
     const digest = await hash(section.image);
-    statements.push(database.prepare('INSERT OR IGNORE INTO eidos_pg_assets(owner_id,hash,data) VALUES(?,?,?)').bind(owner,digest,section.image));
+    // A rejected project or stale head must not leave newly uploaded orphan assets.
+    statements.push(database.prepare('INSERT OR IGNORE INTO eidos_pg_assets(owner_id,hash,data) SELECT ?,?,? WHERE EXISTS(SELECT 1 FROM eidos_pg_projects WHERE id=? AND owner_id=? AND head=?)').bind(owner,digest,section.image,id,owner,project?.head || revisionId));
     section.image = 'asset:' + digest;
   }
-  if (!project) statements.push(database.prepare('INSERT INTO eidos_pg_projects(id,owner_id,name,head,created_at,updated_at) VALUES(?,?,?,?,?,?)').bind(id,owner,document.name,revisionId,now,now));
   statements.push(database.prepare('INSERT INTO eidos_pg_revisions(id,project_id,parent,document,created_at) SELECT ?,id,?,?,? FROM eidos_pg_projects WHERE id=? AND owner_id=? AND head=?').bind(revisionId,project?.head || null,JSON.stringify(stored),now,id,owner,project?.head || revisionId));
   statements.push(database.prepare('UPDATE eidos_pg_projects SET name=?,head=?,updated_at=? WHERE id=? AND owner_id=? AND head=? AND EXISTS(SELECT 1 FROM eidos_pg_revisions WHERE id=?)').bind(document.name,revisionId,now,id,owner,project?.head || revisionId,revisionId));
   try { await database.batch(statements); } catch(error) { if(String(error).includes('Playground owner image quota')) throw new HttpError(413,'Your account has reached its 40 MB image storage limit. Your local work and earlier revisions are preserved.'); throw error; }
   const saved = await database.prepare('SELECT id FROM eidos_pg_revisions WHERE id=?').bind(revisionId).first();
+  if (!saved && !project) throw new HttpError(409, 'This account has reached its 20-project limit.');
   if (!saved) throw new HttpError(409, 'Another tab saved first. Your edits are still on this device. Save them as a new project or reopen the latest revision.');
   return { id, revision: revisionId, name: document.name, updatedAt: now };
 }
