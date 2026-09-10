@@ -22,3 +22,9 @@ Provider-generated Stripe delivery and immutable paid-download matching are not 
 
 ## Artifacts and Drive
 Local receipts are preserved outside committed source; this journal and analysis are repo-local. A final manifest records the exact files and Drive copy outcome. No secrets or session state are included. The code is reviewable through stacked draft PRs; no merges or production promotion are authorized.
+
+## Final artifact receipt
+
+Repo-local metadata is in artifacts/playground_2026_09_10/. Full browser scripts, controlled screenshots and actual ZIPs are retained at C:/Users/bmpar/SystemDiagnostics/playground-20260910. The configured mounted Drive mirror at G:/My Drive/Eidos_Brain_Proof_Phase/2026-09-10/playground-implementation-1439 contains 104 copied files with matching read-back SHA-256 hashes; no files were skipped. Remote synchronization was not independently confirmed. See drive_manifest.json and artifact-manifest.json. No Eidos research metric or readiness percentage is claimed.
+
+All four frontend code previews and matching backend build deployments exist at exact SHAs in deployments-final.json. Combined anonymous preview browser checks passed in Chromium, Firefox and WebKit at 1440 and 390 pixels, with zero AI requests. Eight additional local recovery scenarios passed. Normal member, real Stripe TEST delivery, paid AI evaluation, physical iPhone and actual CMS installation remain external gates. No production rollout or migration occurred.

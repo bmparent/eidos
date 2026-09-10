@@ -1,0 +1,190 @@
+[
+  {
+    "baseRefName": "main",
+    "headRefName": "codex/playground-reliability-backend-20260909",
+    "headRefOid": "4032aa7b172453e472fd73ba1544b5b26c1c1e0e",
+    "isDraft": true,
+    "number": 54,
+    "statusCheckRollup": [
+      {
+        "__typename": "CheckRun",
+        "completedAt": "2026-09-09T20:47:46Z",
+        "conclusion": "SUCCESS",
+        "detailsUrl": "https://github.com/bmparent/eidos/actions/runs/34403118504/job/102639548992",
+        "name": "verify",
+        "startedAt": "2026-09-09T20:47:10Z",
+        "status": "COMPLETED",
+        "workflowName": "Sentinel Lab quality"
+      },
+      {
+        "__typename": "CheckRun",
+        "completedAt": "2026-09-09T20:47:51Z",
+        "conclusion": "SUCCESS",
+        "detailsUrl": "https://github.com/bmparent/eidos/actions/runs/34403118504/job/102639549307",
+        "name": "runner",
+        "startedAt": "2026-09-09T20:47:10Z",
+        "status": "COMPLETED",
+        "workflowName": "Sentinel Lab quality"
+      },
+      {
+        "__typename": "StatusContext",
+        "context": "Vercel",
+        "startedAt": "2026-09-09T20:47:31Z",
+        "state": "SUCCESS",
+        "targetUrl": "https://vercel.com/1brentbm-1876s-projects/eidos-sentinel-lab/24A3ZT2vmbgt3ixV4PMd3ddmJqD1"
+      },
+      {
+        "__typename": "CheckRun",
+        "completedAt": "2026-09-09T20:47:31Z",
+        "conclusion": "SUCCESS",
+        "detailsUrl": "https://vercel.com/github",
+        "name": "Vercel Preview Comments",
+        "startedAt": "2026-09-09T20:47:31Z",
+        "status": "COMPLETED",
+        "workflowName": ""
+      }
+    ],
+    "url": "https://github.com/bmparent/eidos/pull/54"
+  },
+  {
+    "baseRefName": "codex/playground-reliability-backend-20260909",
+    "headRefName": "codex/playground-media-backend-20260910",
+    "headRefOid": "92ec804ff6953edcdcce6419022c336dbf108c5b",
+    "isDraft": true,
+    "number": 55,
+    "statusCheckRollup": [
+      {
+        "__typename": "CheckRun",
+        "completedAt": "2026-09-10T13:44:41Z",
+        "conclusion": "SUCCESS",
+        "detailsUrl": "https://github.com/bmparent/eidos/actions/runs/34484488370/job/102895207595",
+        "name": "verify",
+        "startedAt": "2026-09-10T13:44:06Z",
+        "status": "COMPLETED",
+        "workflowName": "Sentinel Lab quality"
+      },
+      {
+        "__typename": "CheckRun",
+        "completedAt": "2026-09-10T13:44:46Z",
+        "conclusion": "SUCCESS",
+        "detailsUrl": "https://github.com/bmparent/eidos/actions/runs/34484488370/job/102895208367",
+        "name": "runner",
+        "startedAt": "2026-09-10T13:44:06Z",
+        "status": "COMPLETED",
+        "workflowName": "Sentinel Lab quality"
+      },
+      {
+        "__typename": "StatusContext",
+        "context": "Vercel",
+        "startedAt": "2026-09-10T13:44:28Z",
+        "state": "SUCCESS",
+        "targetUrl": "https://vercel.com/1brentbm-1876s-projects/eidos-sentinel-lab/E1P2MDWfGTJaCqyKUj84pkjFjnHp"
+      },
+      {
+        "__typename": "CheckRun",
+        "completedAt": "2026-09-10T13:44:28Z",
+        "conclusion": "SUCCESS",
+        "detailsUrl": "https://vercel.com/github",
+        "name": "Vercel Preview Comments",
+        "startedAt": "2026-09-10T13:44:28Z",
+        "status": "COMPLETED",
+        "workflowName": ""
+      }
+    ],
+    "url": "https://github.com/bmparent/eidos/pull/55"
+  },
+  {
+    "baseRefName": "codex/playground-media-backend-20260910",
+    "headRefName": "codex/playground-structure-backend-20260910",
+    "headRefOid": "0aa5417e3be827910775e32e6157562f85f8da01",
+    "isDraft": true,
+    "number": 56,
+    "statusCheckRollup": [
+      {
+        "__typename": "CheckRun",
+        "completedAt": "2026-09-10T13:58:37Z",
+        "conclusion": "SUCCESS",
+        "detailsUrl": "https://github.com/bmparent/eidos/actions/runs/34485955244/job/102900157655",
+        "name": "verify",
+        "startedAt": "2026-09-10T13:57:57Z",
+        "status": "COMPLETED",
+        "workflowName": "Sentinel Lab quality"
+      },
+      {
+        "__typename": "CheckRun",
+        "completedAt": "2026-09-10T13:58:55Z",
+        "conclusion": "SUCCESS",
+        "detailsUrl": "https://github.com/bmparent/eidos/actions/runs/34485955244/job/102900157435",
+        "name": "runner",
+        "startedAt": "2026-09-10T13:57:57Z",
+        "status": "COMPLETED",
+        "workflowName": "Sentinel Lab quality"
+      },
+      {
+        "__typename": "StatusContext",
+        "context": "Vercel",
+        "startedAt": "2026-09-10T13:58:22Z",
+        "state": "SUCCESS",
+        "targetUrl": "https://vercel.com/1brentbm-1876s-projects/eidos-sentinel-lab/CZjpUWBKhRe5aZCsVnx4cXc4eQS1"
+      },
+      {
+        "__typename": "CheckRun",
+        "completedAt": "2026-09-10T13:58:23Z",
+        "conclusion": "SUCCESS",
+        "detailsUrl": "https://vercel.com/github",
+        "name": "Vercel Preview Comments",
+        "startedAt": "2026-09-10T13:58:23Z",
+        "status": "COMPLETED",
+        "workflowName": ""
+      }
+    ],
+    "url": "https://github.com/bmparent/eidos/pull/56"
+  },
+  {
+    "baseRefName": "codex/playground-structure-backend-20260910",
+    "headRefName": "codex/playground-ai-backend-20260910",
+    "headRefOid": "96cff975478ed32fb806436ca8b694ded03aec2b",
+    "isDraft": true,
+    "number": 57,
+    "statusCheckRollup": [
+      {
+        "__typename": "CheckRun",
+        "completedAt": "2026-09-10T14:23:07Z",
+        "conclusion": "SUCCESS",
+        "detailsUrl": "https://github.com/bmparent/eidos/actions/runs/34488616093/job/102909214312",
+        "name": "verify",
+        "startedAt": "2026-09-10T14:22:27Z",
+        "status": "COMPLETED",
+        "workflowName": "Sentinel Lab quality"
+      },
+      {
+        "__typename": "CheckRun",
+        "completedAt": "2026-09-10T14:23:11Z",
+        "conclusion": "SUCCESS",
+        "detailsUrl": "https://github.com/bmparent/eidos/actions/runs/34488616093/job/102909213955",
+        "name": "runner",
+        "startedAt": "2026-09-10T14:22:28Z",
+        "status": "COMPLETED",
+        "workflowName": "Sentinel Lab quality"
+      },
+      {
+        "__typename": "StatusContext",
+        "context": "Vercel",
+        "startedAt": "2026-09-10T14:22:49Z",
+        "state": "SUCCESS",
+        "targetUrl": "https://vercel.com/1brentbm-1876s-projects/eidos-sentinel-lab/FEsaRcrtesr1jiLiwSWrnC6XdydA"
+      },
+      {
+        "__typename": "CheckRun",
+        "completedAt": "2026-09-10T14:22:49Z",
+        "conclusion": "SUCCESS",
+        "detailsUrl": "https://vercel.com/github",
+        "name": "Vercel Preview Comments",
+        "startedAt": "2026-09-10T14:22:49Z",
+        "status": "COMPLETED",
+        "workflowName": ""
+      }
+    ],
+    "url": "https://github.com/bmparent/eidos/pull/57"
+  }
+]

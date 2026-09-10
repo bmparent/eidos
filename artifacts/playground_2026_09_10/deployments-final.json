@@ -1,0 +1,172 @@
+{
+  "cloudflare": {
+    "checkedAt": "2026-09-10T14:33:09.657Z",
+    "project": "eidosworks",
+    "productionBranch": "main",
+    "production": {
+      "id": "5c362fa8-fab1-4419-b3fe-96efb03d614b",
+      "url": "https://5c362fa8.eidosworks.pages.dev",
+      "environment": "production",
+      "sha": "c5d2525feb006a07a7ac00e19d2d8c574e220b5c",
+      "branch": "main",
+      "status": "success"
+    },
+    "previewBackend": "https://eidos-sentinel-ckvdvep3j-1brentbm-1876s-projects.vercel.app",
+    "previewBindingNames": [
+      "EIDOS_PLATFORM_PREVIEW_BYPASS",
+      "EIDOS_PLATFORM_TOKEN",
+      "EIDOS_PLATFORM_URL"
+    ],
+    "deployments": [
+      {
+        "id": "c62ec1f4-0e31-4bff-8be6-3cae2636fe1e",
+        "url": "https://c62ec1f4.eidosworks.pages.dev",
+        "environment": "preview",
+        "sha": "cfe9682a3a341ec56ca1c53a8431f84922e5c1d8",
+        "branch": "playground-reliability-20260909",
+        "status": "success"
+      },
+      {
+        "id": "6d88bdf7-0b5e-4085-b190-e146f6790cd7",
+        "url": "https://6d88bdf7.eidosworks.pages.dev",
+        "environment": "preview",
+        "sha": "3eb26fa1efc09a7416b55728a957dd2c2b690822",
+        "branch": "playground-media-20260910",
+        "status": "success"
+      },
+      {
+        "id": "733dc787-2593-4f1d-bd0d-aa4cfaae260a",
+        "url": "https://733dc787.eidosworks.pages.dev",
+        "environment": "preview",
+        "sha": "39ba1fa2de678e2e7012427c5500ee67792111a6",
+        "branch": "playground-ai-20260910",
+        "status": "success"
+      },
+      {
+        "id": "8dbced92-b2b3-4eb5-a9d1-534a2ed842e2",
+        "url": "https://8dbced92.eidosworks.pages.dev",
+        "environment": "preview",
+        "sha": "cfdb58f98324bca2e3f22bd6b5be844b0ebc4cb9",
+        "branch": "playground-structure-20260910",
+        "status": "success"
+      },
+      {
+        "id": "9823df81-901e-48ef-872c-4d253f2ba8e0",
+        "url": "https://9823df81.eidosworks.pages.dev",
+        "environment": "preview",
+        "sha": "HEAD",
+        "branch": "playground-structure-20260910",
+        "status": "success"
+      },
+      {
+        "id": "a75a5428-0c52-4f74-9290-bd43464c1bea",
+        "url": "https://a75a5428.eidosworks.pages.dev",
+        "environment": "preview",
+        "sha": "3eb26fa",
+        "branch": "playground-media-20260910",
+        "status": "success"
+      },
+      {
+        "id": "8a335012-f5ee-4267-b323-2f36e4827bcc",
+        "url": "https://8a335012.eidosworks.pages.dev",
+        "environment": "preview",
+        "sha": "11efeef",
+        "branch": "playground-reliability-20260909",
+        "status": "success"
+      },
+      {
+        "id": "5c362fa8-fab1-4419-b3fe-96efb03d614b",
+        "url": "https://5c362fa8.eidosworks.pages.dev",
+        "environment": "production",
+        "sha": "c5d2525feb006a07a7ac00e19d2d8c574e220b5c",
+        "branch": "main",
+        "status": "success"
+      }
+    ]
+  },
+  "vercel": {
+    "deployments": [
+      {
+        "id": "dpl_FEsaRcrtesr1jiLiwSWrnC6XdydA",
+        "url": "eidos-sentinel-q2cnixfly-1brentbm-1876s-projects.vercel.app",
+        "sha": "96cff975478ed32fb806436ca8b694ded03aec2b",
+        "branch": "codex/playground-ai-backend-20260910",
+        "state": "READY",
+        "target": null
+      },
+      {
+        "id": "dpl_CZjpUWBKhRe5aZCsVnx4cXc4eQS1",
+        "url": "eidos-sentinel-d3vajrtgg-1brentbm-1876s-projects.vercel.app",
+        "sha": "0aa5417e3be827910775e32e6157562f85f8da01",
+        "branch": "codex/playground-structure-backend-20260910",
+        "state": "READY",
+        "target": null
+      },
+      {
+        "id": "dpl_E1P2MDWfGTJaCqyKUj84pkjFjnHp",
+        "url": "eidos-sentinel-4z27ygpu4-1brentbm-1876s-projects.vercel.app",
+        "sha": "92ec804ff6953edcdcce6419022c336dbf108c5b",
+        "branch": "codex/playground-media-backend-20260910",
+        "state": "READY",
+        "target": null
+      },
+      {
+        "id": "dpl_24A3ZT2vmbgt3ixV4PMd3ddmJqD1",
+        "url": "eidos-sentinel-4ukuispb2-1brentbm-1876s-projects.vercel.app",
+        "sha": "4032aa7b172453e472fd73ba1544b5b26c1c1e0e",
+        "branch": "codex/playground-reliability-backend-20260909",
+        "state": "READY",
+        "target": null
+      },
+      {
+        "id": "dpl_9PmFJGfq7hF8USFyD7nMqhN1EvR8",
+        "url": "eidos-sentinel-nv30nwz2e-1brentbm-1876s-projects.vercel.app",
+        "sha": "f1e1934d840ea19ec14d9c13d62b966d44f57d0c",
+        "branch": "codex/playground-reliability-backend-20260909",
+        "state": "READY",
+        "target": null
+      },
+      {
+        "id": "dpl_8ztuTFv3h34YFuBSjHS31F8Q13aV",
+        "url": "eidos-sentinel-nr8jm0uzl-1brentbm-1876s-projects.vercel.app",
+        "sha": "a2da5fd9af21c02573e538fd30aaf7d5c690e457",
+        "branch": "main",
+        "state": "READY",
+        "target": "production"
+      },
+      {
+        "id": "dpl_BHqXYeW4qaNx7VBHWcS2q1pMsdHi",
+        "url": "eidos-sentinel-e94vsaxlp-1brentbm-1876s-projects.vercel.app",
+        "sha": "b5d043faf89309a1fcb1b82e45a1b4bec94dca3b",
+        "branch": "feat/playground-cloud-delivery",
+        "state": "READY",
+        "target": null
+      },
+      {
+        "id": "dpl_GxNxReW2D2uHxrxt4TWBs4UHJAMF",
+        "url": "eidos-sentinel-dkp1mjai2-1brentbm-1876s-projects.vercel.app",
+        "sha": "233a1d8404d6b9be806cdf9c45a5ac861123e871",
+        "branch": "main",
+        "state": "READY",
+        "target": "production"
+      },
+      {
+        "id": "dpl_25j8Fyfxov8bw5yNjpxyg2gP7shL",
+        "url": "eidos-sentinel-4nxcwo4pc-1brentbm-1876s-projects.vercel.app",
+        "sha": "1ff3d3643f6dc229795bc7f8c2290a76424a677a",
+        "branch": "1ff3d3643f6dc229795bc7f8c2290a76424a677a",
+        "state": "READY",
+        "target": "production"
+      },
+      {
+        "id": "dpl_BouP1KQtSwPacdxG38zcoxYsM8YK",
+        "url": "eidos-sentinel-iqxq4g0ox-1brentbm-1876s-projects.vercel.app",
+        "sha": "1ff3d3643f6dc229795bc7f8c2290a76424a677a",
+        "branch": "main",
+        "state": "READY",
+        "target": "production"
+      }
+    ],
+    "retrievedDuring": "2026-09-10 verification task"
+  }
+}

@@ -1,0 +1,146 @@
+[
+  {
+    "scope": "Local",
+    "status": "PASS",
+    "gate": "Code and source/vendor parity",
+    "evidence": "54 shared files; zero mismatches; source-vendor-parity.json. Refresh through scripts/export-sentinel-platform.mjs; base SQL LF normalization follows that script."
+  },
+  {
+    "scope": "Local",
+    "status": "FAIL",
+    "gate": "Original save-identity bug reproduced",
+    "evidence": "Sep09 browser-reliability.json: Chromium/Firefox/WebKit open A, open B, Undo A, then Save targets B on production baseline c5d2525. Expected failure preserved."
+  },
+  {
+    "scope": "Local",
+    "status": "PASS",
+    "gate": "Save identity fix and replacement semantics",
+    "evidence": "Same three engines on fixed code; save targets A. Workspace unit tests cover Undo/Redo, import/template/variation detachment and late save acknowledgment."
+  },
+  {
+    "scope": "Local",
+    "status": "PASS",
+    "gate": "Recovery and late writes",
+    "evidence": "recovery-recheck.json: Chromium, intercepted alice/bob API fixtures; 409 two-tab preservation, network failure, expired session, account switch, revision preview/restore, Save as new, late cloud open/import/image decode. No external authentication."
+  },
+  {
+    "scope": "Local",
+    "status": "PASS",
+    "gate": "Media and brand editor",
+    "evidence": "media-browser.json: anonymous controlled Fixture Studio, Chromium/Firefox/WebKit at 1440/390; transparent image upload, fit/zoom/decorative/brand edits, autosave/reload and actual ZIPs."
+  },
+  {
+    "scope": "Local",
+    "status": "PASS",
+    "gate": "Raster validation and asset quotas",
+    "evidence": "Backend actual Sharp PNG decode/mismatched MIME/truncated/excessive dimensions; local missing-decoder and atomic 40 MB owner quota rollback; local API ownership/card hydration tests."
+  },
+  {
+    "scope": "Local",
+    "status": "PASS",
+    "gate": "Version-2 flexible blocks and archives",
+    "evidence": "18 structure-stage Playground tests; structure/browser.json and structure/webkit-recheck.json, all three engines at 1440/390; two independent gallery blocks, cards, upload, Undo/Redo/reload and standalone page ZIP."
+  },
+  {
+    "scope": "Local",
+    "status": "PASS",
+    "gate": "Header installed in unrelated host",
+    "evidence": "structure receipts: actual downloaded header ZIP; original renderer; solid 0/4px, glass 72/150px, reverse 3px; fixed hit-target widths; menu/Escape/fragments; host CSS isolation; no-JS and CSP script-blocked fallback; reduced-motion reload. This is engine testing, not physical Safari."
+  },
+  {
+    "scope": "Local",
+    "status": "PASS",
+    "gate": "Strict AI operations and admission",
+    "evidence": "Six AI unit/mock tests, two backend provider transport tests; ai-browser.json, Chromium/Firefox/WebKit with intercepted alice API; three mocked proposals each, Apply/Undo/stale/late response handling, zero automatic cloud saves."
+  },
+  {
+    "scope": "Local",
+    "status": "PASS",
+    "gate": "Frozen delivery and synthetic payment states",
+    "evidence": "frozen-delivery.json + frozen-fixture.zip: owned local signup fixture, cs_test_fixture, evt_paid, project edited after checkout, frozen/delivered SHA-256 identical. synthetic-payment-scenarios.json and dispute-delivery.json: signature, amount, duplicate, cross-owner, pending/expired/failed, refund/dispute tombstones and earlier-success replay. All provider calls mocked."
+  },
+  {
+    "scope": "Local",
+    "status": "PASS",
+    "gate": "Final applicable checks",
+    "evidence": "Frontend build/typecheck/lint/Functions build; 24 Playground + 26 platform + 3 glass + 1 analytics tests. Backend lint, 51 tests, build. frontend-prs.json/backend-prs.json contain successful GitHub quality checks for all eight code heads."
+  },
+  {
+    "scope": "Preview",
+    "status": "PASS",
+    "gate": "Frontend deployments and anonymous availability",
+    "evidence": "deployments-final.json and http-checks.json: existing eidosworks project, four recorded full SHAs and HTTP 200, CF-Ray IDs. No new cloud project."
+  },
+  {
+    "scope": "Preview",
+    "status": "PASS",
+    "gate": "Deployed editing/reload/free export with AI disabled",
+    "evidence": "preview/browser.json desktop and preview/mobile-recheck.json mobile: Chromium/Firefox/WebKit 1440/390, fresh anonymous contexts, latest combined preview 733dc787; local name edit/reload, actual ZIP/hash, zero /api/playground/ai requests. Screenshots contain controlled fixtures."
+  },
+  {
+    "scope": "Preview",
+    "status": "PASS",
+    "gate": "Backend builds deployed",
+    "evidence": "Four existing-project Vercel deployments READY at recorded SHAs. This establishes build/deployment availability, not authenticated handler execution."
+  },
+  {
+    "scope": "Preview",
+    "status": "BLOCKED",
+    "gate": "Integrated authenticated member verification",
+    "evidence": "Pages preview still targets existing ckvdvep3j validation backend, not the four new protected backend builds. Dedicated controlled normal-member identities were not supplied; no account sessions minted, challenges bypassed or global preview bindings changed. Matching isolated backend configuration/migrations and legitimate two-account sign-in are required."
+  },
+  {
+    "scope": "Production",
+    "status": "PASS",
+    "gate": "Existing release unchanged and publicly available",
+    "evidence": "Cloudflare canonical deployment 5c362fa8 at c5d2525; Vercel production dpl_8ztuTFv3h34YFuBSjHS31F8Q13aV at a2da5fd9. Anonymous public GET HTTP 200; CF-Ray a38f29519e1d95d2-MIA. No claim of authenticated production behavior."
+  },
+  {
+    "scope": "Production",
+    "status": "NOT RUN",
+    "gate": "Release new code or migrations",
+    "evidence": "No merge, production deployment, migration, real sales or public AI enablement authorized or performed."
+  },
+  {
+    "scope": "Preview",
+    "status": "BLOCKED",
+    "gate": "Normal-member save/sign-out/sign-in and fresh-device reopen",
+    "evidence": "Requires dedicated controlled accounts and isolated matching relay/backend. Exact images/content, cross-owner project/revision/asset/order access, session expiry and two-tab 409 through actual relay remain external gates."
+  },
+  {
+    "scope": "Preview",
+    "status": "BLOCKED",
+    "gate": "Stripe-generated TEST checkout and webhook delivery",
+    "evidence": "Dedicated Playground key, webhook secret and amount absent in safely inspected Vercel preview/production env metadata and local env. Separate sk_test key + matching dedicated endpoint secret + 100-cent amount required; preserve existing shop. No real checkout/session/event ID exists in this receipt."
+  },
+  {
+    "scope": "Preview",
+    "status": "NOT RUN",
+    "gate": "Stripe endpoint API compatibility and real refund/dispute/frozen ZIP",
+    "evidence": "Pinned 2026-08-26.dahlia retained; endpoint compatibility and six event subscriptions unverified. Real paid checkout-to-order association, provider idempotency, actual public raw-body/signature relay, refunded/disputed payment and frozen paid-download hash remain unproven. Synthetic rows above do not substitute."
+  },
+  {
+    "scope": "Local",
+    "status": "PASS",
+    "gate": "Read-only AI model catalogue",
+    "evidence": "Existing scoped server credential used only for GET /v1/models; gpt-5-mini, gpt-image-2.5-flare and gpt-image-2.5-sunburst listed. No key created and no inference call made. This is access discovery, not a model evaluation."
+  },
+  {
+    "scope": "Preview",
+    "status": "BLOCKED",
+    "gate": "Real bounded text/image provider evaluation",
+    "evidence": "No test budget authorized. Proposed ceiling USD 2.00 needs an explicit decision before any calls. Compare bounded text candidates and one low-quality draft per current Image 2.5 model; record actual usage/cost/cache/latency, pin winner, verify worst-case reservation. Public controls remain off."
+  },
+  {
+    "scope": "Preview",
+    "status": "NOT RUN",
+    "gate": "Physical iPhone Safari",
+    "evidence": "No physical device/provider used. Photo-library orientation, touch cancellation, rotation/address-bar viewport, reduced motion, reload, download/share and glass fallback remain manual/device-provider gates. No pixel-identical refraction claim."
+  },
+  {
+    "scope": "Preview",
+    "status": "NOT RUN",
+    "gate": "InkSoft and other CMS installation",
+    "evidence": "No authorized customer target tested or changed. Embed/CSS placement, sanitation/CSP, existing headers/admin controls, asset paths/navigation/style isolation remain unvalidated."
+  }
+]
