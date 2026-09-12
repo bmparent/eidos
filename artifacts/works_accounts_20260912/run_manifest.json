@@ -1,0 +1,27 @@
+{
+  "timestamp_utc": "2026-09-12T19:04:26.200607+00:00",
+  "scope": "Works account reconciliation; controlled only; no research engine changes",
+  "backend_base": "a2da5fd9af21c02573e538fd30aaf7d5c690e457",
+  "frontend_base": "9e824cc7748631f61ae6d452ed07a8d10ab29f28",
+  "status": "partial",
+  "hosted_acceptance": "blocked: provider configuration and owner-controlled hosted confirmation pending",
+  "flags": {
+    "EIDOS_PLAYGROUND_AUTHORING_ENABLED": "false by default; true only in controlled v4 test"
+  },
+  "results": {
+    "backend_js_passed": 16,
+    "backend_ts_passed": 48,
+    "frontend_playground_passed": 52,
+    "account_epoch_unit_passed": "included in 52",
+    "controlled_browser_accounts": 2,
+    "account_switch_browser_passed": true
+  },
+  "limitations": [
+    "No real hosted email or Google consent",
+    "No real Stripe TEST traffic",
+    "Default Turbopack build blocked by external dependency junction; webpack build passed",
+    "No physical device test",
+    "No remote migration or rollout"
+  ],
+  "frontend_source": "42ed4f8b76d9b1372cebb02a96b6946b922cb734"
+}

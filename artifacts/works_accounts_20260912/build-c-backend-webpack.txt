@@ -1,0 +1,35 @@
+
+> eidos-sentinel-lab@0.2.0 build
+> next build --webpack
+
+▲ Next.js 16.3.4 (webpack)
+✓ Running next.config.ts took 228ms
+
+  Creating an optimized production build ...
+✓ Compiled successfully in 77s
+  Running TypeScript ...
+  Finished TypeScript in 17.1s ...
+  Collecting page data using 7 workers ...
+  Generating static pages using 7 workers (0/7) ...
+  Generating static pages using 7 workers (1/7) 
+  Generating static pages using 7 workers (3/7) 
+  Generating static pages using 7 workers (5/7) 
+✓ Generating static pages using 7 workers (7/7) in 2.4s
+  Finalizing page optimization ...
+  Collecting build traces ...
+
+Route (app)
+┌ ○ /
+├ ○ /_not-found
+├ ƒ /api/datasets
+├ ƒ /api/experiments
+├ ƒ /api/experiments/[jobId]
+├ ƒ /api/experiments/[jobId]/artifacts/[artifactName]
+├ ƒ /api/experiments/preflight
+├ ƒ /api/smoke
+└ ƒ /api/works/v1/[...path]
+
+
+○  (Static)   prerendered as static content
+ƒ  (Dynamic)  server-rendered on demand
+

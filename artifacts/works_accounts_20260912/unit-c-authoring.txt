@@ -1,0 +1,11 @@
+(node:26076) ExperimentalWarning: SQLite is an experimental feature and might change at any time
+(Use `node --trace-warnings ...` to show where the warning was created)
+✔ v4 cloud defaults off; explicit controlled gate preserves node assets, owner isolation and concurrent heads (181.3393ms)
+ℹ tests 1
+ℹ suites 0
+ℹ pass 1
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 977.3026
