@@ -1,0 +1,22 @@
+[
+  {
+    "who": "alice",
+    "passed": true,
+    "checks": [
+      "actual signup, explicit local proof-link confirmation, secure session and dashboard",
+      "actual local editor saves a legacy-format project through owner-aware API",
+      "actual logout clears dashboard; password login restores matching account"
+    ],
+    "environment": "Chromium loopback in-memory fixture; real local scrypt; no hosted email, Google or payment provider"
+  },
+  {
+    "who": "bobby",
+    "passed": true,
+    "checks": [
+      "actual signup, explicit local proof-link confirmation, secure session and dashboard",
+      "second account has an empty independent dashboard and cannot read first account project",
+      "actual logout clears dashboard; password login restores matching account"
+    ],
+    "environment": "Chromium loopback in-memory fixture; real local scrypt; no hosted email, Google or payment provider"
+  }
+]

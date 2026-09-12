@@ -1,0 +1,89 @@
+
+> eidos-sentinel-lab@0.2.0 test
+> node --test tests/*.test.mjs && node --import tsx --test tests/*.test.ts --test-name-pattern=database
+
+✔ default real-data spec produces a stable canonical lock (15.0645ms)
+✔ real-data spec requires version and rejects path traversal (2.3567ms)
+✔ proof and label-isolation locks cannot be relaxed (1.5359ms)
+✔ preflight blocks dispatch without changing scientific readiness (334.8118ms)
+✔ backend-specific blockers remain explicit and fail closed (4.1048ms)
+✔ stale launcher receipts fail closed without advancing proof gates (9.4087ms)
+✔ launcher command inspection is rate limited (0.9826ms)
+✔ sandbox allocation errors return a stable diagnostic response instead of a generic 400 (2.3859ms)
+✔ dispatch diagnostics preserve useful provider context while redacting credentials (2.4199ms)
+✔ known capacity and configuration failures retain their public contracts (1.1011ms)
+✔ request parse failures and stage wrappers remain explicit (2.3793ms)
+✔ engineering smoke is deterministic for a locked request (123.0818ms)
+✔ held-out seeds are inaccessible (3.5572ms)
+✔ smoke output cannot advance proof gates (26.0892ms)
+✔ incident language remains calibrated (49.0959ms)
+✔ all registered engineering scenarios return finite traces (382.2366ms)
+ℹ tests 16
+ℹ suites 0
+ℹ pass 16
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 1717.2031
+✔ independent clients cannot exceed capacity and retries return the same job (1287.559ms)
+✔ abandoned reservations recover, stale allocators are fenced and old retry keys never relaunch (126.4303ms)
+✔ allocation uncertainty retains its slot beyond expiry until provider reconciliation (90.3017ms)
+✔ admission fails closed without remote storage or a valid retry key (16.9653ms)
+✔ immutable verifier checks bytes, missing and forbidden paths without opening raw inputs (2968.4028ms)
+{"level":"info","event":"experiment_dispatch_started","route":"/api/experiments","diagnosticId":"a40156b4-4d70-438f-9f30-0193a3c8175c","requestId":null}
+{"level":"error","event":"experiment_dispatch_failed","route":"/api/experiments","diagnosticId":"a40156b4-4d70-438f-9f30-0193a3c8175c","requestId":null,"stage":"operator_auth","code":"OPERATOR_AUTH_REQUIRED","status":401,"retryable":false,"durationMs":24,"diagnostic":{"type":"Error","message":"OPERATOR_AUTH_REQUIRED"}}
+✔ changing a dataset source invalidates inherited hashes, filenames and unknown versions (9.1194ms)
+✔ only explicit numeric values and allowlisted engine profiles can be locked (18.2744ms)
+✔ operator and full-capacity gates stay closed before any dispatch (344.216ms)
+✔ bounded JSON handling rejects malformed and chunked oversized requests (950.3909ms)
+✔ Isolated preview database selection never falls back to unrelated bindings (22.4353ms)
+✔ Password KDF uses independent salts, preserves spaces and rejects malformed encodings (10136.1564ms)
+✔ Verified signup, username/email login, logout and exact project persistence use application flows (4604.629ms)
+✔ Two legitimate accounts cannot read projects or revisions owned by each other (2455.4479ms)
+✔ Password change rotates current session and reset invalidates all sessions, old links and old passwords (6052.9173ms)
+✔ Existing magic-link member adds a password without changing member, agent key or project identity (1564.0984ms)
+✔ Unknown and incorrect credentials have identical errors; reserved usernames, weak passwords and missing challenges fail (2456.399ms)
+✔ Concurrent reset defeats a password login already inside its KDF (3050.6235ms)
+✔ Reset expiry and single-use admission fail closed, and repeated login attempts are bounded (11222.1603ms)
+✔ Concurrent application saves cannot exceed the account project cap (1287.6441ms)
+✔ Expired sessions stop reading saved work and a fresh password login preserves ownership (1676.0064ms)
+✔ database cache cannot reuse a previous binding after configuration changes (1.972ms)
+✔ OIDC cryptographic verification rejects wrong issuer/audience/nonce, expiry, unverified email and bad signatures (607.1241ms)
+✔ Google state is bound to browser, single use and PKCE; new member deliberately chooses username (671.9534ms)
+✔ Google links authoritative email to the existing verified member and preserves username; third-party collision requires deliberate linking (3590.16ms)
+✔ real raster decoder validates transparent images and rejects forged, truncated, oversized input (678.5807ms)
+{"event":"experiment_artifact_failed","diagnosticId":"bf56b0cc-dc5b-437d-bc60-d29cf168d9f2","code":"OPERATOR_AUTH_REQUIRED","status":401,"diagnostic":{"type":"Error","message":"OPERATOR_AUTH_REQUIRED"}}
+{"event":"experiment_artifact_failed","diagnosticId":"6a8f5d17-436e-41cf-b5a3-41fd9a1754b5","code":"Artifact not found.","status":404,"diagnostic":{"type":"Error","message":"Artifact not found."}}
+{"event":"experiment_status_failed","diagnosticId":"e38122df-fb87-4d0f-a659-4b7361da0c6c","code":"EXPERIMENT_STATUS_UNAVAILABLE","status":502,"diagnostic":{"type":"Error","message":"503 token=[REDACTED]"}}
+✔ full immutable verification resumes only a completed snapshot and reports provider cleanup (13.0518ms)
+✔ immutable verification is unavailable for active jobs and does not stop them (2.5543ms)
+✔ dispatch uses the verified checkout and commits its source and command receipts (32.3165ms)
+✔ reading or missing an artifact never stops a running experiment (2.6901ms)
+✔ stopped snapshot retrieval cleans up after runner.log (2.2763ms)
+✔ stopped snapshot retrieval cleans up after metrics.json (1.3886ms)
+✔ expired active receipts are persisted once and survive later retrieval (2.5104ms)
+✔ transient monitoring and snapshot read failures do not fabricate engine failure or expiry (2.5409ms)
+✔ confirmed launcher exit commits a failure and releases compute (1.7794ms)
+✔ completed receipts retain results and stop compute (3.0891ms)
+✔ artifact and status routes enforce authentication, byte delivery, allowlists and retryable errors (33.7618ms)
+✔ source probe verifies a real Git checkout in the provider cwd (5566.7531ms)
+✔ source probe verifies a real Git checkout in a child directory (4785.3292ms)
+✔ source verification blocks wrong commit (5216.8086ms)
+✔ source verification blocks changed source (4230.3819ms)
+✔ source verification blocks missing launcher (3031.2514ms)
+✔ source verification blocks ambiguous checkout (3157.3963ms)
+✔ Playground initializes only its tables and libSQL concurrent saves have one winner (876.8304ms)
+✔ Relay authentication, exact origins, routes and method gates (13.0888ms)
+✔ Member sign-in survives the authenticated relay and libSQL consumes links exactly once (199.8174ms)
+✔ Published answers work with no database, model key or outbound fetch (30.1119ms)
+✔ Real libSQL adapter reserves atomically and rolls back failed batches (103.6317ms)
+✔ Sentinel quota and idempotency prevent repeated model calls (123.9532ms)
+ℹ tests 48
+ℹ suites 0
+ℹ pass 48
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 59489.2666

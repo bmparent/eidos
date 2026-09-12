@@ -5,12 +5,37 @@ type RuntimeConfig = {
   selected: string;
   bridge: boolean;
   originalGlass: boolean;
+  channel?: string;
+  revision?: number;
 };
 declare const EidosGlass: { mount: (glass: Project['glass']) => () => void };
 // Deliberately self-contained: the exact compiled function also runs in standalone exports.
 export function pageRuntime(initial: RuntimeConfig) {
   let config = initial;
   let dispose = () => {};
+  let headerSource = document.querySelector('.pg-header')?.outerHTML || '';
+  // Patch committed content by stable identities. Editor chrome is removed by
+  // playground-before-update before comparison; unchanged nodes retain focus/scroll.
+  function patch(target: Element, source: Element) {
+    for (const attr of Array.from(target.attributes)) if (!source.hasAttribute(attr.name)) target.removeAttribute(attr.name);
+    for (const attr of Array.from(source.attributes)) if (target.getAttribute(attr.name) !== attr.value) target.setAttribute(attr.name, attr.value);
+    let cursor: ChildNode | null = target.firstChild;
+    for (const desired of Array.from(source.childNodes)) {
+      const key = desired instanceof Element ? desired.id || desired.getAttribute('data-composition-part') : null;
+      let current = cursor;
+      if (key) current = Array.from(target.childNodes).find(n => n instanceof Element && (n.id || n.getAttribute('data-composition-part')) === key) || null;
+      if (!current || current.nodeName !== desired.nodeName) {
+        const clone = desired.cloneNode(true); target.insertBefore(clone, cursor); cursor = clone.nextSibling; continue;
+      }
+      if (current !== cursor) target.insertBefore(current, cursor);
+      if (current instanceof Element && desired instanceof Element) {
+        // Glass owns its own descendants. Do not reconcile its live canvases/SVG.
+        if (!current.matches('.ew-glass-header')) patch(current, desired);
+      } else if (current.nodeValue !== desired.nodeValue) current.nodeValue = desired.nodeValue;
+      cursor = current.nextSibling;
+    }
+    while (cursor) { const next = cursor.nextSibling; cursor.remove(); cursor = next; }
+  }
   function mount() {
     dispose();
     const disposeGlass = config.originalGlass ? EidosGlass.mount(config.glass) : () => {};
@@ -286,7 +311,7 @@ export function pageRuntime(initial: RuntimeConfig) {
           e.preventDefault();
           if (section)
             parent.postMessage(
-              { type: "playground-select", id: section.dataset.section },
+              { type: "playground-select", channel: config.channel, id: section.dataset.section },
               "*",
             );
           return;
@@ -307,7 +332,7 @@ export function pageRuntime(initial: RuntimeConfig) {
           if (config.bridge && !href.startsWith("#")) {
             e.preventDefault();
             parent.postMessage(
-              { type: "playground-link", href: link.getAttribute("href") },
+              { type: "playground-link", channel: config.channel, href: link.getAttribute("href") },
               "*",
             );
           }
@@ -337,17 +362,40 @@ export function pageRuntime(initial: RuntimeConfig) {
   if (initial.bridge) {
     window.addEventListener("message", (e) => {
       if (e.source !== parent || !e.data || typeof e.data !== "object") return;
+      if (e.data.channel !== initial.channel) return;
+      if (e.data.type === 'playground-selection' && typeof e.data.selected === 'string') {
+        config.selected = e.data.selected;
+        document.querySelectorAll('[data-section]').forEach(s => s.classList.toggle('pg-selected', config.editing && s.getAttribute('data-section') === config.selected));
+        return;
+      }
       if (
         e.data.type === "playground-update" &&
         typeof e.data.html === "string" &&
         typeof e.data.css === "string"
       ) {
+        if (!e.data.config || e.data.config.channel !== initial.channel || !Number.isSafeInteger(e.data.config.revision) || e.data.config.revision <= (config.revision || 0)) return;
+        // Incompatible document revisions cancel before any DOM can be replaced.
+        window.dispatchEvent(new Event('playground-before-update'));
         const y = scrollY;
-        dispose();
-        document.getElementById("page-style")!.textContent = e.data.css;
-        document.getElementById("page-root")!.innerHTML = e.data.html;
+        const oldHeader = document.querySelector('.pg-header');
+        const template = document.createElement('template'); template.innerHTML = e.data.html;
+        const nextHeader = template.content.querySelector('.pg-header');
+        const glassChanged = JSON.stringify(config.glass) !== JSON.stringify(e.data.config.glass) || config.originalGlass !== e.data.config.originalGlass;
+        // Compare source header markup, never the glass runtime's live descendants.
+        const headerMarkup = nextHeader?.outerHTML || '';
+        const headerChanged = headerMarkup !== headerSource;
+        if (glassChanged || headerChanged) dispose();
+        const pageStyle = document.getElementById('page-style')!;
+        if (pageStyle.textContent !== e.data.css) pageStyle.textContent = e.data.css;
+        const pageRoot = document.getElementById('page-root')!;
+        const incoming = document.createElement('div'); incoming.id = 'page-root'; incoming.append(template.content);
+        patch(pageRoot, incoming);
+        if (headerChanged && oldHeader?.isConnected && nextHeader) oldHeader.replaceWith(nextHeader.cloneNode(true));
+        headerSource = headerMarkup;
         config = e.data.config;
-        mount();
+        if (glassChanged || headerChanged) mount();
+        document.body.dataset.editing = String(config.editing);
+        document.body.dataset.reduced = String(config.glass.reducedMotion);
         window.scrollTo(0, y);
       }
       if (e.data.type === "playground-focus" && typeof e.data.id === "string")
@@ -355,6 +403,6 @@ export function pageRuntime(initial: RuntimeConfig) {
           .getElementById(e.data.id)
           ?.scrollIntoView({ behavior: "instant", block: "start" });
     });
-    parent.postMessage({ type: "playground-ready" }, "*");
+    parent.postMessage({ type: "playground-ready", channel: initial.channel }, "*");
   }
 }

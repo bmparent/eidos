@@ -1,0 +1,9 @@
+{
+  "passed": true,
+  "checks": [
+    "late owner A open cannot replace local design after actual owner B signup in another tab; refreshed list hides A and API denies A project",
+    "late successful A save cannot attach its new revision after actual B login; owner mismatch blocks further saves and preserves local document"
+  ],
+  "errors": [],
+  "scope": "Loopback real password/session handlers with deliberately delayed real API responses; no hosted provider"
+}

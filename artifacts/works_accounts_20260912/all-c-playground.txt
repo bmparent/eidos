@@ -1,0 +1,70 @@
+
+> brent-parent-intelligence-studio@1.1.0 test:playground
+> npm run playground:glass && node --import tsx --test scripts/test-playground.ts scripts/test-playground-cloud.ts scripts/test-playground-authoring.ts scripts/test-playground-workspace.ts scripts/test-playground-media.ts scripts/test-playground-structure.ts scripts/test-playground-composition.ts scripts/test-playground-composition-integration.ts scripts/test-playground-authoring-cloud.ts
+
+
+> brent-parent-intelligence-studio@1.1.0 playground:glass
+> node scripts/build-playground-glass.mjs
+
+(node:5308) ExperimentalWarning: SQLite is an experimental feature and might change at any time
+(Use `node --trace-warnings ...` to show where the warning was created)
+✔ v4 cloud defaults off; explicit controlled gate preserves node assets, owner isolation and concurrent heads (543.5118ms)
+✔ opening versions 1-3 never upgrades or introduces authoring (59.0022ms)
+✔ explicit upgrade preserves all legacy section identities/data, tokens, renderer and glass and Undo restores exact original (10.5673ms)
+✔ two independently addressable images, text and buttons survive export and keep old archive input untouched (30.3779ms)
+✔ moves preserve node ID/data across compatible section containers, one history entry and exact Undo/Redo (8.8342ms)
+✔ duplicate assigns fresh IDs recursively; remove changes only the current document (19.1294ms)
+✔ cycles, roots and invalid sibling destinations cannot mutate input (4.1865ms)
+✔ mobile geometry is explicit, independent and exactly reversible (4.9197ms)
+✔ malformed, duplicate, excessive, unsafe and non-finite node inputs reject (31.2309ms)
+✔ text renders as escaped content and authored format stays explicitly local-only (4.7904ms)
+✔ maximum 96-node project renders and exports; 97th node and cross-section duplicate identities reject (83.8641ms)
+✔ mobile row override remains shrinkable instead of overflowing with full-width children (4.8426ms)
+✔ canvas structure moves preserve pinned sections, card identities and exact reversibility (14.7034ms)
+(node:30756) ExperimentalWarning: SQLite is an experimental feature and might change at any time
+(Use `node --trace-warnings ...` to show where the warning was created)
+✔ Cloud revisions preserve images, enforce ownership, and reject stale writes (1047.9517ms)
+✔ Frozen checkout is idempotent and entitlement requires signed matching payment (431.2747ms)
+✔ image decoder availability and atomic owner storage quota preserve saved state (326.3317ms)
+✔ v2 card assets hydrate only for their owner and preserve earlier document versions (246.1683ms)
+✔ full renderer and export preserve version 3, image placement and image asset ownership slots (118.6425ms)
+✔ legacy renderer path is still selected until opt-in upgrade (1.5332ms)
+✔ one upgrade/move is one undoable workspace operation (15.9546ms)
+✔ legacy templates retain their versions and do not gain layout data on validation (23.0513ms)
+✔ upgrade preserves identities, content, media, renderer, brand and page tokens (6.5613ms)
+✔ all placements survive JSON save/reopen with one media slot per original section (9.7802ms)
+✔ moving image within copy changes both reading order and placement without editing text (2.7094ms)
+✔ moving heading, description and button preserves each exactly once (2.551ms)
+✔ mobile placement is independent; automatic side images stack and text order is shared (3.7325ms)
+✔ validation rejects unknown versions, duplicate/missing parts and unexpected fields (0.9904ms)
+✔ all numeric settings reject non-finite and out-of-range values (4.8467ms)
+✔ version 3 cannot silently downgrade or attach composition to other sections (4.1895ms)
+✔ operations refuse legacy projects and non-hero destinations (1.5878ms)
+✔ renderer uses selected element order and exactly one image node (1.5924ms)
+✔ CSS supplies bounded background stacking, responsive override and static mobile transforms (2.6833ms)
+✔ legacy sections produce no composition CSS (4.9237ms)
+✔ background placement adds an honest publishing contrast note (4.1316ms)
+✔ page section moves keep permanent identities, header/footer and original data (2.3837ms)
+✔ legacy AI layout fields cannot silently change an inactive hero layout (33.6199ms)
+✔ media placement and brand metadata roundtrip without rewriting legacy documents (33.0511ms)
+✔ explicit v2 migration preserves v1 bytes, renderer and destinations (33.2699ms)
+✔ repeated block/card identities roundtrip through renderer, export and validation (28.2247ms)
+✔ open A, open B, Undo restores A save identity; Redo restores B (6.4024ms)
+✔ template/import/variation replacements detach, ordinary edits and their undo keep target (1.6368ms)
+✔ late saved head updates only the matching document history, and undo after edit uses latest head (1.1053ms)
+✔ cloud document preflight counts UTF-8 bytes at exact boundary without changing input (172.8205ms)
+✔ Legacy projects stay legacy and component exports require explicit upgrade (30.4283ms)
+✔ all starter projects round trip and reject incompatible versions (9.3617ms)
+✔ untrusted copy and links never become executable markup (1.8854ms)
+✔ exports use identical markup and package uploaded image bytes (17.6962ms)
+✔ stored ZIP carries central directory and correct file count (21.6407ms)
+✔ contrast and visibility produce accessible baseline content (1.4836ms)
+✔ imports reject malformed base64 and mismatched image signatures (1.9854ms)
+ℹ tests 50
+ℹ suites 0
+ℹ pass 50
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 5386.3566
