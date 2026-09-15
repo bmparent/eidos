@@ -1,0 +1,56 @@
+mission_id: sentinel_precision_v1
+title: Sentinel Precision / Calibration Evidence Investigation
+objective: >-
+  Investigate current Sentinel false-positive and alert-pressure behavior using the newest available
+  Eidos evidence, without assuming historical CICIDS results remain current.
+mode: research_only
+allowed_scope:
+  - "eidos/artifacts/**"
+  - "eidos/docs/proof_runs/**"
+  - "eidos/proof/**"
+  - "eidos/tools/**"
+  - "eidos/repo/src/eidos_brain/sentinel/**"
+  - "services/sentinel-runner/**"
+forbidden_scope:
+  - "eidos/EIDOS_BRAIN_UNIFIED_v0_4.7.02.py"
+  - "apps/**"
+evidence_targets:
+  - newest CICIDS/WebAttacks evidence
+  - newest Precision Ledger outputs
+  - newest Sentinel calibration results
+  - current engine commit
+  - current benchmarks
+  - current proof targets
+evaluation_dimensions:
+  - raw precision
+  - merged precision
+  - deduplicated precision
+  - recall
+  - F1
+  - false positives per 10k normal frames
+  - confirmed event count
+  - attack-window coverage
+  - detection latency
+  - false-positive taxonomy
+  - incident-card coverage
+  - seed sensitivity
+  - runtime
+  - memory
+  - crashes
+  - compression/anomaly-preservation regression when touched
+workflow:
+  - Archivist retrieves latest evidence
+  - Sentry diagnoses the owning alert-pressure layer
+  - Curie designs a discriminating experiment
+  - Director reviews outputs
+  - Gauss is requested only for mathematical uncertainty
+  - implementation requires a separate explicit authorization
+  - Bench measures any authorized experiment
+  - Auditor independently verifies claims
+implementation_authorized: false
+required_artifacts:
+  - EvidencePacket
+  - Hypothesis
+  - ExperimentSpec
+  - CostReceipt
+  - FinalDecision

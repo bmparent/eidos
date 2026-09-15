@@ -4,3 +4,7 @@ artifacts/rng_null_proof*/
 __pycache__/
 *.py[cod]
 .pytest_cache/
+.venv*/
+
+# Eidos Agent Lab runtime state and receipts (source mission/config remains tracked)
+artifacts/agent_lab/

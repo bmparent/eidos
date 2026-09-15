@@ -57,3 +57,10 @@ Eidos_Brain_Proof_Phase/YYYY-MM-DD/<run_id>/
 ```
 
 Drive mirroring is evidence storage, not a substitute for repo-local artifacts. If Drive is unavailable, keep the local artifacts and record the skipped copy in `drive_manifest.json`.
+
+## Eidos Research Council
+
+The optional proof-first multi-agent research subsystem lives in `eidos_agents/`. It uses a
+manager-style OpenAI Agents SDK graph, typed work orders/results, persistent workflow gates,
+independent audit, human approvals, and visible cost receipts without changing the Eidos engine.
+See [`docs/agent_lab/README.md`](docs/agent_lab/README.md) for setup and the mocked no-cost quickstart.

@@ -1,0 +1,10 @@
+models:
+  director: {model: gpt-5.6-terra, reasoning: high}
+  archivist: {model: gpt-5.6-luna, reasoning: medium}
+  curie: {model: gpt-5.6-terra, reasoning: high}
+  sentry: {model: gpt-5.6-sol, reasoning: high}
+  gauss: {model: gpt-5.6-sol, reasoning: xhigh}
+  forge: {model: gpt-5.3-codex, reasoning: high}
+  bench: {model: gpt-5.4-mini, reasoning: medium}
+  auditor: {model: gpt-5.6-sol, reasoning: xhigh}
+  council: {model: gpt-6-astra, reasoning: max}
