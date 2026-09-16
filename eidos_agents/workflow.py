@@ -27,17 +27,60 @@ class StageRequirementUnsatisfied(InvalidTransition):
 
 ALLOWED: dict[WorkflowState, set[WorkflowState]] = {
     WorkflowState.CREATED: {WorkflowState.TRIAGED, WorkflowState.BLOCKED},
-    WorkflowState.TRIAGED: {WorkflowState.EVIDENCE_GATHERING, WorkflowState.IMPLEMENTATION_SPECIFIED, WorkflowState.BLOCKED},
-    WorkflowState.EVIDENCE_GATHERING: {WorkflowState.HYPOTHESIS, WorkflowState.EXPERIMENT_SPECIFIED, WorkflowState.READY_FOR_HUMAN, WorkflowState.BLOCKED},
-    WorkflowState.HYPOTHESIS: {WorkflowState.EXPERIMENT_SPECIFIED, WorkflowState.READY_FOR_HUMAN, WorkflowState.BLOCKED},
-    WorkflowState.EXPERIMENT_SPECIFIED: {WorkflowState.IMPLEMENTATION_SPECIFIED, WorkflowState.BENCHMARKING, WorkflowState.READY_FOR_HUMAN, WorkflowState.BLOCKED},
-    WorkflowState.IMPLEMENTATION_SPECIFIED: {WorkflowState.IMPLEMENTING, WorkflowState.BLOCKED},
-    WorkflowState.IMPLEMENTING: {WorkflowState.BENCHMARKING, WorkflowState.BLOCKED},
-    WorkflowState.BENCHMARKING: {WorkflowState.AUDITING, WorkflowState.BLOCKED},
-    WorkflowState.AUDITING: {WorkflowState.READY_FOR_HUMAN, WorkflowState.ESCALATED, WorkflowState.BLOCKED},
-    WorkflowState.ESCALATED: {WorkflowState.READY_FOR_HUMAN, WorkflowState.BLOCKED},
-    WorkflowState.READY_FOR_HUMAN: {WorkflowState.CLOSED, WorkflowState.BLOCKED},
-    WorkflowState.BLOCKED: {WorkflowState.EVIDENCE_GATHERING, WorkflowState.IMPLEMENTATION_SPECIFIED, WorkflowState.IMPLEMENTING, WorkflowState.BENCHMARKING, WorkflowState.AUDITING},
+    WorkflowState.TRIAGED: {
+        WorkflowState.EVIDENCE_GATHERING,
+        WorkflowState.IMPLEMENTATION_SPECIFIED,
+        WorkflowState.BLOCKED,
+    },
+    WorkflowState.EVIDENCE_GATHERING: {
+        WorkflowState.HYPOTHESIS,
+        WorkflowState.EXPERIMENT_SPECIFIED,
+        WorkflowState.READY_FOR_HUMAN,
+        WorkflowState.BLOCKED,
+    },
+    WorkflowState.HYPOTHESIS: {
+        WorkflowState.EXPERIMENT_SPECIFIED,
+        WorkflowState.READY_FOR_HUMAN,
+        WorkflowState.BLOCKED,
+    },
+    WorkflowState.EXPERIMENT_SPECIFIED: {
+        WorkflowState.IMPLEMENTATION_SPECIFIED,
+        WorkflowState.BENCHMARKING,
+        WorkflowState.READY_FOR_HUMAN,
+        WorkflowState.BLOCKED,
+    },
+    WorkflowState.IMPLEMENTATION_SPECIFIED: {
+        WorkflowState.IMPLEMENTING,
+        WorkflowState.BLOCKED,
+    },
+    WorkflowState.IMPLEMENTING: {
+        WorkflowState.BENCHMARKING,
+        WorkflowState.BLOCKED,
+    },
+    WorkflowState.BENCHMARKING: {
+        WorkflowState.AUDITING,
+        WorkflowState.BLOCKED,
+    },
+    WorkflowState.AUDITING: {
+        WorkflowState.READY_FOR_HUMAN,
+        WorkflowState.ESCALATED,
+        WorkflowState.BLOCKED,
+    },
+    WorkflowState.ESCALATED: {
+        WorkflowState.READY_FOR_HUMAN,
+        WorkflowState.BLOCKED,
+    },
+    WorkflowState.READY_FOR_HUMAN: {
+        WorkflowState.CLOSED,
+        WorkflowState.BLOCKED,
+    },
+    WorkflowState.BLOCKED: {
+        WorkflowState.EVIDENCE_GATHERING,
+        WorkflowState.IMPLEMENTATION_SPECIFIED,
+        WorkflowState.IMPLEMENTING,
+        WorkflowState.BENCHMARKING,
+        WorkflowState.AUDITING,
+    },
     WorkflowState.CLOSED: set(),
 }
 
@@ -65,14 +108,23 @@ class WorkflowMachine:
         current = self.state
         if to_state not in ALLOWED[current]:
             raise InvalidTransition(f"{current} -> {to_state} is not allowed")
-        if current == WorkflowState.IMPLEMENTING and to_state != WorkflowState.BLOCKED and tests_passed is not True:
-            raise InvalidTransition("implementation cannot progress without required tests")
+        if (
+            current == WorkflowState.IMPLEMENTING
+            and to_state != WorkflowState.BLOCKED
+            and tests_passed is not True
+        ):
+            raise InvalidTransition(
+                "implementation cannot progress without required tests"
+            )
         if (
             current == WorkflowState.AUDITING
             and to_state == WorkflowState.READY_FOR_HUMAN
-            and audit_verdict not in {AuditVerdict.PASS, AuditVerdict.PASS_WITH_LIMITATIONS}
+            and audit_verdict
+            not in {AuditVerdict.PASS, AuditVerdict.PASS_WITH_LIMITATIONS}
         ):
-            raise InvalidTransition("only PASS or PASS_WITH_LIMITATIONS can progress from audit")
+            raise InvalidTransition(
+                "only PASS or PASS_WITH_LIMITATIONS can progress from audit"
+            )
         if audit_verdict == AuditVerdict.BLOCK and to_state != WorkflowState.BLOCKED:
             raise InvalidTransition("Auditor BLOCK must enter BLOCKED")
         self._validate_reason(reason)
@@ -99,10 +151,16 @@ class WorkflowMachine:
             return []
         requirements = task.research_requirements
         missing: list[str] = []
-        evidence_packets = self.store.records_for_task("evidence", self.task_id, EvidencePacket)
+        evidence_packets = self.store.records_for_task(
+            "evidence", self.task_id, EvidencePacket
+        )
         agent_results = self.store.raw_records_for_task("agent_result", self.task_id)
-        experiments = self.store.records_for_task("experiment", self.task_id, ExperimentSpec)
-        hypotheses = self.store.records_for_task("hypothesis", self.task_id, Hypothesis)
+        experiments = self.store.records_for_task(
+            "experiment", self.task_id, ExperimentSpec
+        )
+        hypotheses = self.store.records_for_task(
+            "hypothesis", self.task_id, Hypothesis
+        )
         accounting_records = self.store.records_for_task(
             "specialist_accounting", self.task_id, SpecialistAccounting
         )
@@ -115,7 +173,8 @@ class WorkflowMachine:
             and bool(packet.evidence or packet.missing_evidence or packet.contradictions)
         ]
         archivist_result_exists = any(
-            str(result.get("agent", "")).lower() == "archivist" for result in agent_results
+            str(result.get("agent", "")).lower() == "archivist"
+            for result in agent_results
         )
         if requirements.current_evidence_required:
             if not valid_evidence:
@@ -127,10 +186,36 @@ class WorkflowMachine:
             if accounting is None:
                 missing.append("persisted specialist completion accounting")
             else:
-                terminal = set(accounting.completed) | set(accounting.failed)
                 for specialist in requirements.required_specialists:
-                    if specialist not in terminal:
-                        missing.append(f"required specialist not completed: {specialist}")
+                    if specialist in accounting.completed:
+                        continue
+                    if specialist in accounting.failed:
+                        missing.append(
+                            f"required specialist failed: {specialist}: "
+                            f"{accounting.failed[specialist]}"
+                        )
+                    elif specialist in accounting.skipped:
+                        missing.append(
+                            f"required specialist skipped: {specialist}: "
+                            f"{accounting.skipped[specialist]}"
+                        )
+                    else:
+                        missing.append(
+                            f"required specialist not completed: {specialist}"
+                        )
+                if all(
+                    specialist in accounting.completed
+                    for specialist in requirements.required_specialists
+                ):
+                    positions = [
+                        accounting.completed.index(specialist)
+                        for specialist in requirements.required_specialists
+                    ]
+                    if positions != sorted(positions):
+                        missing.append(
+                            "required specialist order violated: expected "
+                            + " -> ".join(requirements.required_specialists)
+                        )
 
         if requirements.experiment_spec_required and not any(
             experiment.task_id == self.task_id for experiment in experiments
@@ -141,19 +226,18 @@ class WorkflowMachine:
         return missing
 
     def _validate_reason(self, reason: str) -> None:
+        """Validate factual artifact claims without interpreting free-form status prose.
+
+        Specialist completion is determined exclusively from SpecialistAccounting. In particular,
+        phrases such as "specialist not completed" must never be parsed as positive completion.
+        """
         normalized = reason.lower()
-        if "specialist" in normalized and "complete" in normalized:
-            records = self.store.records_for_task(
-                "specialist_accounting", self.task_id, SpecialistAccounting
-            )
-            if not records or not records[-1].completed:
-                raise StageRequirementUnsatisfied(
-                    ["transition reason claims specialist completion without a completed specialist"]
-                )
         if (
             "evidence" in normalized
             and ("gathered" in normalized or "packet" in normalized)
-            and not self.store.records_for_task("evidence", self.task_id, EvidencePacket)
+            and not self.store.records_for_task(
+                "evidence", self.task_id, EvidencePacket
+            )
         ):
             raise StageRequirementUnsatisfied(
                 ["transition reason claims evidence without a persisted EvidencePacket"]
