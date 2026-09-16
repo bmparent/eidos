@@ -8,13 +8,8 @@ from typing import Any
 from .config import LabConfig
 from .model_registry import ModelRegistry
 from .repo_tools import RepositoryTools
-from .schemas import (
-    AgentResult,
-    ArchivistResult,
-    CurieResult,
-    FinalDecision,
-    SpecialistWorkOrder,
-)
+from .schemas import FinalDecision, SpecialistWorkOrder
+from .sdk_contracts import SDKAgentResult, SDKArchivistResult, SDKCurieResult
 
 COMMON = """
 Return only the requested structured output. Separate claims from evidence. Use HYPOTHESIS,
@@ -22,6 +17,8 @@ SUPPORTED, INCONCLUSIVE, REFUTED, and KNOWN exactly. KNOWN requires strong repro
 under declared conditions. Never treat agent agreement as evidence. Never conceal counterevidence,
 false positives, recall loss, missing receipts, dirty state, or unavailable measurements. Do not
 invoke other specialists. Stay inside the supplied work order and cite compact evidence references.
+When a prior specialist supplied evidence references, carry the relevant references forward so the
+host can verify provenance through the specialist chain.
 """
 
 
@@ -31,23 +28,26 @@ You are Archivist, Eidos project-evidence specialist. Read only. Retrieve the sm
 packet from repository source/history/artifacts/docs. Classify every finding as PROJECT_EVIDENCE,
 EXTERNAL_EVIDENCE, INFERENCE, MISSING, or CONTRADICTION. Never silently reconcile contradictions.
 Use web/literature search only when the work order explicitly requests it.
-Always return an ArchivistResult with a valid EvidencePacket for the supplied task_id. If repository
-evidence is absent, record a MISSING EvidenceItem or explicit missing_evidence rather than returning
-an empty result.
+Always return an SDKArchivistResult with a valid EvidencePacket for the supplied task_id. If
+repository evidence is absent, record a MISSING EvidenceItem or explicit missing_evidence rather
+than returning an empty result.
 """,
     "curie": COMMON + """
 You are Curie, experimental scientist. Formulate falsifiable hypotheses and competing explanations.
 For substantial experiments specify hypothesis, alternative, independent/dependent variables,
 controls, negative controls, ablations, dataset, ordering, seeds, baselines, success, failure,
-ambiguity, confounds, leakage prevention, and artifacts. Do not write production engine code.
-Always return a CurieResult with one complete ExperimentSpec for the supplied task_id.
+ambiguity, confounds, leakage prevention, and artifacts. Represent experiment variables as a typed
+list with name, role, description, and optional unit. Do not write production engine code.
+Always return an SDKCurieResult with one complete SDKExperimentSpec for the supplied task_id.
 """,
     "sentry": COMMON + """
 You are Sentry, Sentinel detection scientist. Optimize trustworthy detection, not sensitivity alone.
-Preserve raw, merged, deduplicated and calibrated views. Never improve precision by hiding recall
-loss. Diagnose ownership first: ingestion/features, predictor, residual/error, surprise gate, event
-confirmation, familiarity, regime classification, postprocessing, or reporting. Include precision,
-recall, F1, FP/10k, attack-window coverage and latency when supported. Propose; do not implement.
+Analyze only from the evidence references supplied by the work order when this is a required routed
+research mission. Preserve raw, merged, deduplicated and calibrated views. Never improve precision
+by hiding recall loss. Diagnose ownership first: ingestion/features, predictor, residual/error,
+surprise gate, event confirmation, familiarity, regime classification, postprocessing, or reporting.
+Include precision, recall, F1, FP/10k, attack-window coverage and latency when supported. Propose;
+do not implement.
 """,
     "gauss": COMMON + """
 You are Gauss, mathematical scientist. Distinguish theorem, known result, derivation, approximation,
@@ -88,9 +88,10 @@ specific evidence-backed specification, require Bench and independent Auditor fo
 control budget, reconcile uncertainty, and return the human decision contract. Do not substantially
 write code, certify commissioned work, merge, deploy, promote experimental results to fact without
 receipts, or override Auditor BLOCK. Council is rare and human-gated.
-Research requirements in TaskSpec are mandatory workflow contracts. Invoke every required specialist
-and obtain the required structured artifacts before finalizing. A prose substitute does not satisfy
-EvidencePacket, ExperimentSpec, Hypothesis, or specialist-completion requirements.
+Research requirements in TaskSpec are mandatory workflow contracts. Invoke required specialists in
+the exact order listed in required_specialists. Feed Archivist evidence references to downstream
+specialists. Obtain the required structured artifacts before finalizing. A prose substitute does
+not satisfy EvidencePacket, ExperimentSpec, Hypothesis, or specialist-completion requirements.
 """,
 }
 
@@ -113,7 +114,9 @@ def _sdk_imports() -> tuple[Any, Any, Any]:
 
         return Agent, ModelSettings, Reasoning
     except Exception as exc:
-        raise SDKUnavailable(f"OpenAI Agents SDK import failed: {type(exc).__name__}: {exc}") from exc
+        raise SDKUnavailable(
+            f"OpenAI Agents SDK import failed: {type(exc).__name__}: {exc}"
+        ) from exc
 
 
 def _archivist_repo_tools(config: LabConfig) -> list[Any]:
@@ -121,7 +124,9 @@ def _archivist_repo_tools(config: LabConfig) -> list[Any]:
     try:
         from agents import function_tool
     except Exception as exc:
-        raise SDKUnavailable(f"OpenAI Agents SDK import failed: {type(exc).__name__}: {exc}") from exc
+        raise SDKUnavailable(
+            f"OpenAI Agents SDK import failed: {type(exc).__name__}: {exc}"
+        ) from exc
 
     repo = RepositoryTools(config.repo_root)
 
@@ -138,7 +143,9 @@ def _archivist_repo_tools(config: LabConfig) -> list[Any]:
     @function_tool
     def repo_read_file(path: str, max_bytes: int = 30_000) -> str:
         """Read one repository file through path, size, permission, and secret guards."""
-        return repo.repo_read_file(path, max_bytes=min(max_bytes, 30_000), actor="archivist")
+        return repo.repo_read_file(
+            path, max_bytes=min(max_bytes, 30_000), actor="archivist"
+        )
 
     @function_tool
     def repo_list_tree(path: str = ".", limit: int = 250) -> list[str]:
@@ -159,10 +166,19 @@ def build_sdk_graph(
     model_registry = registry or ModelRegistry(config)
     specialists: dict[str, Any] = {}
     output_types = {
-        "archivist": ArchivistResult,
-        "curie": CurieResult,
+        "archivist": SDKArchivistResult,
+        "curie": SDKCurieResult,
     }
-    for name in ("archivist", "curie", "sentry", "gauss", "forge", "bench", "auditor", "council"):
+    for name in (
+        "archivist",
+        "curie",
+        "sentry",
+        "gauss",
+        "forge",
+        "bench",
+        "auditor",
+        "council",
+    ):
         profile = model_registry.profile(name)
         specialists[name] = Agent(
             name=name.title() if name != "council" else "Eidos Council",
@@ -170,11 +186,12 @@ def build_sdk_graph(
             model=profile.model,
             model_settings=ModelSettings(reasoning=Reasoning(effort=profile.reasoning)),
             tools=_archivist_repo_tools(config) if name == "archivist" else [],
-            output_type=output_types.get(name, AgentResult),
+            output_type=output_types.get(name, SDKAgentResult),
         )
 
     tools: dict[str, Any] = {}
     for name, agent in specialists.items():
+
         def enabled(context: Any, _agent: Any, specialist: str = name) -> bool:
             allowed = getattr(context.context, "allowed_specialists", None)
             if allowed is not None and specialist not in allowed:
@@ -194,14 +211,16 @@ def build_sdk_graph(
             is_enabled=enabled,
             needs_approval=(name == "council" and config.council_require_approval),
         )
+
     director_profile = model_registry.profile("director")
     director = Agent(
         name="Eidos Director",
         instructions=INSTRUCTIONS["director"],
         model=director_profile.model,
-        # LLM-originated fan-out stays serial. Independent fan-out uses BoundedSpecialistExecutor,
-        # which enforces MAX_PARALLEL and MAX_SPECIALIST_CALLS deterministically.
-        model_settings=ModelSettings(reasoning=Reasoning(effort=director_profile.reasoning), parallel_tool_calls=False),
+        model_settings=ModelSettings(
+            reasoning=Reasoning(effort=director_profile.reasoning),
+            parallel_tool_calls=False,
+        ),
         tools=list(tools.values()),
         output_type=FinalDecision,
     )
