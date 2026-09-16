@@ -1,6 +1,7 @@
 name: Agent Lab Smoke v3
 
 # Smoke v3 acceptance: deterministic suite and mocked mission must pass before any paid live run.
+# Live authorization recorded after deterministic run #4 passed both gates.
 on:
   push:
     branches:
