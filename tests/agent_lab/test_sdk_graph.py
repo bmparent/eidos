@@ -7,6 +7,17 @@ def test_director_exposes_all_specialists_as_bounded_tools(lab_config):
     assert graph.director.model == "gpt-5.6-terra"
     assert graph.specialists["forge"].model == "gpt-5.3-codex"
     assert len(graph.director.tools) == 8
+    assert {tool.name for tool in graph.specialists["archivist"].tools} == {
+        "repo_status",
+        "repo_search",
+        "repo_read_file",
+        "repo_list_tree",
+    }
+    assert all(
+        not graph.specialists[name].tools
+        for name in graph.specialists
+        if name != "archivist"
+    )
 
 
 def test_council_tool_is_approval_gated(lab_config):

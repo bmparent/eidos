@@ -7,6 +7,7 @@ from typing import Any
 
 from .config import LabConfig
 from .model_registry import ModelRegistry
+from .repo_tools import RepositoryTools
 from .schemas import AgentResult, FinalDecision, SpecialistWorkOrder
 
 COMMON = """
@@ -102,7 +103,44 @@ def _sdk_imports() -> tuple[Any, Any, Any]:
         raise SDKUnavailable(f"OpenAI Agents SDK import failed: {type(exc).__name__}: {exc}") from exc
 
 
-def build_sdk_graph(config: LabConfig, registry: ModelRegistry | None = None) -> SDKGraph:
+def _archivist_repo_tools(config: LabConfig) -> list[Any]:
+    """Expose only bounded, read-only repository operations to Archivist."""
+    try:
+        from agents import function_tool
+    except Exception as exc:
+        raise SDKUnavailable(f"OpenAI Agents SDK import failed: {type(exc).__name__}: {exc}") from exc
+
+    repo = RepositoryTools(config.repo_root)
+
+    @function_tool
+    def repo_status() -> dict[str, object]:
+        """Return the current branch and dirty-state summary without exposing file contents."""
+        return repo.repo_status(actor="archivist")
+
+    @function_tool
+    def repo_search(query: str, paths: list[str] | None = None) -> list[str]:
+        """Search bounded repository text paths with a case-insensitive regular expression."""
+        return repo.repo_search(query, paths=paths, actor="archivist")
+
+    @function_tool
+    def repo_read_file(path: str, max_bytes: int = 30_000) -> str:
+        """Read one repository file through path, size, permission, and secret guards."""
+        return repo.repo_read_file(path, max_bytes=min(max_bytes, 30_000), actor="archivist")
+
+    @function_tool
+    def repo_list_tree(path: str = ".", limit: int = 250) -> list[str]:
+        """List a bounded repository subtree so the newest relevant receipts can be located."""
+        return repo.repo_list_tree(path, limit=min(limit, 250), actor="archivist")
+
+    return [repo_status, repo_search, repo_read_file, repo_list_tree]
+
+
+def build_sdk_graph(
+    config: LabConfig,
+    registry: ModelRegistry | None = None,
+    *,
+    run_hooks: Any | None = None,
+) -> SDKGraph:
     """Build specialists first, expose them through Agent.as_tool(), then build Director."""
     Agent, ModelSettings, Reasoning = _sdk_imports()
     model_registry = registry or ModelRegistry(config)
@@ -114,17 +152,26 @@ def build_sdk_graph(config: LabConfig, registry: ModelRegistry | None = None) ->
             instructions=INSTRUCTIONS[name],
             model=profile.model,
             model_settings=ModelSettings(reasoning=Reasoning(effort=profile.reasoning)),
+            tools=_archivist_repo_tools(config) if name == "archivist" else [],
             output_type=AgentResult,
         )
 
     tools: dict[str, Any] = {}
     for name, agent in specialists.items():
+        def enabled(context: Any, _agent: Any, specialist: str = name) -> bool:
+            allowed = getattr(context.context, "allowed_specialists", None)
+            if allowed is not None and specialist not in allowed:
+                return False
+            return specialist != "council" or config.budget.council_enabled
+
         tools[name] = agent.as_tool(
             tool_name=f"consult_{name}",
             tool_description=f"Send a bounded structured work order to {name.title()} and return its structured result.",
             parameters=SpecialistWorkOrder,
             include_input_schema=True,
             max_turns=config.budget.maximum_turns,
+            hooks=run_hooks,
+            is_enabled=enabled,
             needs_approval=(name == "council" and config.council_require_approval),
         )
     director_profile = model_registry.profile("director")

@@ -29,7 +29,8 @@ class BudgetManager:
     def authorize_call(self, agent: str, model: str, *, council: bool = False) -> None:
         if council and not self.spec.council_enabled:
             raise BudgetExceeded("Council is disabled")
-        if sum(self.calls_by_agent.values()) >= self.spec.maximum_specialist_calls:
+        specialist_calls = sum(count for name, count in self.calls_by_agent.items() if name != "director")
+        if agent != "director" and specialist_calls >= self.spec.maximum_specialist_calls:
             raise BudgetExceeded("maximum specialist calls reached")
         limit = self.spec.per_agent_budget_usd.get(agent)
         if limit is not None and self.agent_cost[agent] >= Decimal(str(limit)):

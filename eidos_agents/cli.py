@@ -70,7 +70,9 @@ def main(argv: list[str] | None = None) -> int:
             decision = orchestrator.run_mocked(args.objective, research_only=research_only)
         else:
             try:
-                decision = asyncio.run(orchestrator.run_live(args.objective))
+                decision = asyncio.run(
+                    orchestrator.run_live(args.objective, research_only=research_only)
+                )
             except ApprovalRequired as exc:
                 _print({"status": "AWAITING_APPROVAL", "task_id": exc.task_id, "action": exc.action})
                 return 3

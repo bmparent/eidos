@@ -28,6 +28,15 @@ def test_specialist_call_limit_blocks():
         budget.authorize_call("curie", "cheap")
 
 
+def test_director_calls_do_not_consume_specialist_call_limit():
+    budget = BudgetManager("T", BudgetSpec(maximum_specialist_calls=1), prices())
+    budget.record_call("director", "cheap", {})
+    budget.authorize_call("archivist", "cheap")
+    budget.record_call("archivist", "cheap", {})
+    with pytest.raises(BudgetExceeded):
+        budget.authorize_call("curie", "cheap")
+
+
 def test_council_disabled_by_default():
     budget = BudgetManager("T", BudgetSpec(), prices())
     with pytest.raises(BudgetExceeded):

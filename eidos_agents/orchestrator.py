@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import json
 import uuid
 
 from .approvals import ApprovalManager, ApprovalRequired
@@ -35,7 +36,7 @@ from .schemas import (
     WorkflowState,
     utc_now,
 )
-from .sdk_runtime import AgentsSDKRuntime
+from .sdk_runtime import AgentsSDKRuntime, LiveTelemetry
 from .workflow import WorkflowMachine
 
 
@@ -212,14 +213,20 @@ class EidosOrchestrator:
         self.store.write_model(f"tasks/{task.task_id}/run_manifest.json", manifest, immutable=True)
         return decision
 
-    async def run_live(self, objective: str) -> FinalDecision:
+    async def run_live(self, objective: str, *, research_only: bool = False) -> FinalDecision:
         task = self.create_task(objective, task_type=TaskType.RESEARCH)
         workflow = WorkflowMachine(task.task_id, self.store)
         workflow.transition(WorkflowState.TRIAGED, actor="director", reason="live Director run requested")
         runtime = AgentsSDKRuntime(self.config)
+        budget = BudgetManager(task.task_id, task.budget, self.prices)
+        allowed = {"archivist", "curie", "sentry", "gauss"} if research_only else None
+        telemetry = LiveTelemetry(budget=budget, allowed_specialists=allowed)
         state_path = self.store.task_dir(task.task_id) / "sdk_run_state.json"
         decision, _usage, interruptions = await runtime.run_director(
-            task, self.config.artifact_root / "director_sessions.sqlite", state_path
+            task,
+            self.config.artifact_root / "director_sessions.sqlite",
+            state_path,
+            telemetry=telemetry,
         )
         if interruptions:
             workflow.transition(WorkflowState.BLOCKED, actor="director", reason="human approval required")
@@ -227,6 +234,59 @@ class EidosOrchestrator:
         if decision is None:
             workflow.transition(WorkflowState.BLOCKED, actor="director", reason="Director returned malformed structured output")
             raise RuntimeError("Director did not return FinalDecision")
+        for index, (agent, output) in enumerate(telemetry.agent_outputs, 1):
+            self.store.write_model(
+                f"tasks/{task.task_id}/agents/{index:02d}-{agent}.json", output, immutable=True
+            )
+        events_path = self.store.task_dir(task.task_id) / "live_events.json"
+        events_path.write_text(
+            json.dumps(telemetry.events, indent=2, default=str) + "\n", encoding="utf-8"
+        )
+        cost = budget.receipt()
+        cost_path = self.store.write_model(
+            f"tasks/{task.task_id}/cost_receipt.json", cost, immutable=True
+        )
+        decision = decision.model_copy(
+            update={"cost_receipt_ref": cost_path.relative_to(self.config.artifact_root).as_posix()}
+        )
+        decision_path = self.store.write_model(
+            f"tasks/{task.task_id}/final_decision.json", decision, immutable=True
+        )
+        (self.store.task_dir(task.task_id) / "final_decision.md").write_text(
+            final_decision_markdown(decision), encoding="utf-8"
+        )
+        workflow.transition(
+            WorkflowState.EVIDENCE_GATHERING,
+            actor="director",
+            reason="live bounded specialist research completed",
+        )
+        workflow.transition(
+            WorkflowState.READY_FOR_HUMAN,
+            actor="director",
+            reason="live research decision ready for human review",
+        )
+        manifest = RunManifest(
+            task_id=task.task_id,
+            task_ref=f"tasks/{task.task_id}/task.json",
+            repo_state={
+                "commit": task.base_commit,
+                "branch": self.repo.repo_current_branch(),
+                "dry_run": False,
+            },
+            agents={"events": telemetry.events},
+            models=self.models.manifest(),
+            costs=cost_path.relative_to(self.config.artifact_root).as_posix(),
+            final_decision=decision_path.relative_to(self.config.artifact_root).as_posix(),
+            tracing_available=bool(telemetry.trace_id),
+            tracing_note=(
+                f"trace_id={telemetry.trace_id}"
+                if telemetry.trace_id
+                else "SDK trace identifier unavailable"
+            ),
+        )
+        self.store.write_model(
+            f"tasks/{task.task_id}/run_manifest.json", manifest, immutable=True
+        )
         return decision
 
     async def resume_live(self, task_id: str) -> FinalDecision:

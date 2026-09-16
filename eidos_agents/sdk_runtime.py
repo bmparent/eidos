@@ -3,13 +3,94 @@
 from __future__ import annotations
 
 import json
+from dataclasses import dataclass, field
 from pathlib import Path
 from typing import Any
 
 from .agent_definitions import SDKGraph, SDKUnavailable, build_sdk_graph
+from .budget import BudgetManager
 from .config import LabConfig
 from .model_registry import ModelRegistry
-from .schemas import FinalDecision, TaskSpec
+from .schemas import AgentResult, FinalDecision, TaskSpec
+
+
+@dataclass
+class LiveTelemetry:
+    budget: BudgetManager
+    allowed_specialists: set[str] | None = None
+    events: list[dict[str, Any]] = field(default_factory=list)
+    agent_outputs: list[tuple[str, AgentResult]] = field(default_factory=list)
+    trace_id: str | None = None
+
+
+def _agent_key(name: str) -> str:
+    normalized = name.strip().lower()
+    return "council" if normalized == "eidos council" else normalized
+
+
+def _usage_dict(usage: Any) -> dict[str, int]:
+    input_details = getattr(usage, "input_tokens_details", None)
+    output_details = getattr(usage, "output_tokens_details", None)
+    return {
+        "input_tokens": int(getattr(usage, "input_tokens", 0) or 0),
+        "cached_input_tokens": int(getattr(input_details, "cached_tokens", 0) or 0),
+        "output_tokens": int(getattr(usage, "output_tokens", 0) or 0),
+        "reasoning_tokens": int(getattr(output_details, "reasoning_tokens", 0) or 0),
+    }
+
+
+def _telemetry_hooks(telemetry: LiveTelemetry, config: LabConfig) -> Any:
+    from agents.lifecycle import RunHooksBase
+
+    class Hooks(RunHooksBase):
+        async def on_agent_start(self, context: Any, agent: Any) -> None:
+            telemetry.events.append({"event": "agent_start", "agent": _agent_key(agent.name)})
+
+        async def on_agent_end(self, context: Any, agent: Any, output: Any) -> None:
+            key = _agent_key(agent.name)
+            telemetry.events.append({"event": "agent_end", "agent": key})
+            if isinstance(output, AgentResult):
+                telemetry.agent_outputs.append((key, output))
+
+        async def on_llm_start(
+            self, context: Any, agent: Any, system_prompt: Any, input_items: Any
+        ) -> None:
+            key = _agent_key(agent.name)
+            profile = config.models[key]
+            telemetry.budget.authorize_call(key, profile.model, council=key == "council")
+            telemetry.events.append({"event": "llm_start", "agent": key, "model": profile.model})
+
+        async def on_llm_end(self, context: Any, agent: Any, response: Any) -> None:
+            key = _agent_key(agent.name)
+            profile = config.models[key]
+            usage = _usage_dict(response.usage)
+            telemetry.budget.record_call(key, profile.model, usage)
+            telemetry.events.append(
+                {"event": "llm_end", "agent": key, "model": profile.model, "usage": usage}
+            )
+
+        async def on_tool_start(self, context: Any, agent: Any, tool: Any) -> None:
+            name = str(getattr(tool, "name", type(tool).__name__))
+            telemetry.budget.record_tool(name)
+            telemetry.events.append(
+                {
+                    "event": "tool_start",
+                    "agent": _agent_key(agent.name),
+                    "tool": name,
+                    "arguments": getattr(context, "tool_arguments", None),
+                }
+            )
+
+        async def on_tool_end(self, context: Any, agent: Any, tool: Any, result: Any) -> None:
+            telemetry.events.append(
+                {
+                    "event": "tool_end",
+                    "agent": _agent_key(agent.name),
+                    "tool": str(getattr(tool, "name", type(tool).__name__)),
+                }
+            )
+
+    return Hooks()
 
 
 class AgentsSDKRuntime:
@@ -18,18 +99,24 @@ class AgentsSDKRuntime:
         self.registry = ModelRegistry(config)
         self.graph: SDKGraph | None = None
 
-    def initialize(self) -> SDKGraph:
-        self.graph = build_sdk_graph(self.config, self.registry)
+    def initialize(self, hooks: Any | None = None) -> SDKGraph:
+        self.graph = build_sdk_graph(self.config, self.registry, run_hooks=hooks)
         return self.graph
 
     async def run_director(
-        self, task: TaskSpec, session_db: Path, state_path: Path | None = None
+        self,
+        task: TaskSpec,
+        session_db: Path,
+        state_path: Path | None = None,
+        *,
+        telemetry: LiveTelemetry | None = None,
     ) -> tuple[FinalDecision | None, dict[str, int], list[Any]]:
         try:
             from agents import Runner, SQLiteSession, trace
         except Exception as exc:
             raise SDKUnavailable(f"OpenAI Agents SDK runtime unavailable: {type(exc).__name__}: {exc}") from exc
-        graph = self.graph or self.initialize()
+        hooks = _telemetry_hooks(telemetry, self.config) if telemetry else None
+        graph = self.graph or self.initialize(hooks)
         session = SQLiteSession(task.task_id, str(session_db))
         prompt = task.model_dump_json(indent=2)
         with trace(
@@ -38,18 +125,21 @@ class AgentsSDKRuntime:
             group_id=task.task_id,
             metadata={"task_id": task.task_id, "repo_commit": task.base_commit, "workflow_state": "TRIAGED"},
             disabled=not self.config.tracing_enabled,
-        ):
+        ) as current_trace:
+            if telemetry is not None:
+                telemetry.trace_id = getattr(current_trace, "trace_id", None)
             result = await Runner.run(
                 graph.director,
                 prompt,
+                context=telemetry,
                 session=session,
+                hooks=hooks,
                 max_turns=self.config.budget.maximum_turns,
             )
         usage = {"input_tokens": 0, "cached_input_tokens": 0, "output_tokens": 0, "reasoning_tokens": 0}
         raw_usage = getattr(getattr(result, "context_wrapper", None), "usage", None)
         if raw_usage:
-            for key in usage:
-                usage[key] = int(getattr(raw_usage, key, 0) or 0)
+            usage = _usage_dict(raw_usage)
         interruptions = list(getattr(result, "interruptions", []))
         if interruptions and state_path is not None:
             state_path.parent.mkdir(parents=True, exist_ok=True)
