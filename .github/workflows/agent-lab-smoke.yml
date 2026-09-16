@@ -1,7 +1,7 @@
 name: Agent Lab Smoke v3
 
 # Smoke v3 acceptance: deterministic suite and mocked mission must pass before any paid live run.
-# Live authorization recorded after deterministic run #4 passed both gates.
+# Live authorization is explicit through an [agent-live] commit marker.
 on:
   push:
     branches:
@@ -67,6 +67,17 @@ jobs:
         with:
           python-version: "3.12"
           cache: pip
+      - name: Resolve UTC budget day
+        id: budget-day
+        shell: bash
+        run: echo "day=$(date -u +%F)" >> "$GITHUB_OUTPUT"
+      - name: Restore aggregate daily budget ledger
+        uses: actions/cache/restore@v4
+        with:
+          path: artifacts/agent_lab/daily_budget.sqlite
+          key: agent-lab-daily-budget-${{ steps.budget-day.outputs.day }}-${{ github.run_id }}-${{ github.run_attempt }}
+          restore-keys: |
+            agent-lab-daily-budget-${{ steps.budget-day.outputs.day }}-
       - name: Install Agent Lab
         run: python -m pip install -e '.[test]'
       - name: Verify API credential is available
@@ -95,6 +106,12 @@ jobs:
           print('daily total:', sum(float(row[3]) for row in rows))
           PY
           fi
+      - name: Preserve aggregate daily budget ledger
+        if: always()
+        uses: actions/cache/save@v4
+        with:
+          path: artifacts/agent_lab/daily_budget.sqlite
+          key: agent-lab-daily-budget-${{ steps.budget-day.outputs.day }}-${{ github.run_id }}-${{ github.run_attempt }}
       - name: Retain real session evidence
         if: always()
         uses: actions/upload-artifact@v4
