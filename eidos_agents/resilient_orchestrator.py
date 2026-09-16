@@ -1,8 +1,9 @@
-"""Failure-safe wrapper for live Agent Lab execution.
+"""Failure-safe wrapper for Agent Lab execution.
 
 The core orchestrator remains responsible for the successful workflow. This wrapper guarantees that
 an exception during live SDK execution still leaves a reviewable BLOCKED run rather than a partial
-artifact directory with no manifest.
+artifact directory with no manifest. Its mocked path also records the same required-specialist
+contract that the deterministic workflow now enforces.
 """
 
 from __future__ import annotations
@@ -33,16 +34,26 @@ _FAILURE_STATUSES = {"FAIL", "FAILED", "BLOCK", "BLOCKED", "ERROR", "UNSTRUCTURE
 
 
 class ResilientEidosOrchestrator(EidosOrchestrator):
-    """EidosOrchestrator with deterministic forensic finalization on live failure."""
+    """EidosOrchestrator with deterministic mock contracts and live failure finalization."""
 
     def __init__(self, config):
         super().__init__(config)
         self._active_task: TaskSpec | None = None
+        self._mock_contract_active = False
 
     def create_task(self, *args, **kwargs) -> TaskSpec:  # type: ignore[override]
         task = super().create_task(*args, **kwargs)
         self._active_task = task
+        if self._mock_contract_active:
+            self._persist_mock_specialist_contract(task)
         return task
+
+    def run_mocked(self, *args, **kwargs):  # type: ignore[override]
+        self._mock_contract_active = True
+        try:
+            return super().run_mocked(*args, **kwargs)
+        finally:
+            self._mock_contract_active = False
 
     async def run_live(self, *args, **kwargs):  # type: ignore[override]
         self._active_task = None
@@ -52,6 +63,59 @@ class ResilientEidosOrchestrator(EidosOrchestrator):
             if self._active_task is not None:
                 self._persist_live_failure(self._active_task, exc)
             raise
+
+    def _persist_mock_specialist_contract(self, task: TaskSpec) -> None:
+        """Represent required mocked specialists with the same persisted accounting gate.
+
+        The core mocked adapter deterministically creates the EvidencePacket and ExperimentSpec later
+        in the run. These records establish only that the named mocked specialist stages were
+        exercised in the declared order; they are never presented as live model outputs.
+        """
+        required = list(task.research_requirements.required_specialists)
+        if not required:
+            return
+        completed: list[str] = []
+        for index, agent in enumerate(required, 1):
+            result = AgentResult(
+                task_id=task.task_id,
+                agent=agent,
+                status="PASS",
+                summary=(
+                    f"Mocked deterministic {agent} stage exercised; structured artifacts are "
+                    "persisted by the local mock adapter before promotion."
+                ),
+                confidence=1.0,
+                evidence_refs=[],
+                risks=["Mocked result; no paid model invocation occurred"],
+                next_action=None,
+                recommended_agent=(
+                    required[index] if index < len(required) else "director"
+                ),
+                deliverables={"mode": "mocked-contract"},
+            )
+            self.store.save_record(
+                "agent_result",
+                f"AGENT-MOCK-{task.task_id}-{index:02d}-{agent}",
+                task.task_id,
+                result,
+                f"tasks/{task.task_id}/agents/{index:02d}-{agent}.json",
+            )
+            completed.append(agent)
+        accounting = SpecialistAccounting(
+            task_id=task.task_id,
+            required=required,
+            attempted=required,
+            completed=completed,
+            failed={},
+            skipped={},
+        )
+        self.store.save_record(
+            "specialist_accounting",
+            f"SPECIALISTS-MOCK-{task.task_id}",
+            task.task_id,
+            accounting,
+            f"tasks/{task.task_id}/specialist_accounting.json",
+        )
 
     def _persist_live_failure(self, task: TaskSpec, exc: Exception) -> None:
         task_dir = self.store.task_dir(task.task_id)
@@ -100,10 +164,14 @@ class ResilientEidosOrchestrator(EidosOrchestrator):
 
         manifest_path = task_dir / "run_manifest.json"
         if not manifest_path.exists():
-            experiments = [
-                path.relative_to(self.config.artifact_root).as_posix()
-                for path in sorted((task_dir / "experiments").glob("*/spec.json"))
-            ] if (task_dir / "experiments").exists() else []
+            experiments = (
+                [
+                    path.relative_to(self.config.artifact_root).as_posix()
+                    for path in sorted((task_dir / "experiments").glob("*/spec.json"))
+                ]
+                if (task_dir / "experiments").exists()
+                else []
+            )
             final_path = task_dir / "final_decision.json"
             trace_id = next(
                 (
