@@ -8,6 +8,12 @@ from typing import Any
 from .config import LabConfig
 from .model_registry import ModelRegistry
 from .repo_tools import RepositoryTools
+from .routed_contracts import (
+    SDKArchivistWorkOrder,
+    SDKCurieWorkOrder,
+    SDKSentryResult,
+    SDKSentryWorkOrder,
+)
 from .schemas import FinalDecision, SpecialistWorkOrder
 from .sdk_contracts import SDKAgentResult, SDKArchivistResult, SDKCurieResult
 
@@ -18,7 +24,9 @@ under declared conditions. Never treat agent agreement as evidence. Never concea
 false positives, recall loss, missing receipts, dirty state, or unavailable measurements. Do not
 invoke other specialists. Stay inside the supplied work order and cite compact evidence references.
 When a prior specialist supplied evidence references, carry the relevant references forward so the
-host can verify provenance through the specialist chain.
+host can verify provenance through the specialist chain. The work order's required_output field names
+the exact SDK output contract: return that contract only, with no Markdown fences and no invented
+top-level keys.
 """
 
 
@@ -39,6 +47,7 @@ controls, negative controls, ablations, dataset, ordering, seeds, baselines, suc
 ambiguity, confounds, leakage prevention, and artifacts. Represent experiment variables as a typed
 list with name, role, description, and optional unit. Do not write production engine code.
 Always return an SDKCurieResult with one complete SDKExperimentSpec for the supplied task_id.
+SpecialistAccounting and CostReceipt are host-owned and must never be returned by Curie.
 """,
     "sentry": COMMON + """
 You are Sentry, Sentinel detection scientist. Optimize trustworthy detection, not sensitivity alone.
@@ -46,8 +55,11 @@ Analyze only from the evidence references supplied by the work order when this i
 research mission. Preserve raw, merged, deduplicated and calibrated views. Never improve precision
 by hiding recall loss. Diagnose ownership first: ingestion/features, predictor, residual/error,
 surprise gate, event confirmation, familiarity, regime classification, postprocessing, or reporting.
-Include precision, recall, F1, FP/10k, attack-window coverage and latency when supported. Propose;
-do not implement.
+Include precision, recall, F1, FP/10k, attack-window coverage and latency only when supported.
+Always return exactly one SDKSentryResult. Keep the result compact: at most eight claims and eight
+integrity gates. Cite prior evidence IDs instead of reproducing their full contents. Do not return an
+EvidencePacket, SpecialistAccounting, CostReceipt, RunManifest, or ExperimentSpec; those belong to
+Archivist, the host, or Curie. Propose; do not implement.
 """,
     "gauss": COMMON + """
 You are Gauss, mathematical scientist. Distinguish theorem, known result, derivation, approximation,
@@ -92,6 +104,9 @@ Research requirements in TaskSpec are mandatory workflow contracts. Invoke requi
 the exact order listed in required_specialists. Feed Archivist evidence references to downstream
 specialists. Obtain the required structured artifacts before finalizing. A prose substitute does
 not satisfy EvidencePacket, ExperimentSpec, Hypothesis, or specialist-completion requirements.
+SpecialistAccounting, CostReceipt, RunManifest, and workflow state are host-owned contracts: never
+ask any specialist to return them. For Archivist, Sentry, and Curie, use the exact literal
+required_output value exposed by that tool schema; do not broaden or combine specialist contracts.
 """,
 }
 
@@ -167,7 +182,18 @@ def build_sdk_graph(
     specialists: dict[str, Any] = {}
     output_types = {
         "archivist": SDKArchivistResult,
+        "sentry": SDKSentryResult,
         "curie": SDKCurieResult,
+    }
+    work_order_types = {
+        "archivist": SDKArchivistWorkOrder,
+        "sentry": SDKSentryWorkOrder,
+        "curie": SDKCurieWorkOrder,
+    }
+    output_contract_names = {
+        "archivist": "SDKArchivistResult",
+        "sentry": "SDKSentryResult",
+        "curie": "SDKCurieResult",
     }
     for name in (
         "archivist",
@@ -184,7 +210,10 @@ def build_sdk_graph(
             name=name.title() if name != "council" else "Eidos Council",
             instructions=INSTRUCTIONS[name],
             model=profile.model,
-            model_settings=ModelSettings(reasoning=Reasoning(effort=profile.reasoning)),
+            model_settings=ModelSettings(
+                reasoning=Reasoning(effort=profile.reasoning),
+                verbosity="low" if name == "sentry" else None,
+            ),
             tools=_archivist_repo_tools(config) if name == "archivist" else [],
             output_type=output_types.get(name, SDKAgentResult),
         )
@@ -198,13 +227,16 @@ def build_sdk_graph(
                 return False
             return specialist != "council" or config.budget.council_enabled
 
+        contract = output_contract_names.get(name, "SDKAgentResult")
         tools[name] = agent.as_tool(
             tool_name=f"consult_{name}",
             tool_description=(
-                f"Send a bounded structured work order to {name.title()} and return its structured result. "
-                "Required TaskSpec research stages must be completed before Director finalizes."
+                f"Send a bounded work order to {name.title()} and return exactly {contract}. "
+                "Do not request host-owned SpecialistAccounting, CostReceipt, RunManifest, or "
+                "workflow state from this specialist. Required research stages must complete "
+                "before Director finalizes."
             ),
-            parameters=SpecialistWorkOrder,
+            parameters=work_order_types.get(name, SpecialistWorkOrder),
             include_input_schema=True,
             max_turns=config.budget.maximum_turns,
             hooks=run_hooks,
