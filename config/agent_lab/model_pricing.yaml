@@ -1,11 +1,23 @@
-version: "2026-09-15-unverified-local"
+version: "openai-standard-api-2026-09-15"
+effective_date: "2026-09-15"
+currency: "USD"
+unit: "per_1m_text_tokens"
+sources:
+  - "https://developers.openai.com/api/docs/models/compare"
+  - "https://developers.openai.com/api/docs/models/gpt-5.4-mini"
+  - "https://developers.openai.com/api/docs/models/gpt-5.3-codex"
 notes:
-  - "Estimated cost is unavailable until Brent supplies reviewed current prices. Tool charges are not included."
+  - "Reviewed against official OpenAI model/API documentation on 2026-09-15."
+  - "Tool-specific charges may be additional and are not included unless separately configured."
+  - "Regional/data-residency and Fast-mode uplifts are not represented by these standard prices."
+  - "Long-context pricing can differ where OpenAI applies a long-context multiplier."
+  - "GPT-5.6 and GPT-6 Astra documentation states cache writes are billed at 1.25x uncached input; cache-write tokens are not exposed by this v1 estimator schema."
+  - "Pricing is versioned and must not be treated as permanently current. Estimates are not billing authority."
   - "Pricing is deliberately not used for model routing."
 models:
-  gpt-5.6-terra: {input_per_million: null, cached_input_per_million: null, output_per_million: null, reasoning_per_million: null}
-  gpt-5.6-luna: {input_per_million: null, cached_input_per_million: null, output_per_million: null, reasoning_per_million: null}
-  gpt-5.6-sol: {input_per_million: null, cached_input_per_million: null, output_per_million: null, reasoning_per_million: null}
-  gpt-5.3-codex: {input_per_million: null, cached_input_per_million: null, output_per_million: null, reasoning_per_million: null}
-  gpt-5.4-mini: {input_per_million: null, cached_input_per_million: null, output_per_million: null, reasoning_per_million: null}
-  gpt-6-astra: {input_per_million: null, cached_input_per_million: null, output_per_million: null, reasoning_per_million: null}
+  gpt-5.6-luna: {input_per_million: 0.20, cached_input_per_million: 0.02, output_per_million: 1.20, reasoning_per_million: null}
+  gpt-5.6-terra: {input_per_million: 2.00, cached_input_per_million: 0.20, output_per_million: 12.00, reasoning_per_million: null}
+  gpt-5.6-sol: {input_per_million: 4.00, cached_input_per_million: 0.40, output_per_million: 20.00, reasoning_per_million: null}
+  gpt-5.4-mini: {input_per_million: 0.75, cached_input_per_million: 0.075, output_per_million: 4.50, reasoning_per_million: null}
+  gpt-5.3-codex: {input_per_million: 1.75, cached_input_per_million: 0.175, output_per_million: 14.00, reasoning_per_million: null}
+  gpt-6-astra: {input_per_million: 10.00, cached_input_per_million: 1.00, output_per_million: 50.00, reasoning_per_million: null}

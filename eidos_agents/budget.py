@@ -62,6 +62,7 @@ class BudgetManager:
         return CostReceipt(
             task_id=self.task_id,
             price_version=self.prices.version,
+            price_effective_date=self.prices.effective_date,
             total_input_tokens=self.tokens["input_tokens"],
             cached_input_tokens=self.tokens["cached_input_tokens"],
             output_tokens=self.tokens["output_tokens"],

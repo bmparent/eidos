@@ -18,10 +18,20 @@ class ModelPrice:
 
 
 class PriceRegistry:
-    def __init__(self, version: str, prices: dict[str, ModelPrice], notes: list[str] | None = None) -> None:
+    def __init__(
+        self,
+        version: str,
+        prices: dict[str, ModelPrice],
+        notes: list[str] | None = None,
+        *,
+        effective_date: str | None = None,
+        sources: list[str] | None = None,
+    ) -> None:
         self.version = version
+        self.effective_date = effective_date
         self.prices = prices
         self.notes = notes or []
+        self.sources = sources or []
 
     @classmethod
     def load(cls, path: Path) -> PriceRegistry:
@@ -33,7 +43,13 @@ class PriceRegistry:
                 return None if raw is None else Decimal(str(raw))
 
             prices[model] = ModelPrice(dec("input_per_million"), dec("cached_input_per_million"), dec("output_per_million"), dec("reasoning_per_million"))
-        return cls(str(data["version"]), prices, list(data.get("notes", [])))
+        return cls(
+            str(data["version"]),
+            prices,
+            list(data.get("notes", [])),
+            effective_date=str(data["effective_date"]) if data.get("effective_date") else None,
+            sources=list(data.get("sources", [])),
+        )
 
     def estimate(self, model: str, usage: dict[str, int | None]) -> Decimal | None:
         price = self.prices.get(model)

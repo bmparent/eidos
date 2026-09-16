@@ -284,6 +284,7 @@ class CouncilDecision(StrictModel):
 class CostReceipt(StrictModel):
     task_id: str
     price_version: str
+    price_effective_date: str | None = None
     total_input_tokens: int = Field(default=0, ge=0)
     cached_input_tokens: int | None = Field(default=None, ge=0)
     output_tokens: int = Field(default=0, ge=0)
