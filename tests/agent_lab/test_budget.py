@@ -23,18 +23,26 @@ def test_budget_counts_cached_tokens_without_hiding_them():
 
 def test_specialist_call_limit_blocks():
     budget = BudgetManager("T", BudgetSpec(maximum_specialist_calls=1), prices())
-    budget.record_call("archivist", "cheap", {})
+    budget.authorize_specialist("archivist", "cheap")
     with pytest.raises(BudgetExceeded):
-        budget.authorize_call("curie", "cheap")
+        budget.authorize_specialist("curie", "cheap")
 
 
 def test_director_calls_do_not_consume_specialist_call_limit():
     budget = BudgetManager("T", BudgetSpec(maximum_specialist_calls=1), prices())
     budget.record_call("director", "cheap", {})
+    budget.authorize_specialist("archivist", "cheap")
+    with pytest.raises(BudgetExceeded):
+        budget.authorize_specialist("curie", "cheap")
+
+
+def test_multiple_llm_turns_do_not_consume_extra_specialist_invocations():
+    budget = BudgetManager("T", BudgetSpec(maximum_specialist_calls=1), prices())
+    budget.authorize_specialist("archivist", "cheap")
+    budget.record_call("archivist", "cheap", {})
     budget.authorize_call("archivist", "cheap")
     budget.record_call("archivist", "cheap", {})
-    with pytest.raises(BudgetExceeded):
-        budget.authorize_call("curie", "cheap")
+    assert budget.calls_by_agent["archivist"] == 2
 
 
 def test_council_disabled_by_default():

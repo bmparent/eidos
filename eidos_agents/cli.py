@@ -80,10 +80,16 @@ def main(argv: list[str] | None = None) -> int:
         return 0
     if args.command == "mission":
         mission = MissionDefinition.load(args.path)
-        if not (args.mock or args.dry_run):
-            print("Mission execution requires --dry-run/--mock in v1 until its experiment is human-authorized.", file=sys.stderr)
-            return 2
-        decision = orchestrator.run_mocked(mission.objective, research_only=True, mission=mission)
+        if args.mock or args.dry_run:
+            decision = orchestrator.run_mocked(
+                mission.objective, research_only=True, mission=mission
+            )
+        else:
+            decision = asyncio.run(
+                orchestrator.run_live(
+                    mission.objective, research_only=True, mission=mission
+                )
+            )
         _print(decision.model_dump(mode="json"))
         return 0
     if args.command == "approve":

@@ -17,11 +17,13 @@ from .rendering import final_decision_markdown
 from .repo_tools import RepositoryTools
 from .schemas import (
     ApprovalRecord,
+    ArchivistResult,
     AuditResult,
     AuditVerdict,
     BenchmarkReceipt,
     BenchmarkStatus,
     ClaimStatus,
+    CurieResult,
     EvidenceItem,
     EvidencePacket,
     EvidenceSourceType,
@@ -30,14 +32,16 @@ from .schemas import (
     Hypothesis,
     ImplementationResult,
     ImplementationSpec,
+    ResearchRequirements,
     RunManifest,
+    SpecialistAccounting,
     TaskSpec,
     TaskType,
     WorkflowState,
     utc_now,
 )
 from .sdk_runtime import AgentsSDKRuntime, LiveTelemetry
-from .workflow import WorkflowMachine
+from .workflow import StageRequirementUnsatisfied, WorkflowMachine
 
 
 class EidosOrchestrator:
@@ -59,6 +63,7 @@ class EidosOrchestrator:
         allowed_scope: list[str] | None = None,
         forbidden_scope: list[str] | None = None,
         required_artifacts: list[str] | None = None,
+        research_requirements: ResearchRequirements | None = None,
     ) -> TaskSpec:
         task_id = "TASK-" + utc_now().strftime("%Y%m%dT%H%M%SZ") + "-" + uuid.uuid4().hex[:6].upper()
         task = TaskSpec(
@@ -75,6 +80,7 @@ class EidosOrchestrator:
             failure_criteria=["unsupported claim promoted to KNOWN", "builder self-audits", "Auditor BLOCK bypassed"],
             required_artifacts=required_artifacts or ["run_manifest.json", "cost_receipt.json", "final_decision.json"],
             budget=self.config.budget,
+            research_requirements=research_requirements or ResearchRequirements(),
             human_approval_requirements=["merge", "deployment", "Council invocation", "Auditor BLOCK override"],
         )
         self.store.put_task(task)
@@ -94,6 +100,7 @@ class EidosOrchestrator:
             allowed_scope=allowed,
             forbidden_scope=forbidden,
             required_artifacts=mission.required_artifacts if mission else None,
+            research_requirements=mission.research_requirements if mission else None,
         )
         workflow = WorkflowMachine(task.task_id, self.store)
         workflow.transition(WorkflowState.TRIAGED, actor="director", reason="mocked deterministic triage")
@@ -213,13 +220,31 @@ class EidosOrchestrator:
         self.store.write_model(f"tasks/{task.task_id}/run_manifest.json", manifest, immutable=True)
         return decision
 
-    async def run_live(self, objective: str, *, research_only: bool = False) -> FinalDecision:
-        task = self.create_task(objective, task_type=TaskType.RESEARCH)
+    async def run_live(
+        self,
+        objective: str,
+        *,
+        research_only: bool = False,
+        mission: MissionDefinition | None = None,
+    ) -> FinalDecision:
+        task = self.create_task(
+            objective,
+            task_type=TaskType.RESEARCH,
+            allowed_scope=mission.allowed_scope if mission else None,
+            forbidden_scope=mission.forbidden_scope if mission else None,
+            required_artifacts=mission.required_artifacts if mission else None,
+            research_requirements=mission.research_requirements if mission else None,
+        )
         workflow = WorkflowMachine(task.task_id, self.store)
         workflow.transition(WorkflowState.TRIAGED, actor="director", reason="live Director run requested")
         runtime = AgentsSDKRuntime(self.config)
         budget = BudgetManager(task.task_id, task.budget, self.prices)
-        allowed = {"archivist", "curie", "sentry", "gauss"} if research_only else None
+        required = task.research_requirements.required_specialists
+        allowed = (
+            set(required)
+            if required
+            else ({"archivist", "curie", "sentry", "gauss"} if research_only else None)
+        )
         telemetry = LiveTelemetry(budget=budget, allowed_specialists=allowed)
         state_path = self.store.task_dir(task.task_id) / "sdk_run_state.json"
         decision, _usage, interruptions = await runtime.run_director(
@@ -234,10 +259,48 @@ class EidosOrchestrator:
         if decision is None:
             workflow.transition(WorkflowState.BLOCKED, actor="director", reason="Director returned malformed structured output")
             raise RuntimeError("Director did not return FinalDecision")
+        experiment_refs: list[str] = []
         for index, (agent, output) in enumerate(telemetry.agent_outputs, 1):
-            self.store.write_model(
-                f"tasks/{task.task_id}/agents/{index:02d}-{agent}.json", output, immutable=True
+            self.store.save_record(
+                "agent_result",
+                f"AGENT-{task.task_id}-{index:02d}-{agent}",
+                task.task_id,
+                output,
+                f"tasks/{task.task_id}/agents/{index:02d}-{agent}.json",
             )
+            if isinstance(output, ArchivistResult):
+                packet = output.evidence_packet
+                if packet.task_id != task.task_id:
+                    raise StageRequirementUnsatisfied(["Archivist EvidencePacket task_id mismatch"])
+                self.store.save_record(
+                    "evidence",
+                    f"EVID-{task.task_id}-{index:02d}",
+                    task.task_id,
+                    packet,
+                    f"tasks/{task.task_id}/evidence/evidence_packet.json",
+                )
+            if isinstance(output, CurieResult):
+                experiment = output.experiment_spec
+                if experiment.task_id != task.task_id:
+                    raise StageRequirementUnsatisfied(["Curie ExperimentSpec task_id mismatch"])
+                experiment_path = self.store.save_record(
+                    "experiment",
+                    experiment.experiment_id,
+                    task.task_id,
+                    experiment,
+                    f"tasks/{task.task_id}/experiments/{experiment.experiment_id}/spec.json",
+                )
+                experiment_refs.append(
+                    experiment_path.relative_to(self.config.artifact_root).as_posix()
+                )
+        accounting = self._specialist_accounting(task, telemetry)
+        self.store.save_record(
+            "specialist_accounting",
+            f"SPECIALISTS-{task.task_id}",
+            task.task_id,
+            accounting,
+            f"tasks/{task.task_id}/specialist_accounting.json",
+        )
         events_path = self.store.task_dir(task.task_id) / "live_events.json"
         events_path.write_text(
             json.dumps(telemetry.events, indent=2, default=str) + "\n", encoding="utf-8"
@@ -258,13 +321,25 @@ class EidosOrchestrator:
         workflow.transition(
             WorkflowState.EVIDENCE_GATHERING,
             actor="director",
-            reason="live bounded specialist research completed",
+            reason="live research requirements evaluated",
         )
-        workflow.transition(
-            WorkflowState.READY_FOR_HUMAN,
-            actor="director",
-            reason="live research decision ready for human review",
-        )
+        if experiment_refs:
+            workflow.transition(
+                WorkflowState.EXPERIMENT_SPECIFIED,
+                actor="curie",
+                reason="persisted ExperimentSpec validated for current task",
+                output_artifact_ids=experiment_refs,
+            )
+        gate_error: StageRequirementUnsatisfied | None = None
+        try:
+            workflow.transition(
+                WorkflowState.READY_FOR_HUMAN,
+                actor="director",
+                reason="persisted research requirements satisfied",
+            )
+        except StageRequirementUnsatisfied as exc:
+            gate_error = exc
+            workflow.transition(WorkflowState.BLOCKED, actor="workflow", reason=str(exc))
         manifest = RunManifest(
             task_id=task.task_id,
             task_ref=f"tasks/{task.task_id}/task.json",
@@ -275,6 +350,7 @@ class EidosOrchestrator:
             },
             agents={"events": telemetry.events},
             models=self.models.manifest(),
+            experiments=experiment_refs,
             costs=cost_path.relative_to(self.config.artifact_root).as_posix(),
             final_decision=decision_path.relative_to(self.config.artifact_root).as_posix(),
             tracing_available=bool(telemetry.trace_id),
@@ -287,7 +363,42 @@ class EidosOrchestrator:
         self.store.write_model(
             f"tasks/{task.task_id}/run_manifest.json", manifest, immutable=True
         )
+        if gate_error is not None:
+            raise gate_error
         return decision
+
+    def _specialist_accounting(
+        self, task: TaskSpec, telemetry: LiveTelemetry
+    ) -> SpecialistAccounting:
+        attempted: list[str] = []
+        for event in telemetry.events:
+            agent = str(event.get("agent", "")).lower()
+            if event.get("event") == "agent_start" and agent != "director" and agent not in attempted:
+                attempted.append(agent)
+        completed: list[str] = []
+        failed: dict[str, str] = {}
+        for agent, output in telemetry.agent_outputs:
+            normalized = agent.lower()
+            if output.status.upper() in {"FAIL", "FAILED", "BLOCK", "BLOCKED", "ERROR"}:
+                failed[normalized] = output.summary
+            elif normalized not in completed:
+                completed.append(normalized)
+        for agent in attempted:
+            if agent not in completed and agent not in failed:
+                failed[agent] = "specialist started but no structured completion was persisted"
+        skipped = {
+            agent: "required specialist was not invoked"
+            for agent in task.research_requirements.required_specialists
+            if agent not in attempted
+        }
+        return SpecialistAccounting(
+            task_id=task.task_id,
+            required=task.research_requirements.required_specialists,
+            attempted=attempted,
+            completed=completed,
+            failed=failed,
+            skipped=skipped,
+        )
 
     async def resume_live(self, task_id: str) -> FinalDecision:
         status = ApprovalManager(self.store).resume(task_id)

@@ -113,6 +113,13 @@ class BudgetSpec(StrictModel):
     human_approval_threshold_usd: float | None = Field(default=None, ge=0)
 
 
+class ResearchRequirements(StrictModel):
+    current_evidence_required: bool = False
+    required_specialists: list[str] = Field(default_factory=list)
+    experiment_spec_required: bool = False
+    hypothesis_required: bool = False
+
+
 class TaskSpec(StrictModel):
     task_id: str
     title: str
@@ -130,6 +137,7 @@ class TaskSpec(StrictModel):
     failure_criteria: list[str] = Field(default_factory=list)
     required_artifacts: list[str] = Field(default_factory=list)
     budget: BudgetSpec = Field(default_factory=BudgetSpec)
+    research_requirements: ResearchRequirements = Field(default_factory=ResearchRequirements)
     human_approval_requirements: list[str] = Field(default_factory=list)
 
 
@@ -350,6 +358,23 @@ class AgentResult(StrictModel):
     next_action: str | None = None
     recommended_agent: str | None = None
     deliverables: dict[str, Any] = Field(default_factory=dict)
+
+
+class ArchivistResult(AgentResult):
+    evidence_packet: EvidencePacket
+
+
+class CurieResult(AgentResult):
+    experiment_spec: ExperimentSpec
+
+
+class SpecialistAccounting(StrictModel):
+    task_id: str
+    required: list[str] = Field(default_factory=list)
+    attempted: list[str] = Field(default_factory=list)
+    completed: list[str] = Field(default_factory=list)
+    failed: dict[str, str] = Field(default_factory=dict)
+    skipped: dict[str, str] = Field(default_factory=dict)
 
 
 class SpecialistWorkOrder(StrictModel):

@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import json
 import sqlite3
 from pathlib import Path
 from typing import Any, TypeVar
@@ -138,6 +139,22 @@ class ArtifactStore:
         with self.connect() as conn:
             rows = conn.execute("SELECT record_id,task_id,created_at,payload_hash FROM records WHERE kind=? ORDER BY created_at", (kind,)).fetchall()
         return [dict(row) for row in rows]
+
+    def records_for_task(self, kind: str, task_id: str, model_type: type[T]) -> list[T]:
+        with self.connect() as conn:
+            rows = conn.execute(
+                "SELECT payload_json FROM records WHERE kind=? AND task_id=? ORDER BY created_at",
+                (kind, task_id),
+            ).fetchall()
+        return [model_type.model_validate_json(row["payload_json"]) for row in rows]
+
+    def raw_records_for_task(self, kind: str, task_id: str) -> list[dict[str, Any]]:
+        with self.connect() as conn:
+            rows = conn.execute(
+                "SELECT payload_json FROM records WHERE kind=? AND task_id=? ORDER BY created_at",
+                (kind, task_id),
+            ).fetchall()
+        return [json.loads(row["payload_json"]) for row in rows]
 
     def add_hypothesis(self, hypothesis: Hypothesis, task_id: str) -> Path:
         path = self.write_model(f"hypotheses/{hypothesis.hypothesis_id}.json", hypothesis, immutable=True)

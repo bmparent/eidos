@@ -3,11 +3,26 @@
 from __future__ import annotations
 
 from .persistence import ArtifactStore
-from .schemas import AuditVerdict, WorkflowState, WorkflowTransition
+from .schemas import (
+    AuditVerdict,
+    EvidencePacket,
+    ExperimentSpec,
+    Hypothesis,
+    SpecialistAccounting,
+    TaskSpec,
+    WorkflowState,
+    WorkflowTransition,
+)
 
 
 class InvalidTransition(RuntimeError):
     pass
+
+
+class StageRequirementUnsatisfied(InvalidTransition):
+    def __init__(self, missing: list[str]) -> None:
+        self.missing = missing
+        super().__init__("stage requirements unsatisfied: " + "; ".join(missing))
 
 
 ALLOWED: dict[WorkflowState, set[WorkflowState]] = {
@@ -60,6 +75,11 @@ class WorkflowMachine:
             raise InvalidTransition("only PASS or PASS_WITH_LIMITATIONS can progress from audit")
         if audit_verdict == AuditVerdict.BLOCK and to_state != WorkflowState.BLOCKED:
             raise InvalidTransition("Auditor BLOCK must enter BLOCKED")
+        self._validate_reason(reason)
+        if to_state == WorkflowState.READY_FOR_HUMAN:
+            missing = self.unsatisfied_research_requirements()
+            if missing:
+                raise StageRequirementUnsatisfied(missing)
         transition = WorkflowTransition(
             task_id=self.task_id,
             from_state=current,
@@ -71,3 +91,76 @@ class WorkflowMachine:
         )
         self.store.add_transition(transition)
         return transition
+
+    def unsatisfied_research_requirements(self) -> list[str]:
+        try:
+            task = self.store.get_record("task", self.task_id, TaskSpec)
+        except KeyError:
+            return []
+        requirements = task.research_requirements
+        missing: list[str] = []
+        evidence_packets = self.store.records_for_task("evidence", self.task_id, EvidencePacket)
+        agent_results = self.store.raw_records_for_task("agent_result", self.task_id)
+        experiments = self.store.records_for_task("experiment", self.task_id, ExperimentSpec)
+        hypotheses = self.store.records_for_task("hypothesis", self.task_id, Hypothesis)
+        accounting_records = self.store.records_for_task(
+            "specialist_accounting", self.task_id, SpecialistAccounting
+        )
+        accounting = accounting_records[-1] if accounting_records else None
+
+        valid_evidence = [
+            packet
+            for packet in evidence_packets
+            if packet.task_id == self.task_id
+            and bool(packet.evidence or packet.missing_evidence or packet.contradictions)
+        ]
+        archivist_result_exists = any(
+            str(result.get("agent", "")).lower() == "archivist" for result in agent_results
+        )
+        if requirements.current_evidence_required:
+            if not valid_evidence:
+                missing.append("persisted valid EvidencePacket for current task")
+            if not archivist_result_exists:
+                missing.append("persisted Archivist result")
+
+        if requirements.required_specialists:
+            if accounting is None:
+                missing.append("persisted specialist completion accounting")
+            else:
+                terminal = set(accounting.completed) | set(accounting.failed)
+                for specialist in requirements.required_specialists:
+                    if specialist not in terminal:
+                        missing.append(f"required specialist not completed: {specialist}")
+
+        if requirements.experiment_spec_required and not any(
+            experiment.task_id == self.task_id for experiment in experiments
+        ):
+            missing.append("persisted ExperimentSpec for current task")
+        if requirements.hypothesis_required and not hypotheses:
+            missing.append("persisted Hypothesis for current task")
+        return missing
+
+    def _validate_reason(self, reason: str) -> None:
+        normalized = reason.lower()
+        if "specialist" in normalized and "complete" in normalized:
+            records = self.store.records_for_task(
+                "specialist_accounting", self.task_id, SpecialistAccounting
+            )
+            if not records or not records[-1].completed:
+                raise StageRequirementUnsatisfied(
+                    ["transition reason claims specialist completion without a completed specialist"]
+                )
+        if (
+            "evidence" in normalized
+            and ("gathered" in normalized or "packet" in normalized)
+            and not self.store.records_for_task("evidence", self.task_id, EvidencePacket)
+        ):
+            raise StageRequirementUnsatisfied(
+                ["transition reason claims evidence without a persisted EvidencePacket"]
+            )
+        if "experiment specified" in normalized and not self.store.records_for_task(
+            "experiment", self.task_id, ExperimentSpec
+        ):
+            raise StageRequirementUnsatisfied(
+                ["transition reason claims an experiment without a persisted ExperimentSpec"]
+            )

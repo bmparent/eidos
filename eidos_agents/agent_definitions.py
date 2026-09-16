@@ -8,7 +8,13 @@ from typing import Any
 from .config import LabConfig
 from .model_registry import ModelRegistry
 from .repo_tools import RepositoryTools
-from .schemas import AgentResult, FinalDecision, SpecialistWorkOrder
+from .schemas import (
+    AgentResult,
+    ArchivistResult,
+    CurieResult,
+    FinalDecision,
+    SpecialistWorkOrder,
+)
 
 COMMON = """
 Return only the requested structured output. Separate claims from evidence. Use HYPOTHESIS,
@@ -25,12 +31,16 @@ You are Archivist, Eidos project-evidence specialist. Read only. Retrieve the sm
 packet from repository source/history/artifacts/docs. Classify every finding as PROJECT_EVIDENCE,
 EXTERNAL_EVIDENCE, INFERENCE, MISSING, or CONTRADICTION. Never silently reconcile contradictions.
 Use web/literature search only when the work order explicitly requests it.
+Always return an ArchivistResult with a valid EvidencePacket for the supplied task_id. If repository
+evidence is absent, record a MISSING EvidenceItem or explicit missing_evidence rather than returning
+an empty result.
 """,
     "curie": COMMON + """
 You are Curie, experimental scientist. Formulate falsifiable hypotheses and competing explanations.
 For substantial experiments specify hypothesis, alternative, independent/dependent variables,
 controls, negative controls, ablations, dataset, ordering, seeds, baselines, success, failure,
 ambiguity, confounds, leakage prevention, and artifacts. Do not write production engine code.
+Always return a CurieResult with one complete ExperimentSpec for the supplied task_id.
 """,
     "sentry": COMMON + """
 You are Sentry, Sentinel detection scientist. Optimize trustworthy detection, not sensitivity alone.
@@ -78,6 +88,9 @@ specific evidence-backed specification, require Bench and independent Auditor fo
 control budget, reconcile uncertainty, and return the human decision contract. Do not substantially
 write code, certify commissioned work, merge, deploy, promote experimental results to fact without
 receipts, or override Auditor BLOCK. Council is rare and human-gated.
+Research requirements in TaskSpec are mandatory workflow contracts. Invoke every required specialist
+and obtain the required structured artifacts before finalizing. A prose substitute does not satisfy
+EvidencePacket, ExperimentSpec, Hypothesis, or specialist-completion requirements.
 """,
 }
 
@@ -145,6 +158,10 @@ def build_sdk_graph(
     Agent, ModelSettings, Reasoning = _sdk_imports()
     model_registry = registry or ModelRegistry(config)
     specialists: dict[str, Any] = {}
+    output_types = {
+        "archivist": ArchivistResult,
+        "curie": CurieResult,
+    }
     for name in ("archivist", "curie", "sentry", "gauss", "forge", "bench", "auditor", "council"):
         profile = model_registry.profile(name)
         specialists[name] = Agent(
@@ -153,7 +170,7 @@ def build_sdk_graph(
             model=profile.model,
             model_settings=ModelSettings(reasoning=Reasoning(effort=profile.reasoning)),
             tools=_archivist_repo_tools(config) if name == "archivist" else [],
-            output_type=AgentResult,
+            output_type=output_types.get(name, AgentResult),
         )
 
     tools: dict[str, Any] = {}
@@ -166,7 +183,10 @@ def build_sdk_graph(
 
         tools[name] = agent.as_tool(
             tool_name=f"consult_{name}",
-            tool_description=f"Send a bounded structured work order to {name.title()} and return its structured result.",
+            tool_description=(
+                f"Send a bounded structured work order to {name.title()} and return its structured result. "
+                "Required TaskSpec research stages must be completed before Director finalizes."
+            ),
             parameters=SpecialistWorkOrder,
             include_input_schema=True,
             max_turns=config.budget.maximum_turns,

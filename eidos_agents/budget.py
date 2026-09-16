@@ -20,6 +20,7 @@ class BudgetManager:
         self.prices = prices
         self.calls_by_model: Counter[str] = Counter()
         self.calls_by_agent: Counter[str] = Counter()
+        self.specialist_invocations: Counter[str] = Counter()
         self.tool_calls: Counter[str] = Counter()
         self.tokens: Counter[str] = Counter()
         self.agent_cost: dict[str, Decimal] = defaultdict(Decimal)
@@ -29,14 +30,17 @@ class BudgetManager:
     def authorize_call(self, agent: str, model: str, *, council: bool = False) -> None:
         if council and not self.spec.council_enabled:
             raise BudgetExceeded("Council is disabled")
-        specialist_calls = sum(count for name, count in self.calls_by_agent.items() if name != "director")
-        if agent != "director" and specialist_calls >= self.spec.maximum_specialist_calls:
-            raise BudgetExceeded("maximum specialist calls reached")
         limit = self.spec.per_agent_budget_usd.get(agent)
         if limit is not None and self.agent_cost[agent] >= Decimal(str(limit)):
             raise BudgetExceeded(f"per-agent budget exhausted for {agent}")
         if self.spec.task_budget_usd is not None and self.total_cost >= Decimal(str(self.spec.task_budget_usd)):
             raise BudgetExceeded("task budget exhausted")
+
+    def authorize_specialist(self, agent: str, model: str, *, council: bool = False) -> None:
+        self.authorize_call(agent, model, council=council)
+        if sum(self.specialist_invocations.values()) >= self.spec.maximum_specialist_calls:
+            raise BudgetExceeded("maximum specialist calls reached")
+        self.specialist_invocations[agent] += 1
 
     def record_call(self, agent: str, model: str, usage: dict[str, int | None]) -> None:
         self.calls_by_agent[agent] += 1

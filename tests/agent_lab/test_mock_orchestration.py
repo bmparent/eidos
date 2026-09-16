@@ -25,3 +25,12 @@ def test_sentinel_mission_dry_run_does_not_modify_source(lab_config, repo_root: 
     assert before == after
     assert decision.decision.startswith("RESEARCH_SPEC_READY")
     assert not (orchestrator.store.task_dir(decision.task_id) / "implementation").exists()
+
+
+def test_routing_smoke_mission_persists_explicit_research_requirements(repo_root: Path):
+    mission = MissionDefinition.load(repo_root / "missions" / "agent_routing_smoke_v2.yaml")
+    requirements = mission.research_requirements
+    assert requirements.current_evidence_required is True
+    assert requirements.required_specialists == ["archivist", "sentry", "curie"]
+    assert requirements.experiment_spec_required is True
+    assert requirements.hypothesis_required is False

@@ -45,7 +45,13 @@ def _telemetry_hooks(telemetry: LiveTelemetry, config: LabConfig) -> Any:
 
     class Hooks(RunHooksBase):
         async def on_agent_start(self, context: Any, agent: Any) -> None:
-            telemetry.events.append({"event": "agent_start", "agent": _agent_key(agent.name)})
+            key = _agent_key(agent.name)
+            if key != "director":
+                profile = config.models[key]
+                telemetry.budget.authorize_specialist(
+                    key, profile.model, council=key == "council"
+                )
+            telemetry.events.append({"event": "agent_start", "agent": key})
 
         async def on_agent_end(self, context: Any, agent: Any, output: Any) -> None:
             key = _agent_key(agent.name)
