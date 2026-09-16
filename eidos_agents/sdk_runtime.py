@@ -25,7 +25,8 @@ class LiveTelemetry:
 
 def _agent_key(name: str) -> str:
     normalized = name.strip().lower()
-    return "council" if normalized == "eidos council" else normalized
+    aliases = {"eidos director": "director", "eidos council": "council"}
+    return aliases.get(normalized, normalized)
 
 
 def _usage_dict(usage: Any) -> dict[str, int]:

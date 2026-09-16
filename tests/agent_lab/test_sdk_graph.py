@@ -1,4 +1,5 @@
 from eidos_agents.agent_definitions import ForgeWorkspaceAdapter, build_sdk_graph
+from eidos_agents.sdk_runtime import _agent_key
 
 
 def test_director_exposes_all_specialists_as_bounded_tools(lab_config):
@@ -28,3 +29,8 @@ def test_council_tool_is_approval_gated(lab_config):
 def test_forge_workspace_isolated_behind_adapter():
     description = ForgeWorkspaceAdapter().describe()
     assert description["mode"] == "local-controlled-fallback"
+
+
+def test_runtime_normalizes_director_and_council_names():
+    assert _agent_key("Eidos Director") == "director"
+    assert _agent_key("Eidos Council") == "council"
