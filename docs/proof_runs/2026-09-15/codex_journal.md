@@ -143,3 +143,107 @@ compatibility; the adapter kept that failure explicit.
 15. How this moves Eidos closer to the ultimate goal: reproducibility/self-monitoring receipts.
 16. Evidence files cited: tests, build report, task bundles and regression suites.
 17. Remaining uncertainty / unproven claims: Sentinel performance and scientific value remain unproven.
+
+---
+
+# Live Smoke Closeout Addendum — 2026-09-15
+
+## What happened today
+
+The reviewed model-pricing registry was populated and a single $1-capped live research smoke was run. The paid
+Director call completed and produced trace/cost receipts, but it invoked no specialists and retrieved no project
+evidence. The smoke is therefore `FAIL`, not a research success.
+
+## What was accomplished
+
+- Added versioned prices and official source metadata for all configured production models.
+- Added deterministic live budget, usage, routing and trace receipts.
+- Added bounded read-only repository tools for Archivist.
+- Proved Council, Forge and source writes stayed at zero during the paid run.
+- Identified a missing deterministic EvidencePacket/Archivist progression gate.
+
+## Tests and commands run
+
+- `python -m pytest tests/agent_lab/test_budget.py -q` — passed.
+- `python -m pytest tests/agent_lab -q` — passed with the opt-in paid test skipped.
+- `uvx ruff check eidos_agents tests/agent_lab` — passed.
+- `python -m eidos_agents investigate "..."` under the authorized environment — process passed; smoke verdict failed.
+- `python -m eidos_agents task TASK-20260916T002609Z-C3E108` — persistence reload passed.
+- `python -m eidos_agents costs TASK-20260916T002609Z-C3E108` — cost reload passed.
+
+## Problems encountered
+
+The first local launch failed before an API call because telemetry did not normalize `Eidos Director`; the tested
+fix used the one allowed technical retry. The paid attempt then exposed the larger orchestration defect: Director
+bypassed Archivist and returned an evidence-free answer.
+
+## What changed
+
+Only Agent Lab pricing, telemetry, bounded Archivist tooling, tests and closeout documentation changed.
+
+## What did not change
+
+No Eidos Brain/Sentinel engine behavior, threshold, label, compression, familiarity or incident logic changed.
+
+## Proof Logic + Meaning
+
+### Goal reached
+
+Pricing/accounting and live Director infrastructure passed; live multi-agent research failed.
+
+### Previous state
+
+Pricing and paid execution were unknown.
+
+### Technical logic utilized
+
+SDK lifecycle hooks attribute tokens, tools and agent order; deterministic allowlists hide implementation and
+Council tools in research mode; Git trees and SHA-256 hashes protect source integrity.
+
+### Math / scoring logic
+
+`1513 * $2/1M + 1209 * $12/1M = $0.017534` estimated API text-token cost.
+
+### Philosophical meaning
+
+Evidence before consensus: a structured Director answer is not successful research without retrieved receipts.
+
+### Why this is better
+
+The failure is attributable and reproducible rather than hidden behind a successful API response.
+
+### How this moves Eidos closer to the north-star goal
+
+It improves orchestration self-monitoring and identifies the missing gate required for trustworthy Sentinel work.
+
+### Evidence
+
+See `docs/agent_lab/LIVE_SMOKE_REPORT_2026-09-15.md` and task
+`TASK-20260916T002609Z-C3E108` under ignored Agent Lab artifacts.
+
+### Remaining uncertainty
+
+Specialist routing, current Sentinel evidence and the proposed experiment remain unproven.
+
+## Artifacts generated
+
+Live task, cost, trace, event, transition and final-decision receipts under
+`artifacts/agent_lab/tasks/TASK-20260916T002609Z-C3E108/`.
+
+## Google Drive archive status
+
+Succeeded. Eleven report/task files were mirrored to
+`G:\My Drive\Eidos_Brain_Proof_Phase\2026-09-15\eidos_agent_lab_live_smoke_20260915\` with zero
+SHA-256 mismatches. `drive_manifest.json` records the copy.
+
+## Thoughts on improvement
+
+Require a persisted Archivist result/EvidencePacket before evidence gathering can complete.
+
+## Where to improve next
+
+Add the evidence-stage gate and a regression test, then request separate authorization for another small live smoke.
+
+## Anything that stands out
+
+All safety/cost gates held, but the semantic research gate did not. This distinction is the central finding.

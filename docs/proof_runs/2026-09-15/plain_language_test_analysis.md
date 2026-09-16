@@ -99,3 +99,20 @@ mission are the evidence.
 
 Scientific and production value are still unproven; GPU/device/provider and paid live orchestration
 were not tested.
+
+---
+
+## Live smoke addendum
+
+The first paid Director call cost an estimated `$0.017534` against a `$1.00` cap. It created a remote trace and
+durable token/cost/task receipts without changing Sentinel source. Those infrastructure checks passed.
+
+The intended research organization did not pass. Director skipped Archivist, Sentry and Curie, retrieved no
+current project evidence, and returned an evidence-free `INCONCLUSIVE` answer. The recommendation for a temporal
+holdout calibration experiment may be reasonable, but this run did not establish that it is the repository's
+highest-value missing experiment.
+
+The next change should be a deterministic gate requiring a persisted Archivist EvidencePacket before a research
+task can leave evidence gathering. This embodies evidence before consensus and makes Eidos more reproducible and
+self-monitoring without changing any core detection behavior. Full receipts and limitations are in
+`docs/agent_lab/LIVE_SMOKE_REPORT_2026-09-15.md`.
