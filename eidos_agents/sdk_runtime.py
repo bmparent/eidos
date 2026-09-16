@@ -31,6 +31,32 @@ class LiveTelemetry:
     events: list[dict[str, Any]] = field(default_factory=list)
     agent_outputs: list[tuple[str, AgentResult]] = field(default_factory=list)
     trace_id: str | None = None
+    journal_path: Path | None = None
+    output_journal_path: Path | None = None
+
+    def configure_journal(self, artifact_root: Path, task_id: str) -> None:
+        task_dir = artifact_root / "tasks" / task_id
+        task_dir.mkdir(parents=True, exist_ok=True)
+        self.task_id = task_id
+        self.journal_path = task_dir / "live_events.jsonl"
+        self.output_journal_path = task_dir / "sdk_outputs.jsonl"
+
+    def emit(self, event: dict[str, Any]) -> None:
+        self.events.append(event)
+        if self.journal_path is not None:
+            with self.journal_path.open("a", encoding="utf-8") as handle:
+                handle.write(json.dumps(event, default=str, sort_keys=True) + "\n")
+
+    def persist_output(self, specialist: str, output: AgentResult) -> None:
+        if self.output_journal_path is None:
+            return
+        payload = {
+            "agent": specialist,
+            "output_type": type(output).__name__,
+            "output": output.model_dump(mode="json"),
+        }
+        with self.output_journal_path.open("a", encoding="utf-8") as handle:
+            handle.write(json.dumps(payload, sort_keys=True) + "\n")
 
     def successful_specialists(self) -> list[str]:
         return [
@@ -135,15 +161,26 @@ def _telemetry_hooks(telemetry: LiveTelemetry, config: LabConfig) -> Any:
                 telemetry.budget.authorize_specialist(
                     key, profile.model, council=key == "council"
                 )
-            telemetry.events.append({"event": "agent_start", "agent": key})
+            telemetry.emit({"event": "agent_start", "agent": key})
 
         async def on_agent_end(self, context: Any, agent: Any, output: Any) -> None:
             key = _agent_key(agent.name)
-            telemetry.events.append({"event": "agent_end", "agent": key})
             internal = _internal_output(output)
             if internal is not None:
                 telemetry.verify_output(key, internal)
                 telemetry.agent_outputs.append((key, internal))
+                telemetry.persist_output(key, internal)
+                telemetry.emit(
+                    {
+                        "event": "agent_end",
+                        "agent": key,
+                        "status": internal.status,
+                    }
+                )
+            else:
+                telemetry.emit(
+                    {"event": "agent_end", "agent": key, "status": "UNSTRUCTURED"}
+                )
 
         async def on_llm_start(
             self, context: Any, agent: Any, system_prompt: Any, input_items: Any
@@ -153,7 +190,7 @@ def _telemetry_hooks(telemetry: LiveTelemetry, config: LabConfig) -> Any:
             telemetry.budget.authorize_call(
                 key, profile.model, council=key == "council"
             )
-            telemetry.events.append(
+            telemetry.emit(
                 {"event": "llm_start", "agent": key, "model": profile.model}
             )
 
@@ -162,7 +199,7 @@ def _telemetry_hooks(telemetry: LiveTelemetry, config: LabConfig) -> Any:
             profile = config.models[key]
             usage = _usage_dict(response.usage)
             telemetry.budget.record_call(key, profile.model, usage)
-            telemetry.events.append(
+            telemetry.emit(
                 {
                     "event": "llm_end",
                     "agent": key,
@@ -174,7 +211,7 @@ def _telemetry_hooks(telemetry: LiveTelemetry, config: LabConfig) -> Any:
         async def on_tool_start(self, context: Any, agent: Any, tool: Any) -> None:
             name = str(getattr(tool, "name", type(tool).__name__))
             telemetry.budget.record_tool(name)
-            telemetry.events.append(
+            telemetry.emit(
                 {
                     "event": "tool_start",
                     "agent": _agent_key(agent.name),
@@ -186,7 +223,7 @@ def _telemetry_hooks(telemetry: LiveTelemetry, config: LabConfig) -> Any:
         async def on_tool_end(
             self, context: Any, agent: Any, tool: Any, result: Any
         ) -> None:
-            telemetry.events.append(
+            telemetry.emit(
                 {
                     "event": "tool_end",
                     "agent": _agent_key(agent.name),
@@ -223,7 +260,7 @@ class AgentsSDKRuntime:
             ) from exc
 
         if telemetry is not None:
-            telemetry.task_id = task.task_id
+            telemetry.configure_journal(self.config.artifact_root, task.task_id)
             telemetry.required_sequence = list(
                 task.research_requirements.required_specialists
             )
@@ -244,6 +281,9 @@ class AgentsSDKRuntime:
         ) as current_trace:
             if telemetry is not None:
                 telemetry.trace_id = getattr(current_trace, "trace_id", None)
+                telemetry.emit(
+                    {"event": "trace", "trace_id": telemetry.trace_id}
+                )
             result = await Runner.run(
                 graph.director,
                 prompt,
