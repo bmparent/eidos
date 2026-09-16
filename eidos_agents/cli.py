@@ -12,12 +12,15 @@ from .approvals import ApprovalManager, ApprovalRequired
 from .config import LabConfig
 from .doctor import run_doctor
 from .missions import MissionDefinition
-from .orchestrator import EidosOrchestrator
+from .resilient_orchestrator import ResilientEidosOrchestrator as EidosOrchestrator
 from .schemas import ApprovalRecord
 
 
 def _parser() -> argparse.ArgumentParser:
-    parser = argparse.ArgumentParser(prog="python -m eidos_agents", description="Eidos proof-first agent research lab")
+    parser = argparse.ArgumentParser(
+        prog="python -m eidos_agents",
+        description="Eidos proof-first agent research lab",
+    )
     parser.add_argument("--repo-root", type=Path, default=Path.cwd())
     parser.add_argument("--artifact-root", type=Path)
     sub = parser.add_subparsers(dest="command", required=True)
@@ -46,7 +49,9 @@ def _parser() -> argparse.ArgumentParser:
 
 
 def _config(args: argparse.Namespace) -> LabConfig:
-    config = LabConfig.from_env(args.repo_root, dry_run=bool(getattr(args, "dry_run", False)))
+    config = LabConfig.from_env(
+        args.repo_root, dry_run=bool(getattr(args, "dry_run", False))
+    )
     if args.artifact_root:
         config.artifact_root = args.artifact_root.resolve()
     return config
@@ -67,14 +72,24 @@ def main(argv: list[str] | None = None) -> int:
     if args.command in {"investigate", "run"}:
         research_only = args.command == "investigate"
         if args.mock or args.dry_run:
-            decision = orchestrator.run_mocked(args.objective, research_only=research_only)
+            decision = orchestrator.run_mocked(
+                args.objective, research_only=research_only
+            )
         else:
             try:
                 decision = asyncio.run(
-                    orchestrator.run_live(args.objective, research_only=research_only)
+                    orchestrator.run_live(
+                        args.objective, research_only=research_only
+                    )
                 )
             except ApprovalRequired as exc:
-                _print({"status": "AWAITING_APPROVAL", "task_id": exc.task_id, "action": exc.action})
+                _print(
+                    {
+                        "status": "AWAITING_APPROVAL",
+                        "task_id": exc.task_id,
+                        "action": exc.action,
+                    }
+                )
                 return 3
         _print(decision.model_dump(mode="json"))
         return 0
@@ -93,8 +108,22 @@ def main(argv: list[str] | None = None) -> int:
         _print(decision.model_dump(mode="json"))
         return 0
     if args.command == "approve":
-        orchestrator.store.add_approval(ApprovalRecord(task_id=args.task_id, action=args.action, approved=True, actor=args.actor))
-        _print({"task_id": args.task_id, "action": args.action, "approved": True, "actor": args.actor})
+        orchestrator.store.add_approval(
+            ApprovalRecord(
+                task_id=args.task_id,
+                action=args.action,
+                approved=True,
+                actor=args.actor,
+            )
+        )
+        _print(
+            {
+                "task_id": args.task_id,
+                "action": args.action,
+                "approved": True,
+                "actor": args.actor,
+            }
+        )
         return 0
     if args.command == "resume":
         state_path = orchestrator.store.task_dir(args.task_id) / "sdk_run_state.json"
@@ -102,7 +131,13 @@ def main(argv: list[str] | None = None) -> int:
             try:
                 decision = asyncio.run(orchestrator.resume_live(args.task_id))
             except ApprovalRequired as exc:
-                _print({"status": "AWAITING_APPROVAL", "task_id": exc.task_id, "action": exc.action})
+                _print(
+                    {
+                        "status": "AWAITING_APPROVAL",
+                        "task_id": exc.task_id,
+                        "action": exc.action,
+                    }
+                )
                 return 3
             _print(decision.model_dump(mode="json"))
             return 0

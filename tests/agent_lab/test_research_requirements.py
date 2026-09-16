@@ -143,7 +143,9 @@ def test_archivist_call_without_evidence_packet_is_blocked(tmp_path):
     save_result(store, task.task_id, "archivist")
     save_accounting(store, task.task_id, ["archivist"])
     with pytest.raises(StageRequirementUnsatisfied) as exc:
-        workflow.transition(WorkflowState.READY_FOR_HUMAN, actor="director", reason="review")
+        workflow.transition(
+            WorkflowState.READY_FOR_HUMAN, actor="director", reason="review"
+        )
     assert "EvidencePacket" in str(exc.value)
 
 
@@ -159,16 +161,22 @@ def test_missing_evidence_packet_counts_as_investigated(tmp_path):
         packet,
         f"tasks/{task.task_id}/evidence/evidence_packet.json",
     )
-    workflow.transition(WorkflowState.READY_FOR_HUMAN, actor="director", reason="review")
+    workflow.transition(
+        WorkflowState.READY_FOR_HUMAN, actor="director", reason="review"
+    )
     assert workflow.state == WorkflowState.READY_FOR_HUMAN
 
 
 def test_required_specialist_gate_names_missing_curie(tmp_path):
-    requirements = ResearchRequirements(required_specialists=["archivist", "sentry", "curie"])
+    requirements = ResearchRequirements(
+        required_specialists=["archivist", "sentry", "curie"]
+    )
     store, workflow, task = setup_task(tmp_path, requirements)
     save_accounting(store, task.task_id, ["archivist", "sentry"])
     with pytest.raises(StageRequirementUnsatisfied) as exc:
-        workflow.transition(WorkflowState.READY_FOR_HUMAN, actor="director", reason="review")
+        workflow.transition(
+            WorkflowState.READY_FOR_HUMAN, actor="director", reason="review"
+        )
     assert "curie" in str(exc.value)
 
 
@@ -177,7 +185,9 @@ def test_curie_prose_without_experiment_spec_is_rejected(tmp_path):
     store, workflow, task = setup_task(tmp_path, requirements)
     save_result(store, task.task_id, "curie")
     with pytest.raises(StageRequirementUnsatisfied) as exc:
-        workflow.transition(WorkflowState.READY_FOR_HUMAN, actor="director", reason="review")
+        workflow.transition(
+            WorkflowState.READY_FOR_HUMAN, actor="director", reason="review"
+        )
     assert "ExperimentSpec" in str(exc.value)
 
 
@@ -214,11 +224,11 @@ def test_successful_research_path_reaches_human_review(tmp_path):
     assert workflow.state == WorkflowState.READY_FOR_HUMAN
 
 
-def test_transition_reason_cannot_claim_zero_specialists_completed(tmp_path):
+def test_completion_prose_is_not_used_as_workflow_truth(tmp_path):
     _store, workflow, _task = setup_task(tmp_path, ResearchRequirements())
-    with pytest.raises(StageRequirementUnsatisfied):
-        workflow.transition(
-            WorkflowState.READY_FOR_HUMAN,
-            actor="director",
-            reason="specialist research completed",
-        )
+    workflow.transition(
+        WorkflowState.READY_FOR_HUMAN,
+        actor="director",
+        reason="specialist research completed",
+    )
+    assert workflow.state == WorkflowState.READY_FOR_HUMAN

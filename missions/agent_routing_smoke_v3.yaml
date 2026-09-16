@@ -1,0 +1,53 @@
+mission_id: agent_routing_smoke_v3
+title: Agent Lab Ordered Research Routing Smoke v3
+objective: >-
+  Determine the current evidence-backed state of Sentinel precision/calibration in this repository
+  and identify the single highest-value missing experiment needed before changing Sentinel behavior.
+  Retrieve the newest relevant evidence rather than assuming historical CICIDS metrics are current.
+  This is a read-only research session: do not implement or modify Sentinel behavior.
+mode: research_only
+allowed_scope:
+  - "eidos/artifacts/**"
+  - "eidos/docs/proof_runs/**"
+  - "eidos/proof/**"
+  - "eidos/tools/**"
+  - "eidos/repo/src/eidos_brain/sentinel/**"
+  - "services/sentinel-runner/**"
+forbidden_scope:
+  - "eidos/EIDOS_BRAIN_UNIFIED_v0_4.7.02.py"
+  - "apps/**"
+evidence_targets:
+  - newest CICIDS/WebAttacks evidence
+  - newest Precision Ledger outputs
+  - newest Sentinel calibration results
+  - current engine commit and proof targets
+evaluation_dimensions:
+  - raw precision
+  - merged precision
+  - deduplicated precision
+  - recall
+  - F1
+  - false positives per 10k normal frames
+  - attack-window coverage
+  - detection latency
+workflow:
+  - Archivist runs first, retrieves current repository evidence, and returns EvidencePacket
+  - Sentry runs second and cites the Archivist evidence IDs it analyzes
+  - Curie runs third and carries evidence references into one structured highest-value ExperimentSpec
+  - Director synthesizes only after the host verifies the persisted ordered specialist chain
+implementation_authorized: false
+required_artifacts:
+  - EvidencePacket
+  - SpecialistAccounting
+  - ExperimentSpec
+  - CostReceipt
+  - FinalDecision
+  - RunManifest
+research_requirements:
+  current_evidence_required: true
+  required_specialists:
+    - archivist
+    - sentry
+    - curie
+  experiment_spec_required: true
+  hypothesis_required: false

@@ -1,0 +1,122 @@
+name: Agent Lab Smoke v3
+
+# Smoke v3 acceptance: deterministic suite and mocked mission must pass before any paid live run.
+# Live authorization is explicit through an [agent-live] commit marker.
+on:
+  push:
+    branches:
+      - agent-lab-smoke-v3-2026-09-16
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: agent-lab-smoke-v3-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  deterministic:
+    name: Deterministic guardrails
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: pip
+      - name: Install Agent Lab
+        run: python -m pip install -e '.[test]'
+      - name: Run Agent Lab regression suite
+        run: python -m pytest tests/agent_lab -m "not live"
+      - name: Run mocked ordered-routing mission
+        env:
+          EIDOS_AGENT_TASK_BUDGET_USD: "0.85"
+        run: >-
+          python -m eidos_agents
+          --artifact-root artifacts/agent_lab_mock_v3
+          mission missions/agent_routing_smoke_v3.yaml --mock
+      - name: Retain mocked smoke evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: agent-lab-smoke-v3-mocked-${{ github.sha }}
+          path: artifacts/agent_lab_mock_v3
+          if-no-files-found: warn
+          retention-days: 30
+
+  live-session:
+    name: Real ordered agent session
+    needs: deterministic
+    if: contains(github.event.head_commit.message, '[agent-live]')
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    env:
+      OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+      EIDOS_AGENT_DAILY_BUDGET_USD: "2.00"
+      EIDOS_AGENT_DAILY_LEDGER_DB: ${{ github.workspace }}/artifacts/agent_lab/daily_budget.sqlite
+      EIDOS_AGENT_TASK_BUDGET_USD: "0.85"
+      EIDOS_AGENT_MAX_SPECIALIST_CALLS: "5"
+      EIDOS_AGENT_MAX_RETRIES: "1"
+      EIDOS_AGENT_MAX_TURNS: "12"
+      EIDOS_AGENT_COUNCIL_ENABLED: "false"
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: pip
+      - name: Resolve UTC budget day
+        id: budget-day
+        shell: bash
+        run: echo "day=$(date -u +%F)" >> "$GITHUB_OUTPUT"
+      - name: Restore aggregate daily budget ledger
+        uses: actions/cache/restore@v4
+        with:
+          path: artifacts/agent_lab/daily_budget.sqlite
+          key: agent-lab-daily-budget-${{ steps.budget-day.outputs.day }}-${{ github.run_id }}-${{ github.run_attempt }}
+          restore-keys: |
+            agent-lab-daily-budget-${{ steps.budget-day.outputs.day }}-
+      - name: Install Agent Lab
+        run: python -m pip install -e '.[test]'
+      - name: Verify API credential is available
+        shell: bash
+        run: |
+          if [ -z "$OPENAI_API_KEY" ]; then
+            echo "OPENAI_API_KEY repository secret is not configured" >&2
+            exit 1
+          fi
+      - name: Run real ordered specialist session
+        run: >-
+          python -m eidos_agents
+          --artifact-root artifacts/agent_lab
+          mission missions/agent_routing_smoke_v3.yaml
+      - name: Show final task evidence index
+        if: always()
+        shell: bash
+        run: |
+          find artifacts/agent_lab -maxdepth 5 -type f -print | sort || true
+          if [ -f artifacts/agent_lab/daily_budget.sqlite ]; then
+            python - <<'PY'
+          import sqlite3
+          db = sqlite3.connect('artifacts/agent_lab/daily_budget.sqlite')
+          rows = db.execute('select task_id, agent, model, cost_usd from charges order by id').fetchall()
+          print('daily charges:', rows)
+          print('daily total:', sum(float(row[3]) for row in rows))
+          PY
+          fi
+      - name: Preserve aggregate daily budget ledger
+        if: always()
+        uses: actions/cache/save@v4
+        with:
+          path: artifacts/agent_lab/daily_budget.sqlite
+          key: agent-lab-daily-budget-${{ steps.budget-day.outputs.day }}-${{ github.run_id }}-${{ github.run_attempt }}
+      - name: Retain real session evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: agent-lab-smoke-v3-live-${{ github.sha }}
+          path: artifacts/agent_lab
+          if-no-files-found: warn
+          retention-days: 30
