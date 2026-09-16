@@ -247,3 +247,86 @@ Add the evidence-stage gate and a regression test, then request separate authori
 ## Anything that stands out
 
 All safety/cost gates held, but the semantic research gate did not. This distinction is the central finding.
+
+---
+
+# Routing Smoke v2 Addendum — 2026-09-15
+
+## What happened today
+
+The deterministic evidence-stage patch passed 61 Agent Lab tests and was pushed as `3391d4b`. One `$0.75`-capped
+live v2 smoke then attempted Archivist twice, Sentry once and Curie once. All specialist tools failed strict output
+schema validation before model inference. The new workflow gate correctly rejected human-review promotion.
+
+## What was accomplished
+
+- Persisted explicit research requirements and specialist accounting.
+- Enforced EvidencePacket, required-specialist and ExperimentSpec gates in Python.
+- Proved a fluent evidence-free final answer can no longer advance.
+- Preserved source integrity, Council=0, Forge=0 and cost below budget.
+
+## Tests and commands run
+
+- Focused Agent Lab tests: 24 passed.
+- Full `tests/agent_lab`: 61 passed, 1 paid opt-in test skipped.
+- Scoped Ruff: passed.
+- Live `missions/agent_routing_smoke_v2.yaml`: failed safely.
+
+## Problems encountered
+
+`AgentResult.deliverables: dict[str, Any]` emits an open JSON-schema object that the SDK rejects in strict mode.
+The BLOCKED transition then hit a separate false-positive reason check on the words “not completed.”
+
+## What changed
+
+Only Agent Lab schemas, workflow, persistence, orchestration, budget accounting, tests and the v2 mission changed.
+
+## What did not change
+
+No Eidos Brain/Sentinel algorithm, threshold, label, compression, familiarity or incident behavior changed.
+
+## Proof Logic + Meaning
+
+### Goal reached
+
+The evidence bypass gate passed; the live specialist-routing gate failed.
+
+### Previous state
+
+Director could promote a result without persisted evidence or specialist completion.
+
+### Technical logic utilized
+
+The workflow now queries current-task typed records and rejects promotion with enumerated missing requirements.
+
+### Math / scoring logic
+
+Five Director turns cost an estimated `$0.0396056`; specialist inference cost was zero because agents never started.
+
+### Philosophical meaning
+
+Evidence before consensus: safe failure is preferable to an unsupported research claim.
+
+### Why this is better
+
+The original unsafe transition is no longer possible, and the next infrastructure defect is precisely attributable.
+
+### How this moves Eidos closer to the north-star goal
+
+It improves self-monitoring and auditability without changing Sentinel behavior.
+
+### Evidence
+
+See `docs/agent_lab/LIVE_SMOKE_REPORT_V2_2026-09-15.md` and task
+`TASK-20260916T004858Z-7DE619` in ignored Agent Lab artifacts.
+
+### Remaining uncertainty
+
+Live specialist execution and current Sentinel precision/calibration remain unproven.
+
+## Google Drive archive status
+
+Succeeded. Eleven report/task receipts plus `drive_manifest.json` were mirrored to
+`G:\My Drive\Eidos_Brain_Proof_Phase\2026-09-15\eidos_agent_lab_live_smoke_v2_20260915\` with zero
+SHA-256 mismatches. `run_manifest.json` is explicitly listed as skipped because the secondary transition error
+interrupted its creation.

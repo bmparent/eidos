@@ -116,3 +116,17 @@ The next change should be a deterministic gate requiring a persisted Archivist E
 task can leave evidence gathering. This embodies evidence before consensus and makes Eidos more reproducible and
 self-monitoring without changing any core detection behavior. Full receipts and limitations are in
 `docs/agent_lab/LIVE_SMOKE_REPORT_2026-09-15.md`.
+
+## Routing smoke v2 addendum
+
+The workflow repair succeeded at its core safety purpose: it stopped Director's answer from reaching human review
+without Archivist evidence, Sentry analysis and Curie's structured experiment. Sixty-one Agent Lab tests passed.
+
+The paid live organization still failed. Director attempted all required tools, but an open-ended JSON field in the
+specialist output schema was incompatible with the SDK's strict structured-output rules. No specialist model ran,
+no repository evidence was read, and no ExperimentSpec was produced. Five Director turns cost an estimated
+`$0.0396056` against the `$0.75` cap. Source code and Sentinel behavior stayed unchanged.
+
+This is better than the first smoke because the system failed closed and named the missing requirements. It is not
+ready for the full Sentinel precision mission. The exact receipts and next repair are documented in
+`docs/agent_lab/LIVE_SMOKE_REPORT_V2_2026-09-15.md`.
