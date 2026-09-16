@@ -4,8 +4,7 @@ Date: 2026-09-16
 
 ## Pre-live acceptance
 
-- Deterministic Agent Lab suite: 74 passed; 1 paid live-only test intentionally deselected.
-- Mocked ordered-routing mission: PASS.
+- Deterministic Agent Lab suite and mocked ordered-routing mission are green after the live-derived regressions.
 - Required chain: Archivist -> Sentry -> Curie -> Director.
 - Host-owned SpecialistAccounting, CostReceipt, RunManifest, and workflow state cannot be requested as specialist outputs.
 - Routed work-order schemas pin Archivist, Sentry, and Curie to their exact SDK output contracts.
@@ -14,9 +13,10 @@ Date: 2026-09-16
 - Per-session ceiling: $0.85; aggregate daily ceiling: $2.00; Council disabled.
 - Daily ledger is restored/saved across live GitHub runners for the UTC budget day.
 
-## Prior live finding
+## Live-derived fixes
 
-The first credentialed live attempt correctly completed Archivist, blocked after Sentry failed structured output twice, skipped Curie, and refused READY_FOR_HUMAN. The retained evidence identified a contract mismatch: Director requested host-owned artifacts from Sentry although Sentry's SDK result contract did not contain those artifacts. The routed contract fix now makes that request invalid at the tool-schema boundary and gives Sentry a compact, explicit SDKSentryResult.
+1. The first credentialed live attempt completed Archivist but Sentry failed structured output because Director requested host-owned artifacts outside Sentry's output contract. Routed work-order schemas now make that combined request invalid and Sentry has an explicit compact SDKSentryResult.
+2. The next live attempt proved Sentry's structured result parsed successfully, but the host rejected its provenance because Director forwarded persisted evidence ids as namespaced refs such as `Archivist:E1` while the verifier requires canonical `E1`. SDKSentryWorkOrder now canonicalizes `Archivist:E1` and `Archivist:E1=path` to the persisted evidence id before Sentry sees them. Regression tests reproduce this exact condition while retaining the strict packet provenance gate.
 
 ## Final acceptance condition
 
