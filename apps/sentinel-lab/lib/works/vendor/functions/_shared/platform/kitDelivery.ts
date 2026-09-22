@@ -39,7 +39,8 @@ export async function archiveDigest(data: string) {
 export async function kitDownload(env: PlatformEnv, order: Order) {
   if (order.status !== 'paid') throw new HttpError(403, 'A verified, completed purchase is required to download this package.');
   await ensureKitDelivery(env);
-  const archive = await db(env).prepare('SELECT r.data,r.digest FROM eidos_kit_attempts a JOIN eidos_kit_archives r ON r.digest=a.archive_digest WHERE a.order_id=?').bind(order.id).first<{ data: string; digest: string }>();
+  const archive = await db(env).prepare('SELECT r.data,a.archive_digest AS digest FROM eidos_kit_attempts a LEFT JOIN eidos_kit_archives r ON r.digest=a.archive_digest WHERE a.order_id=?').bind(order.id).first<{ data: string | null; digest: string }>();
+  if (archive && !archive.data) throw new HttpError(503, 'The purchased archive needs a support check. Please try again later.');
   // Historical v1 orders retain the original v1 artifact; never substitute a new version.
   const data = archive?.data || legacyKitArchiveBase64, digest = await archiveDigest(data);
   if (archive && digest !== archive.digest) throw new HttpError(503, 'The purchased archive needs a support check. Please try again later.');
