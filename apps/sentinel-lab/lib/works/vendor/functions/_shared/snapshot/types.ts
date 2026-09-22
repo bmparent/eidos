@@ -80,6 +80,9 @@ export type SnapshotStatus =
   | 'processing'
   | 'complete'
   | 'failed'
+  | 'partial'
+  | 'refunded'
+  | 'disputed'
 
 export interface SnapshotRecord {
   version: 1
@@ -94,6 +97,9 @@ export interface SnapshotRecord {
   completedAt?: string
   stripeSessionId?: string
   stripeCheckoutUrl?: string
+  paymentIntent?: string
+  imageKey?: string
+  imageSha256?: string
   captureNote?: string
   report?: SnapshotReport
   imageStored?: boolean
@@ -116,6 +122,16 @@ export interface KVNamespaceLike {
 }
 
 export interface SnapshotEnv {
+  SNAPSHOT_DB?: import('../platform/core').Database
+  SNAPSHOT_OBJECTS?: {
+    put(key: string, value: Uint8Array, options?: { httpMetadata?: { contentType: string } }): Promise<unknown>
+    get(key: string): Promise<{ arrayBuffer(): Promise<ArrayBuffer> } | null>
+    delete(key: string): Promise<void>
+  }
+  SNAPSHOT_GENERATION_ENABLED?: string
+  SNAPSHOT_DAILY_ALLOWANCE_CENTS?: string
+  SNAPSHOT_MAX_JOB_COST_CENTS?: string
+  SNAPSHOT_CAPTURE_APPROVED?: string
   SNAPSHOT_STORE?: KVNamespaceLike
   SNAPSHOT_PUBLIC_ENABLED?: string
   SNAPSHOT_DEV_BYPASS_PAYMENT?: string

@@ -9,6 +9,25 @@ export interface Database {
   batch(statements: Statement[]): Promise<unknown[]>;
 }
 export interface PlatformEnv {
+  EIDOS_PLAYGROUND_AI_ENABLED?: string;
+  EIDOS_PLAYGROUND_AI_KILL?: string;
+  EIDOS_PLAYGROUND_AI_CONFIG?: string;
+  EIDOS_PLAYGROUND_IMAGE_ENABLED?: string;
+  EIDOS_PLAYGROUND_AI_PROVIDER?: import('./playgroundAI').AIProvider;
+  EIDOS_SOURCE_REVISION?: string;
+  EIDOS_PLAYGROUND_AUTHORING_ENABLED?: string;
+  EIDOS_PASSWORD_AUTH_ENABLED?: string;
+  EIDOS_PASSWORD_SERVICE?: {
+    hash(password: string): Promise<string>;
+    verify(password: string, encoded: string | null): Promise<boolean>;
+  };
+  EIDOS_GOOGLE_CLIENT_ID?: string;
+  EIDOS_GOOGLE_CLIENT_SECRET?: string;
+  EIDOS_GOOGLE_REDIRECT_URI?: string;
+  EIDOS_GOOGLE_VERIFY?: (token: string, nonce: string) => Promise<{
+    subject: string; email: string; authoritativeEmail: boolean;
+  }>;
+  EIDOS_VALIDATE_PLAYGROUND_IMAGE?: (data: string) => Promise<void>;
   EIDOS_RUNTIME?: 'sentinel';
   EIDOS_DB?: Database;
   EIDOS_ADMIN_TOKEN?: string;
@@ -68,10 +87,11 @@ export function json(body: unknown, status = 200) {
 }
 export function guarded(handler: (context: Context) => Promise<Response>) {
   return async (context: Context) => {
+    const started=Date.now();let response:Response;
     try {
-      return await handler(context);
+      response=await handler(context);
     } catch (error) {
-      return json(
+      response=json(
         {
           error:
             error instanceof HttpError
@@ -81,6 +101,18 @@ export function guarded(handler: (context: Context) => Promise<Response>) {
         error instanceof HttpError ? error.status : 503,
       );
     }
+    const path=new URL(context.request.url).pathname;
+    if(context.env.EIDOS_DB && /^\/api\/(assistant|members\/(auth|credentials|google)|shop\/(checkout|webhook|download|purchases)|playground\/(ai|checkout|webhook|purchases))$/.test(path)) {
+      try {
+        const database=context.env.EIDOS_DB,day=new Date().toISOString().slice(0,10);
+        let outcome=response.ok?'accepted':'http_'+response.status;
+        if(path==='/api/assistant' && response.ok){const result=await response.clone().json() as {mode?:string;note?:string};outcome=result.mode==='ai'?'ai_completed':result.note?'source_fallback':'source_answer';}
+        await database.prepare('CREATE TABLE IF NOT EXISTS eidos_outcomes(day TEXT,feature TEXT,outcome TEXT,count INTEGER,latency_ms INTEGER,updated TEXT,PRIMARY KEY(day,feature,outcome))').run();
+        await database.prepare('INSERT INTO eidos_outcomes VALUES(?,?,?,1,?,?) ON CONFLICT(day,feature,outcome) DO UPDATE SET count=count+1,latency_ms=latency_ms+excluded.latency_ms,updated=excluded.updated').bind(day,path,outcome,Date.now()-started,new Date().toISOString()).run();
+        await database.prepare('DELETE FROM eidos_outcomes WHERE day<?').bind(new Date(Date.now()-30*86400000).toISOString().slice(0,10)).run();
+      } catch { /* Observability failures cannot change billing/admission or expose request contents. */ }
+    }
+    return response;
   };
 }
 export async function readText(request: Pick<Request, 'headers' | 'body'>, max = 12000) {
