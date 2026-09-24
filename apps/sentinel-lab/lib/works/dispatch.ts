@@ -15,6 +15,7 @@ import * as memberDirectory from './vendor/functions/api/members/directory';
 import * as memberUnsubscribe from './vendor/functions/api/members/unsubscribe';
 import { timingSafeEqual } from 'node:crypto';
 import { platformDatabase } from './database';
+import { operations } from './operations';
 import { json, readText, type Context, type PlatformEnv } from './vendor/functions/_shared/platform/core';
 import * as assistant from './vendor/functions/api/assistant';
 import * as readiness from './vendor/functions/api/operations/readiness';
@@ -84,8 +85,18 @@ export async function dispatchWorks(request: Request, source: Record<string, str
     const expectedSite = new URL(source.PUBLIC_SITE_URL || 'https://eidos-works.com').origin;
     const actualSite = request.headers.get('x-eidos-site-origin');
     // Preview hosts require an explicit exact-origin allowlist. Never accept wildcard *.pages.dev.
-    const allowed = [expectedSite, ...(source.EIDOS_PREVIEW_ORIGINS || '').split(',').map(s => s.trim()).filter(Boolean)];
+    const allowed = [expectedSite, source.EIDOS_OPS_ORIGIN, ...(source.EIDOS_PREVIEW_ORIGINS || '').split(',').map(s => s.trim()).filter(Boolean)];
     if (!actualSite || !allowed.includes(actualSite)) return json({ error: 'Unrecognized studio origin.' }, 403);
+    if (path === '/api/operations/console') {
+      if (actualSite !== source.EIDOS_OPS_ORIGIN) return json({ error: 'Owner console origin required.' }, 403);
+      const headers = new Headers();
+      for (const name of ['cf-access-jwt-assertion','content-type','origin','x-ops-csrf']) {
+        const value = request.headers.get(name);
+        if (value) headers.set(name,value);
+      }
+      const payload = request.method === 'POST' ? await readText(request,8000) : undefined;
+      return operations(new Request(actualSite + path,{method:request.method,headers,body:payload}),source,suppliedEnv?.EIDOS_DB || platformDatabase(source));
+    }
     const match = path.match(/^\/community\/thread\/([a-zA-Z0-9-]+)$/);
     const endpoint = match ? thread : routes[path];
     if (!endpoint) return json({ error: 'Unknown studio endpoint.' }, 404);
