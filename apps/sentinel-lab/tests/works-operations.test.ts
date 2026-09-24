@@ -44,7 +44,12 @@ test('a signed owner identity may read while a different subject is denied', asy
   const source={EIDOS_OPS_ACCESS_TEAM:'ops-test-team',EIDOS_OPS_ACCESS_AUD:'ops-audience',EIDOS_OPS_OWNER_SUB:'owner-123',EIDOS_OPS_OWNER_EMAIL:'owner@example.com',EIDOS_SOURCE_REVISION:'test-revision',EIDOS_OPS_ORIGIN:'https://owner.example.com'};
   const client=createClient({url:'file::memory:'});
   try {
-    await client.execute('CREATE TABLE eidos_email_members(id TEXT PRIMARY KEY)');
+    await client.execute('CREATE TABLE eidos_email_members(id TEXT PRIMARY KEY,email TEXT,username TEXT UNIQUE COLLATE NOCASE,kind TEXT,created_at TEXT,disabled INTEGER)');
+    await client.execute("INSERT INTO eidos_email_members VALUES('member-a','a@example.com','alpha','person','2026-09-24',0)");
+    await client.execute("INSERT INTO eidos_email_members VALUES('member-b','b@example.com','beta','person','2026-09-24',0)");
+    await client.execute('CREATE TABLE eidos_member_sessions(token_hash TEXT PRIMARY KEY,member_id TEXT,expires INTEGER)');
+    await client.execute("INSERT INTO eidos_member_sessions VALUES('session-a','member-a',9999999999999)");
+    await client.execute("INSERT INTO eidos_member_sessions VALUES('session-b','member-b',9999999999999)");
     await client.execute('CREATE TABLE eidos_orders(id TEXT,status TEXT)');
     await client.execute('CREATE TABLE eidos_agents(id TEXT,revoked INTEGER)');
     await client.execute('CREATE TABLE eidos_outcomes(day TEXT,feature TEXT,outcome TEXT,count INTEGER,updated TEXT)');
@@ -57,7 +62,7 @@ test('a signed owner identity may read while a different subject is denied', asy
     assert.equal(allowed.status,200);
     const result=await allowed.json();
     assert.equal(result.data.sourceRevision,'test-revision');
-    assert.equal(result.data.accounts,0);
+    assert.equal(result.data.accounts,2);
     const ownerJwt=await sign('owner-123');
     const key='11111111-1111-4111-8111-111111111111';
     const input={command:'work_create',title:'Check isolated preview',detail:'Controlled test item',severity:'normal',reason:'Acceptance check',idempotencyKey:key};
@@ -72,5 +77,16 @@ test('a signed owner identity may read while a different subject is denied', asy
     const stale=await operations(action({command:'work_update',id:workId,status:'done',version:0,reason:'Stale attempt',idempotencyKey:'22222222-2222-4222-8222-222222222222'}),source,adaptDatabase(client));
     assert.equal(stale.status,409);
     assert.equal((await client.execute("SELECT COUNT(*) AS n FROM eidos_ops_audit WHERE outcome='denied_stale_or_invalid'")).rows[0].n,1);
+    const memberAction=(actionName:string,extra:Record<string,unknown>={},keyNumber=3)=>action({command:'account_action',memberId:'member-a',action:actionName,confirmation:'member-a',expectedUsername:extra.expectedUsername||'alpha',expectedDisabled:extra.expectedDisabled??0,reason:'Controlled account test',idempotencyKey:`${String(keyNumber).repeat(8)}-${String(keyNumber).repeat(4)}-4${String(keyNumber).repeat(3)}-8${String(keyNumber).repeat(3)}-${String(keyNumber).repeat(12)}`,...extra});
+    assert.equal((await operations(memberAction('suspend'),source,adaptDatabase(client))).status,200);
+    assert.equal((await client.execute("SELECT disabled FROM eidos_email_members WHERE id='member-a'")).rows[0].disabled,1);
+    assert.equal((await client.execute("SELECT disabled FROM eidos_email_members WHERE id='member-b'")).rows[0].disabled,0);
+    assert.equal((await operations(memberAction('restore',{expectedDisabled:1},4),source,adaptDatabase(client))).status,200);
+    assert.equal((await operations(memberAction('username',{username:'beta'},5),source,adaptDatabase(client))).status,409);
+    assert.equal((await operations(memberAction('username',{username:'gamma'},6),source,adaptDatabase(client))).status,200);
+    assert.equal((await client.execute("SELECT username FROM eidos_email_members WHERE id='member-b'")).rows[0].username,'beta');
+    assert.equal((await operations(memberAction('revoke_sessions',{expectedUsername:'gamma'},7),source,adaptDatabase(client))).status,200);
+    assert.equal((await client.execute("SELECT COUNT(*) AS n FROM eidos_member_sessions WHERE member_id='member-a'")).rows[0].n,0);
+    assert.equal((await client.execute("SELECT COUNT(*) AS n FROM eidos_member_sessions WHERE member_id='member-b'")).rows[0].n,1);
   } finally {globalThis.fetch=originalFetch;client.close();}
 });
