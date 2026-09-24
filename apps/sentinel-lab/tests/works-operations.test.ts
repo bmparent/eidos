@@ -74,6 +74,12 @@ test('a signed owner identity may read while a different subject is denied', asy
     const duplicate=await operations(action(input),source,adaptDatabase(client));
     assert.equal((await duplicate.json()).replayed,true);
     assert.equal((await client.execute('SELECT COUNT(*) AS n FROM eidos_ops_work')).rows[0].n,1);
+    const noteRequest={command:'work_note',id:workId,note:'Follow up on the provider gate',reason:'Acceptance history',idempotencyKey:'88888888-8888-4888-8888-888888888888'};
+    assert.equal((await operations(action(noteRequest),source,adaptDatabase(client))).status,201);
+    assert.equal((await operations(action(noteRequest),source,adaptDatabase(client))).status,200);
+    const reopened=await operations(action({command:'work_notes',id:workId}),source,adaptDatabase(client));
+    assert.equal((await reopened.json()).data[0].body,noteRequest.note);
+    assert.equal((await client.execute('SELECT COUNT(*) AS n FROM eidos_ops_work_notes')).rows[0].n,1);
     const stale=await operations(action({command:'work_update',id:workId,status:'done',version:0,reason:'Stale attempt',idempotencyKey:'22222222-2222-4222-8222-222222222222'}),source,adaptDatabase(client));
     assert.equal(stale.status,409);
     assert.equal((await client.execute("SELECT COUNT(*) AS n FROM eidos_ops_audit WHERE outcome='denied_stale_or_invalid'")).rows[0].n,1);
