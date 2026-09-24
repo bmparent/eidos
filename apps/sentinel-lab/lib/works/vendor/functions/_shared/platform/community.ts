@@ -98,7 +98,7 @@ export async function maybeSuggest(
     (proactive
       ? 'You opted in to a follow-up on unanswered questions. '
       : 'You asked @eidos for help. ') +
-    'Here is relevant information from the studio’s published pages:\n\n' +
+    'Source lookup (no AI call). Here is relevant information from the studio’s published pages:\n\n' +
     answer.answer +
     '\n\nSources:\n' +
     answer.sources

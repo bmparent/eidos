@@ -5,7 +5,6 @@ import {
   db,
   fingerprint,
   guarded,
-  hash,
   HttpError,
   json,
   origin,
@@ -13,6 +12,7 @@ import {
   siteOrigin,
 } from '../../_shared/platform/core';
 import { KIT_PRICE, shopReady } from '../../_shared/platform/shop';
+import { kitAttempt } from '../../_shared/platform/kitDelivery';
 export const onRequestPost = guarded(async ({ request, env }) => {
   origin(request);
   shopReady(env);
@@ -31,21 +31,18 @@ export const onRequestPost = guarded(async ({ request, env }) => {
       'You have opened several checkouts today. Please use an existing checkout or try again tomorrow.',
     );
   await challenge(request, env, input.challenge, 'checkout');
-  const id = crypto.randomUUID(),
-    receipt =
+  const receipt = clean(input.attempt, 80) ||
       crypto.randomUUID().replaceAll('-', '') +
       crypto.randomUUID().replaceAll('-', '');
-  await database
-    .prepare(
-      'INSERT INTO eidos_orders(id,receipt_hash,created_at) VALUES(?,?,?)',
-    )
-    .bind(id, await hash(receipt), new Date().toISOString())
-    .run();
+  if (!/^[a-f0-9]{64}$/.test(receipt)) throw new HttpError(400, 'Start a valid checkout attempt.');
   const useCase = ['own-website', 'client-project', 'learning'].includes(
     String(input.useCase),
   )
     ? String(input.useCase)
     : 'unspecified';
+  const attempt = await kitAttempt(request, env, receipt, useCase, siteOrigin(env));
+  const id = attempt.order_id;
+  if (attempt.session_url) return json({ url: attempt.session_url });
   const values = new URLSearchParams({
     'metadata[eidos_use_case]': useCase,
     mode: 'payment',
@@ -63,7 +60,7 @@ export const onRequestPost = guarded(async ({ request, env }) => {
       'Eidos Cinematic Starter — one website license',
     'line_items[0][price_data][product_data][description]':
       'HTML, CSS, JavaScript, setup notes, and a commercial license for one finished website. Digital download; no hosting or custom implementation.',
-    expires_at: String(Math.floor(Date.now() / 1000) + 1800),
+    expires_at: String(attempt.expires),
   });
   const response = await fetch('https://api.stripe.com/v1/checkout/sessions', {
     method: 'POST',
@@ -78,7 +75,7 @@ export const onRequestPost = guarded(async ({ request, env }) => {
   if (!response.ok)
     throw new HttpError(
       502,
-      'Checkout could not be opened. No payment was taken here. Please try again.',
+      'Checkout could not be confirmed. Retry this same attempt; do not start another purchase until its result is known.',
     );
   const session = (await response.json()) as { id?: string; url?: string };
   if (!/^cs_[A-Za-z0-9_]+$/.test(session.id || ''))
@@ -94,9 +91,9 @@ export const onRequestPost = guarded(async ({ request, env }) => {
     checkout.hostname !== 'checkout.stripe.com'
   )
     throw new HttpError(502, 'The payment link was invalid.');
-  await database
-    .prepare('UPDATE eidos_orders SET session_id=? WHERE id=?')
-    .bind(session.id, id)
-    .run();
+  await database.batch([
+    database.prepare('UPDATE eidos_orders SET session_id=? WHERE id=? AND (session_id IS NULL OR session_id=?)').bind(session.id, id, session.id),
+    database.prepare('UPDATE eidos_kit_attempts SET session_url=? WHERE order_id=?').bind(checkout.toString(), id),
+  ]);
   return json({ url: checkout.toString() });
 });

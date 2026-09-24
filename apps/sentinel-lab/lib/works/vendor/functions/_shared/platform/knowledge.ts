@@ -1,4 +1,6 @@
-export const knowledge = [
+import { projectCatalogue, catalogueRevision } from './projectCatalogue';
+export { catalogueRevision };
+const generalKnowledge = [
   {
     id: 'work',
     title: 'Explore the work',
@@ -58,15 +60,42 @@ export const knowledge = [
     text: 'Eidos builds operational views and focused automations around an existing source of data. Work includes production reporting with department and date filters and searchable work orders. Access, data shape, and the actual daily decision determine the implementation.',
   },
 ];
-export function selectKnowledge(question: string) {
-  const selected = knowledge.filter((item) => item.match.test(question));
-  return (selected.length ? selected : [knowledge[0], knowledge[4]]).slice(
-    0,
-    3,
-  );
+export const knowledge = [...projectCatalogue.map((project) => ({
+  id: project.id,
+  title: project.title,
+  href: project.sourceUrls[0],
+  text: [...project.supportedClaims, ...project.limitations].join(' '),
+  match: /(?!) /,
+})), ...generalKnowledge];
+
+export function boundedHistory(history: unknown): string[] {
+  return Array.isArray(history) ? history.slice(-2).filter((item): item is string => typeof item === 'string').map(item => item.trim().slice(0, 450)).filter(Boolean) : [];
 }
-export function sourceAnswer(question: string) {
-  const sources = selectKnowledge(question);
+const normalize = (value: string) => value.toLowerCase().replace(/[^a-z0-9]+/g, ' ').trim();
+function rank(question: string) {
+  const normalized = ` ${normalize(question)} `;
+  const projects = projectCatalogue.map(project => {
+    const exact = project.aliases.some(alias => normalized.includes(` ${normalize(alias)} `));
+    const tasks = project.businessTasks.filter(task => normalized.includes(` ${normalize(task)} `)).length;
+    return { item: knowledge.find(item => item.id === project.id)!, score: exact ? 100 + tasks : tasks * 15 };
+  });
+  const general = generalKnowledge.map(item => ({ item, score: item.match.test(question) ? 5 : 0 }));
+  return [...projects, ...general].filter(item => item.score > 0).sort((a, b) => b.score - a.score);
+}
+export function selectKnowledge(question: string, history: unknown = []) {
+  let selected = rank(question);
+  // Only prior user topics resolve pronouns. Prior assistant output never becomes evidence.
+  if (/\b(it|them|those|that|its|they)\b/i.test(question) && !selected.some(item => item.score >= 100)) {
+    const previous = boundedHistory(history).at(-1);
+    if (previous) selected = [...rank(previous).map(item => ({ ...item, score: item.score + 10 })), ...selected].sort((a, b) => b.score - a.score);
+  }
+  const unique = selected.filter((value, index) => selected.findIndex(other => other.item.id === value.item.id) === index);
+  return unique.length ? unique.slice(0, 3).map(value => value.item) : [
+    { ...generalKnowledge[4], text: "I don't have enough published detail to confirm that. " + generalKnowledge[4].text },
+  ];
+}
+export function sourceAnswer(question: string, history: unknown = []) {
+  const sources = selectKnowledge(question, history);
   return {
     answer: sources
       .slice(0, 2)
@@ -74,5 +103,6 @@ export function sourceAnswer(question: string) {
       .join('\n\n'),
     sources: sources.map(({ title, href }) => ({ title, href })),
     mode: 'sources' as const,
+    catalogueRevision,
   };
 }
