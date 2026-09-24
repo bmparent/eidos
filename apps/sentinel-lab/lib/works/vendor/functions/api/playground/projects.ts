@@ -5,7 +5,7 @@ export const onRequestGet = guarded(async ({request,env}) => {
   const member = await requireMember(request,env,false), url = new URL(request.url);
   await ensurePlayground(env);
   const id = url.searchParams.get('id');
-  if (!id) return json({ownerId:member.id,projects:(await db(env).prepare('SELECT id,name,head,updated_at FROM eidos_pg_projects WHERE owner_id=? ORDER BY updated_at DESC LIMIT 20').bind(member.id).all()).results});
+  if (!id) return json({ownerId:member.id,newFormatSaveEnabled:env.EIDOS_PLAYGROUND_AUTHORING_ENABLED==='true',projects:(await db(env).prepare('SELECT id,name,head,updated_at FROM eidos_pg_projects WHERE owner_id=? ORDER BY updated_at DESC LIMIT 20').bind(member.id).all()).results});
   if (url.searchParams.has('revisions')) {
     await ownedProject(env,member.id,id);
     return json({revisions:(await db(env).prepare('SELECT id,parent,created_at FROM eidos_pg_revisions WHERE project_id=? ORDER BY created_at DESC LIMIT 100').bind(id).all()).results});
