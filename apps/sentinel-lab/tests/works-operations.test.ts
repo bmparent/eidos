@@ -29,7 +29,7 @@ test('additive operations migration retains existing member and payment records'
     for(const statement of sql.split(';').map(x=>x.trim()).filter(Boolean)) await client.execute(statement);
     assert.equal((await client.execute('SELECT COUNT(*) AS n FROM eidos_email_members')).rows[0].n,1);
     assert.equal((await client.execute('SELECT COUNT(*) AS n FROM eidos_orders')).rows[0].n,1);
-    assert.equal((await client.execute("SELECT COUNT(*) AS n FROM sqlite_master WHERE type='table' AND name LIKE 'eidos_ops_%'")).rows[0].n,4);
+    assert.equal((await client.execute("SELECT COUNT(*) AS n FROM sqlite_master WHERE type='table' AND name LIKE 'eidos_ops_%'")).rows[0].n,5);
   } finally { client.close(); }
 });
 

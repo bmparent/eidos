@@ -31,6 +31,13 @@ async function audit(database:Database, actor:string, action:string, targetType:
     .bind(id(),actor,action,targetType,targetId,JSON.stringify(before),JSON.stringify(after),reason,outcome,correlation,revision,new Date().toISOString()).run();
 }
 async function all(database:Database,sql:string,...params:unknown[]) { return (await database.prepare(sql).bind(...params).all()).results; }
+async function claim(database:Database,key:string,actor:string,action:string) {
+  const result=await database.prepare("INSERT OR IGNORE INTO eidos_ops_idempotency(key,actor_sub,action,state,response_safe,created_at) VALUES(?,?,?,'pending',NULL,?)").bind(key,actor,action,new Date().toISOString()).run();
+  return result.meta.changes===1;
+}
+async function complete(database:Database,key:string,data:unknown) {
+  await database.prepare("UPDATE eidos_ops_idempotency SET state='completed',response_safe=? WHERE key=? AND state='pending'").bind(JSON.stringify(data),key).run();
+}
 function envelope(data:unknown,source:string,environment:string,observedAt=new Date().toISOString(),status='healthy',errorCode:string|null=null) {
   return {status,observedAt,source,environment,data,staleAfter:new Date(Date.now()+300000).toISOString(),errorCode,correlationId:id()};
 }
@@ -95,19 +102,27 @@ export async function operations(request:Request, source:Source, database=platfo
     if (command === 'work_notes') return response(envelope(await all(database,'SELECT id,work_id,body,created_at FROM eidos_ops_work_notes WHERE work_id=? ORDER BY created_at DESC LIMIT 100',text(input.id,100)),'works-operations',environment));
     if (command !== 'work_create' && command !== 'work_update' && command !== 'work_note' && command !== 'account_action') return response({error:'Unknown command.'},400);
     const origin = request.headers.get('origin');
-    if (origin !== source.EIDOS_OPS_ORIGIN || request.headers.get('x-ops-csrf') !== '1') return response({error:'Origin or CSRF check failed.'},403);
+    if (origin !== source.EIDOS_OPS_ORIGIN || request.headers.get('x-ops-csrf') !== '1') {
+      await audit(database,actor,command,'request','-',null,null,'','denied_csrf',correlation,revision);
+      return response({error:'Origin or CSRF check failed.'},403);
+    }
     const reason = text(input.reason,500);
     const key = text(input.idempotencyKey,100);
-    if (!reason || !/^[a-f0-9-]{36}$/.test(key)) return response({error:'Reason and idempotency key required.'},400);
+    if (!reason || !/^[a-f0-9-]{36}$/.test(key)) {
+      await audit(database,actor,command,'request','-',null,null,'','denied_validation',correlation,revision);
+      return response({error:'Reason and idempotency key required.'},400);
+    }
     const prior = await database.prepare('SELECT after_safe,outcome FROM eidos_ops_audit WHERE correlation_id=?').bind(key).first<{after_safe:string;outcome:string}>();
     if (prior) return response({replayed:true,outcome:prior.outcome,data:JSON.parse(prior.after_safe)});
     if (command === 'work_create') {
       const title=text(input.title,180),detail=text(input.detail,2000),severity=text(input.severity,20)||'normal';
       if (!title || !['critical','high','normal','low'].includes(severity)) return response({error:'Invalid work item.'},400);
+      if (!await claim(database,key,actor,command)) return response({error:'Action with this key is still pending.'},409);
       const workId=id(), now=new Date().toISOString(), evidence=allowedUrl(input.evidenceUrl);
       await database.prepare('INSERT INTO eidos_ops_work(id,title,detail,status,severity,evidence_url,due_at,source,created_at,updated_at,version) VALUES(?,?,?,?,?,?,?,?,?,?,1)').bind(workId,title,detail,'open',severity,evidence,text(input.dueAt,40)||null,'manual',now,now).run();
       const after={id:workId,title,status:'open',severity,version:1};
       await audit(database,actor,command,'work',workId,null,after,reason,'success',key,revision);
+      await complete(database,key,after);
       return response({data:after},201);
     }
     if (command === 'work_update') {
@@ -118,34 +133,54 @@ export async function operations(request:Request, source:Source, database=platfo
         await audit(database,actor,command,'work',workId,{status:current.status,version:current.version},null,reason,'denied_stale_or_invalid',key,revision);
         return response({error:'Stale or invalid work update.'},409);
       }
+      if (!await claim(database,key,actor,command)) return response({error:'Action with this key is still pending.'},409);
       const nextVersion=version+1,now=new Date().toISOString();
       const change=await database.prepare('UPDATE eidos_ops_work SET status=?,updated_at=?,version=? WHERE id=? AND version=?').bind(status,now,nextVersion,workId,version).run();
-      if (!change.meta.changes) return response({error:'Work item changed.'},409);
+      if (!change.meta.changes) {
+        await audit(database,actor,command,'work',workId,{status:current.status,version},null,reason,'denied_stale',key,revision);
+        await database.prepare("UPDATE eidos_ops_idempotency SET state='denied' WHERE key=?").bind(key).run();
+        return response({error:'Work item changed.'},409);
+      }
       const after={id:workId,status,version:nextVersion};
       await audit(database,actor,command,'work',workId,{status:current.status,version},after,reason,'success',key,revision);
+      await complete(database,key,after);
       return response({data:after});
     }
     if (command === 'work_note') {
       const workId=text(input.id,100),note=text(input.note,2000);
       if (!note || !(await database.prepare('SELECT id FROM eidos_ops_work WHERE id=?').bind(workId).first())) return response({error:'Invalid note or work item.'},400);
+      if (!await claim(database,key,actor,command)) return response({error:'Action with this key is still pending.'},409);
       const noteId=id(),now=new Date().toISOString();
       await database.prepare('INSERT INTO eidos_ops_work_notes(id,work_id,actor_sub,body,created_at) VALUES(?,?,?,?,?)').bind(noteId,workId,actor,note,now).run();
       const after={id:noteId,workId,createdAt:now};
       await audit(database,actor,command,'work',workId,null,after,reason,'success',key,revision);
+      await complete(database,key,after);
       return response({data:after},201);
     }
     const memberId=text(input.memberId,100),action=text(input.action,30),confirmation=text(input.confirmation,100);
     const member=await database.prepare('SELECT id,username,disabled FROM eidos_email_members WHERE id=?').bind(memberId).first<{id:string;username:string;disabled:number}>();
     if (!member || confirmation!==memberId || !['revoke_sessions','suspend','restore','username'].includes(action)) return response({error:'Invalid member action or confirmation.'},400);
+    if (input.expectedUsername!==member.username || Number(input.expectedDisabled)!==member.disabled || (action==='suspend' && member.disabled===1) || (action==='restore' && member.disabled===0)) {
+      await audit(database,actor,`account_${action}`,'member',memberId,{username:member.username,disabled:member.disabled},null,reason,'denied_stale',key,revision);
+      return response({error:'Member state changed; reopen detail.'},409);
+    }
+    const username=action==='username'?text(input.username,40):'';
+    if (action==='username' && (!/^[a-zA-Z0-9_]{3,40}$/.test(username) || await database.prepare('SELECT id FROM eidos_email_members WHERE username=? COLLATE NOCASE AND id!=?').bind(username,memberId).first())) return response({error:'Username unavailable.'},409);
+    if (!await claim(database,key,actor,command)) return response({error:'Action with this key is still pending.'},409);
     if (action==='revoke_sessions') await database.prepare('DELETE FROM eidos_member_sessions WHERE member_id=?').bind(memberId).run();
-    if (action==='suspend' || action==='restore') await database.prepare('UPDATE eidos_email_members SET disabled=? WHERE id=? AND disabled=?').bind(action==='suspend'?1:0,memberId,member.disabled).run();
+    let accountChange: {meta:{changes:number}}|null=null;
+    if (action==='suspend' || action==='restore') accountChange=await database.prepare('UPDATE eidos_email_members SET disabled=? WHERE id=? AND username=? AND disabled=?').bind(action==='suspend'?1:0,memberId,member.username,member.disabled).run();
     if (action==='username') {
-      const username=text(input.username,40);
-      if (!/^[a-zA-Z0-9_]{3,40}$/.test(username) || await database.prepare('SELECT id FROM eidos_email_members WHERE username=? COLLATE NOCASE AND id!=?').bind(username,memberId).first()) return response({error:'Username unavailable.'},409);
-      await database.prepare('UPDATE eidos_email_members SET username=? WHERE id=?').bind(username,memberId).run();
+      accountChange=await database.prepare('UPDATE eidos_email_members SET username=? WHERE id=? AND username=? AND disabled=?').bind(username,memberId,member.username,member.disabled).run();
+    }
+    if (accountChange && !accountChange.meta.changes) {
+      await audit(database,actor,`account_${action}`,'member',memberId,{username:member.username,disabled:member.disabled},null,reason,'denied_stale',key,revision);
+      await database.prepare("UPDATE eidos_ops_idempotency SET state='denied' WHERE key=?").bind(key).run();
+      return response({error:'Member state changed; reopen detail.'},409);
     }
     const after={id:memberId,action,username:action==='username'?text(input.username,40):member.username,disabled:action==='suspend'?1:action==='restore'?0:member.disabled};
     await audit(database,actor,`account_${action}`,'member',memberId,{username:member.username,disabled:member.disabled},after,reason,'success',key,revision);
+    await complete(database,key,after);
     return response({data:after});
   } catch {
     return response({error:'Operations source unavailable.',correlationId:correlation},503);

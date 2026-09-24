@@ -19,6 +19,11 @@ CREATE TABLE IF NOT EXISTS eidos_ops_audit (
  created_at TEXT NOT NULL
 );
 CREATE INDEX IF NOT EXISTS eidos_ops_audit_recent ON eidos_ops_audit(created_at DESC);
+CREATE TABLE IF NOT EXISTS eidos_ops_idempotency (
+ key TEXT PRIMARY KEY, actor_sub TEXT NOT NULL, action TEXT NOT NULL,
+ state TEXT NOT NULL CHECK(state IN ('pending','completed','denied')),
+ response_safe TEXT, created_at TEXT NOT NULL
+);
 CREATE TABLE IF NOT EXISTS eidos_ops_connector_checkpoints (
  source TEXT NOT NULL, environment TEXT NOT NULL, observed_at TEXT, last_success_at TEXT,
  stale_after TEXT, status TEXT NOT NULL, error_code TEXT, cursor TEXT,
