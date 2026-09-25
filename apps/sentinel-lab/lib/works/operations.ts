@@ -1,6 +1,7 @@
 import { createRemoteJWKSet, jwtVerify } from 'jose';
 import type { Database } from './vendor/functions/_shared/platform/core';
 import { platformDatabase } from './database';
+import { observeStripeTest } from './stripeObservation';
 
 type Source = Record<string, string | undefined>;
 type Work = { id:string; title:string; detail:string; status:string; severity:string; evidence_url:string|null; due_at:string|null; source:string; created_at:string; updated_at:string; version:number };
@@ -92,9 +93,12 @@ export async function operations(request:Request, source:Source, database=platfo
       return response(envelope({member,methods,projects:projects?.count ?? null,purchases:purchases?.count ?? null,activeSessions:sessions?.count ?? null,history,emailVerified:'unknown',lastAuthActivity:'unknown'},'works-members',environment));
     }
     if (command === 'payments') {
-      const orders = await all(database,'SELECT id,status,created_at,paid_at FROM eidos_orders ORDER BY created_at DESC LIMIT 50');
-      const playground = await all(database,'SELECT id,owner_id,project_id,status,mode,amount,created_at,paid_at FROM eidos_pg_orders ORDER BY created_at DESC LIMIT 50');
-      return response(envelope({orders,playground,providerReconciliation:'unavailable',revenue:null,refunds:null},'works-order-ledger',environment));
+      const orders = await all(database,'SELECT id,status,created_at,paid_at,payment_intent FROM eidos_orders ORDER BY created_at DESC LIMIT 50');
+      const playground = await all(database,'SELECT id,owner_id,project_id,status,mode,amount,created_at,paid_at,payment_intent,CASE WHEN length(archive)>0 THEN 1 ELSE 0 END AS archive_present FROM eidos_pg_orders ORDER BY created_at DESC LIMIT 50');
+      const provider = await observeStripeTest(source.STRIPE_SECRET_KEY,orders as {id:string;status:string;payment_intent?:string|null}[],playground as {id:string;status:string;payment_intent?:string|null;archive_present?:number|null}[]);
+      await database.prepare("INSERT INTO eidos_ops_connector_checkpoints(source,environment,observed_at,last_success_at,stale_after,status,error_code,cursor) VALUES('stripe','test',?,?,?,?,?,NULL) ON CONFLICT(source,environment) DO UPDATE SET observed_at=excluded.observed_at,last_success_at=CASE WHEN excluded.status IN ('healthy','partial') THEN excluded.observed_at ELSE eidos_ops_connector_checkpoints.last_success_at END,stale_after=excluded.stale_after,status=excluded.status,error_code=excluded.error_code")
+        .bind(provider.observedAt,['healthy','partial'].includes(provider.status)?provider.observedAt:null,provider.staleAfter,provider.status,provider.errorCode).run();
+      return response(envelope({orders:orders.map(({payment_intent: _payment_intent,...safe})=>safe),playground:playground.map(({payment_intent: _payment_intent,...safe})=>safe),provider,revenue:null},'works-order-ledger',environment));
     }
     if (command === 'agents') return response(envelope(await all(database,'SELECT id,name,profile_url,revoked,created_at FROM eidos_agents ORDER BY created_at DESC LIMIT 50'),'works-community-agents',environment));
     if (command === 'artifacts') return response(envelope(await all(database,"SELECT id,owner_id,project_id,name,status,mode,created_at FROM eidos_pg_orders ORDER BY created_at DESC LIMIT 50"),'works-purchased-archives-index',environment));
