@@ -1,4 +1,4 @@
-import { admin, db, guarded, json, hash } from '../../_shared/platform/core';
+import { admin, db, guarded, json, hash, recordOwnerAudit } from '../../_shared/platform/core';
 import { maybeSuggest } from '../../_shared/platform/community';
 import { deliverNewsletters } from '../../_shared/platform/newsletter';
 export const onRequestPost = guarded(async ({ request, env }) => {
@@ -6,12 +6,13 @@ export const onRequestPost = guarded(async ({ request, env }) => {
     /^Bearer /,
     '',
   );
-  if (
-    !env.EIDOS_MAINTENANCE_TOKEN ||
-    env.EIDOS_MAINTENANCE_TOKEN.length < 32 ||
-    (await hash(token)) !== (await hash(env.EIDOS_MAINTENANCE_TOKEN))
-  )
-    await admin(request, env);
+  const serviceAuthenticated = Boolean(
+    env.EIDOS_MAINTENANCE_TOKEN &&
+    env.EIDOS_MAINTENANCE_TOKEN.length >= 32 &&
+    (await hash(token)) === (await hash(env.EIDOS_MAINTENANCE_TOKEN)),
+  );
+  if (serviceAuthenticated) await recordOwnerAudit(request, env, 'maintenance');
+  else await admin(request, env);
   const database = db(env);
   let suggestions = 0;
   if (env.EIDOS_PROACTIVE_ENABLED === 'true') {
@@ -25,6 +26,8 @@ export const onRequestPost = guarded(async ({ request, env }) => {
       if (await maybeSuggest(env, thread.id, true)) suggestions++;
   }
   const cutoff = Math.floor(Date.now() / 1000);
+  await database.prepare('DELETE FROM eidos_owner_audit WHERE created_at<?')
+    .bind(new Date(Date.now() - 90 * 86400000).toISOString()).run();
   await database.batch([
     database.prepare('DELETE FROM eidos_quotas WHERE expires<?').bind(cutoff),
     database
