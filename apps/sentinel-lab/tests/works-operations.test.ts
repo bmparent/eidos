@@ -63,6 +63,11 @@ test('a signed owner identity may read while a different subject is denied', asy
     const result=await allowed.json();
     assert.equal(result.data.sourceRevision,'test-revision');
     assert.equal(result.data.accounts,2);
+    const previewSource={...source,VERCEL_ENV:'preview',VERCEL_GIT_COMMIT_SHA:'a'.repeat(40)};
+    const preview=await operations(new Request('https://owner.example.com/api/operations/console',{headers:{'cf-access-jwt-assertion':await sign('owner-123')}}),previewSource,adaptDatabase(client));
+    assert.equal((await preview.json()).data.sourceRevision,'a'.repeat(40));
+    const missingCommit=await operations(new Request('https://owner.example.com/api/operations/console',{headers:{'cf-access-jwt-assertion':await sign('owner-123')}}),{...previewSource,VERCEL_GIT_COMMIT_SHA:''},adaptDatabase(client));
+    assert.equal((await missingCommit.json()).data.sourceRevision,'unknown');
     const ownerJwt=await sign('owner-123');
     const key='11111111-1111-4111-8111-111111111111';
     const input={command:'work_create',title:'Check isolated preview',detail:'Controlled test item',severity:'normal',reason:'Acceptance check',idempotencyKey:key};

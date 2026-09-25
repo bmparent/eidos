@@ -49,7 +49,9 @@ export async function operations(request:Request, source:Source, database=platfo
   if (!actor) return response({error:'Owner access required.',correlationId:correlation},403);
   if (!database) return response(envelope(null,'works-database','preview',undefined,'unavailable','database_not_configured'),503);
   const environment = source.EIDOS_OPS_ENVIRONMENT || 'unknown';
-  const revision = source.EIDOS_SOURCE_REVISION || 'unknown';
+  const revision = source.VERCEL_ENV === 'preview'
+    ? (/^[a-f0-9]{40}$/.test(source.VERCEL_GIT_COMMIT_SHA || '') ? source.VERCEL_GIT_COMMIT_SHA! : 'unknown')
+    : source.EIDOS_SOURCE_REVISION || 'unknown';
   try {
     if (request.method === 'GET') {
       const [work,accounts,orders,agents,outcomes,auditRows,checkpoints] = await Promise.all([
@@ -64,7 +66,7 @@ export async function operations(request:Request, source:Source, database=platfo
       return response(envelope({work,accounts:accounts?.count ?? null,orders,agents:agents?.count ?? null,outcomes,audit:auditRows,checkpoints,sourceRevision:revision,
         connectors:{inquiries:'not_configured',stripeProvider:'not_configured',cloudflare:'not_configured',github:'not_configured',ga4:'not_configured',drive:'not_configured'},
         readiness:{database:'ready',assistantEnabled:source.EIDOS_AI_ENABLED==='true',accountsEnabled:source.EIDOS_ACCOUNTS_ENABLED==='true',googleConfigured:Boolean(source.EIDOS_GOOGLE_CLIENT_ID && source.EIDOS_GOOGLE_CLIENT_SECRET && source.EIDOS_GOOGLE_REDIRECT_URI),kitMode:source.STRIPE_SECRET_KEY?.startsWith('sk_test_')?'test':source.STRIPE_SECRET_KEY?.startsWith('sk_live_')?'live':'unknown',snapshot:'not accepted for sale'},
-        release:{status:'blocked',siteCandidate:'f2d98bc1d1de8a7b01509b580558c39858949684',backendCandidate:'a50647dddb8a270563062b378033155afe935753'}},'works-database',environment));
+        release:{status:'blocked',siteCandidate:'unknown',backendCandidate:revision}},'works-database',environment));
     }
     if (request.method !== 'POST' || request.headers.get('content-type')?.split(';')[0] !== 'application/json') return response({error:'Unsupported request.'},405);
     const bodyText = await request.text();
