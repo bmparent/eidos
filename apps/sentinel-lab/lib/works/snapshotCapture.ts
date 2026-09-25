@@ -53,7 +53,17 @@ function requestPinned(url: URL, address: string): Promise<PinnedResponse> {
         accept: 'text/html,application/xhtml+xml;q=0.9',
         'user-agent': 'EidosSnapshot/1.0 (+https://eidos-works.com/snapshot)',
       },
-      lookup: (_hostname, _options, callback) => callback(null, address, 4),
+      lookup: (_hostname, options, callback) => {
+        if (options.all) {
+          (callback as (error: Error | null, addresses: Array<{ address: string; family: number }>) => void)(
+            null, [{ address, family: 4 }],
+          );
+        } else {
+          (callback as (error: Error | null, result: string, family: number) => void)(
+            null, address, 4,
+          );
+        }
+      },
       servername: url.protocol === 'https:' ? url.hostname : undefined,
       timeout: REQUEST_TIMEOUT_MS,
     }, (response) => {
