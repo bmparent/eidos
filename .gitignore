@@ -4,3 +4,6 @@ artifacts/rng_null_proof*/
 __pycache__/
 *.py[cod]
 .pytest_cache/
+.vercel/
+.env.local
+.env.*.local
