@@ -73,3 +73,26 @@ test('capture route rejects missing authorization before parsing a URL', async (
     else process.env.EIDOS_SNAPSHOT_CAPTURE_TOKEN = original;
   }
 });
+
+test('authorized route rejects an oversized streamed body before URL handling', async () => {
+  const original = process.env.EIDOS_SNAPSHOT_CAPTURE_TOKEN;
+  const token = 'fixture-token-with-at-least-thirty-two-characters';
+  process.env.EIDOS_SNAPSHOT_CAPTURE_TOKEN = token;
+  try {
+    const response = await POST(new Request('https://example.test/api/works/snapshot-capture', {
+      method: 'POST',
+      headers: { authorization: 'Bearer ' + token },
+      body: new ReadableStream({
+        start(controller) {
+          controller.enqueue(new TextEncoder().encode('x'.repeat(5000)));
+          controller.close();
+        },
+      }),
+      duplex: 'half',
+    } as RequestInit));
+    assert.equal(response.status, 413);
+  } finally {
+    if (original === undefined) delete process.env.EIDOS_SNAPSHOT_CAPTURE_TOKEN;
+    else process.env.EIDOS_SNAPSHOT_CAPTURE_TOKEN = original;
+  }
+});
