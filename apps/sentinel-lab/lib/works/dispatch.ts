@@ -18,6 +18,7 @@ import { platformDatabase } from './database';
 import { json, readText, type Context, type PlatformEnv } from './vendor/functions/_shared/platform/core';
 import * as assistant from './vendor/functions/api/assistant';
 import * as readiness from './vendor/functions/api/operations/readiness';
+import * as audit from './vendor/functions/api/operations/audit';
 import * as config from './vendor/functions/api/public-config';
 import * as threads from './vendor/functions/api/community/threads';
 import * as replies from './vendor/functions/api/community/replies';
@@ -43,7 +44,7 @@ const routes: Record<string, Module> = {
   '/api/members/credentials': memberCredentials, '/api/members/google': memberGoogle,
   '/api/members/directory': memberDirectory, '/api/members/unsubscribe': memberUnsubscribe,
   '/api/assistant': assistant, '/api/public-config': config,
-  '/api/operations/readiness': readiness,
+  '/api/operations/readiness': readiness, '/api/operations/audit': audit,
   '/api/community/threads': threads, '/api/community/replies': replies,
   '/api/community/agents': agents, '/api/community/moderate': moderate,
   '/api/community/maintenance': maintenance,
@@ -54,7 +55,8 @@ const routes: Record<string, Module> = {
 const names = [
   'EIDOS_PLAYGROUND_AI_ENABLED', 'EIDOS_PLAYGROUND_AI_KILL', 'EIDOS_PLAYGROUND_AI_CONFIG', 'EIDOS_PLAYGROUND_IMAGE_ENABLED',
   'EIDOS_SOURCE_REVISION',
-  'EIDOS_ADMIN_TOKEN', 'EIDOS_RATE_SECRET', 'OPENAI_API_KEY', 'EIDOS_ASSISTANT_MODEL',
+  'EIDOS_ADMIN_TOKEN', 'EIDOS_ADMIN_AUTOMATION_ALLOWED', 'EIDOS_ACCESS_TEAM_DOMAIN', 'EIDOS_ACCESS_AUD', 'EIDOS_OWNER_EMAIL',
+  'EIDOS_RATE_SECRET', 'OPENAI_API_KEY', 'EIDOS_ASSISTANT_MODEL',
   'EIDOS_AI_ENABLED', 'EIDOS_AI_DAILY_TOKENS', 'EIDOS_PROACTIVE_ENABLED', 'EIDOS_MAINTENANCE_TOKEN',
   'TURNSTILE_SITE_KEY', 'TURNSTILE_SECRET_KEY', 'GA_MEASUREMENT_ID', 'PUBLIC_SITE_URL',
   'EIDOS_ACCOUNTS_ENABLED', 'EIDOS_NEWSLETTER_ENABLED', 'EIDOS_MAIL_DAILY_LIMIT', 'EIDOS_MAIL_FROM', 'RESEND_API_KEY',
@@ -96,6 +98,10 @@ export async function dispatchWorks(request: Request, source: Record<string, str
     for (const name of ['origin', 'content-type', 'authorization', 'stripe-signature']) {
       const value = request.headers.get(name);
       if (value) headers.set(name, value);
+    }
+    if (path.startsWith('/api/operations/') || path === '/api/community/moderate' || path === '/api/community/maintenance') {
+      const assertion = request.headers.get('cf-access-jwt-assertion');
+      if (assertion) headers.set('cf-access-jwt-assertion', assertion);
     }
     const cookies = (request.headers.get('cookie') || '').split(';').map(s=>s.trim()).filter(s=>/^__Host-eidos_(session|oauth|onboard)=[a-f0-9]{64}$/.test(s));
     if (cookies.length) headers.set('cookie', cookies.join('; '));
