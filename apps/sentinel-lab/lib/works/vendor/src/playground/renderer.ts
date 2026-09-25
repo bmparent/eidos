@@ -112,10 +112,15 @@ export function renderedStyles(p: Project) { return pageStyles + authoringStyles
 .pg-header.ew-glass-header{padding:0;background:transparent;backdrop-filter:none;-webkit-backdrop-filter:none;isolation:auto;box-shadow:none}
 .pg-header.ew-glass-header:before{display:none}
 .pg-header .ew-header__inner{width:100%;display:flex;align-items:center;justify-content:space-between;padding:18px 28px;min-height:64px}
+.pg-header.ew-glass-header .ew-liquid-optics{background:color-mix(in srgb,var(--solid) 94%,transparent)}
 .pg-header canvas.ew-liquid-light{z-index:auto}
 .pg-header .pg-nav.open{background:var(--solid)}
 @media(max-width:640px){.pg-header .ew-header__inner{padding:14px 18px}.pg-header .pg-nav{position:absolute}}
-` : ''); }
+` : '') + `
+.pg-hero .pg-copy{min-width:0;max-width:100%}
+.pg-hero h1{font-size:clamp(42px,calc(7vw * var(--scale)),96px);overflow-wrap:anywhere}
+@media(max-width:640px){.pg-hero h1{font-size:clamp(34px,calc(10vw * var(--scale)),57px)}}
+`; }
 export function pageDocument(
   p: Project,
   options: {

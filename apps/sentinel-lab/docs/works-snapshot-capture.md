@@ -1,0 +1,7 @@
+# Works Snapshot capture proxy
+
+The isolated `POST /api/works/snapshot-capture` route accepts a website URL from the paired Eidos Works Snapshot runtime. It is a server-to-server route, protected by a dedicated `EIDOS_SNAPSHOT_CAPTURE_TOKEN` of at least 32 characters. Configure only the paired Pages and scheduled Worker with the exact HTTPS route URL and matching `SNAPSHOT_CAPTURE_PROXY_TOKEN`. A Vercel protected preview also needs its existing branch-scoped protection bypass value on the caller. Do not put any of these values in source, URLs, logs, or browser code.
+
+The route permits only standard HTTP and HTTPS ports, resolves A records, rejects any private or special-use IPv4 answer, and pins the selected public address to the HTTP/TLS socket. Host and TLS certificate checks still use the original hostname. Each redirect receives a fresh validation and pinned connection. It does not support IPv6-only websites or IP-literal targets. Responses are limited to 90 KB of HTML; missing content or a failed capture produces the site's documented URL-only fallback.
+
+Run `npm run lint`, `node --import tsx --test tests/snapshot-capture.test.ts`, and `npm test` from `apps/sentinel-lab`. Source tests cover address ranges, mixed answers, redirect rejection, pinned-address transport arguments, and authentication denial. A hosted test must separately verify actual outbound connection behavior and Vercel protection before `SNAPSHOT_CAPTURE_APPROVED` may become true. The route alone does not approve Snapshot generation, provider spend, storage, checkout, or release.
