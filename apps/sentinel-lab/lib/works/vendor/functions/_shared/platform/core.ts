@@ -1,3 +1,5 @@
+import { verifyAccessOwner } from './ownerSecurity';
+
 export interface Statement {
   bind(...values: unknown[]): Statement;
   first<T = Record<string, unknown>>(): Promise<T | null>;
@@ -31,6 +33,11 @@ export interface PlatformEnv {
   EIDOS_RUNTIME?: 'sentinel';
   EIDOS_DB?: Database;
   EIDOS_ADMIN_TOKEN?: string;
+  EIDOS_ADMIN_AUTOMATION_ALLOWED?: string;
+  EIDOS_ACCESS_TEAM_DOMAIN?: string;
+  EIDOS_ACCESS_AUD?: string;
+  EIDOS_OWNER_EMAIL?: string;
+  EIDOS_OWNER_AUDIT_DB?: Database;
   EIDOS_RATE_SECRET?: string;
   OPENAI_API_KEY?: string;
   EIDOS_ASSISTANT_MODEL?: string;
@@ -237,14 +244,40 @@ export async function reserve(
   return Boolean(result);
 }
 export async function admin(request: Request, env: PlatformEnv) {
-  if (!env.EIDOS_ADMIN_TOKEN || env.EIDOS_ADMIN_TOKEN.length < 32)
-    throw new HttpError(503, 'Operator access is not configured.');
-  const token = (request.headers.get('authorization') || '').replace(
-    /^Bearer /,
-    '',
-  );
-  if ((await hash(token)) !== (await hash(env.EIDOS_ADMIN_TOKEN)))
+  let actor: string;
+  const assertion = request.headers.get('cf-access-jwt-assertion');
+  if (assertion) {
+    try {
+      actor = 'owner:' + await verifyAccessOwner(assertion, env);
+    } catch {
+      // A bad Access assertion cannot fall back to an automation credential.
+      throw new HttpError(401, 'Operator authentication is required.');
+    }
+  } else if (local(request, env) || env.EIDOS_ADMIN_AUTOMATION_ALLOWED === 'true') {
+    const token = (request.headers.get('authorization') || '').replace(/^Bearer /, '');
+    if (!env.EIDOS_ADMIN_TOKEN || env.EIDOS_ADMIN_TOKEN.length < 32 ||
+        !token || (await hash(token)) !== (await hash(env.EIDOS_ADMIN_TOKEN)))
+      throw new HttpError(401, 'Operator authentication is required.');
+    actor = 'automation';
+  } else {
     throw new HttpError(401, 'Operator authentication is required.');
+  }
+  await recordOwnerAudit(request, env, actor);
+  return actor;
+}
+export async function recordOwnerAudit(request: Request, env: PlatformEnv, actor: string) {
+  const audit = env.EIDOS_OWNER_AUDIT_DB || env.EIDOS_DB;
+  if (!audit) throw new HttpError(503, 'Owner audit storage is unavailable.');
+  try {
+    await audit.prepare('CREATE TABLE IF NOT EXISTS eidos_owner_audit(id TEXT PRIMARY KEY,actor TEXT NOT NULL,method TEXT NOT NULL,path TEXT NOT NULL,event TEXT NOT NULL,created_at TEXT NOT NULL)').run();
+    await audit.prepare('INSERT INTO eidos_owner_audit(id,actor,method,path,event,created_at) VALUES(?,?,?,?,?,?)')
+      .bind(crypto.randomUUID(), actor, request.method,
+        new URL(request.url).pathname.slice(0, 120), 'authorized',
+        new Date().toISOString()).run();
+  } catch {
+    // Fail before owner work begins; a mutation without an audit receipt is unsafe.
+    throw new HttpError(503, 'Owner audit storage is unavailable.');
+  }
 }
 export async function challenge(
   request: Request,
