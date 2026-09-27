@@ -1,0 +1,300 @@
+{
+  "artifacts": {
+    "dataset_receipt.json": {
+      "bytes": 3441,
+      "sha256": "abc9aa1eb855726664a1ddcd74b24515762583586d46ce608dbb7e14ccc386b5"
+    },
+    "engine_artifacts/compression/sentinel_lab_real_data_engineering/20260906_233324_bicameral_stream_meta_sentinel_lab_real_data_engineering.json": {
+      "bytes": 299,
+      "sha256": "c5ecc3ab1dea3eec08d7c8a506dfc456d72153c343b2e9c97f481b8d0c55d2b0"
+    },
+    "engine_artifacts/compression/sentinel_lab_real_data_engineering/20260906_233324_bicameral_stream_sentinel_lab_real_data_engineering.bin": {
+      "bytes": 71948,
+      "sha256": "f69c56f65784144b95c25c74dfdbd19647ff4dacbf6ed439a6e428f66c950ab8"
+    },
+    "engine_artifacts/eidos_brain_archive/20260906_233322_sentinel_lab_dhoogla_cicids2017_v3_seed0/anomalies.jsonl": {
+      "bytes": 252573,
+      "sha256": "2b2ed87070d0ef81286a1ccf0bb94ab99cb152c3ff2bc3810444520e32c4ec6d"
+    },
+    "engine_artifacts/eidos_brain_archive/20260906_233322_sentinel_lab_dhoogla_cicids2017_v3_seed0/clusters.json": {
+      "bytes": 12763,
+      "sha256": "3c0ccb839048ca7bea0d9bd91b883c3c71e2449237af72f88707980b4fcc83fa"
+    },
+    "engine_artifacts/eidos_brain_archive/20260906_233322_sentinel_lab_dhoogla_cicids2017_v3_seed0/report.txt": {
+      "bytes": 1729,
+      "sha256": "6d529e93e092053e9bcd2122cbf64becc2df6493272b37be58ff6ae6e176ba1a"
+    },
+    "engine_artifacts/eidos_brain_archive/20260906_233322_sentinel_lab_dhoogla_cicids2017_v3_seed0/session_meta.json": {
+      "bytes": 4314,
+      "sha256": "a6dc4298340192b362a049d513eed7c18fdd455879b38ff1223856425a5f8c17"
+    },
+    "engine_artifacts/eidos_brain_archive/20260906_233322_sentinel_lab_dhoogla_cicids2017_v3_seed0/state_capsule.json": {
+      "bytes": 1163,
+      "sha256": "29ab639e034dbfc66c034d50025e065968f6640ff529566530aedec387cfdf2b"
+    },
+    "engine_artifacts/eidos_brain_archive/20260906_233322_sentinel_lab_dhoogla_cicids2017_v3_seed0/steps.csv": {
+      "bytes": 267032,
+      "sha256": "02a73baccfc373c9bd2665d7b488ab89d12e85f2f4e6f1e86c6f4c91815d5ba9"
+    },
+    "engine_artifacts/eidos_brain_archive/20260906_233322_sentinel_lab_dhoogla_cicids2017_v3_seed0/summary.json": {
+      "bytes": 924,
+      "sha256": "d599dc461f4cfdf31721b1a1a13b1d1fc52d727713573944feb1b28a09d78722"
+    },
+    "engine_artifacts/forecast.jsonl": {
+      "bytes": 20418,
+      "sha256": "fe72854ad63e9ff285dc722aa9838c69a1ea610577ca7ff4a1966a55a3214fc1"
+    },
+    "engine_artifacts/hippocampus/sentinel_lab_real_data_engineering/20260906_233324_hippocampus_snapshot_sentinel_lab_real_data_engineering.pt": {
+      "bytes": 19365,
+      "sha256": "2e43f0e5a7f3aad0166ae35c611ccbad9dcc972fabfbb3611e5af69aac7b81bd"
+    },
+    "engine_artifacts/incident_cards.jsonl": {
+      "bytes": 213427,
+      "sha256": "bbcc3ae440ef4b2dc96f08e67c379109ffa21cee2a2f93ef1e377ffa1302bc0a"
+    },
+    "engine_artifacts/manifest.jsonl": {
+      "bytes": 2999,
+      "sha256": "d7c909821186f7aab1d990896b48246258a7c2ae146c3bb8b03aafc30585c5d2"
+    },
+    "engine_artifacts/reservoir_checkpoints/sentinel_lab_real_data_engineering/20260906_233324_reservoir_checkpoint_sentinel_lab_real_data_engineering.pt": {
+      "bytes": 597409,
+      "sha256": "94343f1e2bf690851869333eebdf4f328df0ad8bde11e17b871c06753a317b73"
+    },
+    "engine_artifacts/reservoir_geometry/sentinel_lab_real_data_engineering/20260906_233324_reservoir_geom_sentinel_lab_real_data_engineering.json": {
+      "bytes": 9971,
+      "sha256": "f7486b4d652d662105268b220da0f48aae302895719c67bc064f4621ab33c8f0"
+    },
+    "engine_artifacts/reservoir_geometry/sentinel_lab_real_data_engineering/20260906_233324_reservoir_states_sentinel_lab_real_data_engineering.npy": {
+      "bytes": 368768,
+      "sha256": "d63580a7882dc37386e821ad08ae99fd1e0bacefb6840d613e5bfff3a73d9d1b"
+    },
+    "engine_artifacts/sentinel_forensics/sentinel_lab_real_data_engineering/20260906_233324_top_100_surprises_sentinel_lab_real_data_engineering.json": {
+      "bytes": 171476,
+      "sha256": "f82cd8738d21f591f181c2a7ffd0f01deedb6072c83403f62d71bdf1a1690df3"
+    },
+    "engine_artifacts/sentinel_forensics/sentinel_lab_real_data_engineering/20260906_233324_top_100_surprises_text_sentinel_lab_real_data_engineering.txt": {
+      "bytes": 12684,
+      "sha256": "0af4ed54e92fc810f4b90a07a1e7ffe791e92f57aa42b4307f41ab14dfd2c981"
+    },
+    "engine_diagnostics.json": {
+      "bytes": 210641,
+      "sha256": "09748ee88d4bf21ef53a5194b21e653c6685776f387ea8ac5cfc461974bd14b0"
+    },
+    "engine_trace.jsonl": {
+      "bytes": 360390,
+      "sha256": "38050640bb64eaddc43df2f1a8027416664d992b8386884f8ea0dbe5b3a58b06"
+    },
+    "evaluation_trace.jsonl": {
+      "bytes": 82110,
+      "sha256": "e867f09d93b53881d472a4f6ed487df25aea9cf0bf7d433605bf074887f566e7"
+    },
+    "metrics.json": {
+      "bytes": 1134,
+      "sha256": "98338f4e547e8d7d8c3bcd8fb986f89aafe6415418c662be6071e5a3be07ff86"
+    },
+    "request.json": {
+      "bytes": 1246,
+      "sha256": "0c0a3f84b77cbad814d660f84bb6d098a3e1bc9fb2321b7a8162272e1afb5573"
+    },
+    "source_receipt.json": {
+      "bytes": 900,
+      "sha256": "c6cb677cd3c1dbdcf4b18466819a01c63428452bfee508e25c58445cf73569d2"
+    }
+  },
+  "completed_at": "2026-09-06T23:33:24Z",
+  "dataset_receipt_sha256": "abc9aa1eb855726664a1ddcd74b24515762583586d46ce608dbb7e14ccc386b5",
+  "engine": {
+    "code_sha256": "d1d8db7b5f8e70c0ae6abc96575295620a27ea2943fa50209317d264da50ef50",
+    "config_profile": "cicids_webattacks",
+    "effective_config": {
+      "demo_enable": false,
+      "demo_every": 25,
+      "demo_out_csv": "demo_trace_seal.csv",
+      "demo_plot_matplotlib": false,
+      "demo_window": 400,
+      "demo_write_csv": true,
+      "deterministic_cuda": true,
+      "domain": "cicids_webattacks",
+      "ema_alpha": 0.001,
+      "epochs": 3,
+      "forecast_emit_every": 10,
+      "forecast_enabled": false,
+      "forecast_horizon_steps": [
+        10,
+        30,
+        100
+      ],
+      "forecast_min_conf": 0.35,
+      "forecast_mode": "risk",
+      "forecast_similarity_temperature": 6.0,
+      "forecast_traj_window": 30,
+      "forgetting": 0.99,
+      "fractal_bands": 1,
+      "global_seed": 0,
+      "hipp_bank_by_color": {
+        "AMBER": "ELEVATED",
+        "BLUE": "NOVEL",
+        "GREEN": "NOMINAL",
+        "RED": "INCIDENT",
+        "UNK": "MISC",
+        "VIOLET": "RARE"
+      },
+      "hippocampus_bank_by_regime": true,
+      "hippocampus_compute_on_surprise_only": true,
+      "hippocampus_decay_gamma": 0.99995,
+      "hippocampus_dim": 2048,
+      "hippocampus_encoder": "SIMHASH",
+      "hippocampus_familiarity_beta": 3.0,
+      "hippocampus_freeze_floor": 0.1,
+      "hippocampus_freeze_strength": 0.75,
+      "hippocampus_log_every": 500,
+      "hippocampus_r_proj_dim": 256,
+      "hippocampus_seed": 1337,
+      "hippocampus_sim_kappa": 30.0,
+      "hippocampus_sim_theta": 0.1,
+      "hippocampus_write_novelty_gate": 0.002,
+      "hippocampus_write_on_green": false,
+      "hippocampus_write_on_surprise": true,
+      "hippocampus_write_weight_base": 1.0,
+      "hippocampus_write_weight_max": 6.0,
+      "hippocampus_write_z_thresh": 4.0,
+      "incident_cards_enabled": true,
+      "incident_emit_on": [
+        "AMBER",
+        "RED"
+      ],
+      "incident_min_gap_steps": 25,
+      "input_scaling": 0.3,
+      "leak_q": 10.0,
+      "leak_rate": 0.01,
+      "leak_rate_base": 0.5,
+      "mode": "detect",
+      "plasticity_fatigue_down": 0.005,
+      "plasticity_fatigue_up": 0.02,
+      "plasticity_max_scale": 2.0,
+      "plasticity_min_scale": 0.2,
+      "plasticity_red_cooldown": 50,
+      "plasticity_rest_scale": 0.35,
+      "plasticity_rest_threshold": 0.7,
+      "plasticity_surprise_alpha": 0.001,
+      "plasticity_thermostat_gain": 3.0,
+      "precision": "float32",
+      "procedural_actions": "default",
+      "procedural_enabled": true,
+      "procedural_min_similarity": 0.35,
+      "procedural_policy": "recommend",
+      "procedural_reward_horizon": 150,
+      "reservoir": 256,
+      "sigma_k": 1.5,
+      "spectral_radius": 1.27,
+      "steps": 60000,
+      "target_surprise": 0.15,
+      "thermo_enabled": true,
+      "thermo_energy_coeffs": {
+        "dominance": 2.0,
+        "entropy": 2.0,
+        "epsilon": 1.0,
+        "surprise": 1.0
+      },
+      "thermo_lambda_eta": 1e-05,
+      "thermo_lambda_limits": [
+        0.97,
+        0.9995
+      ],
+      "thermo_rho_eta": 0.0002,
+      "thermo_rho_limits": [
+        0.7,
+        1.6
+      ],
+      "thermo_targets": {
+        "dominance": 0.2,
+        "entropy": 0.8
+      },
+      "thermo_temp_beta": 0.95,
+      "thermo_temp_max": 5.0,
+      "trace_seal_decay": 0.995,
+      "trace_seal_diag_every": 500,
+      "trace_seal_eig_floor": 1e-06,
+      "trace_seal_enabled": false,
+      "trace_seal_mix": 1.0,
+      "trace_seal_rank": 4,
+      "trace_seal_recalc_every": 250,
+      "trace_seal_sigma_taper": "none",
+      "trace_seal_update_on_surprise": false,
+      "use_tf32": true,
+      "use_torch_compile": false,
+      "warmup_cap": 500,
+      "weight_decay": 0.0005
+    },
+    "effective_overrides": {
+      "demo_enable": false,
+      "deterministic_cuda": true,
+      "domain": "cicids_webattacks",
+      "fractal_bands": 1,
+      "global_seed": 0,
+      "hippocampus_dim": 2048,
+      "hippocampus_log_every": 500,
+      "reservoir": 256,
+      "trace_seal_diag_every": 500,
+      "trace_seal_enabled": false,
+      "warmup_cap": 500
+    },
+    "execution_profile": "cpu_engineering",
+    "module": "/vercel/eidos/eidos/EIDOS_BRAIN_UNIFIED_v0_4.7.02.py",
+    "process_isolation": true,
+    "version": "0.4.7.02"
+  },
+  "environment": {
+    "platform": "Linux-6.18.40-x86_64-with-glibc2.43",
+    "python": "3.14.4"
+  },
+  "evidence_class": "REAL_DATA_ENGINEERING",
+  "job_id": "rd-8a14916b3ea7-696b7427",
+  "lock_digest": "8a14916b3ea7a0cf2ce766ba2a8c8e126745f8f7907b0ceccb2a7df8476cf0a5",
+  "metrics_sha256": "98338f4e547e8d7d8c3bcd8fb986f89aafe6415418c662be6071e5a3be07ff86",
+  "proof": {
+    "gates_advanced": 0,
+    "heldout_evaluated": false,
+    "verdict": "BLOCKED_RESOURCE_BEFORE_HELDOUT"
+  },
+  "schema": "eidos.sentinel-runner.manifest.v0.2",
+  "spec": {
+    "dataContract": {
+      "excludedColumns": [],
+      "featureColumns": [],
+      "labelColumn": "Label",
+      "maxRows": 1000,
+      "negativeLabels": [
+        "BENIGN"
+      ],
+      "orderMode": "source"
+    },
+    "dataset": {
+      "expectedSha256": "7db47b2bf97ad58c3556ee25e8e1eb1e697cd391670733833865d0e84d8ed82a",
+      "file": "WebAttacks-Thursday-no-metadata.parquet",
+      "provider": "kaggle",
+      "ref": "dhoogla/cicids2017",
+      "version": 3
+    },
+    "engine": {
+      "configProfile": "cicids_webattacks",
+      "features": 64,
+      "seed": 0,
+      "version": "0.4.7.02"
+    },
+    "evidenceClass": "REAL_DATA_ENGINEERING",
+    "protocol": {
+      "heldoutPolicy": "exclude_from_engineering_run",
+      "labelPolicy": "sealed_until_prediction_freeze",
+      "normalization": "calibration_only_zscore",
+      "projection": "seeded_gaussian_or_pad",
+      "proofVerdict": "BLOCKED_RESOURCE_BEFORE_HELDOUT"
+    },
+    "schema": "eidos.sentinel-lab.experiment.v0.2",
+    "split": {
+      "calibration": 0.2,
+      "evaluation": 0.6,
+      "sealedHoldout": 0.2
+    }
+  }
+}

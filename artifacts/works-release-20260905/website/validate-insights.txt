@@ -1,0 +1,5 @@
+
+> brent-parent-intelligence-studio@1.1.0 validate:insights
+> node scripts/validate-insights.mjs --skip-source-fetch
+
+Insights validation passed for 10 published articles.

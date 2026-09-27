@@ -1,0 +1,314 @@
+{
+  "schema": "eidos.sentinel-lab.artifact-verification.v0.1",
+  "jobId": "rd-8a14916b3ea7-696b7427",
+  "manifestSha256": "c8bedc2f43aa7bca807c6abac7207351074cc44a898b8cd7b2f87f73c6121b03",
+  "declaredCount": 25,
+  "matchedCount": 25,
+  "allMatched": true,
+  "files": [
+    {
+      "path": "dataset_receipt.json",
+      "expected": {
+        "bytes": 3441,
+        "sha256": "abc9aa1eb855726664a1ddcd74b24515762583586d46ce608dbb7e14ccc386b5"
+      },
+      "matched": true,
+      "actual": {
+        "bytes": 3441,
+        "sha256": "abc9aa1eb855726664a1ddcd74b24515762583586d46ce608dbb7e14ccc386b5"
+      }
+    },
+    {
+      "path": "engine_artifacts/compression/sentinel_lab_real_data_engineering/20260906_233324_bicameral_stream_meta_sentinel_lab_real_data_engineering.json",
+      "expected": {
+        "bytes": 299,
+        "sha256": "c5ecc3ab1dea3eec08d7c8a506dfc456d72153c343b2e9c97f481b8d0c55d2b0"
+      },
+      "matched": true,
+      "actual": {
+        "bytes": 299,
+        "sha256": "c5ecc3ab1dea3eec08d7c8a506dfc456d72153c343b2e9c97f481b8d0c55d2b0"
+      }
+    },
+    {
+      "path": "engine_artifacts/compression/sentinel_lab_real_data_engineering/20260906_233324_bicameral_stream_sentinel_lab_real_data_engineering.bin",
+      "expected": {
+        "bytes": 71948,
+        "sha256": "f69c56f65784144b95c25c74dfdbd19647ff4dacbf6ed439a6e428f66c950ab8"
+      },
+      "matched": true,
+      "actual": {
+        "bytes": 71948,
+        "sha256": "f69c56f65784144b95c25c74dfdbd19647ff4dacbf6ed439a6e428f66c950ab8"
+      }
+    },
+    {
+      "path": "engine_artifacts/eidos_brain_archive/20260906_233322_sentinel_lab_dhoogla_cicids2017_v3_seed0/anomalies.jsonl",
+      "expected": {
+        "bytes": 252573,
+        "sha256": "2b2ed87070d0ef81286a1ccf0bb94ab99cb152c3ff2bc3810444520e32c4ec6d"
+      },
+      "matched": true,
+      "actual": {
+        "bytes": 252573,
+        "sha256": "2b2ed87070d0ef81286a1ccf0bb94ab99cb152c3ff2bc3810444520e32c4ec6d"
+      }
+    },
+    {
+      "path": "engine_artifacts/eidos_brain_archive/20260906_233322_sentinel_lab_dhoogla_cicids2017_v3_seed0/clusters.json",
+      "expected": {
+        "bytes": 12763,
+        "sha256": "3c0ccb839048ca7bea0d9bd91b883c3c71e2449237af72f88707980b4fcc83fa"
+      },
+      "matched": true,
+      "actual": {
+        "bytes": 12763,
+        "sha256": "3c0ccb839048ca7bea0d9bd91b883c3c71e2449237af72f88707980b4fcc83fa"
+      }
+    },
+    {
+      "path": "engine_artifacts/eidos_brain_archive/20260906_233322_sentinel_lab_dhoogla_cicids2017_v3_seed0/report.txt",
+      "expected": {
+        "bytes": 1729,
+        "sha256": "6d529e93e092053e9bcd2122cbf64becc2df6493272b37be58ff6ae6e176ba1a"
+      },
+      "matched": true,
+      "actual": {
+        "bytes": 1729,
+        "sha256": "6d529e93e092053e9bcd2122cbf64becc2df6493272b37be58ff6ae6e176ba1a"
+      }
+    },
+    {
+      "path": "engine_artifacts/eidos_brain_archive/20260906_233322_sentinel_lab_dhoogla_cicids2017_v3_seed0/session_meta.json",
+      "expected": {
+        "bytes": 4314,
+        "sha256": "a6dc4298340192b362a049d513eed7c18fdd455879b38ff1223856425a5f8c17"
+      },
+      "matched": true,
+      "actual": {
+        "bytes": 4314,
+        "sha256": "a6dc4298340192b362a049d513eed7c18fdd455879b38ff1223856425a5f8c17"
+      }
+    },
+    {
+      "path": "engine_artifacts/eidos_brain_archive/20260906_233322_sentinel_lab_dhoogla_cicids2017_v3_seed0/state_capsule.json",
+      "expected": {
+        "bytes": 1163,
+        "sha256": "29ab639e034dbfc66c034d50025e065968f6640ff529566530aedec387cfdf2b"
+      },
+      "matched": true,
+      "actual": {
+        "bytes": 1163,
+        "sha256": "29ab639e034dbfc66c034d50025e065968f6640ff529566530aedec387cfdf2b"
+      }
+    },
+    {
+      "path": "engine_artifacts/eidos_brain_archive/20260906_233322_sentinel_lab_dhoogla_cicids2017_v3_seed0/steps.csv",
+      "expected": {
+        "bytes": 267032,
+        "sha256": "02a73baccfc373c9bd2665d7b488ab89d12e85f2f4e6f1e86c6f4c91815d5ba9"
+      },
+      "matched": true,
+      "actual": {
+        "bytes": 267032,
+        "sha256": "02a73baccfc373c9bd2665d7b488ab89d12e85f2f4e6f1e86c6f4c91815d5ba9"
+      }
+    },
+    {
+      "path": "engine_artifacts/eidos_brain_archive/20260906_233322_sentinel_lab_dhoogla_cicids2017_v3_seed0/summary.json",
+      "expected": {
+        "bytes": 924,
+        "sha256": "d599dc461f4cfdf31721b1a1a13b1d1fc52d727713573944feb1b28a09d78722"
+      },
+      "matched": true,
+      "actual": {
+        "bytes": 924,
+        "sha256": "d599dc461f4cfdf31721b1a1a13b1d1fc52d727713573944feb1b28a09d78722"
+      }
+    },
+    {
+      "path": "engine_artifacts/forecast.jsonl",
+      "expected": {
+        "bytes": 20418,
+        "sha256": "fe72854ad63e9ff285dc722aa9838c69a1ea610577ca7ff4a1966a55a3214fc1"
+      },
+      "matched": true,
+      "actual": {
+        "bytes": 20418,
+        "sha256": "fe72854ad63e9ff285dc722aa9838c69a1ea610577ca7ff4a1966a55a3214fc1"
+      }
+    },
+    {
+      "path": "engine_artifacts/hippocampus/sentinel_lab_real_data_engineering/20260906_233324_hippocampus_snapshot_sentinel_lab_real_data_engineering.pt",
+      "expected": {
+        "bytes": 19365,
+        "sha256": "2e43f0e5a7f3aad0166ae35c611ccbad9dcc972fabfbb3611e5af69aac7b81bd"
+      },
+      "matched": true,
+      "actual": {
+        "bytes": 19365,
+        "sha256": "2e43f0e5a7f3aad0166ae35c611ccbad9dcc972fabfbb3611e5af69aac7b81bd"
+      }
+    },
+    {
+      "path": "engine_artifacts/incident_cards.jsonl",
+      "expected": {
+        "bytes": 213427,
+        "sha256": "bbcc3ae440ef4b2dc96f08e67c379109ffa21cee2a2f93ef1e377ffa1302bc0a"
+      },
+      "matched": true,
+      "actual": {
+        "bytes": 213427,
+        "sha256": "bbcc3ae440ef4b2dc96f08e67c379109ffa21cee2a2f93ef1e377ffa1302bc0a"
+      }
+    },
+    {
+      "path": "engine_artifacts/manifest.jsonl",
+      "expected": {
+        "bytes": 2999,
+        "sha256": "d7c909821186f7aab1d990896b48246258a7c2ae146c3bb8b03aafc30585c5d2"
+      },
+      "matched": true,
+      "actual": {
+        "bytes": 2999,
+        "sha256": "d7c909821186f7aab1d990896b48246258a7c2ae146c3bb8b03aafc30585c5d2"
+      }
+    },
+    {
+      "path": "engine_artifacts/reservoir_checkpoints/sentinel_lab_real_data_engineering/20260906_233324_reservoir_checkpoint_sentinel_lab_real_data_engineering.pt",
+      "expected": {
+        "bytes": 597409,
+        "sha256": "94343f1e2bf690851869333eebdf4f328df0ad8bde11e17b871c06753a317b73"
+      },
+      "matched": true,
+      "actual": {
+        "bytes": 597409,
+        "sha256": "94343f1e2bf690851869333eebdf4f328df0ad8bde11e17b871c06753a317b73"
+      }
+    },
+    {
+      "path": "engine_artifacts/reservoir_geometry/sentinel_lab_real_data_engineering/20260906_233324_reservoir_geom_sentinel_lab_real_data_engineering.json",
+      "expected": {
+        "bytes": 9971,
+        "sha256": "f7486b4d652d662105268b220da0f48aae302895719c67bc064f4621ab33c8f0"
+      },
+      "matched": true,
+      "actual": {
+        "bytes": 9971,
+        "sha256": "f7486b4d652d662105268b220da0f48aae302895719c67bc064f4621ab33c8f0"
+      }
+    },
+    {
+      "path": "engine_artifacts/reservoir_geometry/sentinel_lab_real_data_engineering/20260906_233324_reservoir_states_sentinel_lab_real_data_engineering.npy",
+      "expected": {
+        "bytes": 368768,
+        "sha256": "d63580a7882dc37386e821ad08ae99fd1e0bacefb6840d613e5bfff3a73d9d1b"
+      },
+      "matched": true,
+      "actual": {
+        "bytes": 368768,
+        "sha256": "d63580a7882dc37386e821ad08ae99fd1e0bacefb6840d613e5bfff3a73d9d1b"
+      }
+    },
+    {
+      "path": "engine_artifacts/sentinel_forensics/sentinel_lab_real_data_engineering/20260906_233324_top_100_surprises_sentinel_lab_real_data_engineering.json",
+      "expected": {
+        "bytes": 171476,
+        "sha256": "f82cd8738d21f591f181c2a7ffd0f01deedb6072c83403f62d71bdf1a1690df3"
+      },
+      "matched": true,
+      "actual": {
+        "bytes": 171476,
+        "sha256": "f82cd8738d21f591f181c2a7ffd0f01deedb6072c83403f62d71bdf1a1690df3"
+      }
+    },
+    {
+      "path": "engine_artifacts/sentinel_forensics/sentinel_lab_real_data_engineering/20260906_233324_top_100_surprises_text_sentinel_lab_real_data_engineering.txt",
+      "expected": {
+        "bytes": 12684,
+        "sha256": "0af4ed54e92fc810f4b90a07a1e7ffe791e92f57aa42b4307f41ab14dfd2c981"
+      },
+      "matched": true,
+      "actual": {
+        "bytes": 12684,
+        "sha256": "0af4ed54e92fc810f4b90a07a1e7ffe791e92f57aa42b4307f41ab14dfd2c981"
+      }
+    },
+    {
+      "path": "engine_diagnostics.json",
+      "expected": {
+        "bytes": 210641,
+        "sha256": "09748ee88d4bf21ef53a5194b21e653c6685776f387ea8ac5cfc461974bd14b0"
+      },
+      "matched": true,
+      "actual": {
+        "bytes": 210641,
+        "sha256": "09748ee88d4bf21ef53a5194b21e653c6685776f387ea8ac5cfc461974bd14b0"
+      }
+    },
+    {
+      "path": "engine_trace.jsonl",
+      "expected": {
+        "bytes": 360390,
+        "sha256": "38050640bb64eaddc43df2f1a8027416664d992b8386884f8ea0dbe5b3a58b06"
+      },
+      "matched": true,
+      "actual": {
+        "bytes": 360390,
+        "sha256": "38050640bb64eaddc43df2f1a8027416664d992b8386884f8ea0dbe5b3a58b06"
+      }
+    },
+    {
+      "path": "evaluation_trace.jsonl",
+      "expected": {
+        "bytes": 82110,
+        "sha256": "e867f09d93b53881d472a4f6ed487df25aea9cf0bf7d433605bf074887f566e7"
+      },
+      "matched": true,
+      "actual": {
+        "bytes": 82110,
+        "sha256": "e867f09d93b53881d472a4f6ed487df25aea9cf0bf7d433605bf074887f566e7"
+      }
+    },
+    {
+      "path": "metrics.json",
+      "expected": {
+        "bytes": 1134,
+        "sha256": "98338f4e547e8d7d8c3bcd8fb986f89aafe6415418c662be6071e5a3be07ff86"
+      },
+      "matched": true,
+      "actual": {
+        "bytes": 1134,
+        "sha256": "98338f4e547e8d7d8c3bcd8fb986f89aafe6415418c662be6071e5a3be07ff86"
+      }
+    },
+    {
+      "path": "request.json",
+      "expected": {
+        "bytes": 1246,
+        "sha256": "0c0a3f84b77cbad814d660f84bb6d098a3e1bc9fb2321b7a8162272e1afb5573"
+      },
+      "matched": true,
+      "actual": {
+        "bytes": 1246,
+        "sha256": "0c0a3f84b77cbad814d660f84bb6d098a3e1bc9fb2321b7a8162272e1afb5573"
+      }
+    },
+    {
+      "path": "source_receipt.json",
+      "expected": {
+        "bytes": 900,
+        "sha256": "c6cb677cd3c1dbdcf4b18466819a01c63428452bfee508e25c58445cf73569d2"
+      },
+      "matched": true,
+      "actual": {
+        "bytes": 900,
+        "sha256": "c6cb677cd3c1dbdcf4b18466819a01c63428452bfee508e25c58445cf73569d2"
+      }
+    }
+  ],
+  "resumedForRetrieval": true,
+  "status": "COMPLETED_ENGINEERING",
+  "providerStatusAfterRetrieval": "stopped",
+  "verifiedAt": "2026-09-07T20:18:47.430Z"
+}

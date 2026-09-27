@@ -1,0 +1,28 @@
+
+> brent-parent-intelligence-studio@1.1.0 test:platform
+> node --import tsx --test scripts/test-platform.ts scripts/test-relay.ts scripts/test-inquiries.ts
+
+✔ inquiry requires same origin and confirmed private-provider delivery (205.9474ms)
+✔ private mailer fixes destination, bounds input, enforces rate limit, and requires provider receipt (13.2578ms)
+(node:23528) ExperimentalWarning: SQLite is an experimental feature and might change at any time
+(Use `node --trace-warnings ...` to show where the warning was created)
+✔ Atomic quotas cannot overspend under concurrent reservations (35.4207ms)
+✔ Published knowledge and legacy clients spend zero model tokens (80.3248ms)
+✔ AI is opt-in, capped globally, deduplicated, and fails closed without a database (95.5145ms)
+✔ Request boundaries reject oversized bodies and cross-origin writes (6.4704ms)
+✔ Questions are private until reviewed, then receive at most one requested Eidos reply (23.9955ms)
+✔ Untrusted thread HTML is escaped and unpublished content disappears (10.1807ms)
+✔ Proactive assistance respects opt-in, age, human identity, and the one-reply cap (9.7155ms)
+✔ Agents need registered revocable keys and cannot trigger bot loops (16.7264ms)
+✔ Turnstile cannot be bypassed on production hosts or with a mismatched hostname (7.8594ms)
+✔ Only matching signed paid events unlock a real ZIP; refunds revoke access, including out-of-order events (48.9491ms)
+✔ Checkout is disabled until configured and never trusts client pricing or redirects (17.0356ms)
+✔ Relay preserves webhook body and signature, overwrites client claims, and never redirects secrets (140.0612ms)
+ℹ tests 14
+ℹ suites 0
+ℹ pass 14
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 1559.6848

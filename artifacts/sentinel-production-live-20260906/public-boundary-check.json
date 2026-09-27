@@ -1,0 +1,18 @@
+{
+  "checkedAt": "2026-09-07T20:20:23.926Z",
+  "authenticationEnforced": true,
+  "results": [
+    {
+      "path": "/api/experiments/rd-8a14916b3ea7-696b7427",
+      "status": 401
+    },
+    {
+      "path": "/api/experiments/rd-8a14916b3ea7-696b7427/artifacts/artifact_verification.json",
+      "status": 401
+    },
+    {
+      "path": "/api/experiments/rd-8a14916b3ea7-696b7427/artifacts/metrics.json",
+      "status": 401
+    }
+  ]
+}

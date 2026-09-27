@@ -1,0 +1,13 @@
+{
+  "timestamp_utc": "2026-09-05T23:57:58.370Z",
+  "mode": "live",
+  "sessionId": "cs_live_a1ZRWFypLPUBTnWkXhs58u2iTmWiDYjDfc4CeqllMKLP6LydR5CeAiM5UT",
+  "amountTotal": 2900,
+  "currency": "usd",
+  "paymentStatus": "unpaid",
+  "statusAfterVerification": "expired",
+  "realPaymentMade": false,
+  "entitlementGranted": false,
+  "purpose": "Direct API configuration check; separate deployed browser checkout is still required",
+  "checkoutUrlSavedPrivately": true
+}

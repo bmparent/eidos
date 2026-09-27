@@ -1,0 +1,16 @@
+{
+  "timestamp_utc": "2026-09-05T22:30:27.260Z",
+  "deploymentId": "dpl_CYejLjAxv8qeVfhxgrUioJWZxBee",
+  "commit": "a2642d3985c2590cd6f4e4bbb335673499bc4c1e",
+  "productionUrl": "https://eidos-sentinel-lab.vercel.app",
+  "healthStatus": 200,
+  "unauthenticatedStatus": 401,
+  "publicConfig": {
+    "gaMeasurementId": "G-8N7Y7EM4CS",
+    "turnstileSiteKey": "0x4AAAAAAEpi_WVq3Q1gpr5z",
+    "communityReady": true,
+    "aiReady": true,
+    "shopReady": false,
+    "localTest": false
+  }
+}

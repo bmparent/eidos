@@ -44,6 +44,18 @@ const STAGE_FAILURES = {
 };
 
 const EXACT_FAILURES = {
+  IDEMPOTENCY_KEY_REQUIRED: {
+    error: "IDEMPOTENCY_KEY_REQUIRED", status: 400, retryable: false,
+    detail: "Refresh the Lab and lock your settings to create a stable launch retry key.",
+  },
+  IDEMPOTENCY_LOCK_CONFLICT: {
+    error: "IDEMPOTENCY_LOCK_CONFLICT", status: 409, retryable: false,
+    detail: "This launch key belongs to different settings. Restore its original lock or explicitly prepare a new experiment.",
+  },
+  ADMISSION_RESERVATION_EXPIRED: {
+    error: "ADMISSION_RESERVATION_EXPIRED", status: 409, retryable: false,
+    detail: "The launch reservation expired before allocation. Prepare a new experiment; this retry key cannot start another job.",
+  },
   OPERATOR_AUTH_NOT_CONFIGURED: {
     error: "OPERATOR_AUTH_NOT_CONFIGURED",
     status: 503,

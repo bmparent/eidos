@@ -1,0 +1,40 @@
+## Runtime Logs
+
+**Project:** prj_5aL0COF1DONfPKI4fv25NitAdkOE
+**Time range:** 2026-09-06T22:56:49.110Z → 2026-09-06T23:56:49.110Z
+
+### 23:46:04 GET /api/experiments/rd-8a14916b3ea7-696b7427/artifacts/engine_trace.jsonl 200 [info/serverless]
+dep=dpl_DVvasVzqPNraYw67XXnQgvqmejgB branch=main cache=BYPASS
+
+### 23:45:28 GET /api/experiments/rd-8a14916b3ea7-696b7427/artifacts/engine_diagnostics.json 200 [info/serverless]
+dep=dpl_DVvasVzqPNraYw67XXnQgvqmejgB branch=main cache=BYPASS
+
+### 23:40:20 GET /api/experiments/rd-8a14916b3ea7-696b7427/artifacts/evaluation_trace.jsonl 200 [info/serverless]
+dep=dpl_DVvasVzqPNraYw67XXnQgvqmejgB branch=main cache=BYPASS
+
+### 23:37:15 GET /api/experiments/rd-8a14916b3ea7-696b7427/artifacts/metrics.json 200 [info/serverless]
+dep=dpl_DVvasVzqPNraYw67XXnQgvqmejgB branch=main cache=BYPASS
+
+### 23:36:39 GET /api/experiments/rd-8a14916b3ea7-696b7427/artifacts/dataset_receipt.json 200 [info/serverless]
+dep=dpl_DVvasVzqPNraYw67XXnQgvqmejgB branch=main cache=BYPASS
+
+### 23:34:48 GET /api/experiments/rd-8a14916b3ea7-696b7427/artifacts/run_manifest.json 200 [info/serverless]
+dep=dpl_DVvasVzqPNraYw67XXnQgvqmejgB branch=main cache=BYPASS
+
+### 23:34:18 GET /api/experiments/rd-8a14916b3ea7-696b7427/artifacts/source_receipt.json 200 [info/serverless]
+dep=dpl_DVvasVzqPNraYw67XXnQgvqmejgB branch=main cache=BYPASS
+
+### 23:33:31 GET /api/experiments/rd-8a14916b3ea7-696b7427 200 [info/serverless]
+dep=dpl_DVvasVzqPNraYw67XXnQgvqmejgB branch=main cache=BYPASS
+
+### 23:33:21 GET /api/experiments/rd-8a14916b3ea7-696b7427 200 [info/serverless]
+dep=dpl_DVvasVzqPNraYw67XXnQgvqmejgB branch=main cache=BYPASS
+
+### 23:33:06 GET /api/experiments/rd-8a14916b3ea7-696b7427 200 [info/serverless]
+dep=dpl_DVvasVzqPNraYw67XXnQgvqmejgB branch=main cache=BYPASS
+
+### 23:32:54 POST /api/experiments 202 [info/serverless]
+dep=dpl_DVvasVzqPNraYw67XXnQgvqmejgB branch=main cache=MISS
+    {"level":"info","event":"experiment_dispatch_started","route":"/api/experiments","diagnosticId":"9ca66d3f-2ed2-427c-940d-0eb971a94b01","requestId":"iad1::qhr5s-1788737574268-3ace905f5874"}
+    {"level":"info","event":"experiment_dispatch_accepted","route":"/api/experiments","diagnosticId":"9ca66d3f-2ed2-427c-940d-0eb971a94b01","requestId":"iad1::qhr5s-1788737574268-3ace905f5874","lockDigest":"8a14916b3ea7a0cf2ce766ba2a8c8e126745f8f7907b0ceccb2a7df8476cf0a5","jobId":"rd-8a14916b3ea7-696b7427","executionBackend":"sandbox","durationMs":6731}
+

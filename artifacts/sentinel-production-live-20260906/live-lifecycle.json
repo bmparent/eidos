@@ -1,0 +1,22 @@
+{
+  "schema": "eidos.sentinel-lab.live-lifecycle.v0.1",
+  "jobId": "rd-8a14916b3ea7-696b7427",
+  "observedAt": "2026-09-07T20:18:47.430Z",
+  "reloadRestoredSameJob": true,
+  "reloadRestoredSameLock": true,
+  "credentialClearedOnReload": true,
+  "reloadObservationDate": "2026-09-06",
+  "authenticatedReconnect": true,
+  "reconnectMode": "Saved job ID entered in a fresh production tab after the previous tab closed",
+  "completedResultPreserved": true,
+  "observatoryShowsCompletedJob": true,
+  "evaluationRowsScored": 600,
+  "falsePositiveCountDisplayed": 301,
+  "sourceArtifactDownloads": 7,
+  "fullVerificationDownload": true,
+  "resumedForRetrieval": true,
+  "providerStatusAfterRetrieval": "stopped",
+  "activeDownloadLiveObservation": false,
+  "activeDownloadEvidence": "Controlled regression; the bounded live run completed before an active download was observed",
+  "source": "Authenticated production UI and artifact_verification.json"
+}

@@ -1,0 +1,20 @@
+{
+  "timestamp": "2026-09-05T20:52:58.406Z",
+  "mode": "test",
+  "account": "acct_1Rj03gKC8pRG5Tr9",
+  "/v1/products?limit=100": {
+    "status": 200,
+    "has_more": false,
+    "data": []
+  },
+  "/v1/prices?limit=100": {
+    "status": 200,
+    "has_more": false,
+    "data": []
+  },
+  "/v1/webhook_endpoints?limit=100": {
+    "status": 200,
+    "has_more": false,
+    "data": []
+  }
+}

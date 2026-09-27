@@ -1,0 +1,32 @@
+{
+  "timestamp_utc": "2026-09-06T00:01:44.234Z",
+  "mode": "live",
+  "method": "Production browser checkout plus authenticated Stripe API readback",
+  "sessionId": "cs_live_a150rGnlQdnzrO7rE93bpH2bEfDQ7fcUJDrRHiKRpPGidvSTCm4ES3DbHj",
+  "orderId": "4bc21e13-cecb-444b-bfa0-e6b8ba719411",
+  "amountTotal": 2900,
+  "currency": "usd",
+  "product": "Eidos Cinematic Starter — one website license",
+  "quantity": 1,
+  "paymentStatus": "unpaid",
+  "sessionStatus": "expired",
+  "orderStatus": "pending",
+  "unpaidDownloadStatus": 403,
+  "successOrigin": "https://eidos-works.com",
+  "successPath": "/shop/success",
+  "receiptStoredPrivately": true,
+  "cancelUrl": "https://eidos-works.com/shop/cinematic-starter?checkout=cancelled",
+  "paymentMethods": [
+    "card"
+  ],
+  "useCase": "learning",
+  "realPaymentMade": false,
+  "fulfillmentTestedIn": "separate Stripe TEST mode",
+  "secretsPrinted": false,
+  "expiredOwnQaSessionOnly": true,
+  "expiredDownloadStatus": 403,
+  "browserAmountVerified": "$29.00",
+  "browserProductVerified": true,
+  "browserBackLinkWorked": true,
+  "browserCancelReturnedToProduct": true
+}

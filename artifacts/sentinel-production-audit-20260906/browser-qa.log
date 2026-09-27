@@ -1,0 +1,32 @@
+
+> eidos-sentinel-lab@0.2.0 qa:browser
+> node scripts/browser-qa.mjs
+
+Error: Uncaught
+    at evaluate (file:///C:/Users/bmpar/codex-worktrees/sentinel-audit-20260906/apps/sentinel-lab/scripts/browser-qa.mjs:100:38)
+    at async file:///C:/Users/bmpar/codex-worktrees/sentinel-audit-20260906/apps/sentinel-lab/scripts/browser-qa.mjs:171:3
+Server log:
+▲ Next.js 16.3.4
+- Local:         http://127.0.0.1:3100
+- Network:       http://127.0.0.1:3100
+✓ Ready in 1461ms
+✓ Running next.config.ts took 424ms
+
+Chrome log:
+
+DevTools listening on ws://127.0.0.1:9333/devtools/browser/4bfbed5d-8ea8-46ea-8336-ce607ee7406a
+
+node:fs:1221
+  return binding.rmSync(getValidatedPath(path), opts.maxRetries, opts.recursive, opts.retryDelay);
+                 ^
+
+Error: EPERM, Permission denied: \\?\C:\Users\bmpar\AppData\Local\Temp\eidos-sentinel-cdp-Mz17A6 '\\?\C:\Users\bmpar\AppData\Local\Temp\eidos-sentinel-cdp-Mz17A6'
+    at rmSync (node:fs:1221:18)
+    at file:///C:/Users/bmpar/codex-worktrees/sentinel-audit-20260906/apps/sentinel-lab/scripts/browser-qa.mjs:443:3 {
+  errno: 1,
+  code: 'EPERM',
+  path: '\\\\?\\C:\\Users\\bmpar\\AppData\\Local\\Temp\\eidos-sentinel-cdp-Mz17A6',
+  syscall: 'rm'
+}
+
+Node.js v24.14.0

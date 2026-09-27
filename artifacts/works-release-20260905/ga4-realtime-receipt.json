@@ -1,0 +1,57 @@
+{
+  "observed_utc": "2026-09-05T22:00:00Z",
+  "source": "Authenticated Google Analytics Realtime UI",
+  "accountId": "386114675",
+  "propertyId": "552876683",
+  "propertyName": "Eidos Works",
+  "streamId": "15725877773",
+  "streamUrl": "https://eidos-works.com",
+  "measurementId": "G-8N7Y7EM4CS",
+  "enhancedMeasurement": false,
+  "observations": {
+    "page_view": 3,
+    "question_submit": 1,
+    "first_visit": 1,
+    "session_start": 1,
+    "purchase": 1
+  },
+  "purchaseObservedLater": true,
+  "environment": "Pages validation preview, QA traffic",
+  "beforeConsentScriptCount": 0,
+  "afterDeclineScriptCount": 0,
+  "afterGrantScriptCount": 1,
+  "afterRegrantScriptCount": 1,
+  "limitations": [
+    "All observed purchases are Stripe TEST transactions.",
+    "Production release QA may classify as human in a normal browser; use this release window and receipts to exclude it from business interpretation.",
+    "User-agent classification is heuristic; registered agent API requests emit no browser conversion events.",
+    "Custom dimension reports can take time to populate; Realtime receipt is already verified."
+  ],
+  "productionVerification": {
+    "observed_utc": "2026-09-05T23:13:31.737Z",
+    "source": "Authenticated GA4 Realtime UI",
+    "page_view": 3,
+    "assistant_open": 1,
+    "assistant_question": 1,
+    "assistant_ai_request": 1,
+    "generate_lead": 1,
+    "leadPageLocation": "https://eidos-works.com/contact/",
+    "keyEvents": [
+      "generate_lead",
+      "purchase"
+    ],
+    "leadDefaultMonetaryValue": null,
+    "leadCounting": "once per event",
+    "customDimension": {
+      "name": "Traffic type",
+      "scope": "Event",
+      "parameter": "traffic_type"
+    },
+    "productionConsent": {
+      "beforeConsentTags": 0,
+      "afterDeclineTags": 0,
+      "afterGrantTags": 1
+    },
+    "note": "Release QA on the production hostname is not organic audience, a customer inquiry, or revenue. The lead was observed before its key-event setting was added; that setting applies prospectively."
+  }
+}

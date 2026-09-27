@@ -29,6 +29,7 @@ const GATES = [
 ];
 
 type Tab = "lab" | "real-data" | "evidence" | "gates" | "compare";
+const TAB_LABELS: Record<Tab, string> = { "real-data": "Run experiment", lab: "Quick demo", evidence: "Evidence", gates: "Proof gates", compare: "Compare demo" };
 const HISTORY_KEY = "eidos.sentinel.v1.history";
 const ARTIFACTS_KEY = "eidos.sentinel.v1.artifacts";
 
@@ -132,7 +133,7 @@ function GateRail() {
 }
 
 export function SentinelLab({ initialRun }: { initialRun: SmokeResult }) {
-  const [tab, setTab] = useState<Tab>("lab");
+  const [tab, setTab] = useState<Tab>("real-data");
   const [menuOpen, setMenuOpen] = useState(false);
   const [drawerOpen, setDrawerOpen] = useState(false);
   const [run, setRun] = useState(initialRun);
@@ -145,6 +146,16 @@ export function SentinelLab({ initialRun }: { initialRun: SmokeResult }) {
   const [artifacts, setArtifacts] = useState<ImportedArtifact[]>([]);
   const [importing, setImporting] = useState(false);
   const fileInput = useRef<HTMLInputElement>(null);
+
+  useEffect(() => {
+    const readTab = () => {
+      const value = window.location.hash.slice(1);
+      if (Object.hasOwn(TAB_LABELS, value)) setTab(value as Tab);
+    };
+    readTab();
+    window.addEventListener("hashchange", readTab);
+    return () => window.removeEventListener("hashchange", readTab);
+  }, []);
 
   useEffect(() => {
     try {
@@ -166,6 +177,7 @@ export function SentinelLab({ initialRun }: { initialRun: SmokeResult }) {
 
   function navigate(next: Tab) {
     setTab(next);
+    window.location.hash = next;
     setMenuOpen(false);
     window.scrollTo({ top: 0, behavior: "smooth" });
   }
@@ -182,7 +194,7 @@ export function SentinelLab({ initialRun }: { initialRun: SmokeResult }) {
       setRun(nextRun);
       setHistory((currentHistory) => {
         const nextHistory = [{ runId: nextRun.runId, scenarioLabel: nextRun.scenarioLabel, seed: nextRun.seed, frames: nextRun.frames }, ...currentHistory.filter((entry) => entry.runId !== nextRun.runId)].slice(0, 5);
-        localStorage.setItem(HISTORY_KEY, JSON.stringify(nextHistory));
+        try { localStorage.setItem(HISTORY_KEY, JSON.stringify(nextHistory)); } catch { /* Optional navigation history. */ }
         return nextHistory;
       });
     } catch (runError) {
@@ -236,19 +248,19 @@ export function SentinelLab({ initialRun }: { initialRun: SmokeResult }) {
   return (
     <div className="site-shell">
       <header className="site-header">
-        <button className="brand" onClick={() => navigate("lab")} aria-label="Open Sentinel Lab home"><EidosMark /><span>EIDOS <b>/</b> SENTINEL LAB</span></button>
+        <button className="brand" onClick={() => navigate("real-data")} aria-label="Open Sentinel Lab home"><EidosMark /><span>EIDOS <b>/</b> SENTINEL LAB</span></button>
         <nav className={menuOpen ? "primary-nav open" : "primary-nav"} aria-label="Primary navigation">
-          {(["lab", "real-data", "evidence", "gates", "compare"] as Tab[]).map((item) => <button key={item} className={tab === item ? "active" : ""} onClick={() => navigate(item)}>{item}</button>)}
+          {(["real-data", "lab", "evidence", "gates", "compare"] as Tab[]).map((item) => <button key={item} className={tab === item ? "active" : ""} aria-current={tab === item ? "page" : undefined} onClick={() => navigate(item)}>{TAB_LABELS[item]}</button>)}
         </nav>
         <div className="header-status"><i /> PROTOCOL OPEN</div>
         <button className="menu-button" onClick={() => setMenuOpen((open) => !open)} aria-expanded={menuOpen} aria-label="Toggle navigation"><MenuIcon open={menuOpen} /></button>
       </header>
 
       <main>
-        <section className="hero">
+        <section className="hero lab-hero">
           <div className="hero-index">GP / 02</div>
-          <div className="hero-copy"><p className="eyebrow">CURRENT EVIDENCE POSTURE · {run.protocol.id}</p><h1>Proof is blocked<br />before held-out.</h1><p className="hero-summary">The observer and proof harness exist. Resource-qualified held-out runs have not been completed.</p></div>
-          <div className="verdict-card"><span>CURRENT VERDICT</span><strong>BLOCKED_RESOURCE_<br />BEFORE_HELDOUT</strong><small>0 / 7 gates advanced</small></div>
+          <div className="hero-copy"><p className="eyebrow">EIDOS / SENTINEL</p><h1>Follow the signal.</h1><p className="hero-summary">Run the engine. Inspect what changed. Trace every claim to evidence.</p></div>
+          <button className="verdict-card proof-posture" onClick={() => navigate("gates")}><span>RESEARCH STATUS</span><strong>Engineering evidence</strong><small>Held-out proof pending · 0 / 7 gates advanced</small></button>
         </section>
 
         {error && <div className="error-banner" role="alert"><span>REQUEST HALTED</span>{error}<button onClick={() => setError(null)} aria-label="Dismiss error"><CloseIcon /></button></div>}
@@ -265,7 +277,7 @@ export function SentinelLab({ initialRun }: { initialRun: SmokeResult }) {
                 </div>
                 <label><span>SYSTEM</span><div className="locked-field">eidos_ms_v1_observer <b>LOCKED</b></div></label>
                 <button className="run-button" onClick={executeRun} disabled={running}>{running ? <span className="running-dot" /> : <PlayIcon />}{running ? "Evaluating causal trace…" : "Run engineering smoke"}</button>
-                <p className="config-note">Held-out seeds 100–119 are intentionally absent. This browser projection cannot advance a proof gate.</p>
+                <p className="config-note">This quick demo uses a synthetic observer projection. Choose Run experiment for the Torch reservoir and episodic-memory engine. Held-out seeds remain sealed.</p>
                 {history.length > 0 && <div className="run-history"><span>RECENT LOCAL RUNS</span>{history.slice(0, 3).map((entry) => <code key={entry.runId}>{entry.runId}</code>)}</div>}
               </aside>
 
@@ -280,7 +292,7 @@ export function SentinelLab({ initialRun }: { initialRun: SmokeResult }) {
           </>
         )}
 
-        {tab === "real-data" && <RealDataLab />}
+        <div hidden={tab !== "real-data"}><RealDataLab /></div>
 
         {tab === "evidence" && (
           <section className="tab-page evidence-page">

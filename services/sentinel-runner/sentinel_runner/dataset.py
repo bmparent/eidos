@@ -64,7 +64,17 @@ def read_tabular(path: Path, max_rows: int) -> pd.DataFrame:
     elif suffix == ".tsv":
         frame = pd.read_csv(path, sep="\t", nrows=max_rows, low_memory=False)
     elif suffix == ".parquet":
-        frame = pd.read_parquet(path).head(max_rows)
+        import pyarrow as pa
+        import pyarrow.parquet as pq
+        batches = []
+        remaining = max_rows
+        for batch in pq.ParquetFile(path).iter_batches(batch_size=min(max_rows, 8192)):
+            selected = batch.slice(0, remaining)
+            batches.append(selected)
+            remaining -= len(selected)
+            if remaining <= 0:
+                break
+        frame = pa.Table.from_batches(batches).to_pandas() if batches else pd.DataFrame()
     elif suffix in {".feather", ".ftr"}:
         frame = pd.read_feather(path).head(max_rows)
     else:

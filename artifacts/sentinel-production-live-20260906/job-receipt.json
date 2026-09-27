@@ -1,0 +1,9 @@
+{
+  "jobId": "rd-8a14916b3ea7-696b7427",
+  "status": "BOOTSTRAPPING_RUNTIME",
+  "statusUrl": "/api/experiments/rd-8a14916b3ea7-696b7427",
+  "executionBackend": "sandbox",
+  "evidenceClass": "REAL_DATA_ENGINEERING",
+  "proofVerdict": "BLOCKED_RESOURCE_BEFORE_HELDOUT",
+  "diagnosticId": "9ca66d3f-2ed2-427c-940d-0eb971a94b01"
+}

@@ -16,6 +16,7 @@ from fastapi.responses import FileResponse
 from .engine_bridge import discover_engine_path
 from .job import atomic_json, update_status
 from .spec import ExperimentEnvelope, PROOF_VERDICT
+from .profiles import require_profile_capacity
 
 
 JOB_ID = re.compile(r"^rd-[a-f0-9]{12}-[a-f0-9]{8}$")
@@ -27,9 +28,9 @@ def job_root() -> Path:
 
 
 def authorize(authorization: Optional[str]) -> None:
-    expected = os.environ.get("EIDOS_RUNNER_TOKEN", "")
-    supplied = authorization.removeprefix("Bearer ").strip() if authorization else ""
-    if not expected or not hmac.compare_digest(supplied, expected):
+    expected = os.environ.get("EIDOS_RUNNER_TOKEN", "").strip()
+    supplied = authorization[7:].strip() if authorization and authorization.startswith("Bearer ") else ""
+    if not expected or not supplied or not hmac.compare_digest(supplied.encode("utf-8"), expected.encode("utf-8")):
         raise HTTPException(status_code=401, detail="unauthorized")
 
 
@@ -79,6 +80,7 @@ def create_experiment(payload: Dict[str, Any], authorization: Optional[str] = He
     authorize(authorization)
     try:
         envelope = ExperimentEnvelope.from_dict(payload)
+        require_profile_capacity(envelope.spec.engine.execution_profile)
     except ValueError as exc:
         raise HTTPException(status_code=400, detail=str(exc)) from exc
     root = job_root()
@@ -128,7 +130,7 @@ def get_experiment(job_id: str, authorization: Optional[str] = Header(default=No
 @app.get("/v1/experiments/{job_id}/artifacts/{artifact_name}")
 def get_artifact(job_id: str, artifact_name: str, authorization: Optional[str] = Header(default=None)) -> FileResponse:
     authorize(authorization)
-    allowed = {"run_manifest.json", "dataset_receipt.json", "metrics.json", "evaluation_trace.jsonl"}
+    allowed = {"run_manifest.json", "dataset_receipt.json", "metrics.json", "evaluation_trace.jsonl", "engine_diagnostics.json", "engine_trace.jsonl", "runner.log", "failure_traceback.log"}
     if artifact_name not in allowed:
         raise HTTPException(status_code=404, detail="artifact not exposed")
     path = resolve_job(job_id) / artifact_name

@@ -15,6 +15,11 @@ from .memory_core import POLICIES
 COLORS = dict(none='#5b6678',every_step='#c46633',pulse100='#256d9b',carry='#228568')
 
 
+def effect_text(value):
+    """A zero/impulse-only partial run has no suffix task effect to format."""
+    return f'{value:.6g}' if value is not None else 'NA'
+
+
 def csv_write(path, rows):
     if not rows:
         return
@@ -95,7 +100,7 @@ def report(run, out):
         '|---|---|---:|---:|---:|---:|---:|---:|']
     for r in aggregates:
         lines.append(f"| {r['config']} | {r['policy']} | {r['max_state_abs_discrepancy']:.6g} | {r['median_state_rms_discrepancy']:.6g} | "
-                     f"{r['median_normalized_state_rms']:.6g} | {r['task_mse_delta_current_min']:.6g} to {r['task_mse_delta_current_max']:.6g} | "
+                     f"{r['median_normalized_state_rms']:.6g} | {effect_text(r['task_mse_delta_current_min'])} to {effect_text(r['task_mse_delta_current_max'])} | "
                      f"{r['runtime_ratio_median']:.3f} | {r['persistent_state_bytes']} |")
     lines += ['', 'Task MSE uses a shared exploration-only ridge readout; suffixes follow a 64-frame gap, with state carried continuously through the split. '
         'Readouts and normalization are frozen before candidate replay. Raw readout and engine-style rounded predictions are both saved. '

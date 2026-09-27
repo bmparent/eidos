@@ -1,0 +1,15 @@
+{
+  "timestamp_utc": "2026-09-05T21:46:29.062Z",
+  "backend": "https://eidos-sentinel-ckvdvep3j-1brentbm-1876s-projects.vercel.app",
+  "backendHealth": 200,
+  "publicConfig": {
+    "gaMeasurementId": "G-8N7Y7EM4CS",
+    "turnstileSiteKey": "0x4AAAAAAEpi_WVq3Q1gpr5z",
+    "communityReady": true,
+    "aiReady": true,
+    "shopReady": true,
+    "localTest": false
+  },
+  "previewRelayConfigured": true,
+  "project": "eidosworks"
+}

@@ -1,0 +1,5 @@
+
+> brent-parent-intelligence-studio@1.1.0 verify:prerender
+> node scripts/verify-prerender.mjs
+
+Prerender verification passed: headings, metadata, private-page directives, image alternatives, IDs, and JSON-LD are valid.

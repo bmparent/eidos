@@ -1,0 +1,20 @@
+{
+  "goal": "VERIFIED_ENGINEERING_WORKFLOW",
+  "evidenceClass": "REAL_DATA_ENGINEERING",
+  "readinessScore": null,
+  "gatesAdvanced": 0,
+  "math": {
+    "fpr": 0.5016666666666667,
+    "coverage": 1
+  },
+  "remainingUncertainty": [
+    "Only benign evaluation examples: 301 false positives / 600 benign rows; recall and ROC AUC cannot be estimated.",
+    "Zero scientific proof gates advanced; overall scientific readiness is unknown. Held-out data remains excluded.",
+    "Observed live stages were runtime bootstrapping and completed engineering. Intermediate stages passed between observations.",
+    "Active-download preservation, retryable outages, crashes and expiry were verified with controlled regressions, not deliberately induced in production.",
+    "Shared admission covers experiment jobs; a global cap including all short retrieval VMs and the optional external runner backend remains outside this qualification.",
+    "Provider snapshots have seven-day expiry. Local and Drive receipts preserve evidence beyond that lifecycle.",
+    "The optional browser CI workflow patch was not applied because the GitHub credential lacked workflow scope; the rendered suite passed locally.",
+    "Automatic approval review blocked optional deletion of three QA browser profiles; they were left in place."
+  ]
+}

@@ -1,0 +1,18 @@
+{
+  "timestamp_utc": "2026-09-06T23:02:13.862Z",
+  "status": "PASS",
+  "backend": "remote libSQL validation database",
+  "scope": "sentinel-audit-1788735729934",
+  "independentClients": 12,
+  "competingRequests": 12,
+  "capacity": 1,
+  "admitted": 1,
+  "rejected": 11,
+  "retries": 12,
+  "duplicateJobs": 0,
+  "abandonedReservationRecovered": true,
+  "staleAllocatorFenced": true,
+  "uncertainAllocationRetainsCapacity": true,
+  "realSandboxAllocations": 0,
+  "proofGatesAdvanced": 0
+}

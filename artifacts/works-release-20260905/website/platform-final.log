@@ -1,0 +1,31 @@
+
+> brent-parent-intelligence-studio@1.1.0 test:platform
+> node --import tsx --test scripts/test-platform.ts scripts/test-relay.ts scripts/test-relay-runtime.mjs scripts/test-inquiries.ts scripts/test-thread-form.mjs
+
+✔ inquiry requires same origin and confirmed private-provider delivery (336.794ms)
+✔ private mailer fixes destination, bounds input, enforces rate limit, and requires provider receipt (15.5628ms)
+(node:35060) ExperimentalWarning: SQLite is an experimental feature and might change at any time
+(Use `node --trace-warnings ...` to show where the warning was created)
+✔ Atomic quotas cannot overspend under concurrent reservations (53.5918ms)
+✔ Published knowledge and legacy clients spend zero model tokens (178.8542ms)
+✔ AI is opt-in, capped globally, deduplicated, and fails closed without a database (182.8559ms)
+✔ Request boundaries reject oversized bodies and cross-origin writes (7.9199ms)
+✔ Questions are private until reviewed, then receive at most one requested Eidos reply (47.1838ms)
+✔ Untrusted thread HTML is escaped and unpublished content disappears (16.3919ms)
+✔ Proactive assistance respects opt-in, age, human identity, and the one-reply cap (17.7746ms)
+✔ Agents need registered revocable keys and cannot trigger bot loops (25.2365ms)
+✔ Turnstile cannot be bypassed on production hosts or with a mismatched hostname (12.7513ms)
+✔ Only matching signed paid events unlock a real ZIP; refunds revoke access, including out-of-order events (57.3751ms)
+✔ Checkout is disabled until configured and never trusts client pricing or redirects (13.8818ms)
+✔ Cloudflare runtime accepts the relay request options (3763.6639ms)
+✔ Relay preserves webhook body and signature, overwrites client claims, and never redirects secrets (199.4231ms)
+✔ Protected preview relay uses only the server-configured Vercel credential (3.7084ms)
+✔ Reply acknowledgement survives the next verification callback (414.7637ms)
+ℹ tests 17
+ℹ suites 0
+ℹ pass 17
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 8003.8413

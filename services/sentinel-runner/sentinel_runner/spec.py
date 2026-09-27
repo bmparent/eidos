@@ -3,8 +3,11 @@ from __future__ import annotations
 import hashlib
 import json
 import re
+import math
 from dataclasses import dataclass
 from typing import Any, Dict, Mapping, Optional, Tuple
+
+from .profiles import EXECUTION_PROFILES
 
 
 EXPERIMENT_SCHEMA = "eidos.sentinel-lab.experiment.v0.2"
@@ -85,6 +88,7 @@ class SplitSpec:
 @dataclass(frozen=True)
 class EngineSpec:
     seed: int
+    execution_profile: str = "cpu_engineering"
 
 
 @dataclass(frozen=True)
@@ -148,18 +152,24 @@ class ExperimentSpec:
 
         split = _object(root.get("split"), "split")
         _keys(split, ("calibration", "evaluation", "sealedHoldout"), "split")
-        values = (float(split.get("calibration")), float(split.get("evaluation")), float(split.get("sealedHoldout")))
-        if any(value < 0.1 or value > 0.8 for value in values) or abs(sum(values) - 1.0) > 1e-9:
+        raw_values = (split.get("calibration"), split.get("evaluation"), split.get("sealedHoldout"))
+        if any(isinstance(value, bool) or not isinstance(value, (int, float)) for value in raw_values):
+            raise ValueError("split fractions must be finite numbers")
+        values = tuple(float(value) for value in raw_values)
+        if any(not math.isfinite(value) or value < 0.1 or value > 0.8 for value in values) or abs(sum(values) - 1.0) > 1e-9:
             raise ValueError("split fractions must each be 0.1..0.8 and total 1.0")
         split_spec = SplitSpec(*values)
 
         engine = _object(root.get("engine"), "engine")
-        _keys(engine, ("version", "features", "seed", "configProfile"), "engine")
+        _keys(engine, ("version", "features", "seed", "configProfile", "executionProfile"), "engine")
         if engine.get("version") != "0.4.7.02" or engine.get("features") != 64 or engine.get("configProfile") != "cicids_webattacks":
             raise ValueError("engine version, feature dimension, and profile must remain locked")
         seed = engine.get("seed")
-        if seed not in {0, 1}:
+        if type(seed) is not int or seed not in {0, 1}:
             raise ValueError("real-data engineering seeds are restricted to 0 and 1")
+        execution_profile = engine.get("executionProfile", "cpu_engineering")
+        if not isinstance(execution_profile, str) or execution_profile not in EXECUTION_PROFILES:
+            raise ValueError("unsupported engine execution profile")
 
         protocol = _object(root.get("protocol"), "protocol")
         expected_protocol = {
@@ -171,7 +181,7 @@ class ExperimentSpec:
         }
         if dict(protocol) != expected_protocol:
             raise ValueError("protocol safety locks do not match Sentinel Lab v0.2")
-        return cls(dataset=dataset_spec, data_contract=data_contract, split=split_spec, engine=EngineSpec(seed=seed))
+        return cls(dataset=dataset_spec, data_contract=data_contract, split=split_spec, engine=EngineSpec(seed=seed, execution_profile=execution_profile))
 
     def to_dict(self) -> Dict[str, Any]:
         dataset: Dict[str, Any] = {
@@ -202,7 +212,8 @@ class ExperimentSpec:
                 "evaluation": self.split.evaluation,
                 "sealedHoldout": self.split.sealed_holdout,
             },
-            "engine": {"version": "0.4.7.02", "features": 64, "seed": self.engine.seed, "configProfile": "cicids_webattacks"},
+            "engine": {"version": "0.4.7.02", "features": 64, "seed": self.engine.seed, "configProfile": "cicids_webattacks",
+                       **({"executionProfile": self.engine.execution_profile} if self.engine.execution_profile != "cpu_engineering" else {})},
             "protocol": {
                 "labelPolicy": "sealed_until_prediction_freeze",
                 "normalization": "calibration_only_zscore",

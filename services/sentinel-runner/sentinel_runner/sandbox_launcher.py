@@ -51,12 +51,15 @@ def command(args: argparse.Namespace) -> int:
     runner_root = repo_root / "services" / "sentinel-runner"
     venv = repo_root / ".eidos-runner-venv"
     log_path = job_dir / "runner.log"
-    request = json.loads(request_path.read_text(encoding="utf-8"))
-    lock_digest = str(request.get("lockDigest", ""))
-    bootstrap_step = "locate_uv"
+    job_dir.mkdir(parents=True, exist_ok=True)
+    lock_digest = ""
+    bootstrap_step = "read_request"
     try:
+        request = json.loads(request_path.read_text(encoding="utf-8"))
+        lock_digest = str(request.get("lockDigest", ""))
         status(job_dir, "BOOTSTRAPPING_RUNTIME", lockDigest=lock_digest)
         with log_path.open("a", encoding="utf-8") as log:
+            bootstrap_step = "locate_uv"
             uv = shutil.which("uv")
             if not uv:
                 raise RuntimeError("The managed Sandbox image does not expose the required uv installer.")
@@ -69,41 +72,42 @@ def command(args: argparse.Namespace) -> int:
                     stdout=log,
                     stderr=subprocess.STDOUT,
                 )
-                bootstrap_step = "install_cpu_runtime"
-                subprocess.run(
-                    [
-                        uv,
-                        "pip",
-                        "install",
-                        "--python",
-                        str(venv / "bin" / "python"),
-                        "--no-cache",
-                        "--torch-backend",
-                        "cpu",
-                        str(runner_root),
-                    ],
-                    cwd=repo_root,
-                    check=True,
-                    stdout=log,
-                    stderr=subprocess.STDOUT,
-                )
-                bootstrap_step = "verify_cpu_runtime"
-                subprocess.run(
-                    [
-                        str(venv / "bin" / "python"),
-                        "-c",
-                        (
-                            "import torch; "
-                            f"assert torch.__version__.split('+')[0] == '{CPU_TORCH_VERSION}'; "
-                            "assert torch.version.cuda is None; "
-                            "print(f'torch={torch.__version__} backend=cpu')"
-                        ),
-                    ],
-                    cwd=repo_root,
-                    check=True,
-                    stdout=log,
-                    stderr=subprocess.STDOUT,
-                )
+            # A Python executable alone does not prove a previous install finished.
+            bootstrap_step = "install_cpu_runtime"
+            subprocess.run(
+                [
+                    uv,
+                    "pip",
+                    "install",
+                    "--python",
+                    str(venv / "bin" / "python"),
+                    "--no-cache",
+                    "--torch-backend",
+                    "cpu",
+                    str(runner_root),
+                ],
+                cwd=repo_root,
+                check=True,
+                stdout=log,
+                stderr=subprocess.STDOUT,
+            )
+            bootstrap_step = "verify_cpu_runtime"
+            subprocess.run(
+                [
+                    str(venv / "bin" / "python"),
+                    "-c",
+                    (
+                        "import torch; "
+                        f"assert torch.__version__.split('+')[0] == '{CPU_TORCH_VERSION}'; "
+                        "assert torch.version.cuda is None; "
+                        "print(f'torch={torch.__version__} backend=cpu')"
+                    ),
+                ],
+                cwd=repo_root,
+                check=True,
+                stdout=log,
+                stderr=subprocess.STDOUT,
+            )
             environment = os.environ.copy()
             environment["PYTHONPATH"] = os.pathsep.join((str(runner_root), str(repo_root / "eidos" / "repo" / "src"), environment.get("PYTHONPATH", "")))
             bootstrap_step = "execute_engine_job"
@@ -122,6 +126,10 @@ def command(args: argparse.Namespace) -> int:
                 stdout=log,
                 stderr=subprocess.STDOUT,
             )
+        receipt = json.loads((job_dir / "status.json").read_text(encoding="utf-8"))
+        expected = "COMPLETED_ENGINEERING" if result.returncode == 0 else "FAILED"
+        if receipt.get("status") != expected:
+            raise RuntimeError(f"Engine process exited {result.returncode} without the expected terminal receipt")
         return int(result.returncode)
     except Exception as exc:
         (job_dir / "bootstrap_failure_traceback.log").write_text(traceback.format_exc(), encoding="utf-8")
@@ -133,7 +141,7 @@ def command(args: argparse.Namespace) -> int:
             lockDigest=lock_digest,
             error="SANDBOX_BOOTSTRAP_FAILED",
             detail=f"Sandbox bootstrap step {bootstrap_step!r} failed{exit_detail}.",
-            artifacts=["runner.log", "bootstrap_failure_traceback.log"],
+            artifacts=[name for name in ("source_receipt.json", "runner.log", "bootstrap_failure_traceback.log") if (job_dir / name).is_file()],
         )
         return 1
 

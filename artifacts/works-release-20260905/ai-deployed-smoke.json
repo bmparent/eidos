@@ -1,0 +1,11 @@
+{
+  "timestamp_utc": "2026-09-05T22:04:25.111Z",
+  "host": "https://release-validation-20260905.eidosworks.pages.dev",
+  "sourceMode": "sources",
+  "sourceReservation": 0,
+  "enhancedMode": "ai",
+  "answerCharacters": 192,
+  "reservedTokens": 2060,
+  "duplicateIdentical": true,
+  "duplicateAdditionalReservation": 0
+}

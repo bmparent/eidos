@@ -1,0 +1,13 @@
+{
+  "id": "dpl_E4h7W4qLAgn5sd3ptPh4ihzAjPYy",
+  "url": "eidos-sentinel-kr54nwpks-1brentbm-1876s-projects.vercel.app",
+  "alias": [
+    "eidos-sentinel-lab.vercel.app",
+    "eidos-sentinel-lab-1brentbm-1876s-projects.vercel.app",
+    "eidos-sentinel-lab-git-main-1brentbm-1876s-projects.vercel.app"
+  ],
+  "commit": "771076ab2b2c0487d9abe4d19522cde7fa6e6b3a",
+  "state": "READY",
+  "target": "production",
+  "verifiedAt": "2026-09-07T20:30:36.316Z"
+}

@@ -1,0 +1,925 @@
+verify	Set up job	﻿2026-09-06T23:55:27.9169499Z Current runner version: '2.337.0'
+verify	Set up job	2026-09-06T23:55:27.9195427Z ##[group]Runner Image Provisioner
+verify	Set up job	2026-09-06T23:55:27.9196692Z Hosted Compute Agent
+verify	Set up job	2026-09-06T23:55:27.9197335Z Version: 20260828.587
+verify	Set up job	2026-09-06T23:55:27.9197968Z Commit: abac92662cab4cc7352de4f9f9d2e2419aad9c29
+verify	Set up job	2026-09-06T23:55:27.9198822Z Build Date: 2026-08-28T16:44:25Z
+verify	Set up job	2026-09-06T23:55:27.9199526Z Worker ID: {fc446341-be39-49fa-a166-8f53a9140e86}
+verify	Set up job	2026-09-06T23:55:27.9200337Z Azure Region: westus2
+verify	Set up job	2026-09-06T23:55:27.9200943Z ##[endgroup]
+verify	Set up job	2026-09-06T23:55:27.9202557Z ##[group]Operating System
+verify	Set up job	2026-09-06T23:55:27.9203352Z Ubuntu
+verify	Set up job	2026-09-06T23:55:27.9203892Z 24.04.4
+verify	Set up job	2026-09-06T23:55:27.9204449Z LTS
+verify	Set up job	2026-09-06T23:55:27.9204996Z ##[endgroup]
+verify	Set up job	2026-09-06T23:55:27.9205565Z ##[group]Runner Image
+verify	Set up job	2026-09-06T23:55:27.9206905Z Image: ubuntu-24.04
+verify	Set up job	2026-09-06T23:55:27.9207525Z Version: 20260831.293.1
+verify	Set up job	2026-09-06T23:55:27.9208700Z Included Software: https://github.com/actions/runner-images/blob/ubuntu24/20260831.293/images/ubuntu/Ubuntu2404-Readme.md
+verify	Set up job	2026-09-06T23:55:27.9210419Z Image Release: https://github.com/actions/runner-images/releases/tag/ubuntu24%2F20260831.293
+verify	Set up job	2026-09-06T23:55:27.9211478Z ##[endgroup]
+verify	Set up job	2026-09-06T23:55:27.9212599Z ##[group]GITHUB_TOKEN Permissions
+verify	Set up job	2026-09-06T23:55:27.9214949Z Contents: read
+verify	Set up job	2026-09-06T23:55:27.9215585Z Metadata: read
+verify	Set up job	2026-09-06T23:55:27.9216517Z ##[endgroup]
+verify	Set up job	2026-09-06T23:55:27.9218634Z Secret source: Actions
+verify	Set up job	2026-09-06T23:55:27.9219730Z Prepare workflow directory
+verify	Set up job	2026-09-06T23:55:27.9640104Z Prepare all required actions
+verify	Set up job	2026-09-06T23:55:27.9689901Z Getting action download info
+verify	Set up job	2026-09-06T23:55:28.3066790Z Download action repository 'actions/checkout@v4' (SHA:11d5960a326750d5838078e36cf38b85af677262)
+verify	Set up job	2026-09-06T23:55:28.4484021Z Download action repository 'actions/setup-node@v4' (SHA:49933ea5288caeca8642d1e84afbd3f7d6820020)
+verify	Set up job	2026-09-06T23:55:28.6417558Z Complete job name: verify
+verify	Run actions/checkout@v4	﻿2026-09-06T23:55:28.7201516Z Node 20 is being deprecated. This workflow is running with Node 24 by default. If you need to temporarily use Node 20, you can set the ACTIONS_ALLOW_USE_UNSECURE_NODE_VERSION=true environment variable. For more information see: https://github.blog/changelog/2025-09-19-deprecation-of-node-20-on-github-actions-runners/
+verify	Run actions/checkout@v4	2026-09-06T23:55:28.7210982Z ##[group]Run actions/checkout@v4
+verify	Run actions/checkout@v4	2026-09-06T23:55:28.7211745Z with:
+verify	Run actions/checkout@v4	2026-09-06T23:55:28.7212207Z   repository: bmparent/eidos
+verify	Run actions/checkout@v4	2026-09-06T23:55:28.7216521Z   token: ***
+verify	Run actions/checkout@v4	2026-09-06T23:55:28.7216979Z   ssh-strict: true
+verify	Run actions/checkout@v4	2026-09-06T23:55:28.7217438Z   ssh-user: git
+verify	Run actions/checkout@v4	2026-09-06T23:55:28.7217908Z   persist-credentials: true
+verify	Run actions/checkout@v4	2026-09-06T23:55:28.7218420Z   clean: true
+verify	Run actions/checkout@v4	2026-09-06T23:55:28.7218886Z   sparse-checkout-cone-mode: true
+verify	Run actions/checkout@v4	2026-09-06T23:55:28.7219424Z   fetch-depth: 1
+verify	Run actions/checkout@v4	2026-09-06T23:55:28.7219880Z   fetch-tags: false
+verify	Run actions/checkout@v4	2026-09-06T23:55:28.7220353Z   show-progress: true
+verify	Run actions/checkout@v4	2026-09-06T23:55:28.7220819Z   lfs: false
+verify	Run actions/checkout@v4	2026-09-06T23:55:28.7221252Z   submodules: false
+verify	Run actions/checkout@v4	2026-09-06T23:55:28.7221773Z   set-safe-directory: true
+verify	Run actions/checkout@v4	2026-09-06T23:55:28.7222291Z   allow-unsafe-pr-checkout: false
+verify	Run actions/checkout@v4	2026-09-06T23:55:28.7223090Z ##[endgroup]
+verify	Run actions/checkout@v4	2026-09-06T23:55:28.8263657Z Syncing repository: bmparent/eidos
+verify	Run actions/checkout@v4	2026-09-06T23:55:28.8266054Z ##[group]Getting Git version info
+verify	Run actions/checkout@v4	2026-09-06T23:55:28.8266954Z Working directory is '/home/runner/work/eidos/eidos'
+verify	Run actions/checkout@v4	2026-09-06T23:55:28.8268107Z [command]/usr/bin/git version
+verify	Run actions/checkout@v4	2026-09-06T23:55:28.8357288Z git version 2.55.0
+verify	Run actions/checkout@v4	2026-09-06T23:55:28.8393053Z ##[endgroup]
+verify	Run actions/checkout@v4	2026-09-06T23:55:28.8412598Z Temporarily overriding HOME='/home/runner/work/_temp/742e470a-fe66-4368-afda-5353b81920e9' before making global git config changes
+verify	Run actions/checkout@v4	2026-09-06T23:55:28.8414922Z Adding repository directory to the temporary git global config as a safe directory
+verify	Run actions/checkout@v4	2026-09-06T23:55:28.8419647Z [command]/usr/bin/git config --global --add safe.directory /home/runner/work/eidos/eidos
+verify	Run actions/checkout@v4	2026-09-06T23:55:28.8477247Z Deleting the contents of '/home/runner/work/eidos/eidos'
+verify	Run actions/checkout@v4	2026-09-06T23:55:28.8481935Z ##[group]Initializing the repository
+verify	Run actions/checkout@v4	2026-09-06T23:55:28.8488342Z [command]/usr/bin/git init /home/runner/work/eidos/eidos
+verify	Run actions/checkout@v4	2026-09-06T23:55:28.8603275Z hint: Using 'master' as the name for the initial branch. This default branch name
+verify	Run actions/checkout@v4	2026-09-06T23:55:28.8605052Z hint: will change to "main" in Git 3.0. To configure the initial branch name
+verify	Run actions/checkout@v4	2026-09-06T23:55:28.8607088Z hint: to use in all of your new repositories, which will suppress this warning,
+verify	Run actions/checkout@v4	2026-09-06T23:55:28.8608381Z hint: call:
+verify	Run actions/checkout@v4	2026-09-06T23:55:28.8609016Z hint:
+verify	Run actions/checkout@v4	2026-09-06T23:55:28.8609850Z hint: 	git config --global init.defaultBranch <name>
+verify	Run actions/checkout@v4	2026-09-06T23:55:28.8610824Z hint:
+verify	Run actions/checkout@v4	2026-09-06T23:55:28.8611750Z hint: Names commonly chosen instead of 'master' are 'main', 'trunk' and
+verify	Run actions/checkout@v4	2026-09-06T23:55:28.8613328Z hint: 'development'. The just-created branch can be renamed via this command:
+verify	Run actions/checkout@v4	2026-09-06T23:55:28.8614535Z hint:
+verify	Run actions/checkout@v4	2026-09-06T23:55:28.8615219Z hint: 	git branch -m <name>
+verify	Run actions/checkout@v4	2026-09-06T23:55:28.8616182Z hint:
+verify	Run actions/checkout@v4	2026-09-06T23:55:28.8617282Z hint: Disable this message with "git config set advice.defaultBranchName false"
+verify	Run actions/checkout@v4	2026-09-06T23:55:28.8618951Z Initialized empty Git repository in /home/runner/work/eidos/eidos/.git/
+verify	Run actions/checkout@v4	2026-09-06T23:55:28.8622879Z [command]/usr/bin/git remote add origin https://github.com/bmparent/eidos
+verify	Run actions/checkout@v4	2026-09-06T23:55:28.8672035Z ##[endgroup]
+verify	Run actions/checkout@v4	2026-09-06T23:55:28.8673455Z ##[group]Disabling automatic garbage collection
+verify	Run actions/checkout@v4	2026-09-06T23:55:28.8676281Z [command]/usr/bin/git config --local gc.auto 0
+verify	Run actions/checkout@v4	2026-09-06T23:55:28.8711938Z ##[endgroup]
+verify	Run actions/checkout@v4	2026-09-06T23:55:28.8713355Z ##[group]Setting up auth
+verify	Run actions/checkout@v4	2026-09-06T23:55:28.8720179Z [command]/usr/bin/git config --local --name-only --get-regexp core\.sshCommand
+verify	Run actions/checkout@v4	2026-09-06T23:55:28.8756292Z [command]/usr/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'core\.sshCommand' && git config --local --unset-all 'core.sshCommand' || :"
+verify	Run actions/checkout@v4	2026-09-06T23:55:28.9142600Z [command]/usr/bin/git config --local --name-only --get-regexp http\.https\:\/\/github\.com\/\.extraheader
+verify	Run actions/checkout@v4	2026-09-06T23:55:28.9184446Z [command]/usr/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'http\.https\:\/\/github\.com\/\.extraheader' && git config --local --unset-all 'http.https://github.com/.extraheader' || :"
+verify	Run actions/checkout@v4	2026-09-06T23:55:28.9427199Z [command]/usr/bin/git config --local --name-only --get-regexp ^includeIf\.gitdir:
+verify	Run actions/checkout@v4	2026-09-06T23:55:28.9466722Z [command]/usr/bin/git submodule foreach --recursive git config --local --show-origin --name-only --get-regexp remote.origin.url
+verify	Run actions/checkout@v4	2026-09-06T23:55:28.9705463Z [command]/usr/bin/git config --local http.https://github.com/.extraheader AUTHORIZATION: basic ***
+verify	Run actions/checkout@v4	2026-09-06T23:55:28.9751965Z ##[endgroup]
+verify	Run actions/checkout@v4	2026-09-06T23:55:28.9753088Z ##[group]Fetching the repository
+verify	Run actions/checkout@v4	2026-09-06T23:55:28.9767985Z [command]/usr/bin/git -c protocol.version=2 fetch --no-tags --prune --no-recurse-submodules --depth=1 origin +9f4fc52ef79d36b9e268e124413afc1ae2f1f857:refs/remotes/origin/main
+verify	Run actions/checkout@v4	2026-09-06T23:55:31.5938897Z From https://github.com/bmparent/eidos
+verify	Run actions/checkout@v4	2026-09-06T23:55:31.5967622Z  * [new ref]         9f4fc52ef79d36b9e268e124413afc1ae2f1f857 -> origin/main
+verify	Run actions/checkout@v4	2026-09-06T23:55:31.6000147Z ##[endgroup]
+verify	Run actions/checkout@v4	2026-09-06T23:55:31.6001656Z ##[group]Determining the checkout info
+verify	Run actions/checkout@v4	2026-09-06T23:55:31.6003445Z ##[endgroup]
+verify	Run actions/checkout@v4	2026-09-06T23:55:31.6004431Z [command]/usr/bin/git sparse-checkout disable
+verify	Run actions/checkout@v4	2026-09-06T23:55:31.6019806Z [command]/usr/bin/git config --local --unset-all extensions.worktreeConfig
+verify	Run actions/checkout@v4	2026-09-06T23:55:31.6059111Z ##[group]Checking out the ref
+verify	Run actions/checkout@v4	2026-09-06T23:55:31.6068431Z [command]/usr/bin/git checkout --progress --force -B main refs/remotes/origin/main
+verify	Run actions/checkout@v4	2026-09-06T23:55:32.3518544Z Switched to a new branch 'main'
+verify	Run actions/checkout@v4	2026-09-06T23:55:32.3547150Z branch 'main' set up to track 'origin/main'.
+verify	Run actions/checkout@v4	2026-09-06T23:55:32.3549238Z ##[endgroup]
+verify	Run actions/checkout@v4	2026-09-06T23:55:32.3594962Z [command]/usr/bin/git log -1 --format=%H
+verify	Run actions/checkout@v4	2026-09-06T23:55:32.3623502Z 9f4fc52ef79d36b9e268e124413afc1ae2f1f857
+verify	Run actions/setup-node@v4	﻿2026-09-06T23:55:32.3895707Z Node 20 is being deprecated. This workflow is running with Node 24 by default. If you need to temporarily use Node 20, you can set the ACTIONS_ALLOW_USE_UNSECURE_NODE_VERSION=true environment variable. For more information see: https://github.blog/changelog/2025-09-19-deprecation-of-node-20-on-github-actions-runners/
+verify	Run actions/setup-node@v4	2026-09-06T23:55:32.3898486Z ##[group]Run actions/setup-node@v4
+verify	Run actions/setup-node@v4	2026-09-06T23:55:32.3898830Z with:
+verify	Run actions/setup-node@v4	2026-09-06T23:55:32.3899081Z   node-version: 24
+verify	Run actions/setup-node@v4	2026-09-06T23:55:32.3899339Z   cache: npm
+verify	Run actions/setup-node@v4	2026-09-06T23:55:32.3899696Z   cache-dependency-path: apps/sentinel-lab/package-lock.json
+verify	Run actions/setup-node@v4	2026-09-06T23:55:32.3900113Z   always-auth: false
+verify	Run actions/setup-node@v4	2026-09-06T23:55:32.3900392Z   check-latest: false
+verify	Run actions/setup-node@v4	2026-09-06T23:55:32.3903127Z   token: ***
+verify	Run actions/setup-node@v4	2026-09-06T23:55:32.3903524Z ##[endgroup]
+verify	Run actions/setup-node@v4	2026-09-06T23:55:32.5358271Z Found in cache @ /opt/hostedtoolcache/node/24.20.0/x64
+verify	Run actions/setup-node@v4	2026-09-06T23:55:32.5363245Z (node:2266) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.
+verify	Run actions/setup-node@v4	2026-09-06T23:55:32.5364283Z (Use `node --trace-deprecation ...` to show where the warning was created)
+verify	Run actions/setup-node@v4	2026-09-06T23:55:32.5366366Z ##[group]Environment details
+verify	Run actions/setup-node@v4	2026-09-06T23:55:32.9353670Z node: v24.20.0
+verify	Run actions/setup-node@v4	2026-09-06T23:55:32.9354455Z npm: 11.19.0
+verify	Run actions/setup-node@v4	2026-09-06T23:55:32.9354870Z yarn: 1.22.22
+verify	Run actions/setup-node@v4	2026-09-06T23:55:32.9356985Z ##[endgroup]
+verify	Run actions/setup-node@v4	2026-09-06T23:55:32.9381911Z [command]/opt/hostedtoolcache/node/24.20.0/x64/bin/npm config get cache
+verify	Run actions/setup-node@v4	2026-09-06T23:55:33.0573214Z /home/runner/.npm
+verify	Run actions/setup-node@v4	2026-09-06T23:55:33.3089983Z Cache hit for: node-cache-Linux-x64-npm-b40def06d2decf3f3f2369d268fb8d9f4657b4d6e4dca03780b5f0bf9dbbe12e
+verify	Run actions/setup-node@v4	2026-09-06T23:55:33.3229577Z (node:2266) [DEP0169] DeprecationWarning: `url.parse()` behavior is not standardized and prone to errors that have security implications. Use the WHATWG URL API instead. CVEs are not issued for `url.parse()` vulnerabilities.
+verify	Run actions/setup-node@v4	2026-09-06T23:55:34.6081094Z Received 0 of 148349673 (0.0%), 0.0 MBs/sec
+verify	Run actions/setup-node@v4	2026-09-06T23:55:35.6117651Z Received 109051904 of 148349673 (73.5%), 52.0 MBs/sec
+verify	Run actions/setup-node@v4	2026-09-06T23:55:36.2921933Z Received 148349673 of 148349673 (100.0%), 52.7 MBs/sec
+verify	Run actions/setup-node@v4	2026-09-06T23:55:36.2922907Z Cache Size: ~141 MB (148349673 B)
+verify	Run actions/setup-node@v4	2026-09-06T23:55:36.2961250Z [command]/usr/bin/tar -xf /home/runner/work/_temp/d6aed308-1a73-4f60-b33c-3b04491befbc/cache.tzst -P -C /home/runner/work/eidos/eidos --use-compress-program unzstd
+verify	Run actions/setup-node@v4	2026-09-06T23:55:36.4804687Z Cache restored successfully
+verify	Run actions/setup-node@v4	2026-09-06T23:55:36.4875551Z Cache restored from key: node-cache-Linux-x64-npm-b40def06d2decf3f3f2369d268fb8d9f4657b4d6e4dca03780b5f0bf9dbbe12e
+verify	Run npm ci --no-audit --no-fund	﻿2026-09-06T23:55:36.5070604Z ##[group]Run npm ci --no-audit --no-fund
+verify	Run npm ci --no-audit --no-fund	2026-09-06T23:55:36.5071019Z [36;1mnpm ci --no-audit --no-fund[0m
+verify	Run npm ci --no-audit --no-fund	2026-09-06T23:55:36.5123645Z shell: /usr/bin/bash -e {0}
+verify	Run npm ci --no-audit --no-fund	2026-09-06T23:55:36.5123945Z ##[endgroup]
+verify	Run npm ci --no-audit --no-fund	2026-09-06T23:55:44.8456884Z 
+verify	Run npm ci --no-audit --no-fund	2026-09-06T23:55:44.8472897Z added 68 packages in 8s
+verify	Run npm ci --no-audit --no-fund	2026-09-06T23:55:44.8484357Z npm warn install-scripts 1 package has install scripts not yet covered by allowScripts:
+verify	Run npm ci --no-audit --no-fund	2026-09-06T23:55:44.8486274Z npm warn install-scripts   esbuild@0.28.2 (postinstall: node install.js)
+verify	Run npm ci --no-audit --no-fund	2026-09-06T23:55:44.8487303Z npm warn install-scripts
+verify	Run npm ci --no-audit --no-fund	2026-09-06T23:55:44.8488836Z npm warn install-scripts Run `npm install-scripts ls` to review, or `npm install-scripts approve <pkg>` to allow.
+verify	Run npm run lint	﻿2026-09-06T23:55:44.9361770Z ##[group]Run npm run lint
+verify	Run npm run lint	2026-09-06T23:55:44.9362093Z [36;1mnpm run lint[0m
+verify	Run npm run lint	2026-09-06T23:55:44.9402271Z shell: /usr/bin/bash -e {0}
+verify	Run npm run lint	2026-09-06T23:55:44.9402545Z ##[endgroup]
+verify	Run npm run lint	2026-09-06T23:55:45.0491915Z 
+verify	Run npm run lint	2026-09-06T23:55:45.0492532Z > eidos-sentinel-lab@0.2.0 lint
+verify	Run npm run lint	2026-09-06T23:55:45.0493162Z > tsc --noEmit
+verify	Run npm run lint	2026-09-06T23:55:45.0493450Z 
+verify	Run npm test	﻿2026-09-06T23:55:48.5215264Z ##[group]Run npm test
+verify	Run npm test	2026-09-06T23:55:48.5215572Z [36;1mnpm test[0m
+verify	Run npm test	2026-09-06T23:55:48.5252886Z shell: /usr/bin/bash -e {0}
+verify	Run npm test	2026-09-06T23:55:48.5253175Z ##[endgroup]
+verify	Run npm test	2026-09-06T23:55:48.6392343Z 
+verify	Run npm test	2026-09-06T23:55:48.6393146Z > eidos-sentinel-lab@0.2.0 test
+verify	Run npm test	2026-09-06T23:55:48.6394166Z > node --test tests/*.test.mjs && node --import tsx --test tests/*.test.ts
+verify	Run npm test	2026-09-06T23:55:48.6394828Z 
+verify	Run npm test	2026-09-06T23:55:48.7840512Z ✔ default real-data spec produces a stable canonical lock (5.425991ms)
+verify	Run npm test	2026-09-06T23:55:48.7858641Z ✔ real-data spec requires version and rejects path traversal (0.767416ms)
+verify	Run npm test	2026-09-06T23:55:48.7860544Z ✔ proof and label-isolation locks cannot be relaxed (0.421102ms)
+verify	Run npm test	2026-09-06T23:55:48.7862050Z ✔ preflight blocks dispatch without changing scientific readiness (24.880404ms)
+verify	Run npm test	2026-09-06T23:55:48.7863608Z ✔ backend-specific blockers remain explicit and fail closed (0.741188ms)
+verify	Run npm test	2026-09-06T23:55:48.7865083Z ✔ stale launcher receipts fail closed without advancing proof gates (1.602537ms)
+verify	Run npm test	2026-09-06T23:55:48.7866782Z ✔ launcher command inspection is rate limited (0.326516ms)
+verify	Run npm test	2026-09-06T23:55:48.7875058Z ✔ sandbox allocation errors return a stable diagnostic response instead of a generic 400 (0.820294ms)
+verify	Run npm test	2026-09-06T23:55:48.7877132Z ✔ dispatch diagnostics preserve useful provider context while redacting credentials (1.121514ms)
+verify	Run npm test	2026-09-06T23:55:48.7893916Z ✔ known capacity and configuration failures retain their public contracts (0.63524ms)
+verify	Run npm test	2026-09-06T23:55:48.7895458Z ✔ request parse failures and stage wrappers remain explicit (0.842525ms)
+verify	Run npm test	2026-09-06T23:55:48.8287748Z ✔ engineering smoke is deterministic for a locked request (30.57869ms)
+verify	Run npm test	2026-09-06T23:55:48.8297223Z ✔ held-out seeds are inaccessible (0.674684ms)
+verify	Run npm test	2026-09-06T23:55:48.8299734Z ✔ smoke output cannot advance proof gates (6.524349ms)
+verify	Run npm test	2026-09-06T23:55:48.8303902Z ✔ incident language remains calibrated (6.078493ms)
+verify	Run npm test	2026-09-06T23:55:48.8309715Z ✔ all registered engineering scenarios return finite traces (51.354919ms)
+verify	Run npm test	2026-09-06T23:55:48.8404985Z ℹ tests 16
+verify	Run npm test	2026-09-06T23:55:48.8405595Z ℹ suites 0
+verify	Run npm test	2026-09-06T23:55:48.8406163Z ℹ pass 16
+verify	Run npm test	2026-09-06T23:55:48.8406429Z ℹ fail 0
+verify	Run npm test	2026-09-06T23:55:48.8406660Z ℹ cancelled 0
+verify	Run npm test	2026-09-06T23:55:48.8406907Z ℹ skipped 0
+verify	Run npm test	2026-09-06T23:55:48.8407221Z ℹ todo 0
+verify	Run npm test	2026-09-06T23:55:48.8407563Z ℹ duration_ms 167.428064
+verify	Run npm test	2026-09-06T23:55:49.4117941Z ✔ independent clients cannot exceed capacity and retries return the same job (88.01782ms)
+verify	Run npm test	2026-09-06T23:55:49.4176997Z ✔ abandoned reservations recover, stale allocators are fenced and old retry keys never relaunch (3.953244ms)
+verify	Run npm test	2026-09-06T23:55:49.4214093Z ✔ allocation uncertainty retains its slot beyond expiry until provider reconciliation (3.157697ms)
+verify	Run npm test	2026-09-06T23:55:49.4247399Z ✔ admission fails closed without remote storage or a valid retry key (0.57603ms)
+verify	Run npm test	2026-09-06T23:55:49.4337496Z ✔ immutable verifier checks bytes, missing and forbidden paths without opening raw inputs (111.267143ms)
+verify	Run npm test	2026-09-06T23:55:49.4407361Z {"level":"info","event":"experiment_dispatch_started","route":"/api/experiments","diagnosticId":"7d0de5a5-e2ba-4fd1-abef-921f2006a2ed","requestId":null}
+verify	Run npm test	2026-09-06T23:55:49.4453557Z {"level":"error","event":"experiment_dispatch_failed","route":"/api/experiments","diagnosticId":"7d0de5a5-e2ba-4fd1-abef-921f2006a2ed","requestId":null,"stage":"operator_auth","code":"OPERATOR_AUTH_REQUIRED","status":401,"retryable":false,"durationMs":2,"diagnostic":{"type":"Error","message":"OPERATOR_AUTH_REQUIRED"}}
+verify	Run npm test	2026-09-06T23:55:49.4598061Z ✔ changing a dataset source invalidates inherited hashes, filenames and unknown versions (1.646309ms)
+verify	Run npm test	2026-09-06T23:55:49.4710406Z ✔ only explicit numeric values and allowlisted engine profiles can be locked (1.735143ms)
+verify	Run npm test	2026-09-06T23:55:49.4757893Z ✔ operator and full-capacity gates stay closed before any dispatch (34.580345ms)
+verify	Run npm test	2026-09-06T23:55:49.4766750Z ✔ bounded JSON handling rejects malformed and chunked oversized requests (38.290446ms)
+verify	Run npm test	2026-09-06T23:55:50.2758290Z {"event":"experiment_artifact_failed","diagnosticId":"dac0d046-1e09-40aa-905d-4f6cc076de24","code":"OPERATOR_AUTH_REQUIRED","status":401,"diagnostic":{"type":"Error","message":"OPERATOR_AUTH_REQUIRED"}}
+verify	Run npm test	2026-09-06T23:55:50.2807386Z {"event":"experiment_artifact_failed","diagnosticId":"420da5f9-d95a-4e78-b556-f000a47a6aea","code":"Artifact not found.","status":404,"diagnostic":{"type":"Error","message":"Artifact not found."}}
+verify	Run npm test	2026-09-06T23:55:50.2817759Z {"event":"experiment_status_failed","diagnosticId":"b58aae81-1252-47e7-8d99-fab855d6ae2c","code":"EXPERIMENT_STATUS_UNAVAILABLE","status":502,"diagnostic":{"type":"Error","message":"503 token=[REDACTED]"}}
+verify	Run npm test	2026-09-06T23:55:50.2866965Z ✔ full immutable verification resumes only a completed snapshot and reports provider cleanup (3.032735ms)
+verify	Run npm test	2026-09-06T23:55:50.2873604Z ✔ immutable verification is unavailable for active jobs and does not stop them (1.132834ms)
+verify	Run npm test	2026-09-06T23:55:50.2878946Z ✔ dispatch uses the verified checkout and commits its source and command receipts (8.259945ms)
+verify	Run npm test	2026-09-06T23:55:50.2881973Z ✔ reading or missing an artifact never stops a running experiment (0.885465ms)
+verify	Run npm test	2026-09-06T23:55:50.2884680Z ✔ stopped snapshot retrieval cleans up after runner.log (0.773678ms)
+verify	Run npm test	2026-09-06T23:55:50.2897064Z ✔ stopped snapshot retrieval cleans up after metrics.json (0.734474ms)
+verify	Run npm test	2026-09-06T23:55:50.2898687Z ✔ expired active receipts are persisted once and survive later retrieval (0.956497ms)
+verify	Run npm test	2026-09-06T23:55:50.2900639Z ✔ transient monitoring and snapshot read failures do not fabricate engine failure or expiry (0.920891ms)
+verify	Run npm test	2026-09-06T23:55:50.2902400Z ✔ confirmed launcher exit commits a failure and releases compute (0.798373ms)
+verify	Run npm test	2026-09-06T23:55:50.2905147Z ✔ completed receipts retain results and stop compute (1.150117ms)
+verify	Run npm test	2026-09-06T23:55:50.2909917Z ✔ artifact and status routes enforce authentication, byte delivery, allowlists and retryable errors (9.609442ms)
+verify	Run npm test	2026-09-06T23:55:50.3717522Z ✔ source probe verifies a real Git checkout in the provider cwd (164.371895ms)
+verify	Run npm test	2026-09-06T23:55:50.3718660Z ✔ source probe verifies a real Git checkout in a child directory (98.701531ms)
+verify	Run npm test	2026-09-06T23:55:50.3719519Z ✔ source verification blocks wrong commit (425.757592ms)
+verify	Run npm test	2026-09-06T23:55:50.6263050Z ✔ source verification blocks changed source (254.545211ms)
+verify	Run npm test	2026-09-06T23:55:50.8661456Z ✔ source verification blocks missing launcher (239.575931ms)
+verify	Run npm test	2026-09-06T23:55:51.1437040Z ✔ source verification blocks ambiguous checkout (277.529554ms)
+verify	Run npm test	2026-09-06T23:55:51.1556624Z ✔ Relay authentication, exact origins, routes and method gates (37.254623ms)
+verify	Run npm test	2026-09-06T23:55:51.1558042Z ✔ Published answers work with no database, model key or outbound fetch (2.894117ms)
+verify	Run npm test	2026-09-06T23:55:51.1559472Z ✔ Real libSQL adapter reserves atomically and rolls back failed batches (11.701822ms)
+verify	Run npm test	2026-09-06T23:55:51.1560855Z ✔ Sentinel quota and idempotency prevent repeated model calls (46.247111ms)
+verify	Run npm test	2026-09-06T23:55:51.1561888Z ℹ tests 30
+verify	Run npm test	2026-09-06T23:55:51.1562538Z ℹ suites 0
+verify	Run npm test	2026-09-06T23:55:51.1563088Z ℹ pass 30
+verify	Run npm test	2026-09-06T23:55:51.1563610Z ℹ fail 0
+verify	Run npm test	2026-09-06T23:55:51.1564213Z ℹ cancelled 0
+verify	Run npm test	2026-09-06T23:55:51.1565051Z ℹ skipped 0
+verify	Run npm test	2026-09-06T23:55:51.1565602Z ℹ todo 0
+verify	Run npm test	2026-09-06T23:55:51.1566800Z ℹ duration_ms 2279.756016
+verify	Run npm run build	﻿2026-09-06T23:55:51.1730657Z ##[group]Run npm run build
+verify	Run npm run build	2026-09-06T23:55:51.1730967Z [36;1mnpm run build[0m
+verify	Run npm run build	2026-09-06T23:55:51.1768396Z shell: /usr/bin/bash -e {0}
+verify	Run npm run build	2026-09-06T23:55:51.1768668Z ##[endgroup]
+verify	Run npm run build	2026-09-06T23:55:51.2774535Z 
+verify	Run npm run build	2026-09-06T23:55:51.2774946Z > eidos-sentinel-lab@0.2.0 build
+verify	Run npm run build	2026-09-06T23:55:51.2775467Z > next build
+verify	Run npm run build	2026-09-06T23:55:51.2775695Z 
+verify	Run npm run build	2026-09-06T23:55:51.6515785Z ▲ Next.js 16.3.4 (Turbopack)
+verify	Run npm run build	2026-09-06T23:55:51.6780547Z ✓ Running next.config.ts took 26ms
+verify	Run npm run build	2026-09-06T23:55:51.6787598Z ⚠ No build cache found. Please configure build caching for faster rebuilds. Read more: https://nextjs.org/docs/messages/no-cache
+verify	Run npm run build	2026-09-06T23:55:51.6845143Z Attention: Next.js now collects completely anonymous telemetry regarding usage.
+verify	Run npm run build	2026-09-06T23:55:51.6846959Z This information is used to shape Next.js' roadmap and prioritize features.
+verify	Run npm run build	2026-09-06T23:55:51.6848737Z You can learn more, including how to opt-out if you'd not like to participate in this anonymous program, by visiting the following URL:
+verify	Run npm run build	2026-09-06T23:55:51.6850171Z https://nextjs.org/telemetry
+verify	Run npm run build	2026-09-06T23:55:51.6850713Z 
+verify	Run npm run build	2026-09-06T23:55:51.7005611Z 
+verify	Run npm run build	2026-09-06T23:55:51.7356596Z   Creating an optimized production build ...
+verify	Run npm run build	2026-09-06T23:55:57.7666447Z ✓ Compiled successfully in 5.3s
+verify	Run npm run build	2026-09-06T23:55:57.7689829Z   Running TypeScript ...
+verify	Run npm run build	2026-09-06T23:56:01.0655059Z   Finished TypeScript in 3.3s ...
+verify	Run npm run build	2026-09-06T23:56:01.0688460Z   Collecting page data using 3 workers ...
+verify	Run npm run build	2026-09-06T23:56:01.7717518Z   Generating static pages using 3 workers (0/7) ...
+verify	Run npm run build	2026-09-06T23:56:01.8244293Z   Generating static pages using 3 workers (1/7) 
+verify	Run npm run build	2026-09-06T23:56:01.8363295Z   Generating static pages using 3 workers (3/7) 
+verify	Run npm run build	2026-09-06T23:56:02.0082756Z   Generating static pages using 3 workers (5/7) 
+verify	Run npm run build	2026-09-06T23:56:02.0101078Z ✓ Generating static pages using 3 workers (7/7) in 238ms
+verify	Run npm run build	2026-09-06T23:56:02.0137626Z   Finalizing page optimization ...
+verify	Run npm run build	2026-09-06T23:56:02.0279076Z 
+verify	Run npm run build	2026-09-06T23:56:02.0295472Z Route (app)
+verify	Run npm run build	2026-09-06T23:56:02.0296439Z ┌ ○ /
+verify	Run npm run build	2026-09-06T23:56:02.0296865Z ├ ○ /_not-found
+verify	Run npm run build	2026-09-06T23:56:02.0297412Z ├ ƒ /api/datasets
+verify	Run npm run build	2026-09-06T23:56:02.0297901Z ├ ƒ /api/experiments
+verify	Run npm run build	2026-09-06T23:56:02.0298481Z ├ ƒ /api/experiments/[jobId]
+verify	Run npm run build	2026-09-06T23:56:02.0299532Z ├ ƒ /api/experiments/[jobId]/artifacts/[artifactName]
+verify	Run npm run build	2026-09-06T23:56:02.0300366Z ├ ƒ /api/experiments/preflight
+verify	Run npm run build	2026-09-06T23:56:02.0300926Z ├ ƒ /api/smoke
+verify	Run npm run build	2026-09-06T23:56:02.0301459Z └ ƒ /api/works/v1/[...path]
+verify	Run npm run build	2026-09-06T23:56:02.0301783Z 
+verify	Run npm run build	2026-09-06T23:56:02.0301797Z 
+verify	Run npm run build	2026-09-06T23:56:02.0302225Z ○  (Static)   prerendered as static content
+verify	Run npm run build	2026-09-06T23:56:02.0302937Z ƒ  (Dynamic)  server-rendered on demand
+verify	Run npm run build	2026-09-06T23:56:02.0303286Z 
+verify	Post Run actions/setup-node@v4	﻿2026-09-06T23:56:02.5590328Z Node 20 is being deprecated. This workflow is running with Node 24 by default. If you need to temporarily use Node 20, you can set the ACTIONS_ALLOW_USE_UNSECURE_NODE_VERSION=true environment variable. For more information see: https://github.blog/changelog/2025-09-19-deprecation-of-node-20-on-github-actions-runners/
+verify	Post Run actions/setup-node@v4	2026-09-06T23:56:02.5591592Z Post job cleanup.
+verify	Post Run actions/setup-node@v4	2026-09-06T23:56:02.6837252Z (node:2715) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.
+verify	Post Run actions/setup-node@v4	2026-09-06T23:56:02.6838204Z (Use `node --trace-deprecation ...` to show where the warning was created)
+verify	Post Run actions/setup-node@v4	2026-09-06T23:56:02.6841935Z Cache hit occurred on the primary key node-cache-Linux-x64-npm-b40def06d2decf3f3f2369d268fb8d9f4657b4d6e4dca03780b5f0bf9dbbe12e, not saving cache.
+verify	Post Run actions/checkout@v4	﻿2026-09-06T23:56:02.7011172Z Node 20 is being deprecated. This workflow is running with Node 24 by default. If you need to temporarily use Node 20, you can set the ACTIONS_ALLOW_USE_UNSECURE_NODE_VERSION=true environment variable. For more information see: https://github.blog/changelog/2025-09-19-deprecation-of-node-20-on-github-actions-runners/
+verify	Post Run actions/checkout@v4	2026-09-06T23:56:02.7012426Z Post job cleanup.
+verify	Post Run actions/checkout@v4	2026-09-06T23:56:02.7874813Z [command]/usr/bin/git version
+verify	Post Run actions/checkout@v4	2026-09-06T23:56:02.7920991Z git version 2.55.0
+verify	Post Run actions/checkout@v4	2026-09-06T23:56:02.7966192Z Temporarily overriding HOME='/home/runner/work/_temp/668638a9-62fc-454f-a81e-218638638fee' before making global git config changes
+verify	Post Run actions/checkout@v4	2026-09-06T23:56:02.7968226Z Adding repository directory to the temporary git global config as a safe directory
+verify	Post Run actions/checkout@v4	2026-09-06T23:56:02.7972309Z [command]/usr/bin/git config --global --add safe.directory /home/runner/work/eidos/eidos
+verify	Post Run actions/checkout@v4	2026-09-06T23:56:02.8016865Z [command]/usr/bin/git config --local --name-only --get-regexp core\.sshCommand
+verify	Post Run actions/checkout@v4	2026-09-06T23:56:02.8057673Z [command]/usr/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'core\.sshCommand' && git config --local --unset-all 'core.sshCommand' || :"
+verify	Post Run actions/checkout@v4	2026-09-06T23:56:02.8324813Z [command]/usr/bin/git config --local --name-only --get-regexp http\.https\:\/\/github\.com\/\.extraheader
+verify	Post Run actions/checkout@v4	2026-09-06T23:56:02.8352029Z http.https://github.com/.extraheader
+verify	Post Run actions/checkout@v4	2026-09-06T23:56:02.8365539Z [command]/usr/bin/git config --local --unset-all http.https://github.com/.extraheader
+verify	Post Run actions/checkout@v4	2026-09-06T23:56:02.8401770Z [command]/usr/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'http\.https\:\/\/github\.com\/\.extraheader' && git config --local --unset-all 'http.https://github.com/.extraheader' || :"
+verify	Post Run actions/checkout@v4	2026-09-06T23:56:02.8670173Z [command]/usr/bin/git config --local --name-only --get-regexp ^includeIf\.gitdir:
+verify	Post Run actions/checkout@v4	2026-09-06T23:56:02.8715606Z [command]/usr/bin/git submodule foreach --recursive git config --local --show-origin --name-only --get-regexp remote.origin.url
+verify	Complete job	﻿2026-09-06T23:56:02.9115563Z Cleaning up orphan processes
+verify	Complete job	2026-09-06T23:56:02.9458742Z ##[warning]Node.js 20 is deprecated. The following actions target Node.js 20 but are being forced to run on Node.js 24: actions/checkout@v4, actions/setup-node@v4. For more information see: https://github.blog/changelog/2025-09-19-deprecation-of-node-20-on-github-actions-runners/
+runner	Set up job	﻿2026-09-06T23:55:25.8684270Z Current runner version: '2.337.0'
+runner	Set up job	2026-09-06T23:55:25.8701105Z ##[group]Runner Image Provisioner
+runner	Set up job	2026-09-06T23:55:25.8701780Z Hosted Compute Agent
+runner	Set up job	2026-09-06T23:55:25.8702203Z Version: 20260828.587
+runner	Set up job	2026-09-06T23:55:25.8702696Z Commit: abac92662cab4cc7352de4f9f9d2e2419aad9c29
+runner	Set up job	2026-09-06T23:55:25.8703202Z Build Date: 2026-08-28T16:44:25Z
+runner	Set up job	2026-09-06T23:55:25.8703665Z Worker ID: {13305516-0c28-4929-9c58-983b115d8c82}
+runner	Set up job	2026-09-06T23:55:25.8704168Z Azure Region: centralus
+runner	Set up job	2026-09-06T23:55:25.8704576Z ##[endgroup]
+runner	Set up job	2026-09-06T23:55:25.8705566Z ##[group]Operating System
+runner	Set up job	2026-09-06T23:55:25.8706015Z Ubuntu
+runner	Set up job	2026-09-06T23:55:25.8706426Z 24.04.4
+runner	Set up job	2026-09-06T23:55:25.8707057Z LTS
+runner	Set up job	2026-09-06T23:55:25.8707570Z ##[endgroup]
+runner	Set up job	2026-09-06T23:55:25.8707988Z ##[group]Runner Image
+runner	Set up job	2026-09-06T23:55:25.8708405Z Image: ubuntu-24.04
+runner	Set up job	2026-09-06T23:55:25.8708784Z Version: 20260831.293.1
+runner	Set up job	2026-09-06T23:55:25.8709523Z Included Software: https://github.com/actions/runner-images/blob/ubuntu24/20260831.293/images/ubuntu/Ubuntu2404-Readme.md
+runner	Set up job	2026-09-06T23:55:25.8711013Z Image Release: https://github.com/actions/runner-images/releases/tag/ubuntu24%2F20260831.293
+runner	Set up job	2026-09-06T23:55:25.8711676Z ##[endgroup]
+runner	Set up job	2026-09-06T23:55:25.8712419Z ##[group]GITHUB_TOKEN Permissions
+runner	Set up job	2026-09-06T23:55:25.8714161Z Contents: read
+runner	Set up job	2026-09-06T23:55:25.8714580Z Metadata: read
+runner	Set up job	2026-09-06T23:55:25.8715007Z ##[endgroup]
+runner	Set up job	2026-09-06T23:55:25.8716480Z Secret source: Actions
+runner	Set up job	2026-09-06T23:55:25.8717573Z Prepare workflow directory
+runner	Set up job	2026-09-06T23:55:25.8986709Z Prepare all required actions
+runner	Set up job	2026-09-06T23:55:25.9021547Z Getting action download info
+runner	Set up job	2026-09-06T23:55:26.1206097Z Download action repository 'actions/checkout@v4' (SHA:11d5960a326750d5838078e36cf38b85af677262)
+runner	Set up job	2026-09-06T23:55:26.4090937Z Download action repository 'actions/setup-node@v4' (SHA:49933ea5288caeca8642d1e84afbd3f7d6820020)
+runner	Set up job	2026-09-06T23:55:26.6639661Z Download action repository 'actions/setup-python@v5' (SHA:a26af69be951a213d495a4c3e4e4022e16d87065)
+runner	Set up job	2026-09-06T23:55:27.1078153Z Complete job name: runner
+runner	Run actions/checkout@v4	﻿2026-09-06T23:55:27.1651505Z Node 20 is being deprecated. This workflow is running with Node 24 by default. If you need to temporarily use Node 20, you can set the ACTIONS_ALLOW_USE_UNSECURE_NODE_VERSION=true environment variable. For more information see: https://github.blog/changelog/2025-09-19-deprecation-of-node-20-on-github-actions-runners/
+runner	Run actions/checkout@v4	2026-09-06T23:55:27.1658816Z ##[group]Run actions/checkout@v4
+runner	Run actions/checkout@v4	2026-09-06T23:55:27.1659557Z with:
+runner	Run actions/checkout@v4	2026-09-06T23:55:27.1659973Z   repository: bmparent/eidos
+runner	Run actions/checkout@v4	2026-09-06T23:55:27.1665358Z   token: ***
+runner	Run actions/checkout@v4	2026-09-06T23:55:27.1665795Z   ssh-strict: true
+runner	Run actions/checkout@v4	2026-09-06T23:55:27.1666231Z   ssh-user: git
+runner	Run actions/checkout@v4	2026-09-06T23:55:27.1666712Z   persist-credentials: true
+runner	Run actions/checkout@v4	2026-09-06T23:55:27.1667473Z   clean: true
+runner	Run actions/checkout@v4	2026-09-06T23:55:27.1667918Z   sparse-checkout-cone-mode: true
+runner	Run actions/checkout@v4	2026-09-06T23:55:27.1668466Z   fetch-depth: 1
+runner	Run actions/checkout@v4	2026-09-06T23:55:27.1668891Z   fetch-tags: false
+runner	Run actions/checkout@v4	2026-09-06T23:55:27.1669361Z   show-progress: true
+runner	Run actions/checkout@v4	2026-09-06T23:55:27.1669843Z   lfs: false
+runner	Run actions/checkout@v4	2026-09-06T23:55:27.1670257Z   submodules: false
+runner	Run actions/checkout@v4	2026-09-06T23:55:27.1670863Z   set-safe-directory: true
+runner	Run actions/checkout@v4	2026-09-06T23:55:27.1671361Z   allow-unsafe-pr-checkout: false
+runner	Run actions/checkout@v4	2026-09-06T23:55:27.1672127Z ##[endgroup]
+runner	Run actions/checkout@v4	2026-09-06T23:55:27.2449231Z Syncing repository: bmparent/eidos
+runner	Run actions/checkout@v4	2026-09-06T23:55:27.2450894Z ##[group]Getting Git version info
+runner	Run actions/checkout@v4	2026-09-06T23:55:27.2451529Z Working directory is '/home/runner/work/eidos/eidos'
+runner	Run actions/checkout@v4	2026-09-06T23:55:27.2452578Z [command]/usr/bin/git version
+runner	Run actions/checkout@v4	2026-09-06T23:55:27.2913206Z git version 2.55.0
+runner	Run actions/checkout@v4	2026-09-06T23:55:27.2934347Z ##[endgroup]
+runner	Run actions/checkout@v4	2026-09-06T23:55:27.2950481Z Temporarily overriding HOME='/home/runner/work/_temp/a887362b-d3e7-4610-94d2-748c13b67bac' before making global git config changes
+runner	Run actions/checkout@v4	2026-09-06T23:55:27.2952276Z Adding repository directory to the temporary git global config as a safe directory
+runner	Run actions/checkout@v4	2026-09-06T23:55:27.2954378Z [command]/usr/bin/git config --global --add safe.directory /home/runner/work/eidos/eidos
+runner	Run actions/checkout@v4	2026-09-06T23:55:27.3003244Z Deleting the contents of '/home/runner/work/eidos/eidos'
+runner	Run actions/checkout@v4	2026-09-06T23:55:27.3007958Z ##[group]Initializing the repository
+runner	Run actions/checkout@v4	2026-09-06T23:55:27.3012653Z [command]/usr/bin/git init /home/runner/work/eidos/eidos
+runner	Run actions/checkout@v4	2026-09-06T23:55:27.3114236Z hint: Using 'master' as the name for the initial branch. This default branch name
+runner	Run actions/checkout@v4	2026-09-06T23:55:27.3116198Z hint: will change to "main" in Git 3.0. To configure the initial branch name
+runner	Run actions/checkout@v4	2026-09-06T23:55:27.3117673Z hint: to use in all of your new repositories, which will suppress this warning,
+runner	Run actions/checkout@v4	2026-09-06T23:55:27.3118646Z hint: call:
+runner	Run actions/checkout@v4	2026-09-06T23:55:27.3119061Z hint:
+runner	Run actions/checkout@v4	2026-09-06T23:55:27.3119642Z hint: 	git config --global init.defaultBranch <name>
+runner	Run actions/checkout@v4	2026-09-06T23:55:27.3120270Z hint:
+runner	Run actions/checkout@v4	2026-09-06T23:55:27.3120882Z hint: Names commonly chosen instead of 'master' are 'main', 'trunk' and
+runner	Run actions/checkout@v4	2026-09-06T23:55:27.3121972Z hint: 'development'. The just-created branch can be renamed via this command:
+runner	Run actions/checkout@v4	2026-09-06T23:55:27.3122770Z hint:
+runner	Run actions/checkout@v4	2026-09-06T23:55:27.3123202Z hint: 	git branch -m <name>
+runner	Run actions/checkout@v4	2026-09-06T23:55:27.3123729Z hint:
+runner	Run actions/checkout@v4	2026-09-06T23:55:27.3124374Z hint: Disable this message with "git config set advice.defaultBranchName false"
+runner	Run actions/checkout@v4	2026-09-06T23:55:27.3125546Z Initialized empty Git repository in /home/runner/work/eidos/eidos/.git/
+runner	Run actions/checkout@v4	2026-09-06T23:55:27.3127373Z [command]/usr/bin/git remote add origin https://github.com/bmparent/eidos
+runner	Run actions/checkout@v4	2026-09-06T23:55:27.3157214Z ##[endgroup]
+runner	Run actions/checkout@v4	2026-09-06T23:55:27.3158065Z ##[group]Disabling automatic garbage collection
+runner	Run actions/checkout@v4	2026-09-06T23:55:27.3160029Z [command]/usr/bin/git config --local gc.auto 0
+runner	Run actions/checkout@v4	2026-09-06T23:55:27.3181335Z ##[endgroup]
+runner	Run actions/checkout@v4	2026-09-06T23:55:27.3182236Z ##[group]Setting up auth
+runner	Run actions/checkout@v4	2026-09-06T23:55:27.3185584Z [command]/usr/bin/git config --local --name-only --get-regexp core\.sshCommand
+runner	Run actions/checkout@v4	2026-09-06T23:55:27.3207454Z [command]/usr/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'core\.sshCommand' && git config --local --unset-all 'core.sshCommand' || :"
+runner	Run actions/checkout@v4	2026-09-06T23:55:27.3474062Z [command]/usr/bin/git config --local --name-only --get-regexp http\.https\:\/\/github\.com\/\.extraheader
+runner	Run actions/checkout@v4	2026-09-06T23:55:27.3498203Z [command]/usr/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'http\.https\:\/\/github\.com\/\.extraheader' && git config --local --unset-all 'http.https://github.com/.extraheader' || :"
+runner	Run actions/checkout@v4	2026-09-06T23:55:27.3647013Z [command]/usr/bin/git config --local --name-only --get-regexp ^includeIf\.gitdir:
+runner	Run actions/checkout@v4	2026-09-06T23:55:27.3672301Z [command]/usr/bin/git submodule foreach --recursive git config --local --show-origin --name-only --get-regexp remote.origin.url
+runner	Run actions/checkout@v4	2026-09-06T23:55:27.3820156Z [command]/usr/bin/git config --local http.https://github.com/.extraheader AUTHORIZATION: basic ***
+runner	Run actions/checkout@v4	2026-09-06T23:55:27.3848334Z ##[endgroup]
+runner	Run actions/checkout@v4	2026-09-06T23:55:27.3849224Z ##[group]Fetching the repository
+runner	Run actions/checkout@v4	2026-09-06T23:55:27.3855024Z [command]/usr/bin/git -c protocol.version=2 fetch --no-tags --prune --no-recurse-submodules --depth=1 origin +9f4fc52ef79d36b9e268e124413afc1ae2f1f857:refs/remotes/origin/main
+runner	Run actions/checkout@v4	2026-09-06T23:55:30.0098339Z From https://github.com/bmparent/eidos
+runner	Run actions/checkout@v4	2026-09-06T23:55:30.0099572Z  * [new ref]         9f4fc52ef79d36b9e268e124413afc1ae2f1f857 -> origin/main
+runner	Run actions/checkout@v4	2026-09-06T23:55:30.0103900Z ##[endgroup]
+runner	Run actions/checkout@v4	2026-09-06T23:55:30.0104569Z ##[group]Determining the checkout info
+runner	Run actions/checkout@v4	2026-09-06T23:55:30.0105618Z ##[endgroup]
+runner	Run actions/checkout@v4	2026-09-06T23:55:30.0110825Z [command]/usr/bin/git sparse-checkout disable
+runner	Run actions/checkout@v4	2026-09-06T23:55:30.0151981Z [command]/usr/bin/git config --local --unset-all extensions.worktreeConfig
+runner	Run actions/checkout@v4	2026-09-06T23:55:30.0174129Z ##[group]Checking out the ref
+runner	Run actions/checkout@v4	2026-09-06T23:55:30.0177671Z [command]/usr/bin/git checkout --progress --force -B main refs/remotes/origin/main
+runner	Run actions/checkout@v4	2026-09-06T23:55:30.7664647Z Switched to a new branch 'main'
+runner	Run actions/checkout@v4	2026-09-06T23:55:30.7949045Z branch 'main' set up to track 'origin/main'.
+runner	Run actions/checkout@v4	2026-09-06T23:55:30.7965248Z ##[endgroup]
+runner	Run actions/checkout@v4	2026-09-06T23:55:30.8117965Z [command]/usr/bin/git log -1 --format=%H
+runner	Run actions/checkout@v4	2026-09-06T23:55:30.8129981Z 9f4fc52ef79d36b9e268e124413afc1ae2f1f857
+runner	Run actions/setup-node@v4	﻿2026-09-06T23:55:30.8334558Z Node 20 is being deprecated. This workflow is running with Node 24 by default. If you need to temporarily use Node 20, you can set the ACTIONS_ALLOW_USE_UNSECURE_NODE_VERSION=true environment variable. For more information see: https://github.blog/changelog/2025-09-19-deprecation-of-node-20-on-github-actions-runners/
+runner	Run actions/setup-node@v4	2026-09-06T23:55:30.8336417Z ##[group]Run actions/setup-node@v4
+runner	Run actions/setup-node@v4	2026-09-06T23:55:30.8336674Z with:
+runner	Run actions/setup-node@v4	2026-09-06T23:55:30.8337078Z   node-version: 24
+runner	Run actions/setup-node@v4	2026-09-06T23:55:30.8337394Z   always-auth: false
+runner	Run actions/setup-node@v4	2026-09-06T23:55:30.8337638Z   check-latest: false
+runner	Run actions/setup-node@v4	2026-09-06T23:55:30.8339660Z   token: ***
+runner	Run actions/setup-node@v4	2026-09-06T23:55:30.8339886Z ##[endgroup]
+runner	Run actions/setup-node@v4	2026-09-06T23:55:30.9337227Z Found in cache @ /opt/hostedtoolcache/node/24.20.0/x64
+runner	Run actions/setup-node@v4	2026-09-06T23:55:30.9340670Z (node:2015) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.
+runner	Run actions/setup-node@v4	2026-09-06T23:55:30.9341359Z (Use `node --trace-deprecation ...` to show where the warning was created)
+runner	Run actions/setup-node@v4	2026-09-06T23:55:30.9342474Z ##[group]Environment details
+runner	Run actions/setup-node@v4	2026-09-06T23:55:32.2250703Z node: v24.20.0
+runner	Run actions/setup-node@v4	2026-09-06T23:55:32.2251268Z npm: 11.19.0
+runner	Run actions/setup-node@v4	2026-09-06T23:55:32.2251490Z yarn: 1.22.22
+runner	Run actions/setup-node@v4	2026-09-06T23:55:32.2252635Z ##[endgroup]
+runner	Run actions/setup-python@v5	﻿2026-09-06T23:55:32.2381588Z Node 20 is being deprecated. This workflow is running with Node 24 by default. If you need to temporarily use Node 20, you can set the ACTIONS_ALLOW_USE_UNSECURE_NODE_VERSION=true environment variable. For more information see: https://github.blog/changelog/2025-09-19-deprecation-of-node-20-on-github-actions-runners/
+runner	Run actions/setup-python@v5	2026-09-06T23:55:32.2382578Z ##[group]Run actions/setup-python@v5
+runner	Run actions/setup-python@v5	2026-09-06T23:55:32.2382847Z with:
+runner	Run actions/setup-python@v5	2026-09-06T23:55:32.2383074Z   python-version: 3.14
+runner	Run actions/setup-python@v5	2026-09-06T23:55:32.2383318Z   cache: pip
+runner	Run actions/setup-python@v5	2026-09-06T23:55:32.2383618Z   cache-dependency-path: services/sentinel-runner/pyproject.toml
+runner	Run actions/setup-python@v5	2026-09-06T23:55:32.2383933Z   check-latest: false
+runner	Run actions/setup-python@v5	2026-09-06T23:55:32.2385913Z   token: ***
+runner	Run actions/setup-python@v5	2026-09-06T23:55:32.2386152Z   update-environment: true
+runner	Run actions/setup-python@v5	2026-09-06T23:55:32.2386424Z   allow-prereleases: false
+runner	Run actions/setup-python@v5	2026-09-06T23:55:32.2386689Z   freethreaded: false
+runner	Run actions/setup-python@v5	2026-09-06T23:55:32.2387448Z ##[endgroup]
+runner	Run actions/setup-python@v5	2026-09-06T23:55:32.3330403Z ##[group]Installed versions
+runner	Run actions/setup-python@v5	2026-09-06T23:55:32.3401072Z (node:2046) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.
+runner	Run actions/setup-python@v5	2026-09-06T23:55:32.3401934Z (Use `node --trace-deprecation ...` to show where the warning was created)
+runner	Run actions/setup-python@v5	2026-09-06T23:55:32.3402498Z Successfully set up CPython (3.14.7)
+runner	Run actions/setup-python@v5	2026-09-06T23:55:32.3402959Z ##[endgroup]
+runner	Run actions/setup-python@v5	2026-09-06T23:55:32.3606934Z [command]/opt/hostedtoolcache/Python/3.14.7/x64/bin/pip cache dir
+runner	Run actions/setup-python@v5	2026-09-06T23:55:33.2895615Z /home/runner/.cache/pip
+runner	Run actions/setup-python@v5	2026-09-06T23:55:33.4390765Z Cache hit for: setup-python-Linux-x64-24.04-Ubuntu-python-3.14.7-pip-3949712138fe6b006643c63747ee39fdbd3bdb052fe1ec34c6e4b6455d04056a
+runner	Run actions/setup-python@v5	2026-09-06T23:55:33.4464328Z (node:2046) [DEP0169] DeprecationWarning: `url.parse()` behavior is not standardized and prone to errors that have security implications. Use the WHATWG URL API instead. CVEs are not issued for `url.parse()` vulnerabilities.
+runner	Run actions/setup-python@v5	2026-09-06T23:55:34.1573784Z Received 20589530 of 20589530 (100.0%), 33.9 MBs/sec
+runner	Run actions/setup-python@v5	2026-09-06T23:55:34.1574556Z Cache Size: ~20 MB (20589530 B)
+runner	Run actions/setup-python@v5	2026-09-06T23:55:34.1600825Z [command]/usr/bin/tar -xf /home/runner/work/_temp/fd15e269-5cf6-4d77-8a6e-a85cb1eb8e78/cache.tzst -P -C /home/runner/work/eidos/eidos --use-compress-program unzstd
+runner	Run actions/setup-python@v5	2026-09-06T23:55:34.1826569Z Cache restored successfully
+runner	Run actions/setup-python@v5	2026-09-06T23:55:34.1839423Z Cache restored from key: setup-python-Linux-x64-24.04-Ubuntu-python-3.14.7-pip-3949712138fe6b006643c63747ee39fdbd3bdb052fe1ec34c6e4b6455d04056a
+runner	Run python -m pip install uv	﻿2026-09-06T23:55:34.1949061Z ##[group]Run python -m pip install uv
+runner	Run python -m pip install uv	2026-09-06T23:55:34.1949507Z [36;1mpython -m pip install uv[0m
+runner	Run python -m pip install uv	2026-09-06T23:55:34.1981035Z shell: /usr/bin/bash -e {0}
+runner	Run python -m pip install uv	2026-09-06T23:55:34.1981342Z env:
+runner	Run python -m pip install uv	2026-09-06T23:55:34.1981628Z   pythonLocation: /opt/hostedtoolcache/Python/3.14.7/x64
+runner	Run python -m pip install uv	2026-09-06T23:55:34.1982032Z   PKG_CONFIG_PATH: /opt/hostedtoolcache/Python/3.14.7/x64/lib/pkgconfig
+runner	Run python -m pip install uv	2026-09-06T23:55:34.1982389Z   Python_ROOT_DIR: /opt/hostedtoolcache/Python/3.14.7/x64
+runner	Run python -m pip install uv	2026-09-06T23:55:34.1982868Z   Python2_ROOT_DIR: /opt/hostedtoolcache/Python/3.14.7/x64
+runner	Run python -m pip install uv	2026-09-06T23:55:34.1983180Z   Python3_ROOT_DIR: /opt/hostedtoolcache/Python/3.14.7/x64
+runner	Run python -m pip install uv	2026-09-06T23:55:34.1983494Z   LD_LIBRARY_PATH: /opt/hostedtoolcache/Python/3.14.7/x64/lib
+runner	Run python -m pip install uv	2026-09-06T23:55:34.1983798Z ##[endgroup]
+runner	Run python -m pip install uv	2026-09-06T23:55:36.3445119Z Collecting uv
+runner	Run python -m pip install uv	2026-09-06T23:55:36.3456562Z   Using cached uv-0.12.10-py3-none-manylinux_2_17_x86_64.manylinux2014_x86_64.whl.metadata (11 kB)
+runner	Run python -m pip install uv	2026-09-06T23:55:36.3497531Z Using cached uv-0.12.10-py3-none-manylinux_2_17_x86_64.manylinux2014_x86_64.whl (20.0 MB)
+runner	Run python -m pip install uv	2026-09-06T23:55:36.7691487Z Installing collected packages: uv
+runner	Run python -m pip install uv	2026-09-06T23:55:36.9653813Z Successfully installed uv-0.12.10
+runner	Run uv pip install --python "$pythonLocation/bin/python" --no-cache --torch-backend cpu .	﻿2026-09-06T23:55:37.0310927Z ##[group]Run uv pip install --python "$pythonLocation/bin/python" --no-cache --torch-backend cpu .
+runner	Run uv pip install --python "$pythonLocation/bin/python" --no-cache --torch-backend cpu .	2026-09-06T23:55:37.0311609Z [36;1muv pip install --python "$pythonLocation/bin/python" --no-cache --torch-backend cpu .[0m
+runner	Run uv pip install --python "$pythonLocation/bin/python" --no-cache --torch-backend cpu .	2026-09-06T23:55:37.0332914Z shell: /usr/bin/bash -e {0}
+runner	Run uv pip install --python "$pythonLocation/bin/python" --no-cache --torch-backend cpu .	2026-09-06T23:55:37.0333233Z env:
+runner	Run uv pip install --python "$pythonLocation/bin/python" --no-cache --torch-backend cpu .	2026-09-06T23:55:37.0333483Z   pythonLocation: /opt/hostedtoolcache/Python/3.14.7/x64
+runner	Run uv pip install --python "$pythonLocation/bin/python" --no-cache --torch-backend cpu .	2026-09-06T23:55:37.0333903Z   PKG_CONFIG_PATH: /opt/hostedtoolcache/Python/3.14.7/x64/lib/pkgconfig
+runner	Run uv pip install --python "$pythonLocation/bin/python" --no-cache --torch-backend cpu .	2026-09-06T23:55:37.0334268Z   Python_ROOT_DIR: /opt/hostedtoolcache/Python/3.14.7/x64
+runner	Run uv pip install --python "$pythonLocation/bin/python" --no-cache --torch-backend cpu .	2026-09-06T23:55:37.0334636Z   Python2_ROOT_DIR: /opt/hostedtoolcache/Python/3.14.7/x64
+runner	Run uv pip install --python "$pythonLocation/bin/python" --no-cache --torch-backend cpu .	2026-09-06T23:55:37.0334959Z   Python3_ROOT_DIR: /opt/hostedtoolcache/Python/3.14.7/x64
+runner	Run uv pip install --python "$pythonLocation/bin/python" --no-cache --torch-backend cpu .	2026-09-06T23:55:37.0335283Z   LD_LIBRARY_PATH: /opt/hostedtoolcache/Python/3.14.7/x64/lib
+runner	Run uv pip install --python "$pythonLocation/bin/python" --no-cache --torch-backend cpu .	2026-09-06T23:55:37.0335649Z ##[endgroup]
+runner	Run uv pip install --python "$pythonLocation/bin/python" --no-cache --torch-backend cpu .	2026-09-06T23:55:37.0771346Z Using Python 3.14.7 environment at: /opt/hostedtoolcache/Python/3.14.7/x64
+runner	Run uv pip install --python "$pythonLocation/bin/python" --no-cache --torch-backend cpu .	2026-09-06T23:55:37.4416477Z Resolved 43 packages in 364ms
+runner	Run uv pip install --python "$pythonLocation/bin/python" --no-cache --torch-backend cpu .	2026-09-06T23:55:37.4444588Z    Building eidos-sentinel-runner @ file:///home/runner/work/eidos/eidos/services/sentinel-runner
+runner	Run uv pip install --python "$pythonLocation/bin/python" --no-cache --torch-backend cpu .	2026-09-06T23:55:37.4698116Z Downloading torch (187.2MiB)
+runner	Run uv pip install --python "$pythonLocation/bin/python" --no-cache --torch-backend cpu .	2026-09-06T23:55:37.5011611Z Downloading sympy (6.0MiB)
+runner	Run uv pip install --python "$pythonLocation/bin/python" --no-cache --torch-backend cpu .	2026-09-06T23:55:37.5017883Z Downloading networkx (2.0MiB)
+runner	Run uv pip install --python "$pythonLocation/bin/python" --no-cache --torch-backend cpu .	2026-09-06T23:55:37.5019037Z Downloading numpy (15.9MiB)
+runner	Run uv pip install --python "$pythonLocation/bin/python" --no-cache --torch-backend cpu .	2026-09-06T23:55:37.5300880Z Downloading pandas (10.5MiB)
+runner	Run uv pip install --python "$pythonLocation/bin/python" --no-cache --torch-backend cpu .	2026-09-06T23:55:37.5305372Z Downloading pydantic-core (2.0MiB)
+runner	Run uv pip install --python "$pythonLocation/bin/python" --no-cache --torch-backend cpu .	2026-09-06T23:55:37.5314218Z Downloading uvloop (4.1MiB)
+runner	Run uv pip install --python "$pythonLocation/bin/python" --no-cache --torch-backend cpu .	2026-09-06T23:55:37.5318173Z Downloading pyarrow (45.4MiB)
+runner	Run uv pip install --python "$pythonLocation/bin/python" --no-cache --torch-backend cpu .	2026-09-06T23:55:37.8099980Z  Downloaded networkx
+runner	Run uv pip install --python "$pythonLocation/bin/python" --no-cache --torch-backend cpu .	2026-09-06T23:55:37.8208128Z  Downloaded pydantic-core
+runner	Run uv pip install --python "$pythonLocation/bin/python" --no-cache --torch-backend cpu .	2026-09-06T23:55:37.8559645Z  Downloaded uvloop
+runner	Run uv pip install --python "$pythonLocation/bin/python" --no-cache --torch-backend cpu .	2026-09-06T23:55:37.8917991Z  Downloaded sympy
+runner	Run uv pip install --python "$pythonLocation/bin/python" --no-cache --torch-backend cpu .	2026-09-06T23:55:37.9715091Z  Downloaded pandas
+runner	Run uv pip install --python "$pythonLocation/bin/python" --no-cache --torch-backend cpu .	2026-09-06T23:55:38.0248378Z  Downloaded numpy
+runner	Run uv pip install --python "$pythonLocation/bin/python" --no-cache --torch-backend cpu .	2026-09-06T23:55:38.2290368Z       Built eidos-sentinel-runner @ file:///home/runner/work/eidos/eidos/services/sentinel-runner
+runner	Run uv pip install --python "$pythonLocation/bin/python" --no-cache --torch-backend cpu .	2026-09-06T23:55:38.4354622Z  Downloaded pyarrow
+runner	Run uv pip install --python "$pythonLocation/bin/python" --no-cache --torch-backend cpu .	2026-09-06T23:55:39.7471713Z  Downloaded torch
+runner	Run uv pip install --python "$pythonLocation/bin/python" --no-cache --torch-backend cpu .	2026-09-06T23:55:39.7473489Z Prepared 43 packages in 2.30s
+runner	Run uv pip install --python "$pythonLocation/bin/python" --no-cache --torch-backend cpu .	2026-09-06T23:55:39.9166047Z Installed 43 packages in 168ms
+runner	Run uv pip install --python "$pythonLocation/bin/python" --no-cache --torch-backend cpu .	2026-09-06T23:55:39.9166915Z  + annotated-doc==0.0.5
+runner	Run uv pip install --python "$pythonLocation/bin/python" --no-cache --torch-backend cpu .	2026-09-06T23:55:39.9167300Z  + annotated-types==0.8.0
+runner	Run uv pip install --python "$pythonLocation/bin/python" --no-cache --torch-backend cpu .	2026-09-06T23:55:39.9167697Z  + anyio==4.15.1
+runner	Run uv pip install --python "$pythonLocation/bin/python" --no-cache --torch-backend cpu .	2026-09-06T23:55:39.9168067Z  + certifi==2026.7.22
+runner	Run uv pip install --python "$pythonLocation/bin/python" --no-cache --torch-backend cpu .	2026-09-06T23:55:39.9168378Z  + charset-normalizer==3.5.1
+runner	Run uv pip install --python "$pythonLocation/bin/python" --no-cache --torch-backend cpu .	2026-09-06T23:55:39.9168720Z  + click==8.5.0
+runner	Run uv pip install --python "$pythonLocation/bin/python" --no-cache --torch-backend cpu .	2026-09-06T23:55:39.9169293Z  + eidos-sentinel-runner==0.2.1 (from file:///home/runner/work/eidos/eidos/services/sentinel-runner)
+runner	Run uv pip install --python "$pythonLocation/bin/python" --no-cache --torch-backend cpu .	2026-09-06T23:55:39.9169821Z  + fastapi==0.141.1
+runner	Run uv pip install --python "$pythonLocation/bin/python" --no-cache --torch-backend cpu .	2026-09-06T23:55:39.9170125Z  + filelock==3.32.5
+runner	Run uv pip install --python "$pythonLocation/bin/python" --no-cache --torch-backend cpu .	2026-09-06T23:55:39.9170438Z  + fsspec==2026.7.0
+runner	Run uv pip install --python "$pythonLocation/bin/python" --no-cache --torch-backend cpu .	2026-09-06T23:55:39.9170712Z  + h11==0.16.0
+runner	Run uv pip install --python "$pythonLocation/bin/python" --no-cache --torch-backend cpu .	2026-09-06T23:55:39.9170976Z  + httptools==0.8.0
+runner	Run uv pip install --python "$pythonLocation/bin/python" --no-cache --torch-backend cpu .	2026-09-06T23:55:39.9171287Z  + idna==3.19
+runner	Run uv pip install --python "$pythonLocation/bin/python" --no-cache --torch-backend cpu .	2026-09-06T23:55:39.9171574Z  + jinja2==3.1.6
+runner	Run uv pip install --python "$pythonLocation/bin/python" --no-cache --torch-backend cpu .	2026-09-06T23:55:39.9172397Z  + kagglehub==0.4.3
+runner	Run uv pip install --python "$pythonLocation/bin/python" --no-cache --torch-backend cpu .	2026-09-06T23:55:39.9172741Z  + kagglesdk==0.1.37
+runner	Run uv pip install --python "$pythonLocation/bin/python" --no-cache --torch-backend cpu .	2026-09-06T23:55:39.9173010Z  + markupsafe==3.0.3
+runner	Run uv pip install --python "$pythonLocation/bin/python" --no-cache --torch-backend cpu .	2026-09-06T23:55:39.9173320Z  + mpmath==1.3.0
+runner	Run uv pip install --python "$pythonLocation/bin/python" --no-cache --torch-backend cpu .	2026-09-06T23:55:39.9173640Z  + networkx==3.6.1
+runner	Run uv pip install --python "$pythonLocation/bin/python" --no-cache --torch-backend cpu .	2026-09-06T23:55:39.9174142Z  + numpy==2.5.3
+runner	Run uv pip install --python "$pythonLocation/bin/python" --no-cache --torch-backend cpu .	2026-09-06T23:55:39.9174417Z  + packaging==26.3
+runner	Run uv pip install --python "$pythonLocation/bin/python" --no-cache --torch-backend cpu .	2026-09-06T23:55:39.9174669Z  + pandas==3.0.5
+runner	Run uv pip install --python "$pythonLocation/bin/python" --no-cache --torch-backend cpu .	2026-09-06T23:55:39.9175014Z  + protobuf==7.36.1
+runner	Run uv pip install --python "$pythonLocation/bin/python" --no-cache --torch-backend cpu .	2026-09-06T23:55:39.9175285Z  + pyarrow==23.0.1
+runner	Run uv pip install --python "$pythonLocation/bin/python" --no-cache --torch-backend cpu .	2026-09-06T23:55:39.9175668Z  + pydantic==2.13.5
+runner	Run uv pip install --python "$pythonLocation/bin/python" --no-cache --torch-backend cpu .	2026-09-06T23:55:39.9175962Z  + pydantic-core==2.46.5
+runner	Run uv pip install --python "$pythonLocation/bin/python" --no-cache --torch-backend cpu .	2026-09-06T23:55:39.9176284Z  + python-dateutil==2.9.0.post0
+runner	Run uv pip install --python "$pythonLocation/bin/python" --no-cache --torch-backend cpu .	2026-09-06T23:55:39.9176648Z  + python-dotenv==1.2.3
+runner	Run uv pip install --python "$pythonLocation/bin/python" --no-cache --torch-backend cpu .	2026-09-06T23:55:39.9177135Z  + pyyaml==6.0.3
+runner	Run uv pip install --python "$pythonLocation/bin/python" --no-cache --torch-backend cpu .	2026-09-06T23:55:39.9177432Z  + requests==2.34.2
+runner	Run uv pip install --python "$pythonLocation/bin/python" --no-cache --torch-backend cpu .	2026-09-06T23:55:39.9177702Z  + setuptools==84.0.0
+runner	Run uv pip install --python "$pythonLocation/bin/python" --no-cache --torch-backend cpu .	2026-09-06T23:55:39.9178038Z  + six==1.17.0
+runner	Run uv pip install --python "$pythonLocation/bin/python" --no-cache --torch-backend cpu .	2026-09-06T23:55:39.9178303Z  + starlette==1.6.0
+runner	Run uv pip install --python "$pythonLocation/bin/python" --no-cache --torch-backend cpu .	2026-09-06T23:55:39.9178579Z  + sympy==1.14.0
+runner	Run uv pip install --python "$pythonLocation/bin/python" --no-cache --torch-backend cpu .	2026-09-06T23:55:39.9178923Z  + torch==2.14.0+cpu
+runner	Run uv pip install --python "$pythonLocation/bin/python" --no-cache --torch-backend cpu .	2026-09-06T23:55:39.9179401Z  + tqdm==4.70.0
+runner	Run uv pip install --python "$pythonLocation/bin/python" --no-cache --torch-backend cpu .	2026-09-06T23:55:39.9179740Z  + typing-extensions==4.16.0
+runner	Run uv pip install --python "$pythonLocation/bin/python" --no-cache --torch-backend cpu .	2026-09-06T23:55:39.9180199Z  + typing-inspection==0.4.4
+runner	Run uv pip install --python "$pythonLocation/bin/python" --no-cache --torch-backend cpu .	2026-09-06T23:55:39.9180540Z  + urllib3==2.7.0
+runner	Run uv pip install --python "$pythonLocation/bin/python" --no-cache --torch-backend cpu .	2026-09-06T23:55:39.9180823Z  + uvicorn==0.52.4
+runner	Run uv pip install --python "$pythonLocation/bin/python" --no-cache --torch-backend cpu .	2026-09-06T23:55:39.9181153Z  + uvloop==0.22.1
+runner	Run uv pip install --python "$pythonLocation/bin/python" --no-cache --torch-backend cpu .	2026-09-06T23:55:39.9181457Z  + watchfiles==1.2.0
+runner	Run uv pip install --python "$pythonLocation/bin/python" --no-cache --torch-backend cpu .	2026-09-06T23:55:39.9181751Z  + websockets==17.1
+runner	Run python -c "import torch; assert torch.__version__.split('+')[0] == '2.14.0'; assert torch.version.cuda is None"	﻿2026-09-06T23:55:40.0086641Z ##[group]Run python -c "import torch; assert torch.__version__.split('+')[0] == '2.14.0'; assert torch.version.cuda is None"
+runner	Run python -c "import torch; assert torch.__version__.split('+')[0] == '2.14.0'; assert torch.version.cuda is None"	2026-09-06T23:55:40.0088210Z [36;1mpython -c "import torch; assert torch.__version__.split('+')[0] == '2.14.0'; assert torch.version.cuda is None"[0m
+runner	Run python -c "import torch; assert torch.__version__.split('+')[0] == '2.14.0'; assert torch.version.cuda is None"	2026-09-06T23:55:40.0109254Z shell: /usr/bin/bash -e {0}
+runner	Run python -c "import torch; assert torch.__version__.split('+')[0] == '2.14.0'; assert torch.version.cuda is None"	2026-09-06T23:55:40.0109526Z env:
+runner	Run python -c "import torch; assert torch.__version__.split('+')[0] == '2.14.0'; assert torch.version.cuda is None"	2026-09-06T23:55:40.0109853Z   pythonLocation: /opt/hostedtoolcache/Python/3.14.7/x64
+runner	Run python -c "import torch; assert torch.__version__.split('+')[0] == '2.14.0'; assert torch.version.cuda is None"	2026-09-06T23:55:40.0110239Z   PKG_CONFIG_PATH: /opt/hostedtoolcache/Python/3.14.7/x64/lib/pkgconfig
+runner	Run python -c "import torch; assert torch.__version__.split('+')[0] == '2.14.0'; assert torch.version.cuda is None"	2026-09-06T23:55:40.0110639Z   Python_ROOT_DIR: /opt/hostedtoolcache/Python/3.14.7/x64
+runner	Run python -c "import torch; assert torch.__version__.split('+')[0] == '2.14.0'; assert torch.version.cuda is None"	2026-09-06T23:55:40.0110965Z   Python2_ROOT_DIR: /opt/hostedtoolcache/Python/3.14.7/x64
+runner	Run python -c "import torch; assert torch.__version__.split('+')[0] == '2.14.0'; assert torch.version.cuda is None"	2026-09-06T23:55:40.0111289Z   Python3_ROOT_DIR: /opt/hostedtoolcache/Python/3.14.7/x64
+runner	Run python -c "import torch; assert torch.__version__.split('+')[0] == '2.14.0'; assert torch.version.cuda is None"	2026-09-06T23:55:40.0111654Z   LD_LIBRARY_PATH: /opt/hostedtoolcache/Python/3.14.7/x64/lib
+runner	Run python -c "import torch; assert torch.__version__.split('+')[0] == '2.14.0'; assert torch.version.cuda is None"	2026-09-06T23:55:40.0111986Z ##[endgroup]
+runner	Run python -m unittest discover -s tests -v	﻿2026-09-06T23:55:43.2609301Z ##[group]Run python -m unittest discover -s tests -v
+runner	Run python -m unittest discover -s tests -v	2026-09-06T23:55:43.2610251Z [36;1mpython -m unittest discover -s tests -v[0m
+runner	Run python -m unittest discover -s tests -v	2026-09-06T23:55:43.2638529Z shell: /usr/bin/bash -e {0}
+runner	Run python -m unittest discover -s tests -v	2026-09-06T23:55:43.2638963Z env:
+runner	Run python -m unittest discover -s tests -v	2026-09-06T23:55:43.2639328Z   pythonLocation: /opt/hostedtoolcache/Python/3.14.7/x64
+runner	Run python -m unittest discover -s tests -v	2026-09-06T23:55:43.2639909Z   PKG_CONFIG_PATH: /opt/hostedtoolcache/Python/3.14.7/x64/lib/pkgconfig
+runner	Run python -m unittest discover -s tests -v	2026-09-06T23:55:43.2640470Z   Python_ROOT_DIR: /opt/hostedtoolcache/Python/3.14.7/x64
+runner	Run python -m unittest discover -s tests -v	2026-09-06T23:55:43.2641074Z   Python2_ROOT_DIR: /opt/hostedtoolcache/Python/3.14.7/x64
+runner	Run python -m unittest discover -s tests -v	2026-09-06T23:55:43.2641572Z   Python3_ROOT_DIR: /opt/hostedtoolcache/Python/3.14.7/x64
+runner	Run python -m unittest discover -s tests -v	2026-09-06T23:55:43.2642042Z   LD_LIBRARY_PATH: /opt/hostedtoolcache/Python/3.14.7/x64/lib
+runner	Run python -m unittest discover -s tests -v	2026-09-06T23:55:43.2642539Z ##[endgroup]
+runner	Run python -m unittest discover -s tests -v	2026-09-06T23:55:44.5715862Z test_label_like_feature_is_rejected_even_when_explicit (test_dataset.DatasetTests.test_label_like_feature_is_rejected_even_when_explicit) ... ok
+runner	Run python -m unittest discover -s tests -v	2026-09-06T23:55:44.5768117Z test_labels_are_absent_from_engine_frames_and_metadata (test_dataset.DatasetTests.test_labels_are_absent_from_engine_frames_and_metadata) ... ok
+runner	Run python -m unittest discover -s tests -v	2026-09-06T23:55:44.5800046Z test_normalization_is_fit_only_on_calibration (test_dataset.DatasetTests.test_normalization_is_fit_only_on_calibration) ... ok
+runner	Run python -m unittest discover -s tests -v	2026-09-06T23:55:44.5805479Z test_requested_file_never_falls_back (test_dataset.DatasetTests.test_requested_file_never_falls_back) ... ok
+runner	Run python -m unittest discover -s tests -v	2026-09-06T23:55:44.5814107Z test_engine_can_import_companion_modules_from_its_directory (test_engine_bridge.EngineBridgeTests.test_engine_can_import_companion_modules_from_its_directory) ... ok
+runner	Run python -m unittest discover -s tests -v	2026-09-06T23:55:45.3865227Z test_actual_multiband_reservoir_preserves_numeric_type (test_engine_profiles.ProfileTests.test_actual_multiband_reservoir_preserves_numeric_type) ... ok
+runner	Run python -m unittest discover -s tests -v	2026-09-06T23:55:45.4100661Z test_client_and_runner_profiles_match (test_engine_profiles.ProfileTests.test_client_and_runner_profiles_match) ... ok
+runner	Run python -m unittest discover -s tests -v	2026-09-06T23:55:45.4105770Z test_full_capacity_is_denied_without_explicit_runner_budget (test_engine_profiles.ProfileTests.test_full_capacity_is_denied_without_explicit_runner_budget) ... ok
+runner	Run python -m unittest discover -s tests -v	2026-09-06T23:55:45.9142039Z test_external_failure_logs_still_require_operator_auth (test_job_receipts.ReceiptTests.test_external_failure_logs_still_require_operator_auth) ... ok
+runner	Run python -m unittest discover -s tests -v	2026-09-06T23:55:45.9338261Z test_job_commits_predictions_before_evaluation_and_exposes_receipts (test_job_receipts.ReceiptTests.test_job_commits_predictions_before_evaluation_and_exposes_receipts) ... ok
+runner	Run python -m unittest discover -s tests -v	2026-09-06T23:55:45.9801624Z test_manifest_hashes_only_immutable_artifacts (test_job_receipts.ReceiptTests.test_manifest_hashes_only_immutable_artifacts) ... ok
+runner	Run python -m unittest discover -s tests -v	2026-09-06T23:55:45.9802781Z test_telemetry_never_exports_labels_or_input_snippets (test_job_receipts.ReceiptTests.test_telemetry_never_exports_labels_or_input_snippets) ... ok
+runner	Run python -m unittest discover -s tests -v	2026-09-06T23:55:45.9893270Z test_evaluation_requires_complete_unique_finite_frozen_predictions (test_metrics.MetricsTests.test_evaluation_requires_complete_unique_finite_frozen_predictions) ... ok
+runner	Run python -m unittest discover -s tests -v	2026-09-06T23:55:45.9939045Z test_only_evaluation_rows_are_scored_after_freeze (test_metrics.MetricsTests.test_only_evaluation_rows_are_scored_after_freeze) ... ok
+runner	Run python -m unittest discover -s tests -v	2026-09-06T23:55:45.9940269Z test_ties_cannot_invent_ranking_information (test_metrics.MetricsTests.test_ties_cannot_invent_ranking_information) ... ok
+runner	Run python -m unittest discover -s tests -v	2026-09-06T23:55:45.9955894Z test_bootstrap_failure_names_step_and_exposes_authenticated_diagnostics (test_sandbox_launcher.SandboxLauncherTests.test_bootstrap_failure_names_step_and_exposes_authenticated_diagnostics) ... ok
+runner	Run python -m unittest discover -s tests -v	2026-09-06T23:55:45.9959283Z test_bootstrap_status_preserves_proof_boundary (test_sandbox_launcher.SandboxLauncherTests.test_bootstrap_status_preserves_proof_boundary) ... ok
+runner	Run python -m unittest discover -s tests -v	2026-09-06T23:55:46.0002131Z test_child_exit_without_terminal_receipt_fails_and_valid_failure_is_preserved (test_sandbox_launcher.SandboxLauncherTests.test_child_exit_without_terminal_receipt_fails_and_valid_failure_is_preserved) ... ok
+runner	Run python -m unittest discover -s tests -v	2026-09-06T23:55:46.0022839Z test_dependency_install_failure_never_starts_engine (test_sandbox_launcher.SandboxLauncherTests.test_dependency_install_failure_never_starts_engine) ... ok
+runner	Run python -m unittest discover -s tests -v	2026-09-06T23:55:46.0036118Z test_existing_python_does_not_skip_install_or_cpu_verification (test_sandbox_launcher.SandboxLauncherTests.test_existing_python_does_not_skip_install_or_cpu_verification) ... ok
+runner	Run python -m unittest discover -s tests -v	2026-09-06T23:55:46.0659575Z test_invalid_request_still_commits_a_failed_receipt (test_sandbox_launcher.SandboxLauncherTests.test_invalid_request_still_commits_a_failed_receipt) ... ok
+runner	Run python -m unittest discover -s tests -v	2026-09-06T23:55:46.0661882Z test_boolean_seeds_and_nonfinite_splits_are_rejected (test_spec.SpecTests.test_boolean_seeds_and_nonfinite_splits_are_rejected) ... ok
+runner	Run python -m unittest discover -s tests -v	2026-09-06T23:55:46.0664411Z test_lock_round_trip_and_tamper_rejection (test_spec.SpecTests.test_lock_round_trip_and_tamper_rejection) ... ok
+runner	Run python -m unittest discover -s tests -v	2026-09-06T23:55:46.0666287Z test_profiles_are_locked_and_default_digest_is_unchanged (test_spec.SpecTests.test_profiles_are_locked_and_default_digest_is_unchanged) ... ok
+runner	Run python -m unittest discover -s tests -v	2026-09-06T23:55:46.0667461Z test_protocol_locks_cannot_be_relaxed (test_spec.SpecTests.test_protocol_locks_cannot_be_relaxed) ... ok
+runner	Run python -m unittest discover -s tests -v	2026-09-06T23:55:46.0668242Z test_version_and_path_are_fail_closed (test_spec.SpecTests.test_version_and_path_are_fail_closed) ... ok
+runner	Run python -m unittest discover -s tests -v	2026-09-06T23:55:46.0668708Z 
+runner	Run python -m unittest discover -s tests -v	2026-09-06T23:55:46.0668950Z ----------------------------------------------------------------------
+runner	Run python -m unittest discover -s tests -v	2026-09-06T23:55:46.0669369Z Ran 26 tests in 1.512s
+runner	Run python -m unittest discover -s tests -v	2026-09-06T23:55:46.0669504Z 
+runner	Run python -m unittest discover -s tests -v	2026-09-06T23:55:46.0669653Z OK
+runner	Run python -m unittest discover -s tests -v	2026-09-06T23:55:46.0718676Z !!! Optional parsers missing: pillow, PyPDF2, python-docx
+runner	Run python -m unittest discover -s tests -v	2026-09-06T23:55:46.0719144Z >>> GPU CHECK:
+runner	Run python -m unittest discover -s tests -v	2026-09-06T23:55:46.0719422Z     device      = cpu (CPU)
+runner	Run python -m unittest discover -s tests -v	2026-09-06T23:55:46.0719727Z     dtype       = torch.float32
+runner	Run python -m unittest discover -s tests -v	2026-09-06T23:55:46.0720117Z     TF32        = True
+runner	Run python -m unittest discover -s tests -v	2026-09-06T23:55:46.0720415Z     deterministic= False
+runner	Run python -m unittest discover -s tests -v	2026-09-06T23:55:46.0720794Z >>> Hardware: cpu | Precision: Float32
+runner	Run python -m unittest discover -s tests -v	2026-09-06T23:55:46.0721523Z >>> Mode: EIDOS BRAIN UNIFIED v0.4.7.02 + Hippocampus (HDC/VSA)
+runner	Run python -m unittest discover -s tests -v	2026-09-06T23:55:46.0722137Z >>> ENGINE HASH: d1d8db7b5f8e70c0ae6abc96575295620a27ea2943fa50209317d264da50ef50
+runner	Run python -m unittest discover -s tests -v	2026-09-06T23:55:46.0722593Z >>> HIVE BACKEND: LOCAL
+runner	Run python scripts/verify_full_engine.py --profile cpu_engineering --output /tmp/eidos-standard	﻿2026-09-06T23:55:46.3688655Z ##[group]Run python scripts/verify_full_engine.py --profile cpu_engineering --output /tmp/eidos-standard
+runner	Run python scripts/verify_full_engine.py --profile cpu_engineering --output /tmp/eidos-standard	2026-09-06T23:55:46.3689292Z [36;1mpython scripts/verify_full_engine.py --profile cpu_engineering --output /tmp/eidos-standard[0m
+runner	Run python scripts/verify_full_engine.py --profile cpu_engineering --output /tmp/eidos-standard	2026-09-06T23:55:46.3708639Z shell: /usr/bin/bash -e {0}
+runner	Run python scripts/verify_full_engine.py --profile cpu_engineering --output /tmp/eidos-standard	2026-09-06T23:55:46.3708996Z env:
+runner	Run python scripts/verify_full_engine.py --profile cpu_engineering --output /tmp/eidos-standard	2026-09-06T23:55:46.3709273Z   pythonLocation: /opt/hostedtoolcache/Python/3.14.7/x64
+runner	Run python scripts/verify_full_engine.py --profile cpu_engineering --output /tmp/eidos-standard	2026-09-06T23:55:46.3709650Z   PKG_CONFIG_PATH: /opt/hostedtoolcache/Python/3.14.7/x64/lib/pkgconfig
+runner	Run python scripts/verify_full_engine.py --profile cpu_engineering --output /tmp/eidos-standard	2026-09-06T23:55:46.3710042Z   Python_ROOT_DIR: /opt/hostedtoolcache/Python/3.14.7/x64
+runner	Run python scripts/verify_full_engine.py --profile cpu_engineering --output /tmp/eidos-standard	2026-09-06T23:55:46.3710397Z   Python2_ROOT_DIR: /opt/hostedtoolcache/Python/3.14.7/x64
+runner	Run python scripts/verify_full_engine.py --profile cpu_engineering --output /tmp/eidos-standard	2026-09-06T23:55:46.3710777Z   Python3_ROOT_DIR: /opt/hostedtoolcache/Python/3.14.7/x64
+runner	Run python scripts/verify_full_engine.py --profile cpu_engineering --output /tmp/eidos-standard	2026-09-06T23:55:46.3711112Z   LD_LIBRARY_PATH: /opt/hostedtoolcache/Python/3.14.7/x64/lib
+runner	Run python scripts/verify_full_engine.py --profile cpu_engineering --output /tmp/eidos-standard	2026-09-06T23:55:46.3711446Z ##[endgroup]
+runner	Run python scripts/verify_full_engine.py --profile cpu_engineering --output /tmp/eidos-standard	2026-09-06T23:55:52.8008702Z !!! Optional parsers missing: pillow, PyPDF2, python-docx
+runner	Run python scripts/verify_full_engine.py --profile cpu_engineering --output /tmp/eidos-standard	2026-09-06T23:55:52.8048357Z >>> GPU CHECK:
+runner	Run python scripts/verify_full_engine.py --profile cpu_engineering --output /tmp/eidos-standard	2026-09-06T23:55:52.8078042Z     device      = cpu (CPU)
+runner	Run python scripts/verify_full_engine.py --profile cpu_engineering --output /tmp/eidos-standard	2026-09-06T23:55:52.8108009Z     dtype       = torch.float32
+runner	Run python scripts/verify_full_engine.py --profile cpu_engineering --output /tmp/eidos-standard	2026-09-06T23:55:52.8137761Z     TF32        = True
+runner	Run python scripts/verify_full_engine.py --profile cpu_engineering --output /tmp/eidos-standard	2026-09-06T23:55:52.8167666Z     deterministic= False
+runner	Run python scripts/verify_full_engine.py --profile cpu_engineering --output /tmp/eidos-standard	2026-09-06T23:55:52.8197766Z >>> Hardware: cpu | Precision: Float32
+runner	Run python scripts/verify_full_engine.py --profile cpu_engineering --output /tmp/eidos-standard	2026-09-06T23:55:52.8211427Z >>> Mode: EIDOS BRAIN UNIFIED v0.4.7.02 + Hippocampus (HDC/VSA)
+runner	Run python scripts/verify_full_engine.py --profile cpu_engineering --output /tmp/eidos-standard	2026-09-06T23:55:52.8258166Z >>> ENGINE HASH: d1d8db7b5f8e70c0ae6abc96575295620a27ea2943fa50209317d264da50ef50
+runner	Run python scripts/verify_full_engine.py --profile cpu_engineering --output /tmp/eidos-standard	2026-09-06T23:55:52.8287602Z >>> HIVE BACKEND: LOCAL
+runner	Run python scripts/verify_full_engine.py --profile cpu_engineering --output /tmp/eidos-standard	2026-09-06T23:55:52.8313476Z >>> INITIALIZING SENTINEL V2.2 (UNIFIED STREAM)...
+runner	Run python scripts/verify_full_engine.py --profile cpu_engineering --output /tmp/eidos-standard	2026-09-06T23:55:52.8337487Z >>> Determinism: Pinning seed=0
+runner	Run python scripts/verify_full_engine.py --profile cpu_engineering --output /tmp/eidos-standard	2026-09-06T23:55:52.8367664Z >>> est_frames=800, using WARMUP=80
+runner	Run python scripts/verify_full_engine.py --profile cpu_engineering --output /tmp/eidos-standard	2026-09-06T23:55:52.8398964Z [ANOMALY] step=80 err=0.8412 z=7.700 z_thr=1.372 ema=1.9950 sig=0.1498 ratio=2.0 plas_rms=0.2023 plas_clp=0.01 clip_frac~0.11 fatigue=1.00 lr_raw=0.350 lr_eff=0.337 HIPP bank=ELEVATED sim=+0.007 chi=0.051 write=1 status=CALIBRATING | Thermo E=0.68 | text=''
+runner	Run python scripts/verify_full_engine.py --profile cpu_engineering --output /tmp/eidos-standard	2026-09-06T23:55:52.8428342Z [ANOMALY] step=81 err=0.8622 z=7.355 z_thr=1.371 ema=1.9938 sig=0.1539 ratio=2.0 plas_rms=0.2634 plas_clp=0.01 clip_frac~0.24 fatigue=1.00 lr_raw=0.350 lr_eff=0.126 HIPP bank=ELEVATED sim=+0.947 chi=0.854 write=1 status=CALIBRATING | Thermo E=1.26 | text=''
+runner	Run python scripts/verify_full_engine.py --profile cpu_engineering --output /tmp/eidos-standard	2026-09-06T23:55:52.8458398Z [ANOMALY] step=82 err=0.6862 z=8.364 z_thr=1.370 ema=1.9925 sig=0.1562 ratio=2.0 plas_rms=0.3146 plas_clp=0.01 clip_frac~0.19 fatigue=1.00 lr_raw=0.350 lr_eff=0.130 HIPP bank=ELEVATED sim=+0.940 chi=0.836 write=1 status=CALIBRATING | Thermo E=1.88 | text=''
+runner	Run python scripts/verify_full_engine.py --profile cpu_engineering --output /tmp/eidos-standard	2026-09-06T23:55:52.8488293Z [ANOMALY] step=83 err=0.4934 z=9.734 z_thr=1.369 ema=1.9910 sig=0.1539 ratio=2.0 plas_rms=0.3633 plas_clp=0.01 clip_frac~0.18 fatigue=1.00 lr_raw=0.350 lr_eff=0.118 HIPP bank=ELEVATED sim=+0.959 chi=0.884 write=1 status=CALIBRATING | Thermo E=2.57 | text=''
+runner	Run python scripts/verify_full_engine.py --profile cpu_engineering --output /tmp/eidos-standard	2026-09-06T23:55:52.8518382Z [ANOMALY] step=84 err=0.4506 z=10.271 z_thr=1.368 ema=1.9895 sig=0.1498 ratio=2.0 plas_rms=0.7713 plas_clp=0.01 clip_frac~0.06 fatigue=1.00 lr_raw=0.350 lr_eff=0.162 HIPP bank=ELEVATED sim=+0.889 chi=0.716 write=1 status=CALIBRATING | Thermo E=3.25 | text=''
+runner	Run python scripts/verify_full_engine.py --profile cpu_engineering --output /tmp/eidos-standard	2026-09-06T23:55:52.8538951Z [ANOMALY] step=85 err=0.4459 z=10.550 z_thr=1.367 ema=1.9880 sig=0.1462 ratio=2.0 plas_rms=0.9847 plas_clp=0.01 clip_frac~0.05 fatigue=1.00 lr_raw=0.350 lr_eff=0.172 HIPP bank=ELEVATED sim=+0.870 chi=0.677 write=1 status=CALIBRATING | Thermo E=3.88 | text=''
+runner	Run python scripts/verify_full_engine.py --profile cpu_engineering --output /tmp/eidos-standard	2026-09-06T23:55:52.8578210Z [ANOMALY] step=86 err=0.5774 z=9.888 z_thr=1.366 ema=1.9865 sig=0.1425 ratio=2.0 plas_rms=0.9941 plas_clp=0.01 clip_frac~0.05 fatigue=1.00 lr_raw=0.350 lr_eff=0.156 HIPP bank=ELEVATED sim=+0.899 chi=0.740 write=1 status=CALIBRATING | Thermo E=4.39 | text=''
+runner	Run python scripts/verify_full_engine.py --profile cpu_engineering --output /tmp/eidos-standard	2026-09-06T23:55:52.8607638Z [ANOMALY] step=87 err=0.4401 z=10.787 z_thr=1.365 ema=1.9850 sig=0.1432 ratio=2.0 plas_rms=1.0122 plas_clp=0.01 clip_frac~0.04 fatigue=1.00 lr_raw=0.350 lr_eff=0.188 HIPP bank=ELEVATED sim=+0.840 chi=0.618 write=1 status=CALIBRATING | Thermo E=4.93 | text=''
+runner	Run python scripts/verify_full_engine.py --profile cpu_engineering --output /tmp/eidos-standard	2026-09-06T23:55:52.8637649Z [ANOMALY] step=88 err=0.2925 z=11.756 z_thr=1.364 ema=1.9833 sig=0.1438 ratio=2.0 plas_rms=0.9814 plas_clp=0.01 clip_frac~0.05 fatigue=1.00 lr_raw=0.350 lr_eff=0.175 HIPP bank=ELEVATED sim=+0.865 chi=0.667 write=1 status=CALIBRATING | Thermo E=5.52 | text=''
+runner	Run python scripts/verify_full_engine.py --profile cpu_engineering --output /tmp/eidos-standard	2026-09-06T23:55:52.8667687Z [ANOMALY] step=89 err=0.3618 z=11.198 z_thr=1.363 ema=1.9817 sig=0.1447 ratio=2.0 plas_rms=1.0162 plas_clp=0.01 clip_frac~0.04 fatigue=1.00 lr_raw=0.350 lr_eff=0.176 HIPP bank=ELEVATED sim=+0.862 chi=0.662 write=1 status=CALIBRATING | Thermo E=5.99 | text=''
+runner	Run python scripts/verify_full_engine.py --profile cpu_engineering --output /tmp/eidos-standard	2026-09-06T23:55:52.8697624Z [ANOMALY] step=90 err=0.4569 z=10.811 z_thr=1.363 ema=1.9802 sig=0.1409 ratio=2.0 plas_rms=1.0456 plas_clp=0.01 clip_frac~0.04 fatigue=1.00 lr_raw=0.350 lr_eff=0.193 HIPP bank=ELEVATED sim=+0.829 chi=0.599 write=1 status=CALIBRATING | Thermo E=6.38 | text=''
+runner	Run python scripts/verify_full_engine.py --profile cpu_engineering --output /tmp/eidos-standard	2026-09-06T23:55:52.8727659Z [ANOMALY] step=91 err=0.7054 z=8.803 z_thr=1.362 ema=1.9789 sig=0.1447 ratio=2.0 plas_rms=1.0005 plas_clp=0.01 clip_frac~0.04 fatigue=1.00 lr_raw=0.350 lr_eff=0.200 HIPP bank=ELEVATED sim=+0.814 chi=0.573 write=1 status=CALIBRATING | Thermo E=6.53 | text=''
+runner	Run python scripts/verify_full_engine.py --profile cpu_engineering --output /tmp/eidos-standard	2026-09-06T23:55:52.8758803Z [ANOMALY] step=92 err=0.6704 z=8.825 z_thr=1.361 ema=1.9776 sig=0.1481 ratio=2.0 plas_rms=1.0085 plas_clp=0.01 clip_frac~0.04 fatigue=1.00 lr_raw=0.350 lr_eff=0.200 HIPP bank=ELEVATED sim=+0.814 chi=0.573 write=1 status=CALIBRATING | Thermo E=6.67 | text=''
+runner	Run python scripts/verify_full_engine.py --profile cpu_engineering --output /tmp/eidos-standard	2026-09-06T23:55:52.8797841Z [ANOMALY] step=93 err=0.5052 z=10.168 z_thr=1.360 ema=1.9761 sig=0.1447 ratio=2.0 plas_rms=1.0732 plas_clp=0.01 clip_frac~0.04 fatigue=1.00 lr_raw=0.350 lr_eff=0.199 HIPP bank=ELEVATED sim=+0.815 chi=0.575 write=1 status=CALIBRATING | Thermo E=6.93 | text=''
+runner	Run python scripts/verify_full_engine.py --profile cpu_engineering --output /tmp/eidos-standard	2026-09-06T23:55:52.8799057Z [ANOMALY] step=94 err=0.4092 z=10.400 z_thr=1.359 ema=1.9745 sig=0.1505 ratio=2.0 plas_rms=1.0643 plas_clp=0.01 clip_frac~0.03 fatigue=1.00 lr_raw=0.350 lr_eff=0.210 HIPP bank=ELEVATED sim=+0.791 chi=0.534 write=1 status=CALIBRATING | Thermo E=7.18 | text=''
+runner	Run python scripts/verify_full_engine.py --profile cpu_engineering --output /tmp/eidos-standard	2026-09-06T23:55:52.8818197Z [ANOMALY] step=95 err=0.5043 z=10.072 z_thr=1.358 ema=1.9731 sig=0.1458 ratio=2.0 plas_rms=1.0721 plas_clp=0.01 clip_frac~0.03 fatigue=1.00 lr_raw=0.350 lr_eff=0.209 HIPP bank=ELEVATED sim=+0.793 chi=0.537 write=1 status=CALIBRATING | Thermo E=7.37 | text=''
+runner	Run python scripts/verify_full_engine.py --profile cpu_engineering --output /tmp/eidos-standard	2026-09-06T23:55:52.8848390Z [ANOMALY] step=96 err=0.4005 z=10.421 z_thr=1.358 ema=1.9715 sig=0.1507 ratio=2.0 plas_rms=1.1225 plas_clp=0.01 clip_frac~0.03 fatigue=1.00 lr_raw=0.350 lr_eff=0.212 HIPP bank=ELEVATED sim=+0.785 chi=0.525 write=1 status=CALIBRATING | Thermo E=7.58 | text=''
+runner	Run python scripts/verify_full_engine.py --profile cpu_engineering --output /tmp/eidos-standard	2026-09-06T23:55:52.8857849Z [ANOMALY] step=97 err=0.3739 z=10.288 z_thr=1.357 ema=1.9699 sig=0.1551 ratio=2.0 plas_rms=1.0826 plas_clp=0.01 clip_frac~0.03 fatigue=1.00 lr_raw=0.350 lr_eff=0.227 HIPP bank=ELEVATED sim=+0.746 chi=0.467 write=1 status=CALIBRATING | Thermo E=7.76 | text=''
+runner	Run python scripts/verify_full_engine.py --profile cpu_engineering --output /tmp/eidos-standard	2026-09-06T23:55:52.8859294Z [ANOMALY] step=98 err=0.3454 z=10.174 z_thr=1.356 ema=1.9683 sig=0.1595 ratio=2.0 plas_rms=1.0871 plas_clp=0.01 clip_frac~0.03 fatigue=1.00 lr_raw=0.350 lr_eff=0.219 HIPP bank=ELEVATED sim=+0.769 chi=0.499 write=1 status=CALIBRATING | Thermo E=7.90 | text=''
+runner	Run python scripts/verify_full_engine.py --profile cpu_engineering --output /tmp/eidos-standard	2026-09-06T23:55:52.8860544Z [ANOMALY] step=99 err=0.2889 z=10.406 z_thr=1.355 ema=1.9666 sig=0.1612 ratio=2.0 plas_rms=1.1144 plas_clp=0.01 clip_frac~0.03 fatigue=1.00 lr_raw=0.350 lr_eff=0.234 HIPP bank=ELEVATED sim=+0.729 chi=0.443 write=1 status=CALIBRATING | Thermo E=8.06 | text=''
+runner	Run python scripts/verify_full_engine.py --profile cpu_engineering --output /tmp/eidos-standard	2026-09-06T23:55:52.8861955Z [ANOMALY] step=100 err=0.3781 z=9.743 z_thr=1.354 ema=1.9650 sig=0.1629 ratio=2.0 plas_rms=1.1108 plas_clp=0.01 clip_frac~0.03 fatigue=1.00 lr_raw=0.350 lr_eff=0.260 HIPP bank=ELEVATED sim=+0.645 chi=0.344 write=1 status=CALIBRATING | Thermo E=8.13 | text=''
+runner	Run python scripts/verify_full_engine.py --profile cpu_engineering --output /tmp/eidos-standard	2026-09-06T23:55:52.8863163Z [ANOMALY] step=101 err=0.4270 z=9.713 z_thr=1.354 ema=1.9635 sig=0.1582 ratio=2.0 plas_rms=1.1265 plas_clp=0.01 clip_frac~0.03 fatigue=1.00 lr_raw=0.350 lr_eff=0.265 HIPP bank=ELEVATED sim=+0.624 chi=0.324 write=1 status=CALIBRATING | Thermo E=8.19 | text=''
+runner	Run python scripts/verify_full_engine.py --profile cpu_engineering --output /tmp/eidos-standard	2026-09-06T23:55:52.8864688Z [ANOMALY] step=102 err=0.5117 z=9.053 z_thr=1.353 ema=1.9620 sig=0.1602 ratio=2.0 plas_rms=1.1101 plas_clp=0.01 clip_frac~0.03 fatigue=1.00 lr_raw=0.350 lr_eff=0.260 HIPP bank=ELEVATED sim=+0.643 chi=0.342 write=1 status=CALIBRATING | Thermo E=8.19 | text=''
+runner	Run python scripts/verify_full_engine.py --profile cpu_engineering --output /tmp/eidos-standard	2026-09-06T23:55:52.8865946Z [ANOMALY] step=103 err=0.7172 z=7.861 z_thr=1.352 ema=1.9608 sig=0.1582 ratio=2.0 plas_rms=1.0971 plas_clp=0.01 clip_frac~0.03 fatigue=1.00 lr_raw=0.350 lr_eff=0.275 HIPP bank=ELEVATED sim=+0.583 chi=0.286 write=1 status=CALIBRATING | Thermo E=8.06 | text=''
+runner	Run python scripts/verify_full_engine.py --profile cpu_engineering --output /tmp/eidos-standard	2026-09-06T23:55:52.8867397Z [ANOMALY] step=104 err=0.6824 z=7.841 z_thr=1.352 ema=1.9595 sig=0.1629 ratio=2.0 plas_rms=1.1135 plas_clp=0.01 clip_frac~0.03 fatigue=1.00 lr_raw=0.350 lr_eff=0.275 HIPP bank=ELEVATED sim=+0.584 chi=0.287 write=1 status=CALIBRATING | Thermo E=7.95 | text=''
+runner	Run python scripts/verify_full_engine.py --profile cpu_engineering --output /tmp/eidos-standard	2026-09-06T23:55:52.8868644Z [ANOMALY] step=105 err=0.5762 z=8.572 z_thr=1.351 ema=1.9581 sig=0.1612 ratio=2.0 plas_rms=1.1607 plas_clp=0.01 clip_frac~0.02 fatigue=1.00 lr_raw=0.350 lr_eff=0.282 HIPP bank=ELEVATED sim=+0.552 chi=0.261 write=1 status=CALIBRATING | Thermo E=7.92 | text=''
+runner	Run python scripts/verify_full_engine.py --profile cpu_engineering --output /tmp/eidos-standard	2026-09-06T23:55:52.8869969Z [ANOMALY] step=106 err=0.4131 z=9.477 z_thr=1.350 ema=1.9566 sig=0.1629 ratio=2.0 plas_rms=1.1088 plas_clp=0.01 clip_frac~0.02 fatigue=1.00 lr_raw=0.350 lr_eff=0.289 HIPP bank=ELEVATED sim=+0.514 chi=0.232 write=1 status=CALIBRATING | Thermo E=7.98 | text=''
+runner	Run python scripts/verify_full_engine.py --profile cpu_engineering --output /tmp/eidos-standard	2026-09-06T23:55:52.8871184Z [ANOMALY] step=107 err=0.4704 z=9.542 z_thr=1.350 ema=1.9551 sig=0.1556 ratio=2.0 plas_rms=1.1179 plas_clp=0.01 clip_frac~0.02 fatigue=1.00 lr_raw=0.350 lr_eff=0.292 HIPP bank=ELEVATED sim=+0.495 chi=0.220 write=1 status=CALIBRATING | Thermo E=8.04 | text=''
+runner	Run python scripts/verify_full_engine.py --profile cpu_engineering --output /tmp/eidos-standard	2026-09-06T23:55:52.8872538Z [ANOMALY] step=108 err=0.4108 z=10.093 z_thr=1.349 ema=1.9535 sig=0.1529 ratio=2.0 plas_rms=1.1492 plas_clp=0.01 clip_frac~0.02 fatigue=1.00 lr_raw=0.350 lr_eff=0.300 HIPP bank=ELEVATED sim=+0.448 chi=0.191 write=1 status=CALIBRATING | Thermo E=8.15 | text=''
+runner	Run python scripts/verify_full_engine.py --profile cpu_engineering --output /tmp/eidos-standard	2026-09-06T23:55:52.8873918Z [ANOMALY] step=109 err=0.4916 z=9.658 z_thr=1.348 ema=1.9521 sig=0.1512 ratio=2.0 plas_rms=1.1237 plas_clp=0.01 clip_frac~0.02 fatigue=1.00 lr_raw=0.350 lr_eff=0.294 HIPP bank=ELEVATED sim=+0.482 chi=0.212 write=1 status=CALIBRATING | Thermo E=8.46 | text=''
+runner	Run python scripts/verify_full_engine.py --profile cpu_engineering --output /tmp/eidos-standard	2026-09-06T23:55:52.8875277Z [ANOMALY] step=110 err=0.4509 z=10.025 z_thr=1.348 ema=1.9506 sig=0.1496 ratio=2.0 plas_rms=1.1296 plas_clp=0.01 clip_frac~0.02 fatigue=1.00 lr_raw=0.350 lr_eff=0.307 HIPP bank=ELEVATED sim=+0.394 chi=0.162 write=1 status=CALIBRATING | Thermo E=8.76 | text=''
+runner	Run python scripts/verify_full_engine.py --profile cpu_engineering --output /tmp/eidos-standard	2026-09-06T23:55:52.8876524Z [ANOMALY] step=111 err=0.3227 z=10.833 z_thr=1.347 ema=1.9489 sig=0.1501 ratio=2.0 plas_rms=1.1124 plas_clp=0.01 clip_frac~0.02 fatigue=1.00 lr_raw=0.350 lr_eff=0.312 HIPP bank=ELEVATED sim=+0.355 chi=0.145 write=1 status=CALIBRATING | Thermo E=9.10 | text=''
+runner	Run python scripts/verify_full_engine.py --profile cpu_engineering --output /tmp/eidos-standard	2026-09-06T23:55:52.8877875Z [ANOMALY] step=112 err=0.3304 z=10.690 z_thr=1.346 ema=1.9473 sig=0.1513 ratio=2.0 plas_rms=1.0543 plas_clp=0.01 clip_frac~0.02 fatigue=1.00 lr_raw=0.350 lr_eff=0.308 HIPP bank=ELEVATED sim=+0.386 chi=0.158 write=1 status=CALIBRATING | Thermo E=9.40 | text=''
+runner	Run python scripts/verify_full_engine.py --profile cpu_engineering --output /tmp/eidos-standard	2026-09-06T23:55:52.8879286Z [ANOMALY] step=113 err=0.4185 z=10.075 z_thr=1.346 ema=1.9458 sig=0.1516 ratio=2.0 plas_rms=1.0416 plas_clp=0.01 clip_frac~0.02 fatigue=1.00 lr_raw=0.350 lr_eff=0.311 HIPP bank=ELEVATED sim=+0.361 chi=0.147 write=1 status=CALIBRATING | Thermo E=9.59 | text=''
+runner	Run python scripts/verify_full_engine.py --profile cpu_engineering --output /tmp/eidos-standard	2026-09-06T23:55:52.8880601Z [ANOMALY] step=114 err=0.4487 z=9.844 z_thr=1.345 ema=1.9443 sig=0.1519 ratio=2.0 plas_rms=1.0372 plas_clp=0.01 clip_frac~0.02 fatigue=1.00 lr_raw=0.350 lr_eff=0.310 HIPP bank=ELEVATED sim=+0.369 chi=0.151 write=1 status=CALIBRATING | Thermo E=9.74 | text=''
+runner	Run python scripts/verify_full_engine.py --profile cpu_engineering --output /tmp/eidos-standard	2026-09-06T23:55:52.8881857Z [ANOMALY] step=115 err=0.3325 z=10.548 z_thr=1.345 ema=1.9427 sig=0.1527 ratio=2.0 plas_rms=1.0120 plas_clp=0.01 clip_frac~0.02 fatigue=1.00 lr_raw=0.350 lr_eff=0.312 HIPP bank=ELEVATED sim=+0.357 chi=0.145 write=1 status=CALIBRATING | Thermo E=9.93 | text=''
+runner	Run python scripts/verify_full_engine.py --profile cpu_engineering --output /tmp/eidos-standard	2026-09-06T23:55:52.8883265Z [ANOMALY] step=116 err=0.3074 z=10.533 z_thr=1.344 ema=1.9410 sig=0.1551 ratio=2.0 plas_rms=1.0056 plas_clp=0.01 clip_frac~0.02 fatigue=1.00 lr_raw=0.350 lr_eff=0.320 HIPP bank=ELEVATED sim=+0.280 chi=0.115 write=1 status=CALIBRATING | Thermo E=10.10 | text=''
+runner	Run python scripts/verify_full_engine.py --profile cpu_engineering --output /tmp/eidos-standard	2026-09-06T23:55:52.8884774Z [ANOMALY] step=117 err=0.6417 z=8.390 z_thr=1.344 ema=1.9397 sig=0.1547 ratio=2.0 plas_rms=0.9383 plas_clp=0.01 clip_frac~0.03 fatigue=1.00 lr_raw=0.350 lr_eff=0.323 HIPP bank=ELEVATED sim=+0.242 chi=0.103 write=1 status=CALIBRATING | Thermo E=10.04 | text=''
+runner	Run python scripts/verify_full_engine.py --profile cpu_engineering --output /tmp/eidos-standard	2026-09-06T23:55:52.8886070Z [ANOMALY] step=118 err=0.7361 z=7.791 z_thr=1.343 ema=1.9385 sig=0.1543 ratio=2.0 plas_rms=0.9078 plas_clp=0.01 clip_frac~0.03 fatigue=1.00 lr_raw=0.350 lr_eff=0.321 HIPP bank=ELEVATED sim=+0.271 chi=0.112 write=1 status=CALIBRATING | Thermo E=9.92 | text=''
+runner	Run python scripts/verify_full_engine.py --profile cpu_engineering --output /tmp/eidos-standard	2026-09-06T23:55:52.8887412Z [ANOMALY] step=119 err=0.5337 z=9.121 z_thr=1.342 ema=1.9371 sig=0.1539 ratio=2.0 plas_rms=0.8394 plas_clp=0.01 clip_frac~0.03 fatigue=1.00 lr_raw=0.350 lr_eff=0.322 HIPP bank=ELEVATED sim=+0.258 chi=0.108 write=1 status=CALIBRATING | Thermo E=9.94 | text=''
+runner	Run python scripts/verify_full_engine.py --profile cpu_engineering --output /tmp/eidos-standard	2026-09-06T23:55:52.8888534Z [ANOMALY] step=120 err=0.4079 z=9.960 z_thr=1.342 ema=1.9356 sig=0.1534 ratio=2.0 plas_rms=0.8834 plas_clp=0.01 clip_frac~0.03 fatigue=1.00 lr_raw=0.350 lr_eff=0.313 HIPP bank=ELEVATED sim=+0.344 chi=0.140 write=1 status=CALIBRATING | Thermo E=10.03 | text=''
+runner	Run python scripts/verify_full_engine.py --profile cpu_engineering --output /tmp/eidos-standard	2026-09-06T23:55:52.8889661Z [ANOMALY] step=121 err=0.3924 z=9.964 z_thr=1.341 ema=1.9341 sig=0.1547 ratio=2.0 plas_rms=0.8048 plas_clp=0.01 clip_frac~0.03 fatigue=1.00 lr_raw=0.350 lr_eff=0.313 HIPP bank=ELEVATED sim=+0.348 chi=0.141 write=1 status=CALIBRATING | Thermo E=10.11 | text=''
+runner	Run python scripts/verify_full_engine.py --profile cpu_engineering --output /tmp/eidos-standard	2026-09-06T23:55:52.8890773Z [ANOMALY] step=122 err=0.4525 z=9.543 z_thr=1.341 ema=1.9326 sig=0.1551 ratio=2.0 plas_rms=0.7892 plas_clp=0.01 clip_frac~0.03 fatigue=1.00 lr_raw=0.350 lr_eff=0.318 HIPP bank=ELEVATED sim=+0.301 chi=0.123 write=1 status=CALIBRATING | Thermo E=10.14 | text=''
+runner	Run python scripts/verify_full_engine.py --profile cpu_engineering --output /tmp/eidos-standard	2026-09-06T23:55:52.8891890Z [ANOMALY] step=123 err=0.4697 z=9.573 z_thr=1.341 ema=1.9311 sig=0.1527 ratio=2.0 plas_rms=0.7476 plas_clp=0.01 clip_frac~0.03 fatigue=1.00 lr_raw=0.350 lr_eff=0.316 HIPP bank=ELEVATED sim=+0.316 chi=0.129 write=1 status=CALIBRATING | Thermo E=10.17 | text=''
+runner	Run python scripts/verify_full_engine.py --profile cpu_engineering --output /tmp/eidos-standard	2026-09-06T23:55:52.8893034Z [ANOMALY] step=124 err=0.4300 z=10.003 z_thr=1.340 ema=1.9296 sig=0.1499 ratio=2.0 plas_rms=0.7139 plas_clp=0.01 clip_frac~0.03 fatigue=1.00 lr_raw=0.350 lr_eff=0.315 HIPP bank=ELEVATED sim=+0.330 chi=0.134 write=1 status=CALIBRATING | Thermo E=10.24 | text=''
+runner	Run python scripts/verify_full_engine.py --profile cpu_engineering --output /tmp/eidos-standard	2026-09-06T23:55:52.8894172Z [ANOMALY] step=125 err=0.2562 z=10.979 z_thr=1.340 ema=1.9279 sig=0.1523 ratio=2.0 plas_rms=0.7345 plas_clp=0.01 clip_frac~0.03 fatigue=1.00 lr_raw=0.350 lr_eff=0.315 HIPP bank=ELEVATED sim=+0.325 chi=0.132 write=1 status=CALIBRATING | Thermo E=10.40 | text=''
+runner	Run python scripts/verify_full_engine.py --profile cpu_engineering --output /tmp/eidos-standard	2026-09-06T23:55:52.8895287Z [ANOMALY] step=126 err=0.4001 z=9.924 z_thr=1.339 ema=1.9264 sig=0.1538 ratio=2.0 plas_rms=0.6862 plas_clp=0.01 clip_frac~0.04 fatigue=1.00 lr_raw=0.350 lr_eff=0.315 HIPP bank=ELEVATED sim=+0.326 chi=0.132 write=1 status=CALIBRATING | Thermo E=10.45 | text=''
+runner	Run python scripts/verify_full_engine.py --profile cpu_engineering --output /tmp/eidos-standard	2026-09-06T23:55:52.8896421Z [ANOMALY] step=127 err=0.2945 z=10.735 z_thr=1.339 ema=1.9248 sig=0.1519 ratio=2.0 plas_rms=0.6679 plas_clp=0.01 clip_frac~0.04 fatigue=1.00 lr_raw=0.350 lr_eff=0.316 HIPP bank=ELEVATED sim=+0.317 chi=0.129 write=1 status=CALIBRATING | Thermo E=10.56 | text=''
+runner	Run python scripts/verify_full_engine.py --profile cpu_engineering --output /tmp/eidos-standard	2026-09-06T23:55:52.8897618Z [ANOMALY] step=128 err=0.4853 z=9.783 z_thr=1.338 ema=1.9233 sig=0.1470 ratio=2.0 plas_rms=0.6857 plas_clp=0.01 clip_frac~0.04 fatigue=1.00 lr_raw=0.350 lr_eff=0.313 HIPP bank=ELEVATED sim=+0.347 chi=0.141 write=1 status=CALIBRATING | Thermo E=10.58 | text=''
+runner	Run python scripts/verify_full_engine.py --profile cpu_engineering --output /tmp/eidos-standard	2026-09-06T23:55:52.8898767Z [ANOMALY] step=129 err=0.7991 z=7.396 z_thr=1.338 ema=1.9222 sig=0.1519 ratio=2.0 plas_rms=0.6628 plas_clp=0.01 clip_frac~0.04 fatigue=1.00 lr_raw=0.350 lr_eff=0.314 HIPP bank=ELEVATED sim=+0.339 chi=0.138 write=1 status=GREEN: NOMINAL | Thermo E=10.36 | text=''
+runner	Run python scripts/verify_full_engine.py --profile cpu_engineering --output /tmp/eidos-standard	2026-09-06T23:55:52.8899383Z 
+runner	Run python scripts/verify_full_engine.py --profile cpu_engineering --output /tmp/eidos-standard	2026-09-06T23:55:52.8899532Z ========================================
+runner	Run python scripts/verify_full_engine.py --profile cpu_engineering --output /tmp/eidos-standard	2026-09-06T23:55:52.8899850Z SENTINEL SUMMARY (UNIFIED STREAM)
+runner	Run python scripts/verify_full_engine.py --profile cpu_engineering --output /tmp/eidos-standard	2026-09-06T23:55:52.8900405Z ========================================
+runner	Run python scripts/verify_full_engine.py --profile cpu_engineering --output /tmp/eidos-standard	2026-09-06T23:55:52.8900779Z Total frames seen             : 800
+runner	Run python scripts/verify_full_engine.py --profile cpu_engineering --output /tmp/eidos-standard	2026-09-06T23:55:52.8901113Z Frames processed (post warmup): 720
+runner	Run python scripts/verify_full_engine.py --profile cpu_engineering --output /tmp/eidos-standard	2026-09-06T23:55:52.8901443Z Surprises                     : 659 (91.53% of frames)
+runner	Run python scripts/verify_full_engine.py --profile cpu_engineering --output /tmp/eidos-standard	2026-09-06T23:55:52.8901793Z Final approx abs threshold    : 2.59251
+runner	Run python scripts/verify_full_engine.py --profile cpu_engineering --output /tmp/eidos-standard	2026-09-06T23:55:52.8902161Z Final err range               : min=0.1563 max=15.4503
+runner	Run python scripts/verify_full_engine.py --profile cpu_engineering --output /tmp/eidos-standard	2026-09-06T23:55:52.8902511Z Final z_thresh                : 5.18617
+runner	Run python scripts/verify_full_engine.py --profile cpu_engineering --output /tmp/eidos-standard	2026-09-06T23:55:52.8902851Z Final ema_err                 : 1.4710, final sigma: 0.2170
+runner	Run python scripts/verify_full_engine.py --profile cpu_engineering --output /tmp/eidos-standard	2026-09-06T23:55:52.8903831Z Synaptic hash (initial→final) : e9431a18bcc9afed → 61827d80d5d9cffb
+runner	Run python scripts/verify_full_engine.py --profile cpu_engineering --output /tmp/eidos-standard	2026-09-06T23:55:52.8904051Z 
+runner	Run python scripts/verify_full_engine.py --profile cpu_engineering --output /tmp/eidos-standard	2026-09-06T23:55:52.8904213Z ========================================
+runner	Run python scripts/verify_full_engine.py --profile cpu_engineering --output /tmp/eidos-standard	2026-09-06T23:55:52.8904532Z EIDOS SENTINEL PLAIN-LANGUAGE REPORT
+runner	Run python scripts/verify_full_engine.py --profile cpu_engineering --output /tmp/eidos-standard	2026-09-06T23:55:52.8904905Z ========================================
+runner	Run python scripts/verify_full_engine.py --profile cpu_engineering --output /tmp/eidos-standard	2026-09-06T23:55:52.8905190Z SENTINEL SESSION REPORT
+runner	Run python scripts/verify_full_engine.py --profile cpu_engineering --output /tmp/eidos-standard	2026-09-06T23:55:52.8905469Z =======================
+runner	Run python scripts/verify_full_engine.py --profile cpu_engineering --output /tmp/eidos-standard	2026-09-06T23:55:52.8905631Z 
+runner	Run python scripts/verify_full_engine.py --profile cpu_engineering --output /tmp/eidos-standard	2026-09-06T23:55:52.8905781Z Session overview
+runner	Run python scripts/verify_full_engine.py --profile cpu_engineering --output /tmp/eidos-standard	2026-09-06T23:55:52.8906034Z ----------------
+runner	Run python scripts/verify_full_engine.py --profile cpu_engineering --output /tmp/eidos-standard	2026-09-06T23:55:52.8906341Z - Frames processed (post-warmup): 720
+runner	Run python scripts/verify_full_engine.py --profile cpu_engineering --output /tmp/eidos-standard	2026-09-06T23:55:52.8906680Z - Surprises: 659 (91.53% of frames)
+runner	Run python scripts/verify_full_engine.py --profile cpu_engineering --output /tmp/eidos-standard	2026-09-06T23:55:52.8907088Z - Surprise Rate: 91.53%
+runner	Run python scripts/verify_full_engine.py --profile cpu_engineering --output /tmp/eidos-standard	2026-09-06T23:55:52.8907399Z - Error range: min=0.1563, max=15.4503
+runner	Run python scripts/verify_full_engine.py --profile cpu_engineering --output /tmp/eidos-standard	2026-09-06T23:55:52.8907791Z - Final approx absolute surprise threshold: 2.59251
+runner	Run python scripts/verify_full_engine.py --profile cpu_engineering --output /tmp/eidos-standard	2026-09-06T23:55:52.8908144Z - Final z-threshold in surprise space: 5.186
+runner	Run python scripts/verify_full_engine.py --profile cpu_engineering --output /tmp/eidos-standard	2026-09-06T23:55:52.8908484Z - Final residual baseline: ema_err=1.4710, sigma=0.2170
+runner	Run python scripts/verify_full_engine.py --profile cpu_engineering --output /tmp/eidos-standard	2026-09-06T23:55:52.8908734Z 
+runner	Run python scripts/verify_full_engine.py --profile cpu_engineering --output /tmp/eidos-standard	2026-09-06T23:55:52.8908890Z Sentinel regimes observed
+runner	Run python scripts/verify_full_engine.py --profile cpu_engineering --output /tmp/eidos-standard	2026-09-06T23:55:52.8909165Z --------------------------
+runner	Run python scripts/verify_full_engine.py --profile cpu_engineering --output /tmp/eidos-standard	2026-09-06T23:55:52.8909473Z - CALIBRATING: 6.8% of post-warmup frames
+runner	Run python scripts/verify_full_engine.py --profile cpu_engineering --output /tmp/eidos-standard	2026-09-06T23:55:52.8909789Z - GREEN: 93.2% of post-warmup frames
+runner	Run python scripts/verify_full_engine.py --profile cpu_engineering --output /tmp/eidos-standard	2026-09-06T23:55:52.8909977Z 
+runner	Run python scripts/verify_full_engine.py --profile cpu_engineering --output /tmp/eidos-standard	2026-09-06T23:55:52.8910110Z Geometry and spectrum
+runner	Run python scripts/verify_full_engine.py --profile cpu_engineering --output /tmp/eidos-standard	2026-09-06T23:55:52.8910392Z ----------------------
+runner	Run python scripts/verify_full_engine.py --profile cpu_engineering --output /tmp/eidos-standard	2026-09-06T23:55:52.8910767Z - Average eigen dominance ≈ 0.71.
+runner	Run python scripts/verify_full_engine.py --profile cpu_engineering --output /tmp/eidos-standard	2026-09-06T23:55:52.8911144Z - Spectral entropy ~0.36 (low): narrowband/tonal dominance.
+runner	Run python scripts/verify_full_engine.py --profile cpu_engineering --output /tmp/eidos-standard	2026-09-06T23:55:52.8911362Z 
+runner	Run python scripts/verify_full_engine.py --profile cpu_engineering --output /tmp/eidos-standard	2026-09-06T23:55:52.8911471Z Hippocampus (episodic memory)
+runner	Run python scripts/verify_full_engine.py --profile cpu_engineering --output /tmp/eidos-standard	2026-09-06T23:55:52.8911772Z -----------------------------
+runner	Run python scripts/verify_full_engine.py --profile cpu_engineering --output /tmp/eidos-standard	2026-09-06T23:55:52.8912140Z - Mean recall similarity ≈ 0.156 (range ~[-1,1]).
+runner	Run python scripts/verify_full_engine.py --profile cpu_engineering --output /tmp/eidos-standard	2026-09-06T23:55:52.8912471Z - Mean familiarity χ ≈ 0.091 (0..1).
+runner	Run python scripts/verify_full_engine.py --profile cpu_engineering --output /tmp/eidos-standard	2026-09-06T23:55:52.8912750Z - Writes performed: 250
+runner	Run python scripts/verify_full_engine.py --profile cpu_engineering --output /tmp/eidos-standard	2026-09-06T23:55:52.8912900Z 
+runner	Run python scripts/verify_full_engine.py --profile cpu_engineering --output /tmp/eidos-standard	2026-09-06T23:55:52.8913020Z Anomaly highlights
+runner	Run python scripts/verify_full_engine.py --profile cpu_engineering --output /tmp/eidos-standard	2026-09-06T23:55:52.8913251Z ------------------
+runner	Run python scripts/verify_full_engine.py --profile cpu_engineering --output /tmp/eidos-standard	2026-09-06T23:55:52.8913672Z - Cluster 0: steps 88–88 (n=1), max z≈11.76, generic numeric/vector data. Example: ''
+runner	Run python scripts/verify_full_engine.py --profile cpu_engineering --output /tmp/eidos-standard	2026-09-06T23:55:52.8914205Z - Cluster 1: steps 89–89 (n=1), max z≈11.20, generic numeric/vector data. Example: ''
+runner	Run python scripts/verify_full_engine.py --profile cpu_engineering --output /tmp/eidos-standard	2026-09-06T23:55:52.8914719Z - Cluster 2: steps 125–125 (n=1), max z≈10.98, generic numeric/vector data. Example: ''
+runner	Run python scripts/verify_full_engine.py --profile cpu_engineering --output /tmp/eidos-standard	2026-09-06T23:55:52.8915223Z - Cluster 3: steps 111–111 (n=1), max z≈10.83, generic numeric/vector data. Example: ''
+runner	Run python scripts/verify_full_engine.py --profile cpu_engineering --output /tmp/eidos-standard	2026-09-06T23:55:52.8915778Z - Cluster 4: steps 90–90 (n=1), max z≈10.81, generic numeric/vector data. Example: ''
+runner	Run python scripts/verify_full_engine.py --profile cpu_engineering --output /tmp/eidos-standard	2026-09-06T23:55:52.8916252Z - Cluster 5: steps 87–87 (n=1), max z≈10.79, generic numeric/vector data. Example: ''
+runner	Run python scripts/verify_full_engine.py --profile cpu_engineering --output /tmp/eidos-standard	2026-09-06T23:55:52.8916475Z 
+runner	Run python scripts/verify_full_engine.py --profile cpu_engineering --output /tmp/eidos-standard	2026-09-06T23:55:52.8916632Z Plain-language summary
+runner	Run python scripts/verify_full_engine.py --profile cpu_engineering --output /tmp/eidos-standard	2026-09-06T23:55:52.8917051Z ----------------------
+runner	Run python scripts/verify_full_engine.py --profile cpu_engineering --output /tmp/eidos-standard	2026-09-06T23:55:52.8917572Z The engine stayed mostly stable, but encountered distinct segments that deviated from expectation and forced sharper internal adjustment.
+runner	Run python scripts/verify_full_engine.py --profile cpu_engineering --output /tmp/eidos-standard	2026-09-06T23:55:52.8918387Z Hippocampus tracked whether spikes were novel vs. recurrent; recurrent episodes inhibited learning to reduce 'relearning the same surprise'.
+runner	Run python scripts/verify_full_engine.py --profile cpu_engineering --output /tmp/eidos-standard	2026-09-06T23:55:52.8918851Z 
+runner	Run python scripts/verify_full_engine.py --profile cpu_engineering --output /tmp/eidos-standard	2026-09-06T23:55:52.8919397Z Reservoir checkpoint saved: /tmp/eidos-standard/engine/reservoir_checkpoints/sentinel_lab_real_data_engineering/20260906_235552_reservoir_checkpoint_sentinel_lab_real_data_engineering.pt
+runner	Run python scripts/verify_full_engine.py --profile cpu_engineering --output /tmp/eidos-standard	2026-09-06T23:55:52.8920453Z Hippocampus snapshot saved: /tmp/eidos-standard/engine/hippocampus/sentinel_lab_real_data_engineering/20260906_235552_hippocampus_snapshot_sentinel_lab_real_data_engineering.pt
+runner	Run python scripts/verify_full_engine.py --profile cpu_engineering --output /tmp/eidos-standard	2026-09-06T23:55:52.8920884Z 
+runner	Run python scripts/verify_full_engine.py --profile cpu_engineering --output /tmp/eidos-standard	2026-09-06T23:55:52.8921060Z Reservoir geometry artifacts:
+runner	Run python scripts/verify_full_engine.py --profile cpu_engineering --output /tmp/eidos-standard	2026-09-06T23:55:52.8921687Z   Raw states   : /tmp/eidos-standard/engine/reservoir_geometry/sentinel_lab_real_data_engineering/20260906_235552_reservoir_states_sentinel_lab_real_data_engineering.npy
+runner	Run python scripts/verify_full_engine.py --profile cpu_engineering --output /tmp/eidos-standard	2026-09-06T23:55:52.8922542Z   Geometry JSON: /tmp/eidos-standard/engine/reservoir_geometry/sentinel_lab_real_data_engineering/20260906_235552_reservoir_geom_sentinel_lab_real_data_engineering.json
+runner	Run python scripts/verify_full_engine.py --profile cpu_engineering --output /tmp/eidos-standard	2026-09-06T23:55:52.8922975Z 
+runner	Run python scripts/verify_full_engine.py --profile cpu_engineering --output /tmp/eidos-standard	2026-09-06T23:55:52.8923066Z Top-K surprise artifacts:
+runner	Run python scripts/verify_full_engine.py --profile cpu_engineering --output /tmp/eidos-standard	2026-09-06T23:55:52.8923650Z   JSON : /tmp/eidos-standard/engine/sentinel_forensics/sentinel_lab_real_data_engineering/20260906_235552_top_100_surprises_sentinel_lab_real_data_engineering.json
+runner	Run python scripts/verify_full_engine.py --profile cpu_engineering --output /tmp/eidos-standard	2026-09-06T23:55:52.8924461Z   TEXT : /tmp/eidos-standard/engine/sentinel_forensics/sentinel_lab_real_data_engineering/20260906_235552_top_100_surprises_text_sentinel_lab_real_data_engineering.txt
+runner	Run python scripts/verify_full_engine.py --profile cpu_engineering --output /tmp/eidos-standard	2026-09-06T23:55:52.8924882Z 
+runner	Run python scripts/verify_full_engine.py --profile cpu_engineering --output /tmp/eidos-standard	2026-09-06T23:55:52.8925060Z Compression summary (bicameral V6 prototype):
+runner	Run python scripts/verify_full_engine.py --profile cpu_engineering --output /tmp/eidos-standard	2026-09-06T23:55:52.8925351Z   Raw bytes (float64 frames): 368640
+runner	Run python scripts/verify_full_engine.py --profile cpu_engineering --output /tmp/eidos-standard	2026-09-06T23:55:52.8925617Z   Compressed bytes          : 138486
+runner	Run python scripts/verify_full_engine.py --profile cpu_engineering --output /tmp/eidos-standard	2026-09-06T23:55:52.8925920Z   Global ratio              : 2.66x
+runner	Run python scripts/verify_full_engine.py --profile cpu_engineering --output /tmp/eidos-standard	2026-09-06T23:55:52.8927102Z   Compressed stream artifact: /tmp/eidos-standard/engine/compression/sentinel_lab_real_data_engineering/20260906_235552_bicameral_stream_sentinel_lab_real_data_engineering.bin
+runner	Run python scripts/verify_full_engine.py --profile cpu_engineering --output /tmp/eidos-standard	2026-09-06T23:55:52.8928038Z   Codec meta artifact       : /tmp/eidos-standard/engine/compression/sentinel_lab_real_data_engineering/20260906_235552_bicameral_stream_meta_sentinel_lab_real_data_engineering.json
+runner	Run python scripts/verify_full_engine.py --profile cpu_engineering --output /tmp/eidos-standard	2026-09-06T23:55:52.8928789Z {"evaluation_rows": 600, "profile": "cpu_engineering", "reference": "/tmp/eidos-standard/reference.json"}
+runner	Run python scripts/verify_full_engine.py --profile cpu_mechanisms --output /tmp/eidos-mechanisms	﻿2026-09-06T23:55:53.3111577Z ##[group]Run python scripts/verify_full_engine.py --profile cpu_mechanisms --output /tmp/eidos-mechanisms
+runner	Run python scripts/verify_full_engine.py --profile cpu_mechanisms --output /tmp/eidos-mechanisms	2026-09-06T23:55:53.3112185Z [36;1mpython scripts/verify_full_engine.py --profile cpu_mechanisms --output /tmp/eidos-mechanisms[0m
+runner	Run python scripts/verify_full_engine.py --profile cpu_mechanisms --output /tmp/eidos-mechanisms	2026-09-06T23:55:53.3132582Z shell: /usr/bin/bash -e {0}
+runner	Run python scripts/verify_full_engine.py --profile cpu_mechanisms --output /tmp/eidos-mechanisms	2026-09-06T23:55:53.3132905Z env:
+runner	Run python scripts/verify_full_engine.py --profile cpu_mechanisms --output /tmp/eidos-mechanisms	2026-09-06T23:55:53.3133236Z   pythonLocation: /opt/hostedtoolcache/Python/3.14.7/x64
+runner	Run python scripts/verify_full_engine.py --profile cpu_mechanisms --output /tmp/eidos-mechanisms	2026-09-06T23:55:53.3133617Z   PKG_CONFIG_PATH: /opt/hostedtoolcache/Python/3.14.7/x64/lib/pkgconfig
+runner	Run python scripts/verify_full_engine.py --profile cpu_mechanisms --output /tmp/eidos-mechanisms	2026-09-06T23:55:53.3133990Z   Python_ROOT_DIR: /opt/hostedtoolcache/Python/3.14.7/x64
+runner	Run python scripts/verify_full_engine.py --profile cpu_mechanisms --output /tmp/eidos-mechanisms	2026-09-06T23:55:53.3134372Z   Python2_ROOT_DIR: /opt/hostedtoolcache/Python/3.14.7/x64
+runner	Run python scripts/verify_full_engine.py --profile cpu_mechanisms --output /tmp/eidos-mechanisms	2026-09-06T23:55:53.3134707Z   Python3_ROOT_DIR: /opt/hostedtoolcache/Python/3.14.7/x64
+runner	Run python scripts/verify_full_engine.py --profile cpu_mechanisms --output /tmp/eidos-mechanisms	2026-09-06T23:55:53.3135059Z   LD_LIBRARY_PATH: /opt/hostedtoolcache/Python/3.14.7/x64/lib
+runner	Run python scripts/verify_full_engine.py --profile cpu_mechanisms --output /tmp/eidos-mechanisms	2026-09-06T23:55:53.3135379Z ##[endgroup]
+runner	Run python scripts/verify_full_engine.py --profile cpu_mechanisms --output /tmp/eidos-mechanisms	2026-09-06T23:55:56.5947090Z !!! Optional parsers missing: pillow, PyPDF2, python-docx
+runner	Run python scripts/verify_full_engine.py --profile cpu_mechanisms --output /tmp/eidos-mechanisms	2026-09-06T23:55:56.5977919Z >>> GPU CHECK:
+runner	Run python scripts/verify_full_engine.py --profile cpu_mechanisms --output /tmp/eidos-mechanisms	2026-09-06T23:55:56.6017196Z     device      = cpu (CPU)
+runner	Run python scripts/verify_full_engine.py --profile cpu_mechanisms --output /tmp/eidos-mechanisms	2026-09-06T23:55:56.6047072Z     dtype       = torch.float32
+runner	Run python scripts/verify_full_engine.py --profile cpu_mechanisms --output /tmp/eidos-mechanisms	2026-09-06T23:55:56.6077081Z     TF32        = True
+runner	Run python scripts/verify_full_engine.py --profile cpu_mechanisms --output /tmp/eidos-mechanisms	2026-09-06T23:55:56.6097102Z     deterministic= False
+runner	Run python scripts/verify_full_engine.py --profile cpu_mechanisms --output /tmp/eidos-mechanisms	2026-09-06T23:55:56.6137148Z >>> Hardware: cpu | Precision: Float32
+runner	Run python scripts/verify_full_engine.py --profile cpu_mechanisms --output /tmp/eidos-mechanisms	2026-09-06T23:55:56.6167150Z >>> Mode: EIDOS BRAIN UNIFIED v0.4.7.02 + Hippocampus (HDC/VSA)
+runner	Run python scripts/verify_full_engine.py --profile cpu_mechanisms --output /tmp/eidos-mechanisms	2026-09-06T23:55:56.6186420Z >>> ENGINE HASH: d1d8db7b5f8e70c0ae6abc96575295620a27ea2943fa50209317d264da50ef50
+runner	Run python scripts/verify_full_engine.py --profile cpu_mechanisms --output /tmp/eidos-mechanisms	2026-09-06T23:55:56.6217643Z >>> HIVE BACKEND: LOCAL
+runner	Run python scripts/verify_full_engine.py --profile cpu_mechanisms --output /tmp/eidos-mechanisms	2026-09-06T23:55:56.6257228Z >>> INITIALIZING SENTINEL V2.2 (UNIFIED STREAM)...
+runner	Run python scripts/verify_full_engine.py --profile cpu_mechanisms --output /tmp/eidos-mechanisms	2026-09-06T23:55:56.6287101Z >>> Determinism: Pinning seed=0
+runner	Run python scripts/verify_full_engine.py --profile cpu_mechanisms --output /tmp/eidos-mechanisms	2026-09-06T23:55:56.6317052Z >>> est_frames=800, using WARMUP=80
+runner	Run python scripts/verify_full_engine.py --profile cpu_mechanisms --output /tmp/eidos-mechanisms	2026-09-06T23:55:56.6347701Z [ANOMALY] step=80 err=0.8412 z=7.569 z_thr=1.372 ema=1.9936 sig=0.1523 ratio=2.0 plas_rms=0.9388 plas_clp=0.01 clip_frac~0.02 fatigue=1.00 lr_raw=0.350 lr_eff=0.337 HIPP bank=ELEVATED sim=+0.007 chi=0.051 write=1 status=CALIBRATING | Thermo E=0.67 | text=''
+runner	Run python scripts/verify_full_engine.py --profile cpu_mechanisms --output /tmp/eidos-mechanisms	2026-09-06T23:55:56.6377625Z [ANOMALY] step=81 err=0.8622 z=7.250 z_thr=1.371 ema=1.9924 sig=0.1559 ratio=2.0 plas_rms=0.9046 plas_clp=0.01 clip_frac~0.07 fatigue=1.00 lr_raw=0.350 lr_eff=0.124 HIPP bank=ELEVATED sim=+0.950 chi=0.861 write=1 status=CALIBRATING | Thermo E=1.24 | text=''
+runner	Run python scripts/verify_full_engine.py --profile cpu_mechanisms --output /tmp/eidos-mechanisms	2026-09-06T23:55:56.6407711Z [ANOMALY] step=82 err=0.6862 z=8.181 z_thr=1.370 ema=1.9911 sig=0.1595 ratio=2.0 plas_rms=0.8000 plas_clp=0.01 clip_frac~0.07 fatigue=1.00 lr_raw=0.350 lr_eff=0.135 HIPP bank=ELEVATED sim=+0.934 chi=0.819 write=1 status=CALIBRATING | Thermo E=1.84 | text=''
+runner	Run python scripts/verify_full_engine.py --profile cpu_mechanisms --output /tmp/eidos-mechanisms	2026-09-06T23:55:56.6437662Z [ANOMALY] step=83 err=0.4934 z=9.599 z_thr=1.369 ema=1.9896 sig=0.1559 ratio=2.0 plas_rms=0.8348 plas_clp=0.01 clip_frac~0.08 fatigue=1.00 lr_raw=0.350 lr_eff=0.119 HIPP bank=ELEVATED sim=+0.957 chi=0.879 write=1 status=CALIBRATING | Thermo E=2.52 | text=''
+runner	Run python scripts/verify_full_engine.py --profile cpu_mechanisms --output /tmp/eidos-mechanisms	2026-09-06T23:55:56.6467660Z [ANOMALY] step=84 err=0.4506 z=10.098 z_thr=1.368 ema=1.9881 sig=0.1523 ratio=2.0 plas_rms=0.4020 plas_clp=0.01 clip_frac~0.11 fatigue=1.00 lr_raw=0.350 lr_eff=0.174 HIPP bank=ELEVATED sim=+0.867 chi=0.671 write=1 status=CALIBRATING | Thermo E=3.18 | text=''
+runner	Run python scripts/verify_full_engine.py --profile cpu_mechanisms --output /tmp/eidos-mechanisms	2026-09-06T23:55:56.6498275Z [ANOMALY] step=85 err=0.4459 z=10.086 z_thr=1.367 ema=1.9866 sig=0.1528 ratio=2.0 plas_rms=0.2032 plas_clp=0.01 clip_frac~0.20 fatigue=1.00 lr_raw=0.350 lr_eff=0.192 HIPP bank=ELEVATED sim=+0.830 chi=0.601 write=1 status=CALIBRATING | Thermo E=3.78 | text=''
+runner	Run python scripts/verify_full_engine.py --profile cpu_mechanisms --output /tmp/eidos-mechanisms	2026-09-06T23:55:56.6527708Z [ANOMALY] step=86 err=0.5774 z=9.869 z_thr=1.366 ema=1.9852 sig=0.1426 ratio=2.0 plas_rms=0.1754 plas_clp=0.01 clip_frac~0.24 fatigue=1.00 lr_raw=0.350 lr_eff=0.185 HIPP bank=ELEVATED sim=+0.846 chi=0.629 write=1 status=CALIBRATING | Thermo E=4.30 | text=''
+runner	Run python scripts/verify_full_engine.py --profile cpu_mechanisms --output /tmp/eidos-mechanisms	2026-09-06T23:55:56.6557664Z [ANOMALY] step=87 err=0.4401 z=10.655 z_thr=1.365 ema=1.9836 sig=0.1449 ratio=2.0 plas_rms=0.1121 plas_clp=0.01 clip_frac~0.32 fatigue=1.00 lr_raw=0.350 lr_eff=0.219 HIPP bank=ELEVATED sim=+0.768 chi=0.498 write=1 status=CALIBRATING | Thermo E=4.84 | text=''
+runner	Run python scripts/verify_full_engine.py --profile cpu_mechanisms --output /tmp/eidos-mechanisms	2026-09-06T23:55:56.6572492Z [ANOMALY] step=88 err=0.2925 z=11.678 z_thr=1.364 ema=1.9819 sig=0.1447 ratio=2.0 plas_rms=0.1037 plas_clp=0.01 clip_frac~0.35 fatigue=1.00 lr_raw=0.350 lr_eff=0.216 HIPP bank=ELEVATED sim=+0.775 chi=0.510 write=1 status=CALIBRATING | Thermo E=5.43 | text=''
+runner	Run python scripts/verify_full_engine.py --profile cpu_mechanisms --output /tmp/eidos-mechanisms	2026-09-06T23:55:56.6617681Z [ANOMALY] step=89 err=0.3618 z=11.084 z_thr=1.363 ema=1.9803 sig=0.1460 ratio=2.0 plas_rms=0.0687 plas_clp=0.01 clip_frac~0.50 fatigue=1.00 lr_raw=0.350 lr_eff=0.219 HIPP bank=ELEVATED sim=+0.770 chi=0.501 write=1 status=CALIBRATING | Thermo E=5.90 | text=''
+runner	Run python scripts/verify_full_engine.py --profile cpu_mechanisms --output /tmp/eidos-mechanisms	2026-09-06T23:55:56.6647655Z [ANOMALY] step=90 err=0.4569 z=10.497 z_thr=1.363 ema=1.9788 sig=0.1450 ratio=2.0 plas_rms=0.0449 plas_clp=0.01 clip_frac~0.65 fatigue=1.00 lr_raw=0.350 lr_eff=0.236 HIPP bank=ELEVATED sim=+0.722 chi=0.434 write=1 status=CALIBRATING | Thermo E=6.26 | text=''
+runner	Run python scripts/verify_full_engine.py --profile cpu_mechanisms --output /tmp/eidos-mechanisms	2026-09-06T23:55:56.6677588Z [ANOMALY] step=91 err=0.7054 z=8.711 z_thr=1.362 ema=1.9775 sig=0.1460 ratio=2.0 plas_rms=0.0371 plas_clp=0.01 clip_frac~0.68 fatigue=1.00 lr_raw=0.350 lr_eff=0.259 HIPP bank=ELEVATED sim=+0.646 chi=0.346 write=1 status=CALIBRATING | Thermo E=6.42 | text=''
+runner	Run python scripts/verify_full_engine.py --profile cpu_mechanisms --output /tmp/eidos-mechanisms	2026-09-06T23:55:56.6707641Z [ANOMALY] step=92 err=0.6704 z=8.879 z_thr=1.361 ema=1.9762 sig=0.1471 ratio=2.0 plas_rms=0.0374 plas_clp=0.01 clip_frac~0.69 fatigue=1.00 lr_raw=0.350 lr_eff=0.254 HIPP bank=ELEVATED sim=+0.665 chi=0.366 write=1 status=CALIBRATING | Thermo E=6.57 | text=''
+runner	Run python scripts/verify_full_engine.py --profile cpu_mechanisms --output /tmp/eidos-mechanisms	2026-09-06T23:55:56.6728262Z [ANOMALY] step=93 err=0.5052 z=10.063 z_thr=1.360 ema=1.9747 sig=0.1460 ratio=2.0 plas_rms=0.0259 plas_clp=0.01 clip_frac~0.81 fatigue=1.00 lr_raw=0.350 lr_eff=0.258 HIPP bank=ELEVATED sim=+0.649 chi=0.349 write=1 status=CALIBRATING | Thermo E=6.83 | text=''
+runner	Run python scripts/verify_full_engine.py --profile cpu_mechanisms --output /tmp/eidos-mechanisms	2026-09-06T23:55:56.6730086Z [ANOMALY] step=94 err=0.4092 z=10.611 z_thr=1.359 ema=1.9732 sig=0.1474 ratio=2.0 plas_rms=0.0210 plas_clp=0.00 clip_frac~0.85 fatigue=1.00 lr_raw=0.350 lr_eff=0.272 HIPP bank=ELEVATED sim=+0.597 chi=0.298 write=1 status=CALIBRATING | Thermo E=7.11 | text=''
+runner	Run python scripts/verify_full_engine.py --profile cpu_mechanisms --output /tmp/eidos-mechanisms	2026-09-06T23:55:56.6731610Z [ANOMALY] step=95 err=0.5043 z=9.907 z_thr=1.358 ema=1.9717 sig=0.1481 ratio=2.0 plas_rms=0.0228 plas_clp=0.01 clip_frac~0.84 fatigue=1.00 lr_raw=0.350 lr_eff=0.261 HIPP bank=ELEVATED sim=+0.638 chi=0.337 write=1 status=CALIBRATING | Thermo E=7.30 | text=''
+runner	Run python scripts/verify_full_engine.py --profile cpu_mechanisms --output /tmp/eidos-mechanisms	2026-09-06T23:55:56.6733140Z [ANOMALY] step=96 err=0.4005 z=10.535 z_thr=1.358 ema=1.9701 sig=0.1490 ratio=2.0 plas_rms=0.0178 plas_clp=0.00 clip_frac~0.89 fatigue=1.00 lr_raw=0.350 lr_eff=0.268 HIPP bank=ELEVATED sim=+0.610 chi=0.311 write=1 status=CALIBRATING | Thermo E=7.52 | text=''
+runner	Run python scripts/verify_full_engine.py --profile cpu_mechanisms --output /tmp/eidos-mechanisms	2026-09-06T23:55:56.6734584Z [ANOMALY] step=97 err=0.3739 z=10.519 z_thr=1.357 ema=1.9685 sig=0.1516 ratio=2.0 plas_rms=0.0306 plas_clp=0.01 clip_frac~0.72 fatigue=1.00 lr_raw=0.350 lr_eff=0.283 HIPP bank=ELEVATED sim=+0.546 chi=0.256 write=1 status=CALIBRATING | Thermo E=7.73 | text=''
+runner	Run python scripts/verify_full_engine.py --profile cpu_mechanisms --output /tmp/eidos-mechanisms	2026-09-06T23:55:56.6736151Z [ANOMALY] step=98 err=0.3454 z=10.572 z_thr=1.356 ema=1.9669 sig=0.1534 ratio=2.0 plas_rms=0.0303 plas_clp=0.01 clip_frac~0.73 fatigue=1.00 lr_raw=0.350 lr_eff=0.279 HIPP bank=ELEVATED sim=+0.565 chi=0.272 write=1 status=CALIBRATING | Thermo E=7.92 | text=''
+runner	Run python scripts/verify_full_engine.py --profile cpu_mechanisms --output /tmp/eidos-mechanisms	2026-09-06T23:55:56.6737927Z [ANOMALY] step=99 err=0.2889 z=10.835 z_thr=1.355 ema=1.9652 sig=0.1547 ratio=2.0 plas_rms=0.0093 plas_clp=0.00 clip_frac~0.96 fatigue=1.00 lr_raw=0.350 lr_eff=0.284 HIPP bank=ELEVATED sim=+0.542 chi=0.253 write=1 status=CALIBRATING | Thermo E=8.11 | text=''
+runner	Run python scripts/verify_full_engine.py --profile cpu_mechanisms --output /tmp/eidos-mechanisms	2026-09-06T23:55:56.6739563Z [ANOMALY] step=100 err=0.3781 z=10.191 z_thr=1.354 ema=1.9636 sig=0.1556 ratio=2.0 plas_rms=0.0070 plas_clp=0.00 clip_frac~0.98 fatigue=1.00 lr_raw=0.350 lr_eff=0.297 HIPP bank=ELEVATED sim=+0.467 chi=0.202 write=1 status=CALIBRATING | Thermo E=8.23 | text=''
+runner	Run python scripts/verify_full_engine.py --profile cpu_mechanisms --output /tmp/eidos-mechanisms	2026-09-06T23:55:56.6741017Z [ANOMALY] step=101 err=0.4270 z=9.882 z_thr=1.354 ema=1.9621 sig=0.1553 ratio=2.0 plas_rms=0.0269 plas_clp=0.01 clip_frac~0.75 fatigue=1.00 lr_raw=0.350 lr_eff=0.300 HIPP bank=ELEVATED sim=+0.448 chi=0.191 write=1 status=CALIBRATING | Thermo E=8.30 | text=''
+runner	Run python scripts/verify_full_engine.py --profile cpu_mechanisms --output /tmp/eidos-mechanisms	2026-09-06T23:55:56.6742532Z [ANOMALY] step=102 err=0.5117 z=9.342 z_thr=1.353 ema=1.9606 sig=0.1551 ratio=2.0 plas_rms=0.0098 plas_clp=0.00 clip_frac~0.95 fatigue=1.00 lr_raw=0.350 lr_eff=0.303 HIPP bank=ELEVATED sim=+0.430 chi=0.181 write=1 status=CALIBRATING | Thermo E=8.31 | text=''
+runner	Run python scripts/verify_full_engine.py --profile cpu_mechanisms --output /tmp/eidos-mechanisms	2026-09-06T23:55:56.6744150Z [ANOMALY] step=103 err=0.7172 z=8.029 z_thr=1.352 ema=1.9594 sig=0.1547 ratio=2.0 plas_rms=0.0069 plas_clp=0.00 clip_frac~0.98 fatigue=1.00 lr_raw=0.350 lr_eff=0.308 HIPP bank=ELEVATED sim=+0.387 chi=0.159 write=1 status=CALIBRATING | Thermo E=8.19 | text=''
+runner	Run python scripts/verify_full_engine.py --profile cpu_mechanisms --output /tmp/eidos-mechanisms	2026-09-06T23:55:56.6745651Z [ANOMALY] step=104 err=0.6824 z=8.266 z_thr=1.352 ema=1.9581 sig=0.1543 ratio=2.0 plas_rms=0.0291 plas_clp=0.01 clip_frac~0.71 fatigue=1.00 lr_raw=0.350 lr_eff=0.311 HIPP bank=ELEVATED sim=+0.365 chi=0.149 write=1 status=CALIBRATING | Thermo E=8.10 | text=''
+runner	Run python scripts/verify_full_engine.py --profile cpu_mechanisms --output /tmp/eidos-mechanisms	2026-09-06T23:55:56.6747254Z [ANOMALY] step=105 err=0.5762 z=8.973 z_thr=1.351 ema=1.9567 sig=0.1539 ratio=2.0 plas_rms=0.0374 plas_clp=0.01 clip_frac~0.61 fatigue=1.00 lr_raw=0.350 lr_eff=0.311 HIPP bank=ELEVATED sim=+0.368 chi=0.150 write=1 status=CALIBRATING | Thermo E=8.10 | text=''
+runner	Run python scripts/verify_full_engine.py --profile cpu_mechanisms --output /tmp/eidos-mechanisms	2026-09-06T23:55:56.6748783Z [ANOMALY] step=106 err=0.4131 z=10.054 z_thr=1.350 ema=1.9552 sig=0.1534 ratio=2.0 plas_rms=0.0131 plas_clp=0.00 clip_frac~0.92 fatigue=1.00 lr_raw=0.350 lr_eff=0.313 HIPP bank=ELEVATED sim=+0.347 chi=0.141 write=1 status=CALIBRATING | Thermo E=8.20 | text=''
+runner	Run python scripts/verify_full_engine.py --profile cpu_mechanisms --output /tmp/eidos-mechanisms	2026-09-06T23:55:56.6750264Z [ANOMALY] step=107 err=0.4704 z=9.717 z_thr=1.350 ema=1.9537 sig=0.1527 ratio=2.0 plas_rms=0.0682 plas_clp=0.01 clip_frac~0.36 fatigue=1.00 lr_raw=0.350 lr_eff=0.317 HIPP bank=ELEVATED sim=+0.311 chi=0.126 write=1 status=CALIBRATING | Thermo E=8.26 | text=''
+runner	Run python scripts/verify_full_engine.py --profile cpu_mechanisms --output /tmp/eidos-mechanisms	2026-09-06T23:55:56.6751659Z [ANOMALY] step=108 err=0.4108 z=10.262 z_thr=1.349 ema=1.9522 sig=0.1502 ratio=2.0 plas_rms=0.0624 plas_clp=0.01 clip_frac~0.39 fatigue=1.00 lr_raw=0.350 lr_eff=0.317 HIPP bank=ELEVATED sim=+0.308 chi=0.125 write=1 status=CALIBRATING | Thermo E=8.36 | text=''
+runner	Run python scripts/verify_full_engine.py --profile cpu_mechanisms --output /tmp/eidos-mechanisms	2026-09-06T23:55:56.6753251Z [ANOMALY] step=109 err=0.4916 z=9.754 z_thr=1.348 ema=1.9507 sig=0.1496 ratio=2.0 plas_rms=0.0505 plas_clp=0.01 clip_frac~0.48 fatigue=1.00 lr_raw=0.350 lr_eff=0.312 HIPP bank=ELEVATED sim=+0.359 chi=0.146 write=1 status=CALIBRATING | Thermo E=8.53 | text=''
+runner	Run python scripts/verify_full_engine.py --profile cpu_mechanisms --output /tmp/eidos-mechanisms	2026-09-06T23:55:56.6754774Z [ANOMALY] step=110 err=0.4509 z=10.038 z_thr=1.348 ema=1.9492 sig=0.1493 ratio=2.0 plas_rms=0.0659 plas_clp=0.01 clip_frac~0.37 fatigue=1.00 lr_raw=0.350 lr_eff=0.321 HIPP bank=ELEVATED sim=+0.263 chi=0.109 write=1 status=CALIBRATING | Thermo E=8.71 | text=''
+runner	Run python scripts/verify_full_engine.py --profile cpu_mechanisms --output /tmp/eidos-mechanisms	2026-09-06T23:55:56.6756239Z [ANOMALY] step=111 err=0.3227 z=10.862 z_thr=1.347 ema=1.9476 sig=0.1496 ratio=2.0 plas_rms=0.0665 plas_clp=0.01 clip_frac~0.36 fatigue=1.00 lr_raw=0.350 lr_eff=0.322 HIPP bank=ELEVATED sim=+0.250 chi=0.105 write=1 status=CALIBRATING | Thermo E=8.94 | text=''
+runner	Run python scripts/verify_full_engine.py --profile cpu_mechanisms --output /tmp/eidos-mechanisms	2026-09-06T23:55:56.6757893Z [ANOMALY] step=112 err=0.3304 z=10.717 z_thr=1.346 ema=1.9460 sig=0.1507 ratio=2.0 plas_rms=0.0550 plas_clp=0.01 clip_frac~0.43 fatigue=1.00 lr_raw=0.350 lr_eff=0.322 HIPP bank=ELEVATED sim=+0.248 chi=0.105 write=1 status=CALIBRATING | Thermo E=9.13 | text=''
+runner	Run python scripts/verify_full_engine.py --profile cpu_mechanisms --output /tmp/eidos-mechanisms	2026-09-06T23:55:56.6759305Z [ANOMALY] step=113 err=0.4185 z=10.357 z_thr=1.346 ema=1.9444 sig=0.1473 ratio=2.0 plas_rms=0.0564 plas_clp=0.01 clip_frac~0.42 fatigue=1.00 lr_raw=0.350 lr_eff=0.324 HIPP bank=ELEVATED sim=+0.225 chi=0.098 write=1 status=CALIBRATING | Thermo E=9.26 | text=''
+runner	Run python scripts/verify_full_engine.py --profile cpu_mechanisms --output /tmp/eidos-mechanisms	2026-09-06T23:55:56.6760778Z [ANOMALY] step=114 err=0.4487 z=10.218 z_thr=1.345 ema=1.9429 sig=0.1462 ratio=2.0 plas_rms=0.0362 plas_clp=0.01 clip_frac~0.60 fatigue=1.00 lr_raw=0.350 lr_eff=0.326 HIPP bank=ELEVATED sim=+0.209 chi=0.093 write=1 status=CALIBRATING | Thermo E=9.36 | text=''
+runner	Run python scripts/verify_full_engine.py --profile cpu_mechanisms --output /tmp/eidos-mechanisms	2026-09-06T23:55:56.6762159Z [ANOMALY] step=115 err=0.3325 z=11.084 z_thr=1.345 ema=1.9413 sig=0.1451 ratio=2.0 plas_rms=0.0223 plas_clp=0.01 clip_frac~0.79 fatigue=1.00 lr_raw=0.350 lr_eff=0.325 HIPP bank=ELEVATED sim=+0.217 chi=0.095 write=1 status=CALIBRATING | Thermo E=9.53 | text=''
+runner	Run python scripts/verify_full_engine.py --profile cpu_mechanisms --output /tmp/eidos-mechanisms	2026-09-06T23:55:56.6763591Z [ANOMALY] step=116 err=0.3074 z=10.936 z_thr=1.344 ema=1.9397 sig=0.1493 ratio=2.0 plas_rms=0.0358 plas_clp=0.01 clip_frac~0.60 fatigue=1.00 lr_raw=0.350 lr_eff=0.328 HIPP bank=ELEVATED sim=+0.181 chi=0.086 write=1 status=CALIBRATING | Thermo E=9.67 | text=''
+runner	Run python scripts/verify_full_engine.py --profile cpu_mechanisms --output /tmp/eidos-mechanisms	2026-09-06T23:55:56.6765204Z [ANOMALY] step=117 err=0.6417 z=8.744 z_thr=1.344 ema=1.9384 sig=0.1483 ratio=2.0 plas_rms=0.0379 plas_clp=0.01 clip_frac~0.58 fatigue=1.00 lr_raw=0.350 lr_eff=0.328 HIPP bank=ELEVATED sim=+0.169 chi=0.083 write=1 status=CALIBRATING | Thermo E=9.57 | text=''
+runner	Run python scripts/verify_full_engine.py --profile cpu_mechanisms --output /tmp/eidos-mechanisms	2026-09-06T23:55:56.6766654Z [ANOMALY] step=118 err=0.7361 z=8.046 z_thr=1.343 ema=1.9372 sig=0.1493 ratio=2.0 plas_rms=0.0630 plas_clp=0.01 clip_frac~0.38 fatigue=1.00 lr_raw=0.350 lr_eff=0.326 HIPP bank=ELEVATED sim=+0.203 chi=0.092 write=1 status=CALIBRATING | Thermo E=9.42 | text=''
+runner	Run python scripts/verify_full_engine.py --profile cpu_mechanisms --output /tmp/eidos-mechanisms	2026-09-06T23:55:56.6768202Z [ANOMALY] step=119 err=0.5337 z=9.252 z_thr=1.342 ema=1.9358 sig=0.1515 ratio=2.0 plas_rms=0.0296 plas_clp=0.01 clip_frac~0.68 fatigue=1.00 lr_raw=0.350 lr_eff=0.329 HIPP bank=ELEVATED sim=+0.163 chi=0.081 write=1 status=CALIBRATING | Thermo E=9.39 | text=''
+runner	Run python scripts/verify_full_engine.py --profile cpu_mechanisms --output /tmp/eidos-mechanisms	2026-09-06T23:55:56.6769547Z [ANOMALY] step=120 err=0.4079 z=10.384 z_thr=1.342 ema=1.9343 sig=0.1470 ratio=2.0 plas_rms=0.0209 plas_clp=0.01 clip_frac~0.81 fatigue=1.00 lr_raw=0.350 lr_eff=0.326 HIPP bank=ELEVATED sim=+0.208 chi=0.093 write=1 status=CALIBRATING | Thermo E=9.48 | text=''
+runner	Run python scripts/verify_full_engine.py --profile cpu_mechanisms --output /tmp/eidos-mechanisms	2026-09-06T23:55:56.6771072Z [ANOMALY] step=121 err=0.3924 z=10.386 z_thr=1.341 ema=1.9327 sig=0.1483 ratio=2.0 plas_rms=0.0452 plas_clp=0.01 clip_frac~0.51 fatigue=1.00 lr_raw=0.350 lr_eff=0.323 HIPP bank=ELEVATED sim=+0.237 chi=0.101 write=1 status=CALIBRATING | Thermo E=9.56 | text=''
+runner	Run python scripts/verify_full_engine.py --profile cpu_mechanisms --output /tmp/eidos-mechanisms	2026-09-06T23:55:56.6772516Z [ANOMALY] step=122 err=0.4525 z=9.908 z_thr=1.341 ema=1.9312 sig=0.1493 ratio=2.0 plas_rms=0.0692 plas_clp=0.01 clip_frac~0.35 fatigue=1.00 lr_raw=0.350 lr_eff=0.325 HIPP bank=ELEVATED sim=+0.221 chi=0.097 write=1 status=CALIBRATING | Thermo E=9.58 | text=''
+runner	Run python scripts/verify_full_engine.py --profile cpu_mechanisms --output /tmp/eidos-mechanisms	2026-09-06T23:55:56.6774747Z [ANOMALY] step=123 err=0.4697 z=9.969 z_thr=1.341 ema=1.9298 sig=0.1465 ratio=2.0 plas_rms=0.0612 plas_clp=0.01 clip_frac~0.39 fatigue=1.00 lr_raw=0.350 lr_eff=0.323 HIPP bank=ELEVATED sim=+0.245 chi=0.104 write=1 status=CALIBRATING | Thermo E=9.61 | text=''
+runner	Run python scripts/verify_full_engine.py --profile cpu_mechanisms --output /tmp/eidos-mechanisms	2026-09-06T23:55:56.6776190Z [ANOMALY] step=124 err=0.4300 z=10.241 z_thr=1.340 ema=1.9283 sig=0.1463 ratio=2.0 plas_rms=0.0479 plas_clp=0.01 clip_frac~0.49 fatigue=1.00 lr_raw=0.350 lr_eff=0.323 HIPP bank=ELEVATED sim=+0.245 chi=0.104 write=1 status=CALIBRATING | Thermo E=9.66 | text=''
+runner	Run python scripts/verify_full_engine.py --profile cpu_mechanisms --output /tmp/eidos-mechanisms	2026-09-06T23:55:56.6777874Z [ANOMALY] step=125 err=0.2562 z=11.768 z_thr=1.340 ema=1.9266 sig=0.1419 ratio=2.0 plas_rms=0.0122 plas_clp=0.00 clip_frac~0.92 fatigue=1.00 lr_raw=0.350 lr_eff=0.324 HIPP bank=ELEVATED sim=+0.227 chi=0.098 write=1 status=CALIBRATING | Thermo E=9.85 | text=''
+runner	Run python scripts/verify_full_engine.py --profile cpu_mechanisms --output /tmp/eidos-mechanisms	2026-09-06T23:55:56.6779224Z [ANOMALY] step=126 err=0.4001 z=11.109 z_thr=1.339 ema=1.9251 sig=0.1373 ratio=2.0 plas_rms=0.0222 plas_clp=0.01 clip_frac~0.79 fatigue=1.00 lr_raw=0.350 lr_eff=0.322 HIPP bank=ELEVATED sim=+0.254 chi=0.107 write=1 status=CALIBRATING | Thermo E=9.95 | text=''
+runner	Run python scripts/verify_full_engine.py --profile cpu_mechanisms --output /tmp/eidos-mechanisms	2026-09-06T23:55:56.6780734Z [ANOMALY] step=127 err=0.2945 z=12.225 z_thr=1.339 ema=1.9235 sig=0.1332 ratio=2.0 plas_rms=0.0364 plas_clp=0.01 clip_frac~0.60 fatigue=1.00 lr_raw=0.350 lr_eff=0.324 HIPP bank=ELEVATED sim=+0.224 chi=0.097 write=1 status=CALIBRATING | Thermo E=10.14 | text=''
+runner	Run python scripts/verify_full_engine.py --profile cpu_mechanisms --output /tmp/eidos-mechanisms	2026-09-06T23:55:56.6782198Z [ANOMALY] step=128 err=0.4853 z=10.466 z_thr=1.338 ema=1.9220 sig=0.1373 ratio=2.0 plas_rms=0.0268 plas_clp=0.01 clip_frac~0.72 fatigue=1.00 lr_raw=0.350 lr_eff=0.326 HIPP bank=ELEVATED sim=+0.197 chi=0.090 write=1 status=CALIBRATING | Thermo E=10.14 | text=''
+runner	Run python scripts/verify_full_engine.py --profile cpu_mechanisms --output /tmp/eidos-mechanisms	2026-09-06T23:55:56.6783653Z [ANOMALY] step=129 err=0.7991 z=8.145 z_thr=1.338 ema=1.9209 sig=0.1377 ratio=2.0 plas_rms=0.0215 plas_clp=0.01 clip_frac~0.80 fatigue=1.00 lr_raw=0.350 lr_eff=0.326 HIPP bank=ELEVATED sim=+0.208 chi=0.093 write=1 status=GREEN: NOMINAL | Thermo E=9.91 | text=''
+runner	Run python scripts/verify_full_engine.py --profile cpu_mechanisms --output /tmp/eidos-mechanisms	2026-09-06T23:55:56.6784704Z [TRACESEAL] step=500 updates=4 expl=0.0000 logCond=0.00 topEigs=[]
+runner	Run python scripts/verify_full_engine.py --profile cpu_mechanisms --output /tmp/eidos-mechanisms	2026-09-06T23:55:56.6784994Z 
+runner	Run python scripts/verify_full_engine.py --profile cpu_mechanisms --output /tmp/eidos-mechanisms	2026-09-06T23:55:56.6785177Z ========================================
+runner	Run python scripts/verify_full_engine.py --profile cpu_mechanisms --output /tmp/eidos-mechanisms	2026-09-06T23:55:56.6785708Z SENTINEL SUMMARY (UNIFIED STREAM)
+runner	Run python scripts/verify_full_engine.py --profile cpu_mechanisms --output /tmp/eidos-mechanisms	2026-09-06T23:55:56.6786044Z ========================================
+runner	Run python scripts/verify_full_engine.py --profile cpu_mechanisms --output /tmp/eidos-mechanisms	2026-09-06T23:55:56.6786455Z Total frames seen             : 800
+runner	Run python scripts/verify_full_engine.py --profile cpu_mechanisms --output /tmp/eidos-mechanisms	2026-09-06T23:55:56.6786931Z Frames processed (post warmup): 720
+runner	Run python scripts/verify_full_engine.py --profile cpu_mechanisms --output /tmp/eidos-mechanisms	2026-09-06T23:55:56.6787353Z Surprises                     : 670 (93.06% of frames)
+runner	Run python scripts/verify_full_engine.py --profile cpu_mechanisms --output /tmp/eidos-mechanisms	2026-09-06T23:55:56.6787780Z Final approx abs threshold    : 2.60308
+runner	Run python scripts/verify_full_engine.py --profile cpu_mechanisms --output /tmp/eidos-mechanisms	2026-09-06T23:55:56.6788154Z Final err range               : min=0.1563 max=10.5516
+runner	Run python scripts/verify_full_engine.py --profile cpu_mechanisms --output /tmp/eidos-mechanisms	2026-09-06T23:55:56.6788579Z Final z_thresh                : 5.19184
+runner	Run python scripts/verify_full_engine.py --profile cpu_mechanisms --output /tmp/eidos-mechanisms	2026-09-06T23:55:56.6789082Z Final ema_err                 : 1.5086, final sigma: 0.2116
+runner	Run python scripts/verify_full_engine.py --profile cpu_mechanisms --output /tmp/eidos-mechanisms	2026-09-06T23:55:56.6790026Z Synaptic hash (initial→final) : e9431a18bcc9afed → 8b1e9645250eb1ff
+runner	Run python scripts/verify_full_engine.py --profile cpu_mechanisms --output /tmp/eidos-mechanisms	2026-09-06T23:55:56.6790381Z 
+runner	Run python scripts/verify_full_engine.py --profile cpu_mechanisms --output /tmp/eidos-mechanisms	2026-09-06T23:55:56.6790504Z ========================================
+runner	Run python scripts/verify_full_engine.py --profile cpu_mechanisms --output /tmp/eidos-mechanisms	2026-09-06T23:55:56.6790902Z EIDOS SENTINEL PLAIN-LANGUAGE REPORT
+runner	Run python scripts/verify_full_engine.py --profile cpu_mechanisms --output /tmp/eidos-mechanisms	2026-09-06T23:55:56.6791257Z ========================================
+runner	Run python scripts/verify_full_engine.py --profile cpu_mechanisms --output /tmp/eidos-mechanisms	2026-09-06T23:55:56.6791571Z SENTINEL SESSION REPORT
+runner	Run python scripts/verify_full_engine.py --profile cpu_mechanisms --output /tmp/eidos-mechanisms	2026-09-06T23:55:56.6791882Z =======================
+runner	Run python scripts/verify_full_engine.py --profile cpu_mechanisms --output /tmp/eidos-mechanisms	2026-09-06T23:55:56.6792031Z 
+runner	Run python scripts/verify_full_engine.py --profile cpu_mechanisms --output /tmp/eidos-mechanisms	2026-09-06T23:55:56.6792159Z Session overview
+runner	Run python scripts/verify_full_engine.py --profile cpu_mechanisms --output /tmp/eidos-mechanisms	2026-09-06T23:55:56.6792472Z ----------------
+runner	Run python scripts/verify_full_engine.py --profile cpu_mechanisms --output /tmp/eidos-mechanisms	2026-09-06T23:55:56.6792841Z - Frames processed (post-warmup): 720
+runner	Run python scripts/verify_full_engine.py --profile cpu_mechanisms --output /tmp/eidos-mechanisms	2026-09-06T23:55:56.6793206Z - Surprises: 670 (93.06% of frames)
+runner	Run python scripts/verify_full_engine.py --profile cpu_mechanisms --output /tmp/eidos-mechanisms	2026-09-06T23:55:56.6793540Z - Surprise Rate: 93.06%
+runner	Run python scripts/verify_full_engine.py --profile cpu_mechanisms --output /tmp/eidos-mechanisms	2026-09-06T23:55:56.6793914Z - Error range: min=0.1563, max=10.5516
+runner	Run python scripts/verify_full_engine.py --profile cpu_mechanisms --output /tmp/eidos-mechanisms	2026-09-06T23:55:56.6794318Z - Final approx absolute surprise threshold: 2.60308
+runner	Run python scripts/verify_full_engine.py --profile cpu_mechanisms --output /tmp/eidos-mechanisms	2026-09-06T23:55:56.6794755Z - Final z-threshold in surprise space: 5.192
+runner	Run python scripts/verify_full_engine.py --profile cpu_mechanisms --output /tmp/eidos-mechanisms	2026-09-06T23:55:56.6795190Z - Final residual baseline: ema_err=1.5086, sigma=0.2116
+runner	Run python scripts/verify_full_engine.py --profile cpu_mechanisms --output /tmp/eidos-mechanisms	2026-09-06T23:55:56.6795556Z 
+runner	Run python scripts/verify_full_engine.py --profile cpu_mechanisms --output /tmp/eidos-mechanisms	2026-09-06T23:55:56.6795738Z Sentinel regimes observed
+runner	Run python scripts/verify_full_engine.py --profile cpu_mechanisms --output /tmp/eidos-mechanisms	2026-09-06T23:55:56.6796076Z --------------------------
+runner	Run python scripts/verify_full_engine.py --profile cpu_mechanisms --output /tmp/eidos-mechanisms	2026-09-06T23:55:56.6796431Z - CALIBRATING: 6.8% of post-warmup frames
+runner	Run python scripts/verify_full_engine.py --profile cpu_mechanisms --output /tmp/eidos-mechanisms	2026-09-06T23:55:56.6796789Z - GREEN: 93.2% of post-warmup frames
+runner	Run python scripts/verify_full_engine.py --profile cpu_mechanisms --output /tmp/eidos-mechanisms	2026-09-06T23:55:56.6797159Z 
+runner	Run python scripts/verify_full_engine.py --profile cpu_mechanisms --output /tmp/eidos-mechanisms	2026-09-06T23:55:56.6797302Z Geometry and spectrum
+runner	Run python scripts/verify_full_engine.py --profile cpu_mechanisms --output /tmp/eidos-mechanisms	2026-09-06T23:55:56.6797635Z ----------------------
+runner	Run python scripts/verify_full_engine.py --profile cpu_mechanisms --output /tmp/eidos-mechanisms	2026-09-06T23:55:56.6798140Z - Average eigen dominance ≈ 0.40.
+runner	Run python scripts/verify_full_engine.py --profile cpu_mechanisms --output /tmp/eidos-mechanisms	2026-09-06T23:55:56.6798546Z - Spectral entropy ~0.36 (low): narrowband/tonal dominance.
+runner	Run python scripts/verify_full_engine.py --profile cpu_mechanisms --output /tmp/eidos-mechanisms	2026-09-06T23:55:56.6798817Z 
+runner	Run python scripts/verify_full_engine.py --profile cpu_mechanisms --output /tmp/eidos-mechanisms	2026-09-06T23:55:56.6798972Z Hippocampus (episodic memory)
+runner	Run python scripts/verify_full_engine.py --profile cpu_mechanisms --output /tmp/eidos-mechanisms	2026-09-06T23:55:56.6799266Z -----------------------------
+runner	Run python scripts/verify_full_engine.py --profile cpu_mechanisms --output /tmp/eidos-mechanisms	2026-09-06T23:55:56.6799723Z - Mean recall similarity ≈ 0.184 (range ~[-1,1]).
+runner	Run python scripts/verify_full_engine.py --profile cpu_mechanisms --output /tmp/eidos-mechanisms	2026-09-06T23:55:56.6800153Z - Mean familiarity χ ≈ 0.092 (0..1).
+runner	Run python scripts/verify_full_engine.py --profile cpu_mechanisms --output /tmp/eidos-mechanisms	2026-09-06T23:55:56.6800480Z - Writes performed: 250
+runner	Run python scripts/verify_full_engine.py --profile cpu_mechanisms --output /tmp/eidos-mechanisms	2026-09-06T23:55:56.6800652Z 
+runner	Run python scripts/verify_full_engine.py --profile cpu_mechanisms --output /tmp/eidos-mechanisms	2026-09-06T23:55:56.6800763Z Anomaly highlights
+runner	Run python scripts/verify_full_engine.py --profile cpu_mechanisms --output /tmp/eidos-mechanisms	2026-09-06T23:55:56.6801054Z ------------------
+runner	Run python scripts/verify_full_engine.py --profile cpu_mechanisms --output /tmp/eidos-mechanisms	2026-09-06T23:55:56.6801667Z - Cluster 0: steps 127–127 (n=1), max z≈12.22, generic numeric/vector data. Example: ''
+runner	Run python scripts/verify_full_engine.py --profile cpu_mechanisms --output /tmp/eidos-mechanisms	2026-09-06T23:55:56.6802371Z - Cluster 1: steps 125–125 (n=1), max z≈11.77, generic numeric/vector data. Example: ''
+runner	Run python scripts/verify_full_engine.py --profile cpu_mechanisms --output /tmp/eidos-mechanisms	2026-09-06T23:55:56.6803052Z - Cluster 2: steps 88–88 (n=1), max z≈11.68, generic numeric/vector data. Example: ''
+runner	Run python scripts/verify_full_engine.py --profile cpu_mechanisms --output /tmp/eidos-mechanisms	2026-09-06T23:55:56.6803705Z - Cluster 3: steps 126–126 (n=1), max z≈11.11, generic numeric/vector data. Example: ''
+runner	Run python scripts/verify_full_engine.py --profile cpu_mechanisms --output /tmp/eidos-mechanisms	2026-09-06T23:55:56.6804328Z - Cluster 4: steps 115–115 (n=1), max z≈11.08, generic numeric/vector data. Example: ''
+runner	Run python scripts/verify_full_engine.py --profile cpu_mechanisms --output /tmp/eidos-mechanisms	2026-09-06T23:55:56.6805056Z - Cluster 5: steps 89–89 (n=1), max z≈11.08, generic numeric/vector data. Example: ''
+runner	Run python scripts/verify_full_engine.py --profile cpu_mechanisms --output /tmp/eidos-mechanisms	2026-09-06T23:55:56.6805314Z 
+runner	Run python scripts/verify_full_engine.py --profile cpu_mechanisms --output /tmp/eidos-mechanisms	2026-09-06T23:55:56.6805451Z Plain-language summary
+runner	Run python scripts/verify_full_engine.py --profile cpu_mechanisms --output /tmp/eidos-mechanisms	2026-09-06T23:55:56.6805774Z ----------------------
+runner	Run python scripts/verify_full_engine.py --profile cpu_mechanisms --output /tmp/eidos-mechanisms	2026-09-06T23:55:56.6806431Z The engine stayed mostly stable, but encountered distinct segments that deviated from expectation and forced sharper internal adjustment.
+runner	Run python scripts/verify_full_engine.py --profile cpu_mechanisms --output /tmp/eidos-mechanisms	2026-09-06T23:55:56.6807577Z Hippocampus tracked whether spikes were novel vs. recurrent; recurrent episodes inhibited learning to reduce 'relearning the same surprise'.
+runner	Run python scripts/verify_full_engine.py --profile cpu_mechanisms --output /tmp/eidos-mechanisms	2026-09-06T23:55:56.6808060Z 
+runner	Run python scripts/verify_full_engine.py --profile cpu_mechanisms --output /tmp/eidos-mechanisms	2026-09-06T23:55:56.6808717Z Reservoir checkpoint saved: /tmp/eidos-mechanisms/engine/reservoir_checkpoints/sentinel_lab_real_data_engineering/20260906_235556_reservoir_checkpoint_sentinel_lab_real_data_engineering.pt
+runner	Run python scripts/verify_full_engine.py --profile cpu_mechanisms --output /tmp/eidos-mechanisms	2026-09-06T23:55:56.6810065Z Hippocampus snapshot saved: /tmp/eidos-mechanisms/engine/hippocampus/sentinel_lab_real_data_engineering/20260906_235556_hippocampus_snapshot_sentinel_lab_real_data_engineering.pt
+runner	Run python scripts/verify_full_engine.py --profile cpu_mechanisms --output /tmp/eidos-mechanisms	2026-09-06T23:55:56.6810688Z 
+runner	Run python scripts/verify_full_engine.py --profile cpu_mechanisms --output /tmp/eidos-mechanisms	2026-09-06T23:55:56.6810812Z Reservoir geometry artifacts:
+runner	Run python scripts/verify_full_engine.py --profile cpu_mechanisms --output /tmp/eidos-mechanisms	2026-09-06T23:55:56.6811566Z   Raw states   : /tmp/eidos-mechanisms/engine/reservoir_geometry/sentinel_lab_real_data_engineering/20260906_235556_reservoir_states_sentinel_lab_real_data_engineering.npy
+runner	Run python scripts/verify_full_engine.py --profile cpu_mechanisms --output /tmp/eidos-mechanisms	2026-09-06T23:55:56.6812658Z   Geometry JSON: /tmp/eidos-mechanisms/engine/reservoir_geometry/sentinel_lab_real_data_engineering/20260906_235556_reservoir_geom_sentinel_lab_real_data_engineering.json
+runner	Run python scripts/verify_full_engine.py --profile cpu_mechanisms --output /tmp/eidos-mechanisms	2026-09-06T23:55:56.6813233Z 
+runner	Run python scripts/verify_full_engine.py --profile cpu_mechanisms --output /tmp/eidos-mechanisms	2026-09-06T23:55:56.6813382Z Top-K surprise artifacts:
+runner	Run python scripts/verify_full_engine.py --profile cpu_mechanisms --output /tmp/eidos-mechanisms	2026-09-06T23:55:56.6814073Z   JSON : /tmp/eidos-mechanisms/engine/sentinel_forensics/sentinel_lab_real_data_engineering/20260906_235556_top_100_surprises_sentinel_lab_real_data_engineering.json
+runner	Run python scripts/verify_full_engine.py --profile cpu_mechanisms --output /tmp/eidos-mechanisms	2026-09-06T23:55:56.6815093Z   TEXT : /tmp/eidos-mechanisms/engine/sentinel_forensics/sentinel_lab_real_data_engineering/20260906_235556_top_100_surprises_text_sentinel_lab_real_data_engineering.txt
+runner	Run python scripts/verify_full_engine.py --profile cpu_mechanisms --output /tmp/eidos-mechanisms	2026-09-06T23:55:56.6815600Z 
+runner	Run python scripts/verify_full_engine.py --profile cpu_mechanisms --output /tmp/eidos-mechanisms	2026-09-06T23:55:56.6815851Z Compression summary (bicameral V6 prototype):
+runner	Run python scripts/verify_full_engine.py --profile cpu_mechanisms --output /tmp/eidos-mechanisms	2026-09-06T23:55:56.6816236Z   Raw bytes (float64 frames): 368640
+runner	Run python scripts/verify_full_engine.py --profile cpu_mechanisms --output /tmp/eidos-mechanisms	2026-09-06T23:55:56.6816608Z   Compressed bytes          : 143884
+runner	Run python scripts/verify_full_engine.py --profile cpu_mechanisms --output /tmp/eidos-mechanisms	2026-09-06T23:55:56.6817106Z   Global ratio              : 2.56x
+runner	Run python scripts/verify_full_engine.py --profile cpu_mechanisms --output /tmp/eidos-mechanisms	2026-09-06T23:55:56.6817824Z   Compressed stream artifact: /tmp/eidos-mechanisms/engine/compression/sentinel_lab_real_data_engineering/20260906_235556_bicameral_stream_sentinel_lab_real_data_engineering.bin
+runner	Run python scripts/verify_full_engine.py --profile cpu_mechanisms --output /tmp/eidos-mechanisms	2026-09-06T23:55:56.6819178Z   Codec meta artifact       : /tmp/eidos-mechanisms/engine/compression/sentinel_lab_real_data_engineering/20260906_235556_bicameral_stream_meta_sentinel_lab_real_data_engineering.json
+runner	Run python scripts/verify_full_engine.py --profile cpu_mechanisms --output /tmp/eidos-mechanisms	2026-09-06T23:55:56.6820141Z {"evaluation_rows": 600, "profile": "cpu_mechanisms", "reference": "/tmp/eidos-mechanisms/reference.json"}
+runner	Post Run actions/setup-python@v5	﻿2026-09-06T23:55:57.0695807Z Node 20 is being deprecated. This workflow is running with Node 24 by default. If you need to temporarily use Node 20, you can set the ACTIONS_ALLOW_USE_UNSECURE_NODE_VERSION=true environment variable. For more information see: https://github.blog/changelog/2025-09-19-deprecation-of-node-20-on-github-actions-runners/
+runner	Post Run actions/setup-python@v5	2026-09-06T23:55:57.0696752Z Post job cleanup.
+runner	Post Run actions/setup-python@v5	2026-09-06T23:55:57.1553140Z Cache hit occurred on the primary key setup-python-Linux-x64-24.04-Ubuntu-python-3.14.7-pip-3949712138fe6b006643c63747ee39fdbd3bdb052fe1ec34c6e4b6455d04056a, not saving cache.
+runner	Post Run actions/setup-python@v5	2026-09-06T23:55:57.1554381Z (node:2192) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.
+runner	Post Run actions/setup-python@v5	2026-09-06T23:55:57.1555231Z (Use `node --trace-deprecation ...` to show where the warning was created)
+runner	Post Run actions/setup-node@v4	﻿2026-09-06T23:55:57.1628202Z Node 20 is being deprecated. This workflow is running with Node 24 by default. If you need to temporarily use Node 20, you can set the ACTIONS_ALLOW_USE_UNSECURE_NODE_VERSION=true environment variable. For more information see: https://github.blog/changelog/2025-09-19-deprecation-of-node-20-on-github-actions-runners/
+runner	Post Run actions/setup-node@v4	2026-09-06T23:55:57.1629136Z Post job cleanup.
+runner	Post Run actions/setup-node@v4	2026-09-06T23:55:57.2480407Z (node:2200) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.
+runner	Post Run actions/setup-node@v4	2026-09-06T23:55:57.2481284Z (Use `node --trace-deprecation ...` to show where the warning was created)
+runner	Post Run actions/checkout@v4	﻿2026-09-06T23:55:57.2638900Z Node 20 is being deprecated. This workflow is running with Node 24 by default. If you need to temporarily use Node 20, you can set the ACTIONS_ALLOW_USE_UNSECURE_NODE_VERSION=true environment variable. For more information see: https://github.blog/changelog/2025-09-19-deprecation-of-node-20-on-github-actions-runners/
+runner	Post Run actions/checkout@v4	2026-09-06T23:55:57.2640579Z Post job cleanup.
+runner	Post Run actions/checkout@v4	2026-09-06T23:55:57.3273582Z [command]/usr/bin/git version
+runner	Post Run actions/checkout@v4	2026-09-06T23:55:57.3303828Z git version 2.55.0
+runner	Post Run actions/checkout@v4	2026-09-06T23:55:57.3328156Z Temporarily overriding HOME='/home/runner/work/_temp/e9700bb7-175a-4edf-bff8-9c01f9d8e569' before making global git config changes
+runner	Post Run actions/checkout@v4	2026-09-06T23:55:57.3329579Z Adding repository directory to the temporary git global config as a safe directory
+runner	Post Run actions/checkout@v4	2026-09-06T23:55:57.3331864Z [command]/usr/bin/git config --global --add safe.directory /home/runner/work/eidos/eidos
+runner	Post Run actions/checkout@v4	2026-09-06T23:55:57.3359065Z [command]/usr/bin/git config --local --name-only --get-regexp core\.sshCommand
+runner	Post Run actions/checkout@v4	2026-09-06T23:55:57.3382024Z [command]/usr/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'core\.sshCommand' && git config --local --unset-all 'core.sshCommand' || :"
+runner	Post Run actions/checkout@v4	2026-09-06T23:55:57.3548046Z [command]/usr/bin/git config --local --name-only --get-regexp http\.https\:\/\/github\.com\/\.extraheader
+runner	Post Run actions/checkout@v4	2026-09-06T23:55:57.3569856Z http.https://github.com/.extraheader
+runner	Post Run actions/checkout@v4	2026-09-06T23:55:57.3583653Z [command]/usr/bin/git config --local --unset-all http.https://github.com/.extraheader
+runner	Post Run actions/checkout@v4	2026-09-06T23:55:57.3603320Z [command]/usr/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'http\.https\:\/\/github\.com\/\.extraheader' && git config --local --unset-all 'http.https://github.com/.extraheader' || :"
+runner	Post Run actions/checkout@v4	2026-09-06T23:55:57.3808559Z [command]/usr/bin/git config --local --name-only --get-regexp ^includeIf\.gitdir:
+runner	Post Run actions/checkout@v4	2026-09-06T23:55:57.3842699Z [command]/usr/bin/git submodule foreach --recursive git config --local --show-origin --name-only --get-regexp remote.origin.url
+runner	Complete job	﻿2026-09-06T23:55:57.4159411Z Cleaning up orphan processes
+runner	Complete job	2026-09-06T23:55:57.4333345Z ##[warning]Node.js 20 is deprecated. The following actions target Node.js 20 but are being forced to run on Node.js 24: actions/checkout@v4, actions/setup-node@v4, actions/setup-python@v5. For more information see: https://github.blog/changelog/2025-09-19-deprecation-of-node-20-on-github-actions-runners/

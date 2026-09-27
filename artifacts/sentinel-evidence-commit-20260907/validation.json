@@ -1,0 +1,42 @@
+{
+  "timestamp_utc": "2026-09-07T20:53:18.479Z",
+  "status": "passed",
+  "checks": [
+    {
+      "status": "passed",
+      "mode": "--worktree",
+      "files": 97,
+      "bytes": 5521527,
+      "allHashesMatch": true
+    },
+    {
+      "status": "passed",
+      "mode": "--index",
+      "files": 97,
+      "bytes": 5521527,
+      "allHashesMatch": true
+    }
+  ],
+  "originalArchiveManifestEntriesVerified": 89,
+  "structuredRecordsParsed": true,
+  "secretPatternScan": {
+    "flags": 0,
+    "textFiles": 90,
+    "rules": [
+      "private key",
+      "provider token",
+      "JWT",
+      "credential-bearing URL",
+      "bearer token",
+      "literal secret assignment"
+    ],
+    "limitation": "Bounded pattern scan; not a universal secret-detection guarantee"
+  },
+  "screenshotsVisuallyReviewed": 7,
+  "visibleScreenshotCredentials": 0,
+  "whitespaceCheck": "passed; raw archive whitespace preserved using scoped attributes",
+  "runtimeSuitesRerun": false,
+  "runtimeSuitesSkipReason": "Evidence-only commit; no application, runner, model or workflow change",
+  "newExperiments": 0,
+  "coreBehaviorChanged": false
+}

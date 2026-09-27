@@ -1,0 +1,15 @@
+{
+  "timestamp_utc": "2026-09-05T21:34:38.521Z",
+  "environment": "dedicated remote Turso database",
+  "probe": "release-probe-c4091412-06ac-4ba8-a33f-e97a96badec3",
+  "status": "passed",
+  "clients": 3,
+  "concurrent_attempts": 30,
+  "accepted": 7,
+  "reserved_tokens": 700,
+  "limit": 750,
+  "transaction_rollback": "passed",
+  "fresh_process_persistence": "passed",
+  "math": "floor(750 / 100) = 7 accepted reservations; 7 * 100 = 700 <= 750",
+  "probe_cleanup": "passed"
+}

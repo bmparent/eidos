@@ -1,0 +1,34 @@
+{
+  "average_precision": null,
+  "confusion": {
+    "fn": 0,
+    "fp": 301,
+    "tn": 299,
+    "tp": 0
+  },
+  "evaluation_rows_expected": 600,
+  "evaluation_rows_scored": 600,
+  "evidence_class": "REAL_DATA_ENGINEERING",
+  "false_positive_rate": 0.5016666666666667,
+  "gates_advanced": 0,
+  "heldout_evaluated": false,
+  "labels_unsealed_after_prediction_freeze": true,
+  "limitations": [
+    "Engineering evaluation only; held-out generalization is untested.",
+    "Detection delay counts consecutive ordered rows, not elapsed time.",
+    "Source-file order is not independently verified chronology.",
+    "Only one class is present; class-separation performance cannot be established."
+  ],
+  "mean_detection_delay_frames": null,
+  "missed_attack_windows": 0,
+  "negative_rows": 600,
+  "order_basis": "source",
+  "positive_rows": 0,
+  "precision": 0.0,
+  "prediction_coverage_complete": true,
+  "prediction_trace_sha256": "38050640bb64eaddc43df2f1a8027416664d992b8386884f8ea0dbe5b3a58b06",
+  "proof_verdict": "BLOCKED_RESOURCE_BEFORE_HELDOUT",
+  "recall": null,
+  "roc_auc": null,
+  "schema": "eidos.sentinel-runner.metrics.v0.2"
+}

@@ -1,0 +1,21 @@
+{
+  "timestamp_utc": "2026-09-05T23:56:31.800Z",
+  "mode": "live",
+  "keyType": "restricted",
+  "webhookId": "we_1UCTRjKC8pRG5Tr9KUpT4H8F",
+  "url": "https://eidos-works.com/api/shop/webhook",
+  "apiVersion": null,
+  "enabledEvents": [
+    "checkout.session.completed",
+    "checkout.session.async_payment_succeeded",
+    "charge.refunded",
+    "charge.dispute.created"
+  ],
+  "status": "enabled",
+  "credentialsSeparate": true,
+  "signingSecretsSeparate": true,
+  "databaseSeparate": true,
+  "shopEnabled": true,
+  "secretsWrittenToArtifacts": false,
+  "activationVerifiedUtc": "2026-09-06T00:03:43.024Z"
+}

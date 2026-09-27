@@ -1,0 +1,63 @@
+diff --git a/.github/workflows/sentinel-lab-quality.yml b/.github/workflows/sentinel-lab-quality.yml
+index db6148d..dd43238 100644
+--- a/.github/workflows/sentinel-lab-quality.yml
++++ b/.github/workflows/sentinel-lab-quality.yml
+@@ -10,9 +10,6 @@ permissions:
+ jobs:
+   verify:
+     runs-on: ubuntu-latest
+-    defaults:
+-      run:
+-        working-directory: apps/sentinel-lab
+     steps:
+       - uses: actions/checkout@v4
+       - uses: actions/setup-node@v4
+@@ -20,16 +17,21 @@ jobs:
+           node-version: '24'
+           cache: npm
+           cache-dependency-path: apps/sentinel-lab/package-lock.json
+-      - run: npm ci --no-audit --no-fund
+-      - run: npm run lint
+-      - run: npm test
+-      - run: npm run build
++      - run: npm ci --prefix apps/sentinel-lab --no-audit --no-fund
++      - run: npm run lint --prefix apps/sentinel-lab
++      - run: npm test --prefix apps/sentinel-lab
++      - run: npm run build --prefix apps/sentinel-lab
++      - name: Rendered lifecycle, mobile and accessibility checks
++        run: CHROME_BIN="$(command -v google-chrome)" npm run qa:browser --prefix apps/sentinel-lab
++      - uses: actions/upload-artifact@v4
++        if: always()
++        with:
++          name: sentinel-browser-evidence
++          path: apps/sentinel-lab/artifacts/
++          if-no-files-found: warn
+   runner:
+     runs-on: ubuntu-latest
+     timeout-minutes: 15
+-    defaults:
+-      run:
+-        working-directory: services/sentinel-runner
+     steps:
+       - uses: actions/checkout@v4
+       - uses: actions/setup-node@v4
+@@ -41,8 +43,15 @@ jobs:
+           cache: pip
+           cache-dependency-path: services/sentinel-runner/pyproject.toml
+       - run: python -m pip install uv
+-      - run: uv pip install --python "$pythonLocation/bin/python" --no-cache --torch-backend cpu .
++      - run: uv pip install --python "$pythonLocation/bin/python" --no-cache --torch-backend cpu services/sentinel-runner
+       - run: python -c "import torch; assert torch.__version__.split('+')[0] == '2.14.0'; assert torch.version.cuda is None"
+-      - run: python -m unittest discover -s tests -v
+-      - run: python scripts/verify_full_engine.py --profile cpu_engineering --output /tmp/eidos-standard
+-      - run: python scripts/verify_full_engine.py --profile cpu_mechanisms --output /tmp/eidos-mechanisms
++      - run: mkdir -p artifacts/sentinel-ci
++      - run: python -m unittest discover -s services/sentinel-runner/tests -v 2>&1 | tee artifacts/sentinel-ci/runner-tests.log
++      - run: python services/sentinel-runner/scripts/verify_full_engine.py --profile cpu_engineering --output artifacts/sentinel-ci/cpu_engineering
++      - run: python services/sentinel-runner/scripts/verify_full_engine.py --profile cpu_mechanisms --output artifacts/sentinel-ci/cpu_mechanisms
++      - uses: actions/upload-artifact@v4
++        if: always()
++        with:
++          name: sentinel-runner-evidence
++          path: artifacts/sentinel-ci/
++          if-no-files-found: warn

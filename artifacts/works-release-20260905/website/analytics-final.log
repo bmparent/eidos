@@ -1,0 +1,13 @@
+
+> brent-parent-intelligence-studio@1.1.0 test:analytics
+> node --import tsx --test scripts/test-analytics.ts
+
+✔ Analytics requires consent and never includes private URLs or arbitrary event fields (13.7258ms)
+ℹ tests 1
+ℹ suites 0
+ℹ pass 1
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 894.5578

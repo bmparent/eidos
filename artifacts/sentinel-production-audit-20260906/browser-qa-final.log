@@ -1,0 +1,46 @@
+
+> eidos-sentinel-lab@0.2.0 qa:browser
+> node scripts/browser-qa.mjs
+
+{
+  "status": "PASS",
+  "desktopPath": "C:\\Users\\bmpar\\codex-worktrees\\sentinel-audit-20260906\\apps\\sentinel-lab\\artifacts\\sentinel-lab-desktop.png",
+  "mobilePath": "C:\\Users\\bmpar\\codex-worktrees\\sentinel-audit-20260906\\apps\\sentinel-lab\\artifacts\\sentinel-lab-mobile.png",
+  "checks": {
+    "meaningfulContent": true,
+    "noFrameworkOverlay": true,
+    "noConsoleErrors": true,
+    "smokeRunInteraction": true,
+    "heldOutSeedRejected": true,
+    "allSevenGatesLocked": true,
+    "compareRows": 4,
+    "realDataStages": 4,
+    "kaggleLookupPath": true,
+    "canonicalRunLock": true,
+    "runnerBlockerVisible": true,
+    "publicDispatchClosed": true,
+    "publicArtifactRetrievalClosed": true,
+    "pathTraversalRejected": true,
+    "mobileNoPageOverflow": true,
+    "realDataMobileNoPageOverflow": true,
+    "mobileMenuOpens": true
+  },
+  "realDataPath": "C:\\Users\\bmpar\\codex-worktrees\\sentinel-audit-20260906\\apps\\sentinel-lab\\artifacts\\sentinel-lab-real-data-desktop.png",
+  "realDataMobilePath": "C:\\Users\\bmpar\\codex-worktrees\\sentinel-audit-20260906\\apps\\sentinel-lab\\artifacts\\sentinel-lab-real-data-mobile.png",
+  "lifecycleFixtures": {
+    "productionCompute": false,
+    "stableLaunchKey": true,
+    "reloadReconnect": true,
+    "credentialsNotPersisted": true,
+    "activeDownload": true,
+    "completedMetrics": true,
+    "undefinedMetrics": true,
+    "actionableFailure": true,
+    "providerRetry": true,
+    "explicitNewIntent": true
+  },
+  "progressPath": "C:\\Users\\bmpar\\codex-worktrees\\sentinel-audit-20260906\\apps\\sentinel-lab\\artifacts\\sentinel-lab-fixture-progress.png",
+  "completedPath": "C:\\Users\\bmpar\\codex-worktrees\\sentinel-audit-20260906\\apps\\sentinel-lab\\artifacts\\sentinel-lab-fixture-completed.png",
+  "failurePath": "C:\\Users\\bmpar\\codex-worktrees\\sentinel-audit-20260906\\apps\\sentinel-lab\\artifacts\\sentinel-lab-fixture-failure.png"
+}
+Temporary browser profile cleanup deferred: C:\Users\bmpar\AppData\Local\Temp\eidos-sentinel-cdp-6rcsN7

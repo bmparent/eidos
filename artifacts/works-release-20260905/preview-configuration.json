@@ -1,0 +1,23 @@
+{
+  "timestamp_utc": "2026-09-05T21:44:05.592Z",
+  "mode": "test",
+  "webhookId": "we_1UCRNYKC8pRG5Tr99IPveD7O",
+  "url": "https://release-validation-20260905.eidosworks.pages.dev/api/shop/webhook",
+  "apiVersion": null,
+  "enabledEvents": [
+    "checkout.session.completed",
+    "checkout.session.async_payment_succeeded",
+    "charge.refunded",
+    "charge.dispute.created"
+  ],
+  "databaseSeparate": true,
+  "configuredKeys": [
+    "PUBLIC_SITE_URL",
+    "EIDOS_SHOP_ENABLED",
+    "EIDOS_AI_ENABLED",
+    "STRIPE_SECRET_KEY",
+    "EIDOS_KIT_WEBHOOK_SECRET",
+    "EIDOS_DATABASE_URL",
+    "EIDOS_DATABASE_AUTH_TOKEN"
+  ]
+}

@@ -1,0 +1,14 @@
+{
+  "kind": "production",
+  "status": 200,
+  "id": "dpl_DR6RwDA5gsvhLWi8GcRXJ9PrJCZF",
+  "url": "eidos-sentinel-8tkvsw6u2-1brentbm-1876s-projects.vercel.app",
+  "readyState": "READY",
+  "target": "production",
+  "commit": "6bb0b980349f94c55a6ca1ca9665737570c0fd01",
+  "aliases": [
+    "eidos-sentinel-lab.vercel.app",
+    "eidos-sentinel-lab-1brentbm-1876s-projects.vercel.app",
+    "eidos-sentinel-lab-git-main-1brentbm-1876s-projects.vercel.app"
+  ]
+}

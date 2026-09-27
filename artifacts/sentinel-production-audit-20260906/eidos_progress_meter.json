@@ -1,0 +1,51 @@
+{
+  "schema": "eidos.audit-progress.v0.1",
+  "overallProofReadinessScore": null,
+  "reason": "No scientific gates were newly evaluated or advanced.",
+  "gatesAdvanced": 0,
+  "proofGates": [
+    {
+      "gate": "G0",
+      "status": "locked"
+    },
+    {
+      "gate": "G1",
+      "status": "locked"
+    },
+    {
+      "gate": "G2",
+      "status": "locked"
+    },
+    {
+      "gate": "G3",
+      "status": "locked"
+    },
+    {
+      "gate": "G4",
+      "status": "locked"
+    },
+    {
+      "gate": "G5",
+      "status": "locked"
+    },
+    {
+      "gate": "G6",
+      "status": "locked"
+    }
+  ],
+  "engineeringChecks": [
+    "Atomic shared job admission",
+    "Stable retry identity",
+    "Abandoned reservation recovery and stale-owner fencing",
+    "43 app tests and 26 runner tests",
+    "Build and two CPU profile fixtures",
+    "Rendered lifecycle, mobile, keyboard and reduced motion",
+    "Exact production commit verified"
+  ],
+  "liveWorkflow": "ACCESS_BLOCKED",
+  "evidence": [
+    "final-audit.json",
+    "shared-admission-verification.json",
+    "production-deployment.json"
+  ]
+}

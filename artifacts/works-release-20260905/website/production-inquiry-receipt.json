@@ -1,0 +1,11 @@
+{
+  "checked_utc": "2026-09-05T23:03:30.082Z",
+  "messageId": "1a073c1c396c6d57",
+  "deliveredTo": "configured studio inbox",
+  "from": "projects@eidos-works.com",
+  "subject": "Eidos Works project inquiry",
+  "testLabelFound": true,
+  "receiptLines": [],
+  "spfPass": true,
+  "dkimPass": true
+}

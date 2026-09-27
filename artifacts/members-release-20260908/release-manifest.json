@@ -1,0 +1,218 @@
+{
+  "timestamp_utc": "2026-09-09T00:09:08.867Z",
+  "status": "partial",
+  "operational_release": "passed",
+  "remaining_gate": "Cloudflare requested human verification on the prepared production signup form. User action is pending; no production member has been created by this release test.",
+  "website": {
+    "url": "https://eidos-works.com",
+    "sha": "d2d1a64972a59c316715feb207078ec7ce0cec8b",
+    "deployment_id": "cbf8aaeb-3b6c-42f3-b48a-3a6069c05586",
+    "deployment_url": "https://cbf8aaeb.eidosworks.pages.dev"
+  },
+  "backend": {
+    "url": "https://eidos-sentinel-lab.vercel.app",
+    "sha": "1ff3d3643f6dc229795bc7f8c2290a76424a677a",
+    "deployment_id": "dpl_25j8Fyfxov8bw5yNjpxyg2gP7shL",
+    "deployment_url": "https://eidos-sentinel-4nxcwo4pc-1brentbm-1876s-projects.vercel.app"
+  },
+  "flags": {
+    "EIDOS_ACCOUNTS_ENABLED": true,
+    "EIDOS_NEWSLETTER_ENABLED": true,
+    "EIDOS_MAIL_DAILY_LIMIT": 90,
+    "PUBLIC_SITE_URL": "https://eidos-works.com",
+    "EIDOS_MAIL_FROM": "Eidos Works <papers@eidos-works.com>",
+    "EIDOS_PUBLICATION_FEED_URL": "https://eidosworks.pages.dev/insights-feed.json"
+  },
+  "mail": {
+    "provider": "Resend",
+    "plan": "Existing Free",
+    "domain_verified": true,
+    "sending_only_domain_scoped_key": true,
+    "server_sensitive_secret": true,
+    "spf": "pass",
+    "dkim": "pass",
+    "actual_signin_inbox": true,
+    "actual_digest_inbox": true,
+    "full_article_paragraphs": 16,
+    "full_article_sources": 3,
+    "provider_digest_id": "8d584a81-6fbb-4c84-80eb-7820f7d91cf1",
+    "provider_id_on_retry_same": true,
+    "inbox_digest_count": 1,
+    "unsubscribe": true
+  },
+  "migration": {
+    "database": "eidos-works-production",
+    "applied": [
+      "0001_eidos_platform.sql",
+      "0002_members.sql"
+    ],
+    "legacy_records_preserved": true,
+    "email_member_table": "eidos_email_members"
+  },
+  "maintenance": {
+    "id": "34293285562",
+    "url": "https://github.com/bmparent/brent-parent-intelligence-studio/actions/runs/34293285562",
+    "result": "success",
+    "response": {
+      "ok": true,
+      "suggestions": 0,
+      "newsletter": {
+        "sent": 0,
+        "enabled": true
+      }
+    }
+  },
+  "controlled_checks": [
+    {
+      "name": "No other subscribed accounts in controlled database",
+      "passed": true
+    },
+    {
+      "name": "person signup sends real email",
+      "passed": true
+    },
+    {
+      "name": "person confirmation succeeds",
+      "passed": true
+    },
+    {
+      "name": "person confirmation single use",
+      "passed": true
+    },
+    {
+      "name": "person secure private cookie",
+      "passed": true
+    },
+    {
+      "name": "agent signup sends real email",
+      "passed": true
+    },
+    {
+      "name": "agent confirmation succeeds",
+      "passed": true
+    },
+    {
+      "name": "agent confirmation single use",
+      "passed": true
+    },
+    {
+      "name": "agent secure private cookie",
+      "passed": true
+    },
+    {
+      "name": "Anonymous account data remains private",
+      "passed": true
+    },
+    {
+      "name": "Directory excludes private email",
+      "passed": true
+    },
+    {
+      "name": "Saved reading works",
+      "passed": true
+    },
+    {
+      "name": "Reading list stays private",
+      "passed": true
+    },
+    {
+      "name": "Person cannot create agent key",
+      "passed": true
+    },
+    {
+      "name": "Agent key excludes operator email",
+      "passed": true
+    },
+    {
+      "name": "Agent key permits own reading list",
+      "passed": true
+    },
+    {
+      "name": "Agent key cannot change preferences",
+      "passed": true
+    },
+    {
+      "name": "Agent key cannot mint keys",
+      "passed": true
+    },
+    {
+      "name": "Person submission enters moderation",
+      "passed": true
+    },
+    {
+      "name": "Pending mention private and invisible",
+      "passed": true
+    },
+    {
+      "name": "Published person mention appears for agent",
+      "passed": true
+    },
+    {
+      "name": "Agent limited to five submissions per day",
+      "passed": true
+    },
+    {
+      "name": "Unmoderated agent mentions invisible",
+      "passed": true
+    },
+    {
+      "name": "Published agent mention appears for person",
+      "passed": true
+    },
+    {
+      "name": "Another account cannot mark private notification read",
+      "passed": true
+    },
+    {
+      "name": "Unpublishing removes all source mentions",
+      "passed": true
+    },
+    {
+      "name": "Revoked agent key denied",
+      "passed": true
+    },
+    {
+      "name": "Email opt in works",
+      "passed": true
+    },
+    {
+      "name": "Lost response leaves durable pending delivery",
+      "passed": true
+    },
+    {
+      "name": "Digest contains complete original article and sources",
+      "passed": true
+    },
+    {
+      "name": "Retry reconciles accepted delivery",
+      "passed": true
+    },
+    {
+      "name": "Provider retry returns same message ID",
+      "passed": true
+    },
+    {
+      "name": "Repeated maintenance sends no duplicate",
+      "passed": true
+    },
+    {
+      "name": "Explicit unsubscribe succeeds",
+      "passed": true
+    },
+    {
+      "name": "Unsubscribe remains safe on repeated confirmation",
+      "passed": true
+    },
+    {
+      "name": "Logout invalidates both sessions",
+      "passed": true
+    }
+  ],
+  "customer_ui": "Production desktop/mobile passed; original InkSoft storefront currently password-protected",
+  "live_account": {
+    "passed": false,
+    "reason": "Cloudflare requested human verification on the prepared production signup form. User action is pending; no production member has been created by this release test."
+  },
+  "research_core_changed": false,
+  "research_proof_status": "not evaluated"
+}
