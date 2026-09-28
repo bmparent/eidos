@@ -1,0 +1,123 @@
+{
+  "drive_copy_attempted": true,
+  "drive_copy_success": true,
+  "drive_root": "G:\\My Drive\\Eidos_Brain_Proof_Phase\\2026-09-04\\quantized_memory_math",
+  "drive_run_dir": "G:\\My Drive\\Eidos_Brain_Proof_Phase\\2026-09-04\\quantized_memory_math\\controlled_memory_2026-09-04_210733",
+  "reason": "Copied new files to the requested research subfolder; all copied hashes verified locally on the mounted Drive.",
+  "files_considered": [
+    "controlled_memory_reproducibility.zip",
+    "evidence_manifest.json",
+    "decision_report.md",
+    "evidence_figure.png",
+    "evidence_figure.svg",
+    "benchmark_summary.csv",
+    "plot_data.csv",
+    "temporal_blocks.csv",
+    "precision_summary.json",
+    "codex_journal.md",
+    "plain_language_test_analysis.md",
+    "eidos_progress_dashboard.html",
+    "eidos_progress_meter.json",
+    "eidos_progress_meter.md",
+    "eidos_progress_meter.svg",
+    "eidos_progress_readme.md",
+    "proof_logic_ledger.json",
+    "proof_logic_ledger.md"
+  ],
+  "files_copied": [
+    {
+      "file": "controlled_memory_reproducibility.zip",
+      "sha256": "6707e80634d603d935dd7e4916c2f15075f730e05b8f99031b735c5612f64443",
+      "bytes": 195319150
+    },
+    {
+      "file": "evidence_manifest.json",
+      "sha256": "92752a2111489ca3ff748e5b3a33aa6082d683ffbed5e495b8178cc7f4ac2f21",
+      "bytes": 46328
+    },
+    {
+      "file": "decision_report.md",
+      "sha256": "67b255825b39ce1fdf2050b919cdc6caece566d3db9d40d009fa3b32f440d725",
+      "bytes": 10432
+    },
+    {
+      "file": "evidence_figure.png",
+      "sha256": "ff99a5a639cceec4d5ec6fed0b36c23ebb3032aa6ef675f8557f50f9db37acc1",
+      "bytes": 542086
+    },
+    {
+      "file": "evidence_figure.svg",
+      "sha256": "e51e6231d39b0ffd72e711cea0539ed644cbe59c95354aa743cf7dca0fbcfbc7",
+      "bytes": 1161284
+    },
+    {
+      "file": "benchmark_summary.csv",
+      "sha256": "d6efa2b9c242b07134ce9e2f8863c3543f90deac0f909b9e2b3bd2a1cb525ac9",
+      "bytes": 78023
+    },
+    {
+      "file": "plot_data.csv",
+      "sha256": "f850a411d11dc8a834d2ec150e36374dff4a21b7fd60a041de53a9108b6e9d60",
+      "bytes": 13674321
+    },
+    {
+      "file": "temporal_blocks.csv",
+      "sha256": "6f5856dcaa3113b484683071e755bd95cf9eded4816f57310e893f949dc85199",
+      "bytes": 79565
+    },
+    {
+      "file": "precision_summary.json",
+      "sha256": "3e6aa522a31d65e03f3a02a9f672c2010ead1c0d43ea2fc551dd2210098464b1",
+      "bytes": 4926
+    },
+    {
+      "file": "codex_journal.md",
+      "sha256": "6752dc9b4d3f2aed50fb1c6d3635e58f96c99589db6e7fd6e229bbae3501c6be",
+      "bytes": 11746
+    },
+    {
+      "file": "plain_language_test_analysis.md",
+      "sha256": "5cc972f6e6728fd34d9c56afa433e89764f91c043d3c980200306113c20b9c98",
+      "bytes": 4803
+    },
+    {
+      "file": "progress/eidos_progress_dashboard.html",
+      "sha256": "8379052dcb616f0495683db1e9aece1aa2597b7310ddfa6e13d29a408c47bf40",
+      "bytes": 2489
+    },
+    {
+      "file": "progress/eidos_progress_meter.json",
+      "sha256": "a8a113b6d0867e221162f57d1c4ee78a858da64cf44af32e723924dec6909ef1",
+      "bytes": 3347
+    },
+    {
+      "file": "progress/eidos_progress_meter.md",
+      "sha256": "a94e39987b96e22e01eb81b1a3da163b84065467b6e394bbb8d5351819ae4275",
+      "bytes": 1310
+    },
+    {
+      "file": "progress/eidos_progress_meter.svg",
+      "sha256": "93ef7a86583f7a11aa545a2a00cb33eea0ec50e83f01cbe035bf561e78d7303d",
+      "bytes": 2215
+    },
+    {
+      "file": "progress/eidos_progress_readme.md",
+      "sha256": "6e167910830d8fc82326c3569726e616453ef25a6d879aad042aef5ec5cb17d6",
+      "bytes": 312
+    },
+    {
+      "file": "progress/proof_logic_ledger.json",
+      "sha256": "442825f09c43b0fbb6437bdacd438b0ecd7f06abe8650948008773766dd490cb",
+      "bytes": 855
+    },
+    {
+      "file": "progress/proof_logic_ledger.md",
+      "sha256": "77a9341b1eacf4f9c33f6ca63dbf68ce499c1418b3910deed73fe12cf994dbc1",
+      "bytes": 570
+    }
+  ],
+  "files_skipped": [],
+  "timestamp_utc": "2026-09-04T21:45:19.203308+00:00",
+  "bundle_sha256": "6707e80634d603d935dd7e4916c2f15075f730e05b8f99031b735c5612f64443",
+  "bundle_bytes": 195319150
+}

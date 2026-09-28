@@ -1,0 +1,92 @@
+[
+  {
+    "config": "default",
+    "dtype": "torch.float64",
+    "steps": 202,
+    "repeats": 2,
+    "max_abs_error": 1.3877787807814457e-17,
+    "tolerance": 5e-13,
+    "boundary_errors": {
+      "99": 3.469446951953614e-18,
+      "100": 0.0,
+      "101": 0.0,
+      "199": 1.3877787807814457e-17,
+      "200": 0.0,
+      "201": 0.0
+    },
+    "reset_bitwise_equal": true,
+    "noise": "matched nonzero draws"
+  },
+  {
+    "config": "default",
+    "dtype": "torch.float32",
+    "steps": 202,
+    "repeats": 2,
+    "max_abs_error": 2.2351741790771484e-08,
+    "tolerance": 3e-06,
+    "boundary_errors": {
+      "99": 3.725290298461914e-09,
+      "100": 0.0,
+      "101": 0.0,
+      "199": 1.4901161193847656e-08,
+      "200": 0.0,
+      "201": 0.0
+    },
+    "reset_bitwise_equal": true,
+    "noise": "matched nonzero draws"
+  },
+  {
+    "config": "slow",
+    "dtype": "torch.float64",
+    "steps": 202,
+    "repeats": 2,
+    "max_abs_error": 8.673617379884035e-19,
+    "tolerance": 5e-13,
+    "boundary_errors": {
+      "99": 8.673617379884035e-19,
+      "100": 0.0,
+      "101": 0.0,
+      "199": 4.336808689942018e-19,
+      "200": 0.0,
+      "201": 0.0
+    },
+    "reset_bitwise_equal": true,
+    "noise": "matched nonzero draws"
+  },
+  {
+    "config": "slow",
+    "dtype": "torch.float32",
+    "steps": 202,
+    "repeats": 2,
+    "max_abs_error": 1.862645149230957e-09,
+    "tolerance": 3e-06,
+    "boundary_errors": {
+      "99": 0.0,
+      "100": 0.0,
+      "101": 0.0,
+      "199": 1.862645149230957e-09,
+      "200": 0.0,
+      "201": 0.0
+    },
+    "reset_bitwise_equal": true,
+    "noise": "matched nonzero draws"
+  },
+  {
+    "config": "bands",
+    "dtype": "torch.float64",
+    "steps": 202,
+    "repeats": 2,
+    "max_abs_error": 1.3877787807814457e-16,
+    "tolerance": 5e-13,
+    "boundary_errors": {
+      "99": 1.734723475976807e-17,
+      "100": 0.0,
+      "101": 6.938893903907228e-18,
+      "199": 4.163336342344337e-17,
+      "200": 0.0,
+      "201": 0.0
+    },
+    "reset_bitwise_equal": true,
+    "noise": "matched nonzero draws"
+  }
+]

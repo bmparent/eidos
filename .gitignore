@@ -17,3 +17,6 @@ artifacts-guided-*.log
 # archive. Compact reports, metrics, receipts and browser captures are reviewed.
 /artifacts/eidos-sentinel-guided-evidence-20260908.zip
 /artifacts/sentinel-guided-20260908/
+
+# Immutable numerical experiment inputs and raw trajectories are bundled outside git.
+artifacts/controlled_memory_*/

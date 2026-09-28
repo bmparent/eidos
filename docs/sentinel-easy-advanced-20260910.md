@@ -2,6 +2,16 @@
 
 Date: 2026-09-10. Base: `1eb0a1769896a59e7637823af06e18781cb1fe77`, draft PR #52 (`codex/sentinel-guided-analysis-20260908`). This change is stacked on that candidate, not an independent production release.
 
+## September 28 integration update
+
+PR #52 was closed without merging because its exact head is an ancestor of the active PR #59. The complete guided API, worker, and Easy/Advanced UI now travel together in #59. The candidate merged current `main` after research-only PR #36 landed; the only source conflict was `.gitignore`, where both the guided artifacts and controlled-memory raw inputs remain ignored. The historical base above describes the September 10 patch, not the active PR target.
+
+In the integrated checkout, Node 24 `npm ci`, 16 JavaScript tests, the TypeScript tests, `tsc --noEmit`, and a Next.js production build all passed locally. This establishes build compatibility with the new main tree; it does not replace authenticated hosted acceptance.
+
+A fresh development-only probe of seven synthetic scenarios with seed 73 and the unchanged causal policy reproduced the alert-burden problem. The benign noisy-interval scenario produced 12 false incidents across 156 evaluated one-minute frames. The harmful-repetition scenario detected all three injected events but also reported three separate post-event false incidents; slow drift remained undetected. These observations are diagnostic, not a new frozen qualification result. The previously consumed final set remains untouched. A useful alert policy needs task-specific labels and a new development/validation/final split; neither a UI build nor a different incident grouping can turn the archived failed gate into a pass.
+
+Keep #59 draft for engineering review. Recheck Vercel Sandbox allocation, complete isolated-preview signed-in CSV/document/telemetry and Easy/Advanced browser acceptance at the final SHA, and run a separately frozen operational qualification before production promotion or useful-detection claims. Do not change billing or replay the consumed final set as if it were unseen data.
+
 ## What this patch changes
 
 - `/` becomes an Easy-first four-stage journey: Add data -> Check its meaning -> Run experiment -> Understand results. An in-place Easy/Advanced switch preserves selections and uses the same owner-scoped API and worker.

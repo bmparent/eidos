@@ -1,0 +1,645 @@
+{
+  "schema": 1,
+  "frozen_utc": "2026-09-04T21:07:33.253179+00:00",
+  "starting_commit": "6bb0b980349f94c55a6ca1ca9665737570c0fd01",
+  "historical_commit": "6bb0b980349f94c55a6ca1ca9665737570c0fd01",
+  "source_hashes": {
+    "proof/memory_core.py": "334465fb35977fa21012a5ce47db514be0372584047afb31e5f49c3530c5ee92",
+    "proof/memory_benchmark.py": "836dbfb3bad5534f0701fdc8cb29b1e135345cea2e8a774e90dab024065cb0d9",
+    "tests/test_memory_benchmark.py": "963b32ca675cf445bc08cba728c26318a5a9845ae028fcac2aa9bb301892729d",
+    "eidos/repo/src/eidos_brain/engine/eidos_v0_4_7_02.py": "93c6bbeb6bdb46fde88191b223843367370c56d855c6b53489720ca53bbb8286"
+  },
+  "project_stream": {
+    "path": "eidos/verify_data/incident_test_data.csv",
+    "sha256": "31442855fc0abe965bdf198c0ce9ff4b004c97b190244f164668138b844814cd",
+    "labels": "unlabeled synthetic project fixture; no clinical/operational validity"
+  },
+  "calibration_sha256": "9a22dceae63c6da4da26bae7905599456ab6ba27ec0982be25499c427b334334",
+  "adapter_selected_size_sha256": "f9ab76a2b37e1ec85405e63fe19c99f42e388b449c6be0231928c33a37f5b67a",
+  "n_reservoir": 8,
+  "n_inputs": 3,
+  "weight_seed": 42,
+  "forcing_initialization_seeds": [
+    7,
+    19
+  ],
+  "policies": [
+    "none",
+    "every_step",
+    "pulse100",
+    "carry"
+  ],
+  "actual_current_policy": "pulse100",
+  "configurations": {
+    "default": {
+      "alpha": [
+        0.009999999776482582,
+        0.009999999776482582,
+        0.009999999776482582,
+        0.009999999776482582,
+        0.009999999776482582,
+        0.009999999776482582,
+        0.009999999776482582,
+        0.009999999776482582
+      ],
+      "certificate": {
+        "status": "outside_sufficient_condition",
+        "h": [
+          "1",
+          "1",
+          "1",
+          "1",
+          "1",
+          "1",
+          "1",
+          "1"
+        ],
+        "exact_margins": [
+          "-70372813/67108864",
+          "-250085685/536870912",
+          "-1407439509/1073741824",
+          "-155238949/67108864",
+          "-340495047/268435456",
+          "-94544279/67108864",
+          "-1938546501/4294967296",
+          "-276973149/134217728"
+        ],
+        "exact_min_row_sum": "6233513797/4294967296",
+        "rho_abs_float_descriptive": 2.2410149013838554,
+        "rho_W_float_descriptive": 1.2244946047576097,
+        "note": "Exact rational arithmetic certifies binary stored coefficients. Failure is not proof of instability."
+      },
+      "matrix_sha256": "bdbc49348788e2954d324e0a022a4ab426c4d7d006a72b540fbd3a24ce8895cd",
+      "native_coefficient_dtype": "float32 lifted exactly to float64; band alpha native float64"
+    },
+    "slow": {
+      "alpha": [
+        0.0005000000237487257,
+        0.0005000000237487257,
+        0.0005000000237487257,
+        0.0005000000237487257,
+        0.0005000000237487257,
+        0.0005000000237487257,
+        0.0005000000237487257,
+        0.0005000000237487257
+      ],
+      "certificate": {
+        "status": "outside_sufficient_condition",
+        "h": [
+          "1",
+          "1",
+          "1",
+          "1",
+          "1",
+          "1",
+          "1",
+          "1"
+        ],
+        "exact_margins": [
+          "-70372813/67108864",
+          "-250085685/536870912",
+          "-1407439509/1073741824",
+          "-155238949/67108864",
+          "-340495047/268435456",
+          "-94544279/67108864",
+          "-1938546501/4294967296",
+          "-276973149/134217728"
+        ],
+        "exact_min_row_sum": "6233513797/4294967296",
+        "rho_abs_float_descriptive": 2.2410149013838554,
+        "rho_W_float_descriptive": 1.2244946047576097,
+        "note": "Exact rational arithmetic certifies binary stored coefficients. Failure is not proof of instability."
+      },
+      "matrix_sha256": "a85ebacb52c77a25f32da9668d5f47b83ae6a781e4464d6efe46ace27fc5b172",
+      "native_coefficient_dtype": "float32 lifted exactly to float64; band alpha native float64"
+    },
+    "bands": {
+      "alpha": [
+        0.05,
+        0.005,
+        0.005,
+        0.2,
+        0.0005,
+        0.0005,
+        0.2,
+        0.05
+      ],
+      "certificate": {
+        "status": "outside_sufficient_condition",
+        "h": [
+          "1",
+          "1",
+          "1",
+          "1",
+          "1",
+          "1",
+          "1",
+          "1"
+        ],
+        "exact_margins": [
+          "-70372813/67108864",
+          "-250085685/536870912",
+          "-1407439509/1073741824",
+          "-155238949/67108864",
+          "-340495047/268435456",
+          "-94544279/67108864",
+          "-1938546501/4294967296",
+          "-276973149/134217728"
+        ],
+        "exact_min_row_sum": "6233513797/4294967296",
+        "rho_abs_float_descriptive": 2.2410149013838554,
+        "rho_W_float_descriptive": 1.2244946047576097,
+        "note": "Exact rational arithmetic certifies binary stored coefficients. Failure is not proof of instability."
+      },
+      "matrix_sha256": "dc077b37467ad402d254d3696dcd42261aee04d988c7f2d274aaa552d007422d",
+      "native_coefficient_dtype": "float32 lifted exactly to float64; band alpha native float64"
+    }
+  },
+  "trials": [
+    {
+      "key": "default_zero_7",
+      "config": "default",
+      "stream": "zero",
+      "seed": 7,
+      "horizon": 39990,
+      "input_sha256": "317d6c7c034a51b56b791adacaf2c8eda07433eae0f04cd2179d1011bd892c7b",
+      "initial_l2": [
+        0.0,
+        0.16176188860004687
+      ],
+      "state_scale": 0.05231045433236424,
+      "state_scale_source": "driven no-rounding exploration-prefix RMS, floor 1e-6",
+      "task_start": 0,
+      "task_stop": 0,
+      "block_length": 64,
+      "readout_fit_prefix": 2048
+    },
+    {
+      "key": "default_impulse_7",
+      "config": "default",
+      "stream": "impulse",
+      "seed": 7,
+      "horizon": 39991,
+      "input_sha256": "bb4aec8abb5e03bf0d88018dbffd6d9123d2f1e90a211be71ace86e6a7d4e62c",
+      "initial_l2": [
+        0.0,
+        0.16176188860004687
+      ],
+      "state_scale": 0.05231045433236424,
+      "state_scale_source": "driven no-rounding exploration-prefix RMS, floor 1e-6",
+      "task_start": 0,
+      "task_stop": 0,
+      "block_length": 64,
+      "readout_fit_prefix": 2048
+    },
+    {
+      "key": "default_driven_7",
+      "config": "default",
+      "stream": "driven",
+      "seed": 7,
+      "horizon": 44087,
+      "input_sha256": "0e2d533e0a7831d5c193de7082b866346dba1c8b7cc9796014a2773970d38897",
+      "initial_l2": [
+        0.0,
+        0.16176188860004687
+      ],
+      "state_scale": 0.05231045433236424,
+      "state_scale_source": "driven no-rounding exploration-prefix RMS, floor 1e-6",
+      "task_start": 2112,
+      "task_stop": 4096,
+      "block_length": 256,
+      "readout_fit_prefix": 2048
+    },
+    {
+      "key": "default_project_7",
+      "config": "default",
+      "stream": "project",
+      "seed": 7,
+      "horizon": 41090,
+      "input_sha256": "90bac81e3ac813c247fa139a517e36173b7c19547cb1b712fc024c2df970845e",
+      "initial_l2": [
+        0.0,
+        0.16176188860004687
+      ],
+      "state_scale": 0.006102130243053353,
+      "state_scale_source": "project no-rounding exploration-prefix RMS, floor 1e-6",
+      "task_start": 464,
+      "task_stop": 1099,
+      "block_length": 64,
+      "readout_fit_prefix": 400
+    },
+    {
+      "key": "slow_zero_7",
+      "config": "slow",
+      "stream": "zero",
+      "seed": 7,
+      "horizon": 39990,
+      "input_sha256": "107c10e4ce70baf213443eed73db48666c7e5da27e934b226efcea17b30a0d27",
+      "initial_l2": [
+        0.0,
+        0.16176188860004687
+      ],
+      "state_scale": 0.0028688945895170214,
+      "state_scale_source": "driven no-rounding exploration-prefix RMS, floor 1e-6",
+      "task_start": 0,
+      "task_stop": 0,
+      "block_length": 64,
+      "readout_fit_prefix": 2048
+    },
+    {
+      "key": "slow_impulse_7",
+      "config": "slow",
+      "stream": "impulse",
+      "seed": 7,
+      "horizon": 39991,
+      "input_sha256": "9e0e94b2868ad3204615a7b141653b24b343ab61153c8a10f8535425c36fb539",
+      "initial_l2": [
+        0.0,
+        0.16176188860004687
+      ],
+      "state_scale": 0.0028688945895170214,
+      "state_scale_source": "driven no-rounding exploration-prefix RMS, floor 1e-6",
+      "task_start": 0,
+      "task_stop": 0,
+      "block_length": 64,
+      "readout_fit_prefix": 2048
+    },
+    {
+      "key": "slow_driven_7",
+      "config": "slow",
+      "stream": "driven",
+      "seed": 7,
+      "horizon": 44087,
+      "input_sha256": "d6f28114071888da16f1444c9dadc18227e4d33f6ad74610e3ff879dc2c999e4",
+      "initial_l2": [
+        0.0,
+        0.16176188860004687
+      ],
+      "state_scale": 0.0028688945895170214,
+      "state_scale_source": "driven no-rounding exploration-prefix RMS, floor 1e-6",
+      "task_start": 2112,
+      "task_stop": 4096,
+      "block_length": 256,
+      "readout_fit_prefix": 2048
+    },
+    {
+      "key": "slow_project_7",
+      "config": "slow",
+      "stream": "project",
+      "seed": 7,
+      "horizon": 41090,
+      "input_sha256": "e4f630a566ae81a02ff60ecc0a522ee87ef18597fc576333565b866894bbce71",
+      "initial_l2": [
+        0.0,
+        0.16176188860004687
+      ],
+      "state_scale": 0.00038063952201055875,
+      "state_scale_source": "project no-rounding exploration-prefix RMS, floor 1e-6",
+      "task_start": 464,
+      "task_stop": 1099,
+      "block_length": 64,
+      "readout_fit_prefix": 400
+    },
+    {
+      "key": "bands_zero_7",
+      "config": "bands",
+      "stream": "zero",
+      "seed": 7,
+      "horizon": 39990,
+      "input_sha256": "c0c3b09f7e91696deeaf5c3bc30ae349ff8d6c66ce881c04918427387592ad85",
+      "initial_l2": [
+        0.0,
+        0.16176188860004687
+      ],
+      "state_scale": 0.14643535527224713,
+      "state_scale_source": "driven no-rounding exploration-prefix RMS, floor 1e-6",
+      "task_start": 0,
+      "task_stop": 0,
+      "block_length": 64,
+      "readout_fit_prefix": 2048
+    },
+    {
+      "key": "bands_impulse_7",
+      "config": "bands",
+      "stream": "impulse",
+      "seed": 7,
+      "horizon": 39991,
+      "input_sha256": "11b357da570ece26312e431546e72881e5ef9723d8c6292d695353077a962c62",
+      "initial_l2": [
+        0.0,
+        0.16176188860004687
+      ],
+      "state_scale": 0.14643535527224713,
+      "state_scale_source": "driven no-rounding exploration-prefix RMS, floor 1e-6",
+      "task_start": 0,
+      "task_stop": 0,
+      "block_length": 64,
+      "readout_fit_prefix": 2048
+    },
+    {
+      "key": "bands_driven_7",
+      "config": "bands",
+      "stream": "driven",
+      "seed": 7,
+      "horizon": 44087,
+      "input_sha256": "ccf4a006423dafaf383179d4e48f4b8e896f7592506d8e1dae513b128006fc9e",
+      "initial_l2": [
+        0.0,
+        0.16176188860004687
+      ],
+      "state_scale": 0.14643535527224713,
+      "state_scale_source": "driven no-rounding exploration-prefix RMS, floor 1e-6",
+      "task_start": 2112,
+      "task_stop": 4096,
+      "block_length": 256,
+      "readout_fit_prefix": 2048
+    },
+    {
+      "key": "bands_project_7",
+      "config": "bands",
+      "stream": "project",
+      "seed": 7,
+      "horizon": 41090,
+      "input_sha256": "e1712eab30e120da9c5ede5adfc8675bf21497602c7905966f304becf561f547",
+      "initial_l2": [
+        0.0,
+        0.16176188860004687
+      ],
+      "state_scale": 0.02670240567668413,
+      "state_scale_source": "project no-rounding exploration-prefix RMS, floor 1e-6",
+      "task_start": 464,
+      "task_stop": 1099,
+      "block_length": 64,
+      "readout_fit_prefix": 400
+    },
+    {
+      "key": "default_zero_19",
+      "config": "default",
+      "stream": "zero",
+      "seed": 19,
+      "horizon": 39990,
+      "input_sha256": "1a0aee72047cc819365b957c59417ec65a6d41f66da0400de6ff86ef9d90ed3f",
+      "initial_l2": [
+        0.0,
+        0.1466890192098169
+      ],
+      "state_scale": 0.052235064395643294,
+      "state_scale_source": "driven no-rounding exploration-prefix RMS, floor 1e-6",
+      "task_start": 0,
+      "task_stop": 0,
+      "block_length": 64,
+      "readout_fit_prefix": 2048
+    },
+    {
+      "key": "default_impulse_19",
+      "config": "default",
+      "stream": "impulse",
+      "seed": 19,
+      "horizon": 39991,
+      "input_sha256": "6fff1234b03ab8cf371a684cbfc5819169ec274b2a97225aab76fd30843495fd",
+      "initial_l2": [
+        0.0,
+        0.1466890192098169
+      ],
+      "state_scale": 0.052235064395643294,
+      "state_scale_source": "driven no-rounding exploration-prefix RMS, floor 1e-6",
+      "task_start": 0,
+      "task_stop": 0,
+      "block_length": 64,
+      "readout_fit_prefix": 2048
+    },
+    {
+      "key": "default_driven_19",
+      "config": "default",
+      "stream": "driven",
+      "seed": 19,
+      "horizon": 44087,
+      "input_sha256": "4f3154d9c71496cba8a94493c0c1c7ce2adb52f9cf82ab2e38df867067607092",
+      "initial_l2": [
+        0.0,
+        0.1466890192098169
+      ],
+      "state_scale": 0.052235064395643294,
+      "state_scale_source": "driven no-rounding exploration-prefix RMS, floor 1e-6",
+      "task_start": 2112,
+      "task_stop": 4096,
+      "block_length": 256,
+      "readout_fit_prefix": 2048
+    },
+    {
+      "key": "default_project_19",
+      "config": "default",
+      "stream": "project",
+      "seed": 19,
+      "horizon": 41090,
+      "input_sha256": "bd04b6c11cb25c5318b66fa7c5be31a19cb8dee53c160f4b0e48f8a2080fc3f0",
+      "initial_l2": [
+        0.0,
+        0.1466890192098169
+      ],
+      "state_scale": 0.006102130243053353,
+      "state_scale_source": "project no-rounding exploration-prefix RMS, floor 1e-6",
+      "task_start": 464,
+      "task_stop": 1099,
+      "block_length": 64,
+      "readout_fit_prefix": 400
+    },
+    {
+      "key": "slow_zero_19",
+      "config": "slow",
+      "stream": "zero",
+      "seed": 19,
+      "horizon": 39990,
+      "input_sha256": "2840cb180d246434cad0e87da1e4a8fb352dd062fb314a698f3e5385b6a0760e",
+      "initial_l2": [
+        0.0,
+        0.1466890192098169
+      ],
+      "state_scale": 0.0029138316598975337,
+      "state_scale_source": "driven no-rounding exploration-prefix RMS, floor 1e-6",
+      "task_start": 0,
+      "task_stop": 0,
+      "block_length": 64,
+      "readout_fit_prefix": 2048
+    },
+    {
+      "key": "slow_impulse_19",
+      "config": "slow",
+      "stream": "impulse",
+      "seed": 19,
+      "horizon": 39991,
+      "input_sha256": "80cb07e033d8164840475f8524b5c1fb6bdfba832cc09989a788c5d85708e6d9",
+      "initial_l2": [
+        0.0,
+        0.1466890192098169
+      ],
+      "state_scale": 0.0029138316598975337,
+      "state_scale_source": "driven no-rounding exploration-prefix RMS, floor 1e-6",
+      "task_start": 0,
+      "task_stop": 0,
+      "block_length": 64,
+      "readout_fit_prefix": 2048
+    },
+    {
+      "key": "slow_driven_19",
+      "config": "slow",
+      "stream": "driven",
+      "seed": 19,
+      "horizon": 44087,
+      "input_sha256": "307365f61d30e448681796fd26ac63fca172f2674e5b1e79c6e79074edafd0f7",
+      "initial_l2": [
+        0.0,
+        0.1466890192098169
+      ],
+      "state_scale": 0.0029138316598975337,
+      "state_scale_source": "driven no-rounding exploration-prefix RMS, floor 1e-6",
+      "task_start": 2112,
+      "task_stop": 4096,
+      "block_length": 256,
+      "readout_fit_prefix": 2048
+    },
+    {
+      "key": "slow_project_19",
+      "config": "slow",
+      "stream": "project",
+      "seed": 19,
+      "horizon": 41090,
+      "input_sha256": "8078607af2e8ad970be131ce1938e6b5e85a677f176756f4035952c977421c84",
+      "initial_l2": [
+        0.0,
+        0.1466890192098169
+      ],
+      "state_scale": 0.00038063952201055875,
+      "state_scale_source": "project no-rounding exploration-prefix RMS, floor 1e-6",
+      "task_start": 464,
+      "task_stop": 1099,
+      "block_length": 64,
+      "readout_fit_prefix": 400
+    },
+    {
+      "key": "bands_zero_19",
+      "config": "bands",
+      "stream": "zero",
+      "seed": 19,
+      "horizon": 39990,
+      "input_sha256": "5834c974ca3b4b8a87b82a949d2f2ebacb67d53a8e230a2a0334402cf4443725",
+      "initial_l2": [
+        0.0,
+        0.1466890192098169
+      ],
+      "state_scale": 0.14669159346527494,
+      "state_scale_source": "driven no-rounding exploration-prefix RMS, floor 1e-6",
+      "task_start": 0,
+      "task_stop": 0,
+      "block_length": 64,
+      "readout_fit_prefix": 2048
+    },
+    {
+      "key": "bands_impulse_19",
+      "config": "bands",
+      "stream": "impulse",
+      "seed": 19,
+      "horizon": 39991,
+      "input_sha256": "442d7cd7b9654c84464bc762c0f4a278f7ae04b9c55abe12027957100e9afe75",
+      "initial_l2": [
+        0.0,
+        0.1466890192098169
+      ],
+      "state_scale": 0.14669159346527494,
+      "state_scale_source": "driven no-rounding exploration-prefix RMS, floor 1e-6",
+      "task_start": 0,
+      "task_stop": 0,
+      "block_length": 64,
+      "readout_fit_prefix": 2048
+    },
+    {
+      "key": "bands_driven_19",
+      "config": "bands",
+      "stream": "driven",
+      "seed": 19,
+      "horizon": 44087,
+      "input_sha256": "bb77af671b1cc709d355f85e4f71fb58a53b0b9886916971256180f711f07ab0",
+      "initial_l2": [
+        0.0,
+        0.1466890192098169
+      ],
+      "state_scale": 0.14669159346527494,
+      "state_scale_source": "driven no-rounding exploration-prefix RMS, floor 1e-6",
+      "task_start": 2112,
+      "task_stop": 4096,
+      "block_length": 256,
+      "readout_fit_prefix": 2048
+    },
+    {
+      "key": "bands_project_19",
+      "config": "bands",
+      "stream": "project",
+      "seed": 19,
+      "horizon": 41090,
+      "input_sha256": "739f741efb5768f0be0e6da6e7ef7bf607b3b6f7388b2a1d439a91ea992bcb94",
+      "initial_l2": [
+        0.0,
+        0.1466890192098169
+      ],
+      "state_scale": 0.02670240567668413,
+      "state_scale_source": "project no-rounding exploration-prefix RMS, floor 1e-6",
+      "task_start": 464,
+      "task_stop": 1099,
+      "block_length": 64,
+      "readout_fit_prefix": 400
+    }
+  ],
+  "delta": 1e-05,
+  "state_dtype": "float64",
+  "carry_dtype": "float64",
+  "reference": "float64 no explicit grid; selected entire trajectories checked at mpmath 50 decimal digits",
+  "precision_cases": [
+    "default_zero_7",
+    "default_driven_7",
+    "slow_zero_7",
+    "slow_driven_7",
+    "bands_zero_7",
+    "bands_driven_7"
+  ],
+  "precision_initialization": {
+    "zero": 1,
+    "driven": 0
+  },
+  "precision_acceptance_max_abs": 1e-09,
+  "precision_scope": "Same frozen binary matrices, alpha and precomputed forcing; checks recurrence arithmetic, not coefficient-generation truth.",
+  "quantizer": "numpy.rint(x*100000)/100000; nearest binary half ties to even; no saturation",
+  "pulse_phase": "counter zero at initialization; first pulse after update 100; all arms aligned",
+  "carry_reset": "zero at each trajectory and reset; residual z-r, added at next update",
+  "feedback": "No adapt, thermostat, hippocampus, Sentinel, or state-dependent input feedback. Frozen W and readout.",
+  "noise": "zero in numerical arms (thermodynamics off); nonzero matched noise tested in real-listen adapter calibration",
+  "input_rounding": "none in every arm; old input-rounding algorithm is not reproduced",
+  "prediction": "raw frozen affine readout and additional engine-style rounded dream; next-frame target",
+  "readout": "ridge 1e-4, no tuning; fitted only on exploration prefix of corresponding source, frozen before policy replay; same for both initializations",
+  "chronology": "Replay all inputs from declared initial state; training prefix then gap 64 then suffix. No resets at split. Targets only next frame. Gap exceeds one-frame target overlap.",
+  "temporal_dependence": "Contiguous prespecified blocks; report block effects and ranges, no independent-frame p values or confidence claims",
+  "tail_steps": 39990,
+  "largest_scalar_relaxation_time": 1999.4999583229132,
+  "tail_multiple": 20,
+  "tail_note": "Zero-input tail after excitation (or entire zero stream). Diagnostic minimum, not coupled mixing-time guarantee.",
+  "metrics": [
+    "state RMS/Linf discrepancy",
+    "init L2 separation",
+    "tail pulse plateau/cycle",
+    "carry magnitude and exact binary subtraction storage error samples",
+    "raw and rounded prediction difference",
+    "suffix MSE and block deltas",
+    "runtime ratio",
+    "persistent array bytes",
+    "descriptive covariance geometry"
+  ],
+  "storage_error_sampling": "Every 100th step and first 101; exact Fraction(z)-Fraction(r)-Fraction(c); rounding in F and adding c are not included",
+  "practical_task_effect_threshold": null,
+  "acceptable_overhead_threshold": null,
+  "threshold_reason": "No defensible project task-effect or overhead requirement exists for this unlabeled fixture / synthetic prediction task.",
+  "adoption_decision_rule": "Always inconclusive for adoption without a prespecified utility gate; numerical fidelity cannot pass it.",
+  "utility_test_status": "untested; suffix task errors are exploratory descriptive matched comparisons, not a validated utility experiment",
+  "main_cap_seconds": 3600,
+  "first_run_target_seconds": 1800,
+  "partial_policy": "Write each completed trial; retain failures and completed outputs at cap; never shorten horizon",
+  "overhead": "Three timing repeats, rotated deterministic policy order, per policy complete two-initialization trajectories; persistent arrays exclude common inputs/readout and offline trace storage"
+}

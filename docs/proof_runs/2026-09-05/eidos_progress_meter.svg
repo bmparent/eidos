@@ -1,0 +1,26 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1040" height="560" viewBox="0 0 1040 560">
+<rect width="1040" height="560" fill="#f5f7fa"/>
+<text x="40" y="52" font-family="Arial" font-size="27" fill="#152138">Eidos | Utility evidence progress</text>
+<text x="40" y="85" font-family="Arial" font-size="16" fill="#46566e">2026-09-05 · Data gate tested; chronological utility blocked</text>
+<rect x="40" y="115" width="960" height="43" rx="6" fill="white"/>
+<text x="57" y="143" font-family="Arial" font-size="17" fill="#152138">Numerical baseline evidence</text>
+<text x="757" y="143" font-family="Arial" font-size="16" fill="#67748b">evidence_exists</text>
+<rect x="40" y="168" width="960" height="43" rx="6" fill="white"/>
+<text x="57" y="196" font-family="Arial" font-size="17" fill="#152138">Prefix/label isolation checks</text>
+<text x="757" y="196" font-family="Arial" font-size="16" fill="#17845b">passed</text>
+<rect x="40" y="221" width="960" height="43" rx="6" fill="white"/>
+<text x="57" y="249" font-family="Arial" font-size="17" fill="#152138">Labeled source audited</text>
+<text x="757" y="249" font-family="Arial" font-size="16" fill="#17845b">passed</text>
+<rect x="40" y="274" width="960" height="43" rx="6" fill="white"/>
+<text x="57" y="302" font-family="Arial" font-size="17" fill="#152138">Chronological utility data</text>
+<text x="757" y="302" font-family="Arial" font-size="16" fill="#ab4e22">blocked</text>
+<rect x="40" y="327" width="960" height="43" rx="6" fill="white"/>
+<text x="57" y="355" font-family="Arial" font-size="17" fill="#152138">Runtime requirement: +10%</text>
+<text x="757" y="355" font-family="Arial" font-size="16" fill="#2458a5">specified</text>
+<rect x="40" y="380" width="960" height="43" rx="6" fill="white"/>
+<text x="57" y="408" font-family="Arial" font-size="17" fill="#152138">Actual detection utility</text>
+<text x="757" y="408" font-family="Arial" font-size="16" fill="#67748b">untested</text>
+<text x="40" y="463" font-family="Arial" font-size="16" fill="#46566e">170,366 source flows · 2,180 attack labels · 11 invalid durations · no timestamps</text>
+<text x="40" y="494" font-family="Arial" font-size="16" fill="#46566e">Overall readiness unknown. Detection metrics untested. Current model defaults unchanged.</text>
+<text x="40" y="528" font-family="Arial" font-size="14" fill="#46566e">North star: reproducible learning, anomaly preservation, self-monitoring and incident receipts.</text>
+</svg>

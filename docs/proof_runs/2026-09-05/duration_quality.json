@@ -1,0 +1,61 @@
+{
+  "negative_duration_rows": [
+    {
+      "source_row_index_zero_based": 28032,
+      "duration_microseconds": -1.0,
+      "label": "BENIGN"
+    },
+    {
+      "source_row_index_zero_based": 38703,
+      "duration_microseconds": -1.0,
+      "label": "BENIGN"
+    },
+    {
+      "source_row_index_zero_based": 64023,
+      "duration_microseconds": -1.0,
+      "label": "BENIGN"
+    },
+    {
+      "source_row_index_zero_based": 68865,
+      "duration_microseconds": -1.0,
+      "label": "BENIGN"
+    },
+    {
+      "source_row_index_zero_based": 74921,
+      "duration_microseconds": -1.0,
+      "label": "BENIGN"
+    },
+    {
+      "source_row_index_zero_based": 76091,
+      "duration_microseconds": -1.0,
+      "label": "BENIGN"
+    },
+    {
+      "source_row_index_zero_based": 127742,
+      "duration_microseconds": -1.0,
+      "label": "BENIGN"
+    },
+    {
+      "source_row_index_zero_based": 129761,
+      "duration_microseconds": -1.0,
+      "label": "BENIGN"
+    },
+    {
+      "source_row_index_zero_based": 146046,
+      "duration_microseconds": -1.0,
+      "label": "BENIGN"
+    },
+    {
+      "source_row_index_zero_based": 146576,
+      "duration_microseconds": -1.0,
+      "label": "BENIGN"
+    },
+    {
+      "source_row_index_zero_based": 158103,
+      "duration_microseconds": -1.0,
+      "label": "BENIGN"
+    }
+  ],
+  "rows_are_not_removed_or_repaired": true,
+  "source_sha256": "d67066211fb1689c78406f1506f4c44704ecb92088353d5c96d96d6474eb819d"
+}

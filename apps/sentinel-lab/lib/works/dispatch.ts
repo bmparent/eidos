@@ -1,4 +1,8 @@
 import * as memberAuth from './vendor/functions/api/members/auth';
+import * as playgroundProjects from './vendor/functions/api/playground/projects';
+import * as playgroundCheckout from './vendor/functions/api/playground/checkout';
+import * as playgroundPurchases from './vendor/functions/api/playground/purchases';
+import * as playgroundWebhook from './vendor/functions/api/playground/webhook';
 import * as memberAccount from './vendor/functions/api/members/account';
 import * as memberDirectory from './vendor/functions/api/members/directory';
 import * as memberUnsubscribe from './vendor/functions/api/members/unsubscribe';
@@ -23,6 +27,8 @@ import * as thread from './vendor/functions/community/thread/[id]';
 type Handler = (context: Context) => Promise<Response>;
 type Module = { onRequestGet?: Handler; onRequestPost?: Handler };
 const routes: Record<string, Module> = {
+  '/api/playground/projects': playgroundProjects,
+  '/api/playground/checkout': playgroundCheckout, '/api/playground/purchases': playgroundPurchases, '/api/playground/webhook': playgroundWebhook,
   '/api/members/auth': memberAuth, '/api/members/account': memberAccount,
   '/api/members/directory': memberDirectory, '/api/members/unsubscribe': memberUnsubscribe,
   '/api/assistant': assistant, '/api/public-config': config,
@@ -40,6 +46,7 @@ const names = [
   'EIDOS_ACCOUNTS_ENABLED', 'EIDOS_NEWSLETTER_ENABLED', 'EIDOS_MAIL_DAILY_LIMIT', 'EIDOS_MAIL_FROM', 'RESEND_API_KEY',
   'EIDOS_PUBLICATION_FEED_URL',
   'STRIPE_SECRET_KEY', 'EIDOS_KIT_WEBHOOK_SECRET', 'EIDOS_SHOP_ENABLED',
+  'EIDOS_PLAYGROUND_STRIPE_KEY', 'EIDOS_PLAYGROUND_WEBHOOK_SECRET', 'EIDOS_PLAYGROUND_TEST_PRICE_CENTS',
 ] as const;
 export function platformEnvironment(source: Record<string, string | undefined> = process.env): PlatformEnv {
   const selected = Object.fromEntries(names.map(name => [name, source[name]]));
@@ -78,7 +85,7 @@ export async function dispatchWorks(request: Request, source: Record<string, str
     const session = (request.headers.get('cookie') || '').split(';').map(s=>s.trim()).find(s=>/^__Host-eidos_session=[a-f0-9]{64}$/.test(s));
     if (session) headers.set('cookie',session);
     headers.set('CF-Connecting-IP', request.headers.get('x-eidos-client-ip') || 'unknown');
-    const payload = request.method === 'POST' ? await readText(request, path === '/api/shop/webhook' ? 64000 : 12000) : undefined;
+    const payload = request.method === 'POST' ? await readText(request, path === '/api/playground/projects' ? 2_020_000 : ['/api/shop/webhook','/api/playground/webhook'].includes(path) ? 64000 : 12000) : undefined;
     const forwarded = new Request(actualSite + path + inputUrl.search, {
       method: request.method, headers, body: payload,
     });
