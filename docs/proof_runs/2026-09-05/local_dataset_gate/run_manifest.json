@@ -1,0 +1,14 @@
+{
+  "status": "blocked",
+  "started_utc": "2026-09-05T19:57:42.316014+00:00",
+  "core_behavior_changed": false,
+  "detector_exercised": false,
+  "utility_status": "untested",
+  "blockers": [
+    "missing_or_ambiguous_timestamp_column",
+    "invalid_flow_duration",
+    "exploration_cutoff_not_frozen",
+    "overlap_gap_not_frozen"
+  ],
+  "completed_utc": "2026-09-05T19:57:51.996622+00:00"
+}

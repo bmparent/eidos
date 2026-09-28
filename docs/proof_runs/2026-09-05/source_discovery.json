@@ -1,0 +1,23 @@
+{
+  "date": "2026-09-05",
+  "official_dataset_page": "https://www.unb.ca/cic/datasets/ids-2017.html",
+  "official_download_page": "https://cicresearch.ca/CICDataset/CIC-IDS-2017/",
+  "official_page_observed": "Publisher distinguishes GeneratedLabelledFlows.zip from MachineLearningCSV.zip and provides attack schedule.",
+  "download_observed": "Server error and registration form; Open browse page again returns same form. No personal data submitted.",
+  "drive_searches": [
+    {
+      "query": "GeneratedLabelledFlows",
+      "matches": 0
+    },
+    {
+      "name_filter": "GeneratedLabelled OR TrafficLabelling OR Thursday-WorkingHours",
+      "matches": 0
+    }
+  ],
+  "local_searches": [
+    "Original repository cicids_webattacks_samples contains the 52 MB timestamp-free CSV.",
+    "Generalization inputs contain derived natural attack slices, not a timestamped replacement.",
+    "Downloads name searches for Flows and CIC found no candidates."
+  ],
+  "limit": "These searches did not exhaust every public mirror or every file on the machine. No independently authenticated timestamped source was recovered."
+}

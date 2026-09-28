@@ -1,0 +1,1 @@
+Generated from the frozen protocol, completed run manifest, adapter/calibration receipts and precision checks. Project readiness is null because global gates were not audited. Local checks do not promote global milestones. SVG requires no JavaScript. The dashboard links to report CSVs and the evidence figure.

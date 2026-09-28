@@ -1,0 +1,101 @@
+{
+  "utc": "2026-09-04T21:33:54.494883+00:00",
+  "overall_proof_readiness_score": null,
+  "score_reason": "The complete project gate evidence was not audited here; unknown is not zero.",
+  "scoring_rule": "sum(weight_i * accepted_gate_pass_i), evaluated only when every gate has been assessed",
+  "weighted_project_gates": [
+    {
+      "name": "reproducible baseline",
+      "weight": 15,
+      "status": "unknown",
+      "reason": "Global project gate not reassessed by this numerical benchmark"
+    },
+    {
+      "name": "labeled-domain proof",
+      "weight": 15,
+      "status": "unknown",
+      "reason": "Global project gate not reassessed by this numerical benchmark"
+    },
+    {
+      "name": "precision / false-positive discipline",
+      "weight": 15,
+      "status": "unknown",
+      "reason": "Global project gate not reassessed by this numerical benchmark"
+    },
+    {
+      "name": "Sentinel calibration / generalization",
+      "weight": 15,
+      "status": "unknown",
+      "reason": "Global project gate not reassessed by this numerical benchmark"
+    },
+    {
+      "name": "compression / anomaly preservation",
+      "weight": 10,
+      "status": "unknown",
+      "reason": "Global project gate not reassessed by this numerical benchmark"
+    },
+    {
+      "name": "incident cards / explanation",
+      "weight": 10,
+      "status": "unknown",
+      "reason": "Global project gate not reassessed by this numerical benchmark"
+    },
+    {
+      "name": "domain demos",
+      "weight": 10,
+      "status": "unknown",
+      "reason": "Global project gate not reassessed by this numerical benchmark"
+    },
+    {
+      "name": "one-command reproducibility / final report",
+      "weight": 10,
+      "status": "unknown",
+      "reason": "Global project gate not reassessed by this numerical benchmark"
+    }
+  ],
+  "benchmark_checks": [
+    {
+      "name": "Frozen evaluator and inputs",
+      "status": "passed",
+      "evidence": "main/freeze.json"
+    },
+    {
+      "name": "Actual listen adapter / reset",
+      "status": "passed",
+      "evidence": "main/adapter_selected_size.json"
+    },
+    {
+      "name": "Exact scalar and nonnormal controls",
+      "status": "passed",
+      "evidence": "calibration/calibration.json"
+    },
+    {
+      "name": "Declared numerical trajectories",
+      "status": "passed",
+      "evidence": "main/run_manifest.json"
+    },
+    {
+      "name": "Full-horizon precision checks",
+      "status": "passed",
+      "evidence": "report/precision_summary.json"
+    },
+    {
+      "name": "Operational utility gate",
+      "status": "missing",
+      "evidence": "main/protocol.json: null task/overhead thresholds"
+    }
+  ],
+  "neurons": 8,
+  "trajectories": 192,
+  "precision_checks": 6,
+  "north_star": "Eidos Brain is a self-monitoring streaming intelligence codec: learns live streams, compresses predictable behavior, preserves meaningful anomalies, monitors internal state, and emits human-readable incident receipts.",
+  "strengthened": "Reproducibility and interpretation of internal-state persistence.",
+  "unproven": [
+    "Default-size reservoir",
+    "GPU",
+    "Adaptive engine feedback",
+    "Labeled detection utility",
+    "Compression value",
+    "Theorem originality"
+  ]
+}
