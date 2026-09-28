@@ -19,11 +19,13 @@ const receipt = { base, browser: "Playwright Chromium", reason: "Browser plugin 
 const screenshot = async name => { await page.screenshot({ path: resolve(output, `${name}.png`), fullPage: true }); receipt.screenshots.push(`${name}.png`); };
 async function check(name, operation) { await operation(); receipt.checks.push({ name, status: "passed" }); }
 try {
-  await page.goto("https://eidos-sentinel-lab.vercel.app", { waitUntil: "domcontentloaded", timeout: 60000 });
-  await screenshot("before-production");
-  receipt.productionBefore = { title: await page.title(), url: page.url() };
+  if (process.env.EIDOS_QA_URL) {
+    await page.goto("https://eidos-sentinel-lab.vercel.app", { waitUntil: "domcontentloaded", timeout: 60000 });
+    await screenshot("before-production");
+    receipt.productionBefore = { title: await page.title(), url: page.url() };
+  }
   if (access) await page.goto(access, { waitUntil: "domcontentloaded", timeout: 60000 });
-  await page.goto(base, { waitUntil: "networkidle", timeout: 60000 });
+  await page.goto(new URL("/advanced", base).toString(), { waitUntil: "networkidle", timeout: 60000 });
   await page.getByRole("heading", { name: "Understand what changed." }).waitFor();
   await screenshot("01-add-data-desktop");
   await check("approved pilot login", async () => { await page.getByLabel("Access key", { exact: true }).fill(keys.alice); await page.getByRole("button", { name: "Sign in", exact: true }).click(); await page.getByText("Signed in · pilot access").waitFor(); });

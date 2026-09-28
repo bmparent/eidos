@@ -60,7 +60,7 @@ async function datasetFlow(filename,{documents=false,url=false,temporal=true}={}
 }
 try {
   if(access)await page.goto(access,{waitUntil:'domcontentloaded',timeout:60000});
-  await page.goto(base,{waitUntil:'networkidle'});await page.getByLabel('Access key',{exact:true}).fill(keys.alice);await page.getByRole('button',{name:'Sign in',exact:true}).click();await page.getByText('Signed in · pilot access').waitFor();
+  await page.goto(new URL('/advanced',base).toString(),{waitUntil:'networkidle'});await page.getByLabel('Access key',{exact:true}).fill(keys.alice);await page.getByRole('button',{name:'Sign in',exact:true}).click();await page.getByText('Signed in · pilot access').waitFor();
   const names=(process.env.EIDOS_QA_FILES || 'service-latency.xlsx,service-latency.parquet,service-latency.json,service-latency.jsonl,service.log,incident-notes.txt,incident-notes.html,incident-notes.pdf,plain.log').split(',');
   for(const name of names.filter(n=>n!=='URL_ONLY'))await datasetFlow(name,{documents:name.startsWith('incident-')||name==='plain.log'});
   await page.getByRole('button',{name:/^01Add data$/}).click();
