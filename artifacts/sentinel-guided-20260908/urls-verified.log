@@ -1,0 +1,36 @@
+{
+  "base": "http://127.0.0.1:3210",
+  "startedAt": "2026-09-09T00:36:53.012Z",
+  "checks": [
+    {
+      "name": "oversize browser rejection",
+      "status": "passed"
+    },
+    {
+      "name": "malformed parser failure visible in browser",
+      "status": "passed"
+    },
+    {
+      "name": "URL rejection 127.0.0.1",
+      "status": "passed",
+      "http": 400,
+      "message": "A public IPv4 destination is required; private, local and special-use addresses are blocked."
+    },
+    {
+      "name": "URL rejection 169.254.169.254",
+      "status": "passed",
+      "http": 400,
+      "message": "A public IPv4 destination is required; private, local and special-use addresses are blocked."
+    },
+    {
+      "name": "URL rejection httpbin.org",
+      "status": "passed",
+      "http": 400,
+      "message": "A public IPv4 destination is required; private, local and special-use addresses are blocked."
+    }
+  ],
+  "errors": [],
+  "status": "failed",
+  "failure": "Pattern association evidence missing",
+  "finishedAt": "2026-09-09T00:38:10.537Z"
+}

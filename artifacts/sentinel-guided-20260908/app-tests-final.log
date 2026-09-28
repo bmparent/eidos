@@ -1,0 +1,83 @@
+
+> eidos-sentinel-lab@0.2.0 test
+> node --test tests/*.test.mjs && node --import tsx --test tests/*.test.ts
+
+✔ default real-data spec produces a stable canonical lock (10.4594ms)
+✔ real-data spec requires version and rejects path traversal (4.6454ms)
+✔ proof and label-isolation locks cannot be relaxed (1.4338ms)
+✔ preflight blocks dispatch without changing scientific readiness (145.8119ms)
+✔ backend-specific blockers remain explicit and fail closed (1.9385ms)
+✔ stale launcher receipts fail closed without advancing proof gates (7.1243ms)
+✔ launcher command inspection is rate limited (0.946ms)
+✔ sandbox allocation errors return a stable diagnostic response instead of a generic 400 (2.2318ms)
+✔ dispatch diagnostics preserve useful provider context while redacting credentials (2.1837ms)
+✔ known capacity and configuration failures retain their public contracts (1.0266ms)
+✔ request parse failures and stage wrappers remain explicit (2.9107ms)
+✔ engineering smoke is deterministic for a locked request (87.4281ms)
+✔ held-out seeds are inaccessible (3.0215ms)
+✔ smoke output cannot advance proof gates (20.2415ms)
+✔ incident language remains calibrated (26.9218ms)
+✔ all registered engineering scenarios return finite traces (167.0369ms)
+ℹ tests 16
+ℹ suites 0
+ℹ pass 16
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 886.9998
+✔ independent clients cannot exceed capacity and retries return the same job (714.9772ms)
+✔ abandoned reservations recover, stale allocators are fenced and old retry keys never relaunch (65.5027ms)
+✔ allocation uncertainty retains its slot beyond expiry until provider reconciliation (46.425ms)
+✔ admission fails closed without remote storage or a valid retry key (8.0056ms)
+✔ immutable verifier checks bytes, missing and forbidden paths without opening raw inputs (2613.3594ms)
+✔ pattern descriptions exclude missing pairs and preserve original record references (11.5915ms)
+✔ existing Eidos member credentials remain owner-bound and immediately revocable (132.1175ms)
+✔ independent database clients share one retry identity and dispatch lease (218.4464ms)
+✔ browser Host normalization permits same-origin writes and rejects cross-origin writes (5.8618ms)
+✔ owner isolation covers datasets, runs, embeddings, sources, feedback and monitors (29.464ms)
+✔ retry keys preserve job identity, settings and cancellation fencing (54.4115ms)
+✔ canonical input identity ignores object key order but preserves values (1.2858ms)
+✔ public fetch rejects private, metadata, special-use and redirect targets (24.4038ms)
+✔ scoped credential cannot read data, switch sources, or survive revocation (22.3323ms)
+✔ telemetry deduplication, conflict rollback, late data and checkpoint compare-and-set (40.0513ms)
+✔ OTLP JSON preserves event time and target metric selection (2.2837ms)
+{"level":"info","event":"experiment_dispatch_started","route":"/api/experiments","diagnosticId":"6d143f15-e450-4a12-884e-7de1bc329805","requestId":null}
+{"level":"error","event":"experiment_dispatch_failed","route":"/api/experiments","diagnosticId":"6d143f15-e450-4a12-884e-7de1bc329805","requestId":null,"stage":"operator_auth","code":"OPERATOR_AUTH_REQUIRED","status":401,"retryable":false,"durationMs":4,"diagnostic":{"type":"Error","message":"OPERATOR_AUTH_REQUIRED"}}
+✔ changing a dataset source invalidates inherited hashes, filenames and unknown versions (13.4212ms)
+✔ only explicit numeric values and allowlisted engine profiles can be locked (16.4636ms)
+✔ operator and full-capacity gates stay closed before any dispatch (285.9887ms)
+✔ bounded JSON handling rejects malformed and chunked oversized requests (484.151ms)
+{"event":"experiment_artifact_failed","diagnosticId":"09d954f6-f520-4141-be9a-3c103ae86d66","code":"OPERATOR_AUTH_REQUIRED","status":401,"diagnostic":{"type":"Error","message":"OPERATOR_AUTH_REQUIRED"}}
+{"event":"experiment_artifact_failed","diagnosticId":"dc50937f-b239-4ebf-8d25-3e0f8b069ae1","code":"Artifact not found.","status":404,"diagnostic":{"type":"Error","message":"Artifact not found."}}
+{"event":"experiment_status_failed","diagnosticId":"1ae17ed1-1922-4d3d-be90-16c0c0a2f316","code":"EXPERIMENT_STATUS_UNAVAILABLE","status":502,"diagnostic":{"type":"Error","message":"503 token=[REDACTED]"}}
+✔ full immutable verification resumes only a completed snapshot and reports provider cleanup (18.2968ms)
+✔ immutable verification is unavailable for active jobs and does not stop them (4.3676ms)
+✔ dispatch uses the verified checkout and commits its source and command receipts (54.7835ms)
+✔ reading or missing an artifact never stops a running experiment (4.4876ms)
+✔ stopped snapshot retrieval cleans up after runner.log (2.7958ms)
+✔ stopped snapshot retrieval cleans up after metrics.json (2.1555ms)
+✔ expired active receipts are persisted once and survive later retrieval (4.4561ms)
+✔ transient monitoring and snapshot read failures do not fabricate engine failure or expiry (4.6236ms)
+✔ confirmed launcher exit commits a failure and releases compute (3.2544ms)
+✔ completed receipts retain results and stop compute (5.1685ms)
+✔ artifact and status routes enforce authentication, byte delivery, allowlists and retryable errors (60.7329ms)
+✔ source probe verifies a real Git checkout in the provider cwd (4146.4753ms)
+✔ source probe verifies a real Git checkout in a child directory (2589.1583ms)
+✔ source verification blocks wrong commit (3351.645ms)
+✔ source verification blocks changed source (5354.7803ms)
+✔ source verification blocks missing launcher (3800.8225ms)
+✔ source verification blocks ambiguous checkout (5223.6851ms)
+✔ Relay authentication, exact origins, routes and method gates (162.3122ms)
+✔ Member sign-in survives the authenticated relay and libSQL consumes links exactly once (286.9908ms)
+✔ Published answers work with no database, model key or outbound fetch (13.5911ms)
+✔ Real libSQL adapter reserves atomically and rolls back failed batches (79.7035ms)
+✔ Sentinel quota and idempotency prevent repeated model calls (113.2258ms)
+ℹ tests 42
+ℹ suites 0
+ℹ pass 42
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 26765.6882

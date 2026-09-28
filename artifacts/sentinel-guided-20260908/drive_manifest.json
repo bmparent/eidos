@@ -1,0 +1,1692 @@
+{
+  "drive_copy_attempted": true,
+  "drive_copy_success": true,
+  "drive_root": "Google Drive / Eidos_Brain_Proof_Phase",
+  "drive_run_dir": "Eidos_Brain_Proof_Phase/2026-09-08/sentinel-guided-20260908",
+  "folder_url": "https://drive.google.com/drive/folders/16ObF_8iSYgJsKPQPrRnBh20hK68F1fuC",
+  "reason": "Mounted copy returned No space left on device; direct authenticated connector uploaded complete evidence ZIP. Historical files untouched.",
+  "files_considered": [
+    "allocation-provider-response.json",
+    "app-final-lint.log",
+    "app-final-test.log",
+    "app-tests-final.log",
+    "app-tests.log",
+    "before-after.html",
+    "before-after.md",
+    "benchmark_summary.md",
+    "browser/01-add-data-desktop.png",
+    "browser/02-confirm-schema.png",
+    "browser/03-analyze.png",
+    "browser/04-investigate-desktop.png",
+    "browser/05-evidence-and-question.png",
+    "browser/06-investigate-mobile.png",
+    "browser/07-saved-run-mobile.png",
+    "browser/before-production.png",
+    "browser/browser-receipt.json",
+    "browser/browser-result.json",
+    "browser/failure.png",
+    "browser-qa.log",
+    "budget-admission-receipt.json",
+    "build-final.log",
+    "build.log",
+    "cancellation/receipt.json",
+    "cancellation-verified.log",
+    "cancellation.log",
+    "candidate-source-comparison.json",
+    "ci-checks.json",
+    "codex_journal.md",
+    "collector/collector.log",
+    "collector/receipt.json",
+    "collector-download.json",
+    "collector-qa.log",
+    "collector-validation.json",
+    "collector-validation.log",
+    "documents-verified/failure.png",
+    "documents-verified/incident-notes.html-result.json",
+    "documents-verified/incident-notes.html.png",
+    "documents-verified/incident-notes.pdf-result.json",
+    "documents-verified/incident-notes.pdf.png",
+    "documents-verified/incident-notes.txt-result.json",
+    "documents-verified/incident-notes.txt.png",
+    "documents-verified/plain.log-result.json",
+    "documents-verified/plain.log.png",
+    "documents-verified/receipt.json",
+    "documents-verified.log",
+    "environment.txt",
+    "evaluation/acceptance-freeze.json",
+    "evaluation/development-metrics.csv",
+    "evaluation/development-summary.json",
+    "evaluation/final-metrics.csv",
+    "evaluation/final-summary.json",
+    "evaluation/frozen-code-comparison.json",
+    "evaluation/frozen-code.zip",
+    "evaluation/partition-plan.json",
+    "evaluation/period-raw-artifacts.zip",
+    "evaluation/period-raw-manifest.json",
+    "evaluation/qualification.json",
+    "evaluation/validation-metrics.csv",
+    "evaluation/validation-summary.json",
+    "evaluation-development.log",
+    "evaluation-final.log",
+    "fixtures/fixture_manifest.json",
+    "fixtures/incident-notes.html",
+    "fixtures/incident-notes.pdf",
+    "fixtures/incident-notes.txt",
+    "fixtures/malformed.json",
+    "fixtures/oversize.csv",
+    "fixtures/plain.log",
+    "fixtures/service-latency.csv",
+    "fixtures/service-latency.json",
+    "fixtures/service-latency.jsonl",
+    "fixtures/service-latency.parquet",
+    "fixtures/service-latency.xlsx",
+    "fixtures/service.log",
+    "formats/failure.png",
+    "formats/receipt.json",
+    "formats/service-latency.xlsx-result.json",
+    "formats/service-latency.xlsx.png",
+    "formats-qa.log",
+    "formats-verified/failure.png",
+    "formats-verified/incident-notes.txt-result.json",
+    "formats-verified/receipt.json",
+    "formats-verified/service-latency.json-result.json",
+    "formats-verified/service-latency.json.png",
+    "formats-verified/service-latency.jsonl-result.json",
+    "formats-verified/service-latency.jsonl.png",
+    "formats-verified/service-latency.parquet-result.json",
+    "formats-verified/service-latency.parquet.png",
+    "formats-verified/service.log-result.json",
+    "formats-verified/service.log.png",
+    "formats-verified.log",
+    "git_commit.txt",
+    "guided-pytest.log",
+    "guided-pytest.xml",
+    "history-local.log",
+    "legacy-mechanisms/engine/compression/sentinel_lab_real_data_engineering/20260909_002446_bicameral_stream_meta_sentinel_lab_real_data_engineering.json",
+    "legacy-mechanisms/engine/compression/sentinel_lab_real_data_engineering/20260909_002446_bicameral_stream_sentinel_lab_real_data_engineering.bin",
+    "legacy-mechanisms/engine/eidos_brain_archive/20260909_001118_sentinel_lab_eidos_synthetic-verification_v1_seed0/session_meta.json",
+    "legacy-mechanisms/engine/eidos_brain_archive/20260909_002427_sentinel_lab_eidos_synthetic-verification_v1_seed0/anomalies.jsonl",
+    "legacy-mechanisms/engine/eidos_brain_archive/20260909_002427_sentinel_lab_eidos_synthetic-verification_v1_seed0/clusters.json",
+    "legacy-mechanisms/engine/eidos_brain_archive/20260909_002427_sentinel_lab_eidos_synthetic-verification_v1_seed0/report.txt",
+    "legacy-mechanisms/engine/eidos_brain_archive/20260909_002427_sentinel_lab_eidos_synthetic-verification_v1_seed0/session_meta.json",
+    "legacy-mechanisms/engine/eidos_brain_archive/20260909_002427_sentinel_lab_eidos_synthetic-verification_v1_seed0/state_capsule.json",
+    "legacy-mechanisms/engine/eidos_brain_archive/20260909_002427_sentinel_lab_eidos_synthetic-verification_v1_seed0/steps.csv",
+    "legacy-mechanisms/engine/eidos_brain_archive/20260909_002427_sentinel_lab_eidos_synthetic-verification_v1_seed0/summary.json",
+    "legacy-mechanisms/engine/forecast.jsonl",
+    "legacy-mechanisms/engine/hippocampus/sentinel_lab_real_data_engineering/20260909_002445_hippocampus_snapshot_sentinel_lab_real_data_engineering.pt",
+    "legacy-mechanisms/engine/incident_cards.jsonl",
+    "legacy-mechanisms/engine/manifest.jsonl",
+    "legacy-mechanisms/engine/reservoir_checkpoints/sentinel_lab_real_data_engineering/20260909_002445_reservoir_checkpoint_sentinel_lab_real_data_engineering.pt",
+    "legacy-mechanisms/engine/reservoir_geometry/sentinel_lab_real_data_engineering/20260909_002445_reservoir_states_sentinel_lab_real_data_engineering.npy",
+    "legacy-mechanisms/engine/reservoir_geometry/sentinel_lab_real_data_engineering/20260909_002446_reservoir_geom_sentinel_lab_real_data_engineering.json",
+    "legacy-mechanisms/engine/sentinel_forensics/sentinel_lab_real_data_engineering/20260909_002446_top_100_surprises_sentinel_lab_real_data_engineering.json",
+    "legacy-mechanisms/engine/sentinel_forensics/sentinel_lab_real_data_engineering/20260909_002446_top_100_surprises_text_sentinel_lab_real_data_engineering.txt",
+    "legacy-mechanisms/engine_receipt.json",
+    "legacy-mechanisms/metrics.json",
+    "legacy-mechanisms/reference.json",
+    "legacy-mechanisms/synthetic.csv",
+    "legacy-mechanisms-cp1252-failure.log",
+    "legacy-mechanisms.log",
+    "legacy-standard/engine/compression/sentinel_lab_real_data_engineering/20260909_002341_bicameral_stream_meta_sentinel_lab_real_data_engineering.json",
+    "legacy-standard/engine/compression/sentinel_lab_real_data_engineering/20260909_002341_bicameral_stream_sentinel_lab_real_data_engineering.bin",
+    "legacy-standard/engine/eidos_brain_archive/20260909_001036_sentinel_lab_eidos_synthetic-verification_v1_seed0/session_meta.json",
+    "legacy-standard/engine/eidos_brain_archive/20260909_002323_sentinel_lab_eidos_synthetic-verification_v1_seed0/anomalies.jsonl",
+    "legacy-standard/engine/eidos_brain_archive/20260909_002323_sentinel_lab_eidos_synthetic-verification_v1_seed0/clusters.json",
+    "legacy-standard/engine/eidos_brain_archive/20260909_002323_sentinel_lab_eidos_synthetic-verification_v1_seed0/report.txt",
+    "legacy-standard/engine/eidos_brain_archive/20260909_002323_sentinel_lab_eidos_synthetic-verification_v1_seed0/session_meta.json",
+    "legacy-standard/engine/eidos_brain_archive/20260909_002323_sentinel_lab_eidos_synthetic-verification_v1_seed0/state_capsule.json",
+    "legacy-standard/engine/eidos_brain_archive/20260909_002323_sentinel_lab_eidos_synthetic-verification_v1_seed0/steps.csv",
+    "legacy-standard/engine/eidos_brain_archive/20260909_002323_sentinel_lab_eidos_synthetic-verification_v1_seed0/summary.json",
+    "legacy-standard/engine/forecast.jsonl",
+    "legacy-standard/engine/hippocampus/sentinel_lab_real_data_engineering/20260909_002340_hippocampus_snapshot_sentinel_lab_real_data_engineering.pt",
+    "legacy-standard/engine/incident_cards.jsonl",
+    "legacy-standard/engine/manifest.jsonl",
+    "legacy-standard/engine/reservoir_checkpoints/sentinel_lab_real_data_engineering/20260909_002340_reservoir_checkpoint_sentinel_lab_real_data_engineering.pt",
+    "legacy-standard/engine/reservoir_geometry/sentinel_lab_real_data_engineering/20260909_002340_reservoir_states_sentinel_lab_real_data_engineering.npy",
+    "legacy-standard/engine/reservoir_geometry/sentinel_lab_real_data_engineering/20260909_002341_reservoir_geom_sentinel_lab_real_data_engineering.json",
+    "legacy-standard/engine/sentinel_forensics/sentinel_lab_real_data_engineering/20260909_002341_top_100_surprises_sentinel_lab_real_data_engineering.json",
+    "legacy-standard/engine/sentinel_forensics/sentinel_lab_real_data_engineering/20260909_002341_top_100_surprises_text_sentinel_lab_real_data_engineering.txt",
+    "legacy-standard/engine_receipt.json",
+    "legacy-standard/metrics.json",
+    "legacy-standard/reference.json",
+    "legacy-standard/synthetic.csv",
+    "legacy-standard-cp1252-failure.log",
+    "legacy-standard.log",
+    "lint-final.log",
+    "lint.log",
+    "manifest.json",
+    "mount-copy-attempt.json",
+    "plain_language_test_analysis.md",
+    "preview-authorized/01-add-data-desktop.png",
+    "preview-authorized/02-confirm-schema.png",
+    "preview-authorized/03-analyze.png",
+    "preview-authorized/04-investigate-desktop.png",
+    "preview-authorized/05-evidence-and-question.png",
+    "preview-authorized/06-investigate-mobile.png",
+    "preview-authorized/07-saved-run-mobile.png",
+    "preview-authorized/before-production.png",
+    "preview-authorized/browser-receipt.json",
+    "preview-authorized/browser-result.json",
+    "preview-authorized.log",
+    "preview-browser/before-production.png",
+    "preview-browser/browser-receipt.json",
+    "preview-browser/failure.png",
+    "preview-browser.log",
+    "preview-budget/monitor-desktop.png",
+    "preview-budget/monitor-mobile.png",
+    "preview-budget/monitor-state.json",
+    "preview-budget/receipt.json",
+    "preview-budget.log",
+    "preview-final/01-add-data-desktop.png",
+    "preview-final/02-confirm-schema.png",
+    "preview-final/03-analyze.png",
+    "preview-final/04-investigate-desktop.png",
+    "preview-final/05-evidence-and-question.png",
+    "preview-final/06-investigate-mobile.png",
+    "preview-final/07-saved-run-mobile.png",
+    "preview-final/before-production.png",
+    "preview-final/browser-receipt.json",
+    "preview-final/browser-result.json",
+    "preview-final.log",
+    "preview-formats/failure.png",
+    "preview-formats/incident-notes.txt-result.json",
+    "preview-formats/incident-notes.txt.png",
+    "preview-formats/receipt.json",
+    "preview-formats.log",
+    "preview-release/01-add-data-desktop.png",
+    "preview-release/before-production.png",
+    "preview-release/browser-receipt.json",
+    "preview-release/failure.png",
+    "preview-release.log",
+    "production-config-before-preview.json",
+    "progress/eidos_progress_dashboard.html",
+    "progress/eidos_progress_meter.json",
+    "progress/eidos_progress_meter.md",
+    "progress/eidos_progress_meter.svg",
+    "progress/eidos_progress_readme.md",
+    "proof_logic_ledger.json",
+    "proof_logic_ledger.md",
+    "provider-before-sanitized.json",
+    "provider-comparison.json",
+    "provider-recovery.json",
+    "python-package-versions.json",
+    "rejected-allocation-cancel.log",
+    "release-preview.json",
+    "requirement-to-evidence.md",
+    "requirements-evaluation.txt",
+    "reviewed-history/answer.json",
+    "reviewed-history/receipt.json",
+    "reviewed-history.log",
+    "runner-final.log",
+    "runner-final.xml",
+    "runner-pytest.log",
+    "runner-pytest.xml",
+    "secret-scan.json",
+    "semantic/cache/6b46de37bc4f586cc17cf73e39bb8d9670dabddaf5c984a13b42764719aa3616.json",
+    "semantic/cache/772c86f187d1c349f26a9ef74c90dc94970b10213c084b85ab395e0ee9f1306f.json",
+    "semantic/cache/c5269ec2d0f82016b5e2a7193e36cd865962d687ebb16840f2531866178cccd8.json",
+    "semantic/semantic-receipt.json",
+    "semantic-final/cache/4569c9c862eb4f28dcddac09d082e75787fa1430f81014d3abd27e2219a49e1d.json",
+    "semantic-final/cache/5ad2ae48ef9632f82b38ebdcbf4ca6c99c9bd12272127148f0f56a72f34c5f91.json",
+    "semantic-final/cache/71ba1a1305b27bc736f6d8f4cedc872b72cb5ce37f3ccc6b7f2d22f87e60a5c5.json",
+    "semantic-final/cache/74807ed9464c55a0636ed335db25f7cb50f4cddf986c501386ca44f54a0ea4fc.json",
+    "semantic-final/cache/943fc33dccf4368de221fa50c3fb229c8c91ddf7fd061a1a9144436ffb0e0ff2.json",
+    "semantic-final/receipt.json",
+    "semantic-final-verified.log",
+    "semantic-final.log",
+    "semantic.log",
+    "stream/full-replay/heartbeat.json",
+    "stream/full-replay/result.json",
+    "stream/full-replay/status.json",
+    "stream/full-replay-request.json",
+    "stream/full-replay.log",
+    "stream/monitor-desktop.png",
+    "stream/monitor-mobile.png",
+    "stream/monitor-state.json",
+    "stream/receipt.json",
+    "stream-final-local/full-replay/heartbeat.json",
+    "stream-final-local/full-replay/result.json",
+    "stream-final-local/full-replay/status.json",
+    "stream-final-local/full-replay-request.json",
+    "stream-final-local/full-replay.log",
+    "stream-final-local/monitor-state.json",
+    "stream-final-local/receipt.json",
+    "stream-final-local.log",
+    "stream-qa.log",
+    "stream-release-local/full-replay/heartbeat.json",
+    "stream-release-local/full-replay/result.json",
+    "stream-release-local/full-replay/status.json",
+    "stream-release-local/full-replay-request.json",
+    "stream-release-local/full-replay.log",
+    "stream-release-local/monitor-desktop.png",
+    "stream-release-local/monitor-mobile.png",
+    "stream-release-local/monitor-state.json",
+    "stream-release-local/receipt.json",
+    "stream-release-local.log",
+    "urls-cold-server/-result.json",
+    "urls-cold-server/.png",
+    "urls-cold-server/receipt.json",
+    "urls-cold-server/seattle-weather.csv-result.json",
+    "urls-cold-server/seattle-weather.csv.png",
+    "urls-cold-server.log",
+    "urls-verified/failure.png",
+    "urls-verified/receipt.json",
+    "urls-verified/seattle-weather.csv-result.json",
+    "urls-verified.log"
+  ],
+  "files_copied": [
+    {
+      "path": "allocation-provider-response.json",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "delivery": "inside verified local ZIP uploaded through authenticated Drive connector"
+    },
+    {
+      "path": "app-final-lint.log",
+      "sha256": "9a216ee216ffece65f8c7311a6df581a1485d1725ca017f4227f18213940a6eb",
+      "delivery": "inside verified local ZIP uploaded through authenticated Drive connector"
+    },
+    {
+      "path": "app-final-test.log",
+      "sha256": "f026be3185c87ce3a67d938da3f03c22f5dd956ef294b9e7d74f2b1e0bc2dda2",
+      "delivery": "inside verified local ZIP uploaded through authenticated Drive connector"
+    },
+    {
+      "path": "app-tests-final.log",
+      "sha256": "75cc6e9eca70213ce273df9077710c2b681bdd9aebe7a5f86de6e2f6bab9b5c5",
+      "delivery": "inside verified local ZIP uploaded through authenticated Drive connector"
+    },
+    {
+      "path": "app-tests.log",
+      "sha256": "fc46d5cedf454a4febdbe0c5fd9a541141d6a1d806131744d00db65740238224",
+      "delivery": "inside verified local ZIP uploaded through authenticated Drive connector"
+    },
+    {
+      "path": "before-after.html",
+      "sha256": "10279d8941d926fe686c71c6f9023c905cd1f6ca9014a37d5329abbfc58aa267",
+      "delivery": "inside verified local ZIP uploaded through authenticated Drive connector"
+    },
+    {
+      "path": "before-after.md",
+      "sha256": "4b36bd36756ab636aba442c40bd82f6d515633224837dfd83dd0439b6e6140e3",
+      "delivery": "inside verified local ZIP uploaded through authenticated Drive connector"
+    },
+    {
+      "path": "benchmark_summary.md",
+      "sha256": "840fef0f70757076998056d926da77539e22b17c28d4daefad06be3739daaa8a",
+      "delivery": "inside verified local ZIP uploaded through authenticated Drive connector"
+    },
+    {
+      "path": "browser/01-add-data-desktop.png",
+      "sha256": "d70a75b3aa147ad712cd4529eaadf8cca2538470230a208a3442b250795ded89",
+      "delivery": "inside verified local ZIP uploaded through authenticated Drive connector"
+    },
+    {
+      "path": "browser/02-confirm-schema.png",
+      "sha256": "97570333cb57a8c1f0b7662aea84d1c2308247764006482064d631123ddacbfb",
+      "delivery": "inside verified local ZIP uploaded through authenticated Drive connector"
+    },
+    {
+      "path": "browser/03-analyze.png",
+      "sha256": "96fd12e19aa58a2da5c28f45e6c0dd00f46286c4d4567c97cafb818f8a7abaf2",
+      "delivery": "inside verified local ZIP uploaded through authenticated Drive connector"
+    },
+    {
+      "path": "browser/04-investigate-desktop.png",
+      "sha256": "bebcbd7007b08c80de3bd846cba581788b8ba14f4471d1adb7a8e618a6415dd2",
+      "delivery": "inside verified local ZIP uploaded through authenticated Drive connector"
+    },
+    {
+      "path": "browser/05-evidence-and-question.png",
+      "sha256": "de934134b37d3caee88f08e2c09b676718aa43f5be8ec9bb4c009af90d40b088",
+      "delivery": "inside verified local ZIP uploaded through authenticated Drive connector"
+    },
+    {
+      "path": "browser/06-investigate-mobile.png",
+      "sha256": "b27e851910e7f4f7fd5862e50dcf49f139ebbe84b0c4749954cee6f51efe0e52",
+      "delivery": "inside verified local ZIP uploaded through authenticated Drive connector"
+    },
+    {
+      "path": "browser/07-saved-run-mobile.png",
+      "sha256": "7ce519b422af101b41cd5c4f303aa2a383c9f0f91f07ea3e4373571e5a84baa8",
+      "delivery": "inside verified local ZIP uploaded through authenticated Drive connector"
+    },
+    {
+      "path": "browser/before-production.png",
+      "sha256": "927147491d883076f02afef9381f09d86c1ad09d91c34b8dd56a6cd11375bcb9",
+      "delivery": "inside verified local ZIP uploaded through authenticated Drive connector"
+    },
+    {
+      "path": "browser/browser-receipt.json",
+      "sha256": "ade0dd0dac191b0fa8a6bb1850c16a364f37a3b5db6772f731ffe6ede403fc86",
+      "delivery": "inside verified local ZIP uploaded through authenticated Drive connector"
+    },
+    {
+      "path": "browser/browser-result.json",
+      "sha256": "ccceaee335545a2562f3c39fc2dcdc79e3107c0bdda866c3f055278c7562b5b1",
+      "delivery": "inside verified local ZIP uploaded through authenticated Drive connector"
+    },
+    {
+      "path": "browser/failure.png",
+      "sha256": "f2f37cb8946a84de1247079193d11ddad4ec3b8fbec89324385f5223646345f3",
+      "delivery": "inside verified local ZIP uploaded through authenticated Drive connector"
+    },
+    {
+      "path": "browser-qa.log",
+      "sha256": "99738fc70bb9d42b482f851f46cebb89fb2a665a887b91e046c9dea8bd07b166",
+      "delivery": "inside verified local ZIP uploaded through authenticated Drive connector"
+    },
+    {
+      "path": "budget-admission-receipt.json",
+      "sha256": "35b859fbfa509783a2e8dcc48d6d8a3318d552570deada3cd70698c44d31a9cf",
+      "delivery": "inside verified local ZIP uploaded through authenticated Drive connector"
+    },
+    {
+      "path": "build-final.log",
+      "sha256": "a7339fff9278f7387cd666e64ae25ff8b0da5bf3ca986e5ff46a95e23cde9520",
+      "delivery": "inside verified local ZIP uploaded through authenticated Drive connector"
+    },
+    {
+      "path": "build.log",
+      "sha256": "609094d5e200cdf77e78343b2e4eb853713b2022a12f63a5c9cc83c7f4979199",
+      "delivery": "inside verified local ZIP uploaded through authenticated Drive connector"
+    },
+    {
+      "path": "cancellation/receipt.json",
+      "sha256": "a792a18576b09c7e8fc56b3189fc270630ede47d0ce64d54ce57d8cd56d272cf",
+      "delivery": "inside verified local ZIP uploaded through authenticated Drive connector"
+    },
+    {
+      "path": "cancellation-verified.log",
+      "sha256": "08adb31e2169bb2af4f11c7bbda092dae3f5c302ff29f2f7a92ceba2091fa0d7",
+      "delivery": "inside verified local ZIP uploaded through authenticated Drive connector"
+    },
+    {
+      "path": "cancellation.log",
+      "sha256": "0eab9d3e28135bea3ff17dff31bc821f3688d6273480f108d9a4361a8ded9459",
+      "delivery": "inside verified local ZIP uploaded through authenticated Drive connector"
+    },
+    {
+      "path": "candidate-source-comparison.json",
+      "sha256": "33709db4f2f260910738c0292fc3c0c758f176e33472a49aaaad77bb2460806a",
+      "delivery": "inside verified local ZIP uploaded through authenticated Drive connector"
+    },
+    {
+      "path": "ci-checks.json",
+      "sha256": "9ab0031001fcf74601400d794ff11a331261db98662c5b1bbd55ddc26b353d26",
+      "delivery": "inside verified local ZIP uploaded through authenticated Drive connector"
+    },
+    {
+      "path": "codex_journal.md",
+      "sha256": "0b2ee4e6b1f3718461c3f667c71b6b867e40e0b3f49b553bd0fe731386ddab5e",
+      "delivery": "inside verified local ZIP uploaded through authenticated Drive connector"
+    },
+    {
+      "path": "collector/collector.log",
+      "sha256": "1bc21ff9ac0cbd451ee11b05638f09dd9de0a92d6129133fe8f559f16255b719",
+      "delivery": "inside verified local ZIP uploaded through authenticated Drive connector"
+    },
+    {
+      "path": "collector/receipt.json",
+      "sha256": "7d90c5b3168b73dbb7c771b8b714a9328b980aaf3251cd509e138d58d1143819",
+      "delivery": "inside verified local ZIP uploaded through authenticated Drive connector"
+    },
+    {
+      "path": "collector-download.json",
+      "sha256": "3613f986ca1ca137c6418505a818fb3628491180313a7416ce7d0ebfa50036dd",
+      "delivery": "inside verified local ZIP uploaded through authenticated Drive connector"
+    },
+    {
+      "path": "collector-qa.log",
+      "sha256": "1d5b00504374e274f7eb4bfe9cb44b5224d2781f0270ba2efbeaf2619496fd84",
+      "delivery": "inside verified local ZIP uploaded through authenticated Drive connector"
+    },
+    {
+      "path": "collector-validation.json",
+      "sha256": "f181a4d1a6582d3a5b4e63f6ab096af0a39e4658b3d055035af3c24cdcc72990",
+      "delivery": "inside verified local ZIP uploaded through authenticated Drive connector"
+    },
+    {
+      "path": "collector-validation.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "delivery": "inside verified local ZIP uploaded through authenticated Drive connector"
+    },
+    {
+      "path": "documents-verified/failure.png",
+      "sha256": "bff3fe3ca25ae26a6ba420bc53aa1b961f1b8634302667be9a60332557cc807a",
+      "delivery": "inside verified local ZIP uploaded through authenticated Drive connector"
+    },
+    {
+      "path": "documents-verified/incident-notes.html-result.json",
+      "sha256": "648b114a7765d28954e792c5dbec081b649ab9ff0fe9ad8509c30d4d0ce8d122",
+      "delivery": "inside verified local ZIP uploaded through authenticated Drive connector"
+    },
+    {
+      "path": "documents-verified/incident-notes.html.png",
+      "sha256": "7b42ffef865ed6789fb7e7fb34c1c33cb195bbc10a23d27611dfc10f02efa6ed",
+      "delivery": "inside verified local ZIP uploaded through authenticated Drive connector"
+    },
+    {
+      "path": "documents-verified/incident-notes.pdf-result.json",
+      "sha256": "1b7f11e160ae3974f1b854e9fd09cb165461fade9b9894e57ae9f9d9a8c4b2a2",
+      "delivery": "inside verified local ZIP uploaded through authenticated Drive connector"
+    },
+    {
+      "path": "documents-verified/incident-notes.pdf.png",
+      "sha256": "c3ea4b6d2b4037606700807f43797f79e8bff3c58913933eb0ec8bde949c8026",
+      "delivery": "inside verified local ZIP uploaded through authenticated Drive connector"
+    },
+    {
+      "path": "documents-verified/incident-notes.txt-result.json",
+      "sha256": "a36c36cf5ee59a6a9c9d391a67e422bd4d111fefe2d227e15efba653b7d75a45",
+      "delivery": "inside verified local ZIP uploaded through authenticated Drive connector"
+    },
+    {
+      "path": "documents-verified/incident-notes.txt.png",
+      "sha256": "acf67a5e430e7f52171e3f8da90d197b50241890bdaaa8d27e0330e0fe72d61c",
+      "delivery": "inside verified local ZIP uploaded through authenticated Drive connector"
+    },
+    {
+      "path": "documents-verified/plain.log-result.json",
+      "sha256": "519c2154783e4653dc5c40f57a7f4a761ed5146a41e836756d7bee9b26dd3296",
+      "delivery": "inside verified local ZIP uploaded through authenticated Drive connector"
+    },
+    {
+      "path": "documents-verified/plain.log.png",
+      "sha256": "5edd0dd44648efb10f0fe3f0faa131dbc1e1292ffa84ebb9515b0398efd40364",
+      "delivery": "inside verified local ZIP uploaded through authenticated Drive connector"
+    },
+    {
+      "path": "documents-verified/receipt.json",
+      "sha256": "e58e311c2bb254c0333e7f0a306595ee9cf6cec0f6bd7da31a12e6f1ca9db00e",
+      "delivery": "inside verified local ZIP uploaded through authenticated Drive connector"
+    },
+    {
+      "path": "documents-verified.log",
+      "sha256": "bfce37bdc060474437ebaab3c07b6f4a751b7aefa743b801fde902b0669cb901",
+      "delivery": "inside verified local ZIP uploaded through authenticated Drive connector"
+    },
+    {
+      "path": "environment.txt",
+      "sha256": "74a5b798d1a629d30b15e1db8bce6a6a8cbe0e44dc7edcdec57b4a18234cdb5b",
+      "delivery": "inside verified local ZIP uploaded through authenticated Drive connector"
+    },
+    {
+      "path": "evaluation/acceptance-freeze.json",
+      "sha256": "cf00e908d2ae1560956ac1011448bd8d8132bfc2b9f42fe9a9e6abc43b4dc0d9",
+      "delivery": "inside verified local ZIP uploaded through authenticated Drive connector"
+    },
+    {
+      "path": "evaluation/development-metrics.csv",
+      "sha256": "18db76d59a7a0c85622174705f35ed9629bc3032b7290b14266aa13342639458",
+      "delivery": "inside verified local ZIP uploaded through authenticated Drive connector"
+    },
+    {
+      "path": "evaluation/development-summary.json",
+      "sha256": "9deb5c145d077660383325e5c50962aa20b1fa07ba9254dfe93d0e16035f8463",
+      "delivery": "inside verified local ZIP uploaded through authenticated Drive connector"
+    },
+    {
+      "path": "evaluation/final-metrics.csv",
+      "sha256": "61f08d87b8a1b5fd7a4aac0504f6b91d60c2aa9abdcf05d7b0501e8cf90afe1b",
+      "delivery": "inside verified local ZIP uploaded through authenticated Drive connector"
+    },
+    {
+      "path": "evaluation/final-summary.json",
+      "sha256": "ebdda858bea74a5e0e65ecfb9a0a9a6677f5743629cd75fc04c31aa8b1211a57",
+      "delivery": "inside verified local ZIP uploaded through authenticated Drive connector"
+    },
+    {
+      "path": "evaluation/frozen-code-comparison.json",
+      "sha256": "04569725b64164ea5f0ebbbaaebf81c7a3df730f2213303d3bb24bc47d4a6554",
+      "delivery": "inside verified local ZIP uploaded through authenticated Drive connector"
+    },
+    {
+      "path": "evaluation/frozen-code.zip",
+      "sha256": "6a9cb10f6186305158399e850d4a8667529d6ea691433586ab25308736154d21",
+      "delivery": "inside verified local ZIP uploaded through authenticated Drive connector"
+    },
+    {
+      "path": "evaluation/partition-plan.json",
+      "sha256": "cc8d951ad3aa395fbf31918cb4c5c2863f95264d049f23c8d50ab4442dabd5ed",
+      "delivery": "inside verified local ZIP uploaded through authenticated Drive connector"
+    },
+    {
+      "path": "evaluation/period-raw-artifacts.zip",
+      "sha256": "3614d755877eb73248afbce7d7d7628975884172ff9219426a9df9b425cde918",
+      "delivery": "inside verified local ZIP uploaded through authenticated Drive connector"
+    },
+    {
+      "path": "evaluation/period-raw-manifest.json",
+      "sha256": "f58ceb83813ec30c28ce2018b7dd2321435e7b541f173fbdc271633d094977be",
+      "delivery": "inside verified local ZIP uploaded through authenticated Drive connector"
+    },
+    {
+      "path": "evaluation/qualification.json",
+      "sha256": "ab77b94dfd70007e54ef53ea8c4fbed5424c070f35997b5b46c9a14d05608a52",
+      "delivery": "inside verified local ZIP uploaded through authenticated Drive connector"
+    },
+    {
+      "path": "evaluation/validation-metrics.csv",
+      "sha256": "6a047de0d81dcd5a0e88fa8d5df6fca57f06a12793dc67862fe0175177bbbc80",
+      "delivery": "inside verified local ZIP uploaded through authenticated Drive connector"
+    },
+    {
+      "path": "evaluation/validation-summary.json",
+      "sha256": "41230e7bf78f8da606739833540a49d5538b0998099dc3176ed814ea52ac6c5c",
+      "delivery": "inside verified local ZIP uploaded through authenticated Drive connector"
+    },
+    {
+      "path": "evaluation-development.log",
+      "sha256": "90c42d9706af84217512c380678ba137f4533b25810a1d91ca916414760c417f",
+      "delivery": "inside verified local ZIP uploaded through authenticated Drive connector"
+    },
+    {
+      "path": "evaluation-final.log",
+      "sha256": "fdae5f8faa30b9c8da974b32743e9a6ba09442df0c4361548e1f2aa66d02c3bd",
+      "delivery": "inside verified local ZIP uploaded through authenticated Drive connector"
+    },
+    {
+      "path": "fixtures/fixture_manifest.json",
+      "sha256": "2a9b7684d1a449d8bb22ceb1b7b9d970503109498bbf86c5524aaa3d2d9ac2c0",
+      "delivery": "inside verified local ZIP uploaded through authenticated Drive connector"
+    },
+    {
+      "path": "fixtures/incident-notes.html",
+      "sha256": "85b5a0bfae17502b182fe7fb97cd09db52b9aad36ed422f177889f066c525c08",
+      "delivery": "inside verified local ZIP uploaded through authenticated Drive connector"
+    },
+    {
+      "path": "fixtures/incident-notes.pdf",
+      "sha256": "177415a7e72c0e0f6ce8f00758b010fcd43c0db10bfe8677eba1b55b840392b9",
+      "delivery": "inside verified local ZIP uploaded through authenticated Drive connector"
+    },
+    {
+      "path": "fixtures/incident-notes.txt",
+      "sha256": "62442d4073e5ff8f43d5b70b744c8220474036969ce5226166146ec191dc6d1e",
+      "delivery": "inside verified local ZIP uploaded through authenticated Drive connector"
+    },
+    {
+      "path": "fixtures/malformed.json",
+      "sha256": "af4d4da9f58a003dd856fb633b9210fd3f6071091b6e1b27da0f5a5b95c2c5fe",
+      "delivery": "inside verified local ZIP uploaded through authenticated Drive connector"
+    },
+    {
+      "path": "fixtures/oversize.csv",
+      "sha256": "255990a156da86a1821452b998647d4de85bdd811e510d0d7690f5caf7b54729",
+      "delivery": "inside verified local ZIP uploaded through authenticated Drive connector"
+    },
+    {
+      "path": "fixtures/plain.log",
+      "sha256": "28c47e60bdf19d1361555ac2aec0a23a34286eb2c2fa564ee38d3de02ea47080",
+      "delivery": "inside verified local ZIP uploaded through authenticated Drive connector"
+    },
+    {
+      "path": "fixtures/service-latency.csv",
+      "sha256": "d9957ea118f83042c0b38e65e6b46dcd37f88d7e4ba6362451928b076329a240",
+      "delivery": "inside verified local ZIP uploaded through authenticated Drive connector"
+    },
+    {
+      "path": "fixtures/service-latency.json",
+      "sha256": "6add0d87f8429ee2ef735b26311d9862f8153a129ac1603007c6a8edf21779f3",
+      "delivery": "inside verified local ZIP uploaded through authenticated Drive connector"
+    },
+    {
+      "path": "fixtures/service-latency.jsonl",
+      "sha256": "0ff856ac29db84d9e2a75b37b4b83a1babb4a8a3b3ca7d7db660f16bdc595b81",
+      "delivery": "inside verified local ZIP uploaded through authenticated Drive connector"
+    },
+    {
+      "path": "fixtures/service-latency.parquet",
+      "sha256": "c3fcc9bd0bd0a6abf9cd324e4ea8215811f6323fba3356d16a3bf86657201bbc",
+      "delivery": "inside verified local ZIP uploaded through authenticated Drive connector"
+    },
+    {
+      "path": "fixtures/service-latency.xlsx",
+      "sha256": "8582b1e7870263d8b72e81f8cd5573e91dee641ee27597443e4b33d4de0bc5fe",
+      "delivery": "inside verified local ZIP uploaded through authenticated Drive connector"
+    },
+    {
+      "path": "fixtures/service.log",
+      "sha256": "8cd98b498e343488967664b34ed44d77796a7940cb50fe56e45f355ceb18e607",
+      "delivery": "inside verified local ZIP uploaded through authenticated Drive connector"
+    },
+    {
+      "path": "formats/failure.png",
+      "sha256": "29cdecb92e0bd4c9ff45c7add9ba91c99a04dd37cf4d0a29fe927ac0a65df9cc",
+      "delivery": "inside verified local ZIP uploaded through authenticated Drive connector"
+    },
+    {
+      "path": "formats/receipt.json",
+      "sha256": "ed6e257df7c0edef15c73022b18c9dd9fc06a0162e841f8eac9c956b40fbad36",
+      "delivery": "inside verified local ZIP uploaded through authenticated Drive connector"
+    },
+    {
+      "path": "formats/service-latency.xlsx-result.json",
+      "sha256": "b51dcae81c30047b648b5fc75f918cbcd0ba3af54255ddd226553b35875a4e5d",
+      "delivery": "inside verified local ZIP uploaded through authenticated Drive connector"
+    },
+    {
+      "path": "formats/service-latency.xlsx.png",
+      "sha256": "8dac40f00c4763bf60f9083bf9e74b68ed4243d49e1dad603a07e9270dfb1b0f",
+      "delivery": "inside verified local ZIP uploaded through authenticated Drive connector"
+    },
+    {
+      "path": "formats-qa.log",
+      "sha256": "562ddfcdd501e65a1375e1f732b7bf216129a86f48d76556609428463d85c010",
+      "delivery": "inside verified local ZIP uploaded through authenticated Drive connector"
+    },
+    {
+      "path": "formats-verified/failure.png",
+      "sha256": "bcd3e7deb201e907d0395a54ffe9a3308b2ea754d7877f57110aa9d0ccf8e20d",
+      "delivery": "inside verified local ZIP uploaded through authenticated Drive connector"
+    },
+    {
+      "path": "formats-verified/incident-notes.txt-result.json",
+      "sha256": "2a5ed30f342ee76f554ce1866a06c7344ccbfd64a23642a4e9bf6b11f315f758",
+      "delivery": "inside verified local ZIP uploaded through authenticated Drive connector"
+    },
+    {
+      "path": "formats-verified/receipt.json",
+      "sha256": "8f6fb2e9a0be10682e0462f0acbf2294a08815dadbbef7d0359b86c2adb1c691",
+      "delivery": "inside verified local ZIP uploaded through authenticated Drive connector"
+    },
+    {
+      "path": "formats-verified/service-latency.json-result.json",
+      "sha256": "6f67219ed2dc9b8eb4bd7ee97a4ac09689fdd4cfef75dbce073b0ee75a8359a6",
+      "delivery": "inside verified local ZIP uploaded through authenticated Drive connector"
+    },
+    {
+      "path": "formats-verified/service-latency.json.png",
+      "sha256": "103c485bf12290fb32ffc1d88f24629dab118947bc17c01c1dd9c6842bc5969c",
+      "delivery": "inside verified local ZIP uploaded through authenticated Drive connector"
+    },
+    {
+      "path": "formats-verified/service-latency.jsonl-result.json",
+      "sha256": "ff6b530fa1f319838d7b96b42f71d74770405d94514c10df05d527dccb025697",
+      "delivery": "inside verified local ZIP uploaded through authenticated Drive connector"
+    },
+    {
+      "path": "formats-verified/service-latency.jsonl.png",
+      "sha256": "34b17f6acd6edc66ba05b3b70d4bb9d15c242f6209932a6dab08739e98fc5c3e",
+      "delivery": "inside verified local ZIP uploaded through authenticated Drive connector"
+    },
+    {
+      "path": "formats-verified/service-latency.parquet-result.json",
+      "sha256": "170a0ea8728bb1a6e64b7f8778d9a74a2105bdd6e82c44433a5f43f44b3c19d9",
+      "delivery": "inside verified local ZIP uploaded through authenticated Drive connector"
+    },
+    {
+      "path": "formats-verified/service-latency.parquet.png",
+      "sha256": "fe6bb94d4ec1bcb5407af100eee4d5d6a27434cb3d0db1c78a087e7c8fd1cf52",
+      "delivery": "inside verified local ZIP uploaded through authenticated Drive connector"
+    },
+    {
+      "path": "formats-verified/service.log-result.json",
+      "sha256": "137ece18143bdbd54fe15d8c6c3e1d30870c5b19a0e7e95761dac2df3ecd1c6a",
+      "delivery": "inside verified local ZIP uploaded through authenticated Drive connector"
+    },
+    {
+      "path": "formats-verified/service.log.png",
+      "sha256": "1c6af98b1049ce7a7f31df88d64699b174b667ab020ee50c606164ec8052f03c",
+      "delivery": "inside verified local ZIP uploaded through authenticated Drive connector"
+    },
+    {
+      "path": "formats-verified.log",
+      "sha256": "991ab0c11de4c6194aab87ba66476c4f488d2be2cbf3334eb0179dd378d87b7b",
+      "delivery": "inside verified local ZIP uploaded through authenticated Drive connector"
+    },
+    {
+      "path": "git_commit.txt",
+      "sha256": "8f18b43eaa4b0c7d39e885539bcf7c77d8a3eb544594c7c0855d5f52989f063d",
+      "delivery": "inside verified local ZIP uploaded through authenticated Drive connector"
+    },
+    {
+      "path": "guided-pytest.log",
+      "sha256": "aaafb9ecd44ce9632cc0815f0ca81caa9be783e5908a949ffdbef58886743801",
+      "delivery": "inside verified local ZIP uploaded through authenticated Drive connector"
+    },
+    {
+      "path": "guided-pytest.xml",
+      "sha256": "4548d67c096882b94ee9898b3a0664aad9f31bac26fa0cce64eaac0ae5c3be24",
+      "delivery": "inside verified local ZIP uploaded through authenticated Drive connector"
+    },
+    {
+      "path": "history-local.log",
+      "sha256": "f06ac4894036ef178844ac47a8f66070b96271cbec092e2c3c5210a845c853dc",
+      "delivery": "inside verified local ZIP uploaded through authenticated Drive connector"
+    },
+    {
+      "path": "legacy-mechanisms/engine/compression/sentinel_lab_real_data_engineering/20260909_002446_bicameral_stream_meta_sentinel_lab_real_data_engineering.json",
+      "sha256": "35c55e1a8cc3f3560f65f691a2888a2b3fbc62cab47438fe6d1911695def292c",
+      "delivery": "inside verified local ZIP uploaded through authenticated Drive connector"
+    },
+    {
+      "path": "legacy-mechanisms/engine/compression/sentinel_lab_real_data_engineering/20260909_002446_bicameral_stream_sentinel_lab_real_data_engineering.bin",
+      "sha256": "745cfa7b228f39bc164d896201dbab9704c28cd2717bf59141f131ef60f94f78",
+      "delivery": "inside verified local ZIP uploaded through authenticated Drive connector"
+    },
+    {
+      "path": "legacy-mechanisms/engine/eidos_brain_archive/20260909_001118_sentinel_lab_eidos_synthetic-verification_v1_seed0/session_meta.json",
+      "sha256": "cd3170ec074489ac77d88fa96064e6c54eb72a895031cf248cd159d73999184b",
+      "delivery": "inside verified local ZIP uploaded through authenticated Drive connector"
+    },
+    {
+      "path": "legacy-mechanisms/engine/eidos_brain_archive/20260909_002427_sentinel_lab_eidos_synthetic-verification_v1_seed0/anomalies.jsonl",
+      "sha256": "ead8c30812693d8df4a446d04e7dbd3dcf50abd3cd06953c096769c58dcbe0bc",
+      "delivery": "inside verified local ZIP uploaded through authenticated Drive connector"
+    },
+    {
+      "path": "legacy-mechanisms/engine/eidos_brain_archive/20260909_002427_sentinel_lab_eidos_synthetic-verification_v1_seed0/clusters.json",
+      "sha256": "fe65e9c1870cd9a6227d45f6496028d656873aaabcbcca05f08604f55b24002b",
+      "delivery": "inside verified local ZIP uploaded through authenticated Drive connector"
+    },
+    {
+      "path": "legacy-mechanisms/engine/eidos_brain_archive/20260909_002427_sentinel_lab_eidos_synthetic-verification_v1_seed0/report.txt",
+      "sha256": "453d81a80a8693a57a888821a05abba1193977c6e4fd3ec119f7cce12fe42835",
+      "delivery": "inside verified local ZIP uploaded through authenticated Drive connector"
+    },
+    {
+      "path": "legacy-mechanisms/engine/eidos_brain_archive/20260909_002427_sentinel_lab_eidos_synthetic-verification_v1_seed0/session_meta.json",
+      "sha256": "6abc24926c17b3e68dfbda1a7eb80e1072a5a1147dee1af0ff41fdb04b368e7d",
+      "delivery": "inside verified local ZIP uploaded through authenticated Drive connector"
+    },
+    {
+      "path": "legacy-mechanisms/engine/eidos_brain_archive/20260909_002427_sentinel_lab_eidos_synthetic-verification_v1_seed0/state_capsule.json",
+      "sha256": "752225e3ff06c477c1fe03b7975e2104dcc52f661000e7cca74d2d7d1b04b941",
+      "delivery": "inside verified local ZIP uploaded through authenticated Drive connector"
+    },
+    {
+      "path": "legacy-mechanisms/engine/eidos_brain_archive/20260909_002427_sentinel_lab_eidos_synthetic-verification_v1_seed0/steps.csv",
+      "sha256": "e185454587edfaad9648afc232f961c226b85a76a02dd63e64b283ecf515f101",
+      "delivery": "inside verified local ZIP uploaded through authenticated Drive connector"
+    },
+    {
+      "path": "legacy-mechanisms/engine/eidos_brain_archive/20260909_002427_sentinel_lab_eidos_synthetic-verification_v1_seed0/summary.json",
+      "sha256": "639e3a3ce7d7c4c402de21a886f0862e2daffd8cede171867e15070a03d0fc74",
+      "delivery": "inside verified local ZIP uploaded through authenticated Drive connector"
+    },
+    {
+      "path": "legacy-mechanisms/engine/forecast.jsonl",
+      "sha256": "8367f8d4c8a9bf416392268ea58a45a42a6bfdaa11ae568dd11d039d80d1da6d",
+      "delivery": "inside verified local ZIP uploaded through authenticated Drive connector"
+    },
+    {
+      "path": "legacy-mechanisms/engine/hippocampus/sentinel_lab_real_data_engineering/20260909_002445_hippocampus_snapshot_sentinel_lab_real_data_engineering.pt",
+      "sha256": "177f015ffa813108305ec5c5ef69f529a402d63cbedfe33ef42d78f08231b0db",
+      "delivery": "inside verified local ZIP uploaded through authenticated Drive connector"
+    },
+    {
+      "path": "legacy-mechanisms/engine/incident_cards.jsonl",
+      "sha256": "3320668b35aca1ee96825421573f860309a422d8be62ede6647bb1698632ca4a",
+      "delivery": "inside verified local ZIP uploaded through authenticated Drive connector"
+    },
+    {
+      "path": "legacy-mechanisms/engine/manifest.jsonl",
+      "sha256": "4789d152d8c3deeb2634b9b2ba982ec0aa584277530e5f0d5647a98b76e6f3a4",
+      "delivery": "inside verified local ZIP uploaded through authenticated Drive connector"
+    },
+    {
+      "path": "legacy-mechanisms/engine/reservoir_checkpoints/sentinel_lab_real_data_engineering/20260909_002445_reservoir_checkpoint_sentinel_lab_real_data_engineering.pt",
+      "sha256": "df2f5ef3cd94013d78d570dc404eb4ea4cf7c7848bf383bdddea1db2a5908505",
+      "delivery": "inside verified local ZIP uploaded through authenticated Drive connector"
+    },
+    {
+      "path": "legacy-mechanisms/engine/reservoir_geometry/sentinel_lab_real_data_engineering/20260909_002445_reservoir_states_sentinel_lab_real_data_engineering.npy",
+      "sha256": "163ebe0f45087f800b7db8b9ef87f87ed202313fd4c682181e880ef9e61db6c2",
+      "delivery": "inside verified local ZIP uploaded through authenticated Drive connector"
+    },
+    {
+      "path": "legacy-mechanisms/engine/reservoir_geometry/sentinel_lab_real_data_engineering/20260909_002446_reservoir_geom_sentinel_lab_real_data_engineering.json",
+      "sha256": "d8e08efbc114d5e89d430152937f072dbd4cb333d0a7ef7888e6a3620cb356ea",
+      "delivery": "inside verified local ZIP uploaded through authenticated Drive connector"
+    },
+    {
+      "path": "legacy-mechanisms/engine/sentinel_forensics/sentinel_lab_real_data_engineering/20260909_002446_top_100_surprises_sentinel_lab_real_data_engineering.json",
+      "sha256": "789c6ec4788b5463b308a345a72cb4fe5cdcb475ccb659f34f895dca98117ee9",
+      "delivery": "inside verified local ZIP uploaded through authenticated Drive connector"
+    },
+    {
+      "path": "legacy-mechanisms/engine/sentinel_forensics/sentinel_lab_real_data_engineering/20260909_002446_top_100_surprises_text_sentinel_lab_real_data_engineering.txt",
+      "sha256": "64c6b609fae6f4bd409a81b3624b97b858daa26e56e6e7a4da6090f52864bb25",
+      "delivery": "inside verified local ZIP uploaded through authenticated Drive connector"
+    },
+    {
+      "path": "legacy-mechanisms/engine_receipt.json",
+      "sha256": "26c6b05a4898e9fbe0a9fc925e2df6f5a352898e9418e09a360b6823b8835957",
+      "delivery": "inside verified local ZIP uploaded through authenticated Drive connector"
+    },
+    {
+      "path": "legacy-mechanisms/metrics.json",
+      "sha256": "152175ec530f064e83c3ebe722fd0cb346693fb54f934dcd255337a7773d8a64",
+      "delivery": "inside verified local ZIP uploaded through authenticated Drive connector"
+    },
+    {
+      "path": "legacy-mechanisms/reference.json",
+      "sha256": "3fc6e129371e536eabb296f693400c03bb794d336372eea93dbe2b053bb4d05e",
+      "delivery": "inside verified local ZIP uploaded through authenticated Drive connector"
+    },
+    {
+      "path": "legacy-mechanisms/synthetic.csv",
+      "sha256": "170c45f6cb5406852b734e52bc04dbc33a046ae891d16f32383ae2feca27e420",
+      "delivery": "inside verified local ZIP uploaded through authenticated Drive connector"
+    },
+    {
+      "path": "legacy-mechanisms-cp1252-failure.log",
+      "sha256": "8835312c7f5fd1713c4b0d4b1703135f7f3d12703ef131f86fdb60fcc06adc82",
+      "delivery": "inside verified local ZIP uploaded through authenticated Drive connector"
+    },
+    {
+      "path": "legacy-mechanisms.log",
+      "sha256": "8a23442748fcc6c8a75190c91c1ae457ec2acc117fbec135c7686fbf5994bc51",
+      "delivery": "inside verified local ZIP uploaded through authenticated Drive connector"
+    },
+    {
+      "path": "legacy-standard/engine/compression/sentinel_lab_real_data_engineering/20260909_002341_bicameral_stream_meta_sentinel_lab_real_data_engineering.json",
+      "sha256": "7c59fcb88c71beb7ef9ed2c540da5381040223cdfb43e276b51329d3130f9adb",
+      "delivery": "inside verified local ZIP uploaded through authenticated Drive connector"
+    },
+    {
+      "path": "legacy-standard/engine/compression/sentinel_lab_real_data_engineering/20260909_002341_bicameral_stream_sentinel_lab_real_data_engineering.bin",
+      "sha256": "504591173688164dc3cdd50c298333c550702fb7987b8d1b974fcf976c51dc87",
+      "delivery": "inside verified local ZIP uploaded through authenticated Drive connector"
+    },
+    {
+      "path": "legacy-standard/engine/eidos_brain_archive/20260909_001036_sentinel_lab_eidos_synthetic-verification_v1_seed0/session_meta.json",
+      "sha256": "59883e06ef09b040dc7c22ba0bd1d2c7e73d423e69307204383240d3089161ac",
+      "delivery": "inside verified local ZIP uploaded through authenticated Drive connector"
+    },
+    {
+      "path": "legacy-standard/engine/eidos_brain_archive/20260909_002323_sentinel_lab_eidos_synthetic-verification_v1_seed0/anomalies.jsonl",
+      "sha256": "42b6fae9606de322849d016bf83fe350ba22ac3291b1c4a27b39ada483cef9b1",
+      "delivery": "inside verified local ZIP uploaded through authenticated Drive connector"
+    },
+    {
+      "path": "legacy-standard/engine/eidos_brain_archive/20260909_002323_sentinel_lab_eidos_synthetic-verification_v1_seed0/clusters.json",
+      "sha256": "0e1523db14251fe7c6e19ca35ab2c200f9db9cc916fb9c60755ef923e04afc5f",
+      "delivery": "inside verified local ZIP uploaded through authenticated Drive connector"
+    },
+    {
+      "path": "legacy-standard/engine/eidos_brain_archive/20260909_002323_sentinel_lab_eidos_synthetic-verification_v1_seed0/report.txt",
+      "sha256": "67ee3954bfef38c4c869db87508d5cac3671da039361497fca86fc243839c534",
+      "delivery": "inside verified local ZIP uploaded through authenticated Drive connector"
+    },
+    {
+      "path": "legacy-standard/engine/eidos_brain_archive/20260909_002323_sentinel_lab_eidos_synthetic-verification_v1_seed0/session_meta.json",
+      "sha256": "fe73d83c39103d6da04ca138e49416f5befd9aee40087d57d15838cdad457b9c",
+      "delivery": "inside verified local ZIP uploaded through authenticated Drive connector"
+    },
+    {
+      "path": "legacy-standard/engine/eidos_brain_archive/20260909_002323_sentinel_lab_eidos_synthetic-verification_v1_seed0/state_capsule.json",
+      "sha256": "01857e2232bdf7a72bf141c102694e06f742e9c303560949d1eb44297bfdc2db",
+      "delivery": "inside verified local ZIP uploaded through authenticated Drive connector"
+    },
+    {
+      "path": "legacy-standard/engine/eidos_brain_archive/20260909_002323_sentinel_lab_eidos_synthetic-verification_v1_seed0/steps.csv",
+      "sha256": "4fe89e84352b9e9e96282abed726f9600641e3817316e4b7421ef288a3ed0abb",
+      "delivery": "inside verified local ZIP uploaded through authenticated Drive connector"
+    },
+    {
+      "path": "legacy-standard/engine/eidos_brain_archive/20260909_002323_sentinel_lab_eidos_synthetic-verification_v1_seed0/summary.json",
+      "sha256": "a59e64d9181d4d144f29db963fdad2e405fb364373a89dcd58edbe69e27cc781",
+      "delivery": "inside verified local ZIP uploaded through authenticated Drive connector"
+    },
+    {
+      "path": "legacy-standard/engine/forecast.jsonl",
+      "sha256": "daf6bd6124fab40e188b8cb60a2840f67ea3d8f1ce2205b1ef9b8d14730117d3",
+      "delivery": "inside verified local ZIP uploaded through authenticated Drive connector"
+    },
+    {
+      "path": "legacy-standard/engine/hippocampus/sentinel_lab_real_data_engineering/20260909_002340_hippocampus_snapshot_sentinel_lab_real_data_engineering.pt",
+      "sha256": "980cbf16119ac25c14f50bec6c87f5e1d12d18f2698d523d50d778806287d131",
+      "delivery": "inside verified local ZIP uploaded through authenticated Drive connector"
+    },
+    {
+      "path": "legacy-standard/engine/incident_cards.jsonl",
+      "sha256": "2008027418432fed83b3cd249f4771588d29788c66926ff235bbde42ea762aea",
+      "delivery": "inside verified local ZIP uploaded through authenticated Drive connector"
+    },
+    {
+      "path": "legacy-standard/engine/manifest.jsonl",
+      "sha256": "b7b97cbbc3111e35b05de1c284ed3ab12dc304a92fedcb5150e518c4cf932d68",
+      "delivery": "inside verified local ZIP uploaded through authenticated Drive connector"
+    },
+    {
+      "path": "legacy-standard/engine/reservoir_checkpoints/sentinel_lab_real_data_engineering/20260909_002340_reservoir_checkpoint_sentinel_lab_real_data_engineering.pt",
+      "sha256": "05adbbd970a3229691be229403b1a372ba28317c3546ac91c405fab11559ddea",
+      "delivery": "inside verified local ZIP uploaded through authenticated Drive connector"
+    },
+    {
+      "path": "legacy-standard/engine/reservoir_geometry/sentinel_lab_real_data_engineering/20260909_002340_reservoir_states_sentinel_lab_real_data_engineering.npy",
+      "sha256": "c95ec96404ca07142f2f1d411cd91efb7846256ded2f3cdd9f3b31d9e60bc42d",
+      "delivery": "inside verified local ZIP uploaded through authenticated Drive connector"
+    },
+    {
+      "path": "legacy-standard/engine/reservoir_geometry/sentinel_lab_real_data_engineering/20260909_002341_reservoir_geom_sentinel_lab_real_data_engineering.json",
+      "sha256": "fbdd5f194dec82475b3b56a91beec29c6f16385dad0510cf611a81342e14dcd9",
+      "delivery": "inside verified local ZIP uploaded through authenticated Drive connector"
+    },
+    {
+      "path": "legacy-standard/engine/sentinel_forensics/sentinel_lab_real_data_engineering/20260909_002341_top_100_surprises_sentinel_lab_real_data_engineering.json",
+      "sha256": "201a036de194de5f34fc71018656ca098759cce93a5a79ead8be994611e5c75c",
+      "delivery": "inside verified local ZIP uploaded through authenticated Drive connector"
+    },
+    {
+      "path": "legacy-standard/engine/sentinel_forensics/sentinel_lab_real_data_engineering/20260909_002341_top_100_surprises_text_sentinel_lab_real_data_engineering.txt",
+      "sha256": "38274d5383086064d92ab9374b9ea08723b0bbc1b1784ca2ef7ba7eb49025d18",
+      "delivery": "inside verified local ZIP uploaded through authenticated Drive connector"
+    },
+    {
+      "path": "legacy-standard/engine_receipt.json",
+      "sha256": "e35b65ba0d9e9e514fb4d42a7fcb0889a756ad584b8288fd68115af6c20df2c8",
+      "delivery": "inside verified local ZIP uploaded through authenticated Drive connector"
+    },
+    {
+      "path": "legacy-standard/metrics.json",
+      "sha256": "d158c85b3bda352f5a7e49ea3cbedae7d9d53aa1d223470d75cf5afb2f23c072",
+      "delivery": "inside verified local ZIP uploaded through authenticated Drive connector"
+    },
+    {
+      "path": "legacy-standard/reference.json",
+      "sha256": "da86c4df1e4d1ee0ab61c5463d19f4a060a58c9da882a4f8ec97cd4527381efa",
+      "delivery": "inside verified local ZIP uploaded through authenticated Drive connector"
+    },
+    {
+      "path": "legacy-standard/synthetic.csv",
+      "sha256": "170c45f6cb5406852b734e52bc04dbc33a046ae891d16f32383ae2feca27e420",
+      "delivery": "inside verified local ZIP uploaded through authenticated Drive connector"
+    },
+    {
+      "path": "legacy-standard-cp1252-failure.log",
+      "sha256": "5ec62a15c709011751b5ff53360bd2a2dda0b533da78a4758eb0374f60228eba",
+      "delivery": "inside verified local ZIP uploaded through authenticated Drive connector"
+    },
+    {
+      "path": "legacy-standard.log",
+      "sha256": "286f9eba597911efc0cbc8e23711388ef0702ce3986809ddf40f7ccab7c05f26",
+      "delivery": "inside verified local ZIP uploaded through authenticated Drive connector"
+    },
+    {
+      "path": "lint-final.log",
+      "sha256": "9a216ee216ffece65f8c7311a6df581a1485d1725ca017f4227f18213940a6eb",
+      "delivery": "inside verified local ZIP uploaded through authenticated Drive connector"
+    },
+    {
+      "path": "lint.log",
+      "sha256": "9a216ee216ffece65f8c7311a6df581a1485d1725ca017f4227f18213940a6eb",
+      "delivery": "inside verified local ZIP uploaded through authenticated Drive connector"
+    },
+    {
+      "path": "manifest.json",
+      "sha256": "16a0c5b657c02fe602815732924895a8bad0796906094378faae511574591f8f",
+      "delivery": "inside verified local ZIP uploaded through authenticated Drive connector"
+    },
+    {
+      "path": "mount-copy-attempt.json",
+      "sha256": "f9bd9a59d590984ab6195b93f680bf741b64a5bd233e43655b473f39fa4b9449",
+      "delivery": "inside verified local ZIP uploaded through authenticated Drive connector"
+    },
+    {
+      "path": "plain_language_test_analysis.md",
+      "sha256": "47cc231cad74d5f11f1c2b41a4b11bc7b2f42e4536d5f19b83297d48c16cb442",
+      "delivery": "inside verified local ZIP uploaded through authenticated Drive connector"
+    },
+    {
+      "path": "preview-authorized/01-add-data-desktop.png",
+      "sha256": "3961f8ff330407d1d00bb15009d77ed89b9294bdd6483b647434115993a6f7e0",
+      "delivery": "inside verified local ZIP uploaded through authenticated Drive connector"
+    },
+    {
+      "path": "preview-authorized/02-confirm-schema.png",
+      "sha256": "f71b27a935be13d7a9872422e038021f3c213d3a1508cd15a6d976e67d8772da",
+      "delivery": "inside verified local ZIP uploaded through authenticated Drive connector"
+    },
+    {
+      "path": "preview-authorized/03-analyze.png",
+      "sha256": "87d62d3585e2e72a3ab1448fb5b381afb3db5bcdd7c821e4b7ccc0c1e282b919",
+      "delivery": "inside verified local ZIP uploaded through authenticated Drive connector"
+    },
+    {
+      "path": "preview-authorized/04-investigate-desktop.png",
+      "sha256": "a977b9a9a820ad99701484bf45baf89fc9d526acc8abdbe9472f956b059231ed",
+      "delivery": "inside verified local ZIP uploaded through authenticated Drive connector"
+    },
+    {
+      "path": "preview-authorized/05-evidence-and-question.png",
+      "sha256": "2bc7bd156a288d8a5d70408993a880fb6f384943747a69590e38ebe4c4e01baf",
+      "delivery": "inside verified local ZIP uploaded through authenticated Drive connector"
+    },
+    {
+      "path": "preview-authorized/06-investigate-mobile.png",
+      "sha256": "7b61ab023391681ac7b735f6f8abd9e9db7cf422d99a746fd00c620e4cce1fc0",
+      "delivery": "inside verified local ZIP uploaded through authenticated Drive connector"
+    },
+    {
+      "path": "preview-authorized/07-saved-run-mobile.png",
+      "sha256": "ce3faf5de8d3a83cdd046f78793fd6a6a8bc6e654be25ba1c9070addb49487c3",
+      "delivery": "inside verified local ZIP uploaded through authenticated Drive connector"
+    },
+    {
+      "path": "preview-authorized/before-production.png",
+      "sha256": "927147491d883076f02afef9381f09d86c1ad09d91c34b8dd56a6cd11375bcb9",
+      "delivery": "inside verified local ZIP uploaded through authenticated Drive connector"
+    },
+    {
+      "path": "preview-authorized/browser-receipt.json",
+      "sha256": "27381f910ca2f331bc5211478bc4f2c640ef5ac51db1f63691156a85a5dd284a",
+      "delivery": "inside verified local ZIP uploaded through authenticated Drive connector"
+    },
+    {
+      "path": "preview-authorized/browser-result.json",
+      "sha256": "bff5c1ab848f7dcbb53029cd4401aaba22c5a449167a4712d681dba774302a0c",
+      "delivery": "inside verified local ZIP uploaded through authenticated Drive connector"
+    },
+    {
+      "path": "preview-authorized.log",
+      "sha256": "b8f5547c3537091d3390d818d300a9f498b8a770098903979565213fc38f16ee",
+      "delivery": "inside verified local ZIP uploaded through authenticated Drive connector"
+    },
+    {
+      "path": "preview-browser/before-production.png",
+      "sha256": "927147491d883076f02afef9381f09d86c1ad09d91c34b8dd56a6cd11375bcb9",
+      "delivery": "inside verified local ZIP uploaded through authenticated Drive connector"
+    },
+    {
+      "path": "preview-browser/browser-receipt.json",
+      "sha256": "ae2de391a52adb0ab2c2f6ed18d22cc036e3115b0c6292ee99a82f629a00d6b8",
+      "delivery": "inside verified local ZIP uploaded through authenticated Drive connector"
+    },
+    {
+      "path": "preview-browser/failure.png",
+      "sha256": "d3d6cccfab6d93ab91e3419a38ca77a91be7d661f2c325a1e8263e35482d4a3d",
+      "delivery": "inside verified local ZIP uploaded through authenticated Drive connector"
+    },
+    {
+      "path": "preview-browser.log",
+      "sha256": "bf88b8495d49ef884addbd35382321bbd4e07b14948a87fd96d34274f33ef9b8",
+      "delivery": "inside verified local ZIP uploaded through authenticated Drive connector"
+    },
+    {
+      "path": "preview-budget/monitor-desktop.png",
+      "sha256": "1e12598deb5b0746792f480b6a0e8305262a8ebe294c4903b55fab739ad6bffa",
+      "delivery": "inside verified local ZIP uploaded through authenticated Drive connector"
+    },
+    {
+      "path": "preview-budget/monitor-mobile.png",
+      "sha256": "a69e12502e1b6d159c3d5575edf4774ab2dcb50842c1cd241a6bf63442d80672",
+      "delivery": "inside verified local ZIP uploaded through authenticated Drive connector"
+    },
+    {
+      "path": "preview-budget/monitor-state.json",
+      "sha256": "da809142fd184596201044ea27a6c139106e6927332f87b530c68dec4ac35cda",
+      "delivery": "inside verified local ZIP uploaded through authenticated Drive connector"
+    },
+    {
+      "path": "preview-budget/receipt.json",
+      "sha256": "34cae8682b8fb10ed99178e831561ddb2fa4fe231f0b9c1e24e69a33ead6878b",
+      "delivery": "inside verified local ZIP uploaded through authenticated Drive connector"
+    },
+    {
+      "path": "preview-budget.log",
+      "sha256": "51209ca80f4be6750487fee96478538f0dbb82158c249535f8be251dfbe51a51",
+      "delivery": "inside verified local ZIP uploaded through authenticated Drive connector"
+    },
+    {
+      "path": "preview-final/01-add-data-desktop.png",
+      "sha256": "3961f8ff330407d1d00bb15009d77ed89b9294bdd6483b647434115993a6f7e0",
+      "delivery": "inside verified local ZIP uploaded through authenticated Drive connector"
+    },
+    {
+      "path": "preview-final/02-confirm-schema.png",
+      "sha256": "96843964315b53304346f9b6f062f56fe3e47416a5b83d1c7db4312ac3d87d27",
+      "delivery": "inside verified local ZIP uploaded through authenticated Drive connector"
+    },
+    {
+      "path": "preview-final/03-analyze.png",
+      "sha256": "19a5b2e07f1320b783867029febd324f94442310f022029fe2330b247d7611cc",
+      "delivery": "inside verified local ZIP uploaded through authenticated Drive connector"
+    },
+    {
+      "path": "preview-final/04-investigate-desktop.png",
+      "sha256": "0c54818d535a1d31b37a02a8ecb38a3ac2fb426618d4866d397f648917420043",
+      "delivery": "inside verified local ZIP uploaded through authenticated Drive connector"
+    },
+    {
+      "path": "preview-final/05-evidence-and-question.png",
+      "sha256": "9528357fb24df29a2e0063538477deac045df186371b5e6ef9434d125bada114",
+      "delivery": "inside verified local ZIP uploaded through authenticated Drive connector"
+    },
+    {
+      "path": "preview-final/06-investigate-mobile.png",
+      "sha256": "59d63802a676372dc3e1770d9ad307f0b784c9353db744ad00cf50c6322d5acc",
+      "delivery": "inside verified local ZIP uploaded through authenticated Drive connector"
+    },
+    {
+      "path": "preview-final/07-saved-run-mobile.png",
+      "sha256": "ce3faf5de8d3a83cdd046f78793fd6a6a8bc6e654be25ba1c9070addb49487c3",
+      "delivery": "inside verified local ZIP uploaded through authenticated Drive connector"
+    },
+    {
+      "path": "preview-final/before-production.png",
+      "sha256": "927147491d883076f02afef9381f09d86c1ad09d91c34b8dd56a6cd11375bcb9",
+      "delivery": "inside verified local ZIP uploaded through authenticated Drive connector"
+    },
+    {
+      "path": "preview-final/browser-receipt.json",
+      "sha256": "a17d6cc1a1ce4581c4daf670b87aed5fd01d35569e2440543d7d1ad61dd3921f",
+      "delivery": "inside verified local ZIP uploaded through authenticated Drive connector"
+    },
+    {
+      "path": "preview-final/browser-result.json",
+      "sha256": "0d42c0272d50a54f6c4a217ee44c2780968ba526ec7e47ddba8e91b27f8dcdcb",
+      "delivery": "inside verified local ZIP uploaded through authenticated Drive connector"
+    },
+    {
+      "path": "preview-final.log",
+      "sha256": "104c02876fc4a893cb852109509b293a541de4d1f0e5b5a3e82f031dead45faf",
+      "delivery": "inside verified local ZIP uploaded through authenticated Drive connector"
+    },
+    {
+      "path": "preview-formats/failure.png",
+      "sha256": "013aadcf7e5e906393348de3da9dcdfcc86bedf023e4b6a5a5c8530a985c3efc",
+      "delivery": "inside verified local ZIP uploaded through authenticated Drive connector"
+    },
+    {
+      "path": "preview-formats/incident-notes.txt-result.json",
+      "sha256": "5c59c63c61e96977787e3ef30dfb1c85708cdf7fb844d756858dd52633e2d042",
+      "delivery": "inside verified local ZIP uploaded through authenticated Drive connector"
+    },
+    {
+      "path": "preview-formats/incident-notes.txt.png",
+      "sha256": "aa8fcdab57140126c133b986430210c2ccacecdf6a9dd62a7db2d678e1c9fe35",
+      "delivery": "inside verified local ZIP uploaded through authenticated Drive connector"
+    },
+    {
+      "path": "preview-formats/receipt.json",
+      "sha256": "9615447d6585fe8f855932b23da9e286cc94598494c0ee702246cd3bef1ab266",
+      "delivery": "inside verified local ZIP uploaded through authenticated Drive connector"
+    },
+    {
+      "path": "preview-formats.log",
+      "sha256": "dcb8f32085ddaeb0c9a2aad4562410607771a9617d022407283a738e55b40e92",
+      "delivery": "inside verified local ZIP uploaded through authenticated Drive connector"
+    },
+    {
+      "path": "preview-release/01-add-data-desktop.png",
+      "sha256": "3961f8ff330407d1d00bb15009d77ed89b9294bdd6483b647434115993a6f7e0",
+      "delivery": "inside verified local ZIP uploaded through authenticated Drive connector"
+    },
+    {
+      "path": "preview-release/before-production.png",
+      "sha256": "927147491d883076f02afef9381f09d86c1ad09d91c34b8dd56a6cd11375bcb9",
+      "delivery": "inside verified local ZIP uploaded through authenticated Drive connector"
+    },
+    {
+      "path": "preview-release/browser-receipt.json",
+      "sha256": "15bce48dfa371e776ab478cfef2b669c8bb14c595a57466ec508d3a06d24d61e",
+      "delivery": "inside verified local ZIP uploaded through authenticated Drive connector"
+    },
+    {
+      "path": "preview-release/failure.png",
+      "sha256": "b1cff59426e1a5042edaf6665921ba1cbf49b7c048cfa80403d92b8eb993caf1",
+      "delivery": "inside verified local ZIP uploaded through authenticated Drive connector"
+    },
+    {
+      "path": "preview-release.log",
+      "sha256": "89821876f27fe805e7563d46517e0469f61b5485721365b095e1000209cc6bdd",
+      "delivery": "inside verified local ZIP uploaded through authenticated Drive connector"
+    },
+    {
+      "path": "production-config-before-preview.json",
+      "sha256": "2cebab6dc4a9f9fe276d8887ad353e7af4e1be1833bec8fc3dbb8028f46c3c26",
+      "delivery": "inside verified local ZIP uploaded through authenticated Drive connector"
+    },
+    {
+      "path": "progress/eidos_progress_dashboard.html",
+      "sha256": "7f1ea5072cda875e3f64f80c582c4ecc312cfb03dd880aa3f8588f9fb3d10ad6",
+      "delivery": "inside verified local ZIP uploaded through authenticated Drive connector"
+    },
+    {
+      "path": "progress/eidos_progress_meter.json",
+      "sha256": "6d28bba877457d359d867b8c3150f7a690cfb93016fa03fb468117df3782e87e",
+      "delivery": "inside verified local ZIP uploaded through authenticated Drive connector"
+    },
+    {
+      "path": "progress/eidos_progress_meter.md",
+      "sha256": "72c549b0900402aceb3c10953ae74148d8ed924eec51441257b96a3be825ceb6",
+      "delivery": "inside verified local ZIP uploaded through authenticated Drive connector"
+    },
+    {
+      "path": "progress/eidos_progress_meter.svg",
+      "sha256": "a7e45240bbc026f0315fefad9e15ff841e4cd00c8d67196aac39914ef31bccac",
+      "delivery": "inside verified local ZIP uploaded through authenticated Drive connector"
+    },
+    {
+      "path": "progress/eidos_progress_readme.md",
+      "sha256": "cb853c146e4d44bbb268febbe288919421a9a5bbbb0a885d04dee7f017462f11",
+      "delivery": "inside verified local ZIP uploaded through authenticated Drive connector"
+    },
+    {
+      "path": "proof_logic_ledger.json",
+      "sha256": "97618e86ba1cde448ae0f688454cfa589f45ff9c925ff7a309777dbff56c9269",
+      "delivery": "inside verified local ZIP uploaded through authenticated Drive connector"
+    },
+    {
+      "path": "proof_logic_ledger.md",
+      "sha256": "e1e1a797aa70f67cc49e24508982ed1f5577e504b69eb4e4d7b5b0c8e18f4e3c",
+      "delivery": "inside verified local ZIP uploaded through authenticated Drive connector"
+    },
+    {
+      "path": "provider-before-sanitized.json",
+      "sha256": "4e814d18f49379e2e2c2191491267e3253020c925be48b4c9046609653b45875",
+      "delivery": "inside verified local ZIP uploaded through authenticated Drive connector"
+    },
+    {
+      "path": "provider-comparison.json",
+      "sha256": "3ae8e3043030d9baa7b4e2b39e45454e9732edf00af9f81a7fff5d0f0e58970f",
+      "delivery": "inside verified local ZIP uploaded through authenticated Drive connector"
+    },
+    {
+      "path": "provider-recovery.json",
+      "sha256": "76dc7b80a4f0b2a117d5e1267712a5c381fe4b6a9520730a535f37668f5d45d6",
+      "delivery": "inside verified local ZIP uploaded through authenticated Drive connector"
+    },
+    {
+      "path": "python-package-versions.json",
+      "sha256": "466234ab603946cb07f34e653c83f8e8e4ec00c4dd32208f4b0793688a4927cb",
+      "delivery": "inside verified local ZIP uploaded through authenticated Drive connector"
+    },
+    {
+      "path": "rejected-allocation-cancel.log",
+      "sha256": "aa3b7ef4e10e8a84ef819c883c2ebe03c3f0178e678f815531ab1cb6951ae3fa",
+      "delivery": "inside verified local ZIP uploaded through authenticated Drive connector"
+    },
+    {
+      "path": "release-preview.json",
+      "sha256": "80c21626ebaa253db51ea2c9e595ac9b03ebfadcb27d9f71ba78886df0f4b75d",
+      "delivery": "inside verified local ZIP uploaded through authenticated Drive connector"
+    },
+    {
+      "path": "requirement-to-evidence.md",
+      "sha256": "4847bb510b04d3d940be5e4862fe01a95f814e4b3e69dc03635de0be82a2261e",
+      "delivery": "inside verified local ZIP uploaded through authenticated Drive connector"
+    },
+    {
+      "path": "requirements-evaluation.txt",
+      "sha256": "102b5ecba2d6c04f80199790b9f0f7e11b12c2b801770e6ff396be3887a504a5",
+      "delivery": "inside verified local ZIP uploaded through authenticated Drive connector"
+    },
+    {
+      "path": "reviewed-history/answer.json",
+      "sha256": "79b0ee2150735f82ac1a89404a8e5a49ccac33e18dc749bdbcabe7bae2cbdb19",
+      "delivery": "inside verified local ZIP uploaded through authenticated Drive connector"
+    },
+    {
+      "path": "reviewed-history/receipt.json",
+      "sha256": "a6ad6a97f0d7d5397c8dcfdd4c43607ee23acd27c383c0a8ddc3ac14b1f9346c",
+      "delivery": "inside verified local ZIP uploaded through authenticated Drive connector"
+    },
+    {
+      "path": "reviewed-history.log",
+      "sha256": "0625310cfae5a5ddd946c781c341d5b0382f1007d8ed877f9adc0ea9f738d61f",
+      "delivery": "inside verified local ZIP uploaded through authenticated Drive connector"
+    },
+    {
+      "path": "runner-final.log",
+      "sha256": "5c1c2da6fa71888dce28053b7dac8f50ccf82cbee3389cac61f3e30c7f14132b",
+      "delivery": "inside verified local ZIP uploaded through authenticated Drive connector"
+    },
+    {
+      "path": "runner-final.xml",
+      "sha256": "9867d01feed4214d55055d1acd2a7affd9c5732e66ad52bb9be2fc1c6c38aeec",
+      "delivery": "inside verified local ZIP uploaded through authenticated Drive connector"
+    },
+    {
+      "path": "runner-pytest.log",
+      "sha256": "0970840d14d152dde235a0e7f0bef01ed9706c4b7d73c4fa42f31932c8a4e78c",
+      "delivery": "inside verified local ZIP uploaded through authenticated Drive connector"
+    },
+    {
+      "path": "runner-pytest.xml",
+      "sha256": "749af0a687d74166c3a30ff02c2c93657cfb08378f9db603b8fbc2f063e42a20",
+      "delivery": "inside verified local ZIP uploaded through authenticated Drive connector"
+    },
+    {
+      "path": "secret-scan.json",
+      "sha256": "a39e13705855707b111ab8594cb5c33cc493ba48cfbb9c22b5c17c7a87d437fd",
+      "delivery": "inside verified local ZIP uploaded through authenticated Drive connector"
+    },
+    {
+      "path": "semantic/cache/6b46de37bc4f586cc17cf73e39bb8d9670dabddaf5c984a13b42764719aa3616.json",
+      "sha256": "c6ac5b88703f2a3156125b0721344f7c1cdaf0d6ddc9d4dcac617dd757c088a9",
+      "delivery": "inside verified local ZIP uploaded through authenticated Drive connector"
+    },
+    {
+      "path": "semantic/cache/772c86f187d1c349f26a9ef74c90dc94970b10213c084b85ab395e0ee9f1306f.json",
+      "sha256": "7285a8c3e43a4573bcf37ffab650b11ab2513e201bb505fa51f5d45e67276c97",
+      "delivery": "inside verified local ZIP uploaded through authenticated Drive connector"
+    },
+    {
+      "path": "semantic/cache/c5269ec2d0f82016b5e2a7193e36cd865962d687ebb16840f2531866178cccd8.json",
+      "sha256": "e20ce4c2dcc82baa073e09c64611c70afb9d2187105bb57e500afa43b13e6d54",
+      "delivery": "inside verified local ZIP uploaded through authenticated Drive connector"
+    },
+    {
+      "path": "semantic/semantic-receipt.json",
+      "sha256": "dc8c1ef43012f4c7d612b2187e613820af7d3985168ec045b6d5f4070033068e",
+      "delivery": "inside verified local ZIP uploaded through authenticated Drive connector"
+    },
+    {
+      "path": "semantic-final/cache/4569c9c862eb4f28dcddac09d082e75787fa1430f81014d3abd27e2219a49e1d.json",
+      "sha256": "6d77544bc2004b5a1f49770eea8c21f83e77f2e608607ae188d3a16751ca01d3",
+      "delivery": "inside verified local ZIP uploaded through authenticated Drive connector"
+    },
+    {
+      "path": "semantic-final/cache/5ad2ae48ef9632f82b38ebdcbf4ca6c99c9bd12272127148f0f56a72f34c5f91.json",
+      "sha256": "212336715f9a521b17a66bdfd452c09604521a9a242676b97d419846c4a92d49",
+      "delivery": "inside verified local ZIP uploaded through authenticated Drive connector"
+    },
+    {
+      "path": "semantic-final/cache/71ba1a1305b27bc736f6d8f4cedc872b72cb5ce37f3ccc6b7f2d22f87e60a5c5.json",
+      "sha256": "8841cd0a6e2985e32fd35e9feb9c98d86f7351e81616792628859af49716f15f",
+      "delivery": "inside verified local ZIP uploaded through authenticated Drive connector"
+    },
+    {
+      "path": "semantic-final/cache/74807ed9464c55a0636ed335db25f7cb50f4cddf986c501386ca44f54a0ea4fc.json",
+      "sha256": "870e104f6aaa815d1be67b43ba71795913e743cb0e2e9942606fdd288fc8900d",
+      "delivery": "inside verified local ZIP uploaded through authenticated Drive connector"
+    },
+    {
+      "path": "semantic-final/cache/943fc33dccf4368de221fa50c3fb229c8c91ddf7fd061a1a9144436ffb0e0ff2.json",
+      "sha256": "400fbfab5610fa77c04fb05549b9ec8399c0419a6cbf74c1f8fb8b26b94814d1",
+      "delivery": "inside verified local ZIP uploaded through authenticated Drive connector"
+    },
+    {
+      "path": "semantic-final/receipt.json",
+      "sha256": "c1033dd46276b9e472024a31374aa4e716a6cfbac2846bde102e4689497517dd",
+      "delivery": "inside verified local ZIP uploaded through authenticated Drive connector"
+    },
+    {
+      "path": "semantic-final-verified.log",
+      "sha256": "178a22db76523560474f59fdcadbc9a43640b62fae59b4c7fcf56b5ec937e36e",
+      "delivery": "inside verified local ZIP uploaded through authenticated Drive connector"
+    },
+    {
+      "path": "semantic-final.log",
+      "sha256": "a6c70f597ecf400ffa3834481d06613d632fb22298cabc3b09892165ced173c2",
+      "delivery": "inside verified local ZIP uploaded through authenticated Drive connector"
+    },
+    {
+      "path": "semantic.log",
+      "sha256": "38925d83b9b3282362bc8a9dcbbddbae33987dbf05dbd10560979a7d1060cdfb",
+      "delivery": "inside verified local ZIP uploaded through authenticated Drive connector"
+    },
+    {
+      "path": "stream/full-replay/heartbeat.json",
+      "sha256": "47c3a8a30474cc0c352e6d254bd174b2fad34d22fdace13bc8dcf0acc43d85d6",
+      "delivery": "inside verified local ZIP uploaded through authenticated Drive connector"
+    },
+    {
+      "path": "stream/full-replay/result.json",
+      "sha256": "049a42bc282764a78218c1cf2ea9ed7f8f2f14131c0550b9455fe69d991b73ab",
+      "delivery": "inside verified local ZIP uploaded through authenticated Drive connector"
+    },
+    {
+      "path": "stream/full-replay/status.json",
+      "sha256": "114b6da7c333d43e7ec921ab8ade2718a0ec10a2b501951814045d512bc4d8a0",
+      "delivery": "inside verified local ZIP uploaded through authenticated Drive connector"
+    },
+    {
+      "path": "stream/full-replay-request.json",
+      "sha256": "c65a2c14bb7aab83e9e78ef208ff0f16de5aab609f8194848dfb0db7b590f08f",
+      "delivery": "inside verified local ZIP uploaded through authenticated Drive connector"
+    },
+    {
+      "path": "stream/full-replay.log",
+      "sha256": "d25aec4b29739c6d773fa0a4ca030805bef1a12a4b47a55f400b111d0ede215f",
+      "delivery": "inside verified local ZIP uploaded through authenticated Drive connector"
+    },
+    {
+      "path": "stream/monitor-desktop.png",
+      "sha256": "2f7f6b2b692488d63bff33ad138562f529758336684722b79d937e31ef2b84f0",
+      "delivery": "inside verified local ZIP uploaded through authenticated Drive connector"
+    },
+    {
+      "path": "stream/monitor-mobile.png",
+      "sha256": "86dad40d41b934dd3dbbc16a7d3cd6c876c9d4f314af896f5f7b12f58eedf351",
+      "delivery": "inside verified local ZIP uploaded through authenticated Drive connector"
+    },
+    {
+      "path": "stream/monitor-state.json",
+      "sha256": "2562103c90dacf6d8aa90cd8d77fbccc8b9f974e0ea3725a18749944172fd71e",
+      "delivery": "inside verified local ZIP uploaded through authenticated Drive connector"
+    },
+    {
+      "path": "stream/receipt.json",
+      "sha256": "55dcf13ca77d99910f6f6d1fe97cc9666cf109c2255b6a9bf1613781de488809",
+      "delivery": "inside verified local ZIP uploaded through authenticated Drive connector"
+    },
+    {
+      "path": "stream-final-local/full-replay/heartbeat.json",
+      "sha256": "75b3f0c192bfb48552bdc4d78f7912bc043e30dd2517f1db064fe1fe07843255",
+      "delivery": "inside verified local ZIP uploaded through authenticated Drive connector"
+    },
+    {
+      "path": "stream-final-local/full-replay/result.json",
+      "sha256": "1f48d6cb82c8c3fe64a7ff90ca26b04b68950a914e6c5d2373663173c617baf2",
+      "delivery": "inside verified local ZIP uploaded through authenticated Drive connector"
+    },
+    {
+      "path": "stream-final-local/full-replay/status.json",
+      "sha256": "d0de28daa82b2837f495ea0c2485ac3101b4990d4a5baf6b7a6e8f7d0c357078",
+      "delivery": "inside verified local ZIP uploaded through authenticated Drive connector"
+    },
+    {
+      "path": "stream-final-local/full-replay-request.json",
+      "sha256": "f41dc7fbfb987237bd3dc078b278e3c50d2f11e868147429c1fc22dae9be290b",
+      "delivery": "inside verified local ZIP uploaded through authenticated Drive connector"
+    },
+    {
+      "path": "stream-final-local/full-replay.log",
+      "sha256": "d25aec4b29739c6d773fa0a4ca030805bef1a12a4b47a55f400b111d0ede215f",
+      "delivery": "inside verified local ZIP uploaded through authenticated Drive connector"
+    },
+    {
+      "path": "stream-final-local/monitor-state.json",
+      "sha256": "6c8c5016e646b28dabae2339f18eeb4470016b8cbaccb4e9d8de643978084a7a",
+      "delivery": "inside verified local ZIP uploaded through authenticated Drive connector"
+    },
+    {
+      "path": "stream-final-local/receipt.json",
+      "sha256": "535b073d809e5f5d1117ba69320bf1203c1133994145944345cf68828b76748f",
+      "delivery": "inside verified local ZIP uploaded through authenticated Drive connector"
+    },
+    {
+      "path": "stream-final-local.log",
+      "sha256": "464bade627b0ae81608190ec36536f902061d45d9c995bf2f612fbf222ac7d25",
+      "delivery": "inside verified local ZIP uploaded through authenticated Drive connector"
+    },
+    {
+      "path": "stream-qa.log",
+      "sha256": "f80afef8a55de279b9537b5efa642adbafd88b7de10573f547b94d47c582fc67",
+      "delivery": "inside verified local ZIP uploaded through authenticated Drive connector"
+    },
+    {
+      "path": "stream-release-local/full-replay/heartbeat.json",
+      "sha256": "37373bc55dcf7cb754128f4e2a2224fa91a1b518fc9c192fb395eee9142bbbb7",
+      "delivery": "inside verified local ZIP uploaded through authenticated Drive connector"
+    },
+    {
+      "path": "stream-release-local/full-replay/result.json",
+      "sha256": "966d8e9d4206a22e3cf6de4a9cb978e1f0ac9f11b9753fe573aca11ab695899c",
+      "delivery": "inside verified local ZIP uploaded through authenticated Drive connector"
+    },
+    {
+      "path": "stream-release-local/full-replay/status.json",
+      "sha256": "07d60f2f74a8c359b7a6bfe44840d4d60db257f04d29299d0d5123a17edac8fe",
+      "delivery": "inside verified local ZIP uploaded through authenticated Drive connector"
+    },
+    {
+      "path": "stream-release-local/full-replay-request.json",
+      "sha256": "1553735704274ee3a765e91a044136bc0b8e69c6d750c7d9afc6a29831bb669e",
+      "delivery": "inside verified local ZIP uploaded through authenticated Drive connector"
+    },
+    {
+      "path": "stream-release-local/full-replay.log",
+      "sha256": "d25aec4b29739c6d773fa0a4ca030805bef1a12a4b47a55f400b111d0ede215f",
+      "delivery": "inside verified local ZIP uploaded through authenticated Drive connector"
+    },
+    {
+      "path": "stream-release-local/monitor-desktop.png",
+      "sha256": "796a0ce8cd75b1c84e2225d0f6bb775e0cca61967dae7928ed5eee682a2657ba",
+      "delivery": "inside verified local ZIP uploaded through authenticated Drive connector"
+    },
+    {
+      "path": "stream-release-local/monitor-mobile.png",
+      "sha256": "56d1a11e8843076bbd3d67d6eb976785f95df7beabe55b09814b19291fadce1a",
+      "delivery": "inside verified local ZIP uploaded through authenticated Drive connector"
+    },
+    {
+      "path": "stream-release-local/monitor-state.json",
+      "sha256": "c5e890d5d61b82f2aa8b9a5c427e883277adb3ca0181dd7a4bf741ff34aeac44",
+      "delivery": "inside verified local ZIP uploaded through authenticated Drive connector"
+    },
+    {
+      "path": "stream-release-local/receipt.json",
+      "sha256": "c1c70391c93039ab47f80a823d46af278b9c72f8a6b01c899a5a5d2d8fbdb9fc",
+      "delivery": "inside verified local ZIP uploaded through authenticated Drive connector"
+    },
+    {
+      "path": "stream-release-local.log",
+      "sha256": "6c9b77984a6e807c41aa73acb29b1510bcb4be1f8c56b307a188c49026ec812d",
+      "delivery": "inside verified local ZIP uploaded through authenticated Drive connector"
+    },
+    {
+      "path": "urls-cold-server/-result.json",
+      "sha256": "15f1e212301373bd59a756d856fd1928c7dc25e6c7d2ebb1c29b3eba99beefd5",
+      "delivery": "inside verified local ZIP uploaded through authenticated Drive connector"
+    },
+    {
+      "path": "urls-cold-server/.png",
+      "sha256": "916c5a3d5ddafa860bdef4f3e783d062f4d5b18836479ffb2899a6d122a50970",
+      "delivery": "inside verified local ZIP uploaded through authenticated Drive connector"
+    },
+    {
+      "path": "urls-cold-server/receipt.json",
+      "sha256": "2023bc71ea57aa0b4b1b1f3c210790df2307c9df6d52457a62dcffcc2c347dbd",
+      "delivery": "inside verified local ZIP uploaded through authenticated Drive connector"
+    },
+    {
+      "path": "urls-cold-server/seattle-weather.csv-result.json",
+      "sha256": "b7ca3fa255ffcff7006fe3fa35f65ab653f29d5990a0c0a0da7edf2f23217673",
+      "delivery": "inside verified local ZIP uploaded through authenticated Drive connector"
+    },
+    {
+      "path": "urls-cold-server/seattle-weather.csv.png",
+      "sha256": "ced91496336d9ae1eeae5c483749a5a6486f9e1174e002d94a07673bfccad6f8",
+      "delivery": "inside verified local ZIP uploaded through authenticated Drive connector"
+    },
+    {
+      "path": "urls-cold-server.log",
+      "sha256": "e195472326d45537b279720acf969f5c335051a123891ab7536c8b98e40b146c",
+      "delivery": "inside verified local ZIP uploaded through authenticated Drive connector"
+    },
+    {
+      "path": "urls-verified/failure.png",
+      "sha256": "0e08910fe119d37c41f2973c47acf9368366a127daa72e1d38aaaefe2bd134c9",
+      "delivery": "inside verified local ZIP uploaded through authenticated Drive connector"
+    },
+    {
+      "path": "urls-verified/receipt.json",
+      "sha256": "d7a2c6b83de2ea2d0baac2b8d04ea09da237b3170e082d495924e1bb1b9ee64a",
+      "delivery": "inside verified local ZIP uploaded through authenticated Drive connector"
+    },
+    {
+      "path": "urls-verified/seattle-weather.csv-result.json",
+      "sha256": "4fe6685868bbfa91ac92053d9c9158ac781e101b5906937e362df9ef3a0effe9",
+      "delivery": "inside verified local ZIP uploaded through authenticated Drive connector"
+    },
+    {
+      "path": "urls-verified.log",
+      "sha256": "e0180a87161c58ccd55ad9d5c0b6fd2cf354bad13bb53754b4f8dc31a911d621",
+      "delivery": "inside verified local ZIP uploaded through authenticated Drive connector"
+    }
+  ],
+  "files_skipped": [
+    {
+      "path": "private credentials, environment files, libSQL database and worker request directories",
+      "reason": "intentionally excluded; secret scan passed"
+    }
+  ],
+  "timestamp_utc": "2026-09-08T21:48:37.33582-04:00",
+  "archive": {
+    "path": "C:\\Users\\bmpar\\codex-worktrees\\sentinel-guided-analysis-20260908\\artifacts\\eidos-sentinel-guided-evidence-20260908.zip",
+    "fileCount": 267,
+    "bytes": 38997233,
+    "sha256": "cb93d0930afa46aecdee1a84faf25a01bc8726e95ba649d2cca7d8fcb50bd044",
+    "md5": "ed36e9c57eabc798fa96b73507c239e1",
+    "zipReadback": "all entries match local bytes",
+    "sidecarPolicy": "Drive upload receipts are created after archive upload and stored beside the archive.",
+    "driveFileId": "1UfvFhnS81DMj2_hjmsipEKmx6HOHKmOX",
+    "url": "https://drive.google.com/file/d/1UfvFhnS81DMj2_hjmsipEKmx6HOHKmOX/view",
+    "folderId": "16ObF_8iSYgJsKPQPrRnBh20hK68F1fuC",
+    "folderUrl": "https://drive.google.com/drive/folders/16ObF_8iSYgJsKPQPrRnBh20hK68F1fuC",
+    "providerUploadAccepted": true,
+    "metadataReadbackBytes": 38997233,
+    "authenticatedRawReadbackBytes": 38997233,
+    "remoteByteHash": null,
+    "remoteByteHashReason": "Connector returns a sediment file reference; server checksum fields were not exposed. Upload acceptance and remote size verified; local ZIP and all entries hash/readback verified.",
+    "timestamp_utc": "2026-09-08T21:48:37.33582-04:00"
+  },
+  "verification": "Provider acceptance, metadata size and authenticated raw-file size agree. Local archive and every entry verified; independent remote byte hash unavailable. Final archive-status sidecars and latest journal reports are uploaded separately.",
+  "direct_sidecars": [
+    {
+      "name": "codex_journal.md",
+      "id": "1PXFfV1li2A0zzlJmRalzQ4Z4yhectC2L",
+      "url": "https://drive.google.com/file/d/1PXFfV1li2A0zzlJmRalzQ4Z4yhectC2L/view?usp=drivesdk",
+      "success": true
+    },
+    {
+      "name": "plain_language_test_analysis.md",
+      "id": "18wIE4nnyR_RLjWYZ9gLYZQ6hSRbflpr9",
+      "url": "https://drive.google.com/file/d/18wIE4nnyR_RLjWYZ9gLYZQ6hSRbflpr9/view?usp=drivesdk",
+      "success": true
+    },
+    {
+      "name": "artifact_notes.md",
+      "id": "1GDOeC3GAFdmmaK-pzrVQLi3CEoOKY52r",
+      "url": "https://drive.google.com/file/d/1GDOeC3GAFdmmaK-pzrVQLi3CEoOKY52r/view?usp=drivesdk",
+      "success": true
+    },
+    {
+      "name": "manifest.json",
+      "id": "19rQ-K1n4bw0BANaiv_Uz0PnnuRaVvM4O",
+      "url": "https://drive.google.com/file/d/19rQ-K1n4bw0BANaiv_Uz0PnnuRaVvM4O/view?usp=drivesdk",
+      "success": true
+    },
+    {
+      "name": "drive-upload-receipt.json",
+      "id": "1IJi2w57YXtDMqvN4Dt-O_qcC2Qm3QplZ",
+      "url": "https://drive.google.com/file/d/1IJi2w57YXtDMqvN4Dt-O_qcC2Qm3QplZ/view?usp=drivesdk",
+      "success": true
+    },
+    {
+      "name": "drive_manifest.json",
+      "id": "1mLmr4S_lm9zxj3gh67-jB-r4u7pDvLrh",
+      "url": "https://drive.google.com/file/d/1mLmr4S_lm9zxj3gh67-jB-r4u7pDvLrh/view?usp=drivesdk",
+      "success": true
+    },
+    {
+      "name": "secret-scan.json",
+      "id": "162I4wptgdSMkprxucVlJRGJLP_xQP-55",
+      "url": "https://drive.google.com/file/d/162I4wptgdSMkprxucVlJRGJLP_xQP-55/view?usp=drivesdk",
+      "success": true
+    },
+    {
+      "name": "provider-comparison.json",
+      "id": "1RabqvTt7zcHZUTzSEuc54lr_bcEB4KRq",
+      "url": "https://drive.google.com/file/d/1RabqvTt7zcHZUTzSEuc54lr_bcEB4KRq/view?usp=drivesdk",
+      "success": true
+    }
+  ],
+  "sidecar_metadata_readback": "All eight final sidecars were found by ID and name in the configured cloud folder."
+}

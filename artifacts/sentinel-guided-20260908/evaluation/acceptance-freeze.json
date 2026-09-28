@@ -1,0 +1,22 @@
+{
+  "created": "2026-09-09T00:04:19.735796+00:00",
+  "partitionPlanSha256": "b680111c9a73437c4829ae5e19e2ffc37a1d845036c538aed89956a18395e65b",
+  "validationSha256": "fd54bb229127e64dea29e784f891affe6b332c82d4f24d0c08769c11b2a7e300",
+  "criteria": {
+    "forecastMAERatioToPersistenceMax": 1.0,
+    "incidentRecallMin": 0.8,
+    "incidentPrecisionMin": 0.8,
+    "falseAlertsPerOperatingDayMax": 1.0,
+    "intervalCoverageMin": 0.85
+  },
+  "decision": "Default product remains engineering preview. Mechanisms require all criteria to make useful-detection claims; failures remain experimental. No final tuning.",
+  "codeHashes": {
+    "services\\sentinel-runner\\sentinel_runner\\guided\\bootstrap.py": "1df0da982bb653ddf659a7f89b2f5df2cd866bc66589d1e598fc09b4e6021b25",
+    "services\\sentinel-runner\\sentinel_runner\\guided\\causal.py": "83cda2f2f6e06fa6b18854763ad2e1cd69ca391fa74d9da792ad3cf8ae23da4f",
+    "services\\sentinel-runner\\sentinel_runner\\guided\\cli.py": "a93cdcf459c7d3ef0fb84a62ca9565d2efb4f146c6264ca13223c129adf925c4",
+    "services\\sentinel-runner\\sentinel_runner\\guided\\ingestion.py": "f210c7455142ae9eb226defb7bc079a6a9dfbe8098c8d26744399b94386f682f",
+    "services\\sentinel-runner\\sentinel_runner\\guided\\semantic.py": "5f2ad0b46708afe29110cac5956deb3be4406c30d99398351aa83a5be24f2daa",
+    "services\\sentinel-runner\\sentinel_runner\\guided\\telemetry.py": "a50a4a1bd521af5d0b6eeff2b1e665498ed7426e89c347066531618866f33b9e",
+    "services\\sentinel-runner\\sentinel_runner\\guided\\__init__.py": "e1793bcc5b51179bd9ea49ba6e5971a1945ce10d61d7de5d143a8136f6331740"
+  }
+}
