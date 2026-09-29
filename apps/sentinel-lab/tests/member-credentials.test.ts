@@ -163,9 +163,15 @@ await test('Reset expiry and single-use admission fail closed, and repeated logi
     // Controlled clock-expiry fixture; no identity or ownership rows are changed.
     await client.execute({ sql: 'UPDATE eidos_member_auth_tokens SET expires=0 WHERE token_hash=?', args: [await hash(token!)] });
     assert.equal((await credentials(context(env, { action: 'reset', token, password: nextPass }))).status, 400);
-    const statuses = [];
-    for (let i = 0; i < 11; i++) statuses.push((await credentials(context(env, { action: 'login', identifier: user.name, password: 'bad' }))).status);
-    assert.deepEqual(statuses, [...Array(10).fill(401), 429]);
+    // Keep all attempts in one quota period. A CI run can otherwise cross the
+    // 15-minute boundary between KDF calls and reset the counter mid-assertion.
+    const originalNow = Date.now;
+    Date.now = () => 1_800_000_000_000;
+    try {
+      const statuses = [];
+      for (let i = 0; i < 11; i++) statuses.push((await credentials(context(env, { action: 'login', identifier: user.name, password: 'bad' }))).status);
+      assert.deepEqual(statuses, [...Array(10).fill(401), 429]);
+    } finally { Date.now = originalNow; }
   } finally { client.close(); }
 });
 
