@@ -1,0 +1,15 @@
+{
+  "cloud_metadata_verified": true,
+  "scope": "Connector metadata verified IDs, parent folder and byte sizes. SHA-256 byte readback used mounted Drive, not a separate cloud download.",
+  "folder_url": "https://drive.google.com/drive/folders/1D7_g5HZ3uXUjhVbNtw2vkTKD2PFnBXot",
+  "zip": {
+    "id": "1o4fured8Lxdw1P45SJcxQMzHHRBs7QI2",
+    "bytes": 15556260,
+    "parent": "1D7_g5HZ3uXUjhVbNtw2vkTKD2PFnBXot"
+  },
+  "report": {
+    "id": "1dkDEeCBj-xVz0Xrx7Alo-GmG2m8cptir",
+    "bytes": 6803,
+    "parent": "1D7_g5HZ3uXUjhVbNtw2vkTKD2PFnBXot"
+  }
+}

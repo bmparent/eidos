@@ -1,0 +1,216 @@
+{
+  "drive_copy_attempted": true,
+  "drive_copy_success": true,
+  "drive_root": "G:\\My Drive",
+  "drive_run_dir": "G:\\My Drive\\Eidos_Brain_Proof_Phase\\2026-09-04\\quantized_memory_math\\memory_utility_readiness_2026-09-05_201352",
+  "reason": "Every selected direct file and complete ZIP verified by SHA-256 through the mounted Drive path. Other raw data and test fixtures are included inside the ZIP.",
+  "files_considered": [
+    "memory_utility_readiness.zip",
+    "bundle_manifest.json",
+    "decision_report.md",
+    "decision.json",
+    "plain_language_test_analysis.md",
+    "codex_journal.md",
+    "utility_requirements.json",
+    "validation.json",
+    "existing_harness_controls.json",
+    "duration_quality.json",
+    "source_discovery.json",
+    "eidos_progress_dashboard.html",
+    "eidos_progress_dashboard.png",
+    "eidos_progress_meter.svg",
+    "eidos_progress_meter.json",
+    "eidos_progress_meter.md",
+    "proof_logic_ledger.md",
+    "proof_logic_ledger.json",
+    "pytest_results.xml",
+    "package_pytest.xml",
+    "REPRODUCE.md",
+    "handoff.json",
+    "implementation_commit.txt",
+    "memory-utility.patch",
+    "pr_description.md",
+    "visual_validation.json",
+    "prior_numerical_evidence/decision_report.md",
+    "prior_numerical_evidence/validation.json",
+    "local_dataset_gate/dataset_audit.json",
+    "local_dataset_gate/evaluator.py",
+    "local_dataset_gate/freeze.json",
+    "local_dataset_gate/protocol.json",
+    "local_dataset_gate/run_manifest.json"
+  ],
+  "files_copied": [
+    {
+      "path": "memory_utility_readiness.zip",
+      "bytes": 15556260,
+      "sha256": "54cde9b130fcc7361d21e6a12522973c7acfeb2e2ed7c8edd030faaeb704b371"
+    },
+    {
+      "path": "bundle_manifest.json",
+      "bytes": 78083,
+      "sha256": "12fc9ea9c14e6f5e2538605598ce1c055d51f78fefa2fb531aae08530e0db941"
+    },
+    {
+      "path": "decision_report.md",
+      "bytes": 6803,
+      "sha256": "9542087ee8370bf025f87164ba92c001a93689005ae75513df4ff42298d9ca8f"
+    },
+    {
+      "path": "decision.json",
+      "bytes": 1216,
+      "sha256": "85f403ae7df64c34c278629a0527142fecb19beb920d263ba185b7f073a22534"
+    },
+    {
+      "path": "plain_language_test_analysis.md",
+      "bytes": 6803,
+      "sha256": "9542087ee8370bf025f87164ba92c001a93689005ae75513df4ff42298d9ca8f"
+    },
+    {
+      "path": "codex_journal.md",
+      "bytes": 8162,
+      "sha256": "7e6ce266ccc3a1fb1836effdfd3ec986e98650e04d63fbcb6e4a3f3a0f512b08"
+    },
+    {
+      "path": "utility_requirements.json",
+      "bytes": 979,
+      "sha256": "c2f5a8a40de6662094c422324f3788ae2c78fcf3b74c783eb717c933528ddc5a"
+    },
+    {
+      "path": "validation.json",
+      "bytes": 1238,
+      "sha256": "2cd52286658c5430b02d9ddd2c3a4303bc46755a0d405c7ed88382d390577200"
+    },
+    {
+      "path": "existing_harness_controls.json",
+      "bytes": 1306,
+      "sha256": "2adc93f1a60a3d8172011b8706193c77be01f1575d58d7d3e0ef31e078930ce2"
+    },
+    {
+      "path": "duration_quality.json",
+      "bytes": 1532,
+      "sha256": "1f191535496a66d093b9dd20bfb35afc1d0767f3ed5b2cd1f0814805ab84adeb"
+    },
+    {
+      "path": "source_discovery.json",
+      "bytes": 1142,
+      "sha256": "6ad6a6cd7227e776275d3245a06c13ca0740e7d5d989dba1db7b4818f00e7e1c"
+    },
+    {
+      "path": "eidos_progress_dashboard.html",
+      "bytes": 1861,
+      "sha256": "f2c86c92a6753d79392b78b0ee67a2cc31a82b955120c2a22c059d0e7b45c01b"
+    },
+    {
+      "path": "eidos_progress_dashboard.png",
+      "bytes": 85973,
+      "sha256": "6a098bc844db188aec6f084da6e9c7a7a6206ba94b1412a48213bca66b50f2ee"
+    },
+    {
+      "path": "eidos_progress_meter.svg",
+      "bytes": 2484,
+      "sha256": "b95c83b69b6b95d7cc94d33c97dd2b8b404bc5b7fe740f7f5595faa8e6265c2e"
+    },
+    {
+      "path": "eidos_progress_meter.json",
+      "bytes": 1624,
+      "sha256": "66a84b58445fa77f6da039cf60ad1f9a2cd5c380a132b3f7a905cd3098367134"
+    },
+    {
+      "path": "eidos_progress_meter.md",
+      "bytes": 640,
+      "sha256": "4cd6efdfe68a9682bca10d1cc1e4bb02d8eaaf11cbda51669c799f467ffb920f"
+    },
+    {
+      "path": "proof_logic_ledger.md",
+      "bytes": 3149,
+      "sha256": "fd6be219e463864680ffe170ce6561d26b6b38bd81e2b301aa88a5e2b7de6607"
+    },
+    {
+      "path": "proof_logic_ledger.json",
+      "bytes": 747,
+      "sha256": "af710a50a0c8e67b09f566c173b2c14af887752a0d8b83615f75ec379ea13448"
+    },
+    {
+      "path": "pytest_results.xml",
+      "bytes": 4189,
+      "sha256": "0b239cce868398f3d101badf04458a2e8a1b077df94870a6323e7bffeb4f4d60"
+    },
+    {
+      "path": "package_pytest.xml",
+      "bytes": 10798,
+      "sha256": "34870271d5a31409e8b27f625110102489e5f2be928a5ceb92a3f4532844fc6d"
+    },
+    {
+      "path": "REPRODUCE.md",
+      "bytes": 1933,
+      "sha256": "be54ce7bcfab6a1dab992d20bc5dc346e00a255c241c8e3b8e65bfe2572fc643"
+    },
+    {
+      "path": "handoff.json",
+      "bytes": 376,
+      "sha256": "c1fd8d437f25f4981bfa78834998f959397dedf5d02ef34648b253544119a7e6"
+    },
+    {
+      "path": "implementation_commit.txt",
+      "bytes": 42,
+      "sha256": "8f8b878f7a0151c0beabce41310483b37577aaccfc203e021bc6f71eed80ead3"
+    },
+    {
+      "path": "memory-utility.patch",
+      "bytes": 113181,
+      "sha256": "bcaf5d6d50b7c03227211a2f147e0489024a15f5c622c223593635160168b908"
+    },
+    {
+      "path": "pr_description.md",
+      "bytes": 1313,
+      "sha256": "838ed63ccbb626364cabfa2510ff62c77a453e9a761b6f4ae3a6ef44d78a9fde"
+    },
+    {
+      "path": "visual_validation.json",
+      "bytes": 546,
+      "sha256": "0de16a4b5bc2ef9a8362dbcb9595a27f90227c021cf2f8a663c25259e8eb8fdd"
+    },
+    {
+      "path": "prior_numerical_evidence/decision_report.md",
+      "bytes": 10432,
+      "sha256": "67b255825b39ce1fdf2050b919cdc6caece566d3db9d40d009fa3b32f440d725"
+    },
+    {
+      "path": "prior_numerical_evidence/validation.json",
+      "bytes": 2238,
+      "sha256": "0505e744c8ac792113dd616fd361f7ad6e132c462ee244b768aacc520457f115"
+    },
+    {
+      "path": "local_dataset_gate/dataset_audit.json",
+      "bytes": 1505,
+      "sha256": "e8e92e1eb5df0b8f3a56ba73818d508f6c8f19d4d4a20661095e2e70a8b35b4c"
+    },
+    {
+      "path": "local_dataset_gate/evaluator.py",
+      "bytes": 14429,
+      "sha256": "52ede0515b208c1af7860550a5f2322b65219c4d23d6fc8a78e645c2b7f290b0"
+    },
+    {
+      "path": "local_dataset_gate/freeze.json",
+      "bytes": 529,
+      "sha256": "03de5351691050de2ef19d5ab727d00c81d0dcb5973399c95e3640d30b0a5738"
+    },
+    {
+      "path": "local_dataset_gate/protocol.json",
+      "bytes": 1229,
+      "sha256": "16f64ecf011f8c5f4b8d0e79da142ac56ee571a325998bf0dcdc106d728985ce"
+    },
+    {
+      "path": "local_dataset_gate/run_manifest.json",
+      "bytes": 406,
+      "sha256": "0ba6568425677f478fc25a21783c4bb2aa8027fb8992029f807d4a11fed5e45f"
+    }
+  ],
+  "files_skipped": [],
+  "timestamp_utc": "2026-09-05T20:13:52.343503+00:00",
+  "archive_sha256": "54cde9b130fcc7361d21e6a12522973c7acfeb2e2ed7c8edd030faaeb704b371",
+  "archive_bytes": 15556260,
+  "archive_file_entries_verified": 389,
+  "archive_crc_verified": true,
+  "cloud_metadata_verified": false
+}

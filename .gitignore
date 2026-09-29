@@ -7,3 +7,6 @@ __pycache__/
 .vercel/
 .env.local
 .env.*.local
+
+# Immutable numerical experiment inputs and raw trajectories are bundled outside git.
+artifacts/controlled_memory_*/

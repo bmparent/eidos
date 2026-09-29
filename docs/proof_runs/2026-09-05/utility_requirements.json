@@ -1,0 +1,14 @@
+{
+  "recorded_utc": "2026-09-05T20:03:17.368613+00:00",
+  "scope": "future labeled utility trial; no candidate evaluation performed",
+  "source": "User reply in current task: Up to 10% extra runtime",
+  "max_extra_per_frame_runtime_fraction": 0.1,
+  "maximum_candidate_to_current_runtime_ratio": 1.1,
+  "timing_measurement": "Prospective full tested path per-frame runtime, matched inputs/hardware, median of repeated rotated policy runs; freeze exact procedure before evaluation.",
+  "minimum_task_effect": null,
+  "minimum_task_effect_reason": "Existing requirement is fewer false positive events with preserved attack-window recall, but operational magnitude is not established.",
+  "memory_budget": null,
+  "memory_budget_reason": "Not supplied. Carry adds one state-sized residual vector in the numerical adapter.",
+  "adoption_decision": "inconclusive",
+  "previous_snapshot": "local_dataset_gate/protocol.json predates user budget answer; kept unchanged."
+}
