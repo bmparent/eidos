@@ -36,7 +36,7 @@ const generalKnowledge = [
     href: '/contact',
     match:
       /\b(build|website|project|quote|cost|price|budget|timeline|contact|hire|custom)\b/i,
-    text: 'Bring a brief description of what you want to build, who will use it, your current platform, and the main constraint. Eidos scopes websites, storefronts, dashboards, and focused automations around the actual problem. Custom pricing and delivery dates require a conversation with Brent; the assistant cannot commit to a quote.',
+    text: 'Bring a brief description of what you want to build, who will use it, your current platform, and the main constraint. Eidos scopes websites, storefronts, dashboards, and focused automations around the actual problem. Custom pricing and delivery dates require a conversation with Eidos Works; the assistant cannot commit to a quote.',
   },
   {
     id: 'kit',
