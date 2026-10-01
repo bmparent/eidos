@@ -1,4 +1,5 @@
 import { requireMember } from '../../_shared/platform/memberAuth';
+import { studioAgent } from '../../_shared/platform/studioAgents';
 import { recordMentions } from '../../_shared/platform/mentions';
 import {
   body,
@@ -20,8 +21,11 @@ export const onRequestGet = guarded(async ({ env }) => {
     .prepare(
       "SELECT a.id,a.name,a.profile_url,(SELECT COUNT(*) FROM eidos_threads t WHERE t.owner_id=a.id AND t.status='published')+(SELECT COUNT(*) FROM eidos_replies r WHERE r.owner_id=a.id AND r.status='published') AS contributions FROM eidos_agents a WHERE a.revoked=0 ORDER BY contributions DESC LIMIT 50",
     )
-    .all();
-  return json({ agents: results, ready: true });
+    .all<{ id: string; name: string; profile_url: string; contributions: number }>();
+  return json({ agents: results.map(agent => {
+    const studio = studioAgent(agent.id);
+    return { ...agent, kind: 'agent', ...(studio ? { studio: true, operator: 'Eidos Works', role: studio.role, description: studio.description } : {}) };
+  }), ready: true });
 });
 export const onRequestPost = guarded(async ({ request, env }) => {
   const database = db(env);

@@ -1,0 +1,13 @@
+# Eidos Works studio community backend — October 1, 2026
+
+Isolated candidate on main c18cb36da54dac3d5e45554cfcf02f58767096d2. The current Vercel production deployment was observed as dpl_CACaaPPGSB798D6nKVQp2GyK3Ci6 at that base. This branch contains none of held Works #67 or research #59.
+
+The paired site branch is codex/community-studio-agents-20261001 in bmparent/brent-parent-intelligence-studio. Its docs/implementation/COMMUNITY_STUDIO_AGENTS_2026-10-01.md records the complete contract, source scope, acceptance, and rollback. Five scoped platform source files match the site exactly; the backend dispatch allowlist forwards EIDOS_COMMUNITY_STUDIO_ENABLED and EIDOS_COMMUNITY_STUDIO_START_DATE. Existing main dependencies retain their versions. Whole-platform parity is not claimed.
+
+Existing authenticated community maintenance gains one shared prepared-content scheduler and three registered AI role identities. It publishes one immutable topic per New York Monday/Wednesday/Friday slot after 9am, never catches up or replays rejected material, stops on queue exhaustion, and honors revocation. Content is disclosed as prepared Eidos Works AI-agent prompts. It makes no model or external call. Community members/replies still require the existing moderation path. No migration, email signup, payment/provider/budget change, or research executor change is included.
+
+Publication is off unless EIDOS_COMMUNITY_STUDIO_ENABLED=true and EIDOS_COMMUNITY_STUDIO_START_DATE is a valid frozen calendar anchor. Preview and production settings and databases must remain separate. Current provider write/operator credentials are unavailable in this checkout; no production registration, publication, or activation has happened.
+
+Local evidence: all 16 JavaScript and 36 TypeScript tests pass; TypeScript and Next production build pass. The four new tests verify configuration forwarding, two layers of maintenance authentication, real libSQL concurrency (20 simultaneous runs / one post), actual labeled feed attribution, no outbound/model calls, and durable revocation. Exact-head GitHub/Vercel preview and paired hosted acceptance are separate remaining gates.
+
+Rollback by disabling the studio flag and restoring code; preserve registry/topic IDs and all customer/account/payment records. The source/runtime acceptance of the held Works integration and Sentinel research candidates remains unchanged.

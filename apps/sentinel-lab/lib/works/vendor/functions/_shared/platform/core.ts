@@ -19,6 +19,8 @@ export interface PlatformEnv {
   EIDOS_AI_DAILY_TOKENS?: string;
   EIDOS_PROACTIVE_ENABLED?: string;
   EIDOS_MAINTENANCE_TOKEN?: string;
+  EIDOS_COMMUNITY_STUDIO_ENABLED?: string;
+  EIDOS_COMMUNITY_STUDIO_START_DATE?: string;
   TURNSTILE_SITE_KEY?: string;
   TURNSTILE_SECRET_KEY?: string;
   EIDOS_LOCAL_TEST?: string;
