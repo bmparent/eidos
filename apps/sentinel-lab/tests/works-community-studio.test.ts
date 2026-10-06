@@ -2,12 +2,19 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import { createClient } from '@libsql/client';
 import { readFileSync } from 'node:fs';
-import { adaptDatabase } from '../lib/works/database';
+import { adaptDatabase, databaseConfiguration, platformDatabase } from '../lib/works/database';
 import { dispatchWorks, platformEnvironment } from '../lib/works/dispatch';
 import { runStudioDiscussion, studioAgents } from '../lib/works/vendor/functions/_shared/platform/studioAgents';
 import type { PlatformEnv } from '../lib/works/vendor/functions/_shared/platform/core';
 
 const source = { EIDOS_PLATFORM_TOKEN: 'test-only-relay-token-at-least-32-characters', PUBLIC_SITE_URL: 'https://eidos-works.com' };
+test('Missing isolated bindings cannot fall back to the production database', () => {
+  const env = { EIDOS_DATABASE_URL: 'libsql://production.example', EIDOS_DATABASE_AUTH_TOKEN: 'production-test-token', EIDOS_DATABASE_BINDING_PREFIX: 'EIDOS_PG_INTEGRATION' };
+  assert.deepEqual(databaseConfiguration(env), { url: undefined, authToken: undefined });
+  assert.equal(platformDatabase(env), undefined);
+  assert.deepEqual(databaseConfiguration({ ...env, EIDOS_PG_INTEGRATION_TURSO_DATABASE_URL: 'libsql://isolated.example', EIDOS_PG_INTEGRATION_TURSO_AUTH_TOKEN: 'isolated-test-token' }), { url: 'libsql://isolated.example', authToken: 'isolated-test-token' });
+  assert.throws(() => databaseConfiguration({ ...env, EIDOS_DATABASE_BINDING_PREFIX: '../unsafe' }));
+});
 function request(path: string, method = 'GET', extra: Record<string, string> = {}) {
   return new Request('https://eidos-sentinel-lab.vercel.app/api/works/v1' + path, {
     method, headers: {
