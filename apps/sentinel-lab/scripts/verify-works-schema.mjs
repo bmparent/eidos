@@ -109,5 +109,12 @@ try {
 } finally {
   client?.close();
   expected?.close();
-  console.log(JSON.stringify(receipt));
+  // Provider log entries have a per-line size limit. Preserve a complete,
+  // reconstructable receipt without logging credentials or customer rows.
+  const encoded = JSON.stringify(receipt);
+  const chunkSize = 600;
+  for (let offset = 0; offset < encoded.length; offset += chunkSize) {
+    console.log(JSON.stringify({ marker: receipt.marker, part: 1 + offset / chunkSize,
+      parts: Math.ceil(encoded.length / chunkSize), chunk: encoded.slice(offset, offset + chunkSize) }));
+  }
 }
