@@ -4,6 +4,9 @@ artifacts/rng_null_proof*/
 __pycache__/
 *.py[cod]
 .pytest_cache/
+.vercel/
+.env.local
+.env.*.local
 
 # Immutable numerical experiment inputs and raw trajectories are bundled outside git.
 artifacts/controlled_memory_*/

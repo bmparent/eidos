@@ -33,13 +33,25 @@ export function adaptDatabase(client: Client): Database {
   };
 }
 
-let database: Database | undefined;
+let database: {key:string;value:Database} | undefined;
+export function databaseConfiguration(env: Record<string, string | undefined>) {
+  const prefix = env.EIDOS_DATABASE_BINDING_PREFIX;
+  if (prefix && !/^EIDOS_[A-Z0-9_]{1,48}$/.test(prefix)) throw Error('Invalid Works database binding prefix');
+  // A dedicated preview can select separately provisioned sensitive bindings.
+  // Missing prefixed credentials never fall back to the shared/production database.
+  return { url: prefix ? env[prefix + '_TURSO_DATABASE_URL'] : env.EIDOS_DATABASE_URL,
+    authToken: prefix ? env[prefix + '_TURSO_AUTH_TOKEN'] : env.EIDOS_DATABASE_AUTH_TOKEN };
+}
 export function platformDatabase(env: Record<string, string | undefined> = process.env) {
-  if (!env.EIDOS_DATABASE_URL || !env.EIDOS_DATABASE_AUTH_TOKEN) return undefined;
-  const url = new URL(env.EIDOS_DATABASE_URL);
+  const selected = databaseConfiguration(env);
+  if (!selected.url || !selected.authToken) return undefined;
+  const url = new URL(selected.url);
   // Hosted execution must never use ephemeral /tmp or an embedded file for quotas/entitlements.
   if (!['libsql:', 'https:'].includes(url.protocol) || url.username || url.password) return undefined;
-  return database ??= adaptDatabase(createClient({
-    url: env.EIDOS_DATABASE_URL, authToken: env.EIDOS_DATABASE_AUTH_TOKEN,
+  const key=JSON.stringify([selected.url,selected.authToken]);
+  if(database?.key===key)return database.value;
+  const value=adaptDatabase(createClient({
+    url: selected.url, authToken: selected.authToken,
   }));
+  database={key,value};return value;
 }

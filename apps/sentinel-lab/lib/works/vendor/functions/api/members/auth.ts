@@ -106,12 +106,13 @@ export const onRequestPost = guarded(async ({ request, env }) => {
         );
     }
     const session = randomToken();
-    await database
+    const createdSession = await database
       .prepare(
-        'INSERT INTO eidos_member_sessions(token_hash,member_id,expires) VALUES(?,?,?)',
+        'INSERT INTO eidos_member_sessions(token_hash,member_id,expires) SELECT ?,?,? WHERE EXISTS(SELECT 1 FROM eidos_signin_links WHERE token_hash=? AND consumed=1) RETURNING token_hash',
       )
-      .bind(await hash(session), member.id, now + 2592000)
-      .run();
+      .bind(await hash(session), member.id, now + 2592000, await hash(token))
+      .first();
+    if (!createdSession) throw new HttpError(401, 'Your account security changed. Request a new sign-in link.');
     const response = json({ member: publicMember(member) });
     response.headers.set('set-cookie', cookieHeader(request, env, session));
     return response;
