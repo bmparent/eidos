@@ -1,6 +1,7 @@
 import { admin, db, guarded, json, hash } from '../../_shared/platform/core';
 import { maybeSuggest } from '../../_shared/platform/community';
 import { deliverNewsletters } from '../../_shared/platform/newsletter';
+import { runStudioDiscussion, studioAgents } from '../../_shared/platform/studioAgents';
 export const onRequestPost = guarded(async ({ request, env }) => {
   const token = (request.headers.get('authorization') || '').replace(
     /^Bearer /,
@@ -13,6 +14,7 @@ export const onRequestPost = guarded(async ({ request, env }) => {
   )
     await admin(request, env);
   const database = db(env);
+  const studio = await runStudioDiscussion(env);
   let suggestions = 0;
   if (env.EIDOS_PROACTIVE_ENABLED === 'true') {
     const { results } = await database
@@ -37,14 +39,14 @@ export const onRequestPost = guarded(async ({ request, env }) => {
       .bind(new Date(Date.now() - 30 * 86400000).toISOString()),
     database
       .prepare(
-        "DELETE FROM eidos_threads WHERE status='rejected' AND created_at<?",
+        "DELETE FROM eidos_threads WHERE status='rejected' AND created_at<? AND (owner_id IS NULL OR owner_id NOT IN (?,?,?))",
       )
-      .bind(new Date(Date.now() - 30 * 86400000).toISOString()),
+      .bind(new Date(Date.now() - 30 * 86400000).toISOString(), ...studioAgents.map(agent => agent.id)),
   ]);
   if (env.EIDOS_ACCOUNTS_ENABLED === 'true' || env.EIDOS_LOCAL_TEST === 'true') await database.batch([
     database.prepare('DELETE FROM eidos_signin_links WHERE expires<?').bind(cutoff),
     database.prepare('DELETE FROM eidos_member_sessions WHERE expires<?').bind(cutoff),
   ]);
   const newsletter = await deliverNewsletters(env);
-  return json({ ok: true, suggestions, newsletter });
+  return json({ ok: true, suggestions, newsletter, studio });
 });
