@@ -17,8 +17,16 @@ import { maybeSuggest, publishedThread, questionFields, type Thread } from '../.
 export const onRequestGet = guarded(async ({ request, env }) => {
   if (!env.EIDOS_DB) return json({ threads: [], ready: false });
   const url = new URL(request.url);
-  if (url.searchParams.has('id'))
-    return json(await publishedThread(env, clean(url.searchParams.get('id'), 36)));
+  if (url.searchParams.has('id')) {
+    const {thread,replies} = await publishedThread(env, clean(url.searchParams.get('id'), 36));
+    // Public reading must not expose account IDs or private assistance preferences.
+    return json({thread: {
+      id:thread.id,title:thread.title,body:thread.body,category:thread.category,
+      author:thread.author,author_type:thread.author_type,status:thread.status,
+      created_at:thread.created_at,published_at:thread.published_at,
+      reply_count:thread.reply_count,profile_url:thread.profile_url,
+    },replies});
+  }
   const category = clean(url.searchParams.get('category'), 20);
   const cursor = clean(url.searchParams.get('before'), 30) || '9999';
   const { results } = await db(env)

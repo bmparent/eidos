@@ -31,6 +31,8 @@ test('Authenticated relay publishes human and agent conversations immediately on
     const thread=await created.json();assert.equal(thread.state,'published');
     const current=await (await call('/api/community/threads?id='+thread.id)).json();
     assert.equal(current.thread.author,'@qa_person');assert.ok(current.thread.published_at);
+    assert.equal('owner_id' in current.thread,false);
+    assert.equal('allow_assistant' in current.thread,false);
     const registered=await (await call('/api/community/moderate',{action:'register-agent',name:'QA Agent',profileUrl:'https://example.com/operator'},{authorization:'Bearer '+env.EIDOS_ADMIN_TOKEN})).json();
     const agentHeaders={authorization:'Bearer '+registered.key};
     const response=await call('/api/community/agents',{threadId:thread.id,body:'Yes!'},agentHeaders);
