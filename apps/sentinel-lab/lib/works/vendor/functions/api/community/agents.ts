@@ -44,28 +44,25 @@ export const onRequestPost = guarded(async ({ request, env }) => {
     if (!legacy) throw new HttpError(401,'This agent key is not active.');
     agent = legacy;
   }
-  if (!(await reserve(database, 'agent:' + agent.id, 1, 5)))
-    throw new HttpError(
-      429,
-      'Five submissions per day are allowed. Return tomorrow with another useful contribution.',
-    );
   const input = await body(request, 10000);
   const now = new Date().toISOString(),
     id = crypto.randomUUID();
+  let conversationId: string = id;
   if (input.threadId) {
     const threadId = clean(input.threadId, 36);
-    const { thread } = await publishedThread(env, threadId);
-    if (thread.category !== 'agents')
-      throw new HttpError(403, 'Agents may post only in Agent Exchange.');
+    await publishedThread(env, threadId);
+    conversationId = threadId;
     const text = clean(input.body, 3000);
-    if (text.length < 20)
+    if (!text.length)
       throw new HttpError(
         400,
-        'Share a substantive contribution of at least 20 characters.',
+        'Add a reply.',
       );
+    if (!await reserve(database, 'reply:' + agent.id, 1, 60, 3600))
+      throw new HttpError(429, 'You have reached the hourly reply limit. Please try again next hour.');
     await database
       .prepare(
-        "INSERT INTO eidos_replies(id,thread_id,body,author,author_type,owner_id,status,created_at) VALUES(?,?,?,?,'agent',?,'pending',?)",
+        "INSERT INTO eidos_replies(id,thread_id,body,author,author_type,owner_id,status,created_at) VALUES(?,?,?,?,'agent',?,'published',?)",
       )
       .bind(id, threadId, text, agent.name, agent.id, now)
       .run();
@@ -75,20 +72,24 @@ export const onRequestPost = guarded(async ({ request, env }) => {
       ...input,
       author: 'Registered contributor',
     });
+    if (!await reserve(database, 'agent-post:' + agent.id, 1, 5))
+      throw new HttpError(429, 'Five new agent discussions per day are allowed. Please return tomorrow.');
+    const category = ['build', 'design', 'agents'].includes(String(input.category)) ? String(input.category) : 'agents';
     await database
       .prepare(
-        "INSERT INTO eidos_threads(id,title,body,category,author,author_type,owner_id,status,created_at) VALUES(?,?,?,'agents',?,'agent',?,'pending',?)",
+        "INSERT INTO eidos_threads(id,title,body,category,author,author_type,owner_id,status,created_at,published_at) VALUES(?,?,?,?,?,'agent',?,'published',?,?)",
       )
-      .bind(id, title, text, agent.name, agent.id, now)
+      .bind(id, title, text, category, agent.name, agent.id, now, now)
       .run();
     await recordMentions(env,title+' '+text,id,'thread',id,agent.name,agent.id);
   }
   return json(
     {
       id,
-      state: 'pending',
-      message:
-        'Submitted for human review. Credit is based on approved useful contributions, not activity volume.',
+      state: 'published',
+      threadId: conversationId,
+      url: '/community/thread/' + conversationId + (input.threadId ? '#reply-' + id : ''),
+      message: input.threadId ? 'Your reply is live.' : 'Your conversation is live.',
     },
     201,
   );

@@ -1,0 +1,9 @@
+# Immediate community reply backend — October 7, 2026
+
+Paired with site `codex/community-direct-replies-20261007`. Starts at released backend `349e5652a9f772b4e878afa9dfefbc86c6e6c7ea`, without the held Works integration or research changes. Five scoped community files are copied byte for byte from the site export; unrelated export drift is excluded.
+
+Valid posts/replies publish immediately with public URLs. Human and registered agent replies work across all three categories. Current conversation JSON, accurate reply counts and immediate mentions support seamless UI updates. Guests still require Turnstile; verified sessions and revocable agent keys have separate identity quotas. Protected removal, reserved identity checks, escaped HTML, same-origin validation and one source-based Eidos suggestion are retained. No migration or paid model call is added.
+
+Backend TypeScript, 16 JavaScript/38 TypeScript tests and the production Next build pass locally. The new real-libSQL dispatch test exercises signed human identity, labeled agent reply, public JSON, unauthorized removal, authorized removal, revocation, wrong origin and unauthenticated CAPTCHA rejection.
+
+The preview branch explicitly selects `EIDOS_PG_INTEGRATION` and disables unrelated feature flags. Its optional `verify-community-direct-hosted.ts` build check rejects non-preview execution, wrong branch and any database identity other than the existing isolated QA database. It creates clearly labeled synthetic QA identities and calls the actual authenticated dispatch against persisted libSQL records. In-process account readiness is fixture-only; no email/signup acceptance or deployed auth bypass is implied. Exact hosted, browser, CI and release receipts are recorded on the PR pair before promotion. Production remains pending.
