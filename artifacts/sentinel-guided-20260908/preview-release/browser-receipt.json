@@ -1,0 +1,25 @@
+{
+  "base": "https://eidos-sentinel-ddbpvc2sy-1brentbm-1876s-projects.vercel.app",
+  "browser": "Playwright Chromium",
+  "reason": "Browser plugin not available",
+  "startedAt": "2026-09-09T01:13:36.167Z",
+  "checks": [
+    {
+      "name": "approved pilot login",
+      "status": "passed"
+    }
+  ],
+  "screenshots": [
+    "before-production.png",
+    "01-add-data-desktop.png",
+    "failure.png"
+  ],
+  "errors": [],
+  "productionBefore": {
+    "title": "Eidos / Sentinel Lab",
+    "url": "https://eidos-sentinel-lab.vercel.app/"
+  },
+  "status": "failed",
+  "failure": "locator.waitFor: Timeout 240000ms exceeded.\nCall log:\n\u001b[2m  - waiting for getByRole('heading', { name: 'Confirm understanding', exact: true }) to be visible\u001b[22m\n",
+  "finishedAt": "2026-09-09T01:17:43.204Z"
+}

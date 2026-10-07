@@ -3,3 +3,4 @@
 /artifacts/sentinel-production-audit-20260906/** -text -whitespace
 /artifacts/sentinel-production-live-20260906/** -text -whitespace
 /artifacts/sentinel-evidence-commit-20260907/** -text
+/artifacts/sentinel-guided-20260908/** -text -whitespace

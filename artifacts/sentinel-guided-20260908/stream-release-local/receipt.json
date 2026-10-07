@@ -1,0 +1,74 @@
+{
+  "base": "http://127.0.0.1:3210",
+  "startedAt": "2026-09-09T01:31:46.418Z",
+  "checks": [
+    {
+      "name": "first batch has contiguous acknowledged offsets",
+      "status": "passed"
+    },
+    {
+      "name": "replay acknowledges duplicates without counting twice",
+      "status": "passed"
+    },
+    {
+      "name": "changed duplicate is rejected transactionally",
+      "status": "passed"
+    },
+    {
+      "name": "ingest credential cannot read monitor configuration",
+      "status": "passed"
+    },
+    {
+      "name": "other owner cannot read source",
+      "status": "passed"
+    },
+    {
+      "name": "worker and durable result survive client interruption",
+      "status": "passed"
+    },
+    {
+      "name": "warmup and first checkpoint persisted",
+      "status": "passed"
+    },
+    {
+      "name": "second batch resumes existing model",
+      "status": "passed"
+    },
+    {
+      "name": "late event and missing-time gap explicitly counted",
+      "status": "passed"
+    },
+    {
+      "name": "injected event remains an anomaly",
+      "status": "passed"
+    },
+    {
+      "name": "checkpoint-resume matches uninterrupted actual Torch replay",
+      "status": "passed"
+    },
+    {
+      "name": "real OTLP HTTP JSON endpoint accepts exact metric",
+      "status": "passed"
+    },
+    {
+      "name": "reset archives prior state and restarts warmup",
+      "status": "passed"
+    },
+    {
+      "name": "bounded buffer returns backpressure with no partial insertion",
+      "status": "passed"
+    },
+    {
+      "name": "revoked ingest key immediately rejected",
+      "status": "passed"
+    },
+    {
+      "name": "monitor mobile layout fits viewport",
+      "status": "passed"
+    }
+  ],
+  "sourceId": "source-3ef6c075-f155-468e-8763-d7018a881536",
+  "firstJobId": "gj-796ee3732fde910afa92bac53eee3295",
+  "status": "passed",
+  "finishedAt": "2026-09-09T01:33:05.171Z"
+}

@@ -1,0 +1,421 @@
+{
+  "env": [
+    {
+      "key": "EIDOS_EXECUTION_BACKEND",
+      "target": [
+        "production"
+      ],
+      "type": "sensitive",
+      "id": "0F9vaRQwGoNheMB8",
+      "gitBranch": null
+    },
+    {
+      "key": "EIDOS_OPERATOR_TOKEN",
+      "target": [
+        "production"
+      ],
+      "type": "sensitive",
+      "id": "6yj0yq1aF0eInp4X",
+      "gitBranch": null
+    },
+    {
+      "key": "EIDOS_SOURCE_REPOSITORY",
+      "target": [
+        "production"
+      ],
+      "type": "sensitive",
+      "id": "LP8JgepKy4KHjThZ",
+      "gitBranch": null
+    },
+    {
+      "key": "KAGGLE_API_TOKEN",
+      "target": [
+        "production"
+      ],
+      "type": "sensitive",
+      "id": "xXPz6LmnTagcl6On",
+      "gitBranch": null
+    },
+    {
+      "key": "EIDOS_ADMIN_TOKEN",
+      "target": [
+        "production",
+        "preview"
+      ],
+      "type": "encrypted",
+      "id": "VvBmmMNh2azJSTyB",
+      "gitBranch": null
+    },
+    {
+      "key": "EIDOS_AI_DAILY_TOKENS",
+      "target": [
+        "production",
+        "preview"
+      ],
+      "type": "encrypted",
+      "id": "rOBzyEaX2jdleviP",
+      "gitBranch": null
+    },
+    {
+      "key": "EIDOS_AI_ENABLED",
+      "target": [
+        "production"
+      ],
+      "type": "plain",
+      "id": "CZQfmtt8203j36ys",
+      "gitBranch": null
+    },
+    {
+      "key": "EIDOS_ASSISTANT_MODEL",
+      "target": [
+        "production",
+        "preview"
+      ],
+      "type": "plain",
+      "id": "pCVsQiNQkE4a7MyU",
+      "gitBranch": null
+    },
+    {
+      "key": "EIDOS_MAINTENANCE_TOKEN",
+      "target": [
+        "production",
+        "preview"
+      ],
+      "type": "encrypted",
+      "id": "VrdPZ9cnXRASSu9O",
+      "gitBranch": null
+    },
+    {
+      "key": "EIDOS_PLATFORM_TOKEN",
+      "target": [
+        "production",
+        "preview"
+      ],
+      "type": "encrypted",
+      "id": "8gSPuw5GA2Fyhg05",
+      "gitBranch": null
+    },
+    {
+      "key": "EIDOS_PREVIEW_ORIGINS",
+      "target": [
+        "production",
+        "preview"
+      ],
+      "type": "plain",
+      "id": "VIxMpIUV0TLk43vz",
+      "gitBranch": null
+    },
+    {
+      "key": "EIDOS_PROACTIVE_ENABLED",
+      "target": [
+        "preview"
+      ],
+      "type": "plain",
+      "id": "ujD9JOaLD2Foi6nd",
+      "gitBranch": null
+    },
+    {
+      "key": "EIDOS_RATE_SECRET",
+      "target": [
+        "production",
+        "preview"
+      ],
+      "type": "encrypted",
+      "id": "JqysMAq5N8CxJdDB",
+      "gitBranch": null
+    },
+    {
+      "key": "EIDOS_SHOP_ENABLED",
+      "target": [
+        "production"
+      ],
+      "type": "plain",
+      "id": "SYpquzIuYT5rTSN9",
+      "gitBranch": null
+    },
+    {
+      "key": "GA_MEASUREMENT_ID",
+      "target": [
+        "production",
+        "preview"
+      ],
+      "type": "plain",
+      "id": "dB7ixs6V9DAKMth0",
+      "gitBranch": null
+    },
+    {
+      "key": "OPENAI_API_KEY",
+      "target": [
+        "production",
+        "preview"
+      ],
+      "type": "encrypted",
+      "id": "LZSU73GSYchzy1dJ",
+      "gitBranch": null
+    },
+    {
+      "key": "PUBLIC_SITE_URL",
+      "target": [
+        "production"
+      ],
+      "type": "plain",
+      "id": "MZ4S07cb4M7crK2P",
+      "gitBranch": null
+    },
+    {
+      "key": "TURNSTILE_SECRET_KEY",
+      "target": [
+        "production",
+        "preview"
+      ],
+      "type": "encrypted",
+      "id": "hx4sHBSKE6zDKokZ",
+      "gitBranch": null
+    },
+    {
+      "key": "TURNSTILE_SITE_KEY",
+      "target": [
+        "production",
+        "preview"
+      ],
+      "type": "plain",
+      "id": "aKilpXmW0svjTyl6",
+      "gitBranch": null
+    },
+    {
+      "key": "EIDOS_DATABASE_TURSO_AUTH_TOKEN",
+      "target": [
+        "production"
+      ],
+      "type": "encrypted",
+      "id": "jeawug7mQ10EvCEW",
+      "gitBranch": null
+    },
+    {
+      "key": "EIDOS_DATABASE_TURSO_DATABASE_URL",
+      "target": [
+        "production"
+      ],
+      "type": "encrypted",
+      "id": "yPSd53dpAeqs3HUk",
+      "gitBranch": null
+    },
+    {
+      "key": "EIDOS_DATABASE_AUTH_TOKEN",
+      "target": [
+        "production"
+      ],
+      "type": "encrypted",
+      "id": "sjZtt8QHUhL2r1Q4",
+      "gitBranch": null
+    },
+    {
+      "key": "EIDOS_DATABASE_URL",
+      "target": [
+        "production"
+      ],
+      "type": "encrypted",
+      "id": "Ezjgr7M6CqpHqanU",
+      "gitBranch": null
+    },
+    {
+      "key": "EIDOS_DATABASE_TURSO_DATABASE_URL",
+      "target": [
+        "preview"
+      ],
+      "type": "sensitive",
+      "id": "zPT3KfQBVbIK62AE",
+      "gitBranch": null
+    },
+    {
+      "key": "EIDOS_DATABASE_TURSO_AUTH_TOKEN",
+      "target": [
+        "preview"
+      ],
+      "type": "sensitive",
+      "id": "8RmRpPmHEN0bnAWw",
+      "gitBranch": null
+    },
+    {
+      "key": "PUBLIC_SITE_URL",
+      "target": [
+        "preview"
+      ],
+      "type": "plain",
+      "id": "vjUsFTSsKqSb9HPp",
+      "gitBranch": null
+    },
+    {
+      "key": "EIDOS_SHOP_ENABLED",
+      "target": [
+        "preview"
+      ],
+      "type": "plain",
+      "id": "Bc0rrJcZdcvJNVyX",
+      "gitBranch": null
+    },
+    {
+      "key": "EIDOS_AI_ENABLED",
+      "target": [
+        "preview"
+      ],
+      "type": "plain",
+      "id": "9ElNgG3nZzkVfHFg",
+      "gitBranch": null
+    },
+    {
+      "key": "STRIPE_SECRET_KEY",
+      "target": [
+        "preview"
+      ],
+      "type": "encrypted",
+      "id": "XTTeDZsj8FHelAUR",
+      "gitBranch": null
+    },
+    {
+      "key": "EIDOS_KIT_WEBHOOK_SECRET",
+      "target": [
+        "preview"
+      ],
+      "type": "encrypted",
+      "id": "kqWO4Ae1mtLhAvM1",
+      "gitBranch": null
+    },
+    {
+      "key": "EIDOS_DATABASE_URL",
+      "target": [
+        "preview"
+      ],
+      "type": "encrypted",
+      "id": "Jv1mH36R6Cel0vzi",
+      "gitBranch": null
+    },
+    {
+      "key": "EIDOS_DATABASE_AUTH_TOKEN",
+      "target": [
+        "preview"
+      ],
+      "type": "encrypted",
+      "id": "r5Ig5mUoDugAIgdC",
+      "gitBranch": null
+    },
+    {
+      "key": "EIDOS_PROACTIVE_ENABLED",
+      "target": [
+        "production"
+      ],
+      "type": "plain",
+      "id": "HugdUDd3y51QOu1s",
+      "gitBranch": null
+    },
+    {
+      "key": "STRIPE_SECRET_KEY",
+      "target": [
+        "production"
+      ],
+      "type": "encrypted",
+      "id": "mjhYAxLLxkINChF3",
+      "gitBranch": null
+    },
+    {
+      "key": "EIDOS_KIT_WEBHOOK_SECRET",
+      "target": [
+        "production"
+      ],
+      "type": "encrypted",
+      "id": "3ozbPNgRkrfLLAOv",
+      "gitBranch": null
+    },
+    {
+      "key": "CLERK_SECRET_KEY",
+      "target": [
+        "production"
+      ],
+      "type": "encrypted",
+      "id": "TZo3GvpUshblAIYa",
+      "gitBranch": null
+    },
+    {
+      "key": "CLERK_SECRET_KEY",
+      "target": [
+        "preview",
+        "development"
+      ],
+      "type": "encrypted",
+      "id": "oqty38tzFAqC7P6k",
+      "gitBranch": null
+    },
+    {
+      "key": "NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY",
+      "target": [
+        "production"
+      ],
+      "type": "encrypted",
+      "id": "PspVZExBNymzTsGW",
+      "gitBranch": null
+    },
+    {
+      "key": "NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY",
+      "target": [
+        "preview",
+        "development"
+      ],
+      "type": "encrypted",
+      "id": "TkaAHaQOa7OOBh1E",
+      "gitBranch": null
+    },
+    {
+      "key": "EIDOS_ACCOUNTS_ENABLED",
+      "target": [
+        "production"
+      ],
+      "type": "plain",
+      "id": "UAQAzmCGSACmOlct",
+      "gitBranch": null
+    },
+    {
+      "key": "EIDOS_COMMUNITY_AUTO_PUBLISH",
+      "target": [
+        "production"
+      ],
+      "type": "sensitive",
+      "id": "xWEU9kIG9oIjtyU7",
+      "gitBranch": null
+    },
+    {
+      "key": "EIDOS_NEWSLETTER_ENABLED",
+      "target": [
+        "production"
+      ],
+      "type": "plain",
+      "id": "Q5KSqLxhDMuRGsNb",
+      "gitBranch": null
+    },
+    {
+      "key": "EIDOS_MAIL_DAILY_LIMIT",
+      "target": [
+        "production"
+      ],
+      "type": "plain",
+      "id": "vZpWxfgfwfr1sdsT",
+      "gitBranch": null
+    },
+    {
+      "key": "RESEND_API_KEY",
+      "target": [
+        "production"
+      ],
+      "type": "sensitive",
+      "id": "NmrnayieXMKcuhT7",
+      "gitBranch": null
+    }
+  ],
+  "project": {
+    "id": "prj_5aL0COF1DONfPKI4fv25NitAdkOE",
+    "name": "eidos-sentinel-lab",
+    "rootDirectory": "apps/sentinel-lab",
+    "nodeVersion": "24.x",
+    "framework": "nextjs",
+    "updatedAt": 1788910464771
+  }
+}

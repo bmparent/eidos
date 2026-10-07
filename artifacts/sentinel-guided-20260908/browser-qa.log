@@ -1,0 +1,67 @@
+{
+  "status": "passed",
+  "checks": [
+    {
+      "name": "approved pilot login",
+      "status": "passed"
+    },
+    {
+      "name": "real browser CSV upload and parser completion",
+      "status": "passed"
+    },
+    {
+      "name": "confirmed chronology, entity, units and interpretation",
+      "status": "passed"
+    },
+    {
+      "name": "actual Torch analysis through persisted result",
+      "status": "passed"
+    },
+    {
+      "name": "original record drill-down",
+      "status": "passed"
+    },
+    {
+      "name": "grounded result question",
+      "status": "passed"
+    },
+    {
+      "name": "review saved separately from frozen output",
+      "status": "passed"
+    },
+    {
+      "name": "download authenticated result",
+      "status": "passed"
+    },
+    {
+      "name": "mobile layout has no document overflow",
+      "status": "passed"
+    },
+    {
+      "name": "keyboard navigation and reduced motion",
+      "status": "passed"
+    },
+    {
+      "name": "refresh and saved-run recovery",
+      "status": "passed"
+    },
+    {
+      "name": "second user cannot access every first-user resource",
+      "status": "passed"
+    }
+  ],
+  "metrics": {
+    "elapsedSeconds": 7.563000000000102,
+    "evaluatedForecasts": 96,
+    "forecastMAE": 2.8253720492466017,
+    "intervalCount": 96,
+    "intervalCoverage": 0.8958333333333334,
+    "intervalMeanWidth": 4.730272677758893,
+    "llmCalls": 0,
+    "llmCostUSD": 0,
+    "persistenceMAE": 2.2657600220534615,
+    "precision": null,
+    "recall": null,
+    "rowsPerSecond": 15.866719555731638
+  }
+}

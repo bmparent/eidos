@@ -1,0 +1,49 @@
+{
+  "frozenRevision": "272befb",
+  "files": [
+    {
+      "path": "services/sentinel-runner/sentinel_runner/guided/bootstrap.py",
+      "frozenSha256": "1df0da982bb653ddf659a7f89b2f5df2cd866bc66589d1e598fc09b4e6021b25",
+      "currentSha256": "1df0da982bb653ddf659a7f89b2f5df2cd866bc66589d1e598fc09b4e6021b25",
+      "same": true
+    },
+    {
+      "path": "services/sentinel-runner/sentinel_runner/guided/causal.py",
+      "frozenSha256": "83cda2f2f6e06fa6b18854763ad2e1cd69ca391fa74d9da792ad3cf8ae23da4f",
+      "currentSha256": "83cda2f2f6e06fa6b18854763ad2e1cd69ca391fa74d9da792ad3cf8ae23da4f",
+      "same": true
+    },
+    {
+      "path": "services/sentinel-runner/sentinel_runner/guided/cli.py",
+      "frozenSha256": "a93cdcf459c7d3ef0fb84a62ca9565d2efb4f146c6264ca13223c129adf925c4",
+      "currentSha256": "a93cdcf459c7d3ef0fb84a62ca9565d2efb4f146c6264ca13223c129adf925c4",
+      "same": true
+    },
+    {
+      "path": "services/sentinel-runner/sentinel_runner/guided/ingestion.py",
+      "frozenSha256": "f210c7455142ae9eb226defb7bc079a6a9dfbe8098c8d26744399b94386f682f",
+      "currentSha256": "f210c7455142ae9eb226defb7bc079a6a9dfbe8098c8d26744399b94386f682f",
+      "same": true
+    },
+    {
+      "path": "services/sentinel-runner/sentinel_runner/guided/semantic.py",
+      "frozenSha256": "5f2ad0b46708afe29110cac5956deb3be4406c30d99398351aa83a5be24f2daa",
+      "currentSha256": "ce1859c2756d6e01587f87e840cff98325e9c008b3333d9ea07db77633890972",
+      "same": false
+    },
+    {
+      "path": "services/sentinel-runner/sentinel_runner/guided/telemetry.py",
+      "frozenSha256": "a50a4a1bd521af5d0b6eeff2b1e665498ed7426e89c347066531618866f33b9e",
+      "currentSha256": "a50a4a1bd521af5d0b6eeff2b1e665498ed7426e89c347066531618866f33b9e",
+      "same": true
+    },
+    {
+      "path": "services/sentinel-runner/sentinel_runner/guided/__init__.py",
+      "frozenSha256": "e1793bcc5b51179bd9ea49ba6e5971a1945ce10d61d7de5d143a8136f6331740",
+      "currentSha256": "e1793bcc5b51179bd9ea49ba6e5971a1945ce10d61d7de5d143a8136f6331740",
+      "same": true
+    }
+  ],
+  "explanation": "After final consumption, only semantic model cache-loading was optimized among frozen modules. The numerical evaluation imports causal/ingestion, not semantic. No evaluated numerical algorithm, generator, thresholds or labels were tuned after final. Archived exact frozen source remains available.",
+  "researchGatesAdvanced": 0
+}
