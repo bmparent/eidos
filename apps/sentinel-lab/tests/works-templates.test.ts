@@ -224,6 +224,53 @@ test('receipt email retries keep provider idempotency body stable and paid acces
   }finally{f.close();}
 });
 
+test('receipt email retry after thirty minutes renews an unused link without changing provider payload',async(t)=>{
+  let clock=Date.now();t.mock.method(Date,'now',()=>clock);
+  const f=await fixture(),receipt='8'.repeat(64);
+  try{
+    const row=await f.begin(receipt);f.setFailMail(true);
+    assert.equal((await f.event(row,'evt_mail_delayed_retry')).status,503);
+    const first=f.mails[0],token=first.text.match(/#token=([a-f0-9]{64})/)![1],tokenHash=await hash(token);
+    const original=await f.database.prepare('SELECT expires,used FROM eidos_template_recovery WHERE token_hash=?').bind(tokenHash).first<{expires:number;used:number}>();
+    assert.equal(original?.used,0);
+    clock+=31*60*1000;
+    assert.ok(original!.expires<Math.floor(Date.now()/1000));
+    assert.equal((await f.call(redeem,'/api/shop/redeem',{token})).status,401);
+    assert.equal((await f.database.prepare('SELECT COUNT(*) n FROM eidos_stripe_events WHERE id=?').bind('evt_mail_delayed_retry').first<{n:number}>())?.n,0);
+    f.setFailMail(false);
+    assert.equal((await f.event(row,'evt_mail_delayed_retry')).status,200);
+    assert.equal(f.mails.length,2);assert.equal(f.mails[1].text,first.text);assert.equal(f.mails[1].idempotency,first.idempotency);
+    const renewed=await f.database.prepare('SELECT expires,used FROM eidos_template_recovery WHERE token_hash=?').bind(tokenHash).first<{expires:number;used:number}>();
+    assert.equal(renewed?.expires,Math.floor(Date.now()/1000)+1800);assert.equal(renewed?.used,0);
+    assert.equal((await f.database.prepare('SELECT COUNT(*) n FROM eidos_template_recovery WHERE order_id=?').bind(row.id).first<{n:number}>())?.n,1);
+    const recovered=await f.call(redeem,'/api/shop/redeem',{token});assert.equal(recovered.status,200);
+    const newReceipt=(await recovered.json()).receipt;
+    assert.equal((await f.call(status,'/api/shop/status',{receipt:newReceipt})).status,200);
+    assert.equal((await f.call(status,'/api/shop/status',{receipt})).status,404);
+    assert.equal((await f.call(redeem,'/api/shop/redeem',{token})).status,401);
+    assert.equal((await f.database.prepare('SELECT COUNT(*) n FROM eidos_stripe_events WHERE id=?').bind('evt_mail_delayed_retry').first<{n:number}>())?.n,1);
+  }finally{f.close();}
+});
+
+test('receipt email retry after thirty minutes never revives a consumed one-time link',async(t)=>{
+  let clock=Date.now();t.mock.method(Date,'now',()=>clock);
+  const f=await fixture(),receipt='9'.repeat(64);
+  try{
+    const row=await f.begin(receipt);f.setFailMail(true);
+    assert.equal((await f.event(row,'evt_mail_consumed_retry')).status,503);
+    const first=f.mails[0],token=first.text.match(/#token=([a-f0-9]{64})/)![1],tokenHash=await hash(token);
+    assert.equal((await f.call(redeem,'/api/shop/redeem',{token})).status,200);
+    const consumed=await f.database.prepare('SELECT expires,used FROM eidos_template_recovery WHERE token_hash=?').bind(tokenHash).first<{expires:number;used:number}>();
+    assert.equal(consumed?.used,1);
+    clock+=31*60*1000;f.setFailMail(false);
+    assert.equal((await f.event(row,'evt_mail_consumed_retry')).status,200);
+    const after=await f.database.prepare('SELECT expires,used FROM eidos_template_recovery WHERE token_hash=?').bind(tokenHash).first<{expires:number;used:number}>();
+    assert.deepEqual(after,consumed);
+    assert.equal(f.mails.length,2);assert.equal(f.mails[1].text,first.text);assert.equal(f.mails[1].idempotency,first.idempotency);
+    assert.equal((await f.call(redeem,'/api/shop/redeem',{token})).status,401);
+  }finally{f.close();}
+});
+
 test('recovery is enumeration safe, single use and receipt expiry is recoverable; cross-order token fails', async () => {
   const f=await fixture(), receipt='d'.repeat(64), otherReceipt='e'.repeat(64);
   try {

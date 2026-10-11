@@ -147,7 +147,12 @@ async function recoveryToken(env: PlatformEnv, orderId: string, stableReceipt = 
     const key = await crypto.subtle.importKey('raw', encoder.encode(env.EIDOS_KIT_WEBHOOK_SECRET || ''), { name: 'HMAC', hash: 'SHA-256' }, false, ['sign']);
     token = [...new Uint8Array(await crypto.subtle.sign('HMAC', key, encoder.encode('template-receipt:' + orderId)))].map(n => n.toString(16).padStart(2, '0')).join('');
   }
-  await db(env).prepare('INSERT OR IGNORE INTO eidos_template_recovery(token_hash,order_id,expires) VALUES(?,?,?)').bind(await hash(token), orderId, now() + 1800).run();
+  // Retry can happen after the original 30-minute window. Keep the mail body/key
+  // stable, but renew only this order's unused receipt token; never revive used links.
+  const insert = stableReceipt
+    ? 'INSERT INTO eidos_template_recovery(token_hash,order_id,expires) VALUES(?,?,?) ON CONFLICT(token_hash) DO UPDATE SET expires=MAX(eidos_template_recovery.expires,excluded.expires) WHERE eidos_template_recovery.order_id=excluded.order_id AND eidos_template_recovery.used=0'
+    : 'INSERT OR IGNORE INTO eidos_template_recovery(token_hash,order_id,expires) VALUES(?,?,?)';
+  await db(env).prepare(insert).bind(await hash(token), orderId, now() + 1800).run();
   return token;
 }
 export async function templateReceiptMail(env: PlatformEnv, order: TemplateOrder) {
