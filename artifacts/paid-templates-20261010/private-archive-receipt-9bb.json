@@ -1,0 +1,105 @@
+{
+  "schemaVersion": 2,
+  "timestampUtc": "2026-10-11T02:16:04.640Z",
+  "sourceCatalogVersion": "2026-10-10.1",
+  "privateArchives": [
+    {
+      "productId": "switchboard-developer-v1",
+      "archiveKey": "templates/switchboard/1.0.1/developer.zip",
+      "sha256": "5ceb3e123ebd531d8b3d1bd113f3f135296c0a8dd7d320959afb0285cef70678",
+      "bytes": 27055,
+      "alreadyPresent": false
+    },
+    {
+      "productId": "switchboard-wordpress-v1",
+      "archiveKey": "templates/switchboard/1.0.1/wordpress.zip",
+      "sha256": "da30119d1d3e65f44c75dc24cb677b8dcb5a5517c6f68aea0bbcc78590a43abb",
+      "bytes": 29399,
+      "alreadyPresent": true
+    },
+    {
+      "productId": "tideglass-developer-v1",
+      "archiveKey": "templates/tideglass/1.0.0/developer.zip",
+      "sha256": "34130b106526fa76a380efcdb2e2a1126bf3e05524c036246a227ce5d85f16a7",
+      "bytes": 26836,
+      "alreadyPresent": true
+    },
+    {
+      "productId": "tideglass-wordpress-v1",
+      "archiveKey": "templates/tideglass/1.0.1/wordpress.zip",
+      "sha256": "4881c5d5ad34258454c8f542819f5ef0b469b80e72abd61a785f69d77b6ae785",
+      "bytes": 30027,
+      "alreadyPresent": true
+    },
+    {
+      "productId": "matter-developer-v1",
+      "archiveKey": "templates/matter/1.0.0/developer.zip",
+      "sha256": "f5083b4ffad9d99d9ffaf04f1d887f9feada6a4f4732f38aca19432b7ac515d6",
+      "bytes": 27533,
+      "alreadyPresent": true
+    },
+    {
+      "productId": "matter-wordpress-v1",
+      "archiveKey": "templates/matter/1.0.1/wordpress.zip",
+      "sha256": "3fa8fe6902085b3bf2f06a9bdc51e14b861d9e1764a26d0c95d7f856beb415fe",
+      "bytes": 30748,
+      "alreadyPresent": true
+    },
+    {
+      "productId": "nightjar-developer-v1",
+      "archiveKey": "templates/nightjar/1.0.3/developer.zip",
+      "sha256": "99152f05e391a81b4290dc9e08cb0a8c45689f1a17d98f726646c85eec15eb4d",
+      "bytes": 27236,
+      "alreadyPresent": true
+    },
+    {
+      "productId": "nightjar-wordpress-v1",
+      "archiveKey": "templates/nightjar/1.0.1/wordpress.zip",
+      "sha256": "558a42d695338fc94df90968fcf643d155e84767a33ff150c41c9534a7e49739",
+      "bytes": 29742,
+      "alreadyPresent": true
+    }
+  ],
+  "retainedArchives": [
+    {
+      "archiveKey": "templates/tideglass/1.0.0/wordpress.zip",
+      "sha256": "09ec833380b3e1238888ff54442e34de4b882649bbddc7cca4a41625dbe153a5",
+      "bytes": 30016
+    },
+    {
+      "archiveKey": "templates/switchboard/1.0.0/developer.zip",
+      "sha256": "e56450de9adbac6320d9e2315601e1804d281fcf1b87dc0f95cef5ef8ae45e2a",
+      "bytes": 26816
+    },
+    {
+      "archiveKey": "templates/switchboard/1.0.0/wordpress.zip",
+      "sha256": "f816acf68aee776ea32b5fa1fd1acece21bbbc9435c8087134fa7adde8099846",
+      "bytes": 29391
+    },
+    {
+      "archiveKey": "templates/nightjar/1.0.2/developer.zip",
+      "sha256": "1026635e095129dfff9bc2c0a21baa1cf313a64041e9b66bd1fecf065d89487f",
+      "bytes": 27165
+    },
+    {
+      "archiveKey": "templates/nightjar/1.0.1/developer.zip",
+      "sha256": "f8a07e7fe22e3ecf1eeb3dbbd3783a81c940fa39191f56230c64a7ad4faa0a39",
+      "bytes": 26978
+    },
+    {
+      "archiveKey": "templates/nightjar/1.0.0/developer.zip",
+      "sha256": "d27d240bdab367b9b334ac574f9e68e75132701c93bc19422a200f77af53a1f8",
+      "bytes": 26765
+    },
+    {
+      "archiveKey": "templates/nightjar/1.0.0/wordpress.zip",
+      "sha256": "30a53df74f2a939015fae48ef6ac12d7ee2328a57e2074fd57ee0348150bf36d",
+      "bytes": 29728
+    },
+    {
+      "archiveKey": "templates/matter/1.0.0/wordpress.zip",
+      "sha256": "bd0bec696ce1980ed1e08d624fd5ed1179c8d9e32faa07cc5eadf8a4e90c2bc8",
+      "bytes": 30739
+    }
+  ]
+}

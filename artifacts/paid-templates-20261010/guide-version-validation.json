@@ -1,8 +1,8 @@
 {
-  "schemaVersion": 2,
-  "timestampUtc": "2026-10-11T02:53:32.130Z",
-  "sourceCatalogVersion": "2026-10-10.1",
-  "privateArchives": [
+  "timestampUtc": "2026-10-11T02:54:54.187Z",
+  "scope": "Version-only buyer-guide and Nightjar poster package transition; payment algorithms unchanged",
+  "previousSource": "9bb328b5b90b66fdbad4c3a70a7c9997accfd06f",
+  "currentPackages": [
     {
       "productId": "switchboard-developer-v1",
       "archiveKey": "templates/switchboard/1.0.2/developer.zip",
@@ -141,5 +141,35 @@
       "sha256": "bd0bec696ce1980ed1e08d624fd5ed1179c8d9e32faa07cc5eadf8a4e90c2bc8",
       "bytes": 30739
     }
-  ]
+  ],
+  "oldArchivesPreserved": true,
+  "counts": {
+    "current": 8,
+    "retained": 16,
+    "total": 24,
+    "retainedPurchaseSnapshotCases": 16
+  },
+  "validation": {
+    "focused": {
+      "pass": 11,
+      "fail": 0,
+      "command": "node --import ./apps/sentinel-lab/node_modules/tsx/dist/loader.mjs --test apps/sentinel-lab/tests/works-templates.test.ts",
+      "log": "guide-patch-retention-tests.log"
+    },
+    "full": {
+      "pass": 65,
+      "fail": 0,
+      "breakdown": "16 JavaScript +49 TypeScript",
+      "command": "npm --prefix apps/sentinel-lab test",
+      "log": "guide-patch-tests.log"
+    },
+    "typecheck": {
+      "status": "passed",
+      "command": "npm --prefix apps/sentinel-lab run lint -- --incremental false",
+      "log": "guide-patch-typecheck.log"
+    }
+  },
+  "availability": "Developer-only TEST allowlist; WordPress and builder pilots remain unavailable pending separate gates",
+  "mail": "blocked: candidate RESEND_API_KEY absent",
+  "genuineRefundRetry": "Single official CLI retry acknowledged; pre-existing revoked state retained; see genuine-test-refund-retry.json for limits"
 }
