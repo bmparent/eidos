@@ -1,0 +1,682 @@
+{
+  "timestampUtc": "2026-10-11T02:03:38.700Z",
+  "scope": "protected preview only",
+  "branch": "codex/paid-templates-20261010",
+  "commit": "823b61bb9e7ee74aa89b0a5b2fd5e93e4a9c19e6",
+  "bundleHash": "060fa5b52b945059d43362bc6c4a0f7c7b0c0fdd530f63bfb107bbacc41d6832",
+  "dirty": true,
+  "files": [
+    {
+      "file": "apps/sentinel-lab/.gitignore",
+      "bytes": 115,
+      "sha256": "02915aece00d4193a23735fe0a7638cdd7cb3c6fb1c112f886424a9865da61d9"
+    },
+    {
+      "file": "apps/sentinel-lab/.vercelignore",
+      "bytes": 41,
+      "sha256": "f6f1b6a146bca3e4cd5f3659483b4b43b4b205dbcefd4b57261b0db2d1ffe185"
+    },
+    {
+      "file": "apps/sentinel-lab/AGENTS.md",
+      "bytes": 687,
+      "sha256": "ec1b6e023814ae1a510b02ea62229e5eb035d75e39e3335d5ea7f5ce5654d567"
+    },
+    {
+      "file": "apps/sentinel-lab/CLAUDE.md",
+      "bytes": 12,
+      "sha256": "d631d88045f74623d568adfb4783b72e3d1b732330d749bc6c72e6648d4581d3"
+    },
+    {
+      "file": "apps/sentinel-lab/README.md",
+      "bytes": 6633,
+      "sha256": "bef18bd17fa07bc15fca9d7d633e141cde8b60a382ea272e94a10652eafbbccf"
+    },
+    {
+      "file": "apps/sentinel-lab/WORKS_PLATFORM.md",
+      "bytes": 10487,
+      "sha256": "454924f4cce21846a2559037af388254111b3b0505e8384ac518636cc10e937c"
+    },
+    {
+      "file": "apps/sentinel-lab/app/api/datasets/route.ts",
+      "bytes": 2329,
+      "sha256": "1b607a4df53f13d43ce08f96cbcbc446ad4d5cdc9aa4f9f3c33277c45929940e"
+    },
+    {
+      "file": "apps/sentinel-lab/app/api/experiments/[jobId]/route.ts",
+      "bytes": 729,
+      "sha256": "3451405876c3382ecde8eb9fd5647f739a3d85d5370dcb22b335afeecf089653"
+    },
+    {
+      "file": "apps/sentinel-lab/app/api/experiments/preflight/route.ts",
+      "bytes": 1516,
+      "sha256": "d24a571adf90149819f1a34c588f7f1399e44558f37c0df88d2d620ca3dc68d3"
+    },
+    {
+      "file": "apps/sentinel-lab/app/api/experiments/route.ts",
+      "bytes": 4506,
+      "sha256": "a275cf88d0154e927565992aeab475f2ef3db3146ddfe22ecbfcb1a8bf37d319"
+    },
+    {
+      "file": "apps/sentinel-lab/app/api/smoke/route.ts",
+      "bytes": 593,
+      "sha256": "a7c4b77675d2ad876e9b00cdcc2c46c1bdc15fb7c13f5733139f8890972e6f70"
+    },
+    {
+      "file": "apps/sentinel-lab/app/api/works/v1/[...path]/route.ts",
+      "bytes": 297,
+      "sha256": "e045a7cda04bbe8c4c5008a1e21b521ea5781891012b70726f9251f6b278f44a"
+    },
+    {
+      "file": "apps/sentinel-lab/app/error.tsx",
+      "bytes": 440,
+      "sha256": "1ab00ee9c6f0ba7c5afec3f87c4636eae99057e3c53ce676c8543d2437b696d9"
+    },
+    {
+      "file": "apps/sentinel-lab/app/globals.css",
+      "bytes": 46922,
+      "sha256": "b0c0f5e07f95538d8978c6fee30d739290b15791ae0f12a79648667c53df006e"
+    },
+    {
+      "file": "apps/sentinel-lab/app/layout.tsx",
+      "bytes": 564,
+      "sha256": "37bcd30a6bcc1313e48d8d6234dae84f1a1681d26c25645c3f039d951a20a707"
+    },
+    {
+      "file": "apps/sentinel-lab/app/page.tsx",
+      "bytes": 432,
+      "sha256": "5f20ccef46bbc6e53c4f57780549019cd49e3a57a176efa0fb7f4067d26d30e3"
+    },
+    {
+      "file": "apps/sentinel-lab/components/engine-observatory.tsx",
+      "bytes": 9602,
+      "sha256": "db61ec8f869007dcc72405b7428c8864e0ebcacb56cb694261ae3219ecd7be27"
+    },
+    {
+      "file": "apps/sentinel-lab/components/experiment-run-monitor.tsx",
+      "bytes": 9197,
+      "sha256": "747fdc8d81ce74e4e19b6c0a8d0329ddb8d5f5709dc19856b02b28b96f97d641"
+    },
+    {
+      "file": "apps/sentinel-lab/components/icons.tsx",
+      "bytes": 2044,
+      "sha256": "c44d91112fbd1acedf29c326fb14dd6e866f2270f605302ddc8bfbf01e2224c1"
+    },
+    {
+      "file": "apps/sentinel-lab/components/real-data-lab.tsx",
+      "bytes": 19959,
+      "sha256": "6ea4443087b38893d18d8f6b698bd42956f72547fdd3f0141e6d4ebacf93fc84"
+    },
+    {
+      "file": "apps/sentinel-lab/components/sentinel-lab.tsx",
+      "bytes": 20559,
+      "sha256": "391edbce8ed695d9635312c324f32934bdb11726ce125893f653eba6f909b020"
+    },
+    {
+      "file": "apps/sentinel-lab/components/trace-chart.tsx",
+      "bytes": 5309,
+      "sha256": "49f6160181cd23d4f1331552f4c572f81aa82463bd031cf897a097f720133b37"
+    },
+    {
+      "file": "apps/sentinel-lab/lib/experiments/admission.ts",
+      "bytes": 6353,
+      "sha256": "acd0e2fbf6a5d217bf5c09ddbbab5890a889c7538a48299c5abaf5d49f464f5c"
+    },
+    {
+      "file": "apps/sentinel-lab/lib/experiments/artifact-verifier.ts",
+      "bytes": 2475,
+      "sha256": "fb7a35be6a10c652710f8ed9717656683f5e3b0ce392df7c1876dd725a6dc1c9"
+    },
+    {
+      "file": "apps/sentinel-lab/lib/experiments/client.ts",
+      "bytes": 1517,
+      "sha256": "f9edd4ea3b4e3b7046b2994462dee56e53b98c7f784bd1a06c3fde4f66af9ac7"
+    },
+    {
+      "file": "apps/sentinel-lab/lib/experiments/dispatch-diagnostics.js",
+      "bytes": 7689,
+      "sha256": "d2b1fcc98a8d39d7c679cc09d3baf499235861780cf3cb4bfd5bfecbae117dca"
+    },
+    {
+      "file": "apps/sentinel-lab/lib/experiments/lock.js",
+      "bytes": 504,
+      "sha256": "25ae77863084c5a5378179405b8e507ac47b6128d94eb513c85169d201e487ee"
+    },
+    {
+      "file": "apps/sentinel-lab/lib/experiments/operator-auth.ts",
+      "bytes": 2107,
+      "sha256": "9db820eb4ee9920e83fc7e4972c0e49abc3140a93e21c6996a46f656142e6e7a"
+    },
+    {
+      "file": "apps/sentinel-lab/lib/experiments/profiles.js",
+      "bytes": 1776,
+      "sha256": "c58b9d2f7f983efc440eef36da5971fbda49563c6ee640419103a6e7fe2254af"
+    },
+    {
+      "file": "apps/sentinel-lab/lib/experiments/read-error.ts",
+      "bytes": 1302,
+      "sha256": "415a68f1ed3d1c16df0281e0bc8062079aa64ea724a41a914302aec2faeb63f8"
+    },
+    {
+      "file": "apps/sentinel-lab/lib/experiments/reference-run.json",
+      "bytes": 159493,
+      "sha256": "74763416977cf1b89467bf12fcaa685e2f37be5613e235a1a08ee30ecc4c279e"
+    },
+    {
+      "file": "apps/sentinel-lab/lib/experiments/request-body.ts",
+      "bytes": 1050,
+      "sha256": "f5de899f12c2ddf220727766016dbaef14d74dde989caaab0e139926c0e536d7"
+    },
+    {
+      "file": "apps/sentinel-lab/lib/experiments/runner.ts",
+      "bytes": 8210,
+      "sha256": "ec5ba1fe7f8cee2240745b1361484d47ecfd7347e4b8c6c73e0a401cfd209d3b"
+    },
+    {
+      "file": "apps/sentinel-lab/lib/experiments/sandbox-source.ts",
+      "bytes": 3314,
+      "sha256": "7bda0bc0829bae9f3dd736ed7ec1fbc13dd4302032300bc7dbd4f7ec19778a38"
+    },
+    {
+      "file": "apps/sentinel-lab/lib/experiments/sandbox-state.js",
+      "bytes": 1499,
+      "sha256": "24cf5eb2fb2c40369c7c995a9ba19eac25f7c0bed9ff33d61c08f0d9af01442f"
+    },
+    {
+      "file": "apps/sentinel-lab/lib/experiments/sandbox.ts",
+      "bytes": 21988,
+      "sha256": "d022c11fc749b97e84852dc4301c7895b390b1b858cd8d8ac90521a406863ef8"
+    },
+    {
+      "file": "apps/sentinel-lab/lib/experiments/shared.js",
+      "bytes": 12351,
+      "sha256": "e306aa62d208ca4b3d42a464cc5a49ee6acf5d80475b5ed77339177b0bae7037"
+    },
+    {
+      "file": "apps/sentinel-lab/lib/experiments/types.ts",
+      "bytes": 3901,
+      "sha256": "36cdd22a755dff08443152fe576ff647be09c77e6212ef475cafd49a469c2094"
+    },
+    {
+      "file": "apps/sentinel-lab/lib/sentinel/simulate.js",
+      "bytes": 14090,
+      "sha256": "ad51121e69bfec9212565a634e45b77b59e9ac3e6afdcf28202027cd17d88d30"
+    },
+    {
+      "file": "apps/sentinel-lab/lib/sentinel/types.ts",
+      "bytes": 2042,
+      "sha256": "e38a88f6163a8d70c37c0c449a9fa7b2fd07cbd30605afd422eeb851ae6afdb8"
+    },
+    {
+      "file": "apps/sentinel-lab/lib/works/database.ts",
+      "bytes": 2895,
+      "sha256": "94a23967da10e9cf150e1e4b0f74cc0eec5420b0acedfe3d1ccece17a314a3f3"
+    },
+    {
+      "file": "apps/sentinel-lab/lib/works/dispatch.ts",
+      "bytes": 7475,
+      "sha256": "fccf2c146581dee25b2497da45bd00295251a5326696fe69d88965f539b7291e"
+    },
+    {
+      "file": "apps/sentinel-lab/lib/works/templateArchives.ts",
+      "bytes": 891,
+      "sha256": "299245688a898877b72596fe49bff654d1ccd6e732e843fce4dc0c3c4a86f3dc"
+    },
+    {
+      "file": "apps/sentinel-lab/lib/works/vendor/README.md",
+      "bytes": 375,
+      "sha256": "52d89f0c78660d5312fd995dbf664c517155492114f36c43fc50f10987068c78"
+    },
+    {
+      "file": "apps/sentinel-lab/lib/works/vendor/functions/_shared/platform/community.ts",
+      "bytes": 4250,
+      "sha256": "2e628aa1790c95bad5c70127b08eb1c5a1963bc3e2464cc9e1f032af596dd2c5"
+    },
+    {
+      "file": "apps/sentinel-lab/lib/works/vendor/functions/_shared/platform/core.ts",
+      "bytes": 10640,
+      "sha256": "72a924a524687ee32aa4b937ed0442333ca92ae8e47bbabd6247fdecf7d5cba9"
+    },
+    {
+      "file": "apps/sentinel-lab/lib/works/vendor/functions/_shared/platform/kitArchive.ts",
+      "bytes": 8133,
+      "sha256": "e9e45c0cb0a71f1a0da63e148f249963303db6443eefe466d7117232bc28b266"
+    },
+    {
+      "file": "apps/sentinel-lab/lib/works/vendor/functions/_shared/platform/knowledge.ts",
+      "bytes": 4473,
+      "sha256": "b0bd32646b25e1de6622a33e5390be7e7b0b5f9db94ef0186307b611c125ecf9"
+    },
+    {
+      "file": "apps/sentinel-lab/lib/works/vendor/functions/_shared/platform/memberAuth.ts",
+      "bytes": 3960,
+      "sha256": "4e3c63564044b0140cdf16086e284ccbd371483fbba1d9239219f6efa977c244"
+    },
+    {
+      "file": "apps/sentinel-lab/lib/works/vendor/functions/_shared/platform/memberMail.ts",
+      "bytes": 1542,
+      "sha256": "edfa3fed8512d0e92d1122006ec7ca5b9d464c40d9a1ebb50c877d36c7a95840"
+    },
+    {
+      "file": "apps/sentinel-lab/lib/works/vendor/functions/_shared/platform/mentions.ts",
+      "bytes": 1822,
+      "sha256": "b1b2296b492ffd7a20111b984279423f3b346a2f7549a00b1e3510eeb908f664"
+    },
+    {
+      "file": "apps/sentinel-lab/lib/works/vendor/functions/_shared/platform/newsletter.ts",
+      "bytes": 9006,
+      "sha256": "fe7db163e329a9126032e2878e4e001b1791597ab014d6ffc7db9038adbc62d9"
+    },
+    {
+      "file": "apps/sentinel-lab/lib/works/vendor/functions/_shared/platform/playground.ts",
+      "bytes": 5419,
+      "sha256": "4673d266aad186d902977ef0965b2e48026c6cbee4a815e4c71531c903e455b1"
+    },
+    {
+      "file": "apps/sentinel-lab/lib/works/vendor/functions/_shared/platform/playgroundOrders.ts",
+      "bytes": 4628,
+      "sha256": "414647d3d342f4f9d731a4dd80f38cc3856bc1731f3095651493902d69a7f39d"
+    },
+    {
+      "file": "apps/sentinel-lab/lib/works/vendor/functions/_shared/platform/playgroundSchema.ts",
+      "bytes": 1515,
+      "sha256": "5ac48c62fc8983544198e76a29decfb0053e21e04c1b55b111f2a83c68af4b5e"
+    },
+    {
+      "file": "apps/sentinel-lab/lib/works/vendor/functions/_shared/platform/shop.ts",
+      "bytes": 1160,
+      "sha256": "83a9e1c10e38ebe4345486f765daa4966a389a59f597cf32ee6f07ad2266bc79"
+    },
+    {
+      "file": "apps/sentinel-lab/lib/works/vendor/functions/_shared/platform/studioAgents.ts",
+      "bytes": 15517,
+      "sha256": "0a0cdef9e5b7a2a7498bfb8822abd7c92a329cbe59a433cfdce9f0224bef4af6"
+    },
+    {
+      "file": "apps/sentinel-lab/lib/works/vendor/functions/_shared/platform/templateCatalog.ts",
+      "bytes": 1773,
+      "sha256": "a5997934e1eae86967030e65fb97da6f05802bf4dcc836dce6eebc44777c8720"
+    },
+    {
+      "file": "apps/sentinel-lab/lib/works/vendor/functions/_shared/platform/templateShop.ts",
+      "bytes": 21763,
+      "sha256": "f178f081f25b47b329191a8fdaa1e2d96590ce7d1fd877bc18cd0f415f12476a"
+    },
+    {
+      "file": "apps/sentinel-lab/lib/works/vendor/functions/_shared/snapshot/http.ts",
+      "bytes": 3237,
+      "sha256": "c954edebeef188607d8600a63f029d263f930a7302c735b05706b422df184d12"
+    },
+    {
+      "file": "apps/sentinel-lab/lib/works/vendor/functions/_shared/snapshot/stripe.ts",
+      "bytes": 6994,
+      "sha256": "2e393ddf148ab0c9db568a26e56db3529b8c8878823556b0609ef337b74e895c"
+    },
+    {
+      "file": "apps/sentinel-lab/lib/works/vendor/functions/_shared/snapshot/types.ts",
+      "bytes": 3300,
+      "sha256": "c5bb1225c6bcc86fde3e4e9192db6e177038d021939817e24c7036fa9c7af50d"
+    },
+    {
+      "file": "apps/sentinel-lab/lib/works/vendor/functions/api/assistant.ts",
+      "bytes": 6687,
+      "sha256": "72537d7fc869b442f29af1e69c94fc120fd1552f200d200d97f89261f19fbb82"
+    },
+    {
+      "file": "apps/sentinel-lab/lib/works/vendor/functions/api/community/agents.ts",
+      "bytes": 4232,
+      "sha256": "2b898c31bcd5f7a16c369d3cc38378873edc4f85ff3bbf087d9ebbc387616a48"
+    },
+    {
+      "file": "apps/sentinel-lab/lib/works/vendor/functions/api/community/maintenance.ts",
+      "bytes": 2486,
+      "sha256": "14e43bbb54fe3559dfd0fc97e00d385907d540002ddc48b6ea64fe2cbb82fc1f"
+    },
+    {
+      "file": "apps/sentinel-lab/lib/works/vendor/functions/api/community/moderate.ts",
+      "bytes": 4174,
+      "sha256": "66f3c1d57e7251e4fad2b3296b4e4734a3633ac7b032610952e203eda15db907"
+    },
+    {
+      "file": "apps/sentinel-lab/lib/works/vendor/functions/api/community/replies.ts",
+      "bytes": 2753,
+      "sha256": "4eee005ed6ac576d71056be774a8e459934017361d1135d16638295a7c6db06e"
+    },
+    {
+      "file": "apps/sentinel-lab/lib/works/vendor/functions/api/community/threads.ts",
+      "bytes": 4244,
+      "sha256": "4fa3a60a38f2419383601ae85e02ace6b73ca18503cfe7f68435b0bebb40ab38"
+    },
+    {
+      "file": "apps/sentinel-lab/lib/works/vendor/functions/api/members/account.ts",
+      "bytes": 6245,
+      "sha256": "9a4a154ac411b6223e2be09dae69001feacf9c247a4fe0700b6f724bde2c786a"
+    },
+    {
+      "file": "apps/sentinel-lab/lib/works/vendor/functions/api/members/auth.ts",
+      "bytes": 6230,
+      "sha256": "41ab0f0915623a7223435c386adafc891d8e4e9be3f653edf5fae4db5e339ae8"
+    },
+    {
+      "file": "apps/sentinel-lab/lib/works/vendor/functions/api/members/directory.ts",
+      "bytes": 750,
+      "sha256": "5f92189aae896460a7a9873bab00c1e8a8c11440af9d793fe0cbd9bd160166eb"
+    },
+    {
+      "file": "apps/sentinel-lab/lib/works/vendor/functions/api/members/unsubscribe.ts",
+      "bytes": 1398,
+      "sha256": "d6d7a3ffd4e1420af8b003a9630a2914f0096018bf3d1ff70860600296a734ab"
+    },
+    {
+      "file": "apps/sentinel-lab/lib/works/vendor/functions/api/playground/checkout.ts",
+      "bytes": 549,
+      "sha256": "84698a9d6458bd32aa1e6e8593f86043a7a32715f499998e60f88b944da98259"
+    },
+    {
+      "file": "apps/sentinel-lab/lib/works/vendor/functions/api/playground/projects.ts",
+      "bytes": 1461,
+      "sha256": "0f70f213a80a7419fe4bef869003e062a06f4938aa11cc6e2925b69986b26156"
+    },
+    {
+      "file": "apps/sentinel-lab/lib/works/vendor/functions/api/playground/purchases.ts",
+      "bytes": 1753,
+      "sha256": "3dda4a6a0eab1d3187261e05652fbc697f5bdab5f3ddc34f57b10bcf88d39f05"
+    },
+    {
+      "file": "apps/sentinel-lab/lib/works/vendor/functions/api/playground/webhook.ts",
+      "bytes": 3654,
+      "sha256": "cf285d6cc590789c6a1c0cbf82ae5b6bc69e27478750c7efa142785226e7ab8a"
+    },
+    {
+      "file": "apps/sentinel-lab/lib/works/vendor/functions/api/public-config.ts",
+      "bytes": 1102,
+      "sha256": "58e2b162e17733cfdd2288f1cb77e375e66917f6815397594e276ca943c4d98a"
+    },
+    {
+      "file": "apps/sentinel-lab/lib/works/vendor/functions/api/shop/catalog.ts",
+      "bytes": 80,
+      "sha256": "19050aa14f53055ab4ddc56b698bb4f6edced4b87eac71b521f1cd60b9af8a71"
+    },
+    {
+      "file": "apps/sentinel-lab/lib/works/vendor/functions/api/shop/checkout.ts",
+      "bytes": 3899,
+      "sha256": "ab336783453544f44e37a281258fada440a01403c057e3a37d24352c9b0dbb1a"
+    },
+    {
+      "file": "apps/sentinel-lab/lib/works/vendor/functions/api/shop/download.ts",
+      "bytes": 1235,
+      "sha256": "51f989cc8662cd0f8ca57229941f567075adc6b8a3174a6eca672608504d5ea9"
+    },
+    {
+      "file": "apps/sentinel-lab/lib/works/vendor/functions/api/shop/recover.ts",
+      "bytes": 81,
+      "sha256": "181ff3dddea4757e2884d321c30b72af2f194675d57f118dac2b14cd0ab36d7a"
+    },
+    {
+      "file": "apps/sentinel-lab/lib/works/vendor/functions/api/shop/redeem.ts",
+      "bytes": 80,
+      "sha256": "bfdf7961edc7bdf164fc764186e510c8693783c5cb6e9f77b2237540a28dca6c"
+    },
+    {
+      "file": "apps/sentinel-lab/lib/works/vendor/functions/api/shop/status.ts",
+      "bytes": 625,
+      "sha256": "9a68f8aad869e7d84695cde2efc9a57b50d6a307fa1dbc8c8f295ac3ffd7e93e"
+    },
+    {
+      "file": "apps/sentinel-lab/lib/works/vendor/functions/api/shop/webhook.ts",
+      "bytes": 4842,
+      "sha256": "cb5bc33a77246cc12c1dcc76c9d35b7439ce7b301569411110ca47bdebda7ade"
+    },
+    {
+      "file": "apps/sentinel-lab/lib/works/vendor/functions/community/feed.ts",
+      "bytes": 1847,
+      "sha256": "be5d527e2f014cb5a0287e81bd6a9a226a56bc6a114317f07dab143184c8272e"
+    },
+    {
+      "file": "apps/sentinel-lab/lib/works/vendor/functions/community/sitemap.xml.ts",
+      "bytes": 1142,
+      "sha256": "363becb37bc637001b9da464cc77316c04fb1e907b8c6724f4c7fd11fb7e617b"
+    },
+    {
+      "file": "apps/sentinel-lab/lib/works/vendor/functions/community/thread/[id].ts",
+      "bytes": 7226,
+      "sha256": "ff29ac6b3a6fc645c75ef877d9a867b224f9b7b1440f5d81eff7bf4037dc60e1"
+    },
+    {
+      "file": "apps/sentinel-lab/lib/works/vendor/migrations/0001_eidos_platform.sql",
+      "bytes": 2438,
+      "sha256": "291326de7f52818ec88026f66fb5bbb558f5f8ed44a2fbcd4a824d22fac2d7c9"
+    },
+    {
+      "file": "apps/sentinel-lab/lib/works/vendor/migrations/0002_members.sql",
+      "bytes": 2540,
+      "sha256": "bf1bbfeb59646c8234addd3220c46850afcc92918203ee69704f0a20381edae5"
+    },
+    {
+      "file": "apps/sentinel-lab/lib/works/vendor/migrations/0003_playground.sql",
+      "bytes": 1440,
+      "sha256": "de72422190fe3dba1e255905d7f30b9699d0b120d6a873a4555177cdb095d999"
+    },
+    {
+      "file": "apps/sentinel-lab/lib/works/vendor/migrations/0004_paid_templates.sql",
+      "bytes": 1770,
+      "sha256": "787985c873868805712b6a72f459a5554349688d515d10ccc910edd134f9f5a7"
+    },
+    {
+      "file": "apps/sentinel-lab/lib/works/vendor/src/playground/approved-glass-preset.json",
+      "bytes": 1115,
+      "sha256": "af30287e45e2a465c0e8d9a3f88f1b265892344bd2c1e2d6abe6e8a4e3206143"
+    },
+    {
+      "file": "apps/sentinel-lab/lib/works/vendor/src/playground/export.ts",
+      "bytes": 10745,
+      "sha256": "d49e4235b72a2ffc83c16958c28ee61f0cf8423b841b9ad59b722e1214339003"
+    },
+    {
+      "file": "apps/sentinel-lab/lib/works/vendor/src/playground/glassBundle.ts",
+      "bytes": 18630,
+      "sha256": "77709502d61c5f722cbd86df73c924e7e1ecd8fbbf2a9135916d4a3f37fa861e"
+    },
+    {
+      "file": "apps/sentinel-lab/lib/works/vendor/src/playground/model.ts",
+      "bytes": 10481,
+      "sha256": "6c5e5638c571cde6a4fdae9130a4542cab748898882d92688b9a00da685c67d5"
+    },
+    {
+      "file": "apps/sentinel-lab/lib/works/vendor/src/playground/pageStyles.ts",
+      "bytes": 6303,
+      "sha256": "d1388f66aae4598a15b8037911ee100092e973d2cdcd4e88fd6e8f7b01061cd2"
+    },
+    {
+      "file": "apps/sentinel-lab/lib/works/vendor/src/playground/renderer.ts",
+      "bytes": 6483,
+      "sha256": "3c770d7b11f495a73008050d57b837c7c6f0590895313cce213b6b8874ee2c8a"
+    },
+    {
+      "file": "apps/sentinel-lab/lib/works/vendor/src/playground/runtime.ts",
+      "bytes": 11739,
+      "sha256": "a229fe59795f8bd406ecf51d921a4b102e3e073b2a208332f4091d1ce695449a"
+    },
+    {
+      "file": "apps/sentinel-lab/next-env.d.ts",
+      "bytes": 295,
+      "sha256": "1b59d4c6b83807db275d43f3cf2cc8e9323f465fab764eea091cc5becd5bad37"
+    },
+    {
+      "file": "apps/sentinel-lab/next.config.ts",
+      "bytes": 488,
+      "sha256": "58fc318f3566c42b6a118bbe1e5c707a25069dc435345027e0ea48e9dca44624"
+    },
+    {
+      "file": "apps/sentinel-lab/package-lock.json",
+      "bytes": 67198,
+      "sha256": "eed42e2e6987304697f010f95e7412c9f2fe9b350cd8c964fa7e1a7bd9ab20d0"
+    },
+    {
+      "file": "apps/sentinel-lab/package.json",
+      "bytes": 849,
+      "sha256": "5d990f886b71505bc58bb9d4571afd9f8c57446c7bf930d10b85b92b85362a68"
+    },
+    {
+      "file": "apps/sentinel-lab/private/templates/matter/1.0.0/developer.zip",
+      "bytes": 27533,
+      "sha256": "f5083b4ffad9d99d9ffaf04f1d887f9feada6a4f4732f38aca19432b7ac515d6"
+    },
+    {
+      "file": "apps/sentinel-lab/private/templates/matter/1.0.0/wordpress.zip",
+      "bytes": 30739,
+      "sha256": "bd0bec696ce1980ed1e08d624fd5ed1179c8d9e32faa07cc5eadf8a4e90c2bc8"
+    },
+    {
+      "file": "apps/sentinel-lab/private/templates/matter/1.0.1/wordpress.zip",
+      "bytes": 30748,
+      "sha256": "3fa8fe6902085b3bf2f06a9bdc51e14b861d9e1764a26d0c95d7f856beb415fe"
+    },
+    {
+      "file": "apps/sentinel-lab/private/templates/nightjar/1.0.0/developer.zip",
+      "bytes": 26765,
+      "sha256": "d27d240bdab367b9b334ac574f9e68e75132701c93bc19422a200f77af53a1f8"
+    },
+    {
+      "file": "apps/sentinel-lab/private/templates/nightjar/1.0.0/wordpress.zip",
+      "bytes": 29728,
+      "sha256": "30a53df74f2a939015fae48ef6ac12d7ee2328a57e2074fd57ee0348150bf36d"
+    },
+    {
+      "file": "apps/sentinel-lab/private/templates/nightjar/1.0.1/developer.zip",
+      "bytes": 26978,
+      "sha256": "f8a07e7fe22e3ecf1eeb3dbbd3783a81c940fa39191f56230c64a7ad4faa0a39"
+    },
+    {
+      "file": "apps/sentinel-lab/private/templates/nightjar/1.0.1/wordpress.zip",
+      "bytes": 29742,
+      "sha256": "558a42d695338fc94df90968fcf643d155e84767a33ff150c41c9534a7e49739"
+    },
+    {
+      "file": "apps/sentinel-lab/private/templates/nightjar/1.0.2/developer.zip",
+      "bytes": 27165,
+      "sha256": "1026635e095129dfff9bc2c0a21baa1cf313a64041e9b66bd1fecf065d89487f"
+    },
+    {
+      "file": "apps/sentinel-lab/private/templates/nightjar/1.0.3/developer.zip",
+      "bytes": 27236,
+      "sha256": "99152f05e391a81b4290dc9e08cb0a8c45689f1a17d98f726646c85eec15eb4d"
+    },
+    {
+      "file": "apps/sentinel-lab/private/templates/switchboard/1.0.0/developer.zip",
+      "bytes": 26816,
+      "sha256": "e56450de9adbac6320d9e2315601e1804d281fcf1b87dc0f95cef5ef8ae45e2a"
+    },
+    {
+      "file": "apps/sentinel-lab/private/templates/switchboard/1.0.0/wordpress.zip",
+      "bytes": 29391,
+      "sha256": "f816acf68aee776ea32b5fa1fd1acece21bbbc9435c8087134fa7adde8099846"
+    },
+    {
+      "file": "apps/sentinel-lab/private/templates/switchboard/1.0.1/wordpress.zip",
+      "bytes": 29399,
+      "sha256": "da30119d1d3e65f44c75dc24cb677b8dcb5a5517c6f68aea0bbcc78590a43abb"
+    },
+    {
+      "file": "apps/sentinel-lab/private/templates/tideglass/1.0.0/developer.zip",
+      "bytes": 26836,
+      "sha256": "34130b106526fa76a380efcdb2e2a1126bf3e05524c036246a227ce5d85f16a7"
+    },
+    {
+      "file": "apps/sentinel-lab/private/templates/tideglass/1.0.0/wordpress.zip",
+      "bytes": 30016,
+      "sha256": "09ec833380b3e1238888ff54442e34de4b882649bbddc7cca4a41625dbe153a5"
+    },
+    {
+      "file": "apps/sentinel-lab/private/templates/tideglass/1.0.1/wordpress.zip",
+      "bytes": 30027,
+      "sha256": "4881c5d5ad34258454c8f542819f5ef0b469b80e72abd61a785f69d77b6ae785"
+    },
+    {
+      "file": "apps/sentinel-lab/scripts/browser-qa.mjs",
+      "bytes": 30410,
+      "sha256": "3134d6f6c7ba13c349ef58099f1b594f648ff33ab1173498ed502389a59ccecd"
+    },
+    {
+      "file": "apps/sentinel-lab/scripts/configure-templates-preview.mjs",
+      "bytes": 6961,
+      "sha256": "fea34f80c9181fb134e43300a351771c45e7f253b279906f38aa03e58a878cb5"
+    },
+    {
+      "file": "apps/sentinel-lab/scripts/deploy-templates-preview.mjs",
+      "bytes": 5695,
+      "sha256": "1bd7812ac1187b22cac93efbefca8325898f543c0d385ae2ae84073d558c67bb"
+    },
+    {
+      "file": "apps/sentinel-lab/scripts/import-template-packages.mjs",
+      "bytes": 3428,
+      "sha256": "2e1378202a604f086ff30c70cb375ec331e1fa975504bda79416401357d7e6bc"
+    },
+    {
+      "file": "apps/sentinel-lab/scripts/inspect-template-provider.mjs",
+      "bytes": 1456,
+      "sha256": "599aada2d88df70fce231f08894d0521f51093a5a753f13ac430d05fa9b33c2c"
+    },
+    {
+      "file": "apps/sentinel-lab/scripts/migrate-works.mjs",
+      "bytes": 873,
+      "sha256": "5c7f6e42e16a643bec7429c709ebe15fc526b7b00df9319b56b4b7f18ef201f9"
+    },
+    {
+      "file": "apps/sentinel-lab/scripts/prepare-templates-preview.mjs",
+      "bytes": 1874,
+      "sha256": "68bb4fa1cfb669d88f70898caf0862059d5885d65c6fa37d73e7057d05a295a6"
+    },
+    {
+      "file": "apps/sentinel-lab/scripts/vercel-preview-client.mjs",
+      "bytes": 875,
+      "sha256": "df05ac0b13cff30d23331a438f882927deb41d339a1eede45d588387fde37c3f"
+    },
+    {
+      "file": "apps/sentinel-lab/scripts/verify-admission.ts",
+      "bytes": 3308,
+      "sha256": "e2e9510e98c2967a37edc48b83cc978118cb938b5caa99fd415fb1f4fec151d5"
+    },
+    {
+      "file": "apps/sentinel-lab/scripts/verify-community-direct-hosted.ts",
+      "bytes": 6404,
+      "sha256": "1ec5ff4b630561b59fbff253f0430368b45e7d8440dbfa1cd2e25539fa5bbba1"
+    },
+    {
+      "file": "apps/sentinel-lab/scripts/verify-community-hosted.ts",
+      "bytes": 6493,
+      "sha256": "a853278de50caebd7bfb8f65626afd4185108f543bceaa3c9882ba3b2ebd03fe"
+    },
+    {
+      "file": "apps/sentinel-lab/scripts/verify-live-evidence.mjs",
+      "bytes": 5248,
+      "sha256": "5170f3b36b235e744c63e9871859654af23b4ce7cfe6231a8c1d82128a2bd965"
+    },
+    {
+      "file": "apps/sentinel-lab/scripts/verify-production-access.mjs",
+      "bytes": 2497,
+      "sha256": "e9f6bd6a619b107b99e62996baa60d70c3bbd656f8d3dfa6eb112f28a13cdb0e"
+    },
+    {
+      "file": "apps/sentinel-lab/scripts/verify-works-ai.ts",
+      "bytes": 4351,
+      "sha256": "0a71978994261f147817d75d19a122613b496d76e0690178ecc16a7f385a781b"
+    },
+    {
+      "file": "apps/sentinel-lab/scripts/verify-works-proactive.ts",
+      "bytes": 3569,
+      "sha256": "9905c9b68902b37b7800dc1e1b059a7f3be3f171bd7371f9fab41943c80a1a69"
+    },
+    {
+      "file": "apps/sentinel-lab/scripts/verify-works-storage.ts",
+      "bytes": 3901,
+      "sha256": "ae5ceaa060dedd29c2fe0fceb8b885f3f5310f35f89f46158e981f0e37b3af0e"
+    },
+    {
+      "file": "apps/sentinel-lab/tsconfig.json",
+      "bytes": 762,
+      "sha256": "88ad291abc4e5b3401b0d68d35222438cf02452378ae83733f246d6ba48b0767"
+    }
+  ],
+  "uploaded": false,
+  "sourceRevision": "823b61bb9e7ee74aa89b0a5b2fd5e93e4a9c19e6-bundle-060fa5b52b945059"
+}

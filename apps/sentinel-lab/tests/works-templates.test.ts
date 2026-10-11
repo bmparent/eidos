@@ -89,24 +89,24 @@ test('template TEST gate rejects LIVE, production host, missing archives and unv
   } finally {f.close();}
 });
 
-test('catalog updates map independent edition versions while old Nightjar and WordPress purchases retain their original archive', async () => {
+test('catalog updates map independent edition versions while old Switchboard, Nightjar and WordPress purchases retain their original archive', async () => {
   const f=await fixture();
   try {
     for(const product of templateProducts) {
-      const expected=product.editionId==='wordpress'?'1.0.1':product.id==='nightjar-developer-v1'?'1.0.3':'1.0.0';
+      const expected=product.editionId==='wordpress'||product.id==='switchboard-developer-v1'?'1.0.1':product.id==='nightjar-developer-v1'?'1.0.3':'1.0.0';
       assert.equal(product.version,expected);
       assert.match(product.archiveKey,new RegExp('/'+product.version.replaceAll('.','\\.')+'/'+product.editionId+'\\.zip$'));
       assert.ok(product.downloadName.endsWith('-'+product.version+'.zip'));
     }
     f.env.EIDOS_TEMPLATE_VERIFIED_EDITIONS+=',nightjar-developer-v1';
-    for(const [slug,edition,letter,oldVersion] of [['switchboard','wordpress','e','1.0.0'],['nightjar','developer','f','1.0.0'],['nightjar','developer','8','1.0.1'],['nightjar','developer','7','1.0.2']]) {
+    for(const [slug,edition,letter,oldVersion] of [['switchboard','wordpress','e','1.0.0'],['switchboard','developer','6','1.0.0'],['nightjar','developer','f','1.0.0'],['nightjar','developer','8','1.0.1'],['nightjar','developer','7','1.0.2']]) {
       const receipt=letter.repeat(64),current=await f.begin(receipt,edition,'',slug);
-      assert.equal(current.version,edition==='wordpress'?'1.0.1':'1.0.3');
+      assert.equal(current.version,slug==='nightjar'?'1.0.3':'1.0.1');
       // Simulate a retained order created by the previous catalog revision.
       const oldBytes=new Uint8Array([80,75,3,4,9,8,7]),oldHash=createHash('sha256').update(oldBytes).digest('hex');
       const original={...current,version:oldVersion,archive_key:`templates/${slug}/${oldVersion}/${edition}.zip`,archive_sha256:oldHash,download_name:`eidos-${slug}-${edition}-${oldVersion}.zip`};
       await f.database.prepare('UPDATE eidos_template_orders SET version=?,archive_key=?,archive_sha256=?,download_name=? WHERE order_id=?').bind(original.version,original.archive_key,original.archive_sha256,original.download_name,current.id).run();
-      assert.equal((await f.event(original,'evt_retained_original_version_'+slug+'_'+oldVersion.replaceAll('.','_'))).status,200);
+      assert.equal((await f.event(original,'evt_retained_original_version_'+slug+'_'+edition+'_'+oldVersion.replaceAll('.','_'))).status,200);
       const paid=await (await f.call(status,'/api/shop/status',{receipt})).json();
       assert.equal(paid.version,oldVersion);assert.equal(paid.downloadName,original.download_name);
       const keys:string[]=[];const originalArchive=f.env.EIDOS_TEMPLATE_ARCHIVES!;
@@ -153,7 +153,7 @@ test('checkout attempt retry preserves one ledger order and same server-owned TE
     assert.equal(f.sessions.length,1);
     assert.equal(f.sessions[0].get('line_items[0][price_data][unit_amount]'),'9900');
     assert.equal((await f.database.prepare('SELECT COUNT(*) n FROM eidos_orders').first<{n:number}>())?.n,1);
-    assert.equal(row.version,'1.0.0');
+    assert.equal(row.version,'1.0.1');
     assert.equal((await f.call(download,'/api/shop/download',{receipt})).status,403);
     const pending=await (await f.call(status,'/api/shop/status',{receipt})).json();
     assert.equal(pending.status,'pending'); assert.equal(pending.downloadToken,null);
@@ -174,7 +174,7 @@ test('signed paid fulfillment, delayed state, duplicate webhook, snapshot integr
     assert.equal((await f.event(row,'evt_paid')).status,200); assert.equal(f.mails.length,1);
     assert.match(f.mails[0].text,/transactional delivery/);
     const ready=await (await f.call(status,'/api/shop/status',{receipt})).json();
-    assert.equal(ready.status,'paid'); assert.equal(ready.mailStatus,'sent'); assert.equal(ready.version,'1.0.0');
+    assert.equal(ready.status,'paid'); assert.equal(ready.mailStatus,'sent'); assert.equal(ready.version,'1.0.1');
     assert.equal((await f.call(download,'/api/shop/download',{receipt})).status,401);
     const zip=await f.call(download,'/api/shop/download',{receipt,downloadToken:ready.downloadToken});
     assert.equal(zip.status,200); assert.equal(zip.headers.get('cache-control'),'private, no-store');

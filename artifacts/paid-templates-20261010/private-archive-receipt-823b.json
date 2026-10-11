@@ -1,14 +1,14 @@
 {
   "schemaVersion": 2,
-  "timestampUtc": "2026-10-11T02:16:04.640Z",
+  "timestampUtc": "2026-10-11T02:02:42.725Z",
   "sourceCatalogVersion": "2026-10-10.1",
   "privateArchives": [
     {
       "productId": "switchboard-developer-v1",
-      "archiveKey": "templates/switchboard/1.0.1/developer.zip",
-      "sha256": "5ceb3e123ebd531d8b3d1bd113f3f135296c0a8dd7d320959afb0285cef70678",
-      "bytes": 27055,
-      "alreadyPresent": false
+      "archiveKey": "templates/switchboard/1.0.0/developer.zip",
+      "sha256": "e56450de9adbac6320d9e2315601e1804d281fcf1b87dc0f95cef5ef8ae45e2a",
+      "bytes": 26816,
+      "alreadyPresent": true
     },
     {
       "productId": "switchboard-wordpress-v1",
@@ -50,7 +50,7 @@
       "archiveKey": "templates/nightjar/1.0.3/developer.zip",
       "sha256": "99152f05e391a81b4290dc9e08cb0a8c45689f1a17d98f726646c85eec15eb4d",
       "bytes": 27236,
-      "alreadyPresent": true
+      "alreadyPresent": false
     },
     {
       "productId": "nightjar-wordpress-v1",
@@ -65,11 +65,6 @@
       "archiveKey": "templates/tideglass/1.0.0/wordpress.zip",
       "sha256": "09ec833380b3e1238888ff54442e34de4b882649bbddc7cca4a41625dbe153a5",
       "bytes": 30016
-    },
-    {
-      "archiveKey": "templates/switchboard/1.0.0/developer.zip",
-      "sha256": "e56450de9adbac6320d9e2315601e1804d281fcf1b87dc0f95cef5ef8ae45e2a",
-      "bytes": 26816
     },
     {
       "archiveKey": "templates/switchboard/1.0.0/wordpress.zip",
