@@ -33,14 +33,25 @@ export const onRequestPost = guarded(async ({ request, env }) => {
   const event = parseStripeEvent(parsed);
   if (!event) throw new HttpError(400, 'Invalid event.');
   const database = db(env);
+  const object = event.data.object;
+  const templateRevocation =
+    ['charge.refunded', 'charge.dispute.created'].includes(event.type) &&
+    typeof object.payment_intent === 'string' &&
+    await database.prepare(
+      'SELECT o.id FROM eidos_orders o JOIN eidos_template_orders t ON t.order_id=o.id WHERE o.payment_intent=?',
+    ).bind(object.payment_intent).first();
+  if (templateRevocation && (!record(parsed) || parsed.livemode !== false))
+    throw new HttpError(400, 'Template payments require TEST events.');
   if (
+    !templateRevocation &&
     await database
       .prepare('SELECT id FROM eidos_stripe_events WHERE id=?')
       .bind(event.id)
       .first()
   )
     return json({ received: true });
-  const object = event.data.object;
+  // Older paired hooks share the event ledger but do not know template side
+  // tables. Reconcile a known TEST payment's revocation even if one got here first.
   if (await templatePayment(env, event, record(parsed) ? parsed.livemode : undefined)) return json({ received: true });
   if (
     [

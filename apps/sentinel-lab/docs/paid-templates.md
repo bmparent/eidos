@@ -12,7 +12,7 @@ Store current and retained immutable buyer ZIPs in this server-only directory:
 apps/sentinel-lab/private/templates/<switchboard|tideglass|matter|nightjar>/<version>/<developer|wordpress>.zip
 ```
 
-Current WordPress packages and Nightjar developer source use version 1.0.1. Switchboard, Tideglass and Matter developer source remain at 1.0.0. The archive importer validates each package's explicit version and refuses to overwrite different bytes at an existing path. The preview bundle includes all eight current packages and every retained version, including the five replaced 1.0.0 archives. Existing order snapshots continue to retrieve their original version; a catalog update does not rewrite purchases.
+Current WordPress packages use version 1.0.1; Nightjar developer source uses 1.0.3. Switchboard, Tideglass and Matter developer source remain at 1.0.0. The archive importer validates each package's explicit version and refuses to overwrite different bytes at an existing path. The preview bundle includes all eight current packages and every retained version, including the five replaced 1.0.0 archives and Nightjar developer 1.0.1/1.0.2. Existing order snapshots continue to retrieve their original version; a catalog update does not rewrite purchases.
 
 Never put paid ZIPs in Next `public/` or the website's public demo tree. Next file tracing includes these files in the private Works API function bundle. The `templateArchives` adapter only accepts allowlisted product/version/edition paths. It reads bytes and computes SHA-256. A purchase snapshots the path, hash, price, edition and version in `eidos_template_orders`. If a later deployment changes the bytes at that path, old orders fail closed; restore the original archive, then publish the update at a new version path. Retain every sold version in future bundles.
 
@@ -61,6 +61,8 @@ The isolated candidate may explicitly set `EIDOS_TEMPLATE_TEST_CHALLENGE=true` w
 The existing Resend transactional service sends setup/recovery mail independently of newsletter consent. Provider message IDs and mail status are saved; no credentials or response bodies are exposed to buyers. Receipt mail has stable content and provider idempotency across webhook retries. If mail fails, paid state remains durable and the webhook returns a retryable error. The browser can still recover using its unexpired receipt. Recovery responses avoid disclosing whether another address owns a purchase. A signed-in buyer cannot use another account's purchase receipt or recovery link; guest capability links remain available as the existing shop supports guest purchases.
 
 Refunds/disputes revoke future retrieval while retaining the order snapshot and financial/event trail. A late paid event cannot restore a revoked payment. Previously downloaded files cannot be reclaimed. Existing approved refund policy must be used; this code does not decide whether a refund is owed or create refunds automatically.
+
+Legacy paired hooks share the Stripe event ledger. A signed TEST refund/dispute whose payment intent matches a stored template purchase therefore reconciles the template side table even when an older hook already recorded that event. This repeat operation is idempotent, is bound to the stored payment intent, and cannot grant access. LIVE-labelled events for matching template purchases are rejected. Unknown payment intents cannot select a template order through metadata.
 
 ## Validation and limits
 

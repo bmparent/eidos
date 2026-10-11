@@ -14,7 +14,7 @@ for (const item of report.packages || []) {
   if (!source.startsWith(site+path.sep)) throw Error('Package source escapes website root');
   const bytes = await readFile(source), digest = createHash('sha256').update(bytes).digest('hex');
   if (digest !== item.sha256 || bytes.length !== item.bytes) throw Error('Package differs from frozen source receipt: '+item.editionId);
-  const expectedVersion=match[2]==='wordpress'||match[1]==='nightjar'?'1.0.1':'1.0.0';
+  const expectedVersion=match[2]==='wordpress'?'1.0.1':match[1]==='nightjar'?'1.0.3':'1.0.0';
   if(item.version!==expectedVersion)throw Error('Package version differs from the server catalog: '+item.editionId);
   const key=`templates/${match[1]}/${item.version}/${match[2]}.zip`, target=path.resolve(targetRoot,key);
   if (!target.startsWith(targetRoot+path.sep)) throw Error('Invalid private archive target');

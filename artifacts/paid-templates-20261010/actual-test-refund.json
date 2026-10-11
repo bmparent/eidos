@@ -1,0 +1,34 @@
+{
+  "timestampUtc": "2026-10-11T01:52:12.492Z",
+  "scope": "actual full Stripe TEST refund and effective download revocation; old-hook side-table race separately recorded",
+  "backendSource": "e20b6207ad2f80e1497b83ece56e66c316dc5124",
+  "orderId": "8852085b-9a42-45a6-8a30-123b774d772f",
+  "productId": "switchboard-developer-v1",
+  "editionId": "developer",
+  "version": "1.0.0",
+  "refund": {
+    "http": 200,
+    "status": "succeeded",
+    "amount": 9900,
+    "currency": "usd",
+    "livemode": false,
+    "chargeRefunded": true,
+    "amountRefunded": 9900,
+    "eventId": "evt_3UPBqYKC8pRG5Tr912bS756V",
+    "eventType": "charge.refunded"
+  },
+  "ledgerStatus": "refunded",
+  "downloadTokenGranted": false,
+  "previouslyGrantedTokenStillUnexpired": true,
+  "previousTokenExpiresAt": "2026-10-11T01:56:47.000Z",
+  "oldTokenDownloadHttp": 403,
+  "oldTokenError": "A verified, completed purchase is required to download this package.",
+  "orderAndOriginalSnapshotRetained": true,
+  "originalArchiveSha256": "e56450de9adbac6320d9e2315601e1804d281fcf1b87dc0f95cef5ef8ae45e2a",
+  "observedSideTableFulfillment": "ready",
+  "sideTableRace": {
+    "status": "reproduced observation; fix pending",
+    "meaning": "Older retained TEST hook can record the global event before new template side-table reconciliation. Financial refunded state already blocks retrieval; current ready side-table value is inconsistent and will be reconciled idempotently in the next candidate."
+  },
+  "noLiveCharge": true
+}

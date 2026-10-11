@@ -1,0 +1,51 @@
+{
+  "timestampUtc": "2026-10-11T01:59:07.642Z",
+  "mode": "test",
+  "siteOrigin": "https://eidosworks-templates-test-20261010.pages.dev",
+  "sourceRevision": "e20b6207ad2f80e1497b83ece56e66c316dc5124-bundle-b10fa5afe2852d8e",
+  "orderId": "11aeac08-cd82-4909-b05e-4b400f9559ff",
+  "sessionIdSha256": "69811b65b22989c2778e7a29930ae7b21e32f600c05766a2eb7fb7915546e6a6",
+  "amountCents": 9900,
+  "currency": "usd",
+  "checkoutStatus": "open",
+  "paymentStatus": "unpaid",
+  "visibleBrowserDecline": "Your credit card was declined. Try paying with a debit card instead.",
+  "attemptsSubmitted": 1,
+  "retries": 0,
+  "providerFailedEventObserved": true,
+  "providerErrorCode": "card_declined",
+  "providerDeclineCode": "generic_decline",
+  "paymentIntentStatus": "requires_payment_method",
+  "ledgerStatus": "pending",
+  "paymentState": "pending",
+  "downloadGranted": false,
+  "configuredPaymentMethods": [
+    "card",
+    "klarna",
+    "link",
+    "affirm",
+    "cashapp",
+    "amazon_pay"
+  ],
+  "officialTestReference": "https://docs.stripe.com/testing#declined-payments",
+  "ordinaryDeclineIsRetryable": true,
+  "expiryVerification": {
+    "providerStatus": "expired",
+    "providerPaymentStatus": "unpaid",
+    "explicitlyExpiredAfterObservation": true,
+    "checkedAt": "2026-10-11T01:59:15.714Z",
+    "providerEventId": "evt_1UPC2YKC8pRG5Tr9VbUwUi8G",
+    "genuineSignedEventRecorded": true,
+    "publicStatusHttp": 200,
+    "ledgerStatus": "pending",
+    "paymentState": "expired",
+    "fulfillmentStatus": "awaiting_payment",
+    "downloadGranted": false,
+    "ordinaryDeclineDidNotCreateTerminalAsyncFailure": true
+  },
+  "limits": [
+    "No LIVE payment was made.",
+    "No delayed-method transaction was attempted; identity and external approval flows are outside this bounded card test.",
+    "Async success/failure handling has controlled fixture coverage, not a real delayed-method payment."
+  ]
+}

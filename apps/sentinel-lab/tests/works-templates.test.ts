@@ -93,22 +93,22 @@ test('catalog updates map independent edition versions while old Nightjar and Wo
   const f=await fixture();
   try {
     for(const product of templateProducts) {
-      const updated=product.editionId==='wordpress'||product.id==='nightjar-developer-v1';
-      assert.equal(product.version,updated?'1.0.1':'1.0.0');
+      const expected=product.editionId==='wordpress'?'1.0.1':product.id==='nightjar-developer-v1'?'1.0.3':'1.0.0';
+      assert.equal(product.version,expected);
       assert.match(product.archiveKey,new RegExp('/'+product.version.replaceAll('.','\\.')+'/'+product.editionId+'\\.zip$'));
       assert.ok(product.downloadName.endsWith('-'+product.version+'.zip'));
     }
     f.env.EIDOS_TEMPLATE_VERIFIED_EDITIONS+=',nightjar-developer-v1';
-    for(const [slug,edition,letter] of [['switchboard','wordpress','e'],['nightjar','developer','f']]) {
+    for(const [slug,edition,letter,oldVersion] of [['switchboard','wordpress','e','1.0.0'],['nightjar','developer','f','1.0.0'],['nightjar','developer','8','1.0.1'],['nightjar','developer','7','1.0.2']]) {
       const receipt=letter.repeat(64),current=await f.begin(receipt,edition,'',slug);
-      assert.equal(current.version,'1.0.1');
+      assert.equal(current.version,edition==='wordpress'?'1.0.1':'1.0.3');
       // Simulate a retained order created by the previous catalog revision.
       const oldBytes=new Uint8Array([80,75,3,4,9,8,7]),oldHash=createHash('sha256').update(oldBytes).digest('hex');
-      const original={...current,version:'1.0.0',archive_key:`templates/${slug}/1.0.0/${edition}.zip`,archive_sha256:oldHash,download_name:`eidos-${slug}-${edition}-1.0.0.zip`};
+      const original={...current,version:oldVersion,archive_key:`templates/${slug}/${oldVersion}/${edition}.zip`,archive_sha256:oldHash,download_name:`eidos-${slug}-${edition}-${oldVersion}.zip`};
       await f.database.prepare('UPDATE eidos_template_orders SET version=?,archive_key=?,archive_sha256=?,download_name=? WHERE order_id=?').bind(original.version,original.archive_key,original.archive_sha256,original.download_name,current.id).run();
-      assert.equal((await f.event(original,'evt_retained_original_version_'+slug)).status,200);
+      assert.equal((await f.event(original,'evt_retained_original_version_'+slug+'_'+oldVersion.replaceAll('.','_'))).status,200);
       const paid=await (await f.call(status,'/api/shop/status',{receipt})).json();
-      assert.equal(paid.version,'1.0.0');assert.equal(paid.downloadName,original.download_name);
+      assert.equal(paid.version,oldVersion);assert.equal(paid.downloadName,original.download_name);
       const keys:string[]=[];const originalArchive=f.env.EIDOS_TEMPLATE_ARCHIVES!;
       f.env.EIDOS_TEMPLATE_ARCHIVES={async get(key){keys.push(key);return key===original.archive_key?{bytes:oldBytes,sha256:oldHash}:originalArchive.get(key);}};
       const zip=await f.call(download,'/api/shop/download',{receipt,downloadToken:paid.downloadToken});
@@ -258,6 +258,45 @@ test('two signed-in buyers remain isolated and refund/dispute revokes future acc
     const revoked=await(await f.call(status,'/api/shop/status',{receipt})).json();assert.equal(revoked.status,'refunded');assert.equal(revoked.fulfillmentStatus,'revoked');
     assert.equal((await f.database.prepare('SELECT COUNT(*) n FROM eidos_template_orders').first<{n:number}>())?.n,1);
   } finally {f.close();}
+});
+
+test('signed TEST revocations reconcile template side tables after a legacy hook consumes the shared event ID', async()=>{
+  const f=await fixture();
+  try {
+    for(const [type,letter,otherLetter] of [['charge.refunded','3','4'],['charge.dispute.created','5','0']]) {
+      const receipt=letter.repeat(64),otherReceipt=otherLetter.repeat(64);
+      const row=await f.begin(receipt),other=await f.begin(otherReceipt);
+      assert.equal((await f.event(row,'evt_race_paid_'+letter)).status,200);
+      assert.equal((await f.event(other,'evt_race_other_'+letter)).status,200);
+      const ready=await(await f.call(status,'/api/shop/status',{receipt})).json();
+      assert.ok(ready.downloadToken);assert.ok(ready.downloadExpires*1000>Date.now());
+      const beforeRevocation=await f.database.prepare('SELECT o.*,t.* FROM eidos_orders o JOIN eidos_template_orders t ON t.order_id=o.id WHERE o.id=?').bind(row.id).first<Record<string,unknown>>();
+      const intent='pi_test_'+row.id,eventId='evt_race_revoke_'+letter;
+      const object={id:type==='charge.refunded'?'ch_fixture_'+letter:'dp_fixture_'+letter,payment_intent:intent};
+      assert.equal((await f.event(row,'evt_race_live_'+letter,object,type,true)).status,400);
+      // Even metadata pointing to this order cannot redirect an unrelated intent.
+      assert.equal((await f.event(row,'evt_race_unknown_'+letter,{...object,payment_intent:'pi_test_unknown_'+letter},type)).status,200);
+      assert.equal((await(await f.call(status,'/api/shop/status',{receipt})).json()).status,'paid');
+      // Reproduce the older handler's committed financial revocation + global
+      // dedupe entry, without its knowing about the new fulfillment side table.
+      await f.database.batch([
+        f.database.prepare('INSERT INTO eidos_revoked_payments(payment_intent,received_at) VALUES(?,?)').bind(intent,'2026-10-10'),
+        f.database.prepare("UPDATE eidos_orders SET status='refunded' WHERE payment_intent=?").bind(intent),
+        f.database.prepare('INSERT INTO eidos_stripe_events(id,received_at) VALUES(?,?)').bind(eventId,'2026-10-10'),
+      ]);
+      assert.equal((await f.database.prepare('SELECT fulfillment_status FROM eidos_template_orders WHERE order_id=?').bind(row.id).first<{fulfillment_status:string}>())?.fulfillment_status,'ready');
+      for(let replay=0;replay<2;replay++) assert.equal((await f.event(row,eventId,object,type)).status,200);
+      const revoked=await(await f.call(status,'/api/shop/status',{receipt})).json();
+      assert.equal(revoked.status,'refunded');assert.equal(revoked.fulfillmentStatus,'revoked');assert.equal(revoked.downloadToken,null);
+      assert.equal((await f.call(download,'/api/shop/download',{receipt,downloadToken:ready.downloadToken})).status,403);
+      const retained=await f.database.prepare('SELECT o.*,t.* FROM eidos_orders o JOIN eidos_template_orders t ON t.order_id=o.id WHERE o.id=?').bind(row.id).first<Record<string,unknown>>();
+      for(const key of ['id','paid_at','payment_intent','product_id','edition_id','version','archive_key','archive_sha256','download_name']) assert.equal(retained?.[key],beforeRevocation?.[key]);
+      assert.equal((await f.event(row,'evt_race_late_paid_'+letter)).status,200);
+      assert.equal((await(await f.call(status,'/api/shop/status',{receipt})).json()).status,'refunded');
+      assert.equal((await(await f.call(status,'/api/shop/status',{receipt:otherReceipt})).json()).status,'paid');
+      assert.equal((await f.database.prepare('SELECT COUNT(*) n FROM eidos_stripe_events WHERE id=?').bind(eventId).first<{n:number}>())?.n,1);
+    }
+  }finally{f.close();}
 });
 
 test('existing Cinematic Starter paid receipt still downloads the exact original archive', async()=>{

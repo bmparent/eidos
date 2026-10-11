@@ -4,7 +4,7 @@ export const templateFamilies = ['switchboard', 'tideglass', 'matter', 'nightjar
 export const templateEditions = ['developer', 'wordpress'] as const;
 export type TemplateEdition = typeof templateEditions[number];
 export function templateVersion(slug: typeof templateFamilies[number], editionId: TemplateEdition) {
-  return editionId === 'wordpress' || slug === 'nightjar' ? '1.0.1' : '1.0.0';
+  return editionId === 'wordpress' ? '1.0.1' : slug === 'nightjar' ? '1.0.3' : '1.0.0';
 }
 export interface TemplateProduct {
   id: string; productId: string; editionId: TemplateEdition; name: string;
