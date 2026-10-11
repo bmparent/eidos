@@ -1,0 +1,47 @@
+{
+  "timestampUtc": "2026-10-11T02:01:32.871Z",
+  "scope": "local controlled backend tests",
+  "tests": {
+    "passed": 65,
+    "failed": 0,
+    "skipped": 0,
+    "groups": [
+      {
+        "name": "JavaScript",
+        "passed": 16
+      },
+      {
+        "name": "TypeScript",
+        "passed": 49
+      }
+    ]
+  },
+  "typecheck": "passed",
+  "commands": [
+    "npm --prefix apps/sentinel-lab test",
+    "npm --prefix apps/sentinel-lab run lint -- --incremental false"
+  ],
+  "refundReconciliation": "Signed matching TEST refund/dispute reconciles template side state after legacy handler consumes shared event ID. Controlled regression covers unrelated intent, LIVE rejection, duplicate delivery, unexpired token denial, immutable snapshot and late paid events.",
+  "archiveRetention": "Current catalog Nightjar developer1.0.3, WP1.0.1, other developers1.0.0; controlled old purchases retain WP1.0.0 and Nightjar1.0.0/1.0.1/1.0.2 bytes.",
+  "actualProviderEvidenceSource": "e20b6207ad2f80e1497b83ece56e66c316dc5124-bundle-b10fa5afe2852d8e",
+  "actualGates": {
+    "paidCheckout": "passed",
+    "signedPaidDelivery": "passed",
+    "durablePaidOrder": "passed",
+    "privateZipApiAndUiHash": "passed",
+    "refund": "passed",
+    "stillUnexpiredTokenDeniedAfterRefund": "passed",
+    "ordinaryCardDecline": "passed",
+    "genuineExpiredEvent": "passed",
+    "receivedReceiptEmail": "blocked",
+    "receivedRecoveryEmail": "blocked",
+    "twoBuyerHostedAuthentication": "blocked",
+    "realDelayedPayment": "not attempted"
+  },
+  "limits": [
+    "Local reconciliation regression is not a provider event replay.",
+    "Actual e20b refund denied access but exposed fulfillment side-table readiness race; new source fixes it with regression.",
+    "No usable Resend secret; actual paid UI correctly reported email delivery failure.",
+    "No LIVE transaction or production promotion."
+  ]
+}

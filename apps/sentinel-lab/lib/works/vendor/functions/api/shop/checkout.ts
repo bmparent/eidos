@@ -13,10 +13,13 @@ import {
   siteOrigin,
 } from '../../_shared/platform/core';
 import { KIT_PRICE, shopReady } from '../../_shared/platform/shop';
+import { templateCheckout } from '../../_shared/platform/templateShop';
 export const onRequestPost = guarded(async ({ request, env }) => {
   origin(request);
   shopReady(env);
   const input = await body(request, 4000);
+  if (input.productId !== undefined || input.editionId !== undefined)
+    return templateCheckout(request, env, input);
   if (input.acceptTerms !== true)
     throw new HttpError(
       400,

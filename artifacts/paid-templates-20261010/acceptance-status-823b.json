@@ -1,0 +1,137 @@
+{
+  "timestampUtc": "2026-10-11T02:07:14.324Z",
+  "scope": "TEST candidate; no production promotion or LIVE transaction",
+  "source": {
+    "sha": "823b61bb9e7ee74aa89b0a5b2fd5e93e4a9c19e6",
+    "bundleHash": "060fa5b52b945059d43362bc6c4a0f7c7b0c0fdd530f63bfb107bbacc41d6832",
+    "sourceRevision": "823b61bb9e7ee74aa89b0a5b2fd5e93e4a9c19e6-bundle-060fa5b52b945059",
+    "url": "https://eidos-sentinel-adncox6z0-1brentbm-1876s-projects.vercel.app",
+    "deploymentId": "dpl_2ELKmjc3L2yig4jxzhK2ZQknXCBy",
+    "state": "READY",
+    "files": 134,
+    "previewOnly": true
+  },
+  "review": {
+    "url": "https://github.com/bmparent/eidos/pull/71",
+    "state": "OPEN",
+    "draft": true,
+    "checks": "4 passed at exact823b61b head"
+  },
+  "tests": {
+    "command": "npm --prefix apps/sentinel-lab test",
+    "passed": 65,
+    "failed": 0,
+    "skipped": 0,
+    "log": "final-tests.log",
+    "focused": {
+      "passed": 11,
+      "failed": 0,
+      "log": "final-race-regression-tests.log"
+    }
+  },
+  "typecheck": {
+    "command": "npm --prefix apps/sentinel-lab run lint -- --incremental false",
+    "status": "passed",
+    "log": "final-typecheck.log"
+  },
+  "build": {
+    "status": "passed",
+    "method": "exact source protected Vercel remote build",
+    "log": "remote-build-final.json",
+    "events": 68,
+    "localFinalBuild": "not rerun: C full and shared dependency junction; exact remote build used"
+  },
+  "archives": {
+    "private": true,
+    "current": 8,
+    "retained": 7,
+    "total": 15,
+    "priorThirteenArchiveHashesPreserved": true,
+    "previousNightjar102HashPreserved": true,
+    "receipt": "private-archive-receipt-final.json",
+    "currentVersions": {
+      "switchboardDeveloper": "1.0.0",
+      "tideglassDeveloper": "1.0.0",
+      "matterDeveloper": "1.0.0",
+      "nightjarDeveloper": "1.0.3",
+      "allWordPress": "1.0.1"
+    },
+    "eligibleDeveloperEditions": [
+      "switchboard-developer-v1",
+      "tideglass-developer-v1",
+      "matter-developer-v1",
+      "nightjar-developer-v1"
+    ],
+    "wordpress": "unavailable by explicit allowlist",
+    "builderPilots": "unavailable"
+  },
+  "providers": {
+    "stripe": "existing Eidos Works TEST account only",
+    "database": "explicit existing named validation database; additive migration; six legacy orders retained",
+    "mail": "blocked: usable Resend credential unavailable; no received-message claim",
+    "turnstile": "official public TEST keys; actual siteverify; not live bot protection",
+    "githubPairPin": "candidate URL and backend SHA secrets updated; token and protection bypass unchanged",
+    "oldWebhookEndpoints": "all three retained unchanged"
+  },
+  "hosted": {
+    "protectedBackend": "READY; anonymous302/authenticatedcatalog200",
+    "catalog": "exact sourceRevision and current4developer editions verified; WP/pilotsclosed",
+    "negativeControls": "unknown404/clientpriceoverride400/unavailableWP503 passed on final protected backend",
+    "publicPairedSite": "earlier e20b pairing accepted; root will reconfigure/upload final frontend with new backend pin",
+    "actualPurchase": {
+      "status": "passed",
+      "transactionSource": "e20b6207ad2f80e1497b83ece56e66c316dc5124",
+      "sandbox": true,
+      "amountCents": 9900,
+      "currency": "usd",
+      "stripePayment": "succeeded",
+      "providerPaidEvent": "genuine event and durable ledger observed",
+      "privateApiAndUiDownload": "26816bytes; SHA256e56450de9adbac6320d9e2315601e1804d281fcf1b87dc0f95cef5ef8ae45e2a",
+      "receiptUrlCapabilitiesRemovedInBrowser": true,
+      "receiptEmail": "failed; UI accurately reported failure"
+    },
+    "actualRefund": {
+      "status": "passed for full TEST refund and effective retrieval revocation",
+      "transactionSource": "e20b6207ad2f80e1497b83ece56e66c316dc5124",
+      "amountCents": 9900,
+      "stillUnexpiredOriginalTokenDenied403": true,
+      "financialAndArchiveSnapshotRetained": true,
+      "finalSourceObservation": {
+        "status": "refunded",
+        "fulfillmentStatus": "ready",
+        "downloadHttp": 403,
+        "downloadTokenGranted": false
+      }
+    },
+    "actualOrdinaryDecline": {
+      "status": "passed",
+      "providerCode": "card_declined",
+      "declineCode": "generic_decline",
+      "providerIntentStatus": "requires_payment_method",
+      "paymentUnpaid": true,
+      "entitlement": false,
+      "attempts": 1,
+      "retries": 0,
+      "genuineSubsequentExpiryRecorded": true,
+      "terminalAsyncFailureRows": 0
+    },
+    "receivedReceiptEmail": "blocked",
+    "receivedRecoveryEmail": "blocked",
+    "twoBuyerAuthentication": "controlled local fixtures passed; actual hosted two-buyer flow not exercised",
+    "delayedPayment": "controlled local fixtures passed; real delayed-method transaction not attempted"
+  },
+  "reconciliation": {
+    "status": "implemented and deployed; eleven focused tests pass",
+    "controlledProof": "old hook consumes shared event ID first; signed TEST refund/dispute reconciles side table, denies unexpired token, preserves snapshot and unrelated buyer, rejects matching LIVE event and late revival",
+    "actualOldRefundSideState": "ready",
+    "actualProviderReplay": "not performed: no available installed Stripe CLI or connected event-resend capability",
+    "genuineVsControlledEvidenceSeparated": true
+  },
+  "limits": [
+    "No usable Resend secret; received inbox delivery and email recovery remain blocked.",
+    "Actual old refund already denies access; secondary side-table reconciliation is controlled regression evidence, not actual provider re-delivery.",
+    "No LIVE payment, live prices, production migration or production deployment.",
+    "WP and builder editions remain unavailable regardless of package/demo evidence.",
+    "Local exact final build was replaced by an exact protected remote build; C remains full."
+  ]
+}

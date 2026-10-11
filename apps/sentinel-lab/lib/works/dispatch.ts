@@ -8,6 +8,7 @@ import * as memberDirectory from './vendor/functions/api/members/directory';
 import * as memberUnsubscribe from './vendor/functions/api/members/unsubscribe';
 import { timingSafeEqual } from 'node:crypto';
 import { platformDatabase } from './database';
+import { templateArchives } from './templateArchives';
 import { json, readText, type Context, type PlatformEnv } from './vendor/functions/_shared/platform/core';
 import * as assistant from './vendor/functions/api/assistant';
 import * as config from './vendor/functions/api/public-config';
@@ -20,6 +21,9 @@ import * as checkout from './vendor/functions/api/shop/checkout';
 import * as status from './vendor/functions/api/shop/status';
 import * as download from './vendor/functions/api/shop/download';
 import * as webhook from './vendor/functions/api/shop/webhook';
+import * as templateCatalog from './vendor/functions/api/shop/catalog';
+import * as templateRecover from './vendor/functions/api/shop/recover';
+import * as templateRedeem from './vendor/functions/api/shop/redeem';
 import * as feed from './vendor/functions/community/feed';
 import * as sitemap from './vendor/functions/community/sitemap.xml';
 import * as thread from './vendor/functions/community/thread/[id]';
@@ -37,6 +41,7 @@ const routes: Record<string, Module> = {
   '/api/community/maintenance': maintenance,
   '/api/shop/checkout': checkout, '/api/shop/status': status,
   '/api/shop/download': download, '/api/shop/webhook': webhook,
+  '/api/shop/catalog': templateCatalog, '/api/shop/recover': templateRecover, '/api/shop/redeem': templateRedeem,
   '/community/feed': feed, '/community/sitemap.xml': sitemap,
 };
 const names = [
@@ -47,11 +52,12 @@ const names = [
   'EIDOS_ACCOUNTS_ENABLED', 'EIDOS_NEWSLETTER_ENABLED', 'EIDOS_MAIL_DAILY_LIMIT', 'EIDOS_MAIL_FROM', 'RESEND_API_KEY',
   'EIDOS_PUBLICATION_FEED_URL',
   'STRIPE_SECRET_KEY', 'EIDOS_KIT_WEBHOOK_SECRET', 'EIDOS_SHOP_ENABLED',
+  'EIDOS_TEMPLATE_TEST_ENABLED', 'EIDOS_TEMPLATE_TEST_CHALLENGE', 'EIDOS_TEMPLATE_VERIFIED_EDITIONS', 'EIDOS_TEMPLATE_SOURCE_REVISION',
   'EIDOS_PLAYGROUND_STRIPE_KEY', 'EIDOS_PLAYGROUND_WEBHOOK_SECRET', 'EIDOS_PLAYGROUND_TEST_PRICE_CENTS',
 ] as const;
 export function platformEnvironment(source: Record<string, string | undefined> = process.env): PlatformEnv {
   const selected = Object.fromEntries(names.map(name => [name, source[name]]));
-  return { ...selected, EIDOS_RUNTIME: 'sentinel', EIDOS_DB: platformDatabase(source) };
+  return { ...selected, EIDOS_RUNTIME: 'sentinel', EIDOS_DB: platformDatabase(source), EIDOS_TEMPLATE_ARCHIVES: templateArchives };
 }
 function authenticated(request: Request, expected?: string) {
   const actual = request.headers.get('x-eidos-platform-token') || '';

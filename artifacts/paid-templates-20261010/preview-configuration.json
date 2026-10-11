@@ -1,0 +1,23 @@
+{
+  "timestampUtc": "2026-10-11T00:42:40.890Z",
+  "merchantId": "acct_1Rj03gKC8pRG5Tr9",
+  "stripeMode": "test",
+  "project": "prj_5aL0COF1DONfPKI4fv25NitAdkOE",
+  "team": "team_TEsnMvKU6SdbYjVhws6Ttp8H",
+  "siteOrigin": "https://eidosworks-templates-test-20261010.pages.dev",
+  "databaseHost": "eidos-works-validation-vercel-icfg-j5glcbpipda5txwa0a43dmjx.aws-us-east-1.turso.io",
+  "webhookId": "we_1UPAlBKC8pRG5Tr9zQ7h8O5A",
+  "existingWebhooksChanged": false,
+  "productionChanged": false,
+  "automationBypass": "new additive secret; protected preview retained",
+  "turnstile": "Official public always-pass TEST widget and secret; no remote local-test shortcut",
+  "githubSecrets": [
+    "EIDOS_TEMPLATES_PLATFORM_TOKEN",
+    "EIDOS_TEMPLATES_PREVIEW_BYPASS"
+  ],
+  "mailConfigured": false,
+  "blocked": [
+    "RESEND_API_KEY sensitive provider value cannot be read back"
+  ],
+  "privateConfiguration": ".vercel/templates-preview.json"
+}

@@ -1,0 +1,18 @@
+✔ template TEST gate rejects LIVE, production host, missing archives and unverified CMS; server prices cannot be overridden (1768.6304ms)
+✔ catalog updates map independent edition versions while old Nightjar and WordPress purchases retain their original archive (1550.1741ms)
+✔ official public TEST challenge still calls siteverify and is confined to exact candidate commerce actions (88.3178ms)
+✔ checkout attempt retry preserves one ledger order and same server-owned TEST price (166.1101ms)
+✔ signed paid fulfillment, delayed state, duplicate webhook, snapshot integrity and expiring download links (230.266ms)
+✔ failed delayed payment and expired checkout are terminal without entitlement or mail (240.8245ms)
+✔ receipt email retries keep provider idempotency body stable and paid access survives mail failure (219.6472ms)
+✔ recovery is enumeration safe, single use and receipt expiry is recoverable; cross-order token fails (276.1807ms)
+✔ two signed-in buyers remain isolated and refund/dispute revokes future access without deleting receipts (231.4048ms)
+✔ existing Cinematic Starter paid receipt still downloads the exact original archive (33.2511ms)
+ℹ tests 10
+ℹ suites 0
+ℹ pass 10
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 9251.9586

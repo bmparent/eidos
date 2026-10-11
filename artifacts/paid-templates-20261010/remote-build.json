@@ -1,0 +1,345 @@
+{
+  "deploymentId": "dpl_7V42tCLLY3HAwEndSo7VuASKM7GR",
+  "events": [
+    {
+      "type": "stdout",
+      "created": 1791679533826,
+      "text": "Running build in Washington, D.C., USA (East) – iad1"
+    },
+    {
+      "type": "stdout",
+      "created": 1791679533827,
+      "text": "Build machine configuration: 2 cores, 8 GB"
+    },
+    {
+      "type": "stdout",
+      "created": 1791679533879,
+      "text": "Retrieving list of deployment files..."
+    },
+    {
+      "type": "stdout",
+      "created": 1791679533904,
+      "text": "Skipping build cache, deployment was triggered without cache."
+    },
+    {
+      "type": "stdout",
+      "created": 1791679534259,
+      "text": "Downloading 127 deployment files..."
+    },
+    {
+      "type": "stdout",
+      "created": 1791679536894,
+      "text": "Running \"vercel build\""
+    },
+    {
+      "type": "stderr",
+      "created": 1791679536919,
+      "text": "Vercel CLI 62.7.0"
+    },
+    {
+      "type": "stderr",
+      "created": 1791679537666,
+      "text": "Warning: Detected \"engines\": { \"node\": \">=24\" } in your `package.json` that will automatically upgrade when a new major Node.js Version is released. Learn More: https://vercel.link/node-version"
+    },
+    {
+      "type": "stdout",
+      "created": 1791679537680,
+      "text": "Installing dependencies..."
+    },
+    {
+      "type": "stdout",
+      "created": 1791679544194,
+      "text": ""
+    },
+    {
+      "type": "stdout",
+      "created": 1791679544195,
+      "text": "added 68 packages in 6s"
+    },
+    {
+      "type": "stdout",
+      "created": 1791679544195,
+      "text": ""
+    },
+    {
+      "type": "stdout",
+      "created": 1791679544195,
+      "text": "10 packages are looking for funding"
+    },
+    {
+      "type": "stdout",
+      "created": 1791679544195,
+      "text": "  run `npm fund` for details"
+    },
+    {
+      "type": "stderr",
+      "created": 1791679544195,
+      "text": "npm warn install-scripts 1 package has install scripts not yet covered by allowScripts:"
+    },
+    {
+      "type": "stderr",
+      "created": 1791679544195,
+      "text": "npm warn install-scripts   esbuild@0.28.2 (postinstall: node install.js)"
+    },
+    {
+      "type": "stderr",
+      "created": 1791679544195,
+      "text": "npm warn install-scripts"
+    },
+    {
+      "type": "stderr",
+      "created": 1791679544195,
+      "text": "npm warn install-scripts Run `npm install-scripts ls` to review, or `npm install-scripts approve <pkg>` to allow."
+    },
+    {
+      "type": "stdout",
+      "created": 1791679544244,
+      "text": "Detected Next.js version: 16.3.4"
+    },
+    {
+      "type": "stdout",
+      "created": 1791679544252,
+      "text": "Running \"npm run build\""
+    },
+    {
+      "type": "stdout",
+      "created": 1791679544365,
+      "text": ""
+    },
+    {
+      "type": "stdout",
+      "created": 1791679544366,
+      "text": "> eidos-sentinel-lab@0.2.0 build"
+    },
+    {
+      "type": "stdout",
+      "created": 1791679544366,
+      "text": "> next build"
+    },
+    {
+      "type": "stdout",
+      "created": 1791679544366,
+      "text": ""
+    },
+    {
+      "type": "stdout",
+      "created": 1791679544725,
+      "text": "▲ Next.js 16.3.4 (Turbopack)"
+    },
+    {
+      "type": "stdout",
+      "created": 1791679545740,
+      "text": "  Applying modifyConfig from Vercel"
+    },
+    {
+      "type": "stdout",
+      "created": 1791679545742,
+      "text": "✓ Running next.config.ts took 1018ms"
+    },
+    {
+      "type": "stdout",
+      "created": 1791679545761,
+      "text": "Attention: Next.js now collects completely anonymous telemetry regarding usage."
+    },
+    {
+      "type": "stdout",
+      "created": 1791679545761,
+      "text": "This information is used to shape Next.js' roadmap and prioritize features."
+    },
+    {
+      "type": "stdout",
+      "created": 1791679545761,
+      "text": "You can learn more, including how to opt-out if you'd not like to participate in this anonymous program, by visiting the following URL:"
+    },
+    {
+      "type": "stdout",
+      "created": 1791679545761,
+      "text": "https://nextjs.org/telemetry"
+    },
+    {
+      "type": "stdout",
+      "created": 1791679545761,
+      "text": ""
+    },
+    {
+      "type": "stdout",
+      "created": 1791679545779,
+      "text": ""
+    },
+    {
+      "type": "stdout",
+      "created": 1791679545803,
+      "text": "  Creating an optimized production build ..."
+    },
+    {
+      "type": "stdout",
+      "created": 1791679551653,
+      "text": "✓ Compiled successfully in 5.0s"
+    },
+    {
+      "type": "stdout",
+      "created": 1791679551656,
+      "text": "  Running TypeScript ..."
+    },
+    {
+      "type": "stdout",
+      "created": 1791679556379,
+      "text": "  Finished TypeScript in 4.7s ..."
+    },
+    {
+      "type": "stdout",
+      "created": 1791679556381,
+      "text": "  Collecting page data using 1 worker ..."
+    },
+    {
+      "type": "stdout",
+      "created": 1791679556881,
+      "text": "  Generating static pages using 1 worker (0/7) ..."
+    },
+    {
+      "type": "stdout",
+      "created": 1791679556899,
+      "text": "  Generating static pages using 1 worker (1/7) \r"
+    },
+    {
+      "type": "stdout",
+      "created": 1791679556900,
+      "text": "  Generating static pages using 1 worker (3/7) \r"
+    },
+    {
+      "type": "stdout",
+      "created": 1791679557074,
+      "text": "  Generating static pages using 1 worker (5/7) \r"
+    },
+    {
+      "type": "stdout",
+      "created": 1791679557075,
+      "text": "✓ Generating static pages using 1 worker (7/7) in 194ms"
+    },
+    {
+      "type": "stdout",
+      "created": 1791679557081,
+      "text": "  Finalizing page optimization ..."
+    },
+    {
+      "type": "stdout",
+      "created": 1791679557127,
+      "text": "  Running onBuildComplete from Vercel"
+    },
+    {
+      "type": "stderr",
+      "created": 1791679557158,
+      "text": "Warning: Detected \"engines\": { \"node\": \">=24\" } in your `package.json` that will automatically upgrade when a new major Node.js Version is released. Learn More: https://vercel.link/node-version"
+    },
+    {
+      "type": "stdout",
+      "created": 1791679557219,
+      "text": ""
+    },
+    {
+      "type": "stdout",
+      "created": 1791679557220,
+      "text": "Route (app)"
+    },
+    {
+      "type": "stdout",
+      "created": 1791679557221,
+      "text": "┌ ○ /"
+    },
+    {
+      "type": "stdout",
+      "created": 1791679557221,
+      "text": "├ ○ /_not-found"
+    },
+    {
+      "type": "stdout",
+      "created": 1791679557221,
+      "text": "├ ƒ /api/datasets"
+    },
+    {
+      "type": "stdout",
+      "created": 1791679557221,
+      "text": "├ ƒ /api/experiments"
+    },
+    {
+      "type": "stdout",
+      "created": 1791679557221,
+      "text": "├ ƒ /api/experiments/[jobId]"
+    },
+    {
+      "type": "stdout",
+      "created": 1791679557221,
+      "text": "├ ƒ /api/experiments/preflight"
+    },
+    {
+      "type": "stdout",
+      "created": 1791679557221,
+      "text": "├ ƒ /api/smoke"
+    },
+    {
+      "type": "stdout",
+      "created": 1791679557222,
+      "text": "└ ƒ /api/works/v1/[...path]"
+    },
+    {
+      "type": "stdout",
+      "created": 1791679557222,
+      "text": ""
+    },
+    {
+      "type": "stdout",
+      "created": 1791679557222,
+      "text": ""
+    },
+    {
+      "type": "stdout",
+      "created": 1791679557222,
+      "text": "○  (Static)   prerendered as static content"
+    },
+    {
+      "type": "stdout",
+      "created": 1791679557223,
+      "text": "ƒ  (Dynamic)  server-rendered on demand"
+    },
+    {
+      "type": "stdout",
+      "created": 1791679557223,
+      "text": ""
+    },
+    {
+      "type": "stderr",
+      "created": 1791679557705,
+      "text": "Build Completed in /vercel/output [20s]"
+    },
+    {
+      "type": "stdout",
+      "created": 1791679557735,
+      "text": "Deploying outputs..."
+    },
+    {
+      "type": "stdout",
+      "created": 1791679566073,
+      "text": "Deployment completed"
+    },
+    {
+      "type": "stdout",
+      "created": 1791679566075,
+      "text": "Creating build cache..."
+    },
+    {
+      "type": "stdout",
+      "created": 1791679573539,
+      "text": "Created build cache: 7s"
+    },
+    {
+      "type": "stdout",
+      "created": 1791679573539,
+      "text": "Uploading build cache [169.96 MB]"
+    },
+    {
+      "type": "stdout",
+      "created": 1791679576237,
+      "text": "Build cache uploaded: 2.698s"
+    }
+  ]
+}
