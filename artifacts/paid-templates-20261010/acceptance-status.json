@@ -39,14 +39,21 @@
     "turnstile": "official public TEST keys and server validation; not live bot protection"
   },
   "hosted": {
-    "backend": "pending",
+    "backend": "passed: protected READY and authenticated catalog/negative controls",
     "frontend": "pending",
     "testCheckout": "pending",
     "providerWebhook": "pending",
     "receivedEmail": "blocked",
-    "purchaseRecoveryEmail": "blocked"
+    "purchaseRecoveryEmail": "blocked",
+    "testChallenge": "passed: actual official public TEST siteverify and generic recovery"
   },
   "productionChanged": false,
   "brainResearchChanged": false,
-  "cleanup": "automatic execution review rejected candidate .next removal; no deletion performed"
+  "cleanup": "automatic execution review rejected candidate .next removal; no deletion performed",
+  "remoteBuild": {
+    "status": "passed",
+    "deploymentId": "dpl_7V42tCLLY3HAwEndSo7VuASKM7GR",
+    "sourceCommit": "c074b4dedc0da2f13bce079c6c067aec66f6b29f",
+    "log": "remote-build.json"
+  }
 }

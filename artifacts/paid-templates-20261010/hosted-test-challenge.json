@@ -1,0 +1,9 @@
+{
+  "timestampUtc": "2026-10-11T00:49:56.971Z",
+  "scope": "real hosted official public TEST challenge, nonmatching recovery request",
+  "status": 200,
+  "response": {
+    "message": "If an eligible purchase matches that email, a recovery link will arrive shortly. Check spam or contact support if it does not arrive."
+  },
+  "emailDeliveryClaim": false
+}

@@ -35,16 +35,20 @@ if(process.argv.includes('--deploy')||options['request-out']){
   const payload={
     name:'eidos-sentinel-lab',project:'prj_5aL0COF1DONfPKI4fv25NitAdkOE',files,
     gitMetadata:{remoteUrl:'https://github.com/bmparent/eidos',commitRef:branch,commitSha:commit,dirty:receipt.dirty},
-    env:{...configuration.env,EIDOS_TEMPLATE_SOURCE_REVISION:sourceRevision},
     meta:{paidTemplatesSourceSha256:bundleHash,paidTemplatesGitSha:commit},
     projectSettings:{rootDirectory:app.slice(0,-1)},
   };
+  const branchEnvironment=Object.entries({...configuration.env,EIDOS_TEMPLATE_SOURCE_REVISION:sourceRevision}).map(([key,value])=>({
+    key,value,type:/SECRET|TOKEN|AUTH_TOKEN/.test(key)?'sensitive':'encrypted',target:['preview'],gitBranch:branch,
+  }));
   if(options['request-out']) {
     const output=path.resolve(options['request-out']);
     if(!output.startsWith('E:\\CodexArtifacts\\paid-templates-20261010\\'))throw Error('Private connector request must remain in the explicit external task output directory.');
-    await mkdir(path.dirname(output),{recursive:true});await writeFile(output,JSON.stringify(payload),{mode:0o600});
+    await mkdir(path.dirname(output),{recursive:true});await writeFile(output,JSON.stringify({deployment:payload,branchEnvironment}),{mode:0o600});
     receipt.sourceRevision=sourceRevision;
   } else {
+  const configured=vercelApi(options.cli,'/v10/projects/prj_5aL0COF1DONfPKI4fv25NitAdkOE/env?upsert=true&teamId=team_TEsnMvKU6SdbYjVhws6Ttp8H','POST',branchEnvironment);
+  if(configured.failed?.length)throw Error('Candidate branch environment setup failed; no deployment created.');
   const result=vercelApi(options.cli,'/v13/deployments?forceNew=1&teamId=team_TEsnMvKU6SdbYjVhws6Ttp8H','POST',payload);
   if(result.target==='production')throw Error('Unexpected production deployment returned. Inspect provider immediately.');
   Object.assign(receipt,{uploaded:true,sourceRevision,deployment:{id:result.id,url:'https://'+result.url,state:result.readyState||result.status,target:result.target||'preview'}});
