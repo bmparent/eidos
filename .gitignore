@@ -7,3 +7,5 @@ __pycache__/
 
 # Immutable numerical experiment inputs and raw trajectories are bundled outside git.
 artifacts/controlled_memory_*/
+# Buyer packages are generated from pinned site sources, then uploaded privately.
+/apps/sentinel-lab/private/templates/

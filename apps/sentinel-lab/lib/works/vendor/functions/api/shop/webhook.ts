@@ -11,6 +11,7 @@ import {
   parseStripeEvent,
 } from '../../_shared/snapshot/stripe';
 import { KIT_PRICE, type Order } from '../../_shared/platform/shop';
+import { templatePayment } from '../../_shared/platform/templateShop';
 export const onRequestPost = guarded(async ({ request, env }) => {
   if (!env.EIDOS_KIT_WEBHOOK_SECRET)
     throw new HttpError(503, 'Webhook unavailable.');
@@ -40,6 +41,7 @@ export const onRequestPost = guarded(async ({ request, env }) => {
   )
     return json({ received: true });
   const object = event.data.object;
+  if (await templatePayment(env, event, record(parsed) ? parsed.livemode : undefined)) return json({ received: true });
   if (
     [
       'checkout.session.completed',
@@ -105,6 +107,7 @@ export const onRequestPost = guarded(async ({ request, env }) => {
           "UPDATE eidos_orders SET status='refunded' WHERE payment_intent=?",
         )
         .bind(object.payment_intent),
+      database.prepare("UPDATE eidos_template_orders SET fulfillment_status='revoked' WHERE order_id IN (SELECT id FROM eidos_orders WHERE payment_intent=?)").bind(object.payment_intent),
       database
         .prepare(
           'INSERT OR IGNORE INTO eidos_stripe_events(id,received_at) VALUES(?,?)',

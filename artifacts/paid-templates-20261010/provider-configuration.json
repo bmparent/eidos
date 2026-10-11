@@ -1,0 +1,72 @@
+{
+  "timestampUtc": "2026-10-11T00:22:29.771Z",
+  "project": "prj_5aL0COF1DONfPKI4fv25NitAdkOE",
+  "team": "team_TEsnMvKU6SdbYjVhws6Ttp8H",
+  "protectedPreview": "all_except_custom_domains",
+  "automationBypassAvailable": false,
+  "emailConfiguration": [
+    {
+      "id": "l3vAce9p7W1ZAvAk",
+      "key": "EIDOS_MAIL_QA_RECIPIENT",
+      "type": "sensitive",
+      "target": [
+        "preview"
+      ],
+      "gitBranch": "codex/works-paired-integration-20260927"
+    },
+    {
+      "id": "I99e6e6GY4nDadKE",
+      "key": "EIDOS_MAIL_FROM",
+      "type": "encrypted",
+      "target": [
+        "preview"
+      ],
+      "gitBranch": "codex/works-paired-integration-20260927"
+    },
+    {
+      "id": "eoUrjHqk5m9hqeaP",
+      "key": "RESEND_API_KEY",
+      "type": "sensitive",
+      "target": [
+        "preview"
+      ],
+      "gitBranch": "codex/works-paired-integration-20260927"
+    },
+    {
+      "id": "u13F5PhxAzY6cZav",
+      "key": "EIDOS_MAIL_FROM",
+      "type": "plain",
+      "target": [
+        "preview"
+      ],
+      "gitBranch": "codex/playground-spatial-composition-backend-20260910"
+    },
+    {
+      "id": "RlgMhqpckdATzEwN",
+      "key": "EIDOS_MAIL_FROM",
+      "type": "plain",
+      "target": [
+        "preview"
+      ],
+      "gitBranch": "codex/playground-integration-backend-20260910"
+    },
+    {
+      "id": "6i4zZvrc8VKn2Hhp",
+      "key": "EIDOS_MAIL_FROM",
+      "type": "plain",
+      "target": [
+        "production"
+      ],
+      "gitBranch": null
+    },
+    {
+      "id": "NmrnayieXMKcuhT7",
+      "key": "RESEND_API_KEY",
+      "type": "sensitive",
+      "target": [
+        "production"
+      ],
+      "gitBranch": null
+    }
+  ]
+}

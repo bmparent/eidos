@@ -1,0 +1,15 @@
+✔ template TEST gate rejects LIVE, production host, missing archives and unverified CMS; server prices cannot be overridden (578.3315ms)
+✔ checkout attempt retry preserves one ledger order and same server-owned TEST price (469.5306ms)
+✔ signed paid fulfillment, delayed state, duplicate webhook, snapshot integrity and expiring download links (230.2324ms)
+✔ receipt email retries keep provider idempotency body stable and paid access survives mail failure (422.3357ms)
+✔ recovery is enumeration safe, single use and receipt expiry is recoverable; cross-order token fails (432.1549ms)
+✔ two signed-in buyers remain isolated and refund/dispute revokes future access without deleting receipts (253.5607ms)
+✔ existing Cinematic Starter paid receipt still downloads the exact original archive (105.6137ms)
+ℹ tests 7
+ℹ suites 0
+ℹ pass 7
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 14954.4459

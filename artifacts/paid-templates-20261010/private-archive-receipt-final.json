@@ -1,0 +1,63 @@
+{
+  "schemaVersion": 1,
+  "timestampUtc": "2026-10-11T00:37:58.020Z",
+  "sourceCatalogVersion": "2026-10-10.1",
+  "privateArchives": [
+    {
+      "productId": "switchboard-developer-v1",
+      "archiveKey": "templates/switchboard/1.0.0/developer.zip",
+      "sha256": "e56450de9adbac6320d9e2315601e1804d281fcf1b87dc0f95cef5ef8ae45e2a",
+      "bytes": 26816,
+      "alreadyPresent": false
+    },
+    {
+      "productId": "switchboard-wordpress-v1",
+      "archiveKey": "templates/switchboard/1.0.0/wordpress.zip",
+      "sha256": "f816acf68aee776ea32b5fa1fd1acece21bbbc9435c8087134fa7adde8099846",
+      "bytes": 29391,
+      "alreadyPresent": false
+    },
+    {
+      "productId": "tideglass-developer-v1",
+      "archiveKey": "templates/tideglass/1.0.0/developer.zip",
+      "sha256": "34130b106526fa76a380efcdb2e2a1126bf3e05524c036246a227ce5d85f16a7",
+      "bytes": 26836,
+      "alreadyPresent": false
+    },
+    {
+      "productId": "tideglass-wordpress-v1",
+      "archiveKey": "templates/tideglass/1.0.0/wordpress.zip",
+      "sha256": "09ec833380b3e1238888ff54442e34de4b882649bbddc7cca4a41625dbe153a5",
+      "bytes": 30016,
+      "alreadyPresent": false
+    },
+    {
+      "productId": "matter-developer-v1",
+      "archiveKey": "templates/matter/1.0.0/developer.zip",
+      "sha256": "f5083b4ffad9d99d9ffaf04f1d887f9feada6a4f4732f38aca19432b7ac515d6",
+      "bytes": 27533,
+      "alreadyPresent": false
+    },
+    {
+      "productId": "matter-wordpress-v1",
+      "archiveKey": "templates/matter/1.0.0/wordpress.zip",
+      "sha256": "bd0bec696ce1980ed1e08d624fd5ed1179c8d9e32faa07cc5eadf8a4e90c2bc8",
+      "bytes": 30739,
+      "alreadyPresent": false
+    },
+    {
+      "productId": "nightjar-developer-v1",
+      "archiveKey": "templates/nightjar/1.0.0/developer.zip",
+      "sha256": "d27d240bdab367b9b334ac574f9e68e75132701c93bc19422a200f77af53a1f8",
+      "bytes": 26765,
+      "alreadyPresent": false
+    },
+    {
+      "productId": "nightjar-wordpress-v1",
+      "archiveKey": "templates/nightjar/1.0.0/wordpress.zip",
+      "sha256": "30a53df74f2a939015fae48ef6ac12d7ee2328a57e2074fd57ee0348150bf36d",
+      "bytes": 29728,
+      "alreadyPresent": false
+    }
+  ]
+}
