@@ -6,11 +6,13 @@ New template sales require `EIDOS_TEMPLATE_TEST_ENABLED=true`, a Stripe test key
 
 ## Packaging and installation gate
 
-Store the eight immutable buyer ZIPs in this server-only directory:
+Store current and retained immutable buyer ZIPs in this server-only directory:
 
 ```text
-apps/sentinel-lab/private/templates/<switchboard|tideglass|matter|nightjar>/1.0.0/<developer|wordpress>.zip
+apps/sentinel-lab/private/templates/<switchboard|tideglass|matter|nightjar>/<version>/<developer|wordpress>.zip
 ```
+
+Current WordPress packages and Nightjar developer source use version 1.0.1. Switchboard, Tideglass and Matter developer source remain at 1.0.0. The archive importer validates each package's explicit version and refuses to overwrite different bytes at an existing path. The preview bundle includes all eight current packages and every retained version, including the five replaced 1.0.0 archives. Existing order snapshots continue to retrieve their original version; a catalog update does not rewrite purchases.
 
 Never put paid ZIPs in Next `public/` or the website's public demo tree. Next file tracing includes these files in the private Works API function bundle. The `templateArchives` adapter only accepts allowlisted product/version/edition paths. It reads bytes and computes SHA-256. A purchase snapshots the path, hash, price, edition and version in `eidos_template_orders`. If a later deployment changes the bytes at that path, old orders fail closed; restore the original archive, then publish the update at a new version path. Retain every sold version in future bundles.
 

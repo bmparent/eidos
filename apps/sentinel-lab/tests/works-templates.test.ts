@@ -51,8 +51,8 @@ async function fixture() {
   async function call(handler: (value: { request: Request; env: PlatformEnv }) => Promise<Response>, path: string, payload: unknown, cookie = '') {
     return handler({ request: request(path, payload, cookie), env });
   }
-  async function begin(attempt: string, editionId = 'developer', cookie = '') {
-    const response = await call(checkout, '/api/shop/checkout', { productId: 'switchboard-' + editionId + '-v1', editionId, acceptTerms:true, attempt }, cookie);
+  async function begin(attempt: string, editionId = 'developer', cookie = '', slug = 'switchboard') {
+    const response = await call(checkout, '/api/shop/checkout', { productId: slug + '-' + editionId + '-v1', editionId, acceptTerms:true, attempt }, cookie);
     assert.equal(response.status, 200, await response.clone().text());
     const row = await database.prepare('SELECT o.*,t.* FROM eidos_orders o JOIN eidos_template_orders t ON t.order_id=o.id WHERE o.receipt_hash=?').bind(await hash(attempt)).first<Record<string,unknown>>();
     assert.ok(row); return row;
@@ -86,6 +86,40 @@ test('template TEST gate rejects LIVE, production host, missing archives and unv
     const catalogResult=await (await catalog({env:f.env,request:new Request(origin+'/api/shop/catalog')})).json();
     assert.equal(catalogResult.editions.every((item:{available:boolean})=>!item.available),true);
     assert.equal(f.sessions.length,0);
+  } finally {f.close();}
+});
+
+test('catalog updates map independent edition versions while old Nightjar and WordPress purchases retain their original archive', async () => {
+  const f=await fixture();
+  try {
+    for(const product of templateProducts) {
+      const updated=product.editionId==='wordpress'||product.id==='nightjar-developer-v1';
+      assert.equal(product.version,updated?'1.0.1':'1.0.0');
+      assert.match(product.archiveKey,new RegExp('/'+product.version.replaceAll('.','\\.')+'/'+product.editionId+'\\.zip$'));
+      assert.ok(product.downloadName.endsWith('-'+product.version+'.zip'));
+    }
+    f.env.EIDOS_TEMPLATE_VERIFIED_EDITIONS+=',nightjar-developer-v1';
+    for(const [slug,edition,letter] of [['switchboard','wordpress','e'],['nightjar','developer','f']]) {
+      const receipt=letter.repeat(64),current=await f.begin(receipt,edition,'',slug);
+      assert.equal(current.version,'1.0.1');
+      // Simulate a retained order created by the previous catalog revision.
+      const oldBytes=new Uint8Array([80,75,3,4,9,8,7]),oldHash=createHash('sha256').update(oldBytes).digest('hex');
+      const original={...current,version:'1.0.0',archive_key:`templates/${slug}/1.0.0/${edition}.zip`,archive_sha256:oldHash,download_name:`eidos-${slug}-${edition}-1.0.0.zip`};
+      await f.database.prepare('UPDATE eidos_template_orders SET version=?,archive_key=?,archive_sha256=?,download_name=? WHERE order_id=?').bind(original.version,original.archive_key,original.archive_sha256,original.download_name,current.id).run();
+      assert.equal((await f.event(original,'evt_retained_original_version_'+slug)).status,200);
+      const paid=await (await f.call(status,'/api/shop/status',{receipt})).json();
+      assert.equal(paid.version,'1.0.0');assert.equal(paid.downloadName,original.download_name);
+      const keys:string[]=[];const originalArchive=f.env.EIDOS_TEMPLATE_ARCHIVES!;
+      f.env.EIDOS_TEMPLATE_ARCHIVES={async get(key){keys.push(key);return key===original.archive_key?{bytes:oldBytes,sha256:oldHash}:originalArchive.get(key);}};
+      const zip=await f.call(download,'/api/shop/download',{receipt,downloadToken:paid.downloadToken});
+      assert.equal(zip.status,200);assert.deepEqual(keys,[original.archive_key]);
+      assert.equal(zip.headers.get('x-eidos-archive-sha256'),oldHash);
+      assert.deepEqual(new Uint8Array(await zip.arrayBuffer()),oldBytes);
+      assert.ok(zip.headers.get('content-disposition')!.includes(original.download_name));
+      f.env.EIDOS_TEMPLATE_ARCHIVES={async get(){return null;}};
+      assert.equal((await f.call(download,'/api/shop/download',{receipt,downloadToken:paid.downloadToken})).status,503);
+      f.env.EIDOS_TEMPLATE_ARCHIVES=originalArchive;
+    }
   } finally {f.close();}
 });
 

@@ -1,4 +1,4 @@
-import { readFile, mkdir, writeFile } from 'node:fs/promises';
+import { readFile, mkdir, readdir, writeFile } from 'node:fs/promises';
 import { createHash } from 'node:crypto';
 import path from 'node:path';
 
@@ -14,7 +14,9 @@ for (const item of report.packages || []) {
   if (!source.startsWith(site+path.sep)) throw Error('Package source escapes website root');
   const bytes = await readFile(source), digest = createHash('sha256').update(bytes).digest('hex');
   if (digest !== item.sha256 || bytes.length !== item.bytes) throw Error('Package differs from frozen source receipt: '+item.editionId);
-  const key=`templates/${match[1]}/1.0.0/${match[2]}.zip`, target=path.resolve(targetRoot,key);
+  const expectedVersion=match[2]==='wordpress'||match[1]==='nightjar'?'1.0.1':'1.0.0';
+  if(item.version!==expectedVersion)throw Error('Package version differs from the server catalog: '+item.editionId);
+  const key=`templates/${match[1]}/${item.version}/${match[2]}.zip`, target=path.resolve(targetRoot,key);
   if (!target.startsWith(targetRoot+path.sep)) throw Error('Invalid private archive target');
   let existing;
   try {existing = await readFile(target);} catch (error) {if(error.code!=='ENOENT')throw error;}
@@ -24,5 +26,14 @@ for (const item of report.packages || []) {
   receipts.push({productId:item.editionId,archiveKey:key,sha256:digest,bytes:bytes.length,alreadyPresent:Boolean(existing)});
 }
 if(receipts.length!==8)throw Error('Expected exactly eight buyer packages');
-const output=path.resolve(options.out);await mkdir(path.dirname(output),{recursive:true});await writeFile(output,JSON.stringify({schemaVersion:1,timestampUtc:new Date().toISOString(),sourceCatalogVersion:report.catalogVersion,privateArchives:receipts},null,2)+'\n');
-console.log(JSON.stringify({privateArchives:receipts.length,allHashesMatch:true,receipt:options.out}));
+const retainedArchives=[];
+for(const entry of await readdir(path.join(targetRoot,'templates'),{recursive:true,withFileTypes:true})) {
+  if(!entry.isFile())continue;
+  const target=path.join(entry.parentPath,entry.name),key=path.relative(targetRoot,target).split(path.sep).join('/');
+  if(!/^templates\/(switchboard|tideglass|matter|nightjar)\/\d+\.\d+\.\d+\/(developer|wordpress)\.zip$/.test(key))throw Error('Unexpected private archive path');
+  if(receipts.some(item=>item.archiveKey===key))continue;
+  const bytes=await readFile(target);
+  retainedArchives.push({archiveKey:key,sha256:createHash('sha256').update(bytes).digest('hex'),bytes:bytes.length});
+}
+const output=path.resolve(options.out);await mkdir(path.dirname(output),{recursive:true});await writeFile(output,JSON.stringify({schemaVersion:2,timestampUtc:new Date().toISOString(),sourceCatalogVersion:report.catalogVersion,privateArchives:receipts,retainedArchives},null,2)+'\n');
+console.log(JSON.stringify({privateArchives:receipts.length,retainedArchives:retainedArchives.length,allHashesMatch:true,receipt:options.out}));

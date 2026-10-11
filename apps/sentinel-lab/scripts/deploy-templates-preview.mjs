@@ -12,7 +12,10 @@ const branch=git('branch','--show-current'),commit=git('rev-parse','HEAD');
 if(branch!=='codex/paid-templates-20261010')throw Error('Refusing a branch outside this isolated candidate.');
 if(JSON.parse(await readFile(app+'package.json','utf8')).name!=='eidos-sentinel-lab')throw Error('Run from repository root.');
 const selected=new Set(git('ls-files','-co','--exclude-standard','--',app).split('\n').filter(Boolean));
-const archives=JSON.parse(await readFile('artifacts/paid-templates-20261010/private-archive-receipt-final.json','utf8')).privateArchives;
+const archiveReceipt=JSON.parse(await readFile('artifacts/paid-templates-20261010/private-archive-receipt-final.json','utf8'));
+if(archiveReceipt.privateArchives.length!==8)throw Error('Expected eight current buyer packages.');
+const archives=[...archiveReceipt.privateArchives,...(archiveReceipt.retainedArchives||[])];
+if(new Set(archives.map(item=>item.archiveKey)).size!==archives.length)throw Error('Duplicate private archive version path.');
 for(const item of archives)selected.add(app+'private/'+item.archiveKey);
 const files=[],manifest=[];
 for(const file of [...selected].sort()){
@@ -22,10 +25,10 @@ for(const file of [...selected].sort()){
   if(!target.startsWith(root+path.sep)||(await lstat(target)).isSymbolicLink())throw Error('Unsafe source path.');
   const data=await readFile(target),sha256=createHash('sha256').update(data).digest('hex');
   const archive=archives.find(item=>file===app+'private/'+item.archiveKey);
-  if(archive&&(sha256!==archive.sha256||data.length!==archive.bytes))throw Error('Private archive changed after receipt freeze: '+archive.productId);
+  if(archive&&(sha256!==archive.sha256||data.length!==archive.bytes))throw Error('Private archive changed after receipt freeze: '+(archive.productId||archive.archiveKey));
   files.push({file,data:data.toString('base64'),encoding:'base64'});manifest.push({file,bytes:data.length,sha256});
 }
-if(manifest.filter(item=>item.file.startsWith(app+'private/templates/')).length!==8)throw Error('Expected eight private buyer archives.');
+if(manifest.filter(item=>item.file.startsWith(app+'private/templates/')).length!==archives.length)throw Error('A current or retained private buyer archive is missing.');
 const bundleHash=createHash('sha256').update(JSON.stringify(manifest)).digest('hex');
 const receipt={timestampUtc:new Date().toISOString(),scope:'protected preview only',branch,commit,bundleHash,dirty:Boolean(git('status','--porcelain')),files:manifest,uploaded:false};
 if(process.argv.includes('--deploy')||options['request-out']){
