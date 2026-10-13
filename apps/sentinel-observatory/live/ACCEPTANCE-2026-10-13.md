@@ -9,6 +9,7 @@ Requested: finish live URL/IP monitoring, integrate lightweight interpretation, 
 - Exact pinned-IP Node backend: `c40fb741a92d0dbe4a812692c82e5845a5ccb092`, Vercel deployment `dpl_9wYALbR1LGgughoSLBHV7CgqtM7R`, protected immutable preview `eidos-sentinel-lzzhgixpu-1brentbm-1876s-projects.vercel.app`.
 - Initial integrated hosted acceptance: Sites source `7a5fb909b8f537e3302ef99828899e0f9dd6a51b`, deployment `appgdep_6ace912814c8819192bc0bf97839dfc0`, environment revision3.
 - Final reviewed UI: Sites source `3624fffd27312385c922cbbcb7684deffb216932`, deployment `appgdep_6ace92888b2c819186ff97e99ad21d4a`, succeeded2026-10-13T20:20:30Z, environment revision3. Native receipt is `evidence/2026-10-13/hosted-final-deployment.json`.
+- Final hosted acceptance passed again after publication: six delivered UI/model/sensor asset hashes match final source, private access and sensor-disconnected states are correct, actual literal-IP HEAD301 was44.837 ms and URL HEAD200 still passed. Receipt: `evidence/2026-10-13/hosted-final-acceptance.json`.
 
 ## Evidence ledger
 
