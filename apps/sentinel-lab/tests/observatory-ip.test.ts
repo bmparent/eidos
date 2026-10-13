@@ -3,6 +3,7 @@ import test from "node:test";
 import { EventEmitter } from "node:events";
 import * as https from "node:https";
 import type * as http from "node:http";
+import type { Socket } from "node:net";
 import { execFileSync } from "node:child_process";
 import { mkdtemp, readFile, rm } from "node:fs/promises";
 import { tmpdir } from "node:os";
@@ -16,16 +17,18 @@ const request = (target: unknown = "1.1.1.1", overrides: RequestInit = {}) => ne
 });
 
 type RequestFactory = NonNullable<NonNullable<Parameters<typeof observeIp>[1]>["requestFactory"]>;
-function fakeTransport(headers: http.IncomingHttpHeaders = {}, status = 200, inspect?: (options: https.RequestOptions) => void): RequestFactory {
+function fakeTransport(headers: http.IncomingHttpHeaders = {}, status = 200, inspect?: (options: https.RequestOptions) => void, socket?: Socket): RequestFactory {
   return (options, callback) => {
     inspect?.(options);
     const outgoing = new EventEmitter() as http.ClientRequest;
     outgoing.destroy = (() => outgoing) as http.ClientRequest["destroy"];
     outgoing.end = (() => {
+      if (socket) { outgoing.emit("socket", socket); socket.emit("connect"); socket.emit("secureConnect"); }
       queueMicrotask(() => {
         const incoming = new EventEmitter() as http.IncomingMessage;
         incoming.statusCode = status;
         incoming.headers = headers;
+        if (socket) incoming.socket = socket;
         incoming.destroy = (() => incoming) as http.IncomingMessage["destroy"];
         incoming.read = (() => { assert.fail("Response bodies must never be read"); }) as http.IncomingMessage["read"];
         incoming.resume = (() => { assert.fail("Response bodies must never be resumed"); }) as http.IncomingMessage["resume"];
@@ -35,6 +38,10 @@ function fakeTransport(headers: http.IncomingHttpHeaders = {}, status = 200, ins
     }) as http.ClientRequest["end"];
     return outgoing;
   };
+}
+
+function fixtureSocket(properties: Record<string, unknown>): Socket {
+  return Object.assign(new EventEmitter(), properties) as unknown as Socket;
 }
 
 test("normalization is literal-only, public-only and bound to the scheme's standard port", () => {
@@ -205,4 +212,61 @@ test("rate key capacity fails closed rather than evicting unexpired IP cooldowns
   for (let index = 0; index < 512; index += 1) assert.equal((await handle(request(`8.10.${Math.floor(index / 256)}.${index % 256}`))).status, 200);
   assert.equal((await handle(request("9.9.9.9"))).status, 429);
   assert.equal((await handle(request("8.10.0.0"))).status, 429);
+});
+
+test("observed socket flow exposes actual public peer, TLS and counters without source addresses", async () => {
+  const socket = fixtureSocket({ remoteAddress: "::ffff:1.1.1.1", remotePort: 443,
+    localAddress: "10.12.34.56", localPort: 51000, bytesWritten: 172, bytesRead: 437,
+    authorized: true, getProtocol: () => "TLSv1.3", authorizationError: "private certificate detail" });
+  const result = await observeIp("1.1.1.1", { requestFactory: fakeTransport({}, 200, undefined, socket) });
+  const network = result.event.coverage.network;
+  assert.equal(network.scope, "observatory_outbound_head_connection");
+  assert.equal(network.destination_ip, "1.1.1.1");
+  assert.equal(network.destination_port, 443);
+  assert.equal(network.peer_ip, "1.1.1.1");
+  assert.equal(network.peer_port, 443);
+  assert.equal(network.peer_matches_destination, true);
+  assert.equal(network.socket_connected, true);
+  assert.equal(network.tls_verified, true);
+  assert.equal(network.tls_protocol, "TLSv1.3");
+  assert.equal(network.bytes_written, 172);
+  assert.equal(network.bytes_read, 437);
+  assert.equal(network.packet_counts_available, false);
+  assert.equal(network.source_address_collected, false);
+  assert.match(network.counter_scope, /not packet counts/);
+  assert.match(network.limitation, /no target visitor traffic/);
+  assert.doesNotMatch(JSON.stringify(result), /10\.12\.34\.56|51000|private certificate/);
+});
+
+test("unknown socket telemetry stays null and private proxy peers are never returned", async () => {
+  const missing = await observeIp("1.1.1.1", { requestFactory: fakeTransport() });
+  assert.equal(missing.event.coverage.network.peer_ip, null);
+  assert.equal(missing.event.coverage.network.bytes_read, null);
+  assert.equal(missing.event.coverage.network.bytes_written, null);
+  assert.equal(missing.event.coverage.network.tls_verified, null);
+  const socket = fixtureSocket({ remoteAddress: "127.0.0.1", remotePort: 9000, bytesWritten: NaN, bytesRead: -1,
+    authorized: false, getProtocol: () => { throw new Error("private TLS telemetry"); }, localAddress: "192.168.1.10" });
+  const result = await observeIp("1.1.1.1", { requestFactory: fakeTransport({}, 200, undefined, socket) });
+  assert.equal(result.event.status, 200);
+  assert.equal(result.event.error, null);
+  assert.equal(result.event.coverage.network.peer_ip, null);
+  assert.equal(result.event.coverage.network.peer_port, null);
+  assert.equal(result.event.coverage.network.peer_matches_destination, null);
+  assert.equal(result.event.coverage.network.bytes_written, null);
+  assert.equal(result.event.coverage.network.bytes_read, null);
+  assert.equal(result.event.coverage.network.tls_verified, null);
+  assert.equal(result.event.coverage.network.tls_protocol, null);
+  assert.doesNotMatch(JSON.stringify(result), /127\.0\.0\.1|192\.168|private TLS/);
+});
+
+test("HTTP socket does not claim TLS verification and records only its measured counters", async () => {
+  const socket = fixtureSocket({ remoteAddress: "2606:4700:4700:0:0:0:0:1111", remotePort: 80,
+    bytesWritten: 100, bytesRead: 220, authorized: true, getProtocol: () => "TLSv1.3" });
+  const result = await observeIp("http://[2606:4700:4700::1111]/", { requestFactory: fakeTransport({}, 200, undefined, socket) });
+  assert.equal(result.event.coverage.network.peer_ip, "2606:4700:4700::1111");
+  assert.equal(result.event.coverage.network.peer_matches_destination, true);
+  assert.equal(result.event.coverage.network.application_protocol, "HTTP");
+  assert.equal(result.event.coverage.network.tls_verified, null);
+  assert.equal(result.event.coverage.network.tls_protocol, null);
+  assert.equal(result.event.coverage.network.bytes_read, 220);
 });

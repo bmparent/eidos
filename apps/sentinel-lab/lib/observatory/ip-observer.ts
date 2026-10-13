@@ -1,10 +1,10 @@
 /** Public literal-IP observer. Never resolves DNS, follows redirects, reads bodies,
  * sends client headers, changes defenses, or retries TLS insecurely. */
 import { createHash, randomUUID, timingSafeEqual } from "node:crypto";
-import { isIP } from "node:net";
+import { isIP, type Socket } from "node:net";
 import * as http from "node:http";
 import * as https from "node:https";
-import { checkServerIdentity } from "node:tls";
+import { checkServerIdentity, type TLSSocket } from "node:tls";
 
 export const SAMPLE_INTERVAL_MS = 15_000;
 const TIMEOUT_MS = 8_000;
@@ -108,6 +108,19 @@ function securityHeaders(headers?: http.IncomingHttpHeaders): Record<string, boo
 type RequestFactory = (options: https.RequestOptions, callback: (response: http.IncomingMessage) => void) => http.ClientRequest;
 interface ObserveOptions { requestFactory?: RequestFactory; timeoutMs?: number; signal?: AbortSignal; }
 
+function publicPeerIp(value: unknown): string | null {
+  if (typeof value !== "string") return null;
+  // Node may expose an IPv4 peer in a mapped socket notation. Normalize only
+  // that public peer presentation; mapped addresses remain forbidden targets.
+  const presented = value.startsWith("::ffff:") && isIP(value.slice(7)) === 4 ? value.slice(7) : value;
+  if (!isPublicIp(presented)) return null;
+  return isIP(presented) === 6 ? new URL(`https://[${presented}]/`).hostname.slice(1, -1) : presented;
+}
+
+function socketCounter(value: unknown): number | null {
+  return typeof value === "number" && Number.isSafeInteger(value) && value >= 0 ? value : null;
+}
+
 /** Node connects to the validated numeric hostname. Custom lookup also fails
  * closed if a future transport unexpectedly attempts DNS. Test injection is
  * code-only and is never selected by request JSON or environment values. */
@@ -125,9 +138,42 @@ export async function observeIp(input: IpTarget | string, options: ObserveOption
     coverage: { vantage: "Node public-only pinned literal-IP HTTP client", sampling: "One requested HEAD; no crawling or traffic capture",
       head_attempted: false, redirect_followed: false, body_collected: false,
       dns: { state: "literal_public_ip_pinned", address_pinned: true, resolver: "none: literal IP" },
+      network: {
+        scope: "observatory_outbound_head_connection", destination_ip: target.host, destination_port: target.port,
+        protocol: "TCP", application_protocol: target.scheme === "https:" ? "HTTPS" : "HTTP",
+        peer_ip: null as string | null, peer_port: null as number | null, peer_matches_destination: null as boolean | null,
+        socket_connected: false, tls_verified: null as boolean | null, tls_protocol: null as string | null,
+        bytes_written: null as number | null, bytes_read: null as number | null,
+        packet_counts_available: false, source_address_collected: false,
+        counter_scope: "Node application socket counters; not packet counts, interface totals, or TLS wire overhead",
+        limitation: "Only this Observatory HEAD connection is visible; no target visitor traffic or internal network is captured",
+      },
       missing: ["Visitor traffic", "Origin logs", "Internal network", "Packet capture", "Certificate details", "Authenticated application state"],
       dns_rebinding: "No DNS lookup occurs; the validated numeric IP is the connection destination.",
       protections: "Observational only; no network protections or defensive actions changed" },
+  };
+  let observedSocket: Socket | undefined;
+  const captureSocket = (socket: Socket | undefined, connected = false) => {
+    if (!socket) return;
+    observedSocket = socket;
+    const network = event.coverage.network;
+    const peer = publicPeerIp(socket.remoteAddress);
+    // Never expose a private proxy peer or the observer's local/source address.
+    if (peer) {
+      network.peer_ip = peer;
+      network.peer_matches_destination = peer === target.host;
+      if (Number.isInteger(socket.remotePort) && socket.remotePort! >= 1 && socket.remotePort! <= 65535) network.peer_port = socket.remotePort!;
+    }
+    if (connected || peer) network.socket_connected = true;
+    network.bytes_written = socketCounter(socket.bytesWritten);
+    network.bytes_read = socketCounter(socket.bytesRead);
+    if (target.scheme === "https:") {
+      const tlsSocket = socket as TLSSocket;
+      let protocol: string | null = null;
+      try { protocol = typeof tlsSocket.getProtocol === "function" ? tlsSocket.getProtocol() : null; } catch { /* Socket metadata cannot erase an observed HTTP response. */ }
+      if (protocol) network.tls_protocol = ["TLSv1.2", "TLSv1.3"].includes(protocol) ? protocol : "other";
+      if (tlsSocket.authorized === true) network.tls_verified = true;
+    }
   };
   try {
     if (options.signal?.aborted) throw Object.assign(new Error(), { code: "OBSERVATION_CANCELLED" });
@@ -163,6 +209,7 @@ export async function observeIp(input: IpTarget | string, options: ObserveOption
             "User-Agent": "Eidos-Sentinel-Observatory/0.2 (authorized read-only HEAD)",
             Accept: "*/*", Connection: "close", "Cache-Control": "no-cache", Pragma: "no-cache" },
         }, response => {
+          captureSocket(response.socket, true);
           // Do not read or resume response bodies, even when HEAD is violated.
           // Node's http/https APIs do not follow redirects.
           const status = response.statusCode;
@@ -189,6 +236,11 @@ export async function observeIp(input: IpTarget | string, options: ObserveOption
           response.destroy();
           done();
         });
+        request.once("socket", (socket: Socket) => {
+          captureSocket(socket);
+          socket.once("connect", () => captureSocket(socket, true));
+          if (target.scheme === "https:") socket.once("secureConnect", () => captureSocket(socket, true));
+        });
         request.once("error", done);
         options.signal?.addEventListener("abort", cancel, { once: true });
         if (options.signal?.aborted) { cancel(); return; }
@@ -206,7 +258,9 @@ export async function observeIp(input: IpTarget | string, options: ObserveOption
       : code === "OBSERVATION_CANCELLED" ? { code: "cancelled", message: "The observation was cancelled.", scope: "observation_vantage" }
       : tlsError ? { code: "tls_error", message: "TLS validation or negotiation failed; no insecure retry was made.", scope: "observation_vantage" }
       : { code: "transport_error", message: "The observer did not obtain a usable response; target availability is unknown.", scope: "observation_vantage" };
+    if (tlsError && observedSocket) event.coverage.network.tls_verified = false;
   } finally {
+    captureSocket(observedSocket);
     event.completed_at = new Date().toISOString();
     event.elapsed_ms = Math.round((performance.now() - start) * 1_000) / 1_000;
     event.latency_ms = event.coverage.head_attempted ? event.elapsed_ms : null;
