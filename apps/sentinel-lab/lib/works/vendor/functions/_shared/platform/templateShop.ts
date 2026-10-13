@@ -1,7 +1,7 @@
 import { body, challenge, clean, db, fingerprint, guarded, hash, HttpError, json, origin, record, reserve, siteOrigin, type PlatformEnv } from './core';
 import { memberFromRequest, randomToken } from './memberAuth';
 import { sendMemberMail } from './memberMail';
-import { templateProduct, templateProducts, TEMPLATE_STRIPE_API_VERSION, type TemplateProduct } from './templateCatalog';
+import { templateProduct, templateProducts, TEMPLATE_STRIPE_API_VERSION, TEMPLATE_LIVE_STRIPE_API_VERSION, type TemplateProduct } from './templateCatalog';
 import type { Order } from './shop';
 
 export interface TemplateOrder extends Order {
@@ -14,12 +14,46 @@ export interface TemplateOrder extends Order {
 const now = () => Math.floor(Date.now() / 1000);
 const checkoutSelect = 'SELECT o.*, t.*, EXISTS(SELECT 1 FROM eidos_template_payment_failures f WHERE f.order_id=o.id) AS payment_failed FROM eidos_orders o JOIN eidos_template_orders t ON t.order_id=o.id';
 export function templateTestReady(env: PlatformEnv) {
-  return env.EIDOS_TEMPLATE_TEST_ENABLED === 'true' && /^[sr]k_test_/.test(env.STRIPE_SECRET_KEY || '') &&
+  return env.EIDOS_TEMPLATE_LIVE_ENABLED !== 'true' && env.EIDOS_TEMPLATE_TEST_ENABLED === 'true' && /^[sr]k_test_/.test(env.STRIPE_SECRET_KEY || '') &&
     env.EIDOS_SHOP_ENABLED === 'true' && Boolean(env.EIDOS_KIT_WEBHOOK_SECRET && env.EIDOS_DB && env.EIDOS_TEMPLATE_ARCHIVES) &&
     !/(^|\.)eidos-works\.com$/.test(new URL(siteOrigin(env)).hostname);
 }
 export function requireTemplateTest(env: PlatformEnv) {
   if (!templateTestReady(env)) throw new HttpError(503, 'Template purchases are available only in the isolated Stripe TEST candidate.');
+}
+export function templateLiveReady(env: PlatformEnv) {
+  return env.EIDOS_TEMPLATE_LIVE_ENABLED === 'true' && env.EIDOS_TEMPLATE_TEST_ENABLED !== 'true' &&
+    /^[sr]k_live_/.test(env.STRIPE_SECRET_KEY || '') && siteOrigin(env) === 'https://eidos-works.com' &&
+    env.EIDOS_SHOP_ENABLED === 'true' && env.EIDOS_LOCAL_TEST !== 'true' && env.EIDOS_TEMPLATE_TEST_CHALLENGE !== 'true' &&
+    Boolean(env.EIDOS_KIT_WEBHOOK_SECRET && env.EIDOS_DB && env.EIDOS_TEMPLATE_ARCHIVES) &&
+    Boolean(env.EIDOS_RATE_SECRET && env.EIDOS_RATE_SECRET.length >= 32) &&
+    /^acct_[A-Za-z0-9]+$/.test(env.EIDOS_TEMPLATE_STRIPE_ACCOUNT_ID || '') &&
+    /^re_/.test(env.RESEND_API_KEY || '') && Boolean(env.EIDOS_MAIL_FROM) &&
+    Boolean(env.TURNSTILE_SITE_KEY && env.TURNSTILE_SECRET_KEY) &&
+    !/^[123]x0{10,}/.test(env.TURNSTILE_SITE_KEY || '') && !/^[123]x0{10,}/.test(env.TURNSTILE_SECRET_KEY || '');
+}
+function purchaseMode(env: PlatformEnv) {
+  if (templateLiveReady(env)) return 'live';
+  if (templateTestReady(env)) return 'test';
+  throw new HttpError(503, 'Template purchases are temporarily unavailable.');
+}
+/** Payment processing stays available after disabling new sales. Mode is also bound to the stored session. */
+export function assertTemplatePaymentMode(env: PlatformEnv, livemode: unknown, sessionId?: string | null) {
+  const keyMode = /^[sr]k_live_/.test(env.STRIPE_SECRET_KEY || '') ? 'live' : /^[sr]k_test_/.test(env.STRIPE_SECRET_KEY || '') ? 'test' : null;
+  const canonical = /(^|\.)eidos-works\.com$/.test(new URL(siteOrigin(env)).hostname);
+  if (!keyMode || livemode !== (keyMode === 'live') || (keyMode === 'live' ? siteOrigin(env) !== 'https://eidos-works.com' : canonical) ||
+    (sessionId !== undefined && !new RegExp('^cs_' + keyMode + '_[A-Za-z0-9_]+$').test(sessionId || '')))
+    throw new HttpError(400, 'Payment environment does not match this template purchase.');
+}
+async function verifyLiveMerchant(env: PlatformEnv) {
+  const response = await fetch('https://api.stripe.com/v1/account', {
+    headers: { authorization: 'Bearer ' + env.STRIPE_SECRET_KEY, 'stripe-version': TEMPLATE_LIVE_STRIPE_API_VERSION },
+    signal: AbortSignal.timeout(10000), redirect: 'error',
+  });
+  if (!response.ok) throw new HttpError(503, 'The payment account could not be verified. Please try again later.');
+  const merchant = await response.json() as { id?: string; charges_enabled?: boolean; payouts_enabled?: boolean };
+  if (merchant.id !== env.EIDOS_TEMPLATE_STRIPE_ACCOUNT_ID || merchant.charges_enabled !== true || merchant.payouts_enabled !== true)
+    throw new HttpError(503, 'The payment account is not ready for this purchase.');
 }
 async function archive(env: PlatformEnv, key: string) {
   const value = await env.EIDOS_TEMPLATE_ARCHIVES?.get(key);
@@ -30,21 +64,22 @@ export function verifiedEdition(env: PlatformEnv, product: TemplateProduct) {
   return (env.EIDOS_TEMPLATE_VERIFIED_EDITIONS || '').split(',').map(s => s.trim()).includes(product.id);
 }
 export const catalog = guarded(async ({ env }) => {
-  const ready = templateTestReady(env);
+  const mode = env.EIDOS_TEMPLATE_LIVE_ENABLED === 'true' ? 'live' : 'test';
+  const ready = mode === 'live' ? templateLiveReady(env) : templateTestReady(env);
   const editions = await Promise.all(templateProducts.map(async product => {
     const packaged = Boolean(await env.EIDOS_TEMPLATE_ARCHIVES?.get(product.archiveKey));
     const verified = verifiedEdition(env, product);
     return { id: product.id, productId: product.id, editionId: product.editionId, version: product.version,
       priceCents: product.priceCents, guidePath: product.guidePath, available: ready && packaged && verified,
-      status: !packaged ? 'package_missing' : !verified ? 'installation_unverified' : ready ? 'test_available' : 'test_disabled' };
+      status: !packaged ? 'package_missing' : !verified ? 'installation_unverified' : ready ? mode + '_available' : mode + '_disabled' };
   }));
-  return json({ mode: 'test', ready, sourceRevision: env.EIDOS_TEMPLATE_SOURCE_REVISION || null, editions: [...editions,
+  return json({ mode, ready, sourceRevision: env.EIDOS_TEMPLATE_SOURCE_REVISION || null, editions: [...editions,
     { id: 'switchboard-squarespace-v1', productId: 'switchboard-squarespace-v1', editionId: 'squarespace', priceCents: 2900, version: null, available: false, status: 'platform_installation_blocked' },
     { id: 'switchboard-godaddy-v1', productId: 'switchboard-godaddy-v1', editionId: 'godaddy', priceCents: 2900, version: null, available: false, status: 'platform_installation_blocked' },
   ] });
 });
 export async function templateCheckout(request: Request, env: PlatformEnv, input: Record<string, unknown>) {
-  requireTemplateTest(env);
+  const mode = purchaseMode(env);
   const product = templateProduct(input.productId, input.editionId);
   if (!product) throw new HttpError(400, 'Choose a supported product and edition.');
   for (const field of ['price', 'priceCents', 'amount', 'currency', 'version', 'archiveKey', 'priceId'])
@@ -56,6 +91,7 @@ export async function templateCheckout(request: Request, env: PlatformEnv, input
   const database = db(env), visitor = await fingerprint(request, env);
   if (!(await reserve(database, 'template-checkout:' + visitor, 1, 20))) throw new HttpError(429, 'Please use an existing checkout or try again tomorrow.');
   await challenge(request, env, input.challenge, 'checkout');
+  if (mode === 'live') await verifyLiveMerchant(env);
   const member = await memberFromRequest(request, env, false);
   const receipt = input.attempt === undefined ? randomToken() : clean(input.attempt, 80);
   if (!/^[a-f0-9]{64}$/.test(receipt)) throw new HttpError(400, 'Start a valid checkout attempt.');
@@ -65,6 +101,7 @@ export async function templateCheckout(request: Request, env: PlatformEnv, input
     if (order.product_id !== product.id || order.edition_id !== product.editionId || order.member_id !== (member?.id || null))
       throw new HttpError(409, 'This attempt belongs to a different purchase.');
     if (order.status !== 'pending' || order.payment_failed || order.checkout_expires <= now()) throw new HttpError(409, 'This checkout is complete, failed or expired. Check its status before starting again.');
+    if (order.session_id) assertTemplatePaymentMode(env, mode === 'live', order.session_id);
     if (order.session_url) return json({ url: order.session_url });
   } else {
     const id = crypto.randomUUID(), created = new Date().toISOString(), expires = now() + 1800;
@@ -79,6 +116,7 @@ export async function templateCheckout(request: Request, env: PlatformEnv, input
   if (!order) throw new HttpError(503, 'Checkout could not be prepared.');
   const values = new URLSearchParams({
     mode: 'payment', client_reference_id: order.id,
+    ...(mode === 'live' ? { integration_identifier: 'eidos-templates-' + [...order.id.replaceAll('-', '').slice(0, 8)].map(c => String.fromCharCode(97 + parseInt(c, 16))).join('') } : {}),
     'metadata[eidos_product]': product.id, 'metadata[eidos_edition]': product.editionId,
     'metadata[eidos_version]': product.version, 'metadata[eidos_order_id]': order.id,
     'payment_intent_data[metadata][eidos_order_id]': order.id,
@@ -86,18 +124,18 @@ export async function templateCheckout(request: Request, env: PlatformEnv, input
     cancel_url: siteOrigin(env) + '/shop/' + product.id.split('-')[0] + '/?checkout=cancelled',
     'line_items[0][quantity]': '1', 'line_items[0][price_data][currency]': 'usd',
     'line_items[0][price_data][unit_amount]': String(order.price_cents),
-    'line_items[0][price_data][product_data][name]': 'Eidos ' + product.name + ' (TEST)',
+    'line_items[0][price_data][product_data][name]': 'Eidos ' + product.name + (mode === 'test' ? ' (TEST)' : ''),
     'line_items[0][price_data][product_data][description]': 'Version ' + product.version + '. Digital files; third-party hosting, platform plans, booking, forms and commerce services are separate.',
     expires_at: String(order.checkout_expires),
     ...(member?.email ? { customer_email: member.email } : {}),
   });
   const response = await fetch('https://api.stripe.com/v1/checkout/sessions', {
-    method: 'POST', headers: { authorization: 'Bearer ' + env.STRIPE_SECRET_KEY, 'content-type': 'application/x-www-form-urlencoded', 'idempotency-key': 'eidos-template-' + order.id, 'stripe-version': TEMPLATE_STRIPE_API_VERSION },
+    method: 'POST', headers: { authorization: 'Bearer ' + env.STRIPE_SECRET_KEY, 'content-type': 'application/x-www-form-urlencoded', 'idempotency-key': 'eidos-template-' + order.id, 'stripe-version': mode === 'live' ? TEMPLATE_LIVE_STRIPE_API_VERSION : TEMPLATE_STRIPE_API_VERSION },
     body: values, signal: AbortSignal.timeout(15000), redirect: 'error',
   });
   if (!response.ok) throw new HttpError(502, 'Checkout could not be confirmed. Retry this same attempt before starting another purchase.');
   const session = await response.json() as { id?: string; url?: string; livemode?: boolean };
-  if (!/^cs_test_[A-Za-z0-9_]+$/.test(session.id || '') || session.livemode !== false) throw new HttpError(502, 'A Stripe TEST session is required.');
+  if (!new RegExp('^cs_' + mode + '_[A-Za-z0-9_]+$').test(session.id || '') || session.livemode !== (mode === 'live')) throw new HttpError(502, 'The payment session does not match this checkout environment.');
   let checkout: URL;
   try { checkout = new URL(session.url || ''); } catch { throw new HttpError(502, 'Invalid payment link.'); }
   if (checkout.protocol !== 'https:' || checkout.hostname !== 'checkout.stripe.com') throw new HttpError(502, 'Invalid payment link.');
@@ -158,9 +196,10 @@ async function recoveryToken(env: PlatformEnv, orderId: string, stableReceipt = 
 export async function templateReceiptMail(env: PlatformEnv, order: TemplateOrder) {
   if (!order.email || order.status !== 'paid' || order.mail_status === 'sent') return;
   const token = await recoveryToken(env, order.id, true);
+  const test = order.session_id?.startsWith('cs_test_') === true;
   try {
-    const providerId = await sendMemberMail(env, { to: order.email, subject: 'Your Eidos template — download and setup (TEST)',
-      text: `Your TEST purchase of ${order.product_id}, ${order.edition_id}, version ${order.version} is verified.\nOpen this one-time recovery link within 30 minutes: ${siteOrigin(env)}/shop/start#token=${token}\nInstallation guide: ${siteOrigin(env)}${order.guide_path}\nIf this link expires, use ${siteOrigin(env)}/shop/start to request a new link.\nThis is transactional delivery and does not subscribe you to marketing.` }, 'eidos-template-receipt-' + order.id);
+    const providerId = await sendMemberMail(env, { to: order.email, subject: 'Your Eidos template — download and setup' + (test ? ' (TEST)' : ''),
+      text: `Your ${test ? 'TEST ' : ''}purchase of ${order.product_id}, ${order.edition_id}, version ${order.version} is verified.\nOpen this one-time recovery link within 30 minutes: ${siteOrigin(env)}/shop/start#token=${token}\nInstallation guide: ${siteOrigin(env)}${order.guide_path}\nIf this link expires, use ${siteOrigin(env)}/shop/start to request a new link.\nThis is transactional delivery and does not subscribe you to marketing.` }, 'eidos-template-receipt-' + order.id);
     await db(env).prepare("UPDATE eidos_template_orders SET mail_status='sent',mail_provider_id=? WHERE order_id=?").bind(providerId, order.id).run();
   } catch (error) {
     await db(env).prepare("UPDATE eidos_template_orders SET mail_status='failed' WHERE order_id=?").bind(order.id).run();
@@ -172,10 +211,10 @@ export async function templatePayment(env: PlatformEnv, event: { id: string; typ
   const object = event.data.object;
   const metadata = object.metadata;
   if (!record(metadata) || typeof metadata.eidos_product !== 'string' || !templateProducts.some(p => p.id === metadata.eidos_product)) return false;
-  requireTemplateTest(env);
-  if (livemode !== false) throw new HttpError(400, 'Template candidate requires a Stripe TEST event.');
+  assertTemplatePaymentMode(env, livemode);
   const order = await templateOrder(env, clean(metadata.eidos_order_id, 80));
   if (!order?.session_id) throw new HttpError(503, 'Order is not ready. Retry this event.');
+  assertTemplatePaymentMode(env, livemode, order.session_id);
   if (order.product_id !== metadata.eidos_product || order.edition_id !== metadata.eidos_edition || order.version !== metadata.eidos_version || order.session_id !== object.id || object.client_reference_id !== order.id)
     throw new HttpError(400, 'Payment does not match this order and edition.');
   const database = db(env);
@@ -226,7 +265,7 @@ export const recover = guarded(async ({ request, env }) => {
       const orders = await database.prepare(checkoutSelect + " WHERE t.email_hash=? AND o.status='paid' ORDER BY o.created_at DESC LIMIT 10").bind(emailHash).all<TemplateOrder>();
       for (const order of orders.results) {
         const token = await recoveryToken(env, order.id);
-        try { await sendMemberMail(env, { to: email, subject: 'Recover your Eidos template purchase (TEST)', text: `Open within 30 minutes: ${siteOrigin(env)}/shop/start#token=${token}\nPurchase: ${order.product_id}, version ${order.version}.\nIf you did not request this message, ignore it.` }, 'eidos-template-recovery-' + await hash(token)); }
+        try { await sendMemberMail(env, { to: email, subject: 'Recover your Eidos template purchase' + (order.session_id?.startsWith('cs_test_') ? ' (TEST)' : ''), text: `Open within 30 minutes: ${siteOrigin(env)}/shop/start#token=${token}\nPurchase: ${order.product_id}, version ${order.version}.\nIf you did not request this message, ignore it.` }, 'eidos-template-recovery-' + await hash(token)); }
         catch { /* Enumeration-safe response; provider failure is recorded internally. */
           await database.prepare("UPDATE eidos_template_orders SET mail_status='failed' WHERE order_id=?").bind(order.id).run();
         }

@@ -11,7 +11,7 @@ import {
   parseStripeEvent,
 } from '../../_shared/snapshot/stripe';
 import { KIT_PRICE, type Order } from '../../_shared/platform/shop';
-import { templatePayment } from '../../_shared/platform/templateShop';
+import { assertTemplatePaymentMode, templatePayment } from '../../_shared/platform/templateShop';
 export const onRequestPost = guarded(async ({ request, env }) => {
   if (!env.EIDOS_KIT_WEBHOOK_SECRET)
     throw new HttpError(503, 'Webhook unavailable.');
@@ -38,10 +38,9 @@ export const onRequestPost = guarded(async ({ request, env }) => {
     ['charge.refunded', 'charge.dispute.created'].includes(event.type) &&
     typeof object.payment_intent === 'string' &&
     await database.prepare(
-      'SELECT o.id FROM eidos_orders o JOIN eidos_template_orders t ON t.order_id=o.id WHERE o.payment_intent=?',
-    ).bind(object.payment_intent).first();
-  if (templateRevocation && (!record(parsed) || parsed.livemode !== false))
-    throw new HttpError(400, 'Template payments require TEST events.');
+      'SELECT o.session_id FROM eidos_orders o JOIN eidos_template_orders t ON t.order_id=o.id WHERE o.payment_intent=?',
+    ).bind(object.payment_intent).first<{ session_id: string | null }>();
+  if (templateRevocation) assertTemplatePaymentMode(env, record(parsed) ? parsed.livemode : undefined, templateRevocation.session_id);
   if (
     !templateRevocation &&
     await database

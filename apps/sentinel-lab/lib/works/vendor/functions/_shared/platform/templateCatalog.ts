@@ -1,5 +1,6 @@
-/** Server-owned TEST candidate prices. These do not alter Cinematic Starter. */
+/** Server-owned edition prices. Availability is gated independently; Cinematic Starter is unchanged. */
 export const TEMPLATE_STRIPE_API_VERSION = '2025-06-30.basil';
+export const TEMPLATE_LIVE_STRIPE_API_VERSION = '2026-08-26.dahlia';
 export const templateFamilies = ['switchboard', 'tideglass', 'matter', 'nightjar'] as const;
 export const templateEditions = ['developer', 'wordpress'] as const;
 export type TemplateEdition = typeof templateEditions[number];
