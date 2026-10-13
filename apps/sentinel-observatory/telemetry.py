@@ -286,8 +286,14 @@ class Observatory:
     def stop(self):
         self.stop_event.set()
         self.wake.set()
+        # A final receipt must not race an in-flight HEAD or interpretation write.
+        # Four bounded 8s redirect hops plus model completion fit this shutdown
+        # budget; if a worker is stuck, fail rather than export a false final cut.
+        deadline = time.monotonic() + 45
         for thread in self.threads:
-            thread.join(timeout=1)
+            thread.join(timeout=max(0, deadline - time.monotonic()))
+        if any(thread.is_alive() for thread in self.threads):
+            raise RuntimeError("Observation workers have not stopped; final export is unsafe")
 
     def request_probe(self):
         with self.probe_lock:

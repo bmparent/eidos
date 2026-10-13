@@ -223,6 +223,20 @@ class HTTPTests(unittest.TestCase):
             unblock.set()
             self.observatory.stop()
 
+    def test_stop_waits_for_in_flight_evidence_before_final_export(self):
+        started = threading.Event()
+        def finish_request():
+            started.set()
+            time.sleep(1.2)
+            self.observatory.store.append(event())
+        worker = threading.Thread(target=finish_request, daemon=True)
+        self.observatory.threads.append(worker)
+        worker.start()
+        self.assertTrue(started.wait(1))
+        self.observatory.stop()
+        self.assertFalse(worker.is_alive())
+        self.assertEqual(self.observatory.snapshot()["coverage"]["retained_events"], 1)
+
 
 if __name__ == "__main__":
     unittest.main()
