@@ -1,10 +1,11 @@
-/** Server-owned TEST candidate prices. These do not alter Cinematic Starter. */
+/** Server-owned edition prices. Availability is gated independently; Cinematic Starter is unchanged. */
 export const TEMPLATE_STRIPE_API_VERSION = '2025-06-30.basil';
+export const TEMPLATE_LIVE_STRIPE_API_VERSION = '2026-08-26.dahlia';
 export const templateFamilies = ['switchboard', 'tideglass', 'matter', 'nightjar'] as const;
 export const templateEditions = ['developer', 'wordpress'] as const;
 export type TemplateEdition = typeof templateEditions[number];
 export function templateVersion(slug: typeof templateFamilies[number], editionId: TemplateEdition) {
-  return editionId === 'wordpress' || slug === 'switchboard' ? '1.0.2' : slug === 'nightjar' ? '1.0.4' : '1.0.1';
+  return editionId === 'wordpress' || slug === 'switchboard' ? '1.0.3' : slug === 'nightjar' ? '1.0.5' : '1.0.2';
 }
 export interface TemplateProduct {
   id: string; productId: string; editionId: TemplateEdition; name: string;

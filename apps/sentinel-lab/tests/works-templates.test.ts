@@ -5,7 +5,7 @@ import { createHash, createHmac } from 'node:crypto';
 import { createClient } from '@libsql/client';
 import { adaptDatabase } from '../lib/works/database';
 import { challenge, hash, type PlatformEnv } from '../lib/works/vendor/functions/_shared/platform/core';
-import { catalog, recover, redeem, templateTestReady } from '../lib/works/vendor/functions/_shared/platform/templateShop';
+import { catalog, recover, redeem, templateLiveReady, templateTestReady } from '../lib/works/vendor/functions/_shared/platform/templateShop';
 import { templateProducts } from '../lib/works/vendor/functions/_shared/platform/templateCatalog';
 import { onRequestPost as checkout } from '../lib/works/vendor/functions/api/shop/checkout';
 import { onRequestPost as status } from '../lib/works/vendor/functions/api/shop/status';
@@ -14,10 +14,11 @@ import { onRequestPost as webhook } from '../lib/works/vendor/functions/api/shop
 import { kitArchiveBase64 } from '../lib/works/vendor/functions/_shared/platform/kitArchive';
 
 const origin = 'http://localhost:4319';
-function request(path: string, payload: unknown, cookie = '') {
-  return new Request(origin + path, { method: 'POST', headers: { origin, 'content-type': 'application/json', cookie }, body: JSON.stringify(payload) });
+function request(path: string, payload: unknown, cookie = '', requestOrigin = origin) {
+  return new Request(requestOrigin + path, { method: 'POST', headers: { origin: requestOrigin, 'content-type': 'application/json', cookie }, body: JSON.stringify(payload) });
 }
-async function fixture() {
+async function fixture(mode: 'test' | 'live' = 'test') {
+  const requestOrigin = mode === 'live' ? 'https://eidos-works.com' : origin;
   const client = createClient({ url: ':memory:' }), database = adaptDatabase(client);
   for (const name of ['0001_eidos_platform.sql', '0002_members.sql', '0004_paid_templates.sql']) {
     const schema = readFileSync(new URL('../lib/works/vendor/migrations/' + name, import.meta.url), 'utf8');
@@ -27,19 +28,31 @@ async function fixture() {
   let bytes: Uint8Array = new Uint8Array([80, 75, 3, 4, 1, 2, 3]);
   const env: PlatformEnv = { EIDOS_DB: database, EIDOS_SHOP_ENABLED: 'true', EIDOS_LOCAL_TEST: 'true',
     EIDOS_TEMPLATE_TEST_ENABLED: 'true', EIDOS_TEMPLATE_VERIFIED_EDITIONS: 'switchboard-developer-v1,switchboard-wordpress-v1',
-    STRIPE_SECRET_KEY: 'sk_test_local_fixture', EIDOS_KIT_WEBHOOK_SECRET: 'whsec_local_fixture_only', PUBLIC_SITE_URL: origin,
+    STRIPE_SECRET_KEY: 'sk_test_local_fixture', EIDOS_KIT_WEBHOOK_SECRET: 'whsec_local_fixture_only', PUBLIC_SITE_URL: requestOrigin,
     EIDOS_ACCOUNTS_ENABLED: 'true', RESEND_API_KEY: 'fixture-mail-key', EIDOS_MAIL_FROM: 'Eidos <hello@example.test>',
     EIDOS_TEMPLATE_ARCHIVES: { async get(key) { return key.startsWith('templates/') ? { bytes, sha256: createHash('sha256').update(bytes).digest('hex') } : null; } } };
-  const originalFetch = globalThis.fetch, mails: Array<{text:string;to:string;idempotency:string}> = [], sessions: URLSearchParams[] = [];
+  if (mode === 'live') Object.assign(env, { STRIPE_SECRET_KEY: 'rk_live_fixture_only', EIDOS_TEMPLATE_LIVE_ENABLED: 'true', EIDOS_TEMPLATE_TEST_ENABLED: 'false',
+    EIDOS_LOCAL_TEST: 'false', EIDOS_ACCOUNTS_ENABLED: 'false', RESEND_API_KEY: 're_fixture_only',
+    EIDOS_RATE_SECRET: 'fixture_rate_secret_for_live_tests_only_123456789',
+    EIDOS_TEMPLATE_STRIPE_ACCOUNT_ID: 'acct_fixturemerchant', TURNSTILE_SITE_KEY: 'fixture_real_widget', TURNSTILE_SECRET_KEY: 'fixture_real_secret' });
+  const originalFetch = globalThis.fetch, mails: Array<{subject:string;text:string;to:string;idempotency:string}> = [], sessions: URLSearchParams[] = [];
+  let merchant = { id: 'acct_fixturemerchant', charges_enabled: true, payouts_enabled: true };
+  let sessionMode: 'test' | 'live' = mode;
   let failMail = false, failCheckout = false;
   globalThis.fetch = async (url, init) => {
+    if (String(url) === 'https://api.stripe.com/v1/account') return Response.json(merchant);
+    if (String(url) === 'https://challenges.cloudflare.com/turnstile/v0/siteverify') {
+      const form = JSON.parse(String(init?.body)) as { response: string };
+      return Response.json({ success: true, hostname: 'eidos-works.com', action: form.response.includes('recovery') ? 'recovery' : 'checkout' });
+    }
     if (String(url) === 'https://api.stripe.com/v1/checkout/sessions') {
       if (failCheckout) return Response.json({error:'fixture'}, {status:503});
       const body = new URLSearchParams(String(init?.body)), key = body.get('client_reference_id')!;
       assert.equal(body.has('payment_method_types[0]'),false);
-      assert.equal(new Headers(init?.headers).get('stripe-version'),'2025-06-30.basil');
+      assert.equal(new Headers(init?.headers).get('stripe-version'), mode === 'live' ? '2026-08-26.dahlia' : '2025-06-30.basil');
+      if (mode === 'live') assert.match(body.get('integration_identifier')!, /^eidos-templates-[a-z]{8}$/);
       sessions.push(body);
-      return Response.json({ id: 'cs_test_' + key.replaceAll('-', ''), url: 'https://checkout.stripe.com/c/pay/cs_test_' + key, livemode: false });
+      return Response.json({ id: 'cs_' + sessionMode + '_' + key.replaceAll('-', ''), url: 'https://checkout.stripe.com/c/pay/cs_' + sessionMode + '_' + key, livemode: sessionMode === 'live' });
     }
     if (String(url) === 'https://api.resend.com/emails') {
       const mail = JSON.parse(String(init?.body));
@@ -49,23 +62,23 @@ async function fixture() {
     throw Error('Unexpected network in controlled test: ' + url);
   };
   async function call(handler: (value: { request: Request; env: PlatformEnv }) => Promise<Response>, path: string, payload: unknown, cookie = '') {
-    return handler({ request: request(path, payload, cookie), env });
+    return handler({ request: request(path, payload, cookie, requestOrigin), env });
   }
   async function begin(attempt: string, editionId = 'developer', cookie = '', slug = 'switchboard') {
-    const response = await call(checkout, '/api/shop/checkout', { productId: slug + '-' + editionId + '-v1', editionId, acceptTerms:true, attempt }, cookie);
+    const response = await call(checkout, '/api/shop/checkout', { productId: slug + '-' + editionId + '-v1', editionId, acceptTerms:true, attempt, challenge:'fixture-checkout' }, cookie);
     assert.equal(response.status, 200, await response.clone().text());
     const row = await database.prepare('SELECT o.*,t.* FROM eidos_orders o JOIN eidos_template_orders t ON t.order_id=o.id WHERE o.receipt_hash=?').bind(await hash(attempt)).first<Record<string,unknown>>();
     assert.ok(row); return row;
   }
-  async function event(row: Record<string,unknown>, id: string, overrides: Record<string,unknown> = {}, type = 'checkout.session.completed', livemode = false, signature = true) {
+  async function event(row: Record<string,unknown>, id: string, overrides: Record<string,unknown> = {}, type = 'checkout.session.completed', livemode = mode === 'live', signature = true) {
     const payload = {id, type, livemode, data:{object:{ id:row.session_id, client_reference_id:row.id, mode:'payment', currency:'usd', amount_total:row.price_cents,
-      payment_status:'paid', payment_intent:'pi_test_' + row.id, customer_details:{email:'buyer@example.test'},
+      payment_status:'paid', payment_intent:'pi_' + mode + '_' + row.id, customer_details:{email:'buyer@example.test'},
       metadata:{eidos_product:row.product_id,eidos_edition:row.edition_id,eidos_version:row.version,eidos_order_id:row.id}, ...overrides }}};
     const raw = JSON.stringify(payload), timestamp = Math.floor(Date.now()/1000);
     const digest = createHmac('sha256', env.EIDOS_KIT_WEBHOOK_SECRET!).update(timestamp + '.' + raw).digest('hex');
-    return webhook({ env, request: new Request(origin + '/api/shop/webhook', {method:'POST', headers:{'stripe-signature':`t=${timestamp},v1=${signature ? digest : '0'.repeat(64)}`},body:raw}) });
+    return webhook({ env, request: new Request(requestOrigin + '/api/shop/webhook', {method:'POST', headers:{'stripe-signature':`t=${timestamp},v1=${signature ? digest : '0'.repeat(64)}`},body:raw}) });
   }
-  return { env, database, client, call, begin, event, mails, sessions, setBytes(value:Uint8Array){bytes=value;}, setFailMail(value:boolean){failMail=value;}, setFailCheckout(value:boolean){failCheckout=value;}, close(){globalThis.fetch=originalFetch;client.close();} };
+  return { env, database, client, call, begin, event, mails, sessions, setMerchant(value:typeof merchant){merchant=value;}, setSessionMode(value:'test'|'live'){sessionMode=value;}, setBytes(value:Uint8Array){bytes=value;}, setFailMail(value:boolean){failMail=value;}, setFailCheckout(value:boolean){failCheckout=value;}, close(){globalThis.fetch=originalFetch;client.close();} };
 }
 
 test('template TEST gate rejects LIVE, production host, missing archives and unverified CMS; server prices cannot be overridden', async () => {
@@ -89,11 +102,138 @@ test('template TEST gate rejects LIVE, production host, missing archives and unv
   } finally {f.close();}
 });
 
-test('catalog updates all eight edition versions while all sixteen prior purchase snapshots retain their original archive', async () => {
+test('LIVE readiness requires an exclusive canonical configuration, merchant, mail and real verification keys', async () => {
+  const f = await fixture('live');
+  try {
+    assert.equal(templateLiveReady(f.env), true);
+    assert.equal(templateTestReady(f.env), false);
+    for (const change of [
+      { EIDOS_TEMPLATE_LIVE_ENABLED: 'false' }, { EIDOS_TEMPLATE_TEST_ENABLED: 'true' },
+      { STRIPE_SECRET_KEY: 'rk_test_wrong_environment' }, { PUBLIC_SITE_URL: origin },
+      { PUBLIC_SITE_URL: 'https://owner-preview.eidos-works.com' }, { EIDOS_LOCAL_TEST: 'true' },
+      { EIDOS_TEMPLATE_TEST_CHALLENGE: 'true' }, { EIDOS_SHOP_ENABLED: 'false' },
+      { EIDOS_DB: undefined }, { EIDOS_TEMPLATE_ARCHIVES: undefined }, { EIDOS_KIT_WEBHOOK_SECRET: undefined },
+      { EIDOS_RATE_SECRET: undefined }, { EIDOS_RATE_SECRET: 'short' },
+      { EIDOS_TEMPLATE_STRIPE_ACCOUNT_ID: undefined }, { RESEND_API_KEY: undefined }, { EIDOS_MAIL_FROM: undefined },
+      { TURNSTILE_SITE_KEY: undefined }, { TURNSTILE_SECRET_KEY: undefined },
+      { TURNSTILE_SITE_KEY: '1x00000000000000000000AA' },
+      { TURNSTILE_SECRET_KEY: '1x0000000000000000000000000000000AA' },
+    ]) assert.equal(templateLiveReady({ ...f.env, ...change }), false, JSON.stringify(Object.keys(change)));
+    const result = await catalog({ request: new Request('https://eidos-works.com/api/shop/catalog'), env: f.env });
+    const data = await result.json();
+    assert.equal(data.mode, 'live'); assert.equal(data.ready, true);
+    assert.equal(data.editions.filter((edition: { available: boolean }) => edition.available).length, 2);
+    assert.ok(data.editions.filter((edition: { id: string }) => /squarespace|godaddy/.test(edition.id)).every((edition: { available: boolean }) => !edition.available));
+  } finally { f.close(); }
+});
+
+test('LIVE checkout refuses a wrong or incomplete merchant before creating a purchase', async () => {
+  const f = await fixture('live');
+  try {
+    for (const merchant of [
+      { id: 'acct_othermerchant', charges_enabled: true, payouts_enabled: true },
+      { id: 'acct_fixturemerchant', charges_enabled: false, payouts_enabled: true },
+      { id: 'acct_fixturemerchant', charges_enabled: true, payouts_enabled: false },
+    ]) {
+      f.setMerchant(merchant);
+      const response = await f.call(checkout, '/api/shop/checkout', { productId: 'switchboard-developer-v1', editionId: 'developer', acceptTerms: true, attempt: 'c'.repeat(64), challenge: 'fixture-checkout' });
+      assert.equal(response.status, 503);
+    }
+    assert.equal(f.sessions.length, 0);
+    assert.equal((await f.database.prepare('SELECT COUNT(*) n FROM eidos_orders').first<{ n: number }>())?.n, 0);
+  } finally { f.close(); }
+});
+
+test('LIVE checkout rejects a TEST session from the provider and cannot grant a download', async () => {
+  const f = await fixture('live'), receipt = 'd'.repeat(64);
+  try {
+    f.setSessionMode('test');
+    const response = await f.call(checkout, '/api/shop/checkout', { productId: 'switchboard-developer-v1', editionId: 'developer', acceptTerms: true, attempt: receipt, challenge: 'fixture-checkout' });
+    assert.equal(response.status, 502);
+    const pending = await (await f.call(status, '/api/shop/status', { receipt })).json();
+    assert.equal(pending.status, 'pending'); assert.equal(pending.downloadToken, null); assert.equal(f.mails.length, 0);
+    assert.equal((await f.call(download, '/api/shop/download', { receipt })).status, 403);
+  } finally { f.close(); }
+});
+
+test('controlled LIVE guest checkout, signed fulfillment, mail retry, download and single-use recovery survive sales closure', async () => {
+  const f = await fixture('live'), receipt = 'e'.repeat(64);
+  try {
+    const row = await f.begin(receipt);
+    assert.equal(row.member_id, null);
+    assert.doesNotMatch(f.sessions[0].get('line_items[0][price_data][product_data][name]')!, /TEST/);
+    assert.equal((await f.event(row, 'evt_live_wrong_mode', {}, 'checkout.session.completed', false)).status, 400);
+    assert.equal((await f.event(row, 'evt_live_wrong_amount', { amount_total: 1 })).status, 400);
+    f.setFailMail(true);
+    assert.equal((await f.event(row, 'evt_live_paid')).status, 503);
+    assert.equal((await (await f.call(status, '/api/shop/status', { receipt })).json()).mailStatus, 'failed');
+    f.setFailMail(false);
+    f.env.EIDOS_TEMPLATE_LIVE_ENABLED = 'false';
+    assert.equal((await f.event(row, 'evt_live_paid')).status, 200);
+    assert.deepEqual(f.mails[0], f.mails[1]);
+    assert.doesNotMatch(f.mails[1].subject, /TEST/); assert.doesNotMatch(f.mails[1].text, /TEST purchase/);
+    const paid = await (await f.call(status, '/api/shop/status', { receipt })).json();
+    const zip = await f.call(download, '/api/shop/download', { receipt, downloadToken: paid.downloadToken });
+    assert.equal(zip.status, 200); assert.equal(zip.headers.get('x-eidos-archive-sha256'), row.archive_sha256);
+    await f.database.prepare('UPDATE eidos_template_recovery SET expires=0').run();
+    assert.equal((await f.call(recover, '/api/shop/recover', { email: 'buyer@example.test', challenge: 'fixture-recovery' })).status, 200);
+    assert.doesNotMatch(f.mails.at(-1)!.subject, /TEST/);
+    const token = f.mails.at(-1)!.text.match(/#token=([a-f0-9]{64})/)![1];
+    assert.equal((await f.call(redeem, '/api/shop/redeem', { token })).status, 200);
+    assert.equal((await f.call(redeem, '/api/shop/redeem', { token })).status, 401);
+    assert.equal((await f.call(status, '/api/shop/status', { receipt })).status, 404);
+    assert.equal((await f.database.prepare('SELECT COUNT(*) n FROM eidos_orders').first<{ n: number }>())?.n, 1);
+  } finally { f.close(); }
+});
+
+test('LIVE refund/dispute rejects TEST events and revokes downloads after new sales are disabled', async () => {
+  const f = await fixture('live');
+  try {
+    for (const [type, letter] of [['charge.refunded', '0'], ['charge.dispute.created', '1']]) {
+      f.env.EIDOS_TEMPLATE_LIVE_ENABLED = 'true';
+      const receipt = letter.repeat(64), row = await f.begin(receipt);
+      assert.equal((await f.event(row, 'evt_live_paid_' + letter)).status, 200);
+      const ready = await (await f.call(status, '/api/shop/status', { receipt })).json();
+      const object = { payment_intent: 'pi_live_' + row.id };
+      assert.equal((await f.event(row, 'evt_live_wrong_refund_' + letter, object, type, false)).status, 400);
+      f.env.EIDOS_TEMPLATE_LIVE_ENABLED = 'false';
+      for (let replay = 0; replay < 2; replay++) assert.equal((await f.event(row, 'evt_live_revoke_' + letter, object, type)).status, 200);
+      assert.equal((await f.call(download, '/api/shop/download', { receipt, downloadToken: ready.downloadToken })).status, 403);
+      assert.equal((await f.event(row, 'evt_live_late_' + letter)).status, 200);
+      assert.equal((await (await f.call(status, '/api/shop/status', { receipt })).json()).fulfillmentStatus, 'revoked');
+      const retained = await f.database.prepare('SELECT archive_sha256 FROM eidos_template_orders WHERE order_id=?').bind(row.id).first<{ archive_sha256: string }>();
+      assert.equal(retained?.archive_sha256, row.archive_sha256);
+    }
+  } finally { f.close(); }
+});
+
+test('retained TEST and LIVE receipts cannot grant status, downloads or recovery in the opposite environment', async () => {
+  for (const mode of ['test', 'live'] as const) {
+    const f = await fixture(mode), receipt = '8'.repeat(64);
+    try {
+      const row = await f.begin(receipt);
+      assert.equal((await f.event(row, 'evt_mode_bound_purchase')).status, 200);
+      const paid = await (await f.call(status, '/api/shop/status', { receipt })).json();
+      const token = f.mails[0].text.match(/#token=([a-f0-9]{64})/)![1];
+      f.env.STRIPE_SECRET_KEY = mode === 'test' ? 'sk_live_opposite_fixture' : 'sk_test_opposite_fixture';
+      f.env.PUBLIC_SITE_URL = mode === 'test' ? 'https://eidos-works.com' : origin;
+      assert.equal((await f.call(status, '/api/shop/status', { receipt })).status, 400);
+      assert.equal((await f.call(download, '/api/shop/download', { receipt, downloadToken: paid.downloadToken })).status, 400);
+      assert.equal((await f.call(redeem, '/api/shop/redeem', { token })).status, 400);
+      assert.equal((await f.call(recover, '/api/shop/recover', { email: 'buyer@example.test', challenge: 'fixture-recovery' })).status, 200);
+      assert.equal(f.mails.length, 1);
+      assert.equal((await f.database.prepare('SELECT used FROM eidos_template_recovery WHERE token_hash=?').bind(await hash(token)).first<{ used: number }>())?.used, 0);
+      const unchanged = await f.database.prepare('SELECT archive_sha256 FROM eidos_template_orders WHERE order_id=?').bind(row.id).first<{ archive_sha256: string }>();
+      assert.equal(unchanged?.archive_sha256, row.archive_sha256);
+    } finally { f.close(); }
+  }
+});
+
+test('catalog updates all eight edition versions while all twenty-four prior purchase snapshots retain their original archive', async () => {
   const f=await fixture();
   try {
     for(const product of templateProducts) {
-      const expected=product.editionId==='wordpress'||product.id==='switchboard-developer-v1'?'1.0.2':product.id==='nightjar-developer-v1'?'1.0.4':'1.0.1';
+      const expected=product.editionId==='wordpress'||product.id==='switchboard-developer-v1'?'1.0.3':product.id==='nightjar-developer-v1'?'1.0.5':'1.0.2';
       assert.equal(product.version,expected);
       assert.match(product.archiveKey,new RegExp('/'+product.version.replaceAll('.','\\.')+'/'+product.editionId+'\\.zip$'));
       assert.ok(product.downloadName.endsWith('-'+product.version+'.zip'));
@@ -103,10 +243,16 @@ test('catalog updates all eight edition versions while all sixteen prior purchas
       ...['switchboard','tideglass','matter','nightjar'].flatMap(slug=>[['developer','1.0.0'],['wordpress','1.0.0'],['wordpress','1.0.1']].map(([edition,version])=>[slug,edition,version] as [string,string,string])),
       ['switchboard','developer','1.0.1'],
       ...['1.0.1','1.0.2','1.0.3'].map(version=>['nightjar','developer',version] as [string,string,string]),
+      ...['switchboard','tideglass','matter','nightjar'].map(slug=>[slug,'wordpress','1.0.2'] as [string,string,string]),
+      ['switchboard','developer','1.0.2'],['tideglass','developer','1.0.1'],['matter','developer','1.0.1'],['nightjar','developer','1.0.4'],
     ];
-    assert.equal(retained.length,16);
+    assert.equal(retained.length,24);
     for(const [index,[slug,edition,oldVersion]] of retained.entries()) {
-      const receipt=index.toString(16).repeat(64),current=await f.begin(receipt,edition,'',slug);
+      // Each historical buyer is independent; do not weaken production checkout limits.
+      const f=await fixture();
+      try {
+      f.env.EIDOS_TEMPLATE_VERIFIED_EDITIONS=templateProducts.map(product=>product.id).join(',');
+      const receipt=index.toString(16).padStart(64,'0'),current=await f.begin(receipt,edition,'',slug);
       assert.equal(current.version,templateProducts.find(product=>product.id===`${slug}-${edition}-v1`)!.version);
       // Simulate a retained order created by the previous catalog revision.
       const oldBytes=new Uint8Array([80,75,3,4,9,8,7]),oldHash=createHash('sha256').update(oldBytes).digest('hex');
@@ -125,6 +271,7 @@ test('catalog updates all eight edition versions while all sixteen prior purchas
       f.env.EIDOS_TEMPLATE_ARCHIVES={async get(){return null;}};
       assert.equal((await f.call(download,'/api/shop/download',{receipt,downloadToken:paid.downloadToken})).status,503);
       f.env.EIDOS_TEMPLATE_ARCHIVES=originalArchive;
+      } finally {f.close();}
     }
   } finally {f.close();}
 });
@@ -159,7 +306,7 @@ test('checkout attempt retry preserves one ledger order and same server-owned TE
     assert.equal(f.sessions.length,1);
     assert.equal(f.sessions[0].get('line_items[0][price_data][unit_amount]'),'9900');
     assert.equal((await f.database.prepare('SELECT COUNT(*) n FROM eidos_orders').first<{n:number}>())?.n,1);
-    assert.equal(row.version,'1.0.2');
+    assert.equal(row.version,'1.0.3');
     assert.equal((await f.call(download,'/api/shop/download',{receipt})).status,403);
     const pending=await (await f.call(status,'/api/shop/status',{receipt})).json();
     assert.equal(pending.status,'pending'); assert.equal(pending.downloadToken,null);
@@ -180,7 +327,7 @@ test('signed paid fulfillment, delayed state, duplicate webhook, snapshot integr
     assert.equal((await f.event(row,'evt_paid')).status,200); assert.equal(f.mails.length,1);
     assert.match(f.mails[0].text,/transactional delivery/);
     const ready=await (await f.call(status,'/api/shop/status',{receipt})).json();
-    assert.equal(ready.status,'paid'); assert.equal(ready.mailStatus,'sent'); assert.equal(ready.version,'1.0.2');
+    assert.equal(ready.status,'paid'); assert.equal(ready.mailStatus,'sent'); assert.equal(ready.version,'1.0.3');
     assert.equal((await f.call(download,'/api/shop/download',{receipt})).status,401);
     const zip=await f.call(download,'/api/shop/download',{receipt,downloadToken:ready.downloadToken});
     assert.equal(zip.status,200); assert.equal(zip.headers.get('cache-control'),'private, no-store');

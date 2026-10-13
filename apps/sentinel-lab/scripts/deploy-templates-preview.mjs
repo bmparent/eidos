@@ -9,7 +9,8 @@ if(!options.cli)throw Error('Supply --cli=<authenticated Vercel CLI path>. Dry-r
 const root=process.cwd(),app='apps/sentinel-lab/';
 const git=(...args)=>execFileSync('git',args,{encoding:'utf8',cwd:root}).trim();
 const branch=git('branch','--show-current'),commit=git('rev-parse','HEAD');
-if(branch!=='codex/paid-templates-20261010')throw Error('Refusing a branch outside this isolated candidate.');
+const environmentBranch=options['environment-branch'] || branch;
+if(!['codex/paid-templates-20261010','codex/template-release-readiness-20261013','codex/template-delivery-20261013'].includes(branch) || environmentBranch!=='codex/paid-templates-20261010')throw Error('Use an approved template source branch and the isolated candidate environment branch.');
 if(JSON.parse(await readFile(app+'package.json','utf8')).name!=='eidos-sentinel-lab')throw Error('Run from repository root.');
 const selected=new Set(git('ls-files','-co','--exclude-standard','--',app).split('\n').filter(Boolean));
 const archiveReceipt=JSON.parse(await readFile('artifacts/paid-templates-20261010/private-archive-receipt-final.json','utf8'));
@@ -30,19 +31,19 @@ for(const file of [...selected].sort()){
 }
 if(manifest.filter(item=>item.file.startsWith(app+'private/templates/')).length!==archives.length)throw Error('A current or retained private buyer archive is missing.');
 const bundleHash=createHash('sha256').update(JSON.stringify(manifest)).digest('hex');
-const receipt={timestampUtc:new Date().toISOString(),scope:'protected preview only',branch,commit,bundleHash,dirty:Boolean(git('status','--porcelain')),files:manifest,uploaded:false};
+const receipt={timestampUtc:new Date().toISOString(),scope:'protected preview only',branch,environmentBranch,commit,bundleHash,dirty:Boolean(git('status','--porcelain')),files:manifest,uploaded:false};
 if(process.argv.includes('--deploy')||options['request-out']){
   const configuration=JSON.parse(await readFile(app+'.vercel/templates-preview.json','utf8'));
   if(configuration.env.PUBLIC_SITE_URL!=='https://eidosworks-templates-test-20261010.pages.dev'||configuration.env.EIDOS_DATABASE_BINDING_PREFIX!=='EIDOS_TEMPLATES_TEST'||!/^[sr]k_test_/.test(configuration.env.STRIPE_SECRET_KEY||''))throw Error('Unexpected candidate configuration.');
   const sourceRevision=commit+'-bundle-'+bundleHash.slice(0,16);
   const payload={
     name:'eidos-sentinel-lab',project:'prj_5aL0COF1DONfPKI4fv25NitAdkOE',files,
-    gitMetadata:{remoteUrl:'https://github.com/bmparent/eidos',commitRef:branch,commitSha:commit,dirty:receipt.dirty},
-    meta:{paidTemplatesSourceSha256:bundleHash,paidTemplatesGitSha:commit},
+    gitMetadata:{remoteUrl:'https://github.com/bmparent/eidos',commitRef:environmentBranch,commitSha:commit,dirty:receipt.dirty},
+    meta:{paidTemplatesSourceSha256:bundleHash,paidTemplatesGitSha:commit,paidTemplatesSourceBranch:branch,paidTemplatesEnvironmentBranch:environmentBranch},
     projectSettings:{rootDirectory:app.slice(0,-1)},
   };
   const branchEnvironment=Object.entries({...configuration.env,EIDOS_TEMPLATE_SOURCE_REVISION:sourceRevision}).map(([key,value])=>({
-    key,value,type:/SECRET|TOKEN|AUTH_TOKEN/.test(key)?'sensitive':'encrypted',target:['preview'],gitBranch:branch,
+    key,value,type:/SECRET|TOKEN|AUTH_TOKEN/.test(key)?'sensitive':'encrypted',target:['preview'],gitBranch:environmentBranch,
   }));
   if(options['request-out']) {
     const output=path.resolve(options['request-out']);
@@ -50,8 +51,12 @@ if(process.argv.includes('--deploy')||options['request-out']){
     await mkdir(path.dirname(output),{recursive:true});await writeFile(output,JSON.stringify({deployment:payload,branchEnvironment}),{mode:0o600});
     receipt.sourceRevision=sourceRevision;
   } else {
-  const configured=vercelApi(options.cli,'/v10/projects/prj_5aL0COF1DONfPKI4fv25NitAdkOE/env?upsert=true&teamId=team_TEsnMvKU6SdbYjVhws6Ttp8H','POST',branchEnvironment);
-  if(configured.failed?.length)throw Error('Candidate branch environment setup failed; no deployment created.');
+  // The authenticated CLI/provider combination rejects a root JSON array (400).
+  // Use the documented single-variable request shape, preserving Preview scope.
+  for(const variable of branchEnvironment) {
+    const configured=vercelApi(options.cli,'/v10/projects/prj_5aL0COF1DONfPKI4fv25NitAdkOE/env?upsert=true&teamId=team_TEsnMvKU6SdbYjVhws6Ttp8H','POST',variable);
+    if(!configured.created || configured.failed?.length)throw Error('Candidate branch environment setup failed; no deployment created.');
+  }
   const result=vercelApi(options.cli,'/v13/deployments?forceNew=1&teamId=team_TEsnMvKU6SdbYjVhws6Ttp8H','POST',payload);
   if(result.target==='production')throw Error('Unexpected production deployment returned. Inspect provider immediately.');
   Object.assign(receipt,{uploaded:true,sourceRevision,deployment:{id:result.id,url:'https://'+result.url,state:result.readyState||result.status,target:result.target||'preview'}});

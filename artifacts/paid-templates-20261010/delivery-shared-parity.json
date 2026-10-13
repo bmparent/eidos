@@ -1,0 +1,27 @@
+{
+  "timestampUtc": "2026-10-13T19:53:49.229918+00:00",
+  "scope": "four shared commerce files changed by release continuation; line endings normalized; unrelated vendor differences preserved",
+  "files": [
+    {
+      "path": "functions/_shared/platform/core.ts",
+      "normalizedSha256": "c113149f1408f336967395d8548f8af7049062a4123719bca09e7343a464cdc6",
+      "equal": true
+    },
+    {
+      "path": "functions/_shared/platform/templateCatalog.ts",
+      "normalizedSha256": "a455000a242865feb7b77c88aff286ab726bf9968b52e0eab946ddabd6fce80c",
+      "equal": true
+    },
+    {
+      "path": "functions/_shared/platform/templateShop.ts",
+      "normalizedSha256": "e8f74bddd3b7219bb69ff367716e4e13675118f4b97400d6323d842f60b4e44e",
+      "equal": true
+    },
+    {
+      "path": "functions/api/shop/webhook.ts",
+      "normalizedSha256": "08b2b944bbc4b4fccd76c6c8b720a721d4bf547a2c881fef8b3dc9522af0045b",
+      "equal": true
+    }
+  ],
+  "status": "passed"
+}
