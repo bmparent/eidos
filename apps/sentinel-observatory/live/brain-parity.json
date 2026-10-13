@@ -1,6 +1,6 @@
 {
   "schema": "eidos.sentinel.js-parity-receipt.v1",
-  "verified_at": "2026-10-13T20:06:10.816Z",
+  "verified_at": "2026-10-13T21:09:53.719Z",
   "method": "Recorded and test-only frames passed through canonical Python reference and JavaScript port, in sequence",
   "numerical_tolerance": "1e-7 absolute + 1e-8 * abs(reference); exact status/string/boolean agreement",
   "status": "PASS",
@@ -68,7 +68,7 @@
     }
   ],
   "reference_sha256": "2cd5755177be9157203200ba23c5766b15b3eb27d73c79ad444ddfcea90b6855",
-  "module_sha256": "52dcc59fe549bcfb5b1946703c90dd29e2ba1ae8c26e99f77a69b6dcf1870c52",
+  "module_sha256": "dbd0654feb62cb13af44382a9c2e6c21785cd761028bd61366b89fde51ca3d3e",
   "canonical_source_hashes": {
     "sentinel_v3.py": "b76207726fbcc29f626bdef773519c13f26885c2839c34825dee565906a1eef5",
     "calibration.py": "f2f07b148c17f2734fd089fd02614231bf82bb7e3789c1643636fec7c9d64505",

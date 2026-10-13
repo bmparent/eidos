@@ -36,13 +36,17 @@ The store retains at most1000 records and exposes a seven-day window. Expired ro
 
 Read-only provider checks against the current Sentinel Lab scope returned unavailable security configuration. No provider firewall-event feed is presently attached. The hosted panel explicitly reports this missing coverage.
 
-## Qwen and Eido
+## GPT-6.1 Sol and Eido
 
-Select **Enable local Qwen** to download Qwen3-0.6B onto this browser's device. Inference uses a dedicated worker and WebGPU with float16 support, through pinned Transformers.js3.7.1 and a pinned ONNX model revision. The first download is hundreds of MB and requires a compatible current Chrome/Edge device. Unsupported hardware/download failures display unavailable; collection continues.
+The hosted interpreter uses the exact OpenAI model `gpt-6.1-sol` through a server-side Responses API call. Select retained evidence, then explicitly request interpretation. It does not download a browser model or require Hugging Face access. `OPENAI_API_KEY` belongs in the existing Site's secret runtime environment; it is never supplied to browser code. A missing key displays **not configured** and preserves deterministic measured-evidence notes. A configuration check alone does not prove model access or successful inference.
 
-The model ranks two eligible predefined explanations from bounded numeric evidence. Code supplies facts, conditional wording and retained evidence references. Sensor alerts and network flags can be ranked too. A rejected/malformed output returns deterministic evidence notes with a rejection receipt. Each accepted result reports the actual model, revision, inference timing, input IDs and catalogue provenance. There is no model-written security verdict or autonomous defensive action, and no paid model API is used.
+The model ranks two eligible predefined explanations from bounded numeric and enum metadata in authoritative server-retained native records. Imported logs and client-supplied measurements cannot trigger paid inference. Endpoints, IP addresses, raw URLs, request bodies, headers and arbitrary log text stay outside model context. Code supplies facts, conditional wording and evidence references. Accepted output includes provider/model identity, timing, usage, input IDs and prompt/output hashes. Missing, malformed or unverifiable output displays evidence fallback; an attempted call with no verified receipt is not represented as a proven model run.
 
-The optional local CPU interpreter uses the existing tested Qwen GGUF adapter. Configure `OBSERVATORY_MODEL_PATH` to a compatible Qwen3 GGUF after installing the optional llama-cpp-python runtime. The local `/api/analyze` route accepts retained observation IDs, not arbitrary client-created evidence, and bounds/caches model work. Eido remains an evaluation candidate; this app does not represent an unqualified Eido checkpoint as loaded.
+Paid calls run manually, with low reasoning effort and at most1024 output tokens. Durable per-evidence reservations cache results and prevent repeat calls. A60-second cooldown and UTC daily limits of20 reservations or$0.50 in conservative reservations bound usage; at$0.05 reserved per call, the budget currently permits at most10 calls. Reservations are conservative application controls, not an invoice or provider billing cap. Failed attempts remain reserved and are not automatically retried. Model-job records expire after eight days on the next valid retained-evidence interpretation request; expired seven-day source records cannot trigger inference again. There is no model-written security verdict or autonomous defensive action.
+
+The optional local CPU interpreter uses the existing tested Qwen GGUF adapter. Configure `OBSERVATORY_MODEL_PATH` to a compatible Qwen3 GGUF after installing the optional llama-cpp-python runtime. The local `/api/analyze` route accepts retained observation IDs, not arbitrary client-created evidence, and bounds/caches model work. Historical browser Qwen source and receipts remain available as prior implementation evidence; hosted interpretation does not invoke them. Eido remains an evaluation candidate; this app does not represent an unqualified Eido checkpoint as loaded.
+
+Credential provisioning and the remaining actual-provider/browser checks are documented in [CODEX-HANDOFF-SOL.md](./CODEX-HANDOFF-SOL.md).
 
 ## Local public URL/IP companion
 
@@ -57,7 +61,7 @@ Or use the provided Windows/macOS/Linux launcher. Open http://127.0.0.1:8766. Th
 ## Validation and build
 
 ```sh
-node --test apps/sentinel-observatory/live/collector.test.mjs apps/sentinel-observatory/live/brain.test.mjs apps/sentinel-observatory/live/browser-interpreter.test.mjs apps/sentinel-observatory/live/security-events.test.mjs
+node --test apps/sentinel-observatory/live/collector.test.mjs apps/sentinel-observatory/live/brain.test.mjs apps/sentinel-observatory/live/browser-interpreter.test.mjs apps/sentinel-observatory/live/security-events.test.mjs apps/sentinel-observatory/live/hosted-sensor.test.mjs apps/sentinel-observatory/live/sol-interpreter.test.mjs
 python -m unittest discover -s apps/sentinel-observatory/live -p 'test_*.py' -v
 node apps/sentinel-observatory/live/verify_brain_parity.mjs
 python apps/sentinel-observatory/live/build_worker.py --output /absolute/site/worker/index.js --recorded /absolute/site/recorded.html

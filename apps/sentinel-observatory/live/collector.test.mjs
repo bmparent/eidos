@@ -35,6 +35,25 @@ async function mockedGlobalFetch(fetchImpl, fn) {
   try { return await fn(); } finally { globalThis.fetch = original; }
 }
 
+test("oversized and stalled request bodies stop before any outbound request", async () => {
+  let calls = 0;
+  await mockedGlobalFetch(async () => { calls++; throw new Error("Unexpected outbound request"); }, async () => {
+    const large = await handleObservation(request(null, {raw: " ".repeat(1025)}));
+    assert.equal(large.status, 413);
+    assert.equal((await large.json()).error.code, "payload_too_large");
+    let cancelled = false;
+    const stream = new ReadableStream({cancel() {cancelled = true; return new Promise(() => {});}});
+    const slow = new Request("https://observatory.example.com/api/observe", {method: "POST", headers: {Origin: "https://observatory.example.com", "Content-Type": "application/json"}, body: stream, duplex: "half"});
+    const start = performance.now();
+    const timed = await handleObservation(slow);
+    assert.equal(timed.status, 408);
+    assert.equal((await timed.json()).error.code, "request_body_timeout");
+    assert.ok(performance.now() - start < 3000);
+    assert.equal(cancelled, true);
+    assert.equal(calls, 0);
+  });
+});
+
 test("normalizes domain, IDN, explicit standard ports, IPv4 and IPv6 without network", () => {
   assert.equal(normalizeTarget("EIDOS-WORKS.COM/account/").url, "https://eidos-works.com/account/");
   assert.equal(normalizeTarget("https://eidos-works.com.:443/").url, "https://eidos-works.com/");
@@ -184,7 +203,7 @@ test("HTTP API enforces same origin, POST, exact small JSON and recursion denial
       [request("example.com", { contentType: "text/plain" }), 415],
       [request("example.com", { raw: '{"target":"example.com","method":"GET"}' }), 400],
       [request("example.com", { raw: "badjson" }), 400],
-      [request("example.com", { raw: "x".repeat(1025) }), 400],
+      [request("example.com", { raw: "x".repeat(1025) }), 413],
       [request("https://observatory.example.com/"), 400],
     ]) {
       const response = await handleObservation(req);

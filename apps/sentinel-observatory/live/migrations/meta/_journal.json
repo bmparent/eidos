@@ -1,0 +1,20 @@
+{
+  "version": "7",
+  "dialect": "sqlite",
+  "entries": [
+    {
+      "idx": 0,
+      "version": "6",
+      "when": 1791923933071,
+      "tag": "0001_observatory_sensor",
+      "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "6",
+      "when": 1791925450903,
+      "tag": "0002_observatory_model",
+      "breakpoints": true
+    }
+  ]
+}

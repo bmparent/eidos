@@ -9,6 +9,8 @@ const SENSOR_RETENTION_MS = 7 * 24 * 60 * 60 * 1000;
 const SENSOR_MAX_RESPONSE_BYTES = 65536;
 const sensorRules = Object.freeze({same_origin_required: 'deny', non_public_target: 'deny', recursive_target: 'deny', credentials_not_allowed: 'deny',
   unsupported_protocol: 'deny', unsupported_port: 'deny', payload_too_large: 'deny', sample_rate_limited: 'rate_limit'});
+const sensorRuleStatuses = Object.freeze({same_origin_required: 403, non_public_target: 400, recursive_target: 400, credentials_not_allowed: 400,
+  unsupported_protocol: 400, unsupported_port: 400, payload_too_large: 413, sample_rate_limited: 429});
 const sensorMissing = Object.freeze(['LAN and internal-network traffic', 'Packet capture', 'Other sites and remote target visitor traffic',
   'Provider firewall or IDS events', 'Authentication denials before protected Sites dispatch']);
 const sensorPrivacy = 'Shows a seven-day window of this Observatory API request outcomes and requested public HEAD metadata, capped at 1000 records. Older rows are purged on the next sensor read or write; no unattended cleanup is claimed. No client IP, cookies, auth headers, user agent, query strings, request bodies, target paths or payloads are collected.';
@@ -77,7 +79,7 @@ function sensorOutcome(error, status) {
 
 function sensorNetwork(raw) {
   const value = sensorObject(raw);
-  if (value.scope !== 'observatory_outbound_head_connection') return null;
+  if (value.scope !== 'observatory_outbound_head_connection' || value.protocol !== 'TCP') return null;
   const destination = sensorPublicIp(value.destination_ip);
   if (!destination) return null;
   return {scope: 'observatory_outbound_head_connection', destination_ip: destination,
@@ -102,7 +104,8 @@ export async function recordObservation(env, request, response, ctx = {}) {
     const deadline = performance.now() + 2500;
     const now = new Date().toISOString(), payload = await sensorReadResponse(response, deadline);
     const testContext = ctx?.test_context === 'functional_check' ? 'functional_check' : undefined;
-    const code = typeof payload.error?.code === 'string' && Object.hasOwn(sensorRules, payload.error.code) ? payload.error.code : null;
+    const code = typeof payload.error?.code === 'string' && Object.hasOwn(sensorRules, payload.error.code)
+      && sensorRuleStatuses[payload.error.code] === response.status ? payload.error.code : null;
     const incoming = {sensor: 'observatory_edge', timestamp: now, event_id: sensorId(), event_type: 'request', route: 'observe',
       method: ['GET', 'POST', 'HEAD'].includes(request.method) ? request.method : 'other', status: sensorStatus(response.status),
       duration_ms: sensorNumber(ctx?.request_duration_ms), timestamp_scope: 'response_completed_at',
@@ -155,4 +158,60 @@ export async function snapshot(env = {}) {
         max_records: SENSOR_MAX_RECORDS, newest_event_at: records.length ? sensorTime(JSON.parse(records.at(-1)).timestamp) : null}};
   } catch {return {...caps, connected: false, auto_start: false, observed_at: observedAt, text: '', counts: {records: 0},
     reason: 'Observatory sensor storage is unavailable', coverage: {state: 'unavailable', missing: [...sensorMissing, 'Current sensor evidence unavailable; no security verdict']}};}
+}
+
+/** Rebuild only allowlisted metadata from an authoritative retained row.
+ * This is separate from the import adapter: imported/native-looking client data
+ * cannot become server evidence or a model input through this function.
+ */
+function sensorAuthoritativeRow(row) {
+  if (!row || row.source_id !== 'observatory-edge' || !/^edge_[a-f0-9]{32}$/.test(row.id ?? '')
+      || typeof row.event_json !== 'string' || row.event_json.length > 8192) return null;
+  let raw;
+  try {raw = sensorObject(JSON.parse(row.event_json));} catch {return null;}
+  if (raw.sensor !== 'observatory_edge' || raw.event_id !== row.id || raw.event_type !== row.kind
+      || !['request', 'collector', 'policy_event'].includes(raw.event_type) || sensorTime(raw.timestamp) !== row.observed_at) return null;
+  const collector = raw.event_type === 'collector';
+  const code = raw.event_type === 'policy_event' && typeof raw.rule_id === 'string' && Object.hasOwn(sensorRules, raw.rule_id)
+    && raw.rule_action === sensorRules[raw.rule_id]
+    && (raw.status === sensorRuleStatuses[raw.rule_id] || raw.rule_id === 'payload_too_large' && raw.status === 400) ? raw.rule_id : null;
+  // Retained records from the earlier collector used400 for this same size rule.
+  // New ingestion accepts its current413 status; historical evidence remains valid.
+  if (raw.event_type === 'policy_event' && !code) return null;
+  const destination = collector ? sensorHost(raw.dest_endpoint) : 'Sentinel edge';
+  if (!destination) return null;
+  const allowedOutcomes = ['ok', 'blocked', 'timeout', 'tls_validation_failed', 'dns_failure', 'connection_failed', 'upstream_error', 'invalid_request'];
+  return {sensor: 'observatory_edge', timestamp: row.observed_at, event_id: row.id, event_type: row.kind, route: 'observe',
+    method: collector ? 'HEAD' : ['GET', 'POST', 'HEAD'].includes(raw.method) ? raw.method : 'other',
+    status: sensorStatus(raw.status), duration_ms: sensorNumber(raw.duration_ms),
+    src_endpoint: collector ? 'Observatory observer' : 'Your Observatory session', dest_endpoint: destination,
+    outcome: allowedOutcomes.includes(raw.outcome) ? raw.outcome : 'invalid_request',
+    ...(code ? {rule_id: code, rule_action: sensorRules[code]} : {}),
+    ...(collector ? {head_attempted: typeof raw.head_attempted === 'boolean' ? raw.head_attempted : null,
+      linked_evidence_id: /^evt_[a-f0-9]{32}$/.test(raw.linked_evidence_id ?? '') ? raw.linked_evidence_id : null,
+      transport: ['authenticated_pinned_ip_relay', 'cloudflare_public_head', 'named_service_adapter'].includes(raw.transport) ? raw.transport : null,
+      network: sensorNetwork(raw.network)} : {timestamp_scope: 'response_completed_at'}),
+    ...(raw.test_context === 'functional_check' ? {test_context: 'functional_check'} : {})};
+}
+
+export async function resolveSensorEvidence(env, eventId) {
+  if (typeof eventId !== 'string' || !/^(?:edge|evt)_[a-f0-9]{32}$/.test(eventId)) return {found: false, reason: 'invalid_id'};
+  const db = sensorDatabase(env);
+  if (!db) return {found: false, reason: 'unavailable'};
+  try {
+    const now = Date.now(), cutoff = new Date(now - SENSOR_RETENTION_MS).toISOString(), latest = new Date(now + 300000).toISOString();
+    const native = eventId.startsWith('edge_');
+    const query = native
+      ? 'SELECT id, observed_at, source_id, kind, event_json FROM observatory_sensor_events WHERE id = ? AND source_id = ? AND observed_at >= ? AND observed_at <= ? LIMIT 1'
+      : "SELECT id, observed_at, source_id, kind, event_json FROM observatory_sensor_events WHERE json_extract(event_json, '$.linked_evidence_id') = ? AND source_id = ? AND kind = 'collector' AND observed_at >= ? AND observed_at <= ? ORDER BY observed_at DESC, id DESC LIMIT 1";
+    const result = await sensorBounded(db.prepare(query).bind(eventId, 'observatory-edge', cutoff, latest).all());
+    if (result.success === false) return {found: false, reason: 'unavailable'};
+    const row = Array.isArray(result.results) ? result.results[0] : null;
+    if (!row) return {found: false, reason: 'not_retained'};
+    const event = sensorAuthoritativeRow(row);
+    if (!event || !native && event.linked_evidence_id !== eventId) return {found: false, reason: 'unavailable'};
+    return {found: true, event, evidence_id: row.id, linked_evidence_id: event.linked_evidence_id ?? null, source: 'observatory_edge',
+      provenance: 'Authoritative retained metadata generated by this protected Observatory service; no client-supplied observation accepted',
+      coverage: {scope: 'Only Observatory API requests and requested outbound HEAD checks', missing: [...sensorMissing]}};
+  } catch {return {found: false, reason: 'unavailable'};}
 }

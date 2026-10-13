@@ -33,14 +33,20 @@ def build(output: Path, recorded: Path | None = None) -> dict:
     if sensor.count(sensor_import) != 1:
         raise ValueError('Unexpected hosted sensor import contract')
     sensor = sensor.replace(sensor_import, '')
+    sol = (ROOT / 'sol-interpreter.mjs').read_text(encoding='utf-8')
+    sol_import = "import {resolveSensorEvidence} from './hosted-sensor.mjs';"
+    if sol.count(sol_import) != 1:
+        raise ValueError('Unexpected Sol interpreter import contract')
+    sol = sol.replace(sol_import, '')
     entry = (ROOT / 'worker-entry.mjs').read_text(encoding='utf-8')
     required_import = "import {handleObservation, ipCollectorConfiguration} from './collector.mjs';"
     required_sensor_import = "import {capability, snapshot, recordObservation} from './hosted-sensor.mjs';"
+    required_sol_import = "import {hostedInterpretationCapability, handleInterpretation} from './sol-interpreter.mjs';"
     marker = '/* OBSERVATORY_ASSETS */ Object.freeze({})'
-    if entry.count(required_import) != 1 or entry.count(required_sensor_import) != 1 or entry.count(marker) != 1:
+    if entry.count(required_import) != 1 or entry.count(required_sensor_import) != 1 or entry.count(required_sol_import) != 1 or entry.count(marker) != 1:
         raise ValueError('Unexpected Worker entry contract')
-    entry = entry.replace(required_import, '').replace(required_sensor_import, '').replace(marker, json.dumps(assets, ensure_ascii=True))
-    combined = collector + '\n\n' + sensor + '\n\n' + entry
+    entry = entry.replace(required_import, '').replace(required_sensor_import, '').replace(required_sol_import, '').replace(marker, json.dumps(assets, ensure_ascii=True))
+    combined = collector + '\n\n' + sensor + '\n\n' + sol + '\n\n' + entry
     output.parent.mkdir(parents=True, exist_ok=True)
     output.write_text(combined, encoding='utf-8')
     return {'output': str(output.resolve()), 'bytes': output.stat().st_size,

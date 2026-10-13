@@ -181,28 +181,36 @@ export function ipCollectorConfiguration(env = {}) {
   } catch { return null; }
 }
 
-async function boundedText(response, limit, errorCode) {
+async function boundedText(response, limit, errorCode, timeoutMs = null) {
+  const requestBody = errorCode === "payload_too_large";
+  const sizeError = () => fail(errorCode, requestBody ? "The request exceeded the permitted size." : "The response exceeded the permitted size.", requestBody ? 413 : 400);
   const declared = response.headers.get("content-length");
   if (declared !== null && (!/^\d+$/.test(declared) || Number(declared) > limit)) {
-    await response.body?.cancel();
-    fail(errorCode, "The response exceeded the permitted size.", 400);
+    try { Promise.resolve(response.body?.cancel()).catch(() => {}); } catch { /* Bound cancellation too. */ }
+    sizeError();
   }
   if (!response.body) return "";
   const reader = response.body.getReader();
   const chunks = [];
   let length = 0;
+  let timer;
+  const deadline = timeoutMs === null ? null : new Promise((_, reject) => {
+    timer = setTimeout(() => reject(new ObservationError("request_body_timeout", "The request body did not arrive within the permitted time.", 408)), timeoutMs);
+  });
   try {
     while (true) {
-      const { value, done } = await reader.read();
+      const { value, done } = await (deadline ? Promise.race([reader.read(), deadline]) : reader.read());
       if (done) break;
       length += value.byteLength;
       if (length > limit) {
-        await reader.cancel();
-        fail(errorCode, "The response exceeded the permitted size.", 400);
+        sizeError();
       }
       chunks.push(value);
     }
-  } finally { reader.releaseLock(); }
+  } catch (error) {
+    try { Promise.resolve(reader.cancel()).catch(() => {}); } catch { /* Cancellation must not delay the deadline. */ }
+    throw error;
+  } finally { clearTimeout(timer); reader.releaseLock(); }
   const bytes = new Uint8Array(length);
   let offset = 0;
   for (const chunk of chunks) { bytes.set(chunk, offset); offset += chunk.byteLength; }
@@ -574,7 +582,7 @@ export async function handleObservation(request, env = {}, _ctx = undefined) {
     if (request.headers.get("Content-Type")?.split(";", 1)[0].trim().toLowerCase() !== "application/json") {
       return jsonResponse({ error: { code: "json_required", message: "Send a small JSON object containing only target." } }, 415);
     }
-    const text = await boundedText(request, MAX_REQUEST_BYTES, "payload_too_large");
+    const text = await boundedText(request, MAX_REQUEST_BYTES, "payload_too_large", 2000);
     let payload;
     try { payload = JSON.parse(text); } catch { fail("invalid_json", "The request must be valid JSON."); }
     if (!payload || Array.isArray(payload) || typeof payload !== "object" || Object.keys(payload).length !== 1 || !Object.hasOwn(payload, "target")) {

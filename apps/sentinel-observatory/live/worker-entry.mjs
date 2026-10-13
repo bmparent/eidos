@@ -1,18 +1,26 @@
 import {handleObservation, ipCollectorConfiguration} from './collector.mjs';
 import {capability, snapshot, recordObservation} from './hosted-sensor.mjs';
+import {hostedInterpretationCapability, handleInterpretation} from './sol-interpreter.mjs';
 
 // build_worker.py embeds the exact inspected web sources here. No runtime CDN.
 const ASSETS = /* OBSERVATORY_ASSETS */ Object.freeze({});
-const VERSION = 'sentinel-live-v4-sensor';
+const VERSION = 'sentinel-live-v5-sol';
 const SECURITY = {
   'cache-control': 'no-store',
   'x-content-type-options': 'nosniff',
   'referrer-policy': 'no-referrer',
   'permissions-policy': 'camera=(), microphone=(), geolocation=()',
+  'content-security-policy': "frame-ancestors 'self' https://chatgpt.com",
 };
 
 function response(body, type, status = 200, extra = {}) {
   return new Response(body, {status, headers: {...SECURITY, 'content-type': type, ...extra}});
+}
+
+function secureResponse(result) {
+  const headers = new Headers(result.headers);
+  for (const [key, value] of Object.entries(SECURITY)) headers.set(key, value);
+  return new Response(result.body, {status: result.status, headers});
 }
 
 export default {
@@ -30,7 +38,10 @@ export default {
       const stored = await recordObservation(env, request, result, {request_duration_ms: performance.now() - started, test_context: testContext});
       const headers = new Headers(result.headers);
       headers.set('X-Sentinel-Sensor-Write', stored.status);
-      return new Response(result.body, {status: result.status, headers});
+      return secureResponse(new Response(result.body, {status: result.status, headers}));
+    }
+    if (path === '/api/interpret') {
+      return secureResponse(await handleInterpretation(request, env, ctx));
     }
     if (!['GET', 'HEAD'].includes(request.method)) {
       return response(JSON.stringify({error: 'method_not_allowed'}), 'application/json', 405, {allow: 'GET, HEAD'});
@@ -43,7 +54,8 @@ export default {
         ip_transport: ipCollectorConfiguration(env) ? 'Authenticated Node collector; validated literal public address pinned, TLS verified' : 'No direct IP collector configured',
         interval_ms: 15000,
         max_targets: 4,
-        model: {connected: false, mode: 'browser_local_qwen_opt_in', local_adapter_available: true, browser_adapter_available: true, model_id: 'Qwen3-0.6B', hardware: 'WebGPU', eido_status: 'evaluation_candidate'},
+        model: {...hostedInterpretationCapability(env), eido_status: 'evaluation_candidate'},
+        hosted_interpretation: hostedInterpretationCapability(env),
         security_sensor: capability(env),
         recorded_url: '/recorded',
         transport: 'Cloudflare Worker public HTTP HEAD',

@@ -110,6 +110,14 @@ const median = a => { const s = [...a].sort((x, y) => x - y), n = s.length; retu
 const scaled = (x, threshold = 3, scale = 4) => x <= threshold ? 0 : Math.min(3, (x - threshold) / scale);
 const stamp = x => typeof x === 'string' && /(?:Z|[+-]\d\d:\d\d)$/i.test(x) && Number.isFinite(Date.parse(x)) ? Date.parse(x) : NaN;
 const boundedLatency = x => typeof x === 'number' && Number.isFinite(x) && x >= 0 && x <= 86400000;
+const BASELINE_SCOPE = 'first-hop HEAD response latency';
+const responseMode = status => [301, 302, 303, 307, 308].includes(status) ? 'redirect_response' : 'non_redirect_response';
+const identityText = (value, limit) => typeof value === 'string' && value.length <= limit && !/[\u0000-\u001f\u007f]/.test(value) ? value : null;
+const transportIdentity = event => ({
+  kind: identityText(event.coverage?.transport?.kind, 120),
+  effective_url: identityText(event.coverage?.transport?.effective_url ?? event.url, 768),
+  vantage: identityText(event.coverage?.vantage, 240),
+});
 
 class Stats {
   constructor() { this.count = 0; this.mean = 0; this.m2 = 0; }
@@ -221,15 +229,21 @@ export class LiveBrain {
   }
   newSource() { return {detector: new SentinelPort(), samples: 0, rejected: 0, last: null, lastId: null, ewma: null,
     pending: null, scored: 0, error: 0, baselineError: 0, squaredError: 0, baselineSquaredError: 0,
-    wins: 0, baselineWins: 0, ties: 0, skipped: 0, seen: new Set(), state: 'calibrating', gap: null}; }
+    wins: 0, baselineWins: 0, ties: 0, skipped: 0, seen: new Set(), state: 'calibrating', gap: null,
+    acceptedSamples: 0, responseMode: null, transportIdentity: null, baselineIdentity: null,
+    calibrationGeneration: 0, calibrationResets: 0, calibrationNote: 'Awaiting a valid first-hop HEAD response.', lastCalibrationReset: null}; }
+  calibrationMetadata(s) { return {baseline_scope: BASELINE_SCOPE, response_mode: s.responseMode,
+    transport_identity: s.transportIdentity, calibration_generation: s.calibrationGeneration,
+    calibration_reset_count: s.calibrationResets, calibration_note: s.calibrationNote}; }
   comparison(s) { return {scored_count: s.scored, minimum_provisional_comparison: 20,
+    baseline_scope: BASELINE_SCOPE, response_mode: s.responseMode, calibration_generation: s.calibrationGeneration,
     status: s.scored >= 20 ? 'provisional_observed_window' : 'insufficient_evidence',
     ewma_mae_ms: s.scored ? s.error / s.scored : null, persistence_mae_ms: s.scored ? s.baselineError / s.scored : null,
     ewma_rmse_ms: s.scored ? Math.sqrt(s.squaredError / s.scored) : null,
     persistence_rmse_ms: s.scored ? Math.sqrt(s.baselineSquaredError / s.scored) : null,
     paired_mae_improvement_ms: s.scored ? (s.baselineError - s.error) / s.scored : null,
     ewma_wins: s.wins, persistence_wins: s.baselineWins, ties: s.ties, skipped_forecasts: s.skipped,
-    skill_established: false, limitation: 'Sequential probe latency only; short duration and proxy variation prevent general skill claims'}; }
+    skill_established: false, limitation: 'First-hop HEAD latency within this response mode and collector identity only; short duration and proxy variation prevent general skill claims'}; }
   observe(event) {
     const source = event?.source_id, id = event?.id, completed = event?.completed_at, started = event?.observed_at;
     if (typeof source !== 'string' || !source || source.length > 200) throw new Error('valid source_id required');
@@ -238,6 +252,8 @@ export class LiveBrain {
       this.sources.set(source, this.newSource());
     }
     const s = this.sources.get(source), time = stamp(completed), requestTime = stamp(started);
+    const incomingTransport = transportIdentity(event);
+    const incomingTransportChanged = s.transportIdentity !== null && JSON.stringify(s.transportIdentity) !== JSON.stringify(incomingTransport);
     const clientStart = stamp(event.client_request_started_at), clientReceipt = stamp(event.client_received_at), issuedNow = this.now();
     const clientNow = stamp(issuedNow);
     const base = {source_id: source, evidence_id: id, engine: ENGINE_PROVENANCE.engine, provenance: ENGINE_PROVENANCE,
@@ -252,17 +268,42 @@ export class LiveBrain {
     else if (!Number.isFinite(time) || !Number.isFinite(requestTime) || requestTime > time) reason = 'invalid request/response timestamps';
     else if (![clientStart, clientReceipt, clientNow].every(Number.isFinite) || clientStart > clientReceipt || clientReceipt > clientNow) reason = 'missing or invalid browser timing provenance';
     else if (clientStart < stamp(this.startedAt)) reason = 'historical observation excluded from current live epoch';
-    else if (s.last !== null && time <= s.last) reason = 'non-increasing response timestamp excluded';
-    else if (!Number.isInteger(event.status) || event.status < 100 || event.status > 599 || event.error != null || event.response_chain_complete === false || !boundedLatency(event.latency_ms)) reason = 'missing or incomplete HTTP response or invalid response latency excluded';
+    else if (!incomingTransportChanged && s.last !== null && time <= s.last) reason = 'non-increasing response timestamp excluded';
+    else if (event.method !== 'HEAD' || event.kind !== 'measurement' || event.coverage?.head_attempted !== true || !Number.isInteger(event.status) || event.status < 100 || event.status > 599 || event.error !== null || !boundedLatency(event.latency_ms)) reason = 'missing or invalid first-hop HEAD response or response latency excluded';
     if (reason) {
       s.rejected++;
       if (reason.startsWith('missing') && s.pending) { s.skipped++; s.pending = null; }
-      return {...base, state: 'insufficient_data', reason, warmup_remaining: Math.max(0, 12 - s.samples), event_score: null, signals: [],
+      return {...base, ...this.calibrationMetadata(s), state: 'insufficient_data', reason, warmup_remaining: Math.max(0, 12 - s.samples), event_score: null, signals: [],
         forecast: {issued: null, scored: null, comparison: this.comparison(s)}, missing_data_policy: 'Excluded; never replaced with zero'};
     }
+    const mode = responseMode(event.status), transport = incomingTransport;
+    const identity = JSON.stringify({response_mode: mode, ...transport});
+    let reset = null, scored = null;
+    if (s.baselineIdentity === null) {
+      s.responseMode = mode; s.transportIdentity = transport; s.baselineIdentity = identity; s.calibrationGeneration = 1;
+      s.calibrationNote = mode === 'redirect_response'
+        ? 'Calibrating first-hop redirect HEAD responses; redirect destinations were not fetched.'
+        : 'Calibrating first-hop HEAD responses from this collector identity; application success and security were not assessed.';
+    } else if (s.baselineIdentity !== identity) {
+      const previousMode = s.responseMode, previousTransport = s.transportIdentity, previousPending = s.pending;
+      const modeChanged = previousMode !== mode, transportChanged = JSON.stringify(previousTransport) !== JSON.stringify(transport);
+      const note = modeChanged && transportChanged ? 'Response mode and collector transport identity changed.'
+        : modeChanged ? 'Response mode changed.' : 'Collector transport identity changed.';
+      const retained = {rejected: s.rejected, last: transportChanged ? null : s.last, lastId: s.lastId, seen: s.seen, acceptedSamples: s.acceptedSamples,
+        calibrationGeneration: s.calibrationGeneration + 1, calibrationResets: s.calibrationResets + 1};
+      reset = {evidence_id: id, previous_response_mode: previousMode, response_mode: mode,
+        previous_transport_identity: previousTransport, transport_identity: transport,
+        discarded_forecast_id: previousPending?.forecast_id ?? null,
+        reason: modeChanged && transportChanged ? 'response_mode_and_transport_changed' : modeChanged ? 'response_mode_changed' : 'transport_identity_changed'};
+      Object.assign(s, this.newSource(), retained, {responseMode: mode, transportIdentity: transport, baselineIdentity: identity,
+        calibrationNote: `${note} Detector and forecast calibration restarted; collect 12 new first-hop HEAD responses. Prior-baseline forecasts are not scored.`,
+        lastCalibrationReset: reset});
+      if (previousPending) scored = {forecast_id: previousPending.forecast_id, status: 'unscored',
+        reason: 'Response mode or collector identity changed; the prior-baseline forecast was discarded.',
+        actual_evidence_id: id, baseline_scope: BASELINE_SCOPE};
+    }
     const latency = event.latency_ms, gap = s.last === null ? null : (time - s.last) / 1000;
-    s.gap = gap !== null && gap > 300 ? {seconds: gap, note: 'Long coverage gap; prior calibration retained and remains provisional'} : null;
-    let scored = null;
+    s.gap = gap !== null && gap > 300 ? {seconds: gap, note: 'Long coverage gap; current calibration remains provisional'} : null;
     if (s.pending) {
       const frozen = s.pending, horizon = (clientReceipt - stamp(frozen.issued_at)) / 1000;
       if (stamp(frozen.issued_at) < clientStart && horizon > 0 && horizon <= 300) {
@@ -275,19 +316,22 @@ export class LiveBrain {
           timing_proof: 'Prior browser computation precedes this browser request on the same clock'};
       } else { s.skipped++; scored = {forecast_id: frozen.forecast_id, status: 'unscored', reason: 'Late or overlapping request, or forecast horizon exceeded', horizon_seconds: horizon}; }
     }
-    const row = s.detector.step(Math.log1p(latency)); s.samples++; s.last = time; s.lastId = id;
+    const row = s.detector.step(Math.log1p(latency)); s.samples++; s.acceptedSamples++; s.last = time; s.lastId = id;
     s.seen.add(id); if (s.seen.size > 2048) s.seen.delete(s.seen.values().next().value);
     s.ewma = s.ewma === null ? latency : .35 * latency + .65 * s.ewma;
     s.state = row.warmup ? 'calibrating' : row.status === 'RED' ? 'geometry_change' : row.status === 'AMBER' ? 'change_detected' : 'observing';
     // Timestamp publication after computing this observation's next forecast.
     const publishedAt = this.now();
     s.pending = s.samples >= 12 ? {forecast_id: `latency-next:${this.epochId}:${source}:${id}`, method: 'EWMA latency', alpha: .35,
-      target: 'next observed HTTP response latency for this source', issued_at: publishedAt,
+      target: 'next first-hop HEAD response latency for this source, response mode and collector identity',
+      baseline_scope: BASELINE_SCOPE, response_mode: mode, transport_identity: transport, calibration_generation: s.calibrationGeneration,
+      issued_at: publishedAt,
       basis_observed_at: completed, basis_client_received_at: event.client_received_at, basis_evidence_id: id,
       issuance_clock: 'browser',
       predicted_latency_ms: s.ewma, persistence_latency_ms: latency, max_horizon_seconds: 300, status: 'pending',
       claim: 'experimental numerical forecast, not incident prediction'} : null;
-    return {...base, state: s.state, sample_count: s.samples, warmup_remaining: Math.max(0, 12 - s.samples),
+    return {...base, ...this.calibrationMetadata(s), calibration_reset: reset, state: s.state, sample_count: s.samples,
+      accepted_sample_count: s.acceptedSamples, warmup_remaining: Math.max(0, 12 - s.samples),
       event_score: row.warmup ? null : row.event_score, episode_id: row.episode_id, event_active: !row.warmup && row.event_active,
       coverage_gap: s.gap, signals: row.warmup ? [] : signalDefinitions.map(([key, label, meaning]) => ({key, label, meaning, value: row[key], evidence_ids: [id]})),
       diagnostics: {reconstruction_error: row.error_norm, reconstruction_z: row.z, feature: 'log1p(latency_ms)', periodic_probe: 'disabled', security_verdict: 'not assessed'},
@@ -295,7 +339,9 @@ export class LiveBrain {
   }
   summary() { return {engine: ENGINE_PROVENANCE.engine, provenance: ENGINE_PROVENANCE, session_epoch: this.epochId,
     session_started_at: this.startedAt, restart_policy: 'New live calibration per browser epoch; no historical backfill',
-    sources: [...this.sources].map(([source_id, s]) => ({source_id, sample_count: s.samples, rejected_count: s.rejected,
+    baseline_scope: BASELINE_SCOPE,
+    sources: [...this.sources].map(([source_id, s]) => ({source_id, ...this.calibrationMetadata(s), sample_count: s.samples,
+      accepted_sample_count: s.acceptedSamples, rejected_count: s.rejected, last_calibration_reset: s.lastCalibrationReset,
       state: s.state, warmup_remaining: Math.max(0, 12 - s.samples), last_evidence_id: s.lastId,
       last_observed_at: s.last === null ? null : new Date(s.last).toISOString(), coverage_gap: s.gap, forecast: this.comparison(s)}))}; }
 }
