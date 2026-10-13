@@ -1,6 +1,6 @@
 {
   "schema": "eidos.sentinel.js-parity-receipt.v1",
-  "verified_at": "2026-10-13T18:32:33.614Z",
+  "verified_at": "2026-10-13T20:06:10.816Z",
   "method": "Recorded and test-only frames passed through canonical Python reference and JavaScript port, in sequence",
   "numerical_tolerance": "1e-7 absolute + 1e-8 * abs(reference); exact status/string/boolean agreement",
   "status": "PASS",

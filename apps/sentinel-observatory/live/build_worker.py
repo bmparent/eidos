@@ -19,13 +19,17 @@ def build(output: Path, recorded: Path | None = None) -> dict:
         'app': ROOT / 'web' / 'app.js',
         'css': ROOT / 'web' / 'styles.css',
         'brain': ROOT / 'brain.mjs',
+        'interpreter': ROOT / 'web' / 'browser-interpreter.mjs',
+        'model_worker': ROOT / 'web' / 'browser-model-worker.mjs',
+        'security': ROOT / 'security-events.mjs',
+        'network_panel': ROOT / 'web' / 'network-panel.mjs',
     }
     if recorded:
         sources['recorded'] = recorded
     assets = {key: path.read_text(encoding='utf-8') for key, path in sources.items()}
     collector = (ROOT / 'collector.mjs').read_text(encoding='utf-8')
     entry = (ROOT / 'worker-entry.mjs').read_text(encoding='utf-8')
-    required_import = "import {handleObservation} from './collector.mjs';"
+    required_import = "import {handleObservation, ipCollectorConfiguration} from './collector.mjs';"
     marker = '/* OBSERVATORY_ASSETS */ Object.freeze({})'
     if entry.count(required_import) != 1 or entry.count(marker) != 1:
         raise ValueError('Unexpected Worker entry contract')

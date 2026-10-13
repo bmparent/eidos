@@ -1,0 +1,170 @@
+{
+  "schema": "sentinel-hosted-ip-qwen-receipt-v1",
+  "evidence_class": "REAL_HOSTED_PUBLIC_IP_HTTP_HEAD_AND_REAL_LOCAL_QWEN_CPU_INFERENCE",
+  "source_acceptance_file": "/workspace/scratch/66ba08010298/hosted-v3-acceptance.json",
+  "input_event": {
+    "id": "evt_1df8ea1aa0104e06ad40520a0498d6e7",
+    "source_id": "target_9234f5f6f83adff9",
+    "target": "1.1.1.1",
+    "url": "https://1.1.1.1/",
+    "observed_at": "2026-10-13T20:16:06.002Z",
+    "completed_at": "2026-10-13T20:16:06.044Z",
+    "latency_ms": 50.145,
+    "elapsed_ms": 50.145,
+    "status": 301,
+    "kind": "measurement",
+    "method": "HEAD",
+    "error": null,
+    "headers": {
+      "server": "cloudflare"
+    },
+    "security_headers": {
+      "hsts_present": false,
+      "csp_present": false,
+      "x_content_type_options": "absent",
+      "frame_options": "absent",
+      "referrer_policy": "absent",
+      "cache_private": false,
+      "cache_no_store": false
+    },
+    "redirect": {
+      "followed": false,
+      "target": null,
+      "validation": "withheld_outside_boundary"
+    },
+    "redirect_count": 0,
+    "response_chain_complete": false,
+    "coverage": {
+      "vantage": "Vercel Node public-only pinned-address HTTP client",
+      "sampling": "One requested HEAD; no crawling or traffic capture",
+      "head_attempted": true,
+      "redirect_followed": false,
+      "body_collected": false,
+      "dns": {
+        "state": "literal_public_ip_pinned",
+        "address_pinned": true,
+        "resolver": "none: literal public IP"
+      },
+      "transport": {
+        "kind": "authenticated_pinned_ip_relay",
+        "direct_ip": true,
+        "requested_url": "https://1.1.1.1/",
+        "effective_url": "https://1.1.1.1/",
+        "tls_server_name": "1.1.1.1",
+        "address_pinned": true
+      },
+      "relay": {
+        "hostname": "eidos-sentinel-lzzhgixpu-1brentbm-1876s-projects.vercel.app",
+        "evidence_checked_against_requested_target": true
+      },
+      "missing": [
+        "Visitor traffic",
+        "Origin logs",
+        "Internal network",
+        "Packet capture",
+        "Certificate inspection",
+        "Authenticated application state"
+      ],
+      "dns_rebinding": "A validated numeric public IP is the transport destination; no target DNS lookup or alias is used.",
+      "protections": "Observational only; no network protections or defensive actions changed"
+    },
+    "client_request_started_at": "2026-10-13T20:15:59.332177+00:00",
+    "client_received_at": "2026-10-13T20:16:06.100760+00:00"
+  },
+  "analysis": {
+    "summary": "This check returned HTTP 301. The response chain was incomplete, so this is not a final-destination result.",
+    "facts": [
+      {
+        "text": "This check returned HTTP 301. The response chain was incomplete, so this is not a final-destination result.",
+        "evidence_ids": [
+          "evt_1df8ea1aa0104e06ad40520a0498d6e7"
+        ]
+      },
+      {
+        "text": "The observer measured 50.145 ms for this check.",
+        "evidence_ids": [
+          "evt_1df8ea1aa0104e06ad40520a0498d6e7"
+        ]
+      }
+    ],
+    "hypotheses": [
+      {
+        "text": "Edge or origin response timing could contribute to this measurement.",
+        "support": [
+          "evt_1df8ea1aa0104e06ad40520a0498d6e7"
+        ],
+        "against": [],
+        "next_observation": "Compare repeated checks with existing edge or origin timing records, if available."
+      },
+      {
+        "text": "The observer or its network path could contribute to this timing.",
+        "support": [
+          "evt_1df8ea1aa0104e06ad40520a0498d6e7"
+        ],
+        "against": [],
+        "next_observation": "Compare the same read-only check from a second authorized observation point."
+      }
+    ],
+    "unknowns": [
+      "The model ranked predefined possibilities; neither their causes nor the usefulness of this ranking is established.",
+      "A single external check cannot establish a cause, visitor activity, or security incident.",
+      "Origin internals, private network traffic, and attacker intent are outside this observation."
+    ],
+    "kind": "model",
+    "provenance": {
+      "engine": "llama.cpp CPU",
+      "model": "Qwen/Qwen3-0.6B-GGUF Q8_0",
+      "model_ran": true,
+      "model_sha256": "9465e63a22add5354d9bb4b99e90117043c7124007664907259bd16d043bb031",
+      "adapter": "qwen3-chatml-nonthinking",
+      "output_accepted": true,
+      "prompt_version": "observatory-catalogue-ranking-v3",
+      "prompt_sha256": "37b1d87f59ebc31eb05016096c35be1cff4b5701a1f32dbfd44a8896aa8bc61b",
+      "input_evidence_ids": [
+        "evt_1df8ea1aa0104e06ad40520a0498d6e7"
+      ],
+      "output_sha256": "16edbb0d8692cadf846958f9497d85867a304c0554f0aa29e0f932c2a054cb54",
+      "inference_ms": 5027.23,
+      "total_ms": 9347.33,
+      "usage": {
+        "prompt_tokens": 166,
+        "completion_tokens": 6,
+        "total_tokens": 172
+      },
+      "finish_reason": "stop",
+      "validation": "Two distinct eligible catalogue codes; references assigned by deterministic source rules",
+      "ranked_codes": [
+        "edge",
+        "path"
+      ],
+      "role": "ranked_catalogue_selection",
+      "semantic_verification": "Vetted conditional catalogue language; causal truth and ranking utility unverified",
+      "facts_policy": "Summary/facts/citations are deterministic measurements; hypothesis wording and next observations come from a vetted catalogue; model only ranks candidates",
+      "input_policy": "Bounded measurement scalars and enum headers; raw text, bodies, URLs and credentials excluded"
+    }
+  },
+  "status": {
+    "state": "ready",
+    "name": "Qwen/Qwen3-0.6B-GGUF Q8_0",
+    "reason": "Local CPU catalogue ranker loaded; causes and ranking usefulness remain unproven.",
+    "replaceable": true,
+    "local_only": true,
+    "model_sha256": "9465e63a22add5354d9bb4b99e90117043c7124007664907259bd16d043bb031",
+    "eido_role": "evaluation only; not promoted",
+    "adapter": "qwen3-chatml-nonthinking",
+    "compatibility": "Built-in prompt adapter supports Qwen3 GGUF only; other families require an Interpreter adapter."
+  },
+  "raw_rank_output": {
+    "raw_output": "[\"edge\", \"path\"]",
+    "usage": {
+      "prompt_tokens": 166,
+      "completion_tokens": 6,
+      "total_tokens": 172
+    },
+    "inference_ms": 5027.23,
+    "input_evidence_ids": [
+      "evt_1df8ea1aa0104e06ad40520a0498d6e7"
+    ],
+    "finish_reason": "stop"
+  }
+}

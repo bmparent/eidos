@@ -1,0 +1,625 @@
+{
+  "started_at": "2026-10-13T20:15:16.610094+00:00",
+  "origin": "https://sentinel-evidence-observatory.bmparent.chatgpt.site",
+  "requests": [
+    {
+      "path": "/",
+      "status": 200,
+      "sha256": "7848b81a630d04471bf31cc23c9e7c7803d20a7b117d3df44958874258833088"
+    },
+    {
+      "path": "/app.js",
+      "status": 200,
+      "sha256": "473f9b228b60d678386558d99d63d180c4f1046856d8e103723a7953f5b8c830"
+    },
+    {
+      "path": "/network-panel.mjs",
+      "status": 200,
+      "sha256": "056ce3fd2fb7cbf90c5bc4465ae430539fea4082776e2e890ec5cd99ba5e0a56"
+    },
+    {
+      "path": "/security-events.mjs",
+      "status": 200,
+      "sha256": "1b37d5dd1c1a5c372be04d5f3230349ce9def751af2444622a9fe1a0099a8b0f"
+    },
+    {
+      "path": "/browser-interpreter.mjs",
+      "status": 200,
+      "sha256": "89e0f0719bbe691c3000bacf38b574197a3163129528cd2710f6c5cfed93ee57"
+    },
+    {
+      "path": "/browser-model-worker.mjs",
+      "status": 200,
+      "sha256": "77444f211658ff1e03a380fa0d1f8324e8fb8c499cb795ec89565dd8d655ad39"
+    },
+    {
+      "path": "/api/observe",
+      "status": 200,
+      "payload": {
+        "event": {
+          "id": "evt_1df8ea1aa0104e06ad40520a0498d6e7",
+          "source_id": "target_9234f5f6f83adff9",
+          "target": "1.1.1.1",
+          "url": "https://1.1.1.1/",
+          "observed_at": "2026-10-13T20:16:06.002Z",
+          "completed_at": "2026-10-13T20:16:06.044Z",
+          "latency_ms": 50.145,
+          "elapsed_ms": 50.145,
+          "status": 301,
+          "kind": "measurement",
+          "method": "HEAD",
+          "error": null,
+          "headers": {
+            "server": "cloudflare"
+          },
+          "security_headers": {
+            "hsts_present": false,
+            "csp_present": false,
+            "x_content_type_options": "absent",
+            "frame_options": "absent",
+            "referrer_policy": "absent",
+            "cache_private": false,
+            "cache_no_store": false
+          },
+          "redirect": {
+            "followed": false,
+            "target": null,
+            "validation": "withheld_outside_boundary"
+          },
+          "redirect_count": 0,
+          "response_chain_complete": false,
+          "coverage": {
+            "vantage": "Vercel Node public-only pinned-address HTTP client",
+            "sampling": "One requested HEAD; no crawling or traffic capture",
+            "head_attempted": true,
+            "redirect_followed": false,
+            "body_collected": false,
+            "dns": {
+              "state": "literal_public_ip_pinned",
+              "address_pinned": true,
+              "resolver": "none: literal public IP"
+            },
+            "transport": {
+              "kind": "authenticated_pinned_ip_relay",
+              "direct_ip": true,
+              "requested_url": "https://1.1.1.1/",
+              "effective_url": "https://1.1.1.1/",
+              "tls_server_name": "1.1.1.1",
+              "address_pinned": true
+            },
+            "relay": {
+              "hostname": "eidos-sentinel-lzzhgixpu-1brentbm-1876s-projects.vercel.app",
+              "evidence_checked_against_requested_target": true
+            },
+            "missing": [
+              "Visitor traffic",
+              "Origin logs",
+              "Internal network",
+              "Packet capture",
+              "Certificate inspection",
+              "Authenticated application state"
+            ],
+            "dns_rebinding": "A validated numeric public IP is the transport destination; no target DNS lookup or alias is used.",
+            "protections": "Observational only; no network protections or defensive actions changed"
+          },
+          "client_request_started_at": "2026-10-13T20:15:59.332177+00:00",
+          "client_received_at": "2026-10-13T20:16:06.100760+00:00"
+        },
+        "target": {
+          "id": "target_9234f5f6f83adff9",
+          "url": "https://1.1.1.1/",
+          "label": "1.1.1.1"
+        },
+        "retry_after_ms": 15000,
+        "rate_limit_scope": "Per isolate and canonical target; not durable or globally coordinated"
+      }
+    },
+    {
+      "path": "/api/observe",
+      "status": 200,
+      "payload": {
+        "event": {
+          "id": "evt_e2c4d6666729420abed07b6e2f14f85c",
+          "source_id": "target_9234f5f6f83adff9",
+          "target": "1.1.1.1",
+          "url": "https://1.1.1.1/",
+          "observed_at": "2026-10-13T20:16:26.859Z",
+          "completed_at": "2026-10-13T20:16:26.890Z",
+          "latency_ms": 32.777,
+          "elapsed_ms": 32.777,
+          "status": 301,
+          "kind": "measurement",
+          "method": "HEAD",
+          "error": null,
+          "headers": {
+            "server": "cloudflare"
+          },
+          "security_headers": {
+            "hsts_present": false,
+            "csp_present": false,
+            "x_content_type_options": "absent",
+            "frame_options": "absent",
+            "referrer_policy": "absent",
+            "cache_private": false,
+            "cache_no_store": false
+          },
+          "redirect": {
+            "followed": false,
+            "target": null,
+            "validation": "withheld_outside_boundary"
+          },
+          "redirect_count": 0,
+          "response_chain_complete": false,
+          "coverage": {
+            "vantage": "Vercel Node public-only pinned-address HTTP client",
+            "sampling": "One requested HEAD; no crawling or traffic capture",
+            "head_attempted": true,
+            "redirect_followed": false,
+            "body_collected": false,
+            "dns": {
+              "state": "literal_public_ip_pinned",
+              "address_pinned": true,
+              "resolver": "none: literal public IP"
+            },
+            "transport": {
+              "kind": "authenticated_pinned_ip_relay",
+              "direct_ip": true,
+              "requested_url": "https://1.1.1.1/",
+              "effective_url": "https://1.1.1.1/",
+              "tls_server_name": "1.1.1.1",
+              "address_pinned": true
+            },
+            "relay": {
+              "hostname": "eidos-sentinel-lzzhgixpu-1brentbm-1876s-projects.vercel.app",
+              "evidence_checked_against_requested_target": true
+            },
+            "missing": [
+              "Visitor traffic",
+              "Origin logs",
+              "Internal network",
+              "Packet capture",
+              "Certificate inspection",
+              "Authenticated application state"
+            ],
+            "dns_rebinding": "A validated numeric public IP is the transport destination; no target DNS lookup or alias is used.",
+            "protections": "Observational only; no network protections or defensive actions changed"
+          },
+          "client_request_started_at": "2026-10-13T20:16:22.103306+00:00",
+          "client_received_at": "2026-10-13T20:16:26.943488+00:00"
+        },
+        "target": {
+          "id": "target_9234f5f6f83adff9",
+          "url": "https://1.1.1.1/",
+          "label": "1.1.1.1"
+        },
+        "retry_after_ms": 15000,
+        "rate_limit_scope": "Per isolate and canonical target; not durable or globally coordinated"
+      }
+    },
+    {
+      "path": "/api/observe",
+      "status": 200,
+      "payload": {
+        "event": {
+          "id": "evt_88185d74eb8049ed946f5264a804980b",
+          "source_id": "target_9234f5f6f83adff9",
+          "target": "1.1.1.1",
+          "url": "https://1.1.1.1/",
+          "observed_at": "2026-10-13T20:16:47.219Z",
+          "completed_at": "2026-10-13T20:16:47.243Z",
+          "latency_ms": 25.127,
+          "elapsed_ms": 25.127,
+          "status": 301,
+          "kind": "measurement",
+          "method": "HEAD",
+          "error": null,
+          "headers": {
+            "server": "cloudflare"
+          },
+          "security_headers": {
+            "hsts_present": false,
+            "csp_present": false,
+            "x_content_type_options": "absent",
+            "frame_options": "absent",
+            "referrer_policy": "absent",
+            "cache_private": false,
+            "cache_no_store": false
+          },
+          "redirect": {
+            "followed": false,
+            "target": null,
+            "validation": "withheld_outside_boundary"
+          },
+          "redirect_count": 0,
+          "response_chain_complete": false,
+          "coverage": {
+            "vantage": "Vercel Node public-only pinned-address HTTP client",
+            "sampling": "One requested HEAD; no crawling or traffic capture",
+            "head_attempted": true,
+            "redirect_followed": false,
+            "body_collected": false,
+            "dns": {
+              "state": "literal_public_ip_pinned",
+              "address_pinned": true,
+              "resolver": "none: literal public IP"
+            },
+            "transport": {
+              "kind": "authenticated_pinned_ip_relay",
+              "direct_ip": true,
+              "requested_url": "https://1.1.1.1/",
+              "effective_url": "https://1.1.1.1/",
+              "tls_server_name": "1.1.1.1",
+              "address_pinned": true
+            },
+            "relay": {
+              "hostname": "eidos-sentinel-lzzhgixpu-1brentbm-1876s-projects.vercel.app",
+              "evidence_checked_against_requested_target": true
+            },
+            "missing": [
+              "Visitor traffic",
+              "Origin logs",
+              "Internal network",
+              "Packet capture",
+              "Certificate inspection",
+              "Authenticated application state"
+            ],
+            "dns_rebinding": "A validated numeric public IP is the transport destination; no target DNS lookup or alias is used.",
+            "protections": "Observational only; no network protections or defensive actions changed"
+          },
+          "client_request_started_at": "2026-10-13T20:16:42.946310+00:00",
+          "client_received_at": "2026-10-13T20:16:47.291238+00:00"
+        },
+        "target": {
+          "id": "target_9234f5f6f83adff9",
+          "url": "https://1.1.1.1/",
+          "label": "1.1.1.1"
+        },
+        "retry_after_ms": 15000,
+        "rate_limit_scope": "Per isolate and canonical target; not durable or globally coordinated"
+      }
+    }
+  ],
+  "events": [
+    {
+      "id": "evt_1df8ea1aa0104e06ad40520a0498d6e7",
+      "source_id": "target_9234f5f6f83adff9",
+      "target": "1.1.1.1",
+      "url": "https://1.1.1.1/",
+      "observed_at": "2026-10-13T20:16:06.002Z",
+      "completed_at": "2026-10-13T20:16:06.044Z",
+      "latency_ms": 50.145,
+      "elapsed_ms": 50.145,
+      "status": 301,
+      "kind": "measurement",
+      "method": "HEAD",
+      "error": null,
+      "headers": {
+        "server": "cloudflare"
+      },
+      "security_headers": {
+        "hsts_present": false,
+        "csp_present": false,
+        "x_content_type_options": "absent",
+        "frame_options": "absent",
+        "referrer_policy": "absent",
+        "cache_private": false,
+        "cache_no_store": false
+      },
+      "redirect": {
+        "followed": false,
+        "target": null,
+        "validation": "withheld_outside_boundary"
+      },
+      "redirect_count": 0,
+      "response_chain_complete": false,
+      "coverage": {
+        "vantage": "Vercel Node public-only pinned-address HTTP client",
+        "sampling": "One requested HEAD; no crawling or traffic capture",
+        "head_attempted": true,
+        "redirect_followed": false,
+        "body_collected": false,
+        "dns": {
+          "state": "literal_public_ip_pinned",
+          "address_pinned": true,
+          "resolver": "none: literal public IP"
+        },
+        "transport": {
+          "kind": "authenticated_pinned_ip_relay",
+          "direct_ip": true,
+          "requested_url": "https://1.1.1.1/",
+          "effective_url": "https://1.1.1.1/",
+          "tls_server_name": "1.1.1.1",
+          "address_pinned": true
+        },
+        "relay": {
+          "hostname": "eidos-sentinel-lzzhgixpu-1brentbm-1876s-projects.vercel.app",
+          "evidence_checked_against_requested_target": true
+        },
+        "missing": [
+          "Visitor traffic",
+          "Origin logs",
+          "Internal network",
+          "Packet capture",
+          "Certificate inspection",
+          "Authenticated application state"
+        ],
+        "dns_rebinding": "A validated numeric public IP is the transport destination; no target DNS lookup or alias is used.",
+        "protections": "Observational only; no network protections or defensive actions changed"
+      },
+      "client_request_started_at": "2026-10-13T20:15:59.332177+00:00",
+      "client_received_at": "2026-10-13T20:16:06.100760+00:00"
+    },
+    {
+      "id": "evt_e2c4d6666729420abed07b6e2f14f85c",
+      "source_id": "target_9234f5f6f83adff9",
+      "target": "1.1.1.1",
+      "url": "https://1.1.1.1/",
+      "observed_at": "2026-10-13T20:16:26.859Z",
+      "completed_at": "2026-10-13T20:16:26.890Z",
+      "latency_ms": 32.777,
+      "elapsed_ms": 32.777,
+      "status": 301,
+      "kind": "measurement",
+      "method": "HEAD",
+      "error": null,
+      "headers": {
+        "server": "cloudflare"
+      },
+      "security_headers": {
+        "hsts_present": false,
+        "csp_present": false,
+        "x_content_type_options": "absent",
+        "frame_options": "absent",
+        "referrer_policy": "absent",
+        "cache_private": false,
+        "cache_no_store": false
+      },
+      "redirect": {
+        "followed": false,
+        "target": null,
+        "validation": "withheld_outside_boundary"
+      },
+      "redirect_count": 0,
+      "response_chain_complete": false,
+      "coverage": {
+        "vantage": "Vercel Node public-only pinned-address HTTP client",
+        "sampling": "One requested HEAD; no crawling or traffic capture",
+        "head_attempted": true,
+        "redirect_followed": false,
+        "body_collected": false,
+        "dns": {
+          "state": "literal_public_ip_pinned",
+          "address_pinned": true,
+          "resolver": "none: literal public IP"
+        },
+        "transport": {
+          "kind": "authenticated_pinned_ip_relay",
+          "direct_ip": true,
+          "requested_url": "https://1.1.1.1/",
+          "effective_url": "https://1.1.1.1/",
+          "tls_server_name": "1.1.1.1",
+          "address_pinned": true
+        },
+        "relay": {
+          "hostname": "eidos-sentinel-lzzhgixpu-1brentbm-1876s-projects.vercel.app",
+          "evidence_checked_against_requested_target": true
+        },
+        "missing": [
+          "Visitor traffic",
+          "Origin logs",
+          "Internal network",
+          "Packet capture",
+          "Certificate inspection",
+          "Authenticated application state"
+        ],
+        "dns_rebinding": "A validated numeric public IP is the transport destination; no target DNS lookup or alias is used.",
+        "protections": "Observational only; no network protections or defensive actions changed"
+      },
+      "client_request_started_at": "2026-10-13T20:16:22.103306+00:00",
+      "client_received_at": "2026-10-13T20:16:26.943488+00:00"
+    },
+    {
+      "id": "evt_88185d74eb8049ed946f5264a804980b",
+      "source_id": "target_9234f5f6f83adff9",
+      "target": "1.1.1.1",
+      "url": "https://1.1.1.1/",
+      "observed_at": "2026-10-13T20:16:47.219Z",
+      "completed_at": "2026-10-13T20:16:47.243Z",
+      "latency_ms": 25.127,
+      "elapsed_ms": 25.127,
+      "status": 301,
+      "kind": "measurement",
+      "method": "HEAD",
+      "error": null,
+      "headers": {
+        "server": "cloudflare"
+      },
+      "security_headers": {
+        "hsts_present": false,
+        "csp_present": false,
+        "x_content_type_options": "absent",
+        "frame_options": "absent",
+        "referrer_policy": "absent",
+        "cache_private": false,
+        "cache_no_store": false
+      },
+      "redirect": {
+        "followed": false,
+        "target": null,
+        "validation": "withheld_outside_boundary"
+      },
+      "redirect_count": 0,
+      "response_chain_complete": false,
+      "coverage": {
+        "vantage": "Vercel Node public-only pinned-address HTTP client",
+        "sampling": "One requested HEAD; no crawling or traffic capture",
+        "head_attempted": true,
+        "redirect_followed": false,
+        "body_collected": false,
+        "dns": {
+          "state": "literal_public_ip_pinned",
+          "address_pinned": true,
+          "resolver": "none: literal public IP"
+        },
+        "transport": {
+          "kind": "authenticated_pinned_ip_relay",
+          "direct_ip": true,
+          "requested_url": "https://1.1.1.1/",
+          "effective_url": "https://1.1.1.1/",
+          "tls_server_name": "1.1.1.1",
+          "address_pinned": true
+        },
+        "relay": {
+          "hostname": "eidos-sentinel-lzzhgixpu-1brentbm-1876s-projects.vercel.app",
+          "evidence_checked_against_requested_target": true
+        },
+        "missing": [
+          "Visitor traffic",
+          "Origin logs",
+          "Internal network",
+          "Packet capture",
+          "Certificate inspection",
+          "Authenticated application state"
+        ],
+        "dns_rebinding": "A validated numeric public IP is the transport destination; no target DNS lookup or alias is used.",
+        "protections": "Observational only; no network protections or defensive actions changed"
+      },
+      "client_request_started_at": "2026-10-13T20:16:42.946310+00:00",
+      "client_received_at": "2026-10-13T20:16:47.291238+00:00"
+    }
+  ],
+  "actual_network": true,
+  "browser_rendered": false,
+  "unauthenticated_api_status": 403,
+  "capabilities": {
+    "version": "sentinel-live-v3",
+    "mode": "hosted",
+    "direct_ip": true,
+    "ip_transport": "Authenticated Node collector; validated literal public address pinned, TLS verified",
+    "interval_ms": 15000,
+    "max_targets": 4,
+    "model": {
+      "connected": false,
+      "mode": "browser_local_qwen_opt_in",
+      "local_adapter_available": true,
+      "browser_adapter_available": true,
+      "model_id": "Qwen3-0.6B",
+      "hardware": "WebGPU",
+      "eido_status": "evaluation_candidate"
+    },
+    "sensors": {
+      "connected": false,
+      "mode": "browser_log_import",
+      "formats": [
+        "Suricata EVE JSON",
+        "Zeek JSON"
+      ],
+      "reason": "No packet or security sensor is attached to this hosted service. Import a real log or connect the local sensor companion."
+    },
+    "recorded_url": "/recorded",
+    "transport": "Cloudflare Worker public HTTP HEAD",
+    "sampling": "While connected and visible in your browser; no unattended background monitor",
+    "history": "Browser-local retained records; export JSON for a portable copy",
+    "missing_coverage": [
+      "Visitor traffic",
+      "Packet capture",
+      "Internal services",
+      "Origin processing time",
+      "TLS certificate inspection"
+    ]
+  },
+  "private_ip_rejection": {
+    "status": 400,
+    "payload": {
+      "error": {
+        "code": "non_public_target",
+        "message": "Private, loopback, reserved, and special-use IP ranges cannot be monitored."
+      }
+    }
+  },
+  "sensor_status": {
+    "connected": false,
+    "observed_at": "2026-10-13T20:15:59.318Z",
+    "source_id": null,
+    "source_name": null,
+    "format": "auto",
+    "text": "",
+    "coverage": {
+      "state": "disconnected",
+      "missing": [
+        "Network traffic sensor",
+        "IDS alerts",
+        "Firewall events"
+      ]
+    }
+  },
+  "url_check": {
+    "status": 200,
+    "payload": {
+      "event": {
+        "id": "evt_85ea23ae3b4f4991a47c60a79021b6b5",
+        "source_id": "target_cfb9136e88533abf",
+        "target": "eidos-works.com",
+        "url": "https://eidos-works.com/",
+        "observed_at": "2026-10-13T20:16:51.169Z",
+        "completed_at": "2026-10-13T20:16:51.395Z",
+        "latency_ms": 226,
+        "status": 200,
+        "kind": "measurement",
+        "method": "HEAD",
+        "error": null,
+        "headers": {
+          "cf-cache-status": "DYNAMIC",
+          "server": "cloudflare",
+          "content-type": "text/html; charset=utf-8",
+          "date": "Tue, 13 Oct 2026 20:16:51 GMT"
+        },
+        "security_headers": {
+          "hsts_present": false,
+          "csp_present": false,
+          "x_content_type_options": "nosniff",
+          "frame_options": "absent",
+          "referrer_policy": "strict-origin-when-cross-origin",
+          "cache_private": false,
+          "cache_no_store": false
+        },
+        "redirect": null,
+        "redirect_count": 0,
+        "response_chain_complete": true,
+        "coverage": {
+          "vantage": "Cloudflare Worker public HTTP subrequest",
+          "sampling": "One requested HEAD; no crawling or traffic capture",
+          "head_attempted": true,
+          "redirect_followed": false,
+          "body_collected": false,
+          "dns": {
+            "address_count": 4,
+            "resolver": "Cloudflare DNS over HTTPS",
+            "state": "public_addresses_preflight",
+            "address_pinned": false
+          },
+          "missing": [
+            "Visitor traffic",
+            "Origin logs",
+            "Internal network",
+            "Packet capture",
+            "Certificate inspection",
+            "Authenticated application state"
+          ],
+          "dns_rebinding": "DNS is preflight-checked but not pinned to the later fetch. This is not complete rebinding protection.",
+          "protections": "Observational only; no network protections or defensive actions changed"
+        },
+        "elapsed_ms": 244
+      },
+      "target": {
+        "id": "target_cfb9136e88533abf",
+        "url": "https://eidos-works.com/",
+        "label": "eidos-works.com"
+      },
+      "retry_after_ms": 15000,
+      "rate_limit_scope": "Per isolate and canonical target; not durable or globally coordinated"
+    }
+  },
+  "success": true,
+  "finished_at": "2026-10-13T20:16:51.423221+00:00"
+}

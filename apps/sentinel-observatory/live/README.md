@@ -1,121 +1,56 @@
-# Sentinel: connect a target and watch
+# Sentinel Observatory: connect, watch, inspect
 
-This upgrade adds continuous, foreground observations from a public URL. A
-companion uses the same interface for URLs and public IP addresses. Enter a
-target, press **Connect**, and inspect the actual results as they arrive.
+Private live app: https://sentinel-evidence-observatory.bmparent.chatgpt.site
 
-The hosted app is private:
-https://sentinel-evidence-observatory.bmparent.chatgpt.site
+Enter a public URL or IP, select **Connect**, and watch evidence arrive. **Test public IP** selects Cloudflare's public 1.1.1.1 HTTPS endpoint. Each visual mark opens the original observation, response, timing, collection boundary and Sentinel analysis. Pause, remove and export controls preserve the collected evidence.
 
-| Connection | Runs from | Supported targets |
-|---|---|---|
-| Hosted | Cloudflare Worker, behind the existing owner-only Sites access policy | Public HTTP/S DNS names, ports 80/443 |
-| Local companion | The computer running the Python command below | Public HTTP/S DNS names and public IPv4/IPv6, ports 80/443 |
+## Live endpoint observations
 
-Cloudflare Workers cannot directly fetch an IP-address URL. The hosted app
-explains that limitation instead of recording a fictional IP measurement.
-Private networks, localhost and reserved addresses are excluded in both modes.
-An internal-network connector requires a separately approved monitoring scope.
+The hosted app collects public HTTP/S DNS-name endpoints in its Cloudflare Worker. Public literal IPs use a separately authenticated Node collector in the existing Sentinel Lab Vercel preview. The Node collector connects to the validated numeric IP, performs one HEAD request, verifies TLS against that IP, and never follows redirects or reads response bodies. HTTP uses port80 and HTTPS443. Private, reserved, local and special-use addresses are rejected.
 
-## Run the URL/IP companion
+Relay configuration is server-only: `OBSERVATORY_COLLECTOR_URL`, `OBSERVATORY_COLLECTOR_SECRET` and, where Vercel Deployment Protection applies, `OBSERVATORY_COLLECTOR_BYPASS_TOKEN`. Keep all values outside source and browser assets. Without the relay, arbitrary hosted IP monitoring reports unavailable. The explicit 1.1.1.1 named-service fallback is labeled DNS-routed and does not claim a pinned-IP connection.
 
-From the repository root, with Python 3.11 or newer:
+There are at most four targets. Checks run at least15 seconds after the previous result, only while this browser session is connected and visible. Hidden tabs pause; reopening restores retained evidence paused. There is no unattended/background monitoring. The latest500 endpoint records remain in browser session storage where available; export JSON for a portable copy.
+
+These are the observer's checks. They do not reveal a target's visitor traffic, internal network or attacks. A returned HTTP200 is a received response, not proof of functional login or security. A timeout preserves unknown target availability. The hosted DNS-name path checks all DNS answers but cannot pin Worker DNS resolution; the literal-IP relay pins its destination without DNS.
+
+## Network and security sensors
+
+Open **Network & security** to import an existing Suricata EVE JSON/JSONL or Zeek JSON log. No example incident is automatically inserted. The panel shows real sensor detections, observed network connections, traffic relationships, source timestamps, retained evidence and source coverage. Imported logs are historical evidence. A rule match or Zeek notice is a sensor detection, not a confirmed incident.
+
+The normalizer accepts Suricata alert/flow/DNS/TLS and Zeek connection/notice/DNS/TLS metadata. It excludes payloads, HTTP headers, cookies, certificates and arbitrary notice messages. Internal addresses and DNS names may still appear locally; imported evidence remains in the current browser memory until export. The parser bounds bytes, line sizes, records and timestamps, records malformed/unsupported rows, and deduplicates evidence.
+
+Unusual traffic uses an explicitly identified port of unchanged Sentinel V3 on per-source log-transformed connection bytes. Warmup and provisional numerical changes remain experimental. A separate high-destination-count indicator is an explicit fanout heuristic, not proof of scanning or an attack. Missing coverage is visible, and disconnected sources do not imply zero events.
+
+For a live existing sensor, set `OBSERVATORY_SENSOR_LOG` to the absolute path of its Suricata EVE or Zeek JSON file before starting the local companion. The companion reads a bounded regular-file tail every requested refresh, strips fields, and exposes `/api/security-events` only on loopback. It does not start Suricata/Zeek, sniff packets or select files from HTTP input. The browser can start/stop the sensor feed; stale/error states preserve previous evidence without claiming fresh coverage.
+
+Read-only provider checks against the current Sentinel Lab scope returned unavailable security configuration. No provider firewall-event feed is presently attached. The hosted panel explicitly reports this missing coverage.
+
+## Qwen and Eido
+
+Select **Enable local Qwen** to download Qwen3-0.6B onto this browser's device. Inference uses a dedicated worker and WebGPU with float16 support, through pinned Transformers.js3.7.1 and a pinned ONNX model revision. The first download is hundreds of MB and requires a compatible current Chrome/Edge device. Unsupported hardware/download failures display unavailable; collection continues.
+
+The model ranks two eligible predefined explanations from bounded numeric evidence. Code supplies facts, conditional wording and retained evidence references. Sensor alerts and network flags can be ranked too. A rejected/malformed output returns deterministic evidence notes with a rejection receipt. Each accepted result reports the actual model, revision, inference timing, input IDs and catalogue provenance. There is no model-written security verdict or autonomous defensive action, and no paid model API is used.
+
+The optional local CPU interpreter uses the existing tested Qwen GGUF adapter. Configure `OBSERVATORY_MODEL_PATH` to a compatible Qwen3 GGUF after installing the optional llama-cpp-python runtime. The local `/api/analyze` route accepts retained observation IDs, not arbitrary client-created evidence, and bounds/caches model work. Eido remains an evaluation candidate; this app does not represent an unqualified Eido checkpoint as loaded.
+
+## Local public URL/IP companion
+
+From the repository root with Python3.11+:
 
 ```sh
-python apps/sentinel-observatory/live/local_server.py
+python apps/sentinel-observatory/live/local_server.py --open-browser
 ```
 
-Or double-click `Start_Sentinel_Windows.bat` in the companion folder to start
-the service and open your browser. On macOS/Linux, run
-`sh Start_Sentinel_Mac_Linux.sh`. Both require Python 3.11 or newer.
+Or use the provided Windows/macOS/Linux launcher. Open http://127.0.0.1:8766. This observer validates every DNS answer and pins one numeric address while retaining original Host/TLS identity. Bare addresses default to HTTPS. HTTPS certificates must be valid for the supplied hostname/IP; no insecure retry occurs. Ctrl-C stops the service.
 
-Open http://127.0.0.1:8766. No package installation, model download, API key or
-account creation is required. Enter a URL or public IP that you own or are
-authorized to monitor. Bare targets default to HTTPS; include `http://` for an
-HTTP service. A direct HTTPS IP needs a certificate valid for that IP; certificate
-verification is never bypassed. Ctrl-C stops the companion.
-
-The earlier fixed-route Python app and optional local Qwen interpreter remain
-available alongside this version; their source and evidence are preserved.
-
-## How live observation works
-
-- Up to four targets; one bounded HEAD request per target, then at least fifteen
-  seconds before another. This is a stream of sampled observations, not packets.
-- Pause/resume and remove controls cancel the browser request and stop future
-  checks. A request already sent to the target may finish at the collector.
-- Hidden tabs pause checks. Closing the tab stops this foreground session.
-  Reloaded history is restored paused; it never silently restarts monitoring.
-- Up to 500 actual observations remain in this tab's session storage when
-  available. Export JSON before closing the tab if you need a portable record.
-- The old seven-minute recorded capture remains under `/recorded` on the hosted
-  app. It is separate from the live connection and never seeds live baselines.
-
-Each event exposes its source, start/completion time, actual response or error,
-elapsed time, selected response controls and missing coverage. An HTTP 200 is
-not a working-login or security verdict. A timeout means the observer did not
-receive a usable response; it does not establish a site outage. Redirects are
-recorded but never followed, so the selected endpoint remains the boundary.
-
-## Brain and interpretation
-
-`brain.mjs` is an explicitly identified JavaScript port of the existing NumPy
-Sentinel V3, configured for one log-latency feature and a 32-state reservoir.
-Its generated initial weights and source hashes come from the Python engine.
-`brain-parity.json` records numerical parity checks against Python, including the
-earlier actual measurements and separately labeled test fixtures. It is a port,
-not a claim that Python or the full unified Torch engine runs in the browser.
-
-Every active connection gets a fresh epoch. Missing/incomplete measurements are
-excluded, not padded. Calibration and changes remain experimental. A frozen
-EWMA latency prediction is compared with persistence on a later observation;
-browser request and forecast-issue timestamps use the same clock. Historical
-records cannot produce retrospectively issued forecasts. Short samples and
-correlated network timings do not establish predictive skill.
-
-The live view uses deterministic evidence notes, conditional explanations and
-suggested next observations. **No language model runs in this hosted upgrade.**
-The earlier Qwen adapter remains available in the original local application;
-it is not silently represented as connected here. No paid AI endpoint is called.
-
-## Boundaries and privacy
-
-Targets cannot contain credentials, query strings or fragments. Only HTTP/S on
-ports 80/443 is accepted. No response body, cookie, auth header, visitor address,
-packet content or private log is collected or forwarded. No scanning, port
-enumeration, network-protection change or defensive action occurs.
-
-The local companion validates all DNS answers and connects to an approved
-address while preserving the original hostname for Host and TLS SNI. The hosted
-collector checks public DNS before fetching but **cannot pin the later Worker
-DNS resolution**. It does not claim complete DNS-rebinding protection. Keep it
-owner-private and without privileged origins, VPC bindings or internal services.
-Origin checks supplement the platform access policy; Origin is not identity.
-
-The hosted fifteen-second limit is per Worker isolate and canonical target,
-not a durable globally coordinated quota. Browser concurrency is bounded and
-the service is owner-private. Broader sharing requires stronger authorization,
-abuse controls and deliberately reviewed data exposure.
-
-## Validation and publishing
+## Validation and build
 
 ```sh
-node --test apps/sentinel-observatory/live/collector.test.mjs apps/sentinel-observatory/live/brain.test.mjs
-python -m unittest discover -s apps/sentinel-observatory/live -p 'test_local_server.py' -v
+node --test apps/sentinel-observatory/live/collector.test.mjs apps/sentinel-observatory/live/brain.test.mjs apps/sentinel-observatory/live/browser-interpreter.test.mjs apps/sentinel-observatory/live/security-events.test.mjs
+python -m unittest discover -s apps/sentinel-observatory/live -p 'test_*.py' -v
 node apps/sentinel-observatory/live/verify_brain_parity.mjs
+python apps/sentinel-observatory/live/build_worker.py --output /absolute/site/worker/index.js --recorded /absolute/site/recorded.html
 ```
 
-The build script combines the collector and exact web assets into the supported
-Sites Worker ESM entry. It does not fetch a target, generate evidence or embed
-credentials. Pass the preserved recorded HTML explicitly:
-
-```sh
-python apps/sentinel-observatory/live/build_worker.py \
-  --output /absolute/site/worker/index.js \
-  --recorded /absolute/site/recorded.html
-```
-
-Use the existing Site identity and owner-only access. This app needs no database,
-new monitoring credential, private-network binding or scheduled service. Browser
-rendering and real analyst usability require their own verification; DOM and
-API checks alone do not establish visual quality or operational protection.
+Builds preserve the prior capture under `/recorded` and package exact inspected source. They do not generate telemetry. Keep the existing owner-only Sites access and protected Vercel collector; no sharing change is needed. Unit/DOM checks, real hosted API observations, actual model inference and hardware-specific rendered-browser testing are separate evidence levels.

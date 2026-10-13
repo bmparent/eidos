@@ -1,6 +1,6 @@
 import test from "node:test";
 import assert from "node:assert/strict";
-import { collectObservation, handleObservation, normalizeTarget } from "./collector.mjs";
+import { collectObservation, collectIpRelayObservation, handleObservation, ipCollectorConfiguration, normalizeTarget } from "./collector.mjs";
 
 const publicA = "93.184.215.14";
 const publicAAAA = "2606:4700:4700::1111";
@@ -307,4 +307,137 @@ test("DNS redirects are rejected in manual mode without following or sending tar
   assert.equal(result.event.status, null);
   assert.equal(result.event.coverage.head_attempted, false);
   assert.doesNotMatch(JSON.stringify(result), /127\.0\.0\.1|\/private/);
+});
+
+const relayConfig = { url: 'https://sentinel-relay.vercel.app/api/observatory/ip-observe', secret: 'a'.repeat(64), bypass: 'b'.repeat(32) };
+function relayEvidence(input = 'https://1.1.1.1/') {
+  const target = normalizeTarget(input);
+  return {
+    target: { id: target.id, url: target.url, label: target.label }, retry_after_ms: 15000,
+    event: { id: 'evt_' + '1'.repeat(32), source_id: target.id, target: target.label, url: target.url,
+      observed_at: '2026-10-13T20:00:00.000Z', completed_at: '2026-10-13T20:00:00.100Z',
+      latency_ms: 100, elapsed_ms: 100, status: 301, kind: 'measurement', method: 'HEAD', error: null,
+      headers: { server: 'cloudflare', 'set-cookie': 'private-cookie', authorization: 'private-auth' },
+      security_headers: { hsts_present: true }, redirect: { followed: false, target: 'https://one.one.one.one/', validation: 'not_requested' },
+      coverage: { head_attempted: true, body_collected: false, redirect_followed: false, dns: { address_pinned: true } },
+      private_body: 'private body must never pass through',
+    },
+  };
+}
+
+test('1.1.1.1 fallback identifies named service and never claims a direct pinned IP', async () => {
+  const mock = fixtureFetch();
+  const result = await collectObservation('https://1.1.1.1/', { fetchImpl: mock.fetchImpl });
+  assert.equal(mock.calls.length, 3);
+  assert.equal(mock.calls.at(-1).url, 'https://one.one.one.one/');
+  assert.ok(mock.calls.slice(0, 2).every(call => new URL(call.url).searchParams.get('name') === 'one.one.one.one'));
+  assert.equal(result.target.url, 'https://1.1.1.1/');
+  assert.equal(result.event.url, 'https://one.one.one.one/');
+  assert.equal(result.event.source_id, result.target.id);
+  assert.equal(result.event.target, '1.1.1.1 via one.one.one.one');
+  assert.equal(result.event.coverage.transport.kind, 'named_service_adapter');
+  assert.equal(result.event.coverage.transport.direct_ip, false);
+  assert.equal(result.event.coverage.transport.address_pinned, false);
+  assert.equal(result.event.coverage.transport.tls_server_name, 'one.one.one.one');
+  assert.match(result.event.coverage.transport.limitation, /does not establish a connection to the literal/);
+});
+
+test('relay configuration is server-only HTTPS Vercel exact route with bounded secrets', () => {
+  const env = { OBSERVATORY_COLLECTOR_URL: relayConfig.url, OBSERVATORY_COLLECTOR_SECRET: relayConfig.secret, OBSERVATORY_COLLECTOR_BYPASS_TOKEN: relayConfig.bypass };
+  assert.deepEqual(ipCollectorConfiguration(env), relayConfig);
+  for (const value of ['http://sentinel.vercel.app/api/observatory/ip-observe', 'https://attacker.example/api/observatory/ip-observe', 'https://sentinel.vercel.app/other', 'https://sentinel.vercel.app/api/observatory/ip-observe?token=secret', 'https://user:pass@sentinel.vercel.app/api/observatory/ip-observe']) assert.equal(ipCollectorConfiguration({ ...env, OBSERVATORY_COLLECTOR_URL: value }), null);
+  assert.equal(ipCollectorConfiguration({ ...env, OBSERVATORY_COLLECTOR_SECRET: '' }), null);
+  assert.equal(ipCollectorConfiguration({ ...env, OBSERVATORY_COLLECTOR_BYPASS_TOKEN: 'unsafe\r\nheader' }), null);
+});
+
+test('pinned IP relay sends one server POST and accepts only matching bounded evidence', async () => {
+  const calls = [];
+  const result = await collectIpRelayObservation('1.1.1.1', relayConfig, { fetchImpl: async (url, options) => {
+    calls.push({ url, options }); return Response.json(relayEvidence());
+  } });
+  assert.equal(calls.length, 1);
+  assert.equal(calls[0].url, relayConfig.url);
+  assert.equal(calls[0].options.method, 'POST');
+  assert.equal(calls[0].options.redirect, 'manual');
+  assert.equal(calls[0].options.headers.Authorization, 'Bearer ' + relayConfig.secret);
+  assert.equal(calls[0].options.headers['x-vercel-protection-bypass'], relayConfig.bypass);
+  assert.deepEqual(JSON.parse(calls[0].options.body), { target: 'https://1.1.1.1/' });
+  assert.equal(result.event.status, 301);
+  assert.equal(result.event.url, 'https://1.1.1.1/');
+  assert.equal(result.event.coverage.transport.kind, 'authenticated_pinned_ip_relay');
+  assert.equal(result.event.coverage.transport.direct_ip, true);
+  assert.equal(result.event.coverage.transport.address_pinned, true);
+  assert.equal(result.event.coverage.dns.address_pinned, true);
+  assert.equal(result.event.redirect.followed, false);
+  assert.doesNotMatch(JSON.stringify(result), /private-cookie|private-auth|private body|aaaaaa|bbbbbb/);
+});
+
+test('private IPs and DNS names never dispatch to the direct IP relay', async () => {
+  let calls = 0;
+  for (const value of ['127.0.0.1', '10.0.0.1', '169.254.169.254', '[::1]', '[::ffff:1.1.1.1]', 'public.example.com']) await assert.rejects(collectIpRelayObservation(value, relayConfig, { fetchImpl: () => { calls++; throw Error('must not dispatch'); } }));
+  assert.equal(calls, 0);
+});
+
+test('mismatched targets, unpinned transport, body capture and inconsistent times fail relay evidence validation', async () => {
+  const mutations = [
+    p => { p.event.url = 'https://other-public.com/'; },
+    p => { p.event.source_id = 'other_source'; },
+    p => { p.event.coverage.dns.address_pinned = false; },
+    p => { p.event.coverage.body_collected = true; },
+    p => { p.event.coverage.redirect_followed = true; },
+    p => { p.event.completed_at = '2026-10-13T19:00:00Z'; },
+    p => { p.event.error = { code: 'transport_error' }; },
+    p => { p.event.status = null; },
+  ];
+  for (const mutate of mutations) {
+    const payload = relayEvidence(); mutate(payload);
+    await assert.rejects(collectIpRelayObservation('1.1.1.1', relayConfig, { fetchImpl: async () => Response.json(payload) }), e => e.code === 'collector_invalid_response');
+  }
+  await assert.rejects(collectIpRelayObservation('1.1.1.1', relayConfig, { fetchImpl: async () => new Response('x'.repeat(32769)) }), e => e.code === 'collector_invalid_response');
+});
+
+test('IP relay refuses redirects/protection errors and never forwards arbitrary remote messages', async () => {
+  for (const [status, code] of [[302, 'collector_unavailable'], [401, 'collector_auth_failed'], [403, 'collector_auth_failed'], [429, 'sample_rate_limited'], [500, 'collector_unavailable']]) {
+    await assert.rejects(collectIpRelayObservation('1.1.1.1', relayConfig, { fetchImpl: async () => new Response('private proxy password', { status, headers: { Location: 'http://127.0.0.1/' } }) }), e => e.code === code && !/private proxy/.test(e.message));
+  }
+  const payload = relayEvidence(); payload.event.status = null; payload.event.error = { code: 'tls_error', message: 'private certificate details' };
+  const result = await collectIpRelayObservation('1.1.1.1', relayConfig, { fetchImpl: async () => Response.json(payload) });
+  assert.equal(result.event.status, null);
+  assert.equal(result.event.error.code, 'tls_error');
+  assert.match(result.event.error.message, /no insecure retry/);
+  assert.doesNotMatch(JSON.stringify(result), /private certificate/);
+});
+
+test('hosted API generic public IP routes to configured collector without visitor credentials', async () => {
+  const calls = [];
+  const env = { OBSERVATORY_COLLECTOR_URL: relayConfig.url, OBSERVATORY_COLLECTOR_SECRET: relayConfig.secret, OBSERVATORY_COLLECTOR_BYPASS_TOKEN: relayConfig.bypass };
+  await mockedGlobalFetch(async (url, options) => { calls.push({ url, options }); return Response.json(relayEvidence('https://9.9.9.9/')); }, async () => {
+    const response = await handleObservation(request('9.9.9.9', { extra: { Cookie: 'visitor-cookie', Authorization: 'Bearer visitor-token', 'X-Forwarded-For': 'visitor-address' } }), env);
+    assert.equal(response.status, 200);
+    const result = await response.json();
+    assert.equal(result.event.url, 'https://9.9.9.9/');
+    assert.equal(result.event.coverage.transport.direct_ip, true);
+    assert.equal(calls.length, 1);
+    assert.doesNotMatch(JSON.stringify(calls), /visitor-cookie|visitor-token|visitor-address/);
+  });
+});
+
+test('cancelled IP relay has no outbound request and preserves a clear cancellation result', async () => {
+  const controller = new AbortController(); controller.abort();
+  let calls = 0;
+  await assert.rejects(collectIpRelayObservation('1.1.1.1', relayConfig, { signal: controller.signal, fetchImpl: () => { calls++; throw Error('must not run'); } }), e => e.code === 'collector_cancelled');
+  assert.equal(calls, 0);
+});
+
+test('public IP collector cooldown includes retry interval on hosted API', async () => {
+  const env = { OBSERVATORY_COLLECTOR_URL: relayConfig.url, OBSERVATORY_COLLECTOR_SECRET: relayConfig.secret };
+  await mockedGlobalFetch(async () => new Response('not evidence', { status: 429 }), async () => {
+    const response = await handleObservation(request('https://9.9.9.10/'), env);
+    assert.equal(response.status, 429);
+    assert.equal(response.headers.get('Retry-After'), '15');
+    const result = await response.json();
+    assert.equal(result.error.code, 'sample_rate_limited');
+    assert.equal(result.retry_after_ms, 15000);
+    assert.equal(result.event, undefined);
+  });
 });

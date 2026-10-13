@@ -8,7 +8,9 @@
  *
  * DNS-over-HTTPS preflight is a filter, NOT address pinning: Worker fetch resolves
  * the hostname independently. We do not claim complete DNS-rebinding protection.
- * Workers fetch cannot directly request IP URLs; those return an honest limit.
+ * Workers fetch cannot directly request IP URLs. A configured authenticated Node
+ * collector pins literal IPs; the fixed 1.1.1.1 demo can use an explicitly named
+ * DNS service adapter, which is never represented as an IP-pinned measurement.
  * Docs checked 2026-10-13:
  * https://developers.cloudflare.com/workers/platform/known-issues/#fetch-to-ip-addresses
  * https://developers.cloudflare.com/workers/runtime-apis/request/#the-cf-property-requestinitcfproperties
@@ -24,6 +26,7 @@ const rates = new Map();
 const SECURITY_KEYS = ["hsts_present", "csp_present", "x_content_type_options", "frame_options", "referrer_policy", "cache_private", "cache_no_store"];
 const BOUNDED_HEADERS = ["cf-cache-status", "cache-status", "server", "content-type", "date"];
 const DNS_ENDPOINT = "https://cloudflare-dns.com/dns-query";
+const IP_SERVICE_HOST = "one.one.one.one";
 const MISSING = ["Visitor traffic", "Origin logs", "Internal network", "Packet capture", "Certificate inspection", "Authenticated application state"];
 
 class ObservationError extends Error {
@@ -143,13 +146,39 @@ export function normalizeTarget(input, options = {}) {
   if (url.username || url.password) fail("credentials_not_allowed", "Credentials are not allowed in a monitoring URL.");
   // Test original delimiter presence as empty query/fragment is still excluded.
   if (candidate.includes("?") || candidate.includes("#")) fail("query_not_allowed", "Queries and fragments are not collected; choose a fixed public path.");
-  if (url.port && !["80", "443"].includes(url.port)) fail("unsupported_port", "Only ports 80 and 443 can be observed.");
+  if (url.port && url.port !== (url.protocol === "https:" ? "443" : "80")) fail("unsupported_port", "Use the standard port for the scheme: HTTP 80 or HTTPS 443.");
   const blocked = options.blockedHosts || (options.observatoryHost ? [options.observatoryHost] : []);
   const kind = verifyHost(url.hostname, blocked);
   if (kind === "hostname") url.hostname = canonicalHost(url.hostname);
   if (url.pathname.length > 512) fail("path_too_long", "The public path must be at most 512 characters.");
   const normalized = url.toString();
   return { id: stableTargetId(normalized), url: normalized, label: `${url.host}${url.pathname === "/" ? "" : url.pathname}`, hostname: canonicalHost(url.hostname), kind };
+}
+
+function serviceAdapter(target, blockedHosts) {
+  if (target.kind === "hostname") return target;
+  // The well-known public resolver is a service test, not an arbitrary reverse
+  // DNS lookup. It preserves the path and scheme, and TLS authenticates the
+  // named service. Other literal IPs require the actual pinned-address relay.
+  if (target.hostname !== "1.1.1.1") fail("platform_ip_unsupported", "Direct IP monitoring requires the configured public IP collector, or the local companion: python apps/sentinel-observatory/live/local_server.py. The hosted 1.1.1.1 test uses the explicitly named one.one.one.one service.", 422);
+  const url = new URL(target.url);
+  url.hostname = IP_SERVICE_HOST;
+  return normalizeTarget(url.toString(), { blockedHosts });
+}
+
+/** Configuration only, never accepted from browser request JSON. */
+export function ipCollectorConfiguration(env = {}) {
+  const raw = typeof env.OBSERVATORY_COLLECTOR_URL === "string" ? env.OBSERVATORY_COLLECTOR_URL.trim() : "";
+  const secret = typeof env.OBSERVATORY_COLLECTOR_SECRET === "string" ? env.OBSERVATORY_COLLECTOR_SECRET.trim() : "";
+  if (!raw || !/^[a-f0-9]{64}$/.test(secret)) return null;
+  try {
+    const url = new URL(raw);
+    if (url.protocol !== "https:" || !url.hostname.endsWith(".vercel.app") || url.port || url.username || url.password || url.search || url.hash || url.pathname !== "/api/observatory/ip-observe") return null;
+    verifyHost(url.hostname);
+    const bypass = typeof env.OBSERVATORY_COLLECTOR_BYPASS_TOKEN === "string" ? env.OBSERVATORY_COLLECTOR_BYPASS_TOKEN.trim() : "";
+    if (bypass.length > 1024 || /[\u0000-\u0020\u007f]/.test(bypass)) return null;
+    return { url: url.toString(), secret, bypass };
+  } catch { return null; }
 }
 
 async function boundedText(response, limit, errorCode) {
@@ -299,9 +328,8 @@ function redactedError(error, signal, timedOut) {
 export async function collectObservation(input, options = {}) {
   const blockedHosts = options.blockedHosts || [];
   const target = normalizeTarget(typeof input === "string" ? input : input?.url, { blockedHosts });
-  if (target.kind !== "hostname") {
-    fail("platform_ip_unsupported", "Direct IP monitoring needs the local collector. Run python apps/sentinel-observatory/live/local_server.py and open http://127.0.0.1:8766.", 422);
-  }
+  const transportTarget = serviceAdapter(target, blockedHosts);
+  const adapted = transportTarget.url !== target.url;
   // Workers runtime methods can require their receiver. Never detach fetch and
   // invoke it with undefined `this`; Node's permissive fetch hid this in mocks.
   const fetchImpl = options.fetchImpl || globalThis.fetch.bind(globalThis);
@@ -316,7 +344,8 @@ export async function collectObservation(input, options = {}) {
   let stage = "initialization";
   const event = {
     id: `evt_${crypto.randomUUID().replaceAll("-", "")}`, source_id: target.id,
-    target: target.label, url: target.url, observed_at: isoNow(), completed_at: null,
+    target: adapted ? `${target.label} via ${IP_SERVICE_HOST}` : target.label,
+    url: transportTarget.url, observed_at: isoNow(), completed_at: null,
     latency_ms: null, status: null, kind: "measurement", method: "HEAD", error: null,
     headers: {}, security_headers: securityHeaders(null), redirect: null,
     redirect_count: 0, response_chain_complete: false,
@@ -328,10 +357,16 @@ export async function collectObservation(input, options = {}) {
       protections: "Observational only; no network protections or defensive actions changed",
     },
   };
+  if (adapted) event.coverage.transport = {
+    kind: "named_service_adapter", requested_url: target.url, effective_url: transportTarget.url,
+    requested_address: target.hostname, tls_server_name: new URL(transportTarget.url).protocol === "https:" ? IP_SERVICE_HOST : null,
+    direct_ip: false, address_pinned: false,
+    limitation: "The Worker measures the DNS-routed one.one.one.one service. It does not establish a connection to the literal 1.1.1.1 address.",
+  };
   try {
     if (controller.signal.aborted) throw new DOMException("Cancelled", "AbortError");
     stage = "dns_preflight";
-    event.coverage.dns = await validateDns(target, fetchImpl, controller.signal, blockedHosts);
+    event.coverage.dns = await validateDns(transportTarget, fetchImpl, controller.signal, blockedHosts);
     if (controller.signal.aborted) throw new DOMException("Cancelled", "AbortError");
     event.observed_at = isoNow();
     headStart = monotonic();
@@ -339,7 +374,7 @@ export async function collectObservation(input, options = {}) {
     stage = "head_request";
     // New headers only: never forward incoming authentication, cookies, client IP,
     // Origin, arbitrary headers, or Cloudflare Access credentials to the target.
-    const response = await fetchImpl(target.url, {
+    const response = await fetchImpl(transportTarget.url, {
       // RequestInit.cache is gated behind Cloudflare compatibility 2024-11-11.
       // Use explicit cache-control headers and the long-supported cf override
       // without requiring a platform compatibility configuration change.
@@ -369,7 +404,7 @@ export async function collectObservation(input, options = {}) {
       event.redirect = { followed: false, target: null, validation: "not_available" };
       if (location && location.length <= 768) {
         try {
-          const next = normalizeTarget(new URL(location, target.url).toString(), { blockedHosts });
+          const next = normalizeTarget(new URL(location, transportTarget.url).toString(), { blockedHosts });
           event.redirect = { followed: false, target: next.url, validation: "syntax_and_public_literal_only; destination DNS not queried" };
         } catch { event.redirect.validation = "withheld_outside_boundary"; }
       }
@@ -389,6 +424,102 @@ export async function collectObservation(input, options = {}) {
     event.elapsed_ms = Math.round((monotonic() - start) * 1000) / 1000;
   }
   return { event, target: { id: target.id, url: target.url, label: target.label }, retry_after_ms: SAMPLE_INTERVAL_MS };
+}
+
+const RELAY_ERROR_MESSAGES = {
+  tls_error: "TLS validation or negotiation failed; no insecure retry was made. Target availability is unknown.",
+  timeout: "The public IP observation did not complete within eight seconds; target availability is unknown.",
+  cancelled: "The public IP observation was cancelled before completion.",
+  transport_error: "The public IP collector did not obtain a usable response; target availability is unknown.",
+  dns_non_public: "The public IP collector rejected a non-public address; no target request was sent.",
+};
+
+function validatedRelayResult(payload, target, relayUrl, blockedHosts = []) {
+  const event = payload?.event;
+  const numberOrNull = (value) => value === null || typeof value === "number" && Number.isFinite(value) && value >= 0 && value <= 30_000;
+  const date = (value) => typeof value === "string" && value.length < 40 && Number.isFinite(Date.parse(value));
+  if (!payload || payload.target?.id !== target.id || payload.target?.url !== target.url || !event || event.source_id !== target.id || event.url !== target.url || !/^evt_[a-f0-9]{32}$/.test(event.id || "") || event.method !== "HEAD" || event.kind !== "measurement" || !date(event.observed_at) || !date(event.completed_at) || !numberOrNull(event.latency_ms) || !numberOrNull(event.elapsed_ms) || event.status !== null && (!Number.isInteger(event.status) || event.status < 100 || event.status > 599) || typeof event.coverage?.head_attempted !== "boolean" || event.coverage?.body_collected !== false || event.coverage?.redirect_followed !== false || event.coverage?.dns?.address_pinned !== true) {
+    fail("collector_invalid_response", "The public IP collector returned evidence that did not match this target. No result was accepted.", 502);
+  }
+  let error = null;
+  if (event.error !== null) {
+    const code = Object.hasOwn(RELAY_ERROR_MESSAGES, event.error?.code) ? event.error.code : "transport_error";
+    error = { code, message: RELAY_ERROR_MESSAGES[code], scope: "observation_vantage" };
+  }
+  if (event.status === null && !error) fail("collector_invalid_response", "The public IP collector did not provide a response or an explicit observation error.", 502);
+  if (event.status !== null && error || Date.parse(event.completed_at) < Date.parse(event.observed_at)) fail("collector_invalid_response", "The public IP collector returned inconsistent response evidence.", 502);
+  const headers = {};
+  for (const key of BOUNDED_HEADERS) {
+    if (typeof event.headers?.[key] === "string") headers[key] = event.headers[key].replace(/[\u0000-\u001f\u007f]/g, " ").slice(0, 256);
+  }
+  const security = securityHeaders(null);
+  for (const key of SECURITY_KEYS) {
+    const value = event.security_headers?.[key];
+    if (typeof value === "boolean" || value === null || ["absent", "other", "nosniff", "deny", "sameorigin", "no-referrer", "no-referrer-when-downgrade", "origin", "origin-when-cross-origin", "same-origin", "strict-origin", "strict-origin-when-cross-origin", "unsafe-url"].includes(value)) security[key] = value;
+  }
+  let redirect = null;
+  if (isRedirect(event.status)) {
+    redirect = { followed: false, target: null, validation: "withheld_outside_boundary" };
+    if (typeof event.redirect?.target === "string") {
+      try { redirect = { followed: false, target: normalizeTarget(event.redirect.target, { blockedHosts }).url, validation: "syntax_and_public_literal_only; destination DNS not queried" }; } catch { /* No redirect request is made. */ }
+    }
+  }
+  const accepted = {
+    id: event.id, source_id: target.id, target: target.label, url: target.url,
+    observed_at: event.observed_at, completed_at: event.completed_at,
+    latency_ms: event.latency_ms, elapsed_ms: event.elapsed_ms, status: event.status,
+    kind: "measurement", method: "HEAD", error, headers, security_headers: security,
+    redirect, redirect_count: 0, response_chain_complete: event.status !== null && !isRedirect(event.status),
+    coverage: {
+      vantage: "Vercel Node public-only pinned-address HTTP client",
+      sampling: "One requested HEAD; no crawling or traffic capture",
+      head_attempted: event.coverage.head_attempted, redirect_followed: false, body_collected: false,
+      dns: { state: "literal_public_ip_pinned", address_pinned: true, resolver: "none: literal public IP" },
+      transport: { kind: "authenticated_pinned_ip_relay", direct_ip: true, requested_url: target.url, effective_url: target.url, tls_server_name: new URL(target.url).protocol === "https:" ? target.hostname : null, address_pinned: true },
+      relay: { hostname: new URL(relayUrl).hostname, evidence_checked_against_requested_target: true },
+      missing: MISSING,
+      dns_rebinding: "A validated numeric public IP is the transport destination; no target DNS lookup or alias is used.",
+      protections: "Observational only; no network protections or defensive actions changed",
+    },
+  };
+  return { event: accepted, target: { id: target.id, url: target.url, label: target.label }, retry_after_ms: SAMPLE_INTERVAL_MS };
+}
+
+/** Private server-to-server relay. The browser cannot select its endpoint/key. */
+export async function collectIpRelayObservation(input, configuration, options = {}) {
+  const target = normalizeTarget(typeof input === "string" ? input : input?.url, { blockedHosts: options.blockedHosts || [] });
+  if (target.kind === "hostname") fail("invalid_ip_relay_target", "The public IP collector accepts a literal public IP address.");
+  const config = ipCollectorConfiguration({ OBSERVATORY_COLLECTOR_URL: configuration?.url, OBSERVATORY_COLLECTOR_SECRET: configuration?.secret, OBSERVATORY_COLLECTOR_BYPASS_TOKEN: configuration?.bypass });
+  if (!config) fail("collector_not_configured", "The authenticated public IP collector is not configured.", 503);
+  const fetchImpl = options.fetchImpl || globalThis.fetch.bind(globalThis);
+  const controller = new AbortController();
+  const cancel = () => controller.abort();
+  if (options.signal?.aborted) controller.abort();
+  options.signal?.addEventListener("abort", cancel, { once: true });
+  const timer = setTimeout(cancel, 10_000);
+  try {
+    if (controller.signal.aborted) fail("collector_cancelled", "The public IP observation was cancelled before relay dispatch.", 408);
+    const headers = { "Content-Type": "application/json", Authorization: `Bearer ${config.secret}`, "Cache-Control": "no-store" };
+    if (config.bypass) headers["x-vercel-protection-bypass"] = config.bypass;
+    const response = await fetchImpl(config.url, { method: "POST", headers, body: JSON.stringify({ target: target.url }), redirect: "manual", signal: controller.signal, cf: { cacheTtlByStatus: { "100-599": -1 } } });
+    if (!response.ok || response.redirected) {
+      await discardBody(response);
+      if (response.status === 429) fail("sample_rate_limited", "Wait at least fifteen seconds before measuring this public IP again.", 429);
+      if ([401, 403].includes(response.status)) fail("collector_auth_failed", "The public IP collector's server authorization or deployment protection could not be verified.", 502);
+      fail("collector_unavailable", "The public IP collector did not return usable evidence. Target availability is unknown.", 502);
+    }
+    const raw = await boundedText(response, 32_768, "collector_invalid_response");
+    let payload;
+    try { payload = JSON.parse(raw); } catch { fail("collector_invalid_response", "The public IP collector did not return valid evidence JSON.", 502); }
+    return validatedRelayResult(payload, target, config.url, options.blockedHosts || []);
+  } catch (error) {
+    if (error instanceof ObservationError) throw error;
+    fail("collector_transport_error", "The public IP collector connection did not complete. Target availability is unknown.", 502);
+  } finally {
+    clearTimeout(timer);
+    controller.abort();
+    options.signal?.removeEventListener("abort", cancel);
+  }
 }
 
 function jsonResponse(value, status = 200, extraHeaders = {}) {
@@ -427,14 +558,20 @@ export async function handleObservation(request, env = {}, _ctx = undefined) {
     // Operator-configured aliases only; never accept this from the request.
     if (typeof env.OBSERVATORY_HOSTS === "string") blockedHosts.push(...env.OBSERVATORY_HOSTS.split(",").map((host) => host.trim()).filter(Boolean));
     const target = normalizeTarget(payload.target, { blockedHosts });
-    if (target.kind !== "hostname") fail("platform_ip_unsupported", "Direct IP monitoring needs the local collector. Run python apps/sentinel-observatory/live/local_server.py and open http://127.0.0.1:8766.", 422);
+    const ipCollector = target.kind !== "hostname" ? ipCollectorConfiguration(env) : null;
+    if (target.kind !== "hostname" && !ipCollector) serviceAdapter(target, blockedHosts);
     const retry = reserveRate(target.url);
     if (retry) return jsonResponse({ error: { code: "sample_rate_limited", message: "Wait before measuring this target again." }, retry_after_ms: retry, rate_limit_scope: "Per isolate and canonical target; not durable or globally coordinated" }, 429, { "Retry-After": String(Math.ceil(retry / 1000)) });
-    const result = await collectObservation(target, { blockedHosts, signal: request.signal });
+    const result = ipCollector
+      ? await collectIpRelayObservation(target, ipCollector, { blockedHosts, signal: request.signal })
+      : await collectObservation(target, { blockedHosts, signal: request.signal });
     result.rate_limit_scope = "Per isolate and canonical target; not durable or globally coordinated";
     return jsonResponse(result);
   } catch (error) {
-    if (error instanceof ObservationError) return jsonResponse({ error: { code: error.code, message: error.message } }, error.httpStatus);
+    if (error instanceof ObservationError) {
+      if (error.httpStatus === 429) return jsonResponse({ error: { code: error.code, message: error.message }, retry_after_ms: SAMPLE_INTERVAL_MS }, 429, { "Retry-After": "15" });
+      return jsonResponse({ error: { code: error.code, message: error.message } }, error.httpStatus);
+    }
     return jsonResponse({ error: { code: "invalid_request", message: "The request could not be safely processed." } }, 400);
   }
 }

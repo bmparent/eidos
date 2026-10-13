@@ -17,6 +17,8 @@ const MIN_INTERVAL = 15000;
 const MAX_EVENTS = 500;
 const MAX_TARGETS = 4;
 const state = {targets:[],events:[],selectedId:null,followLatest:true,sourceFilter:null,filter:'all',limit:8,capabilities:null,sessionStarted:new Date().toISOString(),seen:new Set(),fieldRendered:false,inspectorSignature:null,storageAvailable:true,restored:false,sessionNotice:null};
+const modelState={engine:'browser',browser:null,browserStatus:{state:'disabled',name:'Qwen3 0.6B · on this device',connected:false,reason:'No model has been loaded or invoked.'},companionStatus:null,enabled:false,busy:false,issue:null,pendingId:null,pendingSensor:null,lastAttemptId:null};
+let networkPanel=null;
 let toastTimer;
 let fieldFreshnessState='';
 const visible = () => document.visibilityState !== 'hidden';
@@ -157,6 +159,7 @@ async function sampleTarget(target) {
     if(state.followLatest&&(!state.sourceFilter||state.sourceFilter===target.sourceId))state.selectedId=event.id;
     retryDelay=Math.max(retryDelay,finite(payload.retry_after_ms)||0);
     persist();renderAll();
+    if(modelState.enabled&&$('auto-interpret').checked)queueInterpretation(event);
   } catch(error) {
     if(connected(target)&&target.run===run)target.lastIssue=watchdogExpired?'The collector did not answer within 18 seconds. No measurement was invented; a later check will try again.':error.name==='AbortError'?'The local request was cancelled. No result was received.':String(error.message||'The collector is unreachable. Retained evidence is unchanged.').slice(0,400);
   } finally {
@@ -221,13 +224,24 @@ function targetState(target) {
   if(!receipt.fresh)return {label:target.inFlight?'Refreshing stale evidence':'Stale · last receipt '+Math.floor(receipt.age/1000)+'s ago',style:'retry'};
   return {label:target.inFlight?'Checking · last receipt '+Math.floor(receipt.age/1000)+'s ago':'Fresh · received '+Math.floor(receipt.age/1000)+'s ago',style:'active'};
 }
+function routeLabel(event) {
+  const transport=event?.coverage?.transport;
+  if(transport?.kind==='named_service_adapter')return 'Named service · DNS route, not a pinned IP';
+  if(transport?.kind==='authenticated_pinned_ip_relay')return 'Direct public IP · address pinned';
+  if(event?.coverage?.dns?.pinned_address||event?.coverage?.dns?.address_pinned||event?.coverage?.address_pinned)return 'Address pinned by local collector';
+  return event?'Public HTTP/S · collector view':'';
+}
+function routeMarkup(event) {
+  const transport=event?.coverage?.transport;if(!transport)return '';
+  return `<div class="evidence-block"><h3>Observed connection path</h3><p>${esc(routeLabel(event))}</p>${transport.requested_url?`<p class="evidence-hint">Requested: ${esc(transport.requested_url)}</p>`:''}${transport.effective_url?`<p class="evidence-hint">Measured: ${esc(transport.effective_url)}</p>`:''}${transport.limitation?`<p class="evidence-hint">${esc(transport.limitation)}</p>`:''}</div>`;
+}
 function renderCards() {
   const activeId=document.activeElement?.dataset?.action;
   const activeTarget=document.activeElement?.dataset?.target;
   $('target-list').innerHTML=state.targets.map(target=>{
     const event=latest(target.sourceId),status=targetState(target);
     const countdown=target.nextAt?Math.max(0,Math.ceil((target.nextAt-Date.now())/1000)):null;
-    return `<article class="target-card ${state.sourceFilter===target.sourceId&&target.sourceId?'selected':''}" data-card="${esc(target.id)}"><div class="target-card-top"><button class="target-name" data-action="select" data-target="${esc(target.id)}" title="${esc(target.url)}">${esc(target.label)}</button><button class="target-remove" data-action="remove" data-target="${esc(target.id)}" aria-label="Remove ${esc(target.label)}">×</button></div><div class="target-status ${status.style}" data-status="${esc(target.id)}"><i></i><span>${esc(status.label)}</span></div><div class="target-stats"><span style="color:${event?statusColor(event):'var(--faint)'}">${esc(responseText(event))}</span><span>${formatNumber(event?.latency_ms)} <small>ms</small></span></div>${target.lastIssue?`<p class="target-issue">${esc(target.lastIssue)}</p>`:''}<div class="target-card-bottom"><span class="target-next" data-countdown="${esc(target.id)}">${target.inFlight?'Request in progress':countdown!==null?'Next check in '+countdown+'s':event?'Last '+clock(event.completed_at):'No observation yet'}</span><button class="target-toggle" data-action="toggle" data-target="${esc(target.id)}" ${target.blocked?'disabled':''} aria-label="${target.active?'Pause':'Resume'} ${esc(target.label)}">${target.active?'Pause':'Resume'}</button></div></article>`;
+    return `<article class="target-card ${state.sourceFilter===target.sourceId&&target.sourceId?'selected':''}" data-card="${esc(target.id)}"><div class="target-card-top"><button class="target-name" data-action="select" data-target="${esc(target.id)}" title="${esc(target.url)}">${esc(target.label)}</button><button class="target-remove" data-action="remove" data-target="${esc(target.id)}" aria-label="Remove ${esc(target.label)}">×</button></div><div class="target-status ${status.style}" data-status="${esc(target.id)}"><i></i><span>${esc(status.label)}</span></div><div class="target-stats"><span style="color:${event?statusColor(event):'var(--faint)'}">${esc(responseText(event))}</span><span>${formatNumber(event?.latency_ms)} <small>ms</small></span></div>${event?`<p class="target-transport">${esc(routeLabel(event))}</p>`:''}${target.lastIssue?`<p class="target-issue">${esc(target.lastIssue)}</p>`:''}<div class="target-card-bottom"><span class="target-next" data-countdown="${esc(target.id)}">${target.inFlight?'Request in progress':countdown!==null?'Next check in '+countdown+'s':event?'Last '+clock(event.completed_at):'No observation yet'}</span><button class="target-toggle" data-action="toggle" data-target="${esc(target.id)}" ${target.blocked?'disabled':''} aria-label="${target.active?'Pause':'Resume'} ${esc(target.label)}">${target.active?'Pause':'Resume'}</button></div></article>`;
   }).join('');
   $('target-list').querySelectorAll('[data-action]').forEach(button=>button.addEventListener('click',()=>{
     const target=state.targets.find(item=>item.id===button.dataset.target);if(!target)return;
@@ -290,8 +304,8 @@ function renderField() {
   state.seen=new Set(state.events.map(event=>event.id));state.fieldRendered=true;
 }
 function activate(element,action) {element.addEventListener('click',action);element.addEventListener('keydown',event=>{if(event.key==='Enter'||event.key===' '){event.preventDefault();action();}});}
-function selectSource(id) {state.followLatest=true;renderStatus();state.sourceFilter=state.sourceFilter===id?null:id;state.limit=8;if(state.sourceFilter)state.selectedId=latest(id)?.id||state.selectedId;renderCards();renderField();renderInspector();renderRecord();}
-function selectEvent(id) {state.followLatest=false;renderStatus();state.selectedId=id;renderField();renderInspector();renderRecord();if(window.innerWidth<641)document.querySelector('.inspector').scrollIntoView({behavior:matchMedia('(prefers-reduced-motion: reduce)').matches?'instant':'smooth',block:'start'});}
+function selectSource(id) {state.followLatest=true;renderStatus();state.sourceFilter=state.sourceFilter===id?null:id;state.limit=8;if(state.sourceFilter)state.selectedId=latest(id)?.id||state.selectedId;renderCards();renderField();renderInspector();renderRecord();renderInterpreter();}
+function selectEvent(id) {state.followLatest=false;renderStatus();state.selectedId=id;renderField();renderInspector();renderRecord();renderInterpreter();if(window.innerWidth<641)document.querySelector('.inspector').scrollIntoView({behavior:matchMedia('(prefers-reduced-motion: reduce)').matches?'instant':'smooth',block:'start'});}
 function evidenceLink(id,label='Inspect cited observation') {return state.events.some(event=>event.id===id)?`<button class="evidence-link" data-evidence="${esc(id)}" title="${esc(id)}">${esc(label)} · ${esc(String(id).slice(0,16))}…</button>`:`<span class="evidence-hint">Cited evidence outside the retained record: ${esc(id)}</span>`;}
 function observedText(event) {
   if(event.error)return `${event.error.message||'The collector could not complete the observation.'}${finite(event.status)!==null?` HTTP ${event.status} was received before completion stopped.`:''}`;
@@ -318,7 +332,8 @@ function renderInspector() {
   state.inspectorSignature=signature;$('inspector-content').dataset.event=event.id;
   const brain=event.brain||{},hypotheses=hypothesesFor(event),issued=brain.forecast?.issued;
   $('inspector-kind').textContent=state.followLatest?'Following latest':'Follow latest';
-  $('inspector-content').innerHTML=`<h2 id="inspector-title">${esc(labelFor(event))}</h2><p class="evidence-url">${esc(event.url||'URL not supplied')}</p><div class="evidence-readings"><div><span>HTTP response</span><strong class="${isIncomplete(event)?'failed':event.status>=400?'warning':'good'}">${esc(responseText(event))}</strong></div><div><span>Collector elapsed</span><strong>${formatNumber(event.latency_ms)}<small>ms</small></strong></div></div><p class="evidence-timestamp">${esc(dateTime(event.completed_at))} · collector clock<br>Received ${esc(dateTime(event.client_received_at))} · browser clock</p><div class="evidence-block"><h3>What was observed</h3><p>${esc(observedText(event))}</p><p class="evidence-hint">Elapsed time includes this collector’s network path. It is not page-load time or origin processing time.</p>${evidenceLink(event.id,'Original evidence')}</div><div class="evidence-block"><h3>Observed response controls</h3>${securityMarkup(event.security_headers)}<p class="evidence-hint">Header presence is not a vulnerability grade. Absent does not mean exploited.</p></div><div class="evidence-block"><h3>Brain / Sentinel <span class="evidence-hint">· experimental</span></h3><span class="signal-state">${esc((brain.state||'waiting').replace(/_/g,' '))}</span>${finite(brain.warmup_remaining)>0?`<p>${brain.warmup_remaining} valid responses remain before provisional calibration.</p>`:''}${brain.reason?`<p>${esc(brain.reason)}</p>`:''}${list(brain.signals).length?'<ul class="signal-list">'+brain.signals.map(signal=>`<li>${esc(signal.label||signal.key)}<strong>${finite(signal.value)!==null?signal.value.toFixed(2):'—'}</strong><small>${esc(signal.meaning)}</small></li>`).join('')+'</ul>':''}<p class="evidence-hint">Portable numerical analysis. Scores are not attack probabilities.</p>${issued?`<p class="evidence-hint">Issued after receiving this evidence: next-response EWMA estimate ${formatNumber(issued.predicted_latency_ms)} ms; persistence ${formatNumber(issued.persistence_latency_ms)} ms. This is not an incident prediction.</p>`:''}</div><div class="evidence-block"><h3>Possible explanations</h3><p class="evidence-hint">Deterministic, conditional notes · no model invoked</p>${hypotheses.length?hypotheses.map(item=>`<div class="hypothesis"><small>Possibility · cause unverified</small><p>${esc(item.text)}</p><p class="next">Next observation: ${esc(item.next)}</p>${evidenceLink(event.id,'Supporting measurement')}</div>`).join(''):'<p>No specific cause is established or needed by this observation. Watch the sequence before assigning meaning to a single response.</p>'}</div><div class="evidence-block"><h3>Still unknown</h3><p>Visitor impact, internal behavior, origin processing, authenticated application state, and the cause of any change remain outside this view.</p></div><details class="technical-details"><summary>Original measurement & provenance</summary><dl><dt>Observation ID</dt><dd>${esc(event.id)}</dd><dt>Request started · collector UTC</dt><dd>${esc(event.observed_at)}</dd><dt>Response completed · collector UTC</dt><dd>${esc(event.completed_at)}</dd><dt>Request started · browser UTC</dt><dd>${esc(event.client_request_started_at||'Not retained')}</dd><dt>Receipt · browser UTC</dt><dd>${esc(event.client_received_at||'Not retained')}</dd><dt>Evidence hash · collector payload</dt><dd>${esc(event.evidence_hash||'Not supplied by this collector; exported JSON is an evidence record, not a signature.')}</dd>${event.evidence_hash?'<dd>Browser timing, Brain signals, and interpretation are added after collection and are outside this collector hash.</dd>':''}<dt>Analysis epoch</dt><dd>${esc(brain.session_epoch||'Not supplied')}</dd><dt>Coverage / vantage</dt><dd>${esc(textValue(event.coverage))}</dd>${Object.entries(event.headers||{}).map(([key,value])=>`<dt>${esc(key)}${key.toLowerCase()==='date'?' · upstream clock':''}</dt><dd>${esc(textValue(value))}</dd>`).join('')}${event.error?`<dt>Original collection error</dt><dd>${esc(textValue(event.error))}</dd>`:''}</dl><button class="quiet-button" id="copy-evidence">Copy this evidence JSON</button></details>`;
+  $('inspector-content').innerHTML=`<h2 id="inspector-title">${esc(labelFor(event))}</h2><p class="evidence-url">${esc(event.url||'URL not supplied')}</p><div class="evidence-readings"><div><span>HTTP response</span><strong class="${isIncomplete(event)?'failed':event.status>=400?'warning':'good'}">${esc(responseText(event))}</strong></div><div><span>Collector elapsed</span><strong>${formatNumber(event.latency_ms)}<small>ms</small></strong></div></div><p class="evidence-timestamp">${esc(dateTime(event.completed_at))} · collector clock<br>Received ${esc(dateTime(event.client_received_at))} · browser clock</p><div class="evidence-block"><h3>What was observed</h3><p>${esc(observedText(event))}</p><p class="evidence-hint">Elapsed time includes this collector’s network path. It is not page-load time or origin processing time.</p>${evidenceLink(event.id,'Original evidence')}</div>${routeMarkup(event)}<div class="evidence-block"><h3>Observed response controls</h3>${securityMarkup(event.security_headers)}<p class="evidence-hint">Header presence is not a vulnerability grade. Absent does not mean exploited.</p></div><div class="evidence-block"><h3>Brain / Sentinel <span class="evidence-hint">· experimental</span></h3><span class="signal-state">${esc((brain.state||'waiting').replace(/_/g,' '))}</span>${finite(brain.warmup_remaining)>0?`<p>${brain.warmup_remaining} valid responses remain before provisional calibration.</p>`:''}${brain.reason?`<p>${esc(brain.reason)}</p>`:''}${list(brain.signals).length?'<ul class="signal-list">'+brain.signals.map(signal=>`<li>${esc(signal.label||signal.key)}<strong>${finite(signal.value)!==null?signal.value.toFixed(2):'—'}</strong><small>${esc(signal.meaning)}</small></li>`).join('')+'</ul>':''}<p class="evidence-hint">Portable numerical analysis. Scores are not attack probabilities.</p>${issued?`<p class="evidence-hint">Issued after receiving this evidence: next-response EWMA estimate ${formatNumber(issued.predicted_latency_ms)} ms; persistence ${formatNumber(issued.persistence_latency_ms)} ms. This is not an incident prediction.</p>`:''}</div><div class="evidence-block"><h3>Possible explanations</h3><p class="evidence-hint">Deterministic, conditional notes · no model invoked</p>${hypotheses.length?hypotheses.map(item=>`<div class="hypothesis"><small>Possibility · cause unverified</small><p>${esc(item.text)}</p><p class="next">Next observation: ${esc(item.next)}</p>${evidenceLink(event.id,'Supporting measurement')}</div>`).join(''):'<p>No specific cause is established or needed by this observation. Watch the sequence before assigning meaning to a single response.</p>'}</div><div class="evidence-block"><h3>Still unknown</h3><p>Visitor impact, internal behavior, origin processing, authenticated application state, and the cause of any change remain outside this view.</p></div><details class="technical-details"><summary>Original measurement & provenance</summary><dl><dt>Observation ID</dt><dd>${esc(event.id)}</dd><dt>Request started · collector UTC</dt><dd>${esc(event.observed_at)}</dd><dt>Response completed · collector UTC</dt><dd>${esc(event.completed_at)}</dd><dt>Request started · browser UTC</dt><dd>${esc(event.client_request_started_at||'Not retained')}</dd><dt>Receipt · browser UTC</dt><dd>${esc(event.client_received_at||'Not retained')}</dd><dt>Evidence hash · collector payload</dt><dd>${esc(event.evidence_hash||'Not supplied by this collector; exported JSON is an evidence record, not a signature.')}</dd>${event.evidence_hash?'<dd>Browser timing, Brain signals, and interpretation are added after collection and are outside this collector hash.</dd>':''}<dt>Analysis epoch</dt><dd>${esc(brain.session_epoch||'Not supplied')}</dd><dt>Coverage / vantage</dt><dd>${esc(textValue(event.coverage))}</dd>${Object.entries(event.headers||{}).map(([key,value])=>`<dt>${esc(key)}${key.toLowerCase()==='date'?' · upstream clock':''}</dt><dd>${esc(textValue(value))}</dd>`).join('')}${event.error?`<dt>Original collection error</dt><dd>${esc(textValue(event.error))}</dd>`:''}</dl><button class="quiet-button" id="copy-evidence">Copy this evidence JSON</button></details>`;
+  if(event.interpretation){const result=document.createElement('div');result.className='model-inspector-result interpretation-result';result.innerHTML=interpretationMarkup(event,true);$('inspector-content').insertBefore(result,document.querySelector('.technical-details'));}
   if(wasOpen&&previousId===event.id)document.querySelector('.technical-details').open=true;
   $('inspector-content').querySelectorAll('[data-evidence]').forEach(button=>button.addEventListener('click',()=>selectEvent(button.dataset.evidence)));
   $('copy-evidence').addEventListener('click',async()=>{try{await navigator.clipboard.writeText(JSON.stringify(event,null,2));notify('Original evidence copied.');}catch{notify('Clipboard unavailable. Export the session JSON instead.');}});
@@ -361,13 +376,133 @@ function renderForecast() {
   $('forecast-metrics').hidden=!count;
   if(count){const ewma=comparisons.reduce((sum,comparison)=>sum+comparison.ewma_mae_ms*comparison.scored_count,0)/count,persistence=comparisons.reduce((sum,comparison)=>sum+comparison.persistence_mae_ms*comparison.scored_count,0)/count;$('forecast-metrics').innerHTML=`<div><span>EWMA mean absolute error</span><strong>${formatNumber(ewma)} <small>ms</small></strong></div><div><span>Persistence baseline error</span><strong>${formatNumber(persistence)} <small>ms</small></strong></div>`;}
 }
-function renderAll() {renderStatus();renderCards();renderMetrics();renderField();renderInspector();renderRecord();renderForecast();}
+
+function activeModelStatus() {return modelState.engine==='companion'?modelState.companionStatus||{state:'unavailable',connected:false,reason:'No companion model is available.'}:modelState.browserStatus;}
+function interpretationMarkup(event,compact=false) {
+  const analysis=event?.interpretation;if(!analysis)return '';
+  const provenance=analysis.provenance||{};
+  const ran=provenance.model_ran===true,accepted=ran&&provenance.output_accepted===true&&analysis.kind==='model';
+  const label=accepted?'Model-ranked possibilities · causes unverified':ran?'Model output rejected · evidence fallback':'Deterministic evidence notes · model not invoked';
+  const detail=String(analysis.summary||analysis.reason||'These explanations describe possible causes, not a confirmed diagnosis.');
+  const hypotheses=list(analysis.hypotheses).slice(0,4).map(item=>`<li><strong>${esc(item.text||item.label||item.code||'Possible explanation')}</strong>${item.next_observation||item.next?`<small>Next observation: ${esc(item.next_observation||item.next)}</small>`:''}${list(item.support).map(id=>evidenceLink(id,'Supporting evidence')).join('')}${typeof item.support==='string'?`<small>${esc(item.support)}</small>`:''}</li>`).join('');
+  return `<span class="model-result-badge ${accepted?'':'fallback'}">${esc(label)}</span><h4>${esc(labelFor(event))}</h4><p>${esc(detail)}</p>${provenance.reason?`<p class="evidence-hint">Interpreter note: ${esc(provenance.reason)}</p>`:''}${hypotheses?'<ul>'+hypotheses+'</ul>':''}${list(analysis.unknowns).length?`<p class="evidence-hint">Still unknown: ${esc(analysis.unknowns.join(' · '))}</p>`:''}${evidenceLink(event.id,'Interpretation evidence')}<p class="model-provenance">${esc(provenance.model||'No accepted model output')} · ${esc(provenance.runtime||provenance.engine||provenance.role||'Evidence catalogue')}<br>Interpreted ${esc(dateTime(event.interpreted_at))}${finite(provenance.inference_ms)!==null?' · '+formatNumber(provenance.inference_ms)+' ms inference':''}</p>`;
+}
+function bindInterpretationEvidence(container) {container.querySelectorAll('[data-evidence]').forEach(button=>button.addEventListener('click',()=>selectEvent(button.dataset.evidence)));}
+function renderInterpreter() {
+  const status=activeModelStatus();const phase=status.state||'disabled';
+  const usable=modelState.enabled&&(status.connected===true||status.available===true||phase==='ready');
+  const ready=modelState.enabled&&(status.connected===true||phase==='ready');
+  $('model-shortcut').textContent=modelState.busy?'Interpreter working ↗':ready?'Interpreter ready ↗':usable?'Interpreter configured ↗':'Enable interpreter ↗';
+  $('model-badge').textContent=modelState.busy?'Interpreting evidence':ready?'Model ready':usable?'Configured · waiting':phase==='loading'?'Loading model':phase==='unavailable'?'Model unavailable':'Not connected';
+  $('model-title').textContent=usable?status.name||status.model||'Your interpreter is configured.':phase==='loading'?'Making room for another perspective.':phase==='unavailable'?'The evidence keeps arriving.':'Give the evidence a second mind.';
+  $('model-status').textContent=modelState.issue||status.reason||status.message||(usable?'Ready to rank explanations against the selected evidence.':'No model has been loaded or invoked.');
+  $('model-status').classList.toggle('issue',!!modelState.issue||phase==='unavailable');
+  $('model-enable').disabled=modelState.busy&&!modelState.enabled||phase==='loading'||(modelState.engine==='companion'&&!status.available);
+  $('model-enable').textContent=usable?'Pause interpretation':phase==='loading'?'Loading…':modelState.engine==='companion'?'Connect companion model':'Enable local Qwen';
+  $('model-engine').disabled=modelState.busy||phase==='loading';
+  $('interpret-latest').disabled=!usable||modelState.busy||!state.events.length;
+  $('model-progress').hidden=phase!=='loading';$('model-progress').value=finite(status.progress)===null?0:Math.max(0,Math.min(1,status.progress/100));
+  $('model-requirements').textContent=modelState.engine==='companion'?'Uses the model configured on your local collector. Eido is an evaluation adapter; a trusted Eido checkpoint is not loaded.':'Qwen runs on your GPU through WebGPU. First use downloads several hundred MB; inference stays on this device. WebGPU support is required. Eido remains an evaluation adapter.';
+  const event=selectedEvent()||state.events[0],markup=interpretationMarkup(event);
+  const container=$('interpretation-result');container.hidden=!markup;
+  const signature=event?.id+':'+event?.interpreted_at;
+  if(container.dataset.signature!==signature){container.dataset.signature=signature;container.innerHTML=markup;bindInterpretationEvidence(container);}
+}
+async function refreshCompanionModel() {
+  if(state.capabilities?.mode!=='local')return;
+  try {
+    const response=await fetch('/api/model/status',{cache:'no-store',credentials:'same-origin',signal:AbortSignal.timeout(5000)});
+    if(!response.ok)return;
+    modelState.companionStatus=await response.json();
+    $('companion-model-option').disabled=modelState.companionStatus?.available!==true;
+    if(modelState.companionStatus?.available===true){modelState.engine='companion';$('model-engine').value='companion';}
+    renderInterpreter();
+  }catch{/* A missing companion model never stops actual observations. */}
+}
+async function enableInterpreter() {
+  if(modelState.enabled){modelState.enabled=false;modelState.pendingId=null;modelState.pendingSensor=null;renderInterpreter();notify('Further model interpretation paused. Original evidence and completed results remain.');return;}
+  if(modelState.busy||activeModelStatus().state==='loading')return;
+  modelState.issue=null;
+  try {
+    if(modelState.engine==='companion'){
+      if(modelState.companionStatus?.available!==true)throw new Error('The companion has no configured model. Choose Qwen in this browser.');
+      modelState.enabled=true;
+    }else{
+      if(!modelState.browser){
+        modelState.browserStatus={...modelState.browserStatus,state:'loading',connected:false,progress:0,reason:'Loading the local model runtime…'};renderInterpreter();
+        const {BrowserInterpreter}=await import('/browser-interpreter.mjs');
+        modelState.browser=new BrowserInterpreter({onStatus:status=>{modelState.browserStatus=status;if(status.state==='unavailable')modelState.enabled=false;renderInterpreter();}});
+      }
+      modelState.browserStatus=await modelState.browser.initialize();
+      modelState.enabled=modelState.browserStatus.connected===true||modelState.browserStatus.state==='ready';
+      if(!modelState.enabled)throw new Error(modelState.browserStatus.reason||'The browser model is not ready.');
+    }
+    renderInterpreter();
+    if(state.events[0]&&$('auto-interpret').checked)queueInterpretation(state.events[0]);
+  }catch(error){modelState.enabled=false;if(modelState.engine==='browser')modelState.browserStatus={...modelState.browserStatus,state:'unavailable',connected:false};modelState.issue=String(error.message||'Model activation failed. Collection remains available.').slice(0,500);renderInterpreter();}
+}
+function queueInterpretation(event,manual=false) {
+  if(!modelState.enabled||!event)return;
+  if(!manual&&event.interpretation)return;
+  if(modelState.busy){modelState.pendingId=event.id;return;}
+  interpretEvent(event);
+}
+async function interpretEvent(event) {
+  modelState.busy=true;modelState.issue=null;modelState.lastAttemptId=event.id;renderInterpreter();
+  try {
+    let analysis;
+    if(modelState.engine==='companion'){
+      const response=await fetch('/api/analyze',{method:'POST',headers:{'Content-Type':'application/json'},credentials:'same-origin',cache:'no-store',body:JSON.stringify({event_id:event.id}),signal:AbortSignal.timeout(120000)});
+      const payload=await response.json();
+      if(!response.ok)throw new Error(readableError(payload,'The companion could not interpret this evidence.'));
+      if(payload.event_id!==event.id)throw new Error('The interpreter returned a different observation ID. The result was not attached.');
+      analysis=payload.analysis;if(payload.model)modelState.companionStatus=payload.model;
+    }else analysis=await modelState.browser.analyze(event,sourceEvents(event.source_id).filter(previous=>stamp(previous.observed_at)<=stamp(event.observed_at)).slice(0,12));
+    if(!analysis||!['model','deterministic'].includes(analysis.kind))throw new Error('The interpreter returned an invalid result. Original evidence is unchanged.');
+    event.interpretation=analysis;event.interpreted_at=new Date().toISOString();
+    persist();state.inspectorSignature=null;renderInspector();renderInterpreter();
+  }catch(error){modelState.issue=String(error.message||'Interpretation failed. Original evidence remains available.').slice(0,500);}
+  finally {
+    modelState.busy=false;renderInterpreter();
+    const sensor=modelState.pendingSensor;modelState.pendingSensor=null;
+    const pending=state.events.find(item=>item.id===modelState.pendingId);modelState.pendingId=null;
+    if(sensor&&modelState.enabled){interpretSensorEvent(sensor.event,sensor.context);return;}
+    if(pending&&pending.id!==event.id&&modelState.enabled&&$('auto-interpret').checked)queueInterpretation(pending);
+  }
+}
+
+
+async function interpretSensorEvent(event,context=[]) {
+  if(modelState.engine!=='browser'||!modelState.enabled||!modelState.browser){
+    if(!modelState.busy){modelState.engine='browser';modelState.enabled=false;$('model-engine').value='browser';renderInterpreter();}
+    notify('Enable Qwen in the interpreter panel to rank sensor explanations on this device.');
+    document.querySelector('.understanding').scrollIntoView({behavior:matchMedia('(prefers-reduced-motion: reduce)').matches?'instant':'smooth',block:'start'});
+    return;
+  }
+  if(modelState.busy){modelState.pendingSensor={event,context};notify('Sensor interpretation queued behind the current evidence receipt.');return;}
+  if(modelState.browserStatus.state!=='ready'){notify('Browser Qwen is not ready. Check the interpreter status.');return;}
+  modelState.busy=true;modelState.issue=null;renderInterpreter();
+  try {
+    const analysis=await modelState.browser.analyze(event,context);
+    if(!analysis||!['model','deterministic'].includes(analysis.kind))throw new Error('The model did not return an accepted sensor interpretation.');
+    networkPanel?.attachInterpretation(event.id,analysis,new Date().toISOString());
+  }catch(error){modelState.issue=String(error.message||'Sensor interpretation failed. Original records are unchanged.').slice(0,500);notify(modelState.issue);}
+  finally {
+    modelState.busy=false;renderInterpreter();
+    const sensor=modelState.pendingSensor;modelState.pendingSensor=null;
+    const pending=state.events.find(item=>item.id===modelState.pendingId);modelState.pendingId=null;
+    if(sensor&&modelState.enabled){interpretSensorEvent(sensor.event,sensor.context);return;}
+    if(pending&&modelState.enabled&&$('auto-interpret').checked)queueInterpretation(pending);
+  }
+}
+
+function renderAll() {renderStatus();renderCards();renderMetrics();renderField();renderInspector();renderRecord();renderForecast();renderInterpreter();}
 
 async function loadCapabilities() {
   try {
     const response=await fetch('/api/capabilities',{cache:'no-store',credentials:'same-origin',signal:AbortSignal.timeout(5000)});
     if(!response.ok)return;
-    const capabilities=await response.json();state.capabilities=capabilities;
+    const capabilities=await response.json();state.capabilities=capabilities;networkPanel?.setCapabilities?.(capabilities);
     const recordedLink=document.querySelector('a[href="/recorded"]');
     if(capabilities.recorded_url===null)recordedLink?.remove();
     if(capabilities.mode==='hosted'&&capabilities.direct_ip===false){
@@ -375,10 +510,22 @@ async function loadCapabilities() {
       $('connection-hint').textContent='Authorized public websites · every 15+ seconds · up to four targets. Direct public IPs require the local collector.';
       document.querySelector('.intro>div>p').innerHTML='Connect a public website and watch actual observations arrive.<br>Public IP monitoring is available through the same interface in the local collector.';
     }else if(capabilities.mode==='local')$('connection-hint').textContent='Local collector · authorized public websites or public IPs · every 15+ seconds · up to four targets.';
-    renderStatus();
+    refreshCompanionModel();renderStatus();
   }catch{/* Capability lookup is optional; it never starts sampling or blocks Connect. */}
 }
 
+$('test-ip').addEventListener('click',()=>{
+  $('connect-target').value='1.1.1.1';
+  $('connect-form').requestSubmit();
+});
+$('model-shortcut').addEventListener('click',()=>document.querySelector('.understanding').scrollIntoView({behavior:matchMedia('(prefers-reduced-motion: reduce)').matches?'instant':'smooth',block:'start'}));
+$('model-engine').addEventListener('change',()=>{
+  if(modelState.busy){$('model-engine').value=modelState.engine;return;}
+  modelState.engine=$('model-engine').value;modelState.enabled=false;modelState.issue=null;modelState.pendingId=null;renderInterpreter();
+});
+$('model-enable').addEventListener('click',enableInterpreter);
+$('interpret-latest').addEventListener('click',()=>{const event=selectedEvent()||state.events[0];if(event)queueInterpretation(event,true);});
+$('auto-interpret').addEventListener('change',()=>{if(modelState.enabled&&$('auto-interpret').checked&&state.events[0])queueInterpretation(state.events[0]);});
 $('connect-form').addEventListener('submit',event=>{
   event.preventDefault();formMessage('');
   if(state.targets.length>=MAX_TARGETS){formMessage('Four targets are connected. Remove one before adding another.');return;}
@@ -396,7 +543,7 @@ document.querySelectorAll('[data-filter]').forEach(button=>button.addEventListen
 $('show-more').addEventListener('click',()=>{state.limit+=12;renderRecord();});
 $('export-button').addEventListener('click',()=>{
   if(!state.events.length)return;
-  const exported={schema:'sentinel-live-evidence-v1',exported_at:new Date().toISOString(),mode:'recorded_actual_observations',session_started_at:state.sessionStarted,source:'Browser session; no automatic history replay into Brain',engine:ENGINE_PROVENANCE,model:{connected:false,mode:'deterministic_evidence_notes'},capabilities:state.capabilities,scope:{protocols:['HTTP','HTTPS'],method:'HEAD',sampling:'Foreground, >=15 seconds after each result; gaps and failures retained',missing:['Visitor traffic','Internal networks','Packet contents','Origin logs','Authenticated state']},targets:state.targets.map(target=>({source_id:target.sourceId,url:target.url,label:target.label})),events:state.events};
+  const exported={schema:'sentinel-live-evidence-v1',exported_at:new Date().toISOString(),mode:'recorded_actual_observations',session_started_at:state.sessionStarted,source:'Browser session; no automatic history replay into Brain',engine:ENGINE_PROVENANCE,model:{engine:modelState.engine,enabled:modelState.enabled,status:activeModelStatus(),role:'Evidence catalogue ranking; causes remain unverified'},capabilities:state.capabilities,scope:{protocols:['HTTP','HTTPS'],method:'HEAD',sampling:'Foreground, >=15 seconds after each result; gaps and failures retained',missing:['Visitor traffic','Internal networks','Packet contents','Origin logs','Authenticated state']},targets:state.targets.map(target=>({source_id:target.sourceId,url:target.url,label:target.label})),events:state.events,network_sensor_evidence:networkPanel?.getEvidence()||null};
   const blob=new Blob([JSON.stringify(exported,null,2)],{type:'application/json'}),url=URL.createObjectURL(blob),link=document.createElement('a');
   link.href=url;link.download='Sentinel_Evidence_'+new Date().toISOString().replace(/[:.]/g,'-')+'.json';document.body.append(link);link.click();link.remove();setTimeout(()=>URL.revokeObjectURL(url),1000);notify('Actual session evidence exported. Review it before sharing.');
 });
@@ -410,3 +557,6 @@ document.addEventListener('visibilitychange',()=>{
 });
 window.addEventListener('pagehide',()=>{for(const target of state.targets)cancelWork(target);persist();});
 restore();renderAll();loadCapabilities();setInterval(tick,1000);
+import('/network-panel.mjs').then(({initializeNetworkPanel})=>{networkPanel=initializeNetworkPanel($('network-panel'),{onNotice:notify,onInterpret:interpretSensorEvent});networkPanel?.setCapabilities?.(state.capabilities);}).catch(()=>{
+  $('network-panel').innerHTML='<p class="empty-record">Network sensor import is unavailable in this build. Endpoint evidence collection remains available.</p>';
+});

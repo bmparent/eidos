@@ -1,4 +1,4 @@
-"""Loopback-only public URL/IP observer. Standard library; no daemon or model.
+"""Loopback-only public URL/IP observer with optional read-only local Qwen.
 
 DNS answers are validated and one numeric address is pinned to the connection.
 No redirects, cookies, authorization, response bodies or private addresses.
@@ -11,10 +11,12 @@ import http.client
 import ipaddress
 import json
 import mimetypes
+import os
 import queue
 import re
 import socket
 import ssl
+import sys
 import threading
 import time
 import uuid
@@ -26,6 +28,9 @@ from pathlib import Path
 from urllib.parse import quote, urljoin, urlsplit, urlunsplit
 
 ROOT = Path(__file__).resolve().parent
+sys.path.insert(0, str(ROOT.parent))
+from interpreter import Interpreter
+from sensor_log import sensor_capabilities, sensor_snapshot
 TIMEOUT_SECONDS = 8.0
 INTERVAL_SECONDS = 15.0
 CAPABILITIES = {"mode": "local", "direct_ip": True, "interval_ms": 15000,
@@ -313,11 +318,44 @@ def collect(target, *, resolver=socket.getaddrinfo, connection_factory=PinnedHTT
 
 
 class Observer:
-    def __init__(self, collector=collect, clock=time.monotonic):
+    def __init__(self, collector=collect, clock=time.monotonic, interpreter=None):
         self.collector, self.clock = collector, clock
+        self.interpreter = interpreter or Interpreter()
         self.lock = threading.Lock()
+        self.model_slot = threading.BoundedSemaphore(1)
         self.active = False
         self.attempts = OrderedDict()
+        self.events = OrderedDict()
+        self.analyses = OrderedDict()
+
+    def model_status(self):
+        details = self.interpreter.status()
+        return {**details, "available": bool(self.interpreter.model_path),
+                "connected": details["state"] == "ready", "mode": "local_cpu_catalogue_ranker",
+                "browser_alternative": "Qwen3 on-device WebGPU", "eido_loaded": False}
+
+    def analyze(self, event_id):
+        if not isinstance(event_id, str) or len(event_id) > 160:
+            return 400, {"error": "invalid_evidence_id"}
+        with self.lock:
+            event = self.events.get(event_id)
+            cached = self.analyses.get(event_id)
+            context = [dict(value) for value in self.events.values() if event and value.get("source_id") == event.get("source_id")]
+        if event is None:
+            return 404, {"error": "unknown_evidence", "message": "Only evidence collected by this local process can be interpreted."}
+        if cached is not None:
+            return 200, {"event_id": event_id, "analysis": cached, "cached": True, "model": self.model_status()}
+        if not self.model_slot.acquire(blocking=False):
+            return 409, {"error": "model_busy", "message": "One model job is already running; collection continues separately."}
+        try:
+            analysis = self.interpreter.analyze(dict(event), context)
+            with self.lock:
+                self.analyses[event_id] = analysis
+                while len(self.analyses) > 500:
+                    self.analyses.popitem(last=False)
+            return 200, {"event_id": event_id, "analysis": analysis, "cached": False, "model": self.model_status()}
+        finally:
+            self.model_slot.release()
 
     def observe(self, value):
         target = normalize_target(value)
@@ -334,7 +372,12 @@ class Observer:
             while len(self.attempts) > 256:
                 self.attempts.popitem(last=False)
         try:
-            return 200, {"event": self.collector(target), "target": {"id": target.id, "url": target.url, "label": target.label},
+            event = self.collector(target)
+            with self.lock:
+                self.events[event["id"]] = event
+                while len(self.events) > 500:
+                    self.events.popitem(last=False)
+            return 200, {"event": event, "target": {"id": target.id, "url": target.url, "label": target.label},
                          "retry_after_ms": 15000, "rate_limit_scope": "this local process; one observation at a time and 15 seconds per target"}
         finally:
             with self.lock:
@@ -372,10 +415,18 @@ def make_handler(observer):
             if not self._valid_host():
                 return self._send(403, {"error": "invalid_host"})
             if self.path == "/api/capabilities":
-                return self._send(200, CAPABILITIES)
+                return self._send(200, {**CAPABILITIES, "model": observer.model_status(), "security_sensor": sensor_capabilities()})
+            if self.path == "/api/model/status":
+                return self._send(200, observer.model_status())
+            if self.path == "/api/security-events":
+                return self._send(200, sensor_snapshot())
             known = {"/": ROOT / "web" / "index.html", "/index.html": ROOT / "web" / "index.html",
                      "/app.js": ROOT / "web" / "app.js", "/styles.css": ROOT / "web" / "styles.css",
-                     "/brain.mjs": ROOT / "brain.mjs", "/brain-weights.mjs": ROOT / "brain-weights.mjs"}
+                     "/brain.mjs": ROOT / "brain.mjs", "/brain-weights.mjs": ROOT / "brain-weights.mjs",
+                     "/browser-interpreter.mjs": ROOT / "web" / "browser-interpreter.mjs",
+                     "/browser-model-worker.mjs": ROOT / "web" / "browser-model-worker.mjs",
+                     "/network-panel.mjs": ROOT / "web" / "network-panel.mjs",
+                     "/security-events.mjs": ROOT / "security-events.mjs"}
             path = known.get(self.path)
             if path is None or not path.is_file():
                 return self._send(404, {"error": "not_found"})
@@ -388,7 +439,7 @@ def make_handler(observer):
             origins = self.headers.get_all("Origin", [])
             if len(origins) != 1 or origins[0] != "http://" + self.headers["Host"]:
                 return self._send(403, {"error": "origin_mismatch"})
-            if self.path != "/api/observe":
+            if self.path not in {"/api/observe", "/api/analyze"}:
                 return self._send(404, {"error": "not_found"})
             lengths = self.headers.get_all("Content-Length", [])
             if self.headers.get("Transfer-Encoding") or len(lengths) != 1 or not lengths[0].isdigit():
@@ -401,9 +452,10 @@ def make_handler(observer):
             try:
                 self.connection.settimeout(2)
                 data = json.loads(self.rfile.read(length))
-                if not isinstance(data, dict) or set(data) != {"target"}:
-                    raise BoundaryError("Expected one target field")
-                status, result = observer.observe(data["target"])
+                field = "event_id" if self.path == "/api/analyze" else "target"
+                if not isinstance(data, dict) or set(data) != {field}:
+                    raise BoundaryError("Expected one request field")
+                status, result = observer.analyze(data[field]) if field == "event_id" else observer.observe(data[field])
                 self._send(status, result)
             except BoundaryError as exc:
                 self._send(400, {"error": "invalid_target", "message": str(exc)})
@@ -423,9 +475,10 @@ def make_server(port=8766, observer=None):
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--port", type=int, default=8766)
+    parser.add_argument("--model", help="Optional local Qwen3 GGUF path; also accepts OBSERVATORY_MODEL_PATH. No model download is performed.")
     parser.add_argument("--open-browser", action="store_true", help="Open the local interface after starting; does not connect any target")
     args = parser.parse_args()
-    server = make_server(args.port)
+    server = make_server(args.port, Observer(interpreter=Interpreter(model_path=args.model)))
     print(f"Sentinel local observer: http://127.0.0.1:{server.server_port} — public URL/IP checks; Ctrl-C stops.", flush=True)
     if args.open_browser:
         import webbrowser
