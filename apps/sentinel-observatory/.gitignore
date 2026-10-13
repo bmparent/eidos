@@ -1,0 +1,7 @@
+data/
+*.sqlite*
+*.gguf
+.venv/
+__pycache__/
+*.log
+recordings/
