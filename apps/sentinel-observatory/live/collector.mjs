@@ -434,6 +434,31 @@ const RELAY_ERROR_MESSAGES = {
   dns_non_public: "The public IP collector rejected a non-public address; no target request was sent.",
 };
 
+function relayNetworkEvidence(raw, target) {
+  if (!raw || typeof raw !== 'object' || Array.isArray(raw)) return null;
+  const port = new URL(target.url).protocol === 'https:' ? 443 : 80;
+  const isTls = port === 443;
+  const counter = value => typeof value === 'number' && Number.isFinite(value) && value >= 0 && value <= 4294967295 ? value : null;
+  let peer = null;
+  if (typeof raw.peer_ip === 'string') {
+    const value = canonicalHost(raw.peer_ip);
+    if (publicIPv4(value) || publicIPv6(value)) peer = value;
+  }
+  return {
+    scope: 'observatory_outbound_head_connection', destination_ip: target.hostname, destination_port: port,
+    protocol: 'TCP', application_protocol: isTls ? 'HTTPS' : 'HTTP',
+    peer_ip: peer, peer_port: peer && Number.isInteger(raw.peer_port) && raw.peer_port >= 1 && raw.peer_port <= 65535 ? raw.peer_port : null,
+    peer_matches_destination: peer ? peer === target.hostname : null,
+    socket_connected: typeof raw.socket_connected === 'boolean' ? raw.socket_connected : null,
+    tls_verified: isTls && typeof raw.tls_verified === 'boolean' ? raw.tls_verified : null,
+    tls_protocol: isTls && ['TLSv1.2','TLSv1.3','other'].includes(raw.tls_protocol) ? raw.tls_protocol : null,
+    bytes_written: counter(raw.bytes_written), bytes_read: counter(raw.bytes_read),
+    packet_counts_available: false, source_address_collected: false,
+    counter_scope: 'Node application socket counters; not packet counts, interface totals, or TLS wire overhead',
+    limitation: 'Only this Observatory HEAD connection is visible; no target visitor traffic or internal network is captured',
+  };
+}
+
 function validatedRelayResult(payload, target, relayUrl, blockedHosts = []) {
   const event = payload?.event;
   const numberOrNull = (value) => value === null || typeof value === "number" && Number.isFinite(value) && value >= 0 && value <= 30_000;
@@ -477,6 +502,7 @@ function validatedRelayResult(payload, target, relayUrl, blockedHosts = []) {
       dns: { state: "literal_public_ip_pinned", address_pinned: true, resolver: "none: literal public IP" },
       transport: { kind: "authenticated_pinned_ip_relay", direct_ip: true, requested_url: target.url, effective_url: target.url, tls_server_name: new URL(target.url).protocol === "https:" ? target.hostname : null, address_pinned: true },
       relay: { hostname: new URL(relayUrl).hostname, evidence_checked_against_requested_target: true },
+      network: relayNetworkEvidence(event.coverage.network, target),
       missing: MISSING,
       dns_rebinding: "A validated numeric public IP is the transport destination; no target DNS lookup or alias is used.",
       protections: "Observational only; no network protections or defensive actions changed",

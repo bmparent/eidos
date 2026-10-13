@@ -24,6 +24,16 @@ Unusual traffic uses an explicitly identified port of unchanged Sentinel V3 on p
 
 For a live existing sensor, set `OBSERVATORY_SENSOR_LOG` to the absolute path of its Suricata EVE or Zeek JSON file before starting the local companion. The companion reads a bounded regular-file tail every requested refresh, strips fields, and exposes `/api/security-events` only on loopback. It does not start Suricata/Zeek, sniff packets or select files from HTTP input. The browser can start/stop the sensor feed; stale/error states preserve previous evidence without claiming fresh coverage.
 
+## Attached application-edge sensor
+
+The hosted Observatory now has a live application-edge sensor backed by its owner-private event store. It records actual `/api/observe` requests, their response outcomes, requested outbound HEAD receipts and known controls that deny or rate-limit a request. DNS-name and IP checks are linked to original measurement IDs. Literal-IP records include public peer identity, actual socket byte counters and TLS status when supplied by the authenticated Node collector.
+
+The network panel automatically reads this attached source when opened. Reading the feed, static assets and capability requests do not generate traffic records. Pause controls and source-event age remain distinct from a successful feed refresh. Imported Suricata/Zeek and local log sensors remain available alongside this source.
+
+Scope is this Observatory's requests and outbound checks. It does not capture LAN packets, remote target visitor traffic or provider firewall incidents. A recorded deny/rate-limit event proves the stated control ran; it does not prove an attack. Deliberate verification requests are labeled functional checks. Raw bodies, credentials, client addresses, user agents and target paths are excluded.
+
+The store retains at most1000 records and exposes a seven-day window. Expired rows are purged on the next sensor read/write; no unattended cleanup is promised. Storage or query failures show unavailable. The schema is an additive migration, with no runtime DDL or inserted sample incidents.
+
 Read-only provider checks against the current Sentinel Lab scope returned unavailable security configuration. No provider firewall-event feed is presently attached. The hosted panel explicitly reports this missing coverage.
 
 ## Qwen and Eido

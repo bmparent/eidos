@@ -100,3 +100,37 @@ test('alert-only exports do not invent network features, empty windows or foreca
   assert.equal(analyzed.coverage.state, 'insufficient_data');
   assert.equal(analyzed.summary.actual_security_events, 1);
 });
+
+const edge = (index, extra = {}) => ({sensor: 'observatory_edge', timestamp: stamp(index), event_id: 'edge_' + index.toString(16).padStart(32, '0'),
+  event_type: 'collector', method: 'HEAD', route: 'observe', status: 200, duration_ms: 100, src_endpoint: 'Observatory observer', dest_endpoint: '1.1.1.1', outcome: 'ok', ...extra});
+
+test('native edge records preserve actual receipt ids and enforce separate control semantics', () => {
+  const result = parse([edge(0), edge(1, {event_type: 'request', method: 'POST', status: 429, outcome: 'blocked'}),
+    edge(2, {event_type: 'policy_event', method: 'POST', status: 429, outcome: 'blocked', rule_id: 'sample_rate_limited', rule_action: 'rate_limit', test_context: 'functional_check'})]);
+  assert.equal(result.events.length, 3);
+  assert.equal(result.summary.actual_security_events, 1);
+  assert.equal(result.summary.collector_events, 1);
+  const policy = result.events.find(x => x.kind === 'policy_event');
+  assert.equal(policy.classification, 'observed_policy_enforcement');
+  assert.equal(policy.attack_confirmed, false);
+  assert.match(policy.summary, /functional check/);
+  assert.equal(result.events[0].source_event_id, edge(0).event_id);
+});
+
+test('native unknown or mismatched policy controls are rejected and raw URLs omitted', () => {
+  assert.equal(parse([edge(0, {event_type: 'policy_event', rule_id: 'made_up_attack', rule_action: 'deny'})]).rejected_count, 1);
+  assert.equal(parse([edge(0, {event_type: 'policy_event', rule_id: 'sample_rate_limited', rule_action: 'deny'})]).rejected_count, 1);
+  const result = parse([edge(0, {dest_endpoint: 'https://example.com/?token=secret', payload: 'secret', headers: {Authorization: 'secret'}})]);
+  assert.doesNotMatch(JSON.stringify(result.events), /secret/);
+});
+
+test('native duration features separate direction and endpoints and exclude failed HEAD outcomes', () => {
+  const result = parse(Array.from({length: 16}, (_, i) => edge(i, {duration_ms: i < 12 ? 100 : 50000}))).events;
+  const analyzed = analyzeSecurityEvents(result);
+  assert.equal(analyzed.observations.filter(x => x.state === 'calibrating').length, 12);
+  assert.ok(analyzed.anomalies.length > 0);
+  assert.ok(analyzed.observations.every(x => x.metric === 'log1p_collector_latency_ms' && x.unit === 'ms' && !x.actual_security_event));
+  assert.equal(analyzeSecurityEvents(parse([edge(0, {outcome: 'tls_validation_failed', status: null})]).events).observations.length, 0);
+  const separated = analyzeSecurityEvents(parse([...Array.from({length: 10}, (_, i) => edge(i)), ...Array.from({length: 10}, (_, i) => edge(i + 10, {dest_endpoint: 'example.com'}))]).events);
+  assert.ok(separated.observations.every(x => x.state === 'calibrating'));
+});

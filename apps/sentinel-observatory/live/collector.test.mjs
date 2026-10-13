@@ -429,6 +429,24 @@ test('cancelled IP relay has no outbound request and preserves a clear cancellat
   assert.equal(calls, 0);
 });
 
+test('IP socket metadata is allowlisted and public-only, unavailable metrics stay null', async () => {
+  const payload = relayEvidence();
+  payload.event.coverage.network = {peer_ip:'1.1.1.1',peer_port:443,socket_connected:true,tls_verified:true,tls_protocol:'TLSv1.3',bytes_written:0,bytes_read:380,local_ip:'10.0.0.9',secret:'private-socket-secret'};
+  const accepted = await collectIpRelayObservation('1.1.1.1', relayConfig, {fetchImpl:async()=>Response.json(payload)});
+  assert.equal(accepted.event.coverage.network.peer_matches_destination,true);
+  assert.equal(accepted.event.coverage.network.tls_verified,true);
+  assert.equal(accepted.event.coverage.network.bytes_written,0);
+  assert.equal(accepted.event.coverage.network.bytes_read,380);
+  assert.doesNotMatch(JSON.stringify(accepted),/private-socket-secret|10\.0\.0\.9/);
+  payload.event.coverage.network = {peer_ip:'10.0.0.8',peer_port:443,tls_protocol:'Bearer secret',bytes_written:-1,bytes_read:'not observed'};
+  const withheld = await collectIpRelayObservation('1.1.1.1', relayConfig, {fetchImpl:async()=>Response.json(payload)});
+  assert.equal(withheld.event.coverage.network.peer_ip,null);
+  assert.equal(withheld.event.coverage.network.tls_verified,null);
+  assert.equal(withheld.event.coverage.network.bytes_written,null);
+  assert.equal(withheld.event.coverage.network.bytes_read,null);
+  assert.doesNotMatch(JSON.stringify(withheld),/10\.0\.0\.8|Bearer secret/);
+});
+
 test('public IP collector cooldown includes retry interval on hosted API', async () => {
   const env = { OBSERVATORY_COLLECTOR_URL: relayConfig.url, OBSERVATORY_COLLECTOR_SECRET: relayConfig.secret };
   await mockedGlobalFetch(async () => new Response('not evidence', { status: 429 }), async () => {

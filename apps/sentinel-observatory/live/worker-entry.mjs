@@ -1,8 +1,9 @@
 import {handleObservation, ipCollectorConfiguration} from './collector.mjs';
+import {capability, snapshot, recordObservation} from './hosted-sensor.mjs';
 
 // build_worker.py embeds the exact inspected web sources here. No runtime CDN.
 const ASSETS = /* OBSERVATORY_ASSETS */ Object.freeze({});
-const VERSION = 'sentinel-live-v3';
+const VERSION = 'sentinel-live-v4-sensor';
 const SECURITY = {
   'cache-control': 'no-store',
   'x-content-type-options': 'nosniff',
@@ -19,7 +20,18 @@ export default {
     const path = new URL(request.url).pathname;
     // Sites dispatch enforces this application's unchanged owner-only access
     // policy, including service access. Never forward identity or auth headers.
-    if (path === '/api/observe') return handleObservation(request, env, ctx);
+    if (path === '/api/observe') {
+      const started = performance.now();
+      const result = await handleObservation(request, env, ctx);
+      // A functional-check label requires the configured server credential;
+      // arbitrary browser labels/headers never establish verification context.
+      const secret = env?.OBSERVATORY_COLLECTOR_SECRET;
+      const testContext = typeof secret === 'string' && secret.length >= 32 && request.headers.get('X-Sentinel-Functional-Check') === secret ? 'functional_check' : undefined;
+      const stored = await recordObservation(env, request, result, {request_duration_ms: performance.now() - started, test_context: testContext});
+      const headers = new Headers(result.headers);
+      headers.set('X-Sentinel-Sensor-Write', stored.status);
+      return new Response(result.body, {status: result.status, headers});
+    }
     if (!['GET', 'HEAD'].includes(request.method)) {
       return response(JSON.stringify({error: 'method_not_allowed'}), 'application/json', 405, {allow: 'GET, HEAD'});
     }
@@ -32,7 +44,7 @@ export default {
         interval_ms: 15000,
         max_targets: 4,
         model: {connected: false, mode: 'browser_local_qwen_opt_in', local_adapter_available: true, browser_adapter_available: true, model_id: 'Qwen3-0.6B', hardware: 'WebGPU', eido_status: 'evaluation_candidate'},
-        security_sensor: {connected: false, mode: 'browser_log_import', formats: ['Suricata EVE JSON', 'Zeek JSON'], reason: 'No packet or security sensor is attached to this hosted service. Import a real log or connect the local sensor companion.'},
+        security_sensor: capability(env),
         recorded_url: '/recorded',
         transport: 'Cloudflare Worker public HTTP HEAD',
         sampling: 'While connected and visible in your browser; no unattended background monitor',
@@ -41,7 +53,8 @@ export default {
       }), 'application/json; charset=utf-8');
     }
     if (path === '/api/security-events') {
-      return response(JSON.stringify({connected: false, observed_at: new Date().toISOString(), source_id: null, source_name: null, format: 'auto', text: '', coverage: {state: 'disconnected', missing: ['Network traffic sensor', 'IDS alerts', 'Firewall events']}}), 'application/json; charset=utf-8');
+      const sensor = await snapshot(env);
+      return response(JSON.stringify(sensor), 'application/json; charset=utf-8', sensor.connected ? 200 : 503);
     }
     const routes = {'/': ['html', 'text/html; charset=utf-8'], '/app.js': ['app', 'text/javascript; charset=utf-8'], '/styles.css': ['css', 'text/css; charset=utf-8'], '/brain.mjs': ['brain', 'text/javascript; charset=utf-8'], '/browser-interpreter.mjs': ['interpreter', 'text/javascript; charset=utf-8'], '/browser-model-worker.mjs': ['model_worker', 'text/javascript; charset=utf-8'], '/security-events.mjs': ['security', 'text/javascript; charset=utf-8'], '/network-panel.mjs': ['network_panel', 'text/javascript; charset=utf-8'], '/recorded': ['recorded', 'text/html; charset=utf-8']};
     const route = routes[path];

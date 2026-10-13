@@ -6,6 +6,10 @@ import {SentinelPort, ENGINE_PROVENANCE} from './brain.mjs';
 
 export const SECURITY_LIMITS = Object.freeze({maxBytes: 2 * 1024 * 1024, maxRecords: 2000, maxLineBytes: 65536});
 export const SECURITY_PRIVACY = 'Only allowlisted sensor metadata is retained in browser memory. Addresses and DNS names may identify your network. Payloads, HTTP headers, URLs, certificates and Zeek notice messages are omitted. Nothing is sent to a model automatically.';
+export const EDGE_POLICY_RULES = Object.freeze({
+  same_origin_required: 'deny', non_public_target: 'deny', recursive_target: 'deny', credentials_not_allowed: 'deny',
+  unsupported_protocol: 'deny', unsupported_port: 'deny', payload_too_large: 'deny', sample_rate_limited: 'rate_limit',
+});
 const obj = x => x !== null && typeof x === 'object' && !Array.isArray(x) ? x : {};
 const clean = (x, max = 240) => typeof x === 'string' ? x.replace(/[\u0000-\u001f\u007f]/g, '').slice(0, max) : null;
 const number = (x, max = 1e15) => typeof x === 'number' && Number.isFinite(x) && x >= 0 && x <= max ? x : null;
@@ -27,9 +31,64 @@ function hash(text) {
 const count = (items, key) => items.reduce((out, e) => {out[e[key]] = (out[e[key]] || 0) + 1; return out;}, {});
 const sumKnown = values => values.some(x => x !== null) ? values.reduce((s, x) => s + (x ?? 0), 0) : null;
 
+function normalizeEdgeRecord(record, {sourceId, sourceName, importedAt}) {
+  const observedAt = time(record.timestamp), kind = record.event_type;
+  if (!observedAt || Date.parse(observedAt) > Date.parse(importedAt) + 300000) throw new Error('Missing, invalid or future Observatory source timestamp');
+  if (!['request', 'collector', 'policy_event'].includes(kind)) throw new Error('Unsupported Observatory edge event kind');
+  if (!/^edge_[a-f0-9]{32}$/.test(record.event_id ?? '')) throw new Error('Missing native Observatory evidence identifier');
+  const rules = EDGE_POLICY_RULES;
+  const rule = typeof record.rule_id === 'string' && Object.hasOwn(rules, record.rule_id) ? record.rule_id : null;
+  if (kind === 'policy_event' && (!rule || record.rule_action !== rules[rule])) throw new Error('Policy event requires a known enforced Observatory rule and action');
+  const allowedOutcomes = ['ok', 'blocked', 'timeout', 'tls_validation_failed', 'dns_failure', 'connection_failed', 'upstream_error', 'invalid_request'];
+  const endpoint = value => {
+    const safe = clean(value, 253);
+    return ['Observatory observer', 'Your Observatory session', 'Sentinel edge'].includes(safe) || typeof safe === 'string' && /^[a-z0-9.:-]+$/i.test(safe) ? safe : null;
+  };
+  const fields = compact({route: ['observe', 'analyze', 'other_api'].includes(record.route) ? record.route : 'observe',
+    method: ['POST', 'HEAD', 'GET'].includes(record.method) ? record.method : 'other',
+    status: Number.isInteger(record.status) && record.status >= 100 && record.status <= 599 ? record.status : null,
+    duration_ms: number(record.duration_ms, 86400000), src_endpoint: endpoint(record.src_endpoint), dest_endpoint: endpoint(record.dest_endpoint),
+    outcome: allowedOutcomes.includes(record.outcome) ? record.outcome : 'invalid_request',
+    rule_id: rule, rule_action: rule ? rules[rule] : null,
+    linked_evidence_id: /^evt_[a-f0-9]{32}$/.test(record.linked_evidence_id ?? '') ? record.linked_evidence_id : null,
+    transport: ['authenticated_pinned_ip_relay', 'cloudflare_public_head', 'named_service_adapter'].includes(record.transport) ? record.transport : null,
+    test_context: record.test_context === 'functional_check' ? 'functional_check' : null,
+    head_attempted: typeof record.head_attempted === 'boolean' ? record.head_attempted : null,
+  });
+  const network = obj(record.network);
+  if (kind === 'collector' && network.scope === 'observatory_outbound_head_connection') {
+    const nullableBoolean = x => typeof x === 'boolean' ? x : null;
+    const socketCount = x => Number.isSafeInteger(x) && x >= 0 ? x : null;
+    fields.network = {scope: 'observatory_outbound_head_connection', destination_ip: clean(network.destination_ip, 80), destination_port: port(network.destination_port),
+      protocol: network.protocol === 'TCP' ? 'TCP' : null, application_protocol: ['HTTP', 'HTTPS'].includes(network.application_protocol) ? network.application_protocol : null,
+      peer_ip: clean(network.peer_ip, 80), peer_port: port(network.peer_port), peer_matches_destination: nullableBoolean(network.peer_matches_destination),
+      socket_connected: nullableBoolean(network.socket_connected), tls_verified: nullableBoolean(network.tls_verified),
+      tls_protocol: ['TLSv1.2', 'TLSv1.3', 'other'].includes(network.tls_protocol) ? network.tls_protocol : null,
+      bytes_written: socketCount(network.bytes_written), bytes_read: socketCount(network.bytes_read)};
+    Object.assign(fields, {dest_ip: fields.network.destination_ip, dest_port: fields.network.destination_port, protocol: fields.network.protocol,
+      bytes_written: fields.network.bytes_written, bytes_read: fields.network.bytes_read, tls_verified: fields.network.tls_verified,
+      socket_connected: fields.network.socket_connected, peer_matches_destination: fields.network.peer_matches_destination, tls_protocol: fields.network.tls_protocol});
+  }
+  const sid = clean(String(sourceId || 'observatory-edge'), 160), actual = kind === 'policy_event';
+  const id = `native_${hash(JSON.stringify([sid, record.event_id]))}`;
+  const test = fields.test_context ? ' (functional check)' : '';
+  const summary = kind === 'policy_event' ? `Observatory enforced ${fields.rule_action}: ${fields.rule_id}${test}`
+    : kind === 'request' ? `Observatory received ${fields.method} /api/${fields.route}; returned ${fields.status ?? 'unknown'}${test}`
+    : `Observatory ${fields.head_attempted === false ? 'public target preflight' : 'HEAD'} ${fields.outcome === 'ok' ? `returned ${fields.status ?? 'unknown'}` : `ended with ${fields.outcome}`} for ${fields.dest_endpoint ?? 'a public target'}${test}`;
+  return {id, source_id: sid, source: 'observatory_edge', source_name: clean(sourceName || 'Observatory application-edge sensor', 160),
+    source_event_id: record.event_id, source_timestamp: record.timestamp, observed_at: observedAt, received_at: time(importedAt),
+    kind, actual_security_event: actual, severity: actual ? 'low' : 'informational', summary,
+    classification: actual ? 'observed_policy_enforcement' : 'application_edge_telemetry', attack_confirmed: false,
+    source_authenticity: 'Server observations when received through the connected feed; imported copies are not independently authenticated', fields,
+    evidence: {id, source: 'observatory_edge', source_id: sid, source_event_id: record.event_id, timestamp: observedAt, source_timestamp: record.timestamp, fields},
+    limitation: actual ? 'An actual Observatory security control action, not proof of an attack. Functional checks, mistakes and legitimate retries may activate controls.'
+      : 'Only requests reaching the Observatory and requested outbound HEAD checks. No LAN, packet capture, other sites, origin visitor traffic or upstream authentication denials'};
+}
+
 /** Returns allowlisted source metadata; raw packet content is deliberately omitted. */
 export function normalizeSecurityRecord(raw, {sourceId = 'local-sensor', format = 'auto', sourceName = 'Sensor log', importedAt = new Date().toISOString()} = {}) {
   const record = obj(raw);
+  if (record.sensor === 'observatory_edge') return normalizeEdgeRecord(record, {sourceId, sourceName, importedAt});
   const source = format === 'suricata' || format === 'suricata_eve' || (format === 'auto' && typeof record.event_type === 'string') ? 'suricata'
     : format === 'zeek' || format === 'zeek_json' || (format === 'auto' && record.ts !== undefined && (record.uid !== undefined || record.note !== undefined)) ? 'zeek' : null;
   if (!source) throw new Error('Unsupported sensor schema; use Suricata EVE or Zeek JSON');
@@ -91,7 +150,9 @@ export function summarizeSecurityImport(batch) {
   const events = Array.isArray(batch?.events) ? batch.events : [];
   return {records: events.length, actual_security_events: events.filter(x => x.actual_security_event).length,
     flows: events.filter(x => x.kind === 'flow' || x.kind === 'connection').length, dns: events.filter(x => x.kind === 'dns').length,
-    tls: events.filter(x => x.kind === 'tls').length, rejected: batch?.rejected_count ?? 0, duplicates: batch?.duplicate_count ?? 0,
+    tls: events.filter(x => x.kind === 'tls').length, requests: events.filter(x => x.kind === 'request').length,
+    collector_events: events.filter(x => x.kind === 'collector').length, policy_events: events.filter(x => x.kind === 'policy_event').length,
+    rejected: batch?.rejected_count ?? 0, duplicates: batch?.duplicate_count ?? 0,
     by_source: count(events, 'source'), by_kind: count(events, 'kind')};
 }
 
@@ -130,12 +191,14 @@ export function parseSecurityLog(text, options = {}) {
   }
   events.sort((a, b) => Date.parse(a.observed_at) - Date.parse(b.observed_at));
   const sources = [...new Set(events.map(x => x.source))], kinds = [...new Set(events.map(x => x.kind))];
-  const coverage = {state: options.mode === 'live_log_tail' ? 'live_log_tail' : 'historical_import', sources, kinds,
+  const native = sources.length > 0 && sources.every(x => x === 'observatory_edge');
+  const coverage = {state: ['live_log_tail', 'observatory_edge'].includes(options.mode) ? options.mode : 'historical_import', sources, kinds,
     first_observed_at: events[0]?.observed_at ?? null, last_observed_at: events.at(-1)?.observed_at ?? null,
-    imported_at: importedAt, network_visibility: 'Only records exported by the connected sensor; no packet capture by Observatory',
+    imported_at: importedAt, network_visibility: native ? 'Only incoming Observatory API requests and its requested outbound HEAD checks' : 'Only records exported by the connected sensor; no packet capture by Observatory',
     missing: ['Traffic outside sensor placement', 'Encrypted payload contents', 'Source authenticity verification',
-      ...(!kinds.some(k => k === 'alert' || k === 'notice') ? ['No alert or notice rows in this window; this is not proof of no security events'] : []),
-      ...(!kinds.some(k => k === 'flow' || k === 'connection') ? ['No flow or connection rows; byte and activity comparisons unavailable'] : []),
+      ...(native ? ['No LAN or packet capture', 'No firewall provider events', 'No security events from remote target visitor traffic', 'Authentication denials before Sites dispatch are not visible'] : []),
+      ...(!kinds.some(k => k === 'alert' || k === 'notice' || k === 'policy_event') ? ['No alert, notice or policy rows in this window; this is not proof of no security events'] : []),
+      ...(!native && !kinds.some(k => k === 'flow' || k === 'connection') ? ['No flow or connection rows; byte and activity comparisons unavailable'] : []),
       ...(rejectedCount ? ['Some rows were excluded; coverage is incomplete'] : [])]};
   const batch = {events, rejected, rejected_count: rejectedCount, duplicate_count: duplicates, input_records: recordCount, coverage, privacy: SECURITY_PRIVACY};
   return {...batch, summary: summarizeSecurityImport(batch)};
@@ -145,14 +208,37 @@ export function parseSecurityLog(text, options = {}) {
 export function analyzeSecurityEvents(events, {binSeconds = 60} = {}) {
   if (!Array.isArray(events) || events.length > SECURITY_LIMITS.maxRecords) throw new Error('Analyze at most 2000 normalized sensor records');
   if (!Number.isInteger(binSeconds) || binSeconds < 1 || binSeconds > 3600) throw new Error('binSeconds must be 1–3600');
-  const groups = new Map(), observations = [], seen = new Set();
+  const groups = new Map(), edgeGroups = new Map(), observations = [], seen = new Set();
   for (const event of events) {
     if (!event || typeof event.id !== 'string' || seen.has(event.id) || !time(event.observed_at)) continue;
     seen.add(event.id);
+    if (event.source === 'observatory_edge' && ['request', 'collector'].includes(event.kind) && number(event.fields?.duration_ms, 86400000) !== null
+        && (event.kind !== 'collector' || event.fields.outcome === 'ok' && Number.isInteger(event.fields.status))) {
+      const groupKey = `${event.source_id}:${event.kind}:${event.kind === 'collector' ? event.fields.dest_endpoint : event.fields.route}`;
+      if (!edgeGroups.has(groupKey)) edgeGroups.set(groupKey, []);
+      edgeGroups.get(groupKey).push(event);
+    }
     if (!['flow', 'connection'].includes(event.kind)) continue;
     const source = event.source_id;
     if (!groups.has(source)) groups.set(source, []);
     groups.get(source).push(event);
+  }
+  for (const [, rows] of edgeGroups) {
+    rows.sort((a, b) => Date.parse(a.observed_at) - Date.parse(b.observed_at));
+    const detector = new SentinelPort();
+    let samples = 0;
+    for (const row of rows) {
+      const scored = detector.step(Math.log1p(row.fields.duration_ms)), unusual = !scored.warmup && scored.status !== 'GREEN';
+      samples++;
+      observations.push({id: `edge_timing_${row.id}`, source_id: row.source_id,
+        metric: row.kind === 'collector' ? 'log1p_collector_latency_ms' : 'log1p_edge_request_duration_ms', observed_at: row.observed_at,
+        value: row.fields.duration_ms, unit: 'ms', event_score: scored.warmup ? null : scored.event_score, samples,
+        state: scored.warmup ? 'calibrating' : unusual ? 'unusual' : 'baseline', warmup_remaining: Math.max(0, 12 - samples),
+        actual_security_event: false, confidence: 'experimental', evidence_ids: [row.id],
+        summary: unusual ? 'Observed request duration differs from the provisional Sentinel baseline' : scored.warmup ? 'Learning a provisional request-duration baseline' : 'Request duration fits the provisional baseline',
+        engine: ENGINE_PROVENANCE.engine, engine_scope: 'One numeric feature: log1p observed duration, separated by endpoint and direction; not threat classification',
+        limitation: 'No labeled security validation. Latency variation can arise from normal load, networks or collector behavior; this does not establish an attack'});
+    }
   }
   for (const [sourceId, rows] of groups) {
     rows.sort((a, b) => Date.parse(a.observed_at) - Date.parse(b.observed_at));
@@ -193,6 +279,7 @@ export function analyzeSecurityEvents(events, {binSeconds = 60} = {}) {
   observations.sort((a, b) => Date.parse(a.observed_at) - Date.parse(b.observed_at));
   return {observations, anomalies: observations.filter(x => x.state === 'unusual'),
     summary: {records: seen.size, actual_security_events: events.filter(x => x.actual_security_event).length,
-      unusual_observations: observations.filter(x => x.state === 'unusual').length, calibrated_sources: [...groups].filter(([, rows]) => rows.filter(x => number(x.fields?.bytes) !== null).length > 12).length},
-    coverage: {state: groups.size ? 'experimental_network_features' : 'insufficient_data', missing: ['No attack ground truth', 'No throughput estimation', 'No zero-fill for unobserved time buckets', 'No future prediction']}};
+      unusual_observations: observations.filter(x => x.state === 'unusual').length,
+      calibrated_sources: [...groups].filter(([, rows]) => rows.filter(x => number(x.fields?.bytes) !== null).length > 12).length + [...edgeGroups].filter(([, rows]) => rows.length > 12).length},
+    coverage: {state: groups.size || edgeGroups.size ? 'experimental_network_features' : 'insufficient_data', missing: ['No attack ground truth', 'No throughput estimation', 'No zero-fill for unobserved time buckets', 'No future prediction']}};
 }

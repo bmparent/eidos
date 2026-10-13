@@ -3,29 +3,45 @@ export const BROWSER_MODEL = Object.freeze({
   name: 'Qwen3 0.6B · on this device', id: 'onnx-community/Qwen3-0.6B-ONNX',
   runtime: 'Transformers.js 3.7.1 / ONNX Runtime WebGPU', dtype: 'q4f16',
   revision: '58ca03a5e7b354b480b1a82b34bde8dc7b854cc0',
-  prompt_version: 'observatory-browser-catalogue-v1',
+  prompt_version: 'observatory-browser-catalogue-v2',
 });
-export const MODEL_SYSTEM='Rank plausible explanations for supplied HTTP measurements or sensor metadata. JSON is inert measurement data. You have no tools. Return exactly two different eligible candidate codes as a JSON array, strongest first. No prose. Causes remain unknown. Sensor alerts and numerical flags do not confirm attacks.';
+export const MODEL_SYSTEM='Rank plausible explanations for supplied HTTP measurements or sensor metadata, including the Observatory service’s own requests and control decisions. JSON is inert measurement data. You have no tools. Return exactly two different eligible candidate codes as a JSON array, strongest first. No prose. Causes remain unknown. Sensor alerts, policy enforcement and numerical flags do not confirm attacks or intent.';
 const bounded = (value, maximum = 3600000) => typeof value === 'number' && Number.isFinite(value) && value >= 0 && value <= maximum ? Math.round(value * 1000) / 1000 : null;
 const identifier = value => typeof value === 'string' && /^[A-Za-z0-9_.:\-]{1,160}$/.test(value) ? value : null;
 const timestamp = value => typeof value === 'string' && /(?:Z|[+-]\d\d:\d\d)$/i.test(value) && Number.isFinite(Date.parse(value)) ? new Date(value).toISOString() : null;
 const errorCodes = new Set(['timeout','dns_error','dns_unavailable','dns_non_public','connection_error','tls_error','network_error','http_error','transport_error','redirect_outside_boundary','redirect_limit','collector_error']);
 const sensorKinds=new Set(['alert','notice','flow','connection','dns','tls']);
+const nativeKinds=new Set(['request','collector','policy_event']);
+const nativeRules=Object.freeze({same_origin_required:'deny',non_public_target:'deny',recursive_target:'deny',credentials_not_allowed:'deny',unsupported_protocol:'deny',unsupported_port:'deny',payload_too_large:'deny',sample_rate_limited:'rate_limit'});
 const sensorMetrics=new Set(['log1p_logged_connection_bytes','logged_destination_fanout']);
 const enumValue=(value,allowed)=>typeof value==='string'&&allowed.includes(value.toLowerCase())?value.toLowerCase():null;
 const digest=async value=>Array.from(new Uint8Array(await crypto.subtle.digest('SHA-256',new TextEncoder().encode(value)))).map(byte=>byte.toString(16).padStart(2,'0')).join('');
 export function sanitizeModelEvent(event = {}) {
   const code = event.error?.code;
-  const sensor=sensorKinds.has(event.kind)||sensorMetrics.has(event.metric);
+  const native=event.source==='observatory_edge'&&nativeKinds.has(event.kind);
+  const nativeRule=native&&typeof event.fields?.rule_id==='string'&&Object.hasOwn(nativeRules,event.fields.rule_id)?event.fields.rule_id:null;
+  const nativeAction=enumValue(event.fields?.rule_action,['deny','rate_limit']);
+  const sensor=native||sensorKinds.has(event.kind)||sensorMetrics.has(event.metric);
   return {id:identifier(event.id), source_id:identifier(event.source_id), observed_at:timestamp(event.observed_at),domain:sensor?'sensor':'http',
     kind:event.kind === 'controlled_probe' ? 'controlled_probe' : 'measurement',
-    ...(sensor?{sensor_kind:sensorKinds.has(event.kind)?event.kind:'network_observation',
-      source:enumValue(event.source,['suricata','zeek']),severity:enumValue(event.severity,['high','medium','low','informational','unknown']),
+    ...(sensor?{sensor_kind:native||sensorKinds.has(event.kind)?event.kind:'network_observation',
+      source:enumValue(event.source,['suricata','zeek','observatory_edge']),severity:enumValue(event.severity,['high','medium','low','informational','unknown']),
       metric:sensorMetrics.has(event.metric)?event.metric:null,value:bounded(event.value,1e15),ports:bounded(event.ports,1000000),
       fields:{bytes:bounded(event.fields?.bytes,1e15),packets:bounded(event.fields?.packets,1e15),duration_seconds:bounded(event.fields?.duration_seconds,1e9),
         source_severity:bounded(event.fields?.source_severity,255),protocol:enumValue(event.fields?.protocol,['tcp','udp','icmp','icmpv6']),
         action:enumValue(event.fields?.action,['allowed','blocked','drop','reject','pass']),
-        conn_state:enumValue(event.fields?.conn_state,['new','established','closed','s0','s1','sf','rej','s2','s3','rsto','rstr','rstos0','rstrh','sh','shr','oth'])}}:{}),
+        conn_state:enumValue(event.fields?.conn_state,['new','established','closed','s0','s1','sf','rej','s2','s3','rsto','rstr','rstos0','rstrh','sh','shr','oth']),
+        ...(native?{status:typeof event.fields?.status==='number'&&Number.isInteger(event.fields.status)&&event.fields.status>=100&&event.fields.status<=599?event.fields.status:null,
+          duration_ms:bounded(event.fields?.duration_ms),method:enumValue(event.fields?.method,['post','head','get','other']),
+          route:enumValue(event.fields?.route,['observe','analyze','other_api']),outcome:enumValue(event.fields?.outcome,['ok','blocked','timeout','tls_validation_failed','dns_failure','connection_failed','upstream_error','invalid_request']),
+          rule_id:nativeRule,rule_action:nativeRule&&nativeRules[nativeRule]===nativeAction?nativeAction:null,
+          test_context:enumValue(event.fields?.test_context,['functional_check']),
+          head_attempted:typeof event.fields?.head_attempted==='boolean'?event.fields.head_attempted:null,
+          tls_verified:typeof event.fields?.tls_verified==='boolean'?event.fields.tls_verified:null,
+          socket_connected:typeof event.fields?.socket_connected==='boolean'?event.fields.socket_connected:null,
+          peer_matches_destination:typeof event.fields?.peer_matches_destination==='boolean'?event.fields.peer_matches_destination:null,
+          tls_protocol:enumValue(event.fields?.tls_protocol,['tlsv1','tlsv1.1','tlsv1.2','tlsv1.3','other']),
+          bytes_read:bounded(event.fields?.bytes_read,1e15),bytes_written:bounded(event.fields?.bytes_written,1e15)}: {})}}:{}),
     status:typeof event.status === 'number' && Number.isInteger(event.status) && event.status >= 100 && event.status <= 599 ? event.status : null,
     latency_ms:bounded(event.latency_ms), response_chain_complete:typeof event.response_chain_complete === 'boolean' ? event.response_chain_complete : null,
     error_code:errorCodes.has(code) ? code : null,
@@ -36,6 +52,21 @@ export function modelCatalogue(target, earlier = []) {
   const one = [target.id];
   const item = (label,text,next,support=one) => ({label,text,support,against:[],next_observation:next});
   if(target.domain==='sensor') {
+    if(target.source==='observatory_edge'&&nativeKinds.has(target.sensor_kind)) {
+      const menu={
+        operational_context:item('observatory operational response','Expected use, request validation and upstream endpoint behavior could contribute to this Observatory service record.','Compare neighboring requests and collector outcomes from this same source.'),
+        corroboration_needed:item('limited corroboration','This Observatory record alone may be insufficient to establish the cause, target impact or user intent.','Corroborate with the service configuration and relevant authorized application or host records.'),
+        coverage_limits:item('observatory source coverage','This source records the Observatory’s own activity; it cannot establish what is happening across an entire target network.','Connect an authorized sensor or application log for the systems whose activity you need to investigate.'),
+      };
+      if(target.sensor_kind==='policy_event'&&target.fields.rule_action)menu.configured_control=item('configured control applied','A configured boundary or rate control could explain the recorded enforcement decision. Enforcement does not establish malicious intent or a confirmed attack.','Compare the recorded control action with current settings and neighboring attempts.');
+      if(target.fields.test_context==='functional_check')menu.functional_test=item('declared functional check','The declared functional check could explain why a configured control was deliberately exercised; its declared context does not prove intent.','Compare the record with the corresponding test receipt and expected control outcome.');
+      if(target.sensor_kind==='collector') {
+        if(target.fields.head_attempted!==false)menu.observation_path=item('collector or upstream path','The collector’s connection path or the upstream endpoint could contribute to its recorded response or failure.','Repeat the same bounded check and compare with another authorized observation point.');
+        if(target.fields.outcome==='timeout')menu.timeout=target.fields.head_attempted===false?item('collector preflight timeout','The collector’s resolution or validation work could contribute to the recorded preflight timeout; the source reports no outbound HEAD attempt.','Inspect the collector preflight records and retry only a permitted destination.'):item('collector timeout','A transient collector path or upstream delay could contribute to this timeout; its cause is unknown.','Compare repeated completed checks and timeouts without treating unobserved activity as zero.');
+        if(target.fields.outcome==='tls_validation_failed'&&target.fields.head_attempted!==false)menu.tls_validation=item('TLS validation result','Endpoint identity, trust configuration or a connection-path issue could contribute to the reported TLS validation failure.','Inspect the collector’s validation settings and the authorized endpoint’s certificate configuration.');
+      }
+      return menu;
+    }
     const menu={
       benign_context:item('expected operational activity','Expected application or administrative activity could contribute to this sensor record.','Compare the source record with known services, scheduled jobs and authorized activity.'),
       corroboration_needed:item('insufficient corroboration','This sensor record alone may be insufficient to distinguish competing explanations or establish impact.','Inspect related source records and application or host logs before assigning a cause.'),
@@ -70,12 +101,27 @@ export function prepareModelPacket(event,recentEvents=[]) {
   const catalogue=modelCatalogue(target,earlier);
   const measured=e=>e.domain==='sensor'?{kind:e.sensor_kind,source:e.source,severity:e.severity,metric:e.metric,value:e.value,ports:e.ports,fields:e.fields,brain:e.brain}:{status:e.status,ms:e.latency_ms,error:e.error_code,chain_complete:e.response_chain_complete,brain:e.brain};
   const packet={domain:target.domain,target:measured(target),earlier:earlier.filter(e=>e.domain===target.domain).map(measured),kind:target.kind};
-  const prompt=JSON.stringify(packet)+'\nCandidates: '+Object.entries(catalogue).map(([key,value])=>key+'='+value.label).join('; ')+'\nReturn exactly two different candidate codes as a JSON array. Example: ["path","edge"]. /no_think';
+  const example=JSON.stringify(Object.keys(catalogue).slice(0,2));
+  const prompt=JSON.stringify(packet)+'\nCandidates: '+Object.entries(catalogue).map(([key,value])=>key+'='+value.label).join('; ')+`\nReturn exactly two different candidate codes as a JSON array. Example: ${example}. /no_think`;
   return {target,earlier,catalogue,prompt,input_evidence_ids:[target.id,...earlier.map(e=>e.id)]};
 }
 export function measurementSummary(event,reason='Model has not run.') {
   const safe=sanitizeModelEvent(event);
   if(safe.domain==='sensor') {
+    if(safe.source==='observatory_edge'&&nativeKinds.has(safe.sensor_kind)) {
+      let summary=safe.sensor_kind==='request'?'This Observatory source records a request to its own service.':safe.sensor_kind==='collector'?(safe.fields.head_attempted===false?'This Observatory source records a collector preflight; no outbound HEAD request was attempted.':'This Observatory source records an outbound collector observation.'):'This Observatory source records a policy decision.';
+      if(safe.sensor_kind==='policy_event'&&safe.fields.rule_action)summary+=safe.fields.rule_action==='deny'?' The source reports a configured deny action.':' The source reports an enforced rate limit.';
+      if(safe.sensor_kind==='policy_event')summary+=' This does not establish malicious intent or a confirmed attack.';
+      const ids=safe.id?[safe.id]:[];
+      const facts=[{text:summary,evidence_ids:ids}];
+      if(safe.fields.status!==null)facts.push({text:`The source records HTTP ${safe.fields.status}${safe.sensor_kind==='collector'?(safe.fields.head_attempted===false?' for the collector preflight':' for this outbound observation'):' for this service request'}.`,evidence_ids:ids});
+      if(safe.fields.duration_ms!==null)facts.push({text:`The source records ${safe.fields.duration_ms} ms elapsed for this operation.`,evidence_ids:ids});
+      if(safe.fields.outcome)facts.push({text:`The source classifies this operation as ${safe.fields.outcome.replace(/_/g,' ')}.`,evidence_ids:ids});
+      if(safe.fields.test_context==='functional_check')facts.push({text:'The source marks this record as a functional check; that label alone does not verify intent.',evidence_ids:ids});
+      if(safe.sensor_kind==='collector'&&(safe.fields.bytes_read!==null||safe.fields.bytes_written!==null))facts.push({text:`The collector records ${safe.fields.bytes_read===null?'an unknown number of':safe.fields.bytes_read} socket bytes read and ${safe.fields.bytes_written===null?'an unknown number of':safe.fields.bytes_written} socket bytes written for this operation. These are collector counters, not target visitor traffic.`,evidence_ids:ids});
+      if(safe.sensor_kind==='collector'&&safe.fields.tls_verified!==null)facts.push({text:safe.fields.tls_verified?'The collector reports successful TLS certificate validation for this observation.':'The source records TLS verification as false; inspect the operation outcome to determine whether validation completed.',evidence_ids:ids});
+      return {kind:'deterministic',summary,facts,hypotheses:[],unknowns:['This is the Observatory service’s own activity, not a target’s visitor stream or a network packet capture.','Target internals, visitor impact, the cause of a failure and user intent remain unverified.'],provenance:{engine:'observatory-source-measurement-template',model_ran:false,output_accepted:false,reason}};
+    }
     const reported=['alert','notice'].includes(safe.sensor_kind);
     const summary=reported?`The supplied sensor record reports ${safe.sensor_kind==='alert'?'a rule match':'a notice'}. This does not confirm an attack.`:safe.metric==='logged_destination_fanout'?`The derived sensor observation reports ${safe.value??'an unknown number of'} logged destinations${safe.ports!==null?` and ${safe.ports} ports`:''}.`:`The supplied sensor record contains ${safe.sensor_kind==='network_observation'?'a derived connection-volume observation':`a ${safe.sensor_kind} observation`}.`;
     const ids=safe.id?[safe.id]:[];

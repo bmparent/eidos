@@ -1,0 +1,66 @@
+{
+  "passed": true,
+  "method": "Exact network-panel source executed by Linkedom using captured hosted after.body snapshot as offline DOM replay",
+  "live_browser": false,
+  "pixel_verification": false,
+  "network_requests_during_ui_test": 0,
+  "actual_captured_source": true,
+  "source_acceptance": "/workspace/scratch/66ba08010298/attached-sensor-acceptance.json",
+  "source_acceptance_sha256": "e794aca232a6042391f4ea2b9f6fe8241a34c630fd0b8f64239d08d4ff531f5d",
+  "ui_source": "/workspace/scratch/cef7aa8a2f87/eidos/apps/sentinel-observatory/live/web/network-panel.mjs",
+  "ui_source_sha256": "e31714657ba71fba2852539f895f8888cf4be0c8a10b6d43ad8340d8bca6ede3",
+  "capture_time": "2026-10-13T20:42:39.482Z",
+  "captured_records": 6,
+  "actual_policy_controls": 1,
+  "node_labels": [
+    "Your Observatory session",
+    "Sentinel edge",
+    "Observatory observer",
+    "eidos-works.com",
+    "1.1.1.1"
+  ],
+  "observed_relationships": 3,
+  "head_attempted_records": 2,
+  "preflight_only_records": 0,
+  "control_rule": "non_public_target",
+  "check_context": "declared functional_check; not independently authorized by imported copies",
+  "checks": [
+    {
+      "name": "Native sensor auto-read consumes exact captured snapshot without contacting network",
+      "passed": true
+    },
+    {
+      "name": "Six authoritative captured rows render; exactly one recorded policy control",
+      "passed": true
+    },
+    {
+      "name": "Graph displays only actual symbolic components and observed public endpoints",
+      "passed": true
+    },
+    {
+      "name": "Two captured outbound rows have actual HEAD attempts; no preflight is represented as traffic",
+      "passed": true
+    },
+    {
+      "name": "Freshness uses captured event and receipt timestamps at the replay capture clock",
+      "passed": true
+    },
+    {
+      "name": "Actual non-public-target denial is inspectable with declared check context and no attack claim",
+      "passed": true
+    },
+    {
+      "name": "IP collector evidence exposes original receipt link, 301 and measured TLS/socket counters",
+      "passed": true
+    },
+    {
+      "name": "Elapsed replay time cannot manufacture fresh source activity or resume a new source fetch",
+      "passed": true
+    },
+    {
+      "name": "Manual pause keeps captured evidence and survives capability refresh",
+      "passed": true
+    }
+  ],
+  "finished_at": "2026-10-13T20:44:58.137Z"
+}
