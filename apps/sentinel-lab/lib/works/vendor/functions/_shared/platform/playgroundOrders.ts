@@ -1,4 +1,4 @@
-import { db, HttpError, type PlatformEnv } from './core';
+import { db, HttpError, reserve, type PlatformEnv } from './core';
 import { identifier, projectRevision } from './playground';
 import { exportFiles, zipFiles } from '../../../src/playground/export';
 
@@ -19,6 +19,8 @@ export async function createPlaygroundCheckout(env: PlatformEnv, owner: string, 
   const projectId = identifier(input.projectId), revisionId = identifier(input.revisionId);
   let order = await database.prepare('SELECT * FROM eidos_pg_orders WHERE owner_id=? AND request_id=?').bind(owner,requestId).first<PlaygroundOrder>();
   if (!order) {
+    if (!await reserve(database, 'pg-checkout:'+owner, 1, 5))
+      throw new HttpError(429, 'Too many new checkout attempts. Use an existing checkout or try again tomorrow.');
     const count = await database.prepare('SELECT COUNT(*) AS n FROM eidos_pg_orders WHERE owner_id=?').bind(owner).first<{n:number}>();
     if ((count?.n || 0) >= 100) throw new HttpError(409,'This account has reached the preview checkout limit. Existing purchases remain available.');
     const result = await projectRevision(env,owner,projectId,revisionId);

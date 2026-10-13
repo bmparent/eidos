@@ -11,7 +11,7 @@ const secret = 'local-test-relay-key-at-least-32-characters';
 const source = { EIDOS_PLATFORM_TOKEN: secret, PUBLIC_SITE_URL: 'https://eidos-works.com' };
 test('Playground initializes only its tables and libSQL concurrent saves have one winner', async () => {
   const {client,db}=await setup();
-  const env:PlatformEnv={EIDOS_RUNTIME:'sentinel',EIDOS_DB:db,EIDOS_ACCOUNTS_ENABLED:'true',RESEND_API_KEY:'test-only',EIDOS_MAIL_FROM:'Eidos <papers@example.test>',TURNSTILE_SITE_KEY:'test',TURNSTILE_SECRET_KEY:'test',PUBLIC_SITE_URL:source.PUBLIC_SITE_URL};
+  const env:PlatformEnv={EIDOS_RUNTIME:'sentinel',EIDOS_VALIDATE_PLAYGROUND_IMAGE:async()=>{},EIDOS_DB:db,EIDOS_ACCOUNTS_ENABLED:'true',RESEND_API_KEY:'test-only',EIDOS_MAIL_FROM:'Eidos <papers@example.test>',TURNSTILE_SITE_KEY:'test',TURNSTILE_SECRET_KEY:'test',PUBLIC_SITE_URL:source.PUBLIC_SITE_URL};
   const token='b'.repeat(64);
   env.EIDOS_RATE_SECRET='test-only-rate-secret-longer-than-32-characters';
   try {
@@ -60,7 +60,7 @@ await test('Relay authentication, exact origins, routes and method gates', async
 });
 await test('Member sign-in survives the authenticated relay and libSQL consumes links exactly once', async () => {
   const {client,db}=await setup();
-  const env:PlatformEnv={EIDOS_RUNTIME:'sentinel',EIDOS_DB:db,EIDOS_ACCOUNTS_ENABLED:'true',RESEND_API_KEY:'test-only',EIDOS_MAIL_FROM:'Eidos <papers@example.test>',TURNSTILE_SITE_KEY:'test',TURNSTILE_SECRET_KEY:'test',EIDOS_RATE_SECRET:'test-only-rate-secret-longer-than-32-characters',PUBLIC_SITE_URL:source.PUBLIC_SITE_URL};
+  const env:PlatformEnv={EIDOS_RUNTIME:'sentinel',EIDOS_VALIDATE_PLAYGROUND_IMAGE:async()=>{},EIDOS_DB:db,EIDOS_ACCOUNTS_ENABLED:'true',RESEND_API_KEY:'test-only',EIDOS_MAIL_FROM:'Eidos <papers@example.test>',TURNSTILE_SITE_KEY:'test',TURNSTILE_SECRET_KEY:'test',EIDOS_RATE_SECRET:'test-only-rate-secret-longer-than-32-characters',PUBLIC_SITE_URL:source.PUBLIC_SITE_URL};
   const token='a'.repeat(64);
   try {
     await db.prepare('INSERT INTO eidos_signin_links(token_hash,email,username,kind,newsletter,expires) VALUES(?,?,?,?,?,?)').bind(await hash(token),'relay@example.test','relay_member','person',1,Math.floor(Date.now()/1000)+900).run();

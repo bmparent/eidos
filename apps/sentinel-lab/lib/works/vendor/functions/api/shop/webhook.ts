@@ -11,6 +11,8 @@ import {
   parseStripeEvent,
 } from '../../_shared/snapshot/stripe';
 import { KIT_PRICE, type Order } from '../../_shared/platform/shop';
+import { ensureKitDelivery } from '../../_shared/platform/kitDelivery';
+import { hash } from '../../_shared/platform/core';
 export const onRequestPost = guarded(async ({ request, env }) => {
   if (!env.EIDOS_KIT_WEBHOOK_SECRET)
     throw new HttpError(503, 'Webhook unavailable.');
@@ -69,7 +71,12 @@ export const onRequestPost = guarded(async ({ request, env }) => {
       object.client_reference_id !== order.id
     )
       throw new HttpError(400, 'Payment does not match this order.');
+    await ensureKitDelivery(env);
+    const recoveryEmail = record(object.customer_details) && typeof object.customer_details.email === 'string' &&
+      /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(object.customer_details.email) && object.customer_details.email.length <= 260
+      ? object.customer_details.email.trim().toLowerCase() : null;
     await database.batch([
+      ...(recoveryEmail ? [database.prepare('INSERT OR IGNORE INTO eidos_kit_recovery(order_id,email_hash) VALUES(?,?)').bind(order.id, await hash(recoveryEmail))] : []),
       database
         .prepare(
           "UPDATE eidos_orders SET status=CASE WHEN status='refunded' OR EXISTS(SELECT 1 FROM eidos_revoked_payments WHERE payment_intent=?) THEN 'refunded' ELSE 'paid' END,paid_at=COALESCE(paid_at,?),payment_intent=? WHERE id=?",

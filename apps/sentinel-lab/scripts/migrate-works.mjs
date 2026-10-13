@@ -9,7 +9,9 @@ try {
   const directory = new URL('../lib/works/vendor/migrations/', import.meta.url);
   for (const name of (await readdir(directory)).filter(n=>/^\d+.*\.sql$/.test(n)).sort()) {
     const schema = await readFile(new URL(name,directory),'utf8');
-    await client.batch(schema.split(';').map(s => s.trim()).filter(Boolean), 'write');
+    // SQLite migrations include triggers and quoted semicolons. The SQL parser,
+    // rather than string splitting, must find the statement boundaries.
+    await client.executeMultiple(schema);
   }
   console.log('Applied the additive Eidos Works schema.');
 } finally { client.close(); }
