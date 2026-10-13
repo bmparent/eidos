@@ -46,7 +46,8 @@ It is a source preparation candidate, with LIVE activation absent by default.
   Stripe connector is Eidos Works, `acct_1Rj03gKC8pRG5Tr9`; its connection is not
   proof that a deployment's key targets it.
 - Checkout response IDs and webhook modes must match the stored session. Wrong
-  modes, prices and merchants fail closed. LIVE requests use the skill-prescribed
+  modes, prices and merchants fail closed. Status, download and recovery also
+  reject an order from the opposite environment, including retained TEST orders. LIVE requests use the skill-prescribed
   `2026-08-26.dahlia` version and integration identifier; existing TEST requests
   retain their pinned `2025-06-30.basil` contract. Actual provider acceptance of
   the new LIVE request remains untested.
@@ -69,7 +70,7 @@ configuration is applied by this continuation.
 | --- | --- | --- |
 | Current package integrity and source boundaries | 803 checks pass; all eight frozen ZIP hashes unchanged | Pass locally |
 | Joined manifest and storefront guide contracts | Six manifest and six storefront tests pass | Pass locally |
-| Backend behavior | 16 MJS + 56 TypeScript tests pass, including five new controlled LIVE cases | Pass locally |
+| Backend behavior | 16 MJS + 57 TypeScript tests pass, including six new controlled mode/commerce cases | Pass locally |
 | Site platform and existing commerce | 35 tests pass | Pass locally |
 | Site/worker verification | Lint/typecheck, client/SSR build, prerender, shop/editorial/URL checks and Functions compilation pass; existing Wellway warning remains | Pass locally |
 | Backend typecheck | No errors | Pass locally |

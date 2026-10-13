@@ -149,6 +149,8 @@ export async function templateOrder(env: PlatformEnv, orderId: string) {
   return db(env).prepare(checkoutSelect + ' WHERE o.id=?').bind(orderId).first<TemplateOrder>();
 }
 async function authorizedTemplateOrder(request: Request, env: PlatformEnv, order: TemplateOrder) {
+  if (order.session_id || order.status === 'paid')
+    assertTemplatePaymentMode(env, order.session_id?.startsWith('cs_live_') === true, order.session_id);
   if (order.receipt_expires <= now()) throw new HttpError(401, 'This purchase link expired. Recover your purchase by email.');
   const member = await memberFromRequest(request, env, false);
   if (member && order.member_id && member.id !== order.member_id) throw new HttpError(403, 'This purchase belongs to another account.');
@@ -264,6 +266,8 @@ export const recover = guarded(async ({ request, env }) => {
     if (await reserve(database, 'template-recovery-email:' + emailHash, 1, 4)) {
       const orders = await database.prepare(checkoutSelect + " WHERE t.email_hash=? AND o.status='paid' ORDER BY o.created_at DESC LIMIT 10").bind(emailHash).all<TemplateOrder>();
       for (const order of orders.results) {
+        try { assertTemplatePaymentMode(env, order.session_id?.startsWith('cs_live_') === true, order.session_id); }
+        catch { continue; } // Never turn a purchase from another environment into a recovery capability.
         const token = await recoveryToken(env, order.id);
         try { await sendMemberMail(env, { to: email, subject: 'Recover your Eidos template purchase' + (order.session_id?.startsWith('cs_test_') ? ' (TEST)' : ''), text: `Open within 30 minutes: ${siteOrigin(env)}/shop/start#token=${token}\nPurchase: ${order.product_id}, version ${order.version}.\nIf you did not request this message, ignore it.` }, 'eidos-template-recovery-' + await hash(token)); }
         catch { /* Enumeration-safe response; provider failure is recorded internally. */
@@ -283,6 +287,7 @@ export const redeem = guarded(async ({ request, env }) => {
   if (!link) throw new HttpError(401, 'This recovery link is invalid or expired.');
   const order = await templateOrder(env, link.order_id), member = await memberFromRequest(request, env, false);
   if (!order || (member && order.member_id && member.id !== order.member_id)) throw new HttpError(403, 'This purchase belongs to another account.');
+  assertTemplatePaymentMode(env, order.session_id?.startsWith('cs_live_') === true, order.session_id);
   const receipt = randomToken();
   const results = await database.batch([
     database.prepare("UPDATE eidos_template_recovery SET used=1 WHERE token_hash=? AND used=0 AND expires>? AND EXISTS(SELECT 1 FROM eidos_orders WHERE id=? AND status='paid')").bind(tokenHash, now(), link.order_id),

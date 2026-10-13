@@ -207,6 +207,28 @@ test('LIVE refund/dispute rejects TEST events and revokes downloads after new sa
   } finally { f.close(); }
 });
 
+test('retained TEST and LIVE receipts cannot grant status, downloads or recovery in the opposite environment', async () => {
+  for (const mode of ['test', 'live'] as const) {
+    const f = await fixture(mode), receipt = '8'.repeat(64);
+    try {
+      const row = await f.begin(receipt);
+      assert.equal((await f.event(row, 'evt_mode_bound_purchase')).status, 200);
+      const paid = await (await f.call(status, '/api/shop/status', { receipt })).json();
+      const token = f.mails[0].text.match(/#token=([a-f0-9]{64})/)![1];
+      f.env.STRIPE_SECRET_KEY = mode === 'test' ? 'sk_live_opposite_fixture' : 'sk_test_opposite_fixture';
+      f.env.PUBLIC_SITE_URL = mode === 'test' ? 'https://eidos-works.com' : origin;
+      assert.equal((await f.call(status, '/api/shop/status', { receipt })).status, 400);
+      assert.equal((await f.call(download, '/api/shop/download', { receipt, downloadToken: paid.downloadToken })).status, 400);
+      assert.equal((await f.call(redeem, '/api/shop/redeem', { token })).status, 400);
+      assert.equal((await f.call(recover, '/api/shop/recover', { email: 'buyer@example.test', challenge: 'fixture-recovery' })).status, 200);
+      assert.equal(f.mails.length, 1);
+      assert.equal((await f.database.prepare('SELECT used FROM eidos_template_recovery WHERE token_hash=?').bind(await hash(token)).first<{ used: number }>())?.used, 0);
+      const unchanged = await f.database.prepare('SELECT archive_sha256 FROM eidos_template_orders WHERE order_id=?').bind(row.id).first<{ archive_sha256: string }>();
+      assert.equal(unchanged?.archive_sha256, row.archive_sha256);
+    } finally { f.close(); }
+  }
+});
+
 test('catalog updates all eight edition versions while all sixteen prior purchase snapshots retain their original archive', async () => {
   const f=await fixture();
   try {
