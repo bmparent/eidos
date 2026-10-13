@@ -1,8 +1,10 @@
 import json
 import os
+import stat
 import tempfile
 import unittest
 from pathlib import Path
+from types import SimpleNamespace
 from unittest.mock import patch
 
 from sensor_log import MAX_RECORDS, sanitize_sensor_record, sensor_capabilities, sensor_snapshot
@@ -45,16 +47,37 @@ class SensorLogTests(unittest.TestCase):
                 self.assertEqual(result["counts"]["malformed"], 1)
                 self.assertEqual(result["counts"]["unsupported"], 1)
 
-    def test_configured_relative_path_directory_or_symlink_is_rejected(self):
+    def test_configured_relative_path_or_directory_is_rejected(self):
+        with tempfile.TemporaryDirectory() as folder:
+            for value in ["relative.json", folder]:
+                with patch.dict(os.environ, {"OBSERVATORY_SENSOR_LOG": value}):
+                    self.assertFalse(sensor_capabilities()["connected"])
+                    self.assertFalse(sensor_snapshot()["connected"])
+
+    def test_configured_symlink_is_rejected(self):
         with tempfile.TemporaryDirectory() as folder:
             path = Path(folder) / "source.json"
             path.write_text('{}', encoding="utf8")
             link = Path(folder) / "link.json"
-            link.symlink_to(path)
-            for value in ["relative.json", folder, str(link)]:
-                with patch.dict(os.environ, {"OBSERVATORY_SENSOR_LOG": value}):
-                    self.assertFalse(sensor_capabilities()["connected"])
-                    self.assertFalse(sensor_snapshot()["connected"])
+            try:
+                link.symlink_to(path)
+            except OSError as error:
+                if getattr(error, "winerror", None) == 1314:
+                    self.skipTest("Windows denied symlink creation (WinError 1314); metadata rejection is tested separately")
+                raise
+            with patch.dict(os.environ, {"OBSERVATORY_SENSOR_LOG": str(link)}):
+                self.assertFalse(sensor_capabilities()["connected"])
+                self.assertFalse(sensor_snapshot()["connected"])
+
+    def test_symlink_metadata_is_rejected_before_open(self):
+        # This guard remains testable without OS permission to create symlinks.
+        path = Path.cwd() / "fixture-only-sensor-link.json"
+        with patch.dict(os.environ, {"OBSERVATORY_SENSOR_LOG": str(path)}), \
+                patch("sensor_log.Path.lstat", return_value=SimpleNamespace(st_mode=stat.S_IFLNK)), \
+                patch("sensor_log.os.open") as open_file:
+            self.assertFalse(sensor_capabilities()["connected"])
+            self.assertFalse(sensor_snapshot()["connected"])
+            open_file.assert_not_called()
 
     def test_sensor_metadata_whitelist_drops_arbitrary_fields(self):
         row = {"timestamp": "2026-10-13T19:00:00Z", "event_type": "dns", "dns": {"queries": [{"rrname": "example.com", "rrtype": "A", "secret": "omit"}]},

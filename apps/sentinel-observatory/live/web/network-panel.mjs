@@ -108,7 +108,15 @@ export function initializeNetworkPanel(container, options={}) {
     const active=state.stream.active,waiting=active&&!state.stream.lastReceivedAt;
     const native=capability.mode==='observatory_edge';
     const description=active?state.stream.issue?`Feed unavailable: ${state.stream.issue}`:document.visibilityState==='hidden'?'Sensor requests pause while this tab is hidden.':waiting?native?'Connecting to the Observatory application-edge sensor…':'Connecting to your configured sensor log…':`${native?'Receiving the Observatory’s actual incoming requests and outbound check records':'Receiving the configured sensor log'} every 5 seconds. Last received ${time(state.stream.lastReceivedAt)}.`:capability.connected?native?'The Observatory application-edge sensor is available. Resume receiving its actual records.':'Your local companion has a sensor log configured. Start receiving its actual records.':native?'The Observatory application-edge sensor is unavailable.':'Connect your sensor to the local companion by setting OBSERVATORY_SENSOR_LOG to its Suricata EVE or Zeek JSONL file.';
-    part('live').innerHTML=`<div class="sn-live"><p>${esc(description)}</p><button class="sn-button" data-action="stream" ${!capability.connected&&!active?'disabled':''}>${active?'Pause sensor feed':native?'Resume application-edge sensor ↗':'Connect sensor feed ↗'}</button></div><p class="sn-live-note">${native?'Observatory application-edge records only · no target internals, visitor traffic, packets or WAF logs':'Existing log file only · no packet capture starts'} · 5 s foreground feed · latest 2,000 records retained. Source event age remains visible, even when the feed is connected.${capability.connected?'':` ${esc(short(capability.reason,240))}`}</p>`;
+    // A feed refresh must not replace the focused pause/resume control.
+    // Keep its DOM identity stable while updating measured freshness text.
+    const live=part('live');
+    if(!live.querySelector('[data-action="stream"]'))live.innerHTML='<div class="sn-live"><p></p><button class="sn-button" data-action="stream"></button></div><p class="sn-live-note"></p>';
+    live.querySelector('.sn-live p').textContent=description;
+    const control=action('stream');
+    control.disabled=!capability.connected&&!active;
+    control.textContent=active?'Pause sensor feed':native?'Resume application-edge sensor ↗':'Connect sensor feed ↗';
+    live.querySelector('.sn-live-note').textContent=`${native?'Observatory application-edge records only · no target internals, visitor traffic, packets or WAF logs':'Existing log file only · no packet capture starts'} · 5 s foreground feed · latest 2,000 records retained. Source event age remains visible, even when the feed is connected.${capability.connected?'':` ${short(capability.reason,240)}`}`;
   }
 
   function stopStream(){

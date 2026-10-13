@@ -183,13 +183,23 @@ class LocalBoundaryTests(unittest.TestCase):
             def connect(self, destination): pass
             def close(self): closed.set()
             def shutdown(self, mode): closed.set()
-        connection = PinnedHTTPConnection(normalize_target("http://8.8.8.8"), (socket.AF_INET, "8.8.8.8"),
-            time.monotonic()+0.03, socket_factory=lambda *args: Sock())
-        try:
-            connection.connect()
-            self.assertTrue(closed.wait(0.3))
-        finally:
-            connection.close()
+        # Verify watchdog scheduling and expiration without requiring a loaded
+        # host to complete connect() inside a 30 ms wall-clock window.
+        with patch("local_server.time.monotonic", return_value=100.0), patch("local_server.threading.Timer") as timer:
+            connection = PinnedHTTPConnection(normalize_target("http://8.8.8.8"), (socket.AF_INET, "8.8.8.8"),
+                100.03, socket_factory=lambda *args: Sock())
+            try:
+                connection.connect()
+                delay, expire = timer.call_args.args
+                self.assertAlmostEqual(delay, 0.03)
+                self.assertTrue(timer.return_value.daemon)
+                timer.return_value.start.assert_called_once_with()
+                self.assertFalse(closed.is_set())
+                expire()
+                self.assertTrue(closed.is_set())
+            finally:
+                connection.close()
+            timer.return_value.cancel.assert_called_once_with()
 
     def test_cooldown_and_no_overlap(self):
         now = [100.0]
