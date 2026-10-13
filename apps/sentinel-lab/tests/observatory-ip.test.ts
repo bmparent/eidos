@@ -43,14 +43,14 @@ test("normalization is literal-only, public-only and bound to the scheme's stand
   assert.equal(normalizeIpTarget("2606:4700:4700::1111").host, "2606:4700:4700::1111");
   assert.equal(normalizeIpTarget("http://1.1.1.1:80/").port, 80);
   for (const value of ["http://1.1.1.1:443", "https://1.1.1.1:80", "https://1.1.1.1:8080", "https://user:pass@1.1.1.1", "https://1.1.1.1?token=secret", "https://1.1.1.1#", "ftp://1.1.1.1", "1.1.1.1\r\nAuthorization: secret", "https://1.1.1.1\\@127.0.0.1", " https://1.1.1.1", "example.com", "https://0x01010101", "https://16843009", "https://001.001.001.001", "https://%31.1.1.1", "https://[fe80::1%25eth0]", "https://1.1.1.1/" + "a".repeat(513)]) {
-    assert.throws(() => normalizeIpTarget(value), undefined, value);
+    assert.throws(() => normalizeIpTarget(value), Error, value);
   }
 });
 
 test("SSRF excludes reserved IPv4, mapped IPv6, metadata, tunnels and special-use ranges", () => {
   for (const value of ["0.0.0.0", "0.1.2.3", "10.0.0.1", "100.64.0.1", "127.0.0.1", "169.254.169.254", "172.31.255.255", "192.0.0.9", "192.0.2.1", "192.88.99.1", "192.168.0.1", "198.18.1.1", "198.51.100.1", "203.0.113.1", "224.0.0.1", "240.0.0.1", "255.255.255.255", "::", "::1", "::ffff:127.0.0.1", "::ffff:8.8.8.8", "64:ff9b::a00:1", "fc00::1", "fe80::1", "ff02::1", "2001::1", "2001:100::1", "2001:db8::1", "2002:7f00:1::", "3fff::1"]) {
     assert.equal(isPublicIp(value), false, value);
-    assert.throws(() => normalizeIpTarget(value), undefined, value);
+    assert.throws(() => normalizeIpTarget(value), Error, value);
   }
   for (const value of ["1.1.1.1", "8.8.8.8", "93.184.216.34", "2606:4700:4700::1111", "2001:4860:4860::8888"]) assert.equal(isPublicIp(value), true, value);
 });
@@ -89,7 +89,7 @@ test("bounded payload validation never gives network transport to unauthorized o
 test("one pinned HEAD sends no client credentials, follows no redirect and retains only enum metadata", async () => {
   let calls = 0;
   const result = await observeIp("https://1.1.1.1", { requestFactory: fakeTransport({
-    server: "server secret-cookie=abc", "content-type": "text/html; token=secret", "set-cookie": "session=secret", authorization: "secret",
+    server: "server secret-cookie=abc", "content-type": "text/html; token=secret", "set-cookie": ["session=secret"], authorization: "secret",
     location: "http://169.254.169.254/latest/meta-data/", "strict-transport-security": "max-age=31536000", "x-frame-options": "DENY", "cache-control": "private, no-store", 
   }, 302, options => {
     calls += 1;
@@ -102,7 +102,7 @@ test("one pinned HEAD sends no client credentials, follows no redirect and retai
     assert.equal(options.maxHeaderSize, 16384);
     assert.deepEqual(Object.keys(options.headers || {}).sort(), ["Accept", "Cache-Control", "Connection", "Host", "Pragma", "User-Agent"]);
     const mismatch = options.checkServerIdentity!("ignored-name", { subjectaltname: "DNS:one.one.one.one" } as never);
-    assert.equal(mismatch?.code, "ERR_TLS_CERT_ALTNAME_INVALID");
+    assert.equal((mismatch as NodeJS.ErrnoException | undefined)?.code, "ERR_TLS_CERT_ALTNAME_INVALID");
     assert.equal(options.checkServerIdentity!("ignored-name", { subjectaltname: "IP Address:1.1.1.1" } as never), undefined);
   }) });
   assert.equal(calls, 1);
@@ -183,20 +183,20 @@ test("rate limit applies to the IP across scheme and path variations, then relea
   assert.equal(calls, 2);
 });
 
-test("only four observations can be active and the slot is released when a request fails", async () => {
-  const releases: Array<(value: Awaited<ReturnType<typeof observeIp>>) => void> = [];
+test("only four observations can be active and slots are released after completion", async () => {
+  const releases: Array<() => void> = [];
   const handle = createIpObservationHandler({ getSecret: () => secret, collector: target => new Promise(resolve => {
     releases.push(async () => resolve(await observeIp(target, { requestFactory: fakeTransport() })));
   }) });
   const pending = [1, 2, 3, 4].map(last => handle(request(`8.8.8.${last}`)));
   while (releases.length !== 4) await new Promise<void>(resolve => setImmediate(resolve));
   assert.equal((await handle(request("9.9.9.9"))).status, 429);
-  releases.forEach(release => release(undefined as never));
+  releases.forEach(release => release());
   const responses = await Promise.all(pending);
   assert.ok(responses.every(response => response.status === 200));
   const next = handle(request("9.9.9.9"));
-  while (releases.length !== 5) await new Promise<void>(resolve => setImmediate(resolve));
-  releases[4](undefined as never);
+  while (Number(releases.length) !== 5) await new Promise<void>(resolve => setImmediate(resolve));
+  releases[4]();
   assert.equal((await next).status, 200);
 });
 

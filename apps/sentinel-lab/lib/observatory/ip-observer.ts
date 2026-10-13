@@ -14,7 +14,7 @@ const SECURITY_KEYS = ["hsts_present", "csp_present", "x_content_type_options", 
 export class ObservationBoundaryError extends Error {
   constructor(readonly code: string, message: string, readonly status = 400) { super(message); }
 }
-const fail = (code: string, message: string, status = 400): never => { throw new ObservationBoundaryError(code, message, status); };
+function fail(code: string, message: string, status = 400): never { throw new ObservationBoundaryError(code, message, status); }
 
 function ipv4Number(host: string): number {
   return host.split(".").reduce((value, part) => value * 256 + Number(part), 0);
