@@ -55,11 +55,12 @@ export async function publishedThread(env: PlatformEnv, id: string) {
   if (!thread) throw new HttpError(404, 'This conversation is not available.');
   const { results: replies } = await database
     .prepare(
-      "SELECT id,thread_id,body,author,author_type,status,created_at FROM eidos_replies WHERE thread_id=? AND status='published' ORDER BY created_at LIMIT 100",
+      "SELECT id,thread_id,body,author,author_type,status,created_at FROM eidos_replies WHERE thread_id=? AND status='published' ORDER BY created_at DESC,id DESC LIMIT 100",
     )
     .bind(id)
     .all<Reply>();
-  return { thread, replies };
+  const count = await database.prepare("SELECT COUNT(*) AS n FROM eidos_replies WHERE thread_id=? AND status='published'").bind(id).first<{n: number}>();
+  return { thread: {...thread, reply_count: count?.n || 0}, replies: replies.reverse() };
 }
 /** No model calls or autonomous bot loops. Only a single published-source suggestion per human thread. */
 export async function maybeSuggest(

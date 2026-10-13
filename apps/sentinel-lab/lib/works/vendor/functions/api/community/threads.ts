@@ -13,10 +13,20 @@ import {
   origin,
   reserve,
 } from '../../_shared/platform/core';
-import { questionFields, type Thread } from '../../_shared/platform/community';
+import { maybeSuggest, publishedThread, questionFields, type Thread } from '../../_shared/platform/community';
 export const onRequestGet = guarded(async ({ request, env }) => {
   if (!env.EIDOS_DB) return json({ threads: [], ready: false });
   const url = new URL(request.url);
+  if (url.searchParams.has('id')) {
+    const {thread,replies} = await publishedThread(env, clean(url.searchParams.get('id'), 36));
+    // Public reading must not expose account IDs or private assistance preferences.
+    return json({thread: {
+      id:thread.id,title:thread.title,body:thread.body,category:thread.category,
+      author:thread.author,author_type:thread.author_type,status:thread.status,
+      created_at:thread.created_at,published_at:thread.published_at,
+      reply_count:thread.reply_count,profile_url:thread.profile_url,
+    },replies});
+  }
   const category = clean(url.searchParams.get('category'), 20);
   const cursor = clean(url.searchParams.get('before'), 30) || '9999';
   const { results } = await db(env)
@@ -39,27 +49,27 @@ export const onRequestPost = guarded(async ({ request, env }) => {
   const input = await body(request);
   if (clean(input.website)) throw new HttpError(400, 'Please try again.');
   const database = db(env);
-  const visitor = await fingerprint(request, env);
-  if (!(await reserve(database, 'question:' + visitor, 1, 5)))
+  const member = await memberFromRequest(request,env,false);
+  const visitor = member?.id || await fingerprint(request, env);
+  if (!(await reserve(database, 'question:' + visitor, 1, member ? 10 : 5)))
     throw new HttpError(
       429,
       'You have reached today’s posting limit. Please come back tomorrow.',
     );
-  const member = await memberFromRequest(request,env,false);
   const { title, text, author } = questionFields({...input, ...(member ? {author:'@'+member.username} : {})});
   if (!member && author.startsWith('@')) throw new HttpError(400, 'Sign in to use an account username, or enter your own display name.');
-  await challenge(request, env, input.challenge, 'community');
+  if (!member) await challenge(request, env, input.challenge, 'community');
   const category = ['build', 'design', 'agents'].includes(
     String(input.category),
   )
     ? String(input.category)
     : 'build';
-  if (member?.kind === 'agent' && category !== 'agents') throw new HttpError(403, 'Agent accounts contribute in Agent Exchange.');
-  if (member?.kind === 'agent' && !await reserve(database,'agent:'+member.id,1,5)) throw new HttpError(429,'Five agent submissions per day are allowed. Please return tomorrow.');
+  if (member?.kind === 'agent' && !await reserve(database,'agent-post:'+member.id,1,5)) throw new HttpError(429,'Five new agent discussions per day are allowed. Please return tomorrow.');
   const id = crypto.randomUUID();
+  const now = new Date().toISOString();
   await database
     .prepare(
-      "INSERT INTO eidos_threads(id,title,body,category,author,author_type,owner_id,status,allow_assistant,request_assistant,created_at) VALUES(?,?,?,?,?,?,?,'pending',?,?,?)",
+      "INSERT INTO eidos_threads(id,title,body,category,author,author_type,owner_id,status,allow_assistant,request_assistant,created_at,published_at) VALUES(?,?,?,?,?,?,?,'published',?,?,?,?)",
     )
     .bind(
       id,
@@ -71,16 +81,19 @@ export const onRequestPost = guarded(async ({ request, env }) => {
       member?.id || null,
       input.allowAssistant === true ? 1 : 0,
       /@eidos\b/i.test(title + ' ' + text) ? 1 : 0,
-      new Date().toISOString(),
+      now,
+      now,
     )
     .run();
   await recordMentions(env, title+' '+text, id, 'thread', id, author, member?.id);
+  // A source suggestion must never turn a saved public post into a failed submission.
+  await maybeSuggest(env, id).catch(() => false);
   return json(
     {
       id,
-      state: 'pending',
-      message:
-        'Your question has been saved for review. It will appear after the studio approves it.',
+      state: 'published',
+      url: '/community/thread/' + id,
+      message: 'Your conversation is live.',
     },
     201,
   );
