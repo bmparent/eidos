@@ -8,6 +8,8 @@ Private app: https://sentinel-evidence-observatory.bmparent.chatgpt.site
 
 Sites project: `appgprj_6ace6f7f4a5481918adb34a5cb366de3`. Preserve its current owner-only access.
 
+Completed implementation: `0566c74dc9395d31930989a027cf6ae012b1829e`. Private deployed Sites source: `54e7ba3392e0fd840ce1718a1fdcbebc4bb7fdac`; deployment `appgdep_6ace9fc4bea88191856799bbaafb7843` succeeded at environment revision4. Read [SOL-AUDIT-2026-10-13.md](./SOL-AUDIT-2026-10-13.md) before changing behavior. The later documentation commit does not change the deployed runtime.
+
 ## Remaining task
 
 The user authorized using the OpenAI Developers plugin to provision an API key and chose **GPT-6.1 Sol** for interpretation. That plugin is unavailable in this ChatGPT Work session; the user requested a Codex handoff for credential setup. No OpenAI API key was generated here, and no live Sol inference is claimed.
