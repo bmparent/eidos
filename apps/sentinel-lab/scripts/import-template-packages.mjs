@@ -1,6 +1,7 @@
 import { readFile, mkdir, readdir, writeFile } from 'node:fs/promises';
 import { createHash } from 'node:crypto';
 import path from 'node:path';
+import { templateProducts } from '../lib/works/vendor/functions/_shared/platform/templateCatalog.ts';
 
 const options = Object.fromEntries(process.argv.slice(2).map(value => value.replace(/^--/, '').split('=')));
 if (!options.site || !options.out) throw Error('Supply --site=<website repo root> and --out=<receipt path>');
@@ -14,8 +15,8 @@ for (const item of report.packages || []) {
   if (!source.startsWith(site+path.sep)) throw Error('Package source escapes website root');
   const bytes = await readFile(source), digest = createHash('sha256').update(bytes).digest('hex');
   if (digest !== item.sha256 || bytes.length !== item.bytes) throw Error('Package differs from frozen source receipt: '+item.editionId);
-  const expectedVersion=match[2]==='wordpress'||match[1]==='switchboard'?'1.0.2':match[1]==='nightjar'?'1.0.4':'1.0.1';
-  if(item.version!==expectedVersion)throw Error('Package version differs from the server catalog: '+item.editionId);
+  const product=templateProducts.find(product=>product.id===item.editionId);
+  if(!product || item.version!==product.version)throw Error('Package version differs from the server catalog: '+item.editionId);
   const key=`templates/${match[1]}/${item.version}/${match[2]}.zip`, target=path.resolve(targetRoot,key);
   if (!target.startsWith(targetRoot+path.sep)) throw Error('Invalid private archive target');
   let existing;
