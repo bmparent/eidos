@@ -186,7 +186,9 @@ async function validateDns(target, fetchImpl, signal, blockedHosts) {
     url.searchParams.set("name", target.hostname);
     url.searchParams.set("type", type);
     const response = await fetchImpl(url.toString(), {
-      method: "GET", redirect: "error", signal,
+      // Older edge runtimes reject redirect:"error" before any I/O. Manual
+      // mode plus the non-2xx check below rejects redirects without following.
+      method: "GET", redirect: "manual", signal,
       headers: { Accept: "application/dns-json", "Cache-Control": "no-cache", Pragma: "no-cache" },
       cf: { cacheTtlByStatus: { "100-599": -1 } },
     });
@@ -249,13 +251,36 @@ function runtimeClassifier(error) {
   if (/illegal invocation|incorrect this reference/i.test(message)) return "illegal_invocation";
   if (/unsupported cache mode|cache (?:mode|option).{0,40}not supported/i.test(message)) return "unsupported_cache_mode";
   if (/\bcache\b.{0,80}RequestInitializerDict.{0,50}not implemented/i.test(message)) return "cache_option_unimplemented";
+  if (/invalid redirect value|unsupported redirect mode/i.test(message)) return "unsupported_redirect_mode";
   return null;
 }
 
 function safeDiagnostic(error, stage, classifier) {
   const allowedNames = ["Error", "TypeError", "RangeError", "SyntaxError", "AbortError", "TimeoutError", "DOMException"];
   const exceptionName = allowedNames.includes(error?.name) ? error.name : "Error";
-  console.error("sentinel_collector_failure", JSON.stringify({ stage, classifier: classifier || "transport_failure", exception_name: exceptionName }));
+  let message = typeof error?.message === "string" ? error.message.slice(0, 2048) : "No diagnostic message";
+  // Server-side diagnostics only. Avoid printing request targets, credentials,
+  // opaque identifiers, or arbitrary quoted values even when a runtime embeds
+  // them in its exception. Known intrinsic names remain useful for debugging.
+  const intrinsicNames = new Set(["cache", "RequestInitializerDict", "URL", "URLSearchParams", "searchParams", "set", "get", "fetch", "signal", "AbortController", "headers", "bind", "toString", "url", "object", "function", "undefined", "manual", "error", "no-store", "no-cache"]);
+  message = message
+    .replace(/[\u0000-\u001f\u007f]/g, " ")
+    .replace(/\b(?:authorization|proxy-authorization|cookie|set-cookie|password|passwd|api[_-]?key|access[_-]?token|token|secret)\b\s*[:=]\s*[^,;]+/gi, "[credential redacted]")
+    .replace(/\b(?:Bearer|Basic)\s+[^\s,;]+/gi, "[credential redacted]")
+    .replace(/\b(?:https?|wss?|ftp):\/\/[^\s\"'<>`]+/gi, "[URL redacted]")
+    .replace(/\b\d{1,3}(?:\.\d{1,3}){3}(?::\d{1,5})?\b/g, "[IP redacted]")
+    .replace(/\[?(?:[0-9a-f]{0,4}:){2,}[0-9a-f:.]{0,45}\]?(?:%[a-z0-9]+)?/gi, "[IP redacted]")
+    .replace(/\b[a-z0-9-]+(?:\.[a-z0-9-]+)+\b/gi, (value) => /^(?:url|URL|globalThis|controller|signal|response|request|reader)\.(?:searchParams\.)?(?:searchParams|set|get|fetch|bind|toString|signal|headers|read|cancel|addEventListener|removeEventListener|throwIfAborted)$/.test(value) ? value : "[hostname redacted]")
+    .replace(/\blocalhost\b/gi, "[hostname redacted]")
+    .replace(/\b(?:sk-[A-Za-z0-9_-]+|gh[pousr]_[A-Za-z0-9_]+|AKIA[A-Z0-9]+)\b/g, "[token redacted]")
+    .replace(/\b(?:secret|token)[a-z0-9_-]*\b/gi, "[sensitive value redacted]")
+    .replace(/\b(?=[A-Za-z0-9_+\/=\-]{20,}\b)(?=[A-Za-z0-9_+\/=\-]*[0-9_+\/=\-])[A-Za-z0-9_+\/=\-]{20,}\b/g, "[opaque value redacted]")
+    .replace(/([\"'`])([^\"'`\r\n]*)\1/g, (whole, quote, value) => intrinsicNames.has(value) ? whole : "[quoted value redacted]")
+    .replace(/\s+/g, " ")
+    .trim().slice(0, 200);
+  const knownFunctions = new Set(["validateDns", "collectObservation", "handleObservation", "boundedText", "fetch", "Function.fetch", "Object.fetch"]);
+  const stackFunctions = typeof error?.stack === "string" ? [...error.stack.slice(0, 2048).matchAll(/\bat\s+(?:async\s+)?([A-Za-z_$][\w$]*(?:\.[\w$]+)*)/g)].map((match) => match[1]).filter((name) => knownFunctions.has(name)).slice(0, 4) : [];
+  console.error("sentinel_collector_failure", JSON.stringify({ stage, classifier: classifier || "transport_failure", exception_name: exceptionName, message, stack_functions: stackFunctions }));
 }
 
 function redactedError(error, signal, timedOut) {

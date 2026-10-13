@@ -242,7 +242,28 @@ test("runtime failure codes and diagnostic logs are bounded and contain no raw m
     assert.equal(logs.length, 3);
     assert.ok(logs.every((row) => row[0] === "sentinel_collector_failure"));
     assert.doesNotMatch(JSON.stringify(logs), /secret-token|private\.example|secret-cache-value/);
-    assert.deepEqual(Object.keys(JSON.parse(logs[0][1])).sort(), ["classifier", "exception_name", "stage"]);
+    assert.deepEqual(Object.keys(JSON.parse(logs[0][1])).sort(), ["classifier", "exception_name", "message", "stack_functions", "stage"]);
+  } finally { console.error = originalError; }
+});
+
+test("server-only diagnostics redact credentials, URLs, addresses and opaque strings", async () => {
+  const originalError = console.error;
+  const logs = [];
+  console.error = (...values) => logs.push(values);
+  try {
+    const secret = "ZXhhbXBsZXNlY3JldDEyMzQ1Njc4OTA=";
+    const message = `Runtime fetch failed https://private.example/path 192.168.1.2:443 [2001:db8::1] Bearer abc123 authorization: XYZ; password=hidden; ${secret} sk-supersecret 'short-secret' ` + "x".repeat(220);
+    const result = await collectObservation("example.com", { fetchImpl: () => { throw new TypeError(message); } });
+    const apiText = JSON.stringify(result);
+    assert.doesNotMatch(apiText, /Runtime fetch failed|abc123|XYZ|hidden|short-secret/);
+    const log = JSON.parse(logs[0][1]);
+    assert.ok(log.message.length <= 200);
+    assert.match(log.message, /Runtime fetch failed/);
+    assert.doesNotMatch(log.message, /private\.example|192\.168|2001:db8|abc123|XYZ|hidden|ZXhh|sk-supersecret|short-secret/);
+    assert.ok(log.stack_functions.every((name) => ["validateDns", "collectObservation", "handleObservation", "boundedText", "fetch", "Function.fetch", "Object.fetch"].includes(name)));
+    logs.length = 0;
+    await collectObservation("example.com", { fetchImpl: () => { throw new TypeError("The 'cache' field on 'RequestInitializerDict' is not implemented."); } });
+    assert.equal(JSON.parse(logs[0][1]).message, "The 'cache' field on 'RequestInitializerDict' is not implemented.");
   } finally { console.error = originalError; }
 });
 
@@ -258,4 +279,32 @@ test("works with an older Worker runtime that rejects RequestInit.cache before n
   assert.equal(mock.calls.length, 3);
   assert.equal(result.event.status, 200);
   assert.equal(result.event.error, null);
+});
+
+test("works with the deployed older edge runtime that rejects redirect error mode", async () => {
+  const mock = fixtureFetch();
+  const result = await collectObservation("eidos-works.com", { fetchImpl: async (url, options) => {
+    if (options.redirect === "error") throw new TypeError('Invalid redirect value, must be one of "follow" or "manual" ("error" will not be implemented at the edge)');
+    assert.equal(options.redirect, "manual");
+    return mock.fetchImpl(url, options);
+  } });
+  assert.equal(mock.calls.length, 3);
+  assert.equal(result.event.status, 200);
+  assert.equal(result.event.error, null);
+});
+
+test("DNS redirects are rejected in manual mode without following or sending target HEAD", async () => {
+  const calls = [];
+  const result = await collectObservation("eidos-works.com", { fetchImpl: async (url, options) => {
+    calls.push({ url, options });
+    assert.equal(options.method, "GET");
+    assert.equal(options.redirect, "manual");
+    assert.match(url, /^https:\/\/cloudflare-dns\.com\/dns-query\?/);
+    return new Response("must not be read", { status: 302, headers: { Location: "http://127.0.0.1/private" } });
+  } });
+  assert.equal(calls.length, 2);
+  assert.equal(result.event.error.code, "dns_unavailable");
+  assert.equal(result.event.status, null);
+  assert.equal(result.event.coverage.head_attempted, false);
+  assert.doesNotMatch(JSON.stringify(result), /127\.0\.0\.1|\/private/);
 });
