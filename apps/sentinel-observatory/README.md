@@ -1,5 +1,9 @@
 # Sentinel Observatory
 
+**Live URL/IP upgrade:** [Connect a target and watch](live/README.md) adds a
+hosted live URL monitor and a shared local companion for URLs/public IPs. The
+original fixed-route implementation below remains preserved.
+
 A local, observational vertical slice for the **public HTTP edge of Eidos Works**.
 The evidence field shows actual measurements, opens their original records, and
 separates measured facts, experimental change signals, numerical forecasts and
