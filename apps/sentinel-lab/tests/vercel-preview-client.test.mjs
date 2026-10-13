@@ -17,7 +17,10 @@ test('Vercel JSON writes declare the content type and keep payloads on stdin',()
     assert.ok(!result.args.some(arg=>arg.includes('fixture-only')));
     const read=vercelApi(cli,'/fixture');
     assert.ok(!read.args.includes('--input')); assert.equal(read.input,'');
-  } finally {rmSync(root,{recursive:true,force:true});}
+  } finally {
+    assert.ok(path.resolve(root).startsWith(path.resolve(tmpdir())+path.sep+'eidos-vercel-client-'));
+    rmSync(root,{recursive:true,force:true});
+  }
 });
 
 test('Vercel request failures report a code without printing response secrets',()=>{
@@ -26,5 +29,8 @@ test('Vercel request failures report a code without printing response secrets',(
     const cli=path.join(root,'mock-cli.mjs');
     writeFileSync(cli,"console.log(JSON.stringify({error:{code:'fixture_rejection',message:'private-fixture-value'}})); process.exitCode=1;");
     assert.throws(()=>vercelApi(cli,'/fixture'),error=>error.message==='Vercel API rejected the request: fixture_rejection');
-  } finally {rmSync(root,{recursive:true,force:true});}
+  } finally {
+    assert.ok(path.resolve(root).startsWith(path.resolve(tmpdir())+path.sep+'eidos-vercel-client-'));
+    rmSync(root,{recursive:true,force:true});
+  }
 });

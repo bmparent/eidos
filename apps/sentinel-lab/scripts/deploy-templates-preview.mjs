@@ -51,8 +51,12 @@ if(process.argv.includes('--deploy')||options['request-out']){
     await mkdir(path.dirname(output),{recursive:true});await writeFile(output,JSON.stringify({deployment:payload,branchEnvironment}),{mode:0o600});
     receipt.sourceRevision=sourceRevision;
   } else {
-  const configured=vercelApi(options.cli,'/v10/projects/prj_5aL0COF1DONfPKI4fv25NitAdkOE/env?upsert=true&teamId=team_TEsnMvKU6SdbYjVhws6Ttp8H','POST',branchEnvironment);
-  if(configured.failed?.length)throw Error('Candidate branch environment setup failed; no deployment created.');
+  // The authenticated CLI/provider combination rejects a root JSON array (400).
+  // Use the documented single-variable request shape, preserving Preview scope.
+  for(const variable of branchEnvironment) {
+    const configured=vercelApi(options.cli,'/v10/projects/prj_5aL0COF1DONfPKI4fv25NitAdkOE/env?upsert=true&teamId=team_TEsnMvKU6SdbYjVhws6Ttp8H','POST',variable);
+    if(!configured.created || configured.failed?.length)throw Error('Candidate branch environment setup failed; no deployment created.');
+  }
   const result=vercelApi(options.cli,'/v13/deployments?forceNew=1&teamId=team_TEsnMvKU6SdbYjVhws6Ttp8H','POST',payload);
   if(result.target==='production')throw Error('Unexpected production deployment returned. Inspect provider immediately.');
   Object.assign(receipt,{uploaded:true,sourceRevision,deployment:{id:result.id,url:'https://'+result.url,state:result.readyState||result.status,target:result.target||'preview'}});
