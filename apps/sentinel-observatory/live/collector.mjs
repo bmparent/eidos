@@ -585,7 +585,7 @@ export async function handleObservation(request, env = {}, _ctx = undefined) {
     const text = await boundedText(request, MAX_REQUEST_BYTES, "payload_too_large", 2000);
     let payload;
     try { payload = JSON.parse(text); } catch { fail("invalid_json", "The request must be valid JSON."); }
-    if (!payload || Array.isArray(payload) || typeof payload !== "object" || Object.keys(payload).length !== 1 || !Object.hasOwn(payload, "target")) {
+    if (!payload || Array.isArray(payload) || typeof payload !== "object" || Object.keys(payload).some(key => !["target", "page_check", "follow_redirects"].includes(key)) || !Object.hasOwn(payload, "target") || ["page_check", "follow_redirects"].some(key => payload[key] !== undefined && typeof payload[key] !== "boolean")) {
       fail("invalid_payload", "The request must contain exactly one target field.");
     }
     const blockedHosts = [endpoint.hostname];
@@ -596,9 +596,11 @@ export async function handleObservation(request, env = {}, _ctx = undefined) {
     if (target.kind !== "hostname" && !ipCollector) serviceAdapter(target, blockedHosts);
     const retry = reserveRate(target.url);
     if (retry) return jsonResponse({ error: { code: "sample_rate_limited", message: "Wait before measuring this target again." }, retry_after_ms: retry, rate_limit_scope: "Per isolate and canonical target; not durable or globally coordinated" }, 429, { "Retry-After": String(Math.ceil(retry / 1000)) });
-    const result = ipCollector
+    const extended = env.OBSERVATORY_TARGET_PROBES_ENABLED === 'true' && typeof _ctx?.targetCollect === 'function';
+    const result = extended ? await _ctx.targetCollect(target, {blockedHosts, signal: request.signal, page_check: payload.page_check === true, follow_redirects: payload.follow_redirects === true}) : ipCollector
       ? await collectIpRelayObservation(target, ipCollector, { blockedHosts, signal: request.signal })
       : await collectObservation(target, { blockedHosts, signal: request.signal });
+    if (result.collector_error) return jsonResponse({error:{code:'target_collector_unavailable',message:'The target probe collector is unavailable. No new observation was invented.'},retry_after_ms:SAMPLE_INTERVAL_MS},result.collector_error===429?429:503);
     result.rate_limit_scope = "Per isolate and canonical target; not durable or globally coordinated";
     return jsonResponse(result);
   } catch (error) {

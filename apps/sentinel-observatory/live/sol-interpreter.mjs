@@ -3,9 +3,11 @@
  * Sites' protected owner dispatch supplies authorization before this handler.
  */
 import {resolveSensorEvidence} from './hosted-sensor.mjs';
+import {resolveTargetEvidence} from './target-store.mjs';
+import {prepareTargetInterpretation} from './target-interpretation.mjs';
 
 export const SOL_MODEL_ID='gpt-6.1-sol';
-export const SOL_PROMPT_VERSION='observatory-sol-catalogue-v1';
+export const SOL_PROMPT_VERSION='observatory-sol-target-streams-v2';
 export const SOL_LIMITS=Object.freeze({daily_requests:20,daily_reserved_usd:0.50,reserved_usd_per_call:0.05,
   cooldown_ms:60000,max_output_tokens:1024,max_request_bytes:6000,provider_timeout_ms:30000,receipt_retention_days:8});
 const solEndpoint='https://api.openai.com/v1/responses';
@@ -37,6 +39,7 @@ export function hostedInterpretationCapability(env={}) {
 }
 
 export function solPrepareEvidence(raw={}) {
+  if (raw.probe_version === 'target-probes-v1') return prepareTargetInterpretation(raw);
   if(raw.sensor!=='observatory_edge'||!/^edge_[a-f0-9]{32}$/.test(raw.event_id??'')||!solClock(raw.timestamp))throw new Error('invalid_authoritative_record');
   const kind=solEnum(raw.event_type,['request','collector','policy_event']);
   if(!kind)throw new Error('invalid_authoritative_record');
@@ -82,7 +85,7 @@ export function solPrepareEvidence(raw={}) {
 export function solDeterministic(prepared,reason,extra={}) {
   return {kind:'deterministic',summary:prepared.summary,facts:prepared.facts,hypotheses:[],unknowns:prepared.unknowns,
     provenance:{engine:'authoritative-measurement-template',model_requested:SOL_MODEL_ID,model_ran:false,output_accepted:false,
-      input_evidence_ids:[prepared.evidence_id],linked_evidence_id:prepared.linked_evidence_id,reason,...extra}};
+      input_evidence_ids:prepared.input_evidence_ids??[prepared.evidence_id],linked_evidence_id:prepared.linked_evidence_id,reason,...extra}};
 }
 
 function solAPIRequest(prepared) {
@@ -191,7 +194,7 @@ export async function handleInterpretation(request,env={},ctx={},options={}) {
   if(request.headers.get('Content-Type')?.split(';',1)[0].trim().toLowerCase()!=='application/json')return solResponse({error:{code:'json_required',message:'A JSON evidence-ID request is required.'}},415);
   let data;try{data=JSON.parse(await solReadStream(request,512,1000));if(!data||typeof data!=='object'||Array.isArray(data)||Object.keys(data).length!==1||!/^((edge|evt)_[a-f0-9]{32})$/.test(data.evidence_id??''))throw new Error('invalid_request');}
   catch{return solResponse({error:{code:'invalid_request',message:'Supply one retained native edge or collector evidence ID; client observations and prompts are not accepted.'}},400);}
-  let resolved;try{resolved=await resolveSensorEvidence(env,data.evidence_id);}catch{resolved={found:false,reason:'unavailable'};}
+  let resolved;try{resolved=await resolveTargetEvidence(env,data.evidence_id);if(!resolved.found)resolved=await resolveSensorEvidence(env,data.evidence_id);}catch{resolved={found:false,reason:'unavailable'};}
   if(!resolved.found)return solResponse({error:{code:resolved.reason==='unavailable'?'source_unavailable':'evidence_not_retained',message:'The requested authoritative evidence is unavailable or outside retention. No model call was made.'}},resolved.reason==='unavailable'?503:404);
   let prepared;try{prepared=solPrepareEvidence(resolved.event);}catch{return solResponse({error:{code:'invalid_source_record',message:'The authoritative record could not be safely interpreted. No model call was made.'}},422);}
   const capabilities=hostedInterpretationCapability(env),db=solDatabase(env);
@@ -208,7 +211,8 @@ export async function handleInterpretation(request,env={},ctx={},options={}) {
     if(!reserved){const raced=await solCached(db,id);if(raced)return solCacheResult(raced,prepared,data.evidence_id,capabilities,promptHash);return solResponse({error:{code:'interpretation_budget_or_cooldown',message:'The interpretation cooldown or reserved daily budget was reached. No provider call was made.'},retry_after_ms:SOL_LIMITS.cooldown_ms,model:capabilities},429);}
   }catch{return solResponse({evidence_id:data.evidence_id,source_event_id:prepared.evidence_id,analysis:solDeterministic(prepared,'Interpretation storage or reservation is unavailable; no provider call was made.'),cached:false,model:{...capabilities,connected:false,state:'storage_unavailable'}});}
   const fetchImpl=options.fetchImpl??globalThis.fetch.bind(globalThis),timeoutMs=Math.min(SOL_LIMITS.provider_timeout_ms,Math.max(1,options.timeoutMs??SOL_LIMITS.provider_timeout_ms));
-  const controller=new AbortController(),timer=setTimeout(()=>controller.abort(),timeoutMs),started=performance.now();
+  let providerTimedOut=false;
+  const controller=new AbortController(),timer=setTimeout(()=>{providerTimedOut=true;controller.abort();},timeoutMs),started=performance.now();
   const cancel=()=>controller.abort();request.signal?.addEventListener('abort',cancel,{once:true});
   let analysis,status='failed',errorCode='provider_unverified',verified=false,usage=null,providerIdentity=null;
   try {
@@ -227,7 +231,7 @@ export async function handleInterpretation(request,env={},ctx={},options={}) {
       unknowns:['GPT-6.1 Sol ranked predefined conditional possibilities; cause and ranking usefulness remain unproven.',...prepared.unknowns],
       provenance:{engine:'OpenAI Responses API',model:SOL_MODEL_ID,provider_model:provider.provider_model,provider_response_id:provider.response_id,
         model_ran:true,execution_verified:true,inference_attempted:true,output_accepted:true,prompt_version:SOL_PROMPT_VERSION,prompt_sha256:promptHash,output_sha256:outputHash,
-        input_evidence_ids:[prepared.evidence_id],linked_evidence_id:prepared.linked_evidence_id,ranked_codes:provider.ranking,usage,
+        input_evidence_ids:prepared.input_evidence_ids??[prepared.evidence_id],linked_evidence_id:prepared.linked_evidence_id,ranked_codes:provider.ranking,usage,
         inference_ms:Math.round(performance.now()-started),reasoning_effort:'low',service_tier:provider.service_tier,local_only:false,
         provider_store:false,reserved_usd:0.05,estimated_standard_usd:(usage.input_tokens*2+usage.output_tokens*10)/1000000,
         estimate_scope:'Token estimate at the documented standard uncached input/output rates, not an invoice; discounts, cache writes or regional charges may differ.',
@@ -237,7 +241,7 @@ export async function handleInterpretation(request,env={},ctx={},options={}) {
     status='completed';errorCode=null;
   }catch(error){
     controller.abort();
-    if(!['provider_http_error','request_cancelled_before_dispatch'].includes(errorCode))errorCode=request.signal?.aborted?'request_cancelled_after_dispatch':controller.signal.aborted&&performance.now()-started>=timeoutMs?'provider_timeout':'provider_output_rejected';
+    if(!['provider_http_error','request_cancelled_before_dispatch'].includes(errorCode))errorCode=request.signal?.aborted?'request_cancelled_after_dispatch':providerTimedOut||error?.message==='bounded_deadline'?'provider_timeout':'provider_output_rejected';
     analysis=solDeterministic(prepared,'The provider attempt failed or its output could not be verified; showing authoritative measurement facts. The attempt remains reserved and will not be automatically repeated.',
       {inference_attempted:errorCode!=='request_cancelled_before_dispatch',model_ran:errorCode==='request_cancelled_before_dispatch'?false:verified?true:null,execution_verified:verified,output_accepted:false,rejection_code:errorCode,prompt_version:SOL_PROMPT_VERSION,prompt_sha256:promptHash,reserved_usd:0.05});
     if(providerIdentity)Object.assign(analysis.provenance,providerIdentity);
