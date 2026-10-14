@@ -1,0 +1,13 @@
+{
+  "runtime_source": "f44cf3de72e19fdd0b1cabfa4ae2dafa75dc71ff",
+  "collector_source": "f0bf5d067c8ecd44bc4576ba21a60c3e5a314e96",
+  "collector_deployment": "dpl_DtAG2U9HnHRRVApoUxz2WaM7nCBb",
+  "collector_url": "https://eidos-sentinel-23vpq50ej-1brentbm-1876s-projects.vercel.app",
+  "sites_source": "f49c165538c04bc5c155d4a49c28e476c0b88470",
+  "sites_version": 15,
+  "sites_deployment": "appgdep_6acfc77a3b1881918b1b9b6f6dd31b2d",
+  "environment_revision": 6,
+  "worker_sha256": "c2b4d750882039364f48bf31a5015c45c397e69723c7d51ff8bc9f03b848ff22",
+  "rollback_sites_version": 12,
+  "rollback_sites_version_id": "appgprj_6ace6f7f4a5481918adb34a5cb366de3~appgver_99a1705f061c819181c2cd6534b30e6c"
+}

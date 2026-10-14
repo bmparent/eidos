@@ -1,0 +1,17 @@
+{
+  "actual_runtime_check": true,
+  "results": [
+    {
+      "state": "unavailable",
+      "reason": "system_command_not_installed",
+      "kind": "ping",
+      "observed_at": "2026-10-14T18:21:30.036Z"
+    },
+    {
+      "state": "unavailable",
+      "reason": "system_command_not_installed",
+      "kind": "trace",
+      "observed_at": "2026-10-14T18:21:30.295Z"
+    }
+  ]
+}

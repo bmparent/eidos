@@ -1,0 +1,21 @@
+✔ normalization is literal-only, public-only and bound to the scheme's standard port (17.921179ms)
+✔ SSRF excludes reserved IPv4, mapped IPv6, metadata, tunnels and special-use ranges (3.035168ms)
+✔ auth fails closed before parsing input or invoking the collector (35.172312ms)
+✔ bounded payload validation never gives network transport to unauthorized or invalid input (6.472525ms)
+✔ one pinned HEAD sends no client credentials, follows no redirect and retains only enum metadata (3.114273ms)
+✔ transport and TLS failures are redacted; slow transport is destroyed at the total deadline (23.507518ms)
+✔ actual Node TLS rejects a self-signed server without an insecure retry (653.564406ms)
+✔ rate limit applies to the IP across scheme and path variations, then releases at 15 seconds (11.999633ms)
+✔ only four observations can be active and slots are released after completion (8.972612ms)
+✔ rate key capacity fails closed rather than evicting unexpired IP cooldowns (449.755489ms)
+✔ observed socket flow exposes actual public peer, TLS and counters without source addresses (1.706114ms)
+✔ unknown socket telemetry stays null and private proxy peers are never returned (1.534136ms)
+✔ HTTP socket does not claim TLS verification and records only its measured counters (0.844736ms)
+ℹ tests 13
+ℹ suites 0
+ℹ pass 13
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 2219.55827
