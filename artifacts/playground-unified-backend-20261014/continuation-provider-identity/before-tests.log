@@ -1,0 +1,44 @@
+✖ 08: pessimistic reconciliation retains provider identity; matching late evidence preserves the waiver (65.9428ms)
+✖ concurrent conflicting reconciliation cannot replace the first recorded provider identity (282.4757ms)
+ℹ Windows libSQL retains the synthetic temp database handle until process exit: C:\Users\bmpar\AppData\Local\Temp\eidos-ai-identity-fixture-5656c7a9-df11-4571-8029-45558c7e03c4.db
+ℹ tests 2
+ℹ suites 0
+ℹ pass 0
+ℹ fail 2
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 1595.3657
+
+✖ failing tests:
+
+test at apps\sentinel-lab\tests\works-playground-ai.test.ts:1:11694
+✖ 08: pessimistic reconciliation retains provider identity; matching late evidence preserves the waiver (65.9428ms)
+  AssertionError [ERR_ASSERTION]: Missing expected rejection.
+      at async TestContext.<anonymous> (C:\Users\bmpar\codex-worktrees\playground-unified-backend-20261014\apps\sentinel-lab\tests\works-playground-ai.test.ts:172:7)
+      at async Test.run (node:internal/test_runner/test:1125:7)
+      at async startSubtestAfterBootstrap (node:internal/test_runner/harness:358:3) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: undefined,
+    expected: /Provider evidence/,
+    operator: 'rejects',
+    diff: 'simple'
+  }
+
+test at apps\sentinel-lab\tests\works-playground-ai.test.ts:1:21661
+✖ concurrent conflicting reconciliation cannot replace the first recorded provider identity (282.4757ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+  
+  2 !== 1
+  
+      at TestContext.<anonymous> (C:\Users\bmpar\codex-worktrees\playground-unified-backend-20261014\apps\sentinel-lab\tests\works-playground-ai.test.ts:325:12)
+      at async Test.run (node:internal/test_runner/test:1125:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:787:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: 2,
+    expected: 1,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }

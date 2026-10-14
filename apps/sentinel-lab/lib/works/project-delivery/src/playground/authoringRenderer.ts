@@ -5,7 +5,7 @@ const esc = (s: string) => s.replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt
 export function authoringMarkup(s: Section): string {
     let headings = 0;
     function node(n: BlockNode): string {
-        const attrs = `id="${n.id}" class="pg-node pg-node-${n.type}" data-node="${n.id}" data-node-type="${n.type}" data-node-name="${esc(n.name)}" data-node-lock="${n.lockAspect}" data-node-mobile="${esc(JSON.stringify(n.mobile || {}))}" data-node-media="${esc(JSON.stringify(n.media || defaultMedia()))}"`;
+        const attrs = `id="${n.id}" class="pg-node pg-node-${n.type}" data-node="${n.id}" data-node-type="${n.type}" data-node-name="${esc(n.name)}" data-node-lock="${n.lockAspect}" data-node-mobile="${esc(JSON.stringify(n.mobile || {}))}" data-node-media="${esc(JSON.stringify(n.media || defaultMedia()))}"${n.motion ? ` data-node-motion="${n.motion.preset}"` : ''}`;
         if (isContainer(n))
             return `<div ${attrs} data-node-container="true" data-node-empty="${!n.children!.length}">${n.children!.map(node).join('')}</div>`;
         if (n.type === 'image')
@@ -26,9 +26,13 @@ export function authoringStyles(sections: Section[]): string {
         return '';
     const css = `.pg-authoring-section{padding:var(--space) clamp(18px,3vw,42px);min-width:0}.pg-node{position:relative;min-width:0;max-width:100%;margin:0;box-sizing:border-box;overflow-wrap:anywhere}.pg-node p,.pg-node h1,.pg-node h2{margin:0;max-width:none;white-space:pre-wrap}.pg-node-stack,.pg-node-row,.pg-node-columns{display:flex}.pg-node-stack{flex-direction:column}.pg-node[data-node-empty=true]{min-height:64px}.pg-node-row,.pg-node-columns{flex-direction:row;align-items:center}.pg-node-row>.pg-node,.pg-node-columns>.pg-node{flex:1 1 0}.pg-block-frame{height:100%;width:100%;position:relative;overflow:hidden;border-radius:var(--radius)}.pg-block-frame img{height:100%;width:100%;display:block}.pg-block-frame i{position:absolute;inset:0;pointer-events:none}.pg-block-empty{background:repeating-linear-gradient(135deg,#8882 0 12px,#8883 12px 24px);min-height:64px}.pg-node-image{flex-shrink:0}@media(max-width:640px){.pg-node-row,.pg-node-columns{flex-direction:column;align-items:stretch}.pg-node-row>.pg-node,.pg-node-columns>.pg-node{flex:0 0 auto!important;width:100%}.pg-authoring-section{padding:32px 18px}.pg-node h1{font-size:clamp(30px,10vw,48px)}}`;
     const typography = `.pg-authoring-section h1{font:400 clamp(40px,calc(6.8vw * var(--scale)),90px)/1.04 var(--display);letter-spacing:-.055em}.pg-authoring-section h2{font:400 clamp(30px,calc(4.2vw * var(--scale)),58px)/1.1 var(--display);letter-spacing:-.035em}.pg-authoring-section p{font-size:clamp(16px,1.6vw,20px);line-height:1.65}@media(max-width:640px){.pg-authoring-section h1{font-size:clamp(34px,calc(10vw * var(--scale)),54px)}.pg-authoring-section h2{font-size:clamp(28px,8vw,42px)}}`;
-    return css + typography + nodes.map(n => {
+    // No motion bytes for existing projects. Entrance transforms never change flow,
+    // are bounded to 16px / 2% scale, and are disabled during editing or reduced motion.
+    const motion = nodes.some(n => n.motion) ? '@keyframes pg-block-fade{from{opacity:0}to{opacity:1}}@keyframes pg-block-rise{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:none}}@keyframes pg-block-settle{from{opacity:0;transform:scale(.98)}to{opacity:1;transform:none}}@media(prefers-reduced-motion:reduce){.pg-node[data-node-motion]{animation:none!important}}' : '';
+    return css + typography + motion + nodes.map(n => {
         const id = '#' + n.id, m = n.type==='image' ? n.media || defaultMedia() : undefined, align = n.align === 'left' ? 'flex-start' : n.align === 'right' ? 'flex-end' : 'center';
         let rules = `${id}{width:${n.width}%;text-align:${n.align};gap:${n.gap}px;align-self:${align};${n.type === 'image' ? `height:${n.height}px;` : ''}}`;
+        if (n.motion) rules += `body[data-editing="false"][data-reduced="false"] ${id}{animation:pg-block-${n.motion.preset} ${n.motion.duration}ms cubic-bezier(.2,.7,.2,1) ${n.motion.delay}ms 1 both}`;
         if (n.type === 'columns' && n.children?.length === 2)
             // Editor resize/insert handles are siblings too. Stable content IDs
             // keep their presence from changing which column receives its width.

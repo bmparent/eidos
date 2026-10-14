@@ -371,6 +371,54 @@ test('checkout attempt retry preserves one ledger order and same server-owned TE
   } finally {f.close();}
 });
 
+test('pending original retry after catalog change retains its version, price, signed payment and historical archive', async () => {
+  const f = await fixture(), receipt = 'd'.repeat(64);
+  try {
+    const payload = { productId: 'switchboard-developer-v1', editionId: 'developer', acceptTerms: true, attempt: receipt };
+    f.setFailCheckout(true); assert.equal((await f.call(checkout, '/api/shop/checkout', payload)).status, 502);
+    const pending = await f.database.prepare('SELECT id FROM eidos_orders WHERE receipt_hash=?').bind(await hash(receipt)).first<{ id: string }>(); assert.ok(pending);
+    // Model an immutable pending snapshot made under the previous server catalog.
+    const originalBytes = new Uint8Array([80, 75, 3, 4, 6, 5, 4, 3]), originalHash = createHash('sha256').update(originalBytes).digest('hex');
+    const originalKey = 'templates/switchboard/1.0.2/developer.zip', originalName = 'eidos-switchboard-developer-1.0.2.zip';
+    await f.database.prepare('UPDATE eidos_template_orders SET version=?,price_cents=?,archive_key=?,archive_sha256=?,download_name=? WHERE order_id=?').bind('1.0.2', 8900, originalKey, originalHash, originalName, pending.id).run();
+    // Retrying this original needs its historical archive, not availability of
+    // the latest package currently advertised by the catalog.
+    f.env.EIDOS_TEMPLATE_ARCHIVES = { async get(key) { return key === originalKey ? { bytes: originalBytes, sha256: originalHash } : null; } };
+    f.setFailCheckout(false); const order = await f.begin(receipt); await f.begin(receipt);
+    assert.equal(f.sessions.length, 1); const sent = f.sessions[0];
+    assert.equal(sent.get('metadata[eidos_version]'), '1.0.2'); assert.equal(sent.get('line_items[0][price_data][unit_amount]'), '8900');
+    assert.match(sent.get('line_items[0][price_data][product_data][description]')!, /^Version 1\.0\.2\./);
+    assert.equal(templateProducts.find(product => product.id === payload.productId)!.version, '1.0.3');
+    assert.equal(templateProducts.find(product => product.id === payload.productId)!.priceCents, 9900);
+    const metadata = Object.fromEntries([...sent.entries()].filter(([key]) => key.startsWith('metadata[')).map(([key, value]) => [key.slice(9, -1), value]));
+    assert.equal((await f.event(order, 'evt_pending_original_retry', { metadata })).status, 200);
+    assert.equal((await f.event(order, 'evt_pending_original_retry', { metadata })).status, 200);
+    const paid = await (await f.call(status, '/api/shop/status', { receipt })).json(); assert.equal(paid.status, 'paid'); assert.equal(paid.version, '1.0.2');
+    const archive = await f.call(download, '/api/shop/download', { receipt, downloadToken: paid.downloadToken }); assert.equal(archive.status, 200);
+    assert.equal(archive.headers.get('x-eidos-archive-sha256'), originalHash); assert.deepEqual(new Uint8Array(await archive.arrayBuffer()), originalBytes);
+    assert.ok(archive.headers.get('content-disposition')!.includes(originalName));
+    assert.equal((await f.database.prepare('SELECT COUNT(*) n FROM eidos_orders').first<{ n: number }>())?.n, 1);
+  } finally { f.close(); }
+});
+
+test('pending original retry refuses unavailable or changed retained archive before provider dispatch', async () => {
+  const f = await fixture(), receipt = 'e'.repeat(64);
+  try {
+    const payload = { productId: 'switchboard-developer-v1', editionId: 'developer', acceptTerms: true, attempt: receipt };
+    f.setFailCheckout(true); assert.equal((await f.call(checkout, '/api/shop/checkout', payload)).status, 502);
+    const pending = await f.database.prepare('SELECT id FROM eidos_orders WHERE receipt_hash=?').bind(await hash(receipt)).first<{ id: string }>(); assert.ok(pending);
+    const oldKey = 'templates/switchboard/1.0.2/developer.zip';
+    const originalBytes = new Uint8Array([80, 75, 3, 4, 7]), originalHash = createHash('sha256').update(originalBytes).digest('hex');
+    await f.database.prepare('UPDATE eidos_template_orders SET version=?,archive_key=?,archive_sha256=? WHERE order_id=?').bind('1.0.2', oldKey, originalHash, pending.id).run();
+    const current = f.env.EIDOS_TEMPLATE_ARCHIVES!; f.setFailCheckout(false);
+    for (const retained of [null, { bytes: originalBytes, sha256: '2'.repeat(64) }, { bytes: new Uint8Array([1, 2, 3]), sha256: originalHash }]) {
+      f.env.EIDOS_TEMPLATE_ARCHIVES = { async get(key) { return key === oldKey ? retained : current.get(key); } };
+      assert.equal((await f.call(checkout, '/api/shop/checkout', payload)).status, 503); assert.equal(f.sessions.length, 0);
+    }
+    assert.equal((await f.database.prepare('SELECT session_id FROM eidos_orders WHERE id=?').bind(pending.id).first<{ session_id: string | null }>())?.session_id, null);
+  } finally { f.close(); }
+});
+
 test('signed paid fulfillment, delayed state, duplicate webhook, snapshot integrity and expiring download links', async () => {
   const f=await fixture(), receipt='b'.repeat(64);
   try {

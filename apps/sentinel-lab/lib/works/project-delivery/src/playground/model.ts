@@ -276,7 +276,7 @@ export function validateProject(input: unknown): Project {
       id,
       ...(p.schemaVersion!==1 ? {type,...validateStructure(s)} : {}),
       ...(s.composition === undefined ? {} : {composition:validateComposition(s.composition)}),
-      ...(s.authoring === undefined ? {} : {authoring:validateAuthoring(s.authoring)}),
+      ...(s.authoring === undefined ? {} : {authoring:validateAuthoring(s.authoring,p.schemaVersion===5)}),
       visible: bool(s.visible),
       title: string(s.title, 240),
       description: string(s.description),

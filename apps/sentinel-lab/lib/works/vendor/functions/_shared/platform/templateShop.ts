@@ -5,6 +5,7 @@ import { templateProduct, templateProducts, TEMPLATE_STRIPE_API_VERSION, TEMPLAT
 import type { Order } from './shop';
 import { approvedOrderArchive, assertDeliveryAttempt, assertDeliveryOwner, deliveryOrderBinding, deliveryOrderMetadata, deliveryOrderRevoked, insertDeliveryOrder, prepareDeliveryOrder, verifiedDeliveryParent } from './projectDeliveryOrders';
 import { DELIVERY_LIMITS, requireProjectDelivery } from './projectDelivery';
+import { hashBytes } from './projectDeliveryRenderer';
 
 export interface TemplateOrder extends Order {
   order_id: string; product_id: string; edition_id: string; version: string; price_cents: number;
@@ -109,18 +110,23 @@ export async function templateCheckout(request: Request, env: PlatformEnv, input
   if (input.acceptTerms !== true) throw new HttpError(400, 'Please accept the product terms before checkout.');
   if (!verifiedEdition(env, product)) throw new HttpError(503, 'This edition has not passed installation acceptance and cannot be purchased.');
   if (clean(input.website)) throw new HttpError(400, 'Please try again.');
-  const item = await archive(env, product.archiveKey);
   const database = db(env), visitor = await fingerprint(request, env);
   if (!(await reserve(database, 'template-checkout:' + visitor, 1, 20))) throw new HttpError(429, 'Please use an existing checkout or try again tomorrow.');
   await challenge(request, env, input.challenge, 'checkout');
   const member = await memberFromRequest(request, env, false);
   if (input.deliveryId !== undefined && mode !== 'test') throw new HttpError(503, 'Approved page attachments are available only in TEST.');
-  const prepared = input.deliveryId === undefined ? null : await prepareDeliveryOrder(env, member?.id, input.deliveryId, product, item);
-  const verifiedMerchantId = mode === 'live' || env.EIDOS_PLAYGROUND_AI_MODE === 'test' || prepared ? await verifyConfiguredMerchant(env) : null;
   const receipt = input.attempt === undefined ? randomToken() : clean(input.attempt, 80);
   if (!/^[a-f0-9]{64}$/.test(receipt)) throw new HttpError(400, 'Start a valid checkout attempt.');
   const receiptHash = await hash(receipt);
   let order = await database.prepare(checkoutSelect + ' WHERE o.receipt_hash=?').bind(receiptHash).first<TemplateOrder>();
+  if (order && (order.product_id !== product.id || order.edition_id !== product.editionId || order.member_id !== (member?.id || null)))
+    throw new HttpError(409, 'This attempt belongs to a different purchase.');
+  // A retry resumes the original immutable purchase, even when the current
+  // catalog points at a newer archive. Attached-page validation stays separate.
+  const archiveKey = order && input.deliveryId === undefined ? order.archive_key : product.archiveKey;
+  const item = await archive(env, archiveKey);
+  const prepared = input.deliveryId === undefined ? null : await prepareDeliveryOrder(env, member?.id, input.deliveryId, product, item);
+  const verifiedMerchantId = mode === 'live' || env.EIDOS_PLAYGROUND_AI_MODE === 'test' || prepared ? await verifyConfiguredMerchant(env) : null;
   if (!order) {
     const id = crypto.randomUUID(), created = new Date().toISOString(), expires = now() + 1800;
     await database.batch([
@@ -139,6 +145,9 @@ export async function templateCheckout(request: Request, env: PlatformEnv, input
   assertDeliveryAttempt(deliveryBinding, input.deliveryId);
   if (deliveryBinding && deliveryBinding.merchant_id !== verifiedMerchantId) throw new HttpError(409, 'This approved page is bound to a different merchant.');
   if (order.status !== 'pending' || order.payment_failed || order.checkout_expires <= now()) throw new HttpError(409, 'This checkout is complete, failed or expired. Check its status before starting again.');
+  const retainedArchive = order.archive_key === archiveKey ? item : await archive(env, order.archive_key);
+  if (retainedArchive.sha256 !== order.archive_sha256 || await hashBytes(retainedArchive.bytes) !== order.archive_sha256)
+    throw new HttpError(503, 'The original purchased archive does not match its receipt. Contact support; do not repurchase.');
   if (order.session_id) assertTemplatePaymentMode(env, mode === 'live', order.session_id);
   if (order.session_url) return json({ url: order.session_url });
   if (mode === 'test' && env.EIDOS_PLAYGROUND_AI_MODE === 'test' && verifiedMerchantId) {
@@ -152,8 +161,8 @@ export async function templateCheckout(request: Request, env: PlatformEnv, input
   const values = new URLSearchParams({
     mode: 'payment', client_reference_id: order.id,
     ...(mode === 'live' ? { integration_identifier: 'eidos-templates-' + [...order.id.replaceAll('-', '').slice(0, 8)].map(c => String.fromCharCode(97 + parseInt(c, 16))).join('') } : {}),
-    'metadata[eidos_product]': product.id, 'metadata[eidos_edition]': product.editionId,
-    'metadata[eidos_version]': product.version, 'metadata[eidos_order_id]': order.id,
+    'metadata[eidos_product]': order.product_id, 'metadata[eidos_edition]': order.edition_id,
+    'metadata[eidos_version]': order.version, 'metadata[eidos_order_id]': order.id,
     ...(deliveryBinding ? { 'metadata[eidos_delivery_id]': deliveryBinding.delivery_id, 'metadata[eidos_snapshot_hash]': deliveryBinding.snapshot_hash, 'metadata[eidos_delivery_archive_sha256]': deliveryBinding.archive_sha256 } : {}),
     'payment_intent_data[metadata][eidos_order_id]': order.id,
     success_url: siteOrigin(env) + (deliveryBinding ? '/playground/?checkout=returned#receipt=' : '/shop/start#receipt=') + receipt,
@@ -161,7 +170,7 @@ export async function templateCheckout(request: Request, env: PlatformEnv, input
     'line_items[0][quantity]': '1', 'line_items[0][price_data][currency]': 'usd',
     'line_items[0][price_data][unit_amount]': String(order.price_cents),
     'line_items[0][price_data][product_data][name]': 'Eidos ' + product.name + (mode === 'test' ? ' (TEST)' : ''),
-    'line_items[0][price_data][product_data][description]': 'Version ' + product.version + '. Digital files; third-party hosting, platform plans, booking, forms and commerce services are separate.',
+    'line_items[0][price_data][product_data][description]': 'Version ' + order.version + '. Digital files; third-party hosting, platform plans, booking, forms and commerce services are separate.',
     expires_at: String(order.checkout_expires),
     ...(member?.email ? { customer_email: member.email } : {}),
   });

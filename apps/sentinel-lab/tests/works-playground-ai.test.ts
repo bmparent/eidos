@@ -11,7 +11,7 @@ import { hash, type PlatformEnv } from '../lib/works/vendor/functions/_shared/pl
 import { onRequestGet, onRequestPost } from '../lib/works/vendor/functions/api/playground/ai';
 import { USD, aiBalance, aiPolicyStatus, cancelAiAction, claimAiDispatch, configureAiPolicy, ensureAiLedger, grantPaidAiBalance, markAiUnknown,
   meterAiUsage, monthlyPeriod, ownedAiAction, providerMaximum, quoteAiAction, reconcileAiDeadlines, reconcileAiReversals,
-  reserveAiAction, retailCharge, setAiLimit, settleAiAction, validateRateCard, recordVerifiedAiPayment, type AiBrief, type AiRateCard } from '../lib/works/vendor/functions/_shared/platform/playgroundAi';
+  reserveAiAction, retailCharge, setAiLimit, settleAiAction, validateRateCard, recordVerifiedAiPayment, recordAiProviderReceipt, type AiBrief, type AiRateCard, type AiUsage } from '../lib/works/vendor/functions/_shared/platform/playgroundAi';
 
 // CONTROLLED FIXTURES ONLY: these prices are deliberately synthetic, not accepted provider/customer prices.
 const at = new Date('2026-10-14T12:00:00.000Z');
@@ -22,6 +22,31 @@ const card: AiRateCard = { version: 'fixture-v1', model: 'gpt-6.1-sol', evidence
 const brief: AiBrief = { documentId: 'document-one', revision: 'revision-1', scope: 'element', targetId: 'headline-1', instruction: 'Clarify this offer', context: 'A local service business. Current headline: Reliable cleaning.' };
 const usage = { inputTokens: 1000, outputTokens: 1000, calls: 1, paidTools: 0 };
 const fullUsage = { inputTokens: card.maxInputTokens, outputTokens: card.maxOutputTokens, calls: 1, paidTools: 0 };
+test('provider categories: cache-write reservation, exact category prices and reasoning included once preserve historical cards', () => {
+  const priced: AiRateCard = { ...card, inputMicrosPerMillion: 2 * USD, outputMicrosPerMillion: 10 * USD,
+    cachedInputMicrosPerMillion: 100000, cacheWriteMicrosPerMillion: 2500000 };
+  assert.equal(providerMaximum(priced), 40000); // 8000 * 2.50 + 2000 * 10 per million.
+  assert.equal(meterAiUsage({ inputTokens: 1000, cachedInputTokens: 200, cacheWriteTokens: 300, outputTokens: 100, reasoningTokens: 80, calls: 1, paidTools: 0 }, priced), 2770);
+  assert.equal(meterAiUsage(usage, card), 150000);
+  assert.throws(() => meterAiUsage({ ...usage, cachedInputTokens: 1 }, card), /categories/);
+  for (const change of [{ cachedInputTokens: 1001 }, { cacheWriteTokens: 1001 }, { cachedInputTokens: 501, cacheWriteTokens: 500 },
+    { cachedInputTokens: -1 }, { cacheWriteTokens: NaN }, { reasoningTokens: 1001 }]) assert.throws(() => meterAiUsage({ ...usage, ...change }, priced));
+  assert.throws(() => validateRateCard({ ...card, cacheWriteMicrosPerMillion: 2500000 }), /categories/);
+});
+test('provider receipt identity persists before complete parsing and cannot be replaced during reconciliation', async () => {
+  const f = await fixture(); try {
+    const a = await f.quote(); await reserveAiAction(f.env,'alice','test',a.id,at);
+    const token = await claimAiDispatch(f.env,'alice','test',a.id,at); assert.ok(token);
+    await recordAiProviderReceipt(f.env,'alice','test',a.id,token,{providerRequestId:'req_header_only'});
+    await assert.rejects(recordAiProviderReceipt(f.env,'alice','test',a.id,token,{providerRequestId:'req_replacement'}),/does not match/);
+    await recordAiProviderReceipt(f.env,'alice','test',a.id,token,{providerId:'resp_parsed_later'});
+    const held=await ownedAiAction(f.env,'alice','test',a.id);assert.equal(held.provider_request_id,'req_header_only');assert.equal(held.provider_id,'resp_parsed_later');
+    assert.equal((await aiPolicyStatus(f.env,'test')).committed,a.provider_maximum);
+    await assert.rejects(settleAiAction(f.env,'alice','test',a.id,{dispatchToken:token,providerId:'resp_other',providerRequestId:'req_header_only',usage,usable:true,result:{}},at),/does not match/);
+    const settled=await settleAiAction(f.env,'alice','test',a.id,{dispatchToken:token,providerId:'resp_parsed_later',providerRequestId:'req_header_only',usage,usable:false},at);
+    assert.equal(settled.customer_status,'waived');assert.equal(settled.provider_cost,150000);
+  } finally {f.close();}
+});
 async function fixture(limit = USD, balance = USD, budget = 10 * USD, databaseUrl = ':memory:') {
   const client = createClient({ url: databaseUrl }), database = adaptDatabase(client);
   for (const name of ['0001_eidos_platform.sql', '0002_members.sql', '0004_paid_templates.sql'])
@@ -133,6 +158,18 @@ test('06: actual usage releases difference; above-bound usage never overcharges 
     assert.equal((await aiBalance(f.env, 'alice', 'test', at)).pending, 0);
   } finally { f.close(); }
 });
+test('06: extreme retail markup cannot prevent above-bound settlement and the route pause', async () => {
+  const f = await fixture(1_000_000_000_000, 1_000_000_000_000);
+  try {
+    await configureAiPolicy(f.env, 'test', { ...card, retailNumerator: 1_000_000 }, 10 * USD, true);
+    const a = await f.quote();
+    const settled = await f.execute(a.id, 'alice', { ...fullUsage, outputTokens: 10000 });
+    assert.equal(settled.charged_purchased, a.maximum); assert.equal(settled.provider_cost, 1_400_000);
+    assert.equal(settled.provider_status, 'settled'); assert.equal((await aiPolicyStatus(f.env, 'test')).enabled, false);
+    assert.equal((await aiBalance(f.env, 'alice', 'test', at)).pending, 0);
+  } finally { f.close(); }
+});
+
 test('07: unusable technical output restores allowance while real provider expense remains counted', async () => {
   const f = await fixture(USD, USD, 700000);
   try {
@@ -141,6 +178,70 @@ test('07: unusable technical output restores allowance while real provider expen
     assert.equal((await aiBalance(f.env, 'alice', 'test', at)).availablePurchased, USD);
     await assert.rejects(f.execute((await f.quote()).id), /allowance, monthly limit/);
   } finally { f.close(); }
+});
+test('06/07: invalid result storage waives the customer, settles known provider cost and still pauses overruns', async () => {
+  const circular: { self?: unknown } = {}; circular.self = circular;
+  for (const result of ['x'.repeat(100001), circular, 1n, () => undefined]) {
+    for (const aboveBound of [false, true]) {
+      const f = await fixture(3 * USD, 3 * USD, 10 * USD);
+      try {
+        const a = await f.quote(); await reserveAiAction(f.env, 'alice', 'test', a.id, at);
+        const token = await claimAiDispatch(f.env, 'alice', 'test', a.id, at); assert.ok(token);
+        const reported = aboveBound ? { ...fullUsage, outputTokens: 5000 } : usage;
+        const providerCost = meterAiUsage(reported, card);
+        const evidence = { dispatchToken: token, providerId: 'invalid-result-response', providerRequestId: 'invalid-result-request', usage: reported, usable: true, result };
+        const settled = await settleAiAction(f.env, 'alice', 'test', a.id, evidence, at);
+        assert.equal(settled.state, 'technical_waiver'); assert.equal(settled.customer_status, 'waived');
+        assert.equal(settled.charged_included + settled.charged_purchased, 0); assert.equal(settled.result_json, null);
+        assert.equal(settled.provider_status, 'settled'); assert.equal(settled.provider_cost, providerCost);
+        const policy = await aiPolicyStatus(f.env, 'test');
+        assert.equal(policy.committed, providerCost); assert.equal(policy.dispatchBlocked, aboveBound);
+        assert.equal((await aiBalance(f.env, 'alice', 'test', at)).availablePurchased, 3 * USD);
+        await settleAiAction(f.env, 'alice', 'test', a.id, { ...evidence, result: {} }, at);
+        assert.equal((await aiBalance(f.env, 'alice', 'test', at)).settled, 0);
+      } finally { f.close(); }
+    }
+  }
+});
+
+test('06/08: unmeterable usage pauses dispatch, retains unknown liability and never revives a waived charge', async () => {
+  const cases: Array<{ name: string; usage: unknown }> = [
+    { name: 'large safe integer', usage: { ...usage, inputTokens: Number.MAX_SAFE_INTEGER } },
+    { name: 'fractional metering', usage: { ...usage, outputTokens: 0.5 } },
+    { name: 'missing usage', usage: undefined },
+    { name: 'unbounded call count', usage: { ...usage, calls: 101 } },
+  ];
+  for (const example of cases) {
+    const f = await fixture(2 * USD, 2 * USD, 10 * USD);
+    try {
+      const a = await f.quote(), waiting = await f.quote();
+      await reserveAiAction(f.env, 'alice', 'test', a.id, at); await reserveAiAction(f.env, 'alice', 'test', waiting.id, at);
+      const token = await claimAiDispatch(f.env, 'alice', 'test', a.id, at); assert.ok(token);
+      const evidence = { dispatchToken: token, providerId: 'response-unmeterable', providerRequestId: 'request-unmeterable', usage: example.usage as AiUsage, usable: true, result: {} };
+      await assert.rejects(settleAiAction(f.env, 'alice', 'test', a.id, evidence, at));
+      const policy = await aiPolicyStatus(f.env, 'test');
+      assert.equal(policy.enabled, false, example.name); assert.equal(policy.dispatchBlocked, true, example.name);
+      assert.equal(policy.committed, a.provider_maximum + waiting.provider_maximum);
+      const unknown = await ownedAiAction(f.env, 'alice', 'test', a.id);
+      assert.equal(unknown.state, 'reconciliation_pending'); assert.equal(unknown.provider_status, 'held'); assert.equal(unknown.provider_cost, 0);
+      assert.equal(unknown.customer_status, 'held'); assert.equal(unknown.charged_included + unknown.charged_purchased, 0);
+      assert.equal(unknown.provider_id, evidence.providerId); assert.equal(unknown.provider_request_id, evidence.providerRequestId);
+      await assert.rejects(claimAiDispatch(f.env, 'alice', 'test', waiting.id, at), /paused/);
+      const later = new Date(at.getTime() + 25 * 3600000);
+      await reconcileAiDeadlines(f.env, later);
+      assert.equal((await aiPolicyStatus(f.env, 'test')).committed, a.provider_maximum);
+      assert.equal((await aiBalance(f.env, 'alice', 'test', later)).availablePurchased, 2 * USD);
+      await assert.rejects(settleAiAction(f.env, 'alice', 'test', a.id, evidence, later), /could not be bounded/);
+      const stillWaived = await ownedAiAction(f.env, 'alice', 'test', a.id);
+      assert.equal(stillWaived.state, 'technical_waiver'); assert.equal(stillWaived.customer_status, 'waived');
+      assert.equal(stillWaived.provider_status, 'pessimistic'); assert.equal(stillWaived.provider_cost, a.provider_maximum);
+      const reconciled = await settleAiAction(f.env, 'alice', 'test', a.id, { ...evidence, usage }, later);
+      assert.equal(reconciled.provider_cost, 150000); assert.equal(reconciled.customer_status, 'waived');
+      assert.equal(reconciled.charged_included + reconciled.charged_purchased, 0);
+      assert.equal((await aiPolicyStatus(f.env, 'test')).enabled, false);
+      assert.equal(f.calls(), 0);
+    } finally { f.close(); }
+  }
 });
 test('08: submitted timeout/crash/lease expiry retain provider cost; 24h waiver never retroactively debits', async () => {
   const f = await fixture(USD, USD, 700000);
@@ -160,6 +261,30 @@ test('08: submitted timeout/crash/lease expiry retain provider cost; 24h waiver 
     const late = await ownedAiAction(f.env, 'alice', 'test', a.id); assert.equal(late.charged_purchased, 0); assert.equal(late.customer_status, 'waived'); assert.equal(late.provider_cost, 150000);
   } finally { f.close(); }
 });
+test('08: pessimistic reconciliation retains provider identity; matching late evidence preserves the waiver', async () => {
+  const f = await fixture(USD, USD, 700000);
+  try {
+    const a = await f.quote(); await reserveAiAction(f.env, 'alice', 'test', a.id, at);
+    const token = await claimAiDispatch(f.env, 'alice', 'test', a.id, at); assert.ok(token);
+    const evidence = { dispatchToken: token, providerId: 'response-original', providerRequestId: 'request-original', usage: { ...usage, calls: 2 }, usable: true, result: {} };
+    await settleAiAction(f.env, 'alice', 'test', a.id, evidence, at);
+    assert.equal((await aiPolicyStatus(f.env, 'test')).committed, a.provider_maximum);
+    for (const changed of [{ providerId: 'response-unrelated' }, { providerRequestId: 'request-unrelated' }])
+      await assert.rejects(settleAiAction(f.env, 'alice', 'test', a.id, { ...evidence, ...changed, usage: { inputTokens: 0, outputTokens: 0, calls: 1, paidTools: 0 } }, at), /Provider evidence/);
+    const retained = await ownedAiAction(f.env, 'alice', 'test', a.id);
+    assert.equal(retained.provider_id, evidence.providerId); assert.equal(retained.provider_request_id, evidence.providerRequestId);
+    assert.equal(retained.provider_status, 'pessimistic'); assert.equal(retained.provider_cost, a.provider_maximum);
+    const late = await settleAiAction(f.env, 'alice', 'test', a.id, { ...evidence, usage }, at);
+    assert.equal(late.provider_cost, 150000); assert.equal(late.provider_status, 'settled'); assert.equal(late.customer_status, 'waived');
+    assert.equal(late.charged_included + late.charged_purchased, 0);
+    await settleAiAction(f.env, 'alice', 'test', a.id, { ...evidence, usage }, at);
+    assert.equal((await aiBalance(f.env, 'alice', 'test', at)).availablePurchased, USD);
+    assert.equal((await aiPolicyStatus(f.env, 'test')).committed, 150000);
+    await assert.rejects(settleAiAction(f.env, 'alice', 'test', a.id, { ...evidence, providerId: 'other-after-settlement', usage }, at), /Provider evidence/);
+    assert.equal(f.calls(), 0);
+  } finally { f.close(); }
+});
+
 test('09/13: duplicate/unpaid/out-of-order grants, refunds, owner mismatch and TEST/LIVE isolation', async () => {
   const f = await fixture();
   try {
@@ -178,6 +303,44 @@ test('09/13: duplicate/unpaid/out-of-order grants, refunds, owner mismatch and T
     const replay = await grantPaidAiBalance(f.env, 'alice', 'test', row.id, row.rule); assert.equal(replay.granted, false); assert.equal(replay.reversed, true);
   } finally { f.close(); }
 });
+test('09/13: mixed consumed and held grants stay frozen through refunds, cancellation and late evidence', async () => {
+  const f = await fixture(3 * USD, 0, 10 * USD);
+  try {
+    const included = await f.credit('alice', USD, 'included'), purchased = await f.credit('alice', 2 * USD);
+    await f.execute((await f.quote()).id, 'alice', fullUsage);
+    await f.execute((await f.quote()).id, 'alice', fullUsage);
+    const submitted = await f.quote(), reserved = await f.quote();
+    await reserveAiAction(f.env, 'alice', 'test', submitted.id, at);
+    await reserveAiAction(f.env, 'alice', 'test', reserved.id, at);
+    const token = await claimAiDispatch(f.env, 'alice', 'test', submitted.id, at); assert.ok(token);
+    await f.database.prepare("UPDATE eidos_orders SET status='refunded' WHERE id IN (?,?)").bind(included.id, purchased.id).run();
+    await reconcileAiReversals(f.env); await reconcileAiReversals(f.env);
+    const reversed = await aiBalance(f.env, 'alice', 'test', at);
+    assert.equal(reversed.frozen, true); assert.equal(reversed.availableIncluded, 0); assert.equal(reversed.availablePurchased, 0);
+    assert.equal(reversed.settledIncluded, USD); assert.equal(reversed.settledPurchased, 200000); assert.equal(reversed.pending, 1200000);
+    assert.equal(await claimAiDispatch(f.env, 'alice', 'test', reserved.id, at), null);
+    await cancelAiAction(f.env, 'alice', 'test', submitted.id);
+    assert.equal((await ownedAiAction(f.env, 'alice', 'test', submitted.id)).provider_status, 'held');
+    await cancelAiAction(f.env, 'alice', 'test', reserved.id);
+    assert.equal((await aiBalance(f.env, 'alice', 'test', at)).availablePurchased, 600000);
+    const later = new Date(at.getTime() + 25 * 3600000);
+    await reconcileAiDeadlines(f.env, later);
+    const waived = await aiBalance(f.env, 'alice', 'test', later);
+    assert.equal(waived.frozen, true); assert.equal(waived.availablePurchased, 1200000);
+    for (const row of [included, purchased]) {
+      const replay = await grantPaidAiBalance(f.env, 'alice', 'test', row.id, row.rule);
+      assert.equal(replay.granted, false); assert.equal(replay.reversed, true);
+    }
+    await assert.rejects(reserveAiAction(f.env, 'alice', 'test', (await f.quote('alice', {}, later)).id, later), /allowance, monthly limit/);
+    await settleAiAction(f.env, 'alice', 'test', submitted.id, { dispatchToken: token, providerId: 'refunded-late', providerRequestId: 'refunded-request', usage, usable: true, result: {} }, later);
+    const final = await aiBalance(f.env, 'alice', 'test', later);
+    assert.equal(final.frozen, true); assert.equal(final.availablePurchased, 1200000);
+    assert.equal(final.settledIncluded, USD); assert.equal(final.settledPurchased, 200000); assert.equal(final.pending, 0);
+    assert.equal((await aiPolicyStatus(f.env, 'test')).committed, 1350000);
+    assert.equal(f.calls(), 2);
+  } finally { f.close(); }
+});
+
 test('10: cap edits racing dispatch/settlement preserve the commitment floor and block new work', async () => {
   const f = await fixture();
   try {
@@ -203,6 +366,30 @@ test('11: monthly period is server UTC; pending budget survives, and late settle
     assert.equal((await aiBalance(f.env, 'alice', 'test', next)).pending, 600000);
   } finally { f.close(); }
 });
+test('11: ample provider budget does not duplicate prepaid balance when old and new month work coexist', async () => {
+  const f = await fixture(USD, 2 * USD, 10 * USD);
+  try {
+    const end = new Date('2026-10-31T23:59:30.000Z'), next = new Date('2026-11-01T00:00:10.000Z');
+    const old = await f.quote('alice', {}, end); await reserveAiAction(f.env, 'alice', 'test', old.id, end);
+    const oldToken = await claimAiDispatch(f.env, 'alice', 'test', old.id, end); assert.ok(oldToken);
+    assert.equal((await aiBalance(f.env, 'alice', 'test', next)).availablePurchased, 1400000);
+    const current = await f.quote('alice', {}, next); await reserveAiAction(f.env, 'alice', 'test', current.id, next);
+    const currentToken = await claimAiDispatch(f.env, 'alice', 'test', current.id, next); assert.ok(currentToken);
+    const both = await aiBalance(f.env, 'alice', 'test', next);
+    assert.equal(both.availablePurchased, 800000); assert.equal(both.pending, 600000); assert.equal(both.settled, 0);
+    assert.equal((await aiPolicyStatus(f.env, 'test')).committed, 1200000);
+    await settleAiAction(f.env, 'alice', 'test', old.id, { dispatchToken: oldToken, providerId: 'october-response', providerRequestId: 'october-request', usage, usable: true, result: {} }, next);
+    const late = await aiBalance(f.env, 'alice', 'test', next);
+    assert.equal(late.availablePurchased, 1250000); assert.equal(late.pending, 600000); assert.equal(late.settled, 0);
+    assert.equal((await aiBalance(f.env, 'alice', 'test', end)).settled, 150000);
+    await assert.rejects(reserveAiAction(f.env, 'alice', 'test', (await f.quote('alice', {}, next)).id, next), /allowance, monthly limit/);
+    await settleAiAction(f.env, 'alice', 'test', current.id, { dispatchToken: currentToken, providerId: 'november-response', providerRequestId: 'november-request', usage, usable: true, result: {} }, next);
+    const final = await aiBalance(f.env, 'alice', 'test', next);
+    assert.equal(final.settled, 150000); assert.equal(final.availablePurchased, 1700000); assert.equal(final.pending, 0);
+    assert.equal((await aiPolicyStatus(f.env, 'test')).committed, 300000);
+  } finally { f.close(); }
+});
+
 test('12/14: owner aggregate budget admits only one customer; paused route has no provider fallback', async () => {
   const f = await fixture(USD, USD, USD);
   try {
@@ -276,6 +463,80 @@ test('owner budget reductions block reserved dispatch atomically across independ
     assert.equal(inFlight.reserved, 0); assert.equal(inFlight.submitted, 600000); assert.equal(inFlight.settled, 0);
     await cancelAiAction(f.env, 'alice', 'test', c.id);
     assert.equal((await aiPolicyStatus(otherEnv, 'test')).submitted, 600000);
+    assert.equal(f.calls(), 0);
+  } finally {
+    otherClient.close(); f.close();
+    for (const suffix of ['', '-wal', '-shm']) await unlink(path + suffix).catch(error => {
+      if (error.code === 'EBUSY' && process.platform === 'win32') t.diagnostic('Windows libSQL retains the synthetic temp database handle until process exit: ' + path + suffix);
+      else if (error.code !== 'ENOENT') throw error;
+    });
+  }
+});
+
+test('10: independent clients serialize customer cap reductions against admission, dispatch and settlement', async (t) => {
+  const path = join(tmpdir(), 'eidos-ai-customer-cap-' + crypto.randomUUID() + '.db'), url = 'file:' + path.replaceAll('\\', '/');
+  const f = await fixture(USD, 3 * USD, 10 * USD, url), otherClient = createClient({ url });
+  const otherEnv = { ...f.env, EIDOS_DB: adaptDatabase(otherClient) };
+  try {
+    const first = await f.quote();
+    const admissionRace = await Promise.allSettled([
+      reserveAiAction(f.env, 'alice', 'test', first.id, at), setAiLimit(otherEnv, 'alice', 'test', 0, at),
+    ]);
+    assert.equal(admissionRace[1].status, 'fulfilled');
+    const admitted = (await ownedAiAction(f.env, 'alice', 'test', first.id)).state === 'reserved';
+    const lowered = await aiBalance(otherEnv, 'alice', 'test', at);
+    assert.equal(lowered.requestedLimit, 0); assert.equal(lowered.remainingCap, 0);
+    assert.equal(lowered.pending, admitted ? first.maximum : 0); assert.equal(lowered.effectiveLimit, lowered.pending);
+    assert.equal(admissionRace[0].status, admitted ? 'fulfilled' : 'rejected');
+    await cancelAiAction(f.env, 'alice', 'test', first.id);
+    await setAiLimit(otherEnv, 'alice', 'test', USD, at);
+    const active = await f.quote(), blocked = await f.quote();
+    await reserveAiAction(f.env, 'alice', 'test', active.id, at);
+    const [token] = await Promise.all([
+      claimAiDispatch(f.env, 'alice', 'test', active.id, at), setAiLimit(otherEnv, 'alice', 'test', 100000, at),
+    ]);
+    assert.ok(token); assert.equal((await aiBalance(otherEnv, 'alice', 'test', at)).effectiveLimit, active.maximum);
+    const settlementRace = await Promise.allSettled([
+      settleAiAction(f.env, 'alice', 'test', active.id, { dispatchToken: token, providerId: 'cap-response', providerRequestId: 'cap-request', usage, usable: true, result: {} }, at),
+      setAiLimit(otherEnv, 'alice', 'test', 0, at), reserveAiAction(otherEnv, 'alice', 'test', blocked.id, at),
+    ]);
+    assert.equal(settlementRace[0].status, 'fulfilled'); assert.equal(settlementRace[1].status, 'fulfilled');
+    assert.equal(settlementRace[2].status, 'rejected');
+    const final = await aiBalance(otherEnv, 'alice', 'test', at);
+    assert.equal(final.requestedLimit, 0); assert.equal(final.effectiveLimit, 150000); assert.equal(final.loweringPending, true);
+    assert.equal(final.settled, 150000); assert.equal(final.pending, 0); assert.equal(final.availablePurchased, 2850000);
+    assert.equal((await aiPolicyStatus(otherEnv, 'test')).committed, 150000); assert.equal(f.calls(), 0);
+  } finally {
+    otherClient.close(); f.close();
+    for (const suffix of ['', '-wal', '-shm']) await unlink(path + suffix).catch(error => {
+      if (error.code === 'EBUSY' && process.platform === 'win32') t.diagnostic('Windows libSQL retains the synthetic temp database handle until process exit: ' + path + suffix);
+      else if (error.code !== 'ENOENT') throw error;
+    });
+  }
+});
+
+test('concurrent conflicting reconciliation cannot replace the first recorded provider identity', async (t) => {
+  const path = join(tmpdir(), 'eidos-ai-identity-fixture-' + crypto.randomUUID() + '.db'), url = 'file:' + path.replaceAll('\\', '/');
+  const f = await fixture(USD, USD, USD, url), otherClient = createClient({ url });
+  const otherEnv = { ...f.env, EIDOS_DB: adaptDatabase(otherClient) };
+  try {
+    const a = await f.quote(); await reserveAiAction(f.env, 'alice', 'test', a.id, at);
+    const token = await claimAiDispatch(f.env, 'alice', 'test', a.id, at); assert.ok(token);
+    const evidence = { dispatchToken: token, providerId: 'response-first', providerRequestId: 'request-first', usage: { ...usage, calls: 2 }, usable: false };
+    const results = await Promise.allSettled([
+      settleAiAction(f.env, 'alice', 'test', a.id, evidence, at),
+      settleAiAction(otherEnv, 'alice', 'test', a.id, { ...evidence, providerId: 'response-second', providerRequestId: 'request-second' }, at),
+    ]);
+    assert.equal(results.filter(result => result.status === 'fulfilled').length, 1);
+    const rejected = results.find(result => result.status === 'rejected'); assert.ok(rejected && rejected.status === 'rejected');
+    assert.match(String(rejected.reason), /Provider evidence/);
+    const retained = await ownedAiAction(f.env, 'alice', 'test', a.id);
+    const firstWon = results[0].status === 'fulfilled';
+    assert.equal(retained.provider_id, firstWon ? 'response-first' : 'response-second');
+    assert.equal(retained.provider_request_id, firstWon ? 'request-first' : 'request-second');
+    assert.equal(retained.provider_status, 'pessimistic'); assert.equal(retained.provider_cost, a.provider_maximum);
+    assert.equal(retained.charged_included + retained.charged_purchased, 0);
+    assert.equal((await aiPolicyStatus(f.env, 'test')).committed, a.provider_maximum);
     assert.equal(f.calls(), 0);
   } finally {
     otherClient.close(); f.close();

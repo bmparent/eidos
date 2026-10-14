@@ -1,0 +1,85 @@
+{
+  "timestampUtc": "2026-10-14T23:53:08.2213448Z",
+  "sourceRevision": "c37870bd2c7453fca4dbc8d65275902e4473be95",
+  "sourceState": "uncommitted tested working tree",
+  "providerRequests": 0,
+  "providerTestBudgetMicros": 5000000,
+  "countPricingStatus": "unknown; real transport gate unset",
+  "files": [
+    {
+      "path": "apps/sentinel-lab/lib/works/vendor/functions/_shared/platform/core.ts",
+      "bytes": 10901,
+      "sha256": "58323c84063d8f9fa55d4897234b86154a1e48764b755e3cb2ddf40f5e283f75"
+    },
+    {
+      "path": "apps/sentinel-lab/lib/works/vendor/functions/_shared/platform/playgroundAi.ts",
+      "bytes": 37505,
+      "sha256": "d16de593641edfa18d0cff382d2d4606ca3149d9fbdf4c5e861222892b74ec9e"
+    },
+    {
+      "path": "apps/sentinel-lab/lib/works/vendor/functions/_shared/platform/playgroundAiSchema.ts",
+      "bytes": 6343,
+      "sha256": "dd0df0e1924adbde340730d46b795ae8537a1c9770b76d8bf2ec321900eb9a82"
+    },
+    {
+      "path": "apps/sentinel-lab/lib/works/vendor/functions/_shared/platform/playgroundAiProvider.ts",
+      "bytes": 15422,
+      "sha256": "12caca18ae19e8b4ad28e2c5907e6461eb9b548b7f7648fa4d89375833ebe2d6"
+    },
+    {
+      "path": "apps/sentinel-lab/lib/works/vendor/functions/_shared/platform/playgroundAiRenderer.ts",
+      "bytes": 178,
+      "sha256": "e3752fd05273b7e7546d600d72d05b64bb3f4b9f8987132777e68e9bf8197432"
+    },
+    {
+      "path": "apps/sentinel-lab/lib/works/vendor/functions/api/playground/ai.ts",
+      "bytes": 3292,
+      "sha256": "e6669a0e557cafd8cf5ecc6b0d8949edab96b490366d8b8da6f83cf8109599a1"
+    },
+    {
+      "path": "apps/sentinel-lab/lib/works/vendor/migrations/0005_playground_ai.sql",
+      "bytes": 6255,
+      "sha256": "627a173627dd345d3ca6741c5d964d034de46f8b7d26322a4195ded69028cac8"
+    },
+    {
+      "path": "apps/sentinel-lab/lib/works/dispatch.ts",
+      "bytes": 8558,
+      "sha256": "3f19b0e338a64cee5d63948b7d0fc1d860b2a05ba30b6849029621494e0ad790"
+    },
+    {
+      "path": "apps/sentinel-lab/lib/works/project-delivery/src/playground/aiOperations.ts",
+      "bytes": 14092,
+      "sha256": "60506bc3f9c1f5d856c339ff4958e53ac0122c18e4166ed949d181b5590de7bd"
+    },
+    {
+      "path": "apps/sentinel-lab/lib/works/project-delivery/source-manifest.json",
+      "bytes": 3773,
+      "sha256": "c6f186bc38145ff750c822143175749208cec1cba231525f0bdb8711afe62b15"
+    },
+    {
+      "path": "apps/sentinel-lab/tests/works-playground-ai.test.ts",
+      "bytes": 43458,
+      "sha256": "4721627ead5a8742599b9bf1d4b9300ef6ebf577b3d12b08013ac8e9ee7ee5d8"
+    },
+    {
+      "path": "apps/sentinel-lab/tests/works-playground-provider.test.ts",
+      "bytes": 22463,
+      "sha256": "71ed08a0dff9b0e972bd02209c2d77622344d31c81773fa2c722841ac82a7dab"
+    },
+    {
+      "path": "apps/sentinel-lab/package.json",
+      "bytes": 1134,
+      "sha256": "1e19f65ebbffe508a2af1471c52e4636598c6c343c629df6ce830569f2a817b3"
+    },
+    {
+      "path": "apps/sentinel-lab/.env.example",
+      "bytes": 2483,
+      "sha256": "5c85f4a65a56d99d51a6208896535582a1e60549a9f7df3d42f3c4ddeed340e5"
+    },
+    {
+      "path": "apps/sentinel-lab/lib/works/vendor/functions/api/public-config.ts",
+      "bytes": 1699,
+      "sha256": "114d56a8b52c0731f30df233ef2c29333e687bde8954c2315cddb9db852e8feb"
+    }
+  ]
+}

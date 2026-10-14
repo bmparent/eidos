@@ -1,0 +1,106 @@
+✖ isolated renderer graph matches its portable LF manifest and leaves legacy renderer separate (16.0721ms)
+✖ authenticated backend relay freezes exact schema-5 bytes on real libSQL without provider calls (56.7377ms)
+✖ delivery mode is opt-in and backend body allowance exceeds legacy ceiling but remains bounded (10.5985ms)
+✖ real libSQL chunk faults roll back and separate worker connections cannot exceed owner quota (53.6045ms)
+✔ signed matching TEST payment journals AI merchant evidence once and refund prevents reusable credit (4469.7056ms)
+✔ enabling allowance accounting preserves historical guest receipts without inventing merchant evidence (1325.6052ms)
+✔ template TEST gate rejects LIVE, production host, missing archives and unverified CMS; server prices cannot be overridden (120.2029ms)
+✔ LIVE readiness requires an exclusive canonical configuration, merchant, mail and real verification keys (332.5536ms)
+✔ LIVE checkout refuses a wrong or incomplete merchant before creating a purchase (2102.1687ms)
+✔ LIVE checkout rejects a TEST session from the provider and cannot grant a download (1018.6788ms)
+✔ controlled LIVE guest checkout, signed fulfillment, mail retry, download and single-use recovery survive sales closure (1402.935ms)
+✔ LIVE refund/dispute rejects TEST events and revokes downloads after new sales are disabled (2646.2297ms)
+✔ retained TEST and LIVE receipts cannot grant status, downloads or recovery in the opposite environment (636.1037ms)
+✔ catalog updates all eight edition versions while all twenty-four prior purchase snapshots retain their original archive (11950.1347ms)
+✔ official public TEST challenge still calls siteverify and is confined to exact candidate commerce actions (184.8298ms)
+✔ checkout attempt retry preserves one ledger order and same server-owned TEST price (296.5976ms)
+✔ pending original retry after catalog change retains its version, price, signed payment and historical archive (1561.1291ms)
+✔ pending original retry refuses unavailable or changed retained archive before provider dispatch (321.5733ms)
+✔ signed paid fulfillment, delayed state, duplicate webhook, snapshot integrity and expiring download links (219.4885ms)
+✔ failed delayed payment and expired checkout are terminal without entitlement or mail (189.6215ms)
+✔ receipt email retries keep provider idempotency body stable and paid access survives mail failure (136.0124ms)
+✔ receipt email retry after thirty minutes renews an unused link without changing provider payload (306.8567ms)
+✔ receipt email retry after thirty minutes never revives a consumed one-time link (173.2597ms)
+✔ recovery is enumeration safe, single use and receipt expiry is recoverable; cross-order token fails (214.8675ms)
+✔ two signed-in buyers remain isolated and refund/dispute revokes future access without deleting receipts (144.1508ms)
+✔ signed TEST revocations reconcile template side tables after a legacy hook consumes the shared event ID (386.9502ms)
+✔ existing Cinematic Starter paid receipt still downloads the exact original archive (55.8828ms)
+ℹ tests 27
+ℹ suites 0
+ℹ pass 23
+ℹ fail 4
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 34817.969
+
+✖ failing tests:
+
+test at apps\sentinel-lab\tests\works-project-delivery.test.ts:1:3144
+✖ isolated renderer graph matches its portable LF manifest and leaves legacy renderer separate (16.0721ms)
+  Error: ENOENT: no such file or directory, open 'C:\Users\bmpar\codex-worktrees\playground-unified-backend-20261014\lib\works\project-delivery\source-manifest.json'
+      at readFileSync (node:fs:440:20)
+      at TestContext.<anonymous> (C:\Users\bmpar\codex-worktrees\playground-unified-backend-20261014\apps\sentinel-lab\tests\works-project-delivery.test.ts:42:69)
+      at Test.runInAsyncScope (node:async_hooks:228:14)
+      at Test.run (node:internal/test_runner/test:1118:25)
+      at Test.start (node:internal/test_runner/test:1015:17)
+      at startSubtestAfterBootstrap (node:internal/test_runner/harness:358:17) {
+    errno: -4058,
+    code: 'ENOENT',
+    syscall: 'open',
+    path: 'C:\\Users\\bmpar\\codex-worktrees\\playground-unified-backend-20261014\\lib\\works\\project-delivery\\source-manifest.json'
+  }
+
+test at apps\sentinel-lab\tests\works-project-delivery.test.ts:1:4705
+✖ authenticated backend relay freezes exact schema-5 bytes on real libSQL without provider calls (56.7377ms)
+  Error: ENOENT: no such file or directory, open 'C:\Users\bmpar\codex-worktrees\playground-unified-backend-20261014\lib\works\vendor\migrations\0001_eidos_platform.sql'
+      at readFileSync (node:fs:440:20)
+      at fixture (C:\Users\bmpar\codex-worktrees\playground-unified-backend-20261014\apps\sentinel-lab\tests\works-project-delivery.test.ts:23:100)
+      at TestContext.<anonymous> (C:\Users\bmpar\codex-worktrees\playground-unified-backend-20261014\apps\sentinel-lab\tests\works-project-delivery.test.ts:62:19)
+      at Test.runInAsyncScope (node:async_hooks:228:14)
+      at Test.run (node:internal/test_runner/test:1118:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:787:18)
+      at Test.postRun (node:internal/test_runner/test:1247:19)
+      at Test.run (node:internal/test_runner/test:1175:12)
+      at async startSubtestAfterBootstrap (node:internal/test_runner/harness:358:3) {
+    errno: -4058,
+    code: 'ENOENT',
+    syscall: 'open',
+    path: 'C:\\Users\\bmpar\\codex-worktrees\\playground-unified-backend-20261014\\lib\\works\\vendor\\migrations\\0001_eidos_platform.sql'
+  }
+
+test at apps\sentinel-lab\tests\works-project-delivery.test.ts:1:6453
+✖ delivery mode is opt-in and backend body allowance exceeds legacy ceiling but remains bounded (10.5985ms)
+  Error: ENOENT: no such file or directory, open 'C:\Users\bmpar\codex-worktrees\playground-unified-backend-20261014\lib\works\vendor\migrations\0001_eidos_platform.sql'
+      at readFileSync (node:fs:440:20)
+      at fixture (C:\Users\bmpar\codex-worktrees\playground-unified-backend-20261014\apps\sentinel-lab\tests\works-project-delivery.test.ts:23:100)
+      at TestContext.<anonymous> (C:\Users\bmpar\codex-worktrees\playground-unified-backend-20261014\apps\sentinel-lab\tests\works-project-delivery.test.ts:84:19)
+      at Test.runInAsyncScope (node:async_hooks:228:14)
+      at Test.run (node:internal/test_runner/test:1118:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:787:18)
+      at Test.postRun (node:internal/test_runner/test:1247:19)
+      at Test.run (node:internal/test_runner/test:1175:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:787:7) {
+    errno: -4058,
+    code: 'ENOENT',
+    syscall: 'open',
+    path: 'C:\\Users\\bmpar\\codex-worktrees\\playground-unified-backend-20261014\\lib\\works\\vendor\\migrations\\0001_eidos_platform.sql'
+  }
+
+test at apps\sentinel-lab\tests\works-project-delivery.test.ts:1:8004
+✖ real libSQL chunk faults roll back and separate worker connections cannot exceed owner quota (53.6045ms)
+  Error: ENOENT: no such file or directory, open 'C:\Users\bmpar\codex-worktrees\playground-unified-backend-20261014\lib\works\vendor\migrations\0001_eidos_platform.sql'
+      at readFileSync (node:fs:440:20)
+      at fixture (C:\Users\bmpar\codex-worktrees\playground-unified-backend-20261014\apps\sentinel-lab\tests\works-project-delivery.test.ts:23:100)
+      at TestContext.<anonymous> (C:\Users\bmpar\codex-worktrees\playground-unified-backend-20261014\apps\sentinel-lab\tests\works-project-delivery.test.ts:108:19)
+      at Test.runInAsyncScope (node:async_hooks:228:14)
+      at Test.run (node:internal/test_runner/test:1118:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:787:18)
+      at Test.postRun (node:internal/test_runner/test:1247:19)
+      at Test.run (node:internal/test_runner/test:1175:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:787:7) {
+    errno: -4058,
+    code: 'ENOENT',
+    syscall: 'open',
+    path: 'C:\\Users\\bmpar\\codex-worktrees\\playground-unified-backend-20261014\\lib\\works\\vendor\\migrations\\0001_eidos_platform.sql'
+  }

@@ -1,0 +1,75 @@
+{
+  "timestampUtc": "2026-10-14T23:46:42.896Z",
+  "projectId": "prj_5aL0COF1DONfPKI4fv25NitAdkOE",
+  "metadataOnly": true,
+  "decryptionRequested": false,
+  "valuesAccessed": false,
+  "variables": [
+    {
+      "id": "fZSWtQ0AEbyZ0FxW",
+      "name": "EIDOS_TEMPLATES_TEST_TURSO_AUTH_TOKEN",
+      "type": "sensitive",
+      "targets": [
+        "preview"
+      ],
+      "gitBranch": "codex/playground-unified-20261014",
+      "createdAt": 1792001972714,
+      "updatedAt": 1792003362466
+    },
+    {
+      "id": "cCTO7YAW1hfA08Ii",
+      "name": "EIDOS_TEMPLATES_TEST_TURSO_DATABASE_URL",
+      "type": "encrypted",
+      "targets": [
+        "preview"
+      ],
+      "gitBranch": "codex/playground-unified-20261014",
+      "createdAt": 1792001969141,
+      "updatedAt": 1792003356494
+    },
+    {
+      "id": "P6bpNo4xPw4cfhTx",
+      "name": "EIDOS_TEMPLATES_TEST_TURSO_AUTH_TOKEN",
+      "type": "sensitive",
+      "targets": [
+        "preview"
+      ],
+      "gitBranch": "codex/showcase-studio-boundary-20261013",
+      "createdAt": 1791937121951,
+      "updatedAt": 1791937121951
+    },
+    {
+      "id": "kOOzTSrDZuDV3pRS",
+      "name": "EIDOS_TEMPLATES_TEST_TURSO_DATABASE_URL",
+      "type": "encrypted",
+      "targets": [
+        "preview"
+      ],
+      "gitBranch": "codex/showcase-studio-boundary-20261013",
+      "createdAt": 1791937100223,
+      "updatedAt": 1791937100223
+    },
+    {
+      "id": "MW0QURe9ulk4GPPP",
+      "name": "EIDOS_TEMPLATES_TEST_TURSO_DATABASE_URL",
+      "type": "encrypted",
+      "targets": [
+        "preview"
+      ],
+      "gitBranch": "codex/paid-templates-20261010",
+      "createdAt": 1791679505441,
+      "updatedAt": 1791922001043
+    },
+    {
+      "id": "SfTyHXgeC3XSgQpe",
+      "name": "EIDOS_TEMPLATES_TEST_TURSO_AUTH_TOKEN",
+      "type": "sensitive",
+      "targets": [
+        "preview"
+      ],
+      "gitBranch": "codex/paid-templates-20261010",
+      "createdAt": 1791679505441,
+      "updatedAt": 1791922005451
+    }
+  ]
+}

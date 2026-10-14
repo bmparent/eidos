@@ -16,6 +16,18 @@ export const onRequestGet = guarded(async ({ request, env }) =>
         env.EIDOS_DB &&
         env.EIDOS_RATE_SECRET,
     ),
+    // Configuration readiness only. Accounts and the authenticated lifetime
+    // budget/route ledger remain separate gates; this endpoint does no I/O.
+    playgroundAiReady: Boolean(
+      env.EIDOS_RUNTIME === 'sentinel' &&
+      env.EIDOS_AI_ENABLED === 'true' &&
+      env.EIDOS_PLAYGROUND_AI_ENABLED === 'true' &&
+      env.EIDOS_PLAYGROUND_AI_MODE === 'test' &&
+      (env.EIDOS_PLAYGROUND_OPENAI_API_KEY?.length || 0) >= 20 &&
+      env.EIDOS_PLAYGROUND_INPUT_COUNT_PRICING === 'verified-zero' &&
+      env.EIDOS_DB &&
+      (env.EIDOS_RATE_SECRET?.length || 0) >= 32,
+    ),
     shopReady: Boolean(
       env.EIDOS_SHOP_ENABLED === 'true' &&
         env.STRIPE_SECRET_KEY &&

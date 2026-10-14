@@ -1,0 +1,46 @@
+✖ pending original retry after catalog change retains its version, price, signed payment and historical archive (372.2296ms)
+✖ pending original retry refuses unavailable or changed retained archive before provider dispatch (56.0466ms)
+ℹ tests 2
+ℹ suites 0
+ℹ pass 0
+ℹ fail 2
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 3170.7272
+
+✖ failing tests:
+
+test at apps\sentinel-lab\tests\works-templates.test.ts:1:25956
+✖ pending original retry after catalog change retains its version, price, signed payment and historical archive (372.2296ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+  
+  '1.0.3' !== '1.0.2'
+  
+      at TestContext.<anonymous> (C:\Users\bmpar\codex-worktrees\playground-unified-backend-20261014\apps\sentinel-lab\tests\works-templates.test.ts:388:12)
+      at async Test.run (node:internal/test_runner/test:1125:7)
+      at async startSubtestAfterBootstrap (node:internal/test_runner/harness:358:3) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: '1.0.3',
+    expected: '1.0.2',
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at apps\sentinel-lab\tests\works-templates.test.ts:1:28624
+✖ pending original retry refuses unavailable or changed retained archive before provider dispatch (56.0466ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+  
+  200 !== 503
+  
+      at TestContext.<anonymous> (C:\Users\bmpar\codex-worktrees\playground-unified-backend-20261014\apps\sentinel-lab\tests\works-templates.test.ts:414:14)
+      at async Test.run (node:internal/test_runner/test:1125:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:787:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: 200,
+    expected: 503,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }

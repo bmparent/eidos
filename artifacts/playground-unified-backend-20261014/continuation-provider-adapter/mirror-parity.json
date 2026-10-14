@@ -1,0 +1,26 @@
+[
+  {
+    "path": "functions/_shared/platform/core.ts",
+    "equal": true
+  },
+  {
+    "path": "functions/_shared/platform/playgroundAi.ts",
+    "equal": true
+  },
+  {
+    "path": "functions/_shared/platform/playgroundAiSchema.ts",
+    "equal": true
+  },
+  {
+    "path": "functions/_shared/platform/playgroundAiProvider.ts",
+    "equal": true
+  },
+  {
+    "path": "functions/api/playground/ai.ts",
+    "equal": true
+  },
+  {
+    "path": "migrations/0005_playground_ai.sql",
+    "equal": true
+  }
+]

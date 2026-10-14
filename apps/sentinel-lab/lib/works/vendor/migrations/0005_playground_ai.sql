@@ -50,6 +50,13 @@ CREATE TABLE IF NOT EXISTS eidos_pg_ai_actions (
 );
 CREATE INDEX IF NOT EXISTS pg_ai_actions_owner_period ON eidos_pg_ai_actions(owner_id,mode,period,customer_status);
 CREATE INDEX IF NOT EXISTS pg_ai_actions_provider ON eidos_pg_ai_actions(mode,provider_status);
+-- Frozen complete Responses payload, counted with the provider's exact structural tokenizer.
+-- Separate additive table preserves historical action rows and old fixture contracts.
+CREATE TABLE IF NOT EXISTS eidos_pg_ai_preflights (
+ action_id TEXT PRIMARY KEY REFERENCES eidos_pg_ai_actions(id), request_hash TEXT NOT NULL,
+ request_json TEXT NOT NULL, input_tokens INTEGER NOT NULL CHECK(typeof(input_tokens)='integer' AND input_tokens>=0),
+ count_request_id TEXT NOT NULL, created_at TEXT NOT NULL
+);
 CREATE TABLE IF NOT EXISTS eidos_pg_ai_journal (
  id TEXT PRIMARY KEY, owner_id TEXT, mode TEXT NOT NULL CHECK(mode IN ('test','live')), action_id TEXT,
  event TEXT NOT NULL, detail_json TEXT NOT NULL, created_at TEXT NOT NULL

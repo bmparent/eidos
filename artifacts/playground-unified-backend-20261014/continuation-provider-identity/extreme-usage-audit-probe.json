@@ -1,0 +1,11 @@
+{
+  "fixtureOnly": true,
+  "networkForbidden": true,
+  "settlementRejected": true,
+  "configuredInputMaximum": 8000,
+  "reportedInput": 10000001,
+  "policyEnabled": true,
+  "dispatchBlocked": false,
+  "providerCommitted": 600000,
+  "pausedReason": null
+}

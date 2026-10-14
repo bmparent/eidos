@@ -2,6 +2,8 @@
 
 This is Eidos Works product work, not a Brain/Sentinel model milestone. No research engine or scientific behavior changed.
 
+The current audited continuation is recorded in [works-playground-continuation-20261014.md](works-playground-continuation-20261014.md). The source stages, test counts, runtime graphs and deployments below are retained historical receipts; consult the continuation summary for the latest candidate and remaining gates.
+
 ## Source reconciliation
 
 The clean PR74 source `37f4633f236bacae14c5b799becc2d2cea5528f4` was isolated in branch `codex/playground-unified-20261014`. PR76 source `16a1926d5bbd33cd52bb0c93ee15dd949b1bc698` adds only the immutable private archive deployment gate. Both are based on PR72 `952e68ff75da6857e25f249bebd96ea65116e294`. They were deliberately merged without conflicts at `01e82ac73a1bcb6a3159e93dccf96172fded4964`. No main, Observatory, other worktree, buyer archive, or existing deployment was overwritten.
