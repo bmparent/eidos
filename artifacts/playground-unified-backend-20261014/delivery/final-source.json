@@ -17,5 +17,13 @@
   "hostedMigration": "not run",
   "providerCalls": "none",
   "manualPreviewBoundary": "No database, archives, AI, accounts, checkout, mail or delivery mode",
-  "deployment": "Pending clean committed source bundle; see backend-preview.json for deployed identity"
+  "deployment": {
+    "id": "dpl_Hb3DmunnkTpknbwhqzpGhtKUbqY1",
+    "url": "https://eidos-sentinel-44ncm0vx1-1brentbm-1876s-projects.vercel.app",
+    "state": "READY",
+    "target": "preview"
+  },
+  "backendSourceCommit": "be549a56f15043f7d189db1bad049b904000c344",
+  "bundleHash": "a7baede78b21805167ca61112e0b541128b60cb0979b94524bbc0d4011037b68",
+  "sourceMetadataVerified": true
 }
