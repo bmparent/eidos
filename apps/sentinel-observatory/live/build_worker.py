@@ -23,6 +23,8 @@ def build(output: Path, recorded: Path | None = None) -> dict:
         'model_worker': ROOT / 'web' / 'browser-model-worker.mjs',
         'security': ROOT / 'security-events.mjs',
         'network_panel': ROOT / 'web' / 'network-panel.mjs',
+        'evidence_view': ROOT / 'web' / 'evidence-view.mjs',
+        'evidence_fixture': ROOT / 'web' / 'evidence-fixture.html',
     }
     if recorded:
         sources['recorded'] = recorded

@@ -1,0 +1,11 @@
+{
+  "url": "https://sentinel-showcase-candidate-20261013.bmparent.chatgpt.site",
+  "source_mode": "hosted explicit fixture; no actual sensor/model claim",
+  "checks": [],
+  "console_errors": [],
+  "browser": "155.0.8059.39",
+  "gpu": "disabled",
+  "screenshots": [],
+  "status": "failed",
+  "error": "AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:\n\n401 !== 200\n\n    at file:///C:/Users/bmpar/codex-worktrees/showcase-observatory-20261013/apps/sentinel-observatory/live/hosted-evidence-qa.mjs:16:73\n    at runNextTicks (node:internal/process/task_queues:65:5)\n    at process.processImmediate (node:internal/timers:472:9)"
+}

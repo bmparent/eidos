@@ -1,0 +1,2 @@
+Base: 00d49ff2e8ef74931503fb7a27046857228d0b04
+Candidate commit is recorded by the draft PR and final source receipt.

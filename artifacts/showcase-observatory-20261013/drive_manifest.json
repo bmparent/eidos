@@ -1,0 +1,188 @@
+{
+  "drive_copy_attempted": true,
+  "drive_copy_success": true,
+  "drive_root": "G:\\My Drive",
+  "drive_run_dir": "G:\\My Drive\\Eidos_Brain_Proof_Phase\\2026-10-13\\showcase-observatory-20261013",
+  "reason": "Configured mounted copy checksum-verified; remote synchronization not established",
+  "files_considered": [
+    "acceptance-status.json",
+    "brain-parity.log",
+    "browser-acceptance.json",
+    "build-receipt.json",
+    "codex_journal.md",
+    "config.json",
+    "deployment.json",
+    "environment.txt",
+    "fixture-export.json",
+    "git_commit.txt",
+    "hosted-browser-acceptance.json",
+    "hosted-browser-attempt1-auth-header.json",
+    "hosted-browser-attempt2-denial-status.json",
+    "hosted-observatory-desktop.png",
+    "hosted-observatory-phone.png",
+    "node-tests.log",
+    "observatory-desktop-fixture.png",
+    "observatory-phone-fixture.png",
+    "plain_language_test_analysis.md",
+    "python-tests.log",
+    "site.tar.gz",
+    "progress/eidos_progress_dashboard.html",
+    "progress/eidos_progress_meter.json",
+    "progress/eidos_progress_meter.md",
+    "progress/eidos_progress_meter.svg",
+    "progress/proof_logic_ledger.json",
+    "progress/proof_logic_ledger.md",
+    "worker/index.mjs",
+    "artifact_manifest.json"
+  ],
+  "files_copied": [
+    {
+      "path": "acceptance-status.json",
+      "bytes": 1497,
+      "sha256": "b3d7f982bb69ae6ffcb1f6a2f168184a0067615aae4e58e74f35d312ea9b3fea"
+    },
+    {
+      "path": "brain-parity.log",
+      "bytes": 3730,
+      "sha256": "4315db6a7783c78db269aa1a2d7e5f2e79cd3618435b72e5d5ba03fda33eac75"
+    },
+    {
+      "path": "browser-acceptance.json",
+      "bytes": 2833,
+      "sha256": "2205caa7376cfa1c2c12eeb0ebc974b5c49a3f625166e09e7650b61596b8dc20"
+    },
+    {
+      "path": "build-receipt.json",
+      "bytes": 1122,
+      "sha256": "21f61946f81ae056e31b48b2eb8251e157048c87db1751b00d9d4077db892b62"
+    },
+    {
+      "path": "codex_journal.md",
+      "bytes": 6046,
+      "sha256": "bb5d51e49aaf5b26c89a052fba728bd622ba61ca96ffdbf79a8d2302c68f6df4"
+    },
+    {
+      "path": "config.json",
+      "bytes": 259,
+      "sha256": "5a73132ed7d672c2827627a2fca2dddc829edf8704aa873bc9d84e659b21796b"
+    },
+    {
+      "path": "deployment.json",
+      "bytes": 646,
+      "sha256": "73636618bb3825677799e03ffb2f8fb214d9070b415e62823784e5a961d322eb"
+    },
+    {
+      "path": "environment.txt",
+      "bytes": 210,
+      "sha256": "ee6426e1dcb4128b3d18b0921d085a0a351529767b1cd4fc232731da0420f087"
+    },
+    {
+      "path": "fixture-export.json",
+      "bytes": 7700,
+      "sha256": "0c89579faaa0badbbfe94b1f4acb236c4cd4737a79acb81442835284fe65909f"
+    },
+    {
+      "path": "git_commit.txt",
+      "bytes": 120,
+      "sha256": "221f3a5bda14873c6c319e5440cf97dd04db02d19af6c728f1cee927828c734c"
+    },
+    {
+      "path": "hosted-browser-acceptance.json",
+      "bytes": 4599,
+      "sha256": "f7a373fac5a568046bb89040be6a2687890e1e18d82fe452297eda09272afdef"
+    },
+    {
+      "path": "hosted-browser-attempt1-auth-header.json",
+      "bytes": 651,
+      "sha256": "79e78524f28d036d176ec411b830f7c9d0c7143736af900a6286abbfa04f7730"
+    },
+    {
+      "path": "hosted-browser-attempt2-denial-status.json",
+      "bytes": 4759,
+      "sha256": "acb286701c0bd2479ae9f485dcb198ed5cec653becfb73f20a03a477ff5d156e"
+    },
+    {
+      "path": "hosted-observatory-desktop.png",
+      "bytes": 207809,
+      "sha256": "160120568811a8d319f5fa4b430227d1af4da6aa36d11586bd0bf5feae344fdc"
+    },
+    {
+      "path": "hosted-observatory-phone.png",
+      "bytes": 228469,
+      "sha256": "23f53bc81994b38158d6a82fe979fa018adea5f19a89dd2b2d1a600f8406b483"
+    },
+    {
+      "path": "node-tests.log",
+      "bytes": 12378,
+      "sha256": "1d75eefa2b23dbfdb1380f55503968c405a241d068a4b739c46e182fd0cff7d9"
+    },
+    {
+      "path": "observatory-desktop-fixture.png",
+      "bytes": 329065,
+      "sha256": "2b8099475b1e64bfbbc1ef0717f4e9a1999a321e91c51a6674dc33f14ad816d6"
+    },
+    {
+      "path": "observatory-phone-fixture.png",
+      "bytes": 217952,
+      "sha256": "105cc702e25d62aa0e07a7d204f87158f906b8650fb9d676b550d3232f786b7e"
+    },
+    {
+      "path": "plain_language_test_analysis.md",
+      "bytes": 3493,
+      "sha256": "f465d183040063fccc7d0b15cb7e1d2efa7a6654d97a817854498632d7298dd1"
+    },
+    {
+      "path": "python-tests.log",
+      "bytes": 5225,
+      "sha256": "ea006d37da3ea65efaae24fa970497fc6a7d7971df9aff1cb0b3f24da6a4547b"
+    },
+    {
+      "path": "site.tar.gz",
+      "bytes": 100928,
+      "sha256": "d627f502dc9a81e4678f22c0507bf106151c864652c970ca0b82de5e27ec3461"
+    },
+    {
+      "path": "progress/eidos_progress_dashboard.html",
+      "bytes": 1489,
+      "sha256": "739058f509f744abe15e6bb22db180b53b2d6a7246c10b8d6e627cbea5aac490"
+    },
+    {
+      "path": "progress/eidos_progress_meter.json",
+      "bytes": 1582,
+      "sha256": "7c3d333455382761a850e331c7df69761d4782b7ef70fbf3c19cfb1eabaf3826"
+    },
+    {
+      "path": "progress/eidos_progress_meter.md",
+      "bytes": 399,
+      "sha256": "30a6eb524c3b8bd8b0af72eab32b843d6c62cb88c0db65c84399ad3792f5964e"
+    },
+    {
+      "path": "progress/eidos_progress_meter.svg",
+      "bytes": 795,
+      "sha256": "63e4a9eca3ee5f5f0dac043d2e067eb70f25f888f67cdad1bfde859dee2b1f75"
+    },
+    {
+      "path": "progress/proof_logic_ledger.json",
+      "bytes": 364,
+      "sha256": "321fc43defb08d66921a7b75263f8a5a3d5c436eb667daa8ae0da655b047819f"
+    },
+    {
+      "path": "progress/proof_logic_ledger.md",
+      "bytes": 266,
+      "sha256": "474067cd430a89fc243f42b1d2ace69267663034436052ea096966a838346446"
+    },
+    {
+      "path": "worker/index.mjs",
+      "bytes": 360108,
+      "sha256": "368ba1729acd3a5dd932227d1717e41026acd3b3bec1c15cda97150dd7befbf4"
+    },
+    {
+      "path": "artifact_manifest.json",
+      "bytes": 4688,
+      "sha256": "b8924b21ccf607203d0b8178b86c736ade98b7f0394e86936892afd0c4f416d4"
+    }
+  ],
+  "files_skipped": [],
+  "timestamp_utc": "2026-10-14T00:18:32.406362+00:00",
+  "remote_sync_verified": false
+}

@@ -1,0 +1,15 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Sentinel evidence views · labeled fixture</title><link rel="stylesheet" href="/styles.css"></head>
+<body><main><header><h1>Inspect one receipt across every view.</h1><p>LABELED FIXTURE · synthetic demonstration. This page does not observe a sensor, contact a target, or invoke a model.</p><p><a href="/">Return to the Observatory</a></p></header><div id="fixture-panel"></div></main>
+<script type="module">
+import {initializeNetworkPanel} from '/network-panel.mjs';
+import {parseSecurityLog} from '/security-events.mjs';
+const panel=initializeNetworkPanel(document.querySelector('#fixture-panel'));
+const rows=[
+ {timestamp:'2026-10-13T12:00:00Z',event_type:'flow',flow_id:11,src_ip:'192.0.2.10',dest_ip:'198.51.100.20',proto:'TCP',flow:{bytes_toserver:210,bytes_toclient:820}},
+ {timestamp:'2026-10-13T12:01:00Z',event_type:'alert',flow_id:12,src_ip:'192.0.2.10',dest_ip:'198.51.100.20',proto:'TCP',alert:{signature_id:900001,signature:'Synthetic demonstration rule · no real incident',severity:3,action:'allowed'}},
+ {timestamp:'2026-10-13T12:02:00Z',event_type:'dns',flow_id:13,src_ip:'192.0.2.11',dest_ip:'198.51.100.53',proto:'UDP',dns:{rrname:'fixture.example',rrtype:'A',rcode:'NOERROR'}}
+];
+const batch=parseSecurityLog(rows.map(row=>JSON.stringify(row)).join('\n'),{sourceId:'showcase-fixture',sourceName:'Showcase fixture · synthetic',format:'suricata'});
+panel.addSourceBatch(batch,{id:'showcase-fixture',name:'Showcase fixture · synthetic',mode:'fixture'});
+</script></body></html>

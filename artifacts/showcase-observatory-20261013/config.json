@@ -1,0 +1,8 @@
+{
+  "maximum_retained_records": 2000,
+  "maximum_series_bins": 40,
+  "source_fixture": "explicitly synthetic",
+  "time_window": "fixed selected absolute bounds",
+  "model_calls": "manual existing contract unchanged",
+  "original_site_untouched": true
+}
