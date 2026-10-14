@@ -41,6 +41,11 @@ export function initializeNetworkPanel(container, options={}) {
   container.appendChild(root);
   const part=name=>root.querySelector(`[data-part="${name}"]`);
   const action=name=>root.querySelector(`[data-action="${name}"]`);
+  // Preserve keyboard position when a refreshed list replaces its controls.
+  const focusedKey=(element,attribute)=>element.contains(document.activeElement)?document.activeElement.closest(`[${attribute}]`)?.getAttribute(attribute):null;
+  const restoreKeyFocus=(element,attribute,key)=>{
+    if(key!==null&&key!==undefined)[...element.querySelectorAll(`[${attribute}]`)].find(control=>control.getAttribute(attribute)===key)?.focus({preventScroll:true});
+  };
   const notify=message=>{if(typeof options.onNotice==='function')options.onNotice(message);};
   const selected=()=>state.events.find(event=>event.id===state.selectedId);
   const sourceFor=event=>state.sources.find(source=>source.id===event.source_id);
@@ -96,10 +101,12 @@ export function initializeNetworkPanel(container, options={}) {
   }
 
   function renderSources(){
+    const focused=focusedKey(part('sources'),'data-remove');
     part('sources').innerHTML=state.sources.map(source=>{
       const latest=list(source.events).reduce((best,event)=>!best||stamp(event.observed_at)>stamp(best)?event.observed_at:best,null);
       return `<article class="sn-source"><div class="sn-source-head"><strong>${esc(source.name)}</strong><button class="sn-remove" data-remove="${esc(source.id)}" aria-label="Remove ${esc(source.name)}" title="Remove this source">×</button></div><div class="sn-source-meta"><span>${source.mode==='live'?esc(liveStatus(source)):'Imported capture'}</span><span>${esc(source.format)}</span><span>${source.events.length.toLocaleString()} real records</span></div><small class="sn-source-time">Last event ${esc(date(latest))} · ${esc(age(latest))}<br>${source.mode==='live'?`Last received ${esc(date(source.lastReceivedAt))} · ${esc(age(source.lastReceivedAt))}`:`Imported ${esc(date(source.importedAt))}`}${source.coverage?.truncated?'<br>Source window is bounded; earlier rows are not retained.':''}</small>${source.rejectedCount?`<details><summary>${source.rejectedCount.toLocaleString()} skipped lines · inspect</summary><ul>${source.rejected.map(item=>`<li>Line ${esc(item.line)}: ${esc(short(item.reason,240))}</li>`).join('')||'<li>The companion excluded malformed, unsupported or oversized rows before sending this window.</li>'}</ul></details>`:''}</article>`;
     }).join('');
+    restoreKeyFocus(part('sources'),'data-remove',focused);
   }
 
   function renderLive(){
@@ -164,6 +171,7 @@ export function initializeNetworkPanel(container, options={}) {
   }
 
   function renderGraph(){
+    const focused=focusedKey(part('graph'),'data-node');
     const data=graphData();const shown=data.nodes.slice(0,12),positions=new Map();const n=shown.length;
     part('graph-pan-hint').hidden=!n;
     const native=state.capabilities?.security_sensor?.mode==='observatory_edge'||state.events.some(event=>event.source==='observatory_edge');
@@ -179,6 +187,7 @@ export function initializeNetworkPanel(container, options={}) {
     part('graph').innerHTML=`<svg viewBox="0 0 840 450" role="group" aria-label="Real sensor relationships: ${data.nodes.length} endpoints and ${data.edges.length} recorded address pairs">${edgeMarkup}${nodeMarkup}</svg>${data.nodes.length>12?`<p class="sn-boundary">Showing the 12 most represented endpoints. All ${data.nodes.length.toLocaleString()} remain in the evidence record.</p>`:''}`;
     part('node-filter').hidden=!state.nodeFilter;
     part('node-filter').innerHTML=state.nodeFilter?`<span>Showing records for ${esc(state.nodeFilter)}</span><button data-action="clear-node">Show all endpoints</button>`:'';
+    restoreKeyFocus(part('graph'),'data-node',focused);
   }
 
   function renderInspector(){
@@ -207,10 +216,12 @@ export function initializeNetworkPanel(container, options={}) {
 
   function filteredEvents(){return state.events.filter(event=>(!state.nodeFilter||endpointsFor(event).source===state.nodeFilter||endpointsFor(event).target===state.nodeFilter)&&(state.filter==='all'||state.filter==='alerts'&&['alert','notice'].includes(event.kind)||state.filter==='connections'&&['flow','connection'].includes(event.kind)||state.filter===event.kind));}
   function renderEvents(){
+    const focused=focusedKey(part('events'),'data-evidence');
     const events=filteredEvents();
     root.querySelectorAll('[data-filter]').forEach(button=>{const active=button.dataset.filter===state.filter;button.classList.toggle('active',active);button.setAttribute('aria-pressed',String(active));});
     part('events').innerHTML=events.slice(0,state.limit).map(event=>`<button class="sn-event${event.id===state.selectedId?' selected':''}" data-evidence="${esc(event.id)}" aria-pressed="${event.id===state.selectedId}"><span class="sn-event-name"><i style="background:${colorFor(event)}"></i><span>${esc(describe(event))}<small>${esc(sourceFor(event)?.name||event.source)} · ${esc(short(event.fields?.protocol||event.source_event_id||event.id,70))}</small></span></span><span class="sn-event-kind">${esc(kindFor(event))}</span><span class="sn-event-time">${esc(time(event.observed_at))}</span><span class="sn-event-arrow" aria-hidden="true">↗</span></button>`).join('')||`<p class="sn-empty-list">${state.events.length?'No source records match this filter.':'No sensor records yet. Import a Suricata or Zeek capture to begin.'}</p>`;
     action('more').hidden=events.length<=state.limit;action('export').disabled=!state.events.length;
+    restoreKeyFocus(part('events'),'data-evidence',focused);
   }
 
   function renderSummary(){
