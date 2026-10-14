@@ -129,9 +129,9 @@
 test at tests\works-templates.test.ts:1:6638
 ✖ signed matching TEST payment journals AI merchant evidence once and refund prevents reusable credit (622.4158ms)
   AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
-  
+
   503 !== 502
-  
+
       at TestContext.<anonymous> (C:\Users\bmpar\codex-worktrees\playground-unified-backend-20261014\apps\sentinel-lab\tests\works-templates.test.ts:110:12)
       at async Test.run (node:internal/test_runner/test:1125:7)
       at async startSubtestAfterBootstrap (node:internal/test_runner/harness:358:3) {

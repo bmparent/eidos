@@ -1,5 +1,5 @@
 {
-  "timestampUtc": "2026-10-14T18:13:45.4977758Z",
+  "timestampUtc": "2026-10-14T18:20:33.2067822Z",
   "files": [
     {
       "path": "acceptance.json",
@@ -18,8 +18,8 @@
     },
     {
       "path": "app-tests-mail-fixture-assertion-failed.log",
-      "bytes": 12168,
-      "sha256": "b1d77b15135e0830f6cfec10ae440c9c7cb83384cb495f26c1b5553c2e5a2d1e"
+      "bytes": 12164,
+      "sha256": "3ce32177c677fd00d4bbe1119e9a2e152541bdc625411b2d1d8d668f52a38592"
     },
     {
       "path": "app-tests.log",
@@ -28,13 +28,13 @@
     },
     {
       "path": "build.log",
-      "bytes": 1128,
-      "sha256": "189ef9c50ccfb91f22b91c60b5ed3a6239d4939abe11d34b819db1b982f1771d"
+      "bytes": 1123,
+      "sha256": "4fba8530a51d88cb4945c48d26bf956247f3bdcda9cb92c7c702d4d6255f771e"
     },
     {
       "path": "codex_journal.md",
-      "bytes": 4058,
-      "sha256": "904687e5eadc6a85cadba1dce266ec600d6278d0d9df129dae07609ce43c41e3"
+      "bytes": 4721,
+      "sha256": "3bdd38cecc85ee9f7eba295860e524600051d3aedc60d0ded6e28689711049b4"
     },
     {
       "path": "dependency-audit-after.json",
@@ -52,9 +52,19 @@
       "sha256": "44ed1d32b825b6038751060f78d69afc9f2d2879881cbfa1ca6ef59113c726d0"
     },
     {
+      "path": "preview-environment.json",
+      "bytes": 4055,
+      "sha256": "05571fce1d847e513478c4180933c8aeb7a2ac94de78210fddffece4e47009cf"
+    },
+    {
+      "path": "retained-archives.json",
+      "bytes": 327,
+      "sha256": "d8c0dde983f9195717dc31e03d5a25012d60f82eed35b64f5f18f3cb69993024"
+    },
+    {
       "path": "typecheck.log",
-      "bytes": 53,
-      "sha256": "9a216ee216ffece65f8c7311a6df581a1485d1725ca017f4227f18213940a6eb"
+      "bytes": 51,
+      "sha256": "7b59a4947fcf6b1a7e8133a5082462cb9213c7c9bc79b65c8adbb9a347af7486"
     }
   ]
 }

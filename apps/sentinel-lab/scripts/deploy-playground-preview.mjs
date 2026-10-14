@@ -34,9 +34,17 @@ if (process.argv.includes('--inspect')) {
   }
   const bundleHash = createHash('sha256').update(JSON.stringify(inventory)).digest('hex');
   if (payload.env?.EIDOS_SOURCE_COMMIT !== head || payload.env?.EIDOS_SOURCE_BUNDLE_HASH !== bundleHash || payload.meta?.paidTemplatesSourceSha256 !== bundleHash) throw Error('Runtime/source bundle identities do not match.');
+  // Repeat all isolated overrides on this deployment itself, so branch-selection
+  // changes or inherited Preview defaults cannot activate a database/provider.
+  const isolated = JSON.parse(await readFile('apps/sentinel-lab/.vercel/playground-manual.private.json', 'utf8')).env;
+  if (!isolated || isolated.PUBLIC_SITE_URL !== 'https://eidosworks-playground-20261014.pages.dev' || (isolated.EIDOS_PLATFORM_TOKEN?.length || 0) < 32 ||
+      ['EIDOS_SHOP_ENABLED', 'EIDOS_TEMPLATE_TEST_ENABLED', 'EIDOS_TEMPLATE_LIVE_ENABLED', 'EIDOS_ACCOUNTS_ENABLED', 'EIDOS_AI_ENABLED', 'EIDOS_NEWSLETTER_ENABLED', 'EIDOS_PROACTIVE_ENABLED', 'EIDOS_COMMUNITY_STUDIO_ENABLED'].some(key => isolated[key] !== 'false') ||
+      ['EIDOS_DATABASE_URL', 'EIDOS_DATABASE_AUTH_TOKEN', 'EIDOS_DATABASE_BINDING_PREFIX', 'EIDOS_TEMPLATES_TEST_TURSO_DATABASE_URL', 'EIDOS_TEMPLATES_TEST_TURSO_AUTH_TOKEN', 'OPENAI_API_KEY', 'STRIPE_SECRET_KEY', 'RESEND_API_KEY', 'EIDOS_PLAYGROUND_AI_MODE'].some(key => isolated[key] !== '') ||
+      configuration.variableNames.some(key => !(key in isolated))) throw Error('Isolated per-deployment environment is incomplete.');
+  Object.assign(payload.env, isolated);
   receipt = { branch, backendSha: head, bundleHash, manualOnly: true, database: 'none', privateArchiveCount: 0,
     privateArchiveState: 'Intentionally omitted for disabled manual editor preview. Original complete TEST archive bundle retained unchanged.',
-    features: 'Accounts, AI, commerce, mail, community and proactive disabled', createdAt: new Date().toISOString(), deployed: false };
+    features: 'Accounts, AI, commerce, mail, community and proactive disabled', perDeploymentOverrides: true, createdAt: new Date().toISOString(), deployed: false };
   if (process.argv.includes('--deploy')) {
     const result = vercelApi(options.cli, '/v13/deployments?forceNew=1&teamId=' + team, 'POST', payload);
     if (result.target === 'production') throw Error('Unexpected Production deployment; inspect provider immediately.');

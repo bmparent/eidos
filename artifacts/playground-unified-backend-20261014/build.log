@@ -16,9 +16,9 @@ Template commerce is disabled; private archive gate is inactive.
   Finished TypeScript in 57s ...
   Collecting page data using 7 workers ...
   Generating static pages using 7 workers (0/7) ...
-  Generating static pages using 7 workers (1/7) 
-  Generating static pages using 7 workers (3/7) 
-  Generating static pages using 7 workers (5/7) 
+  Generating static pages using 7 workers (1/7)
+  Generating static pages using 7 workers (3/7)
+  Generating static pages using 7 workers (5/7)
 ✓ Generating static pages using 7 workers (7/7) in 1631ms
   Finalizing page optimization ...
 
@@ -36,4 +36,3 @@ Route (app)
 
 ○  (Static)   prerendered as static content
 ƒ  (Dynamic)  server-rendered on demand
-
