@@ -1,5 +1,5 @@
 {
-  "timestampUtc": "2026-10-14T19:04:45.3604073Z",
+  "timestampUtc": "2026-10-14T19:09:22.163Z",
   "scope": "Canonical runtime fixes cross-build archive identity",
   "graphFiles": 17,
   "graphSha256": "3254b61e995185a2753b98ddf97c378e62c91273b9539d6e5929138e4e55c19f",
@@ -13,9 +13,38 @@
   "scriptParse": "passed",
   "nameHelperLeak": false,
   "compiledProbe": "plain Node loading actual optimized Next route; in-memory SQLite; fetch forbidden",
-  "frontendBrowser": "Agent reports built Vite fresh recovery1440/390 and deferred-checkout exact checks passed; final browser matrix independently pending",
+  "frontendBrowser": "Built Vite exact acceptance and fresh recovery passed; full frontend purchase matrix is separately recorded by frontend agent",
   "legacyCloudRenderer": "unchanged",
   "originalRuntimeSources": "unchanged",
   "unknownExportFiles": "rejected before source write; negative control passed",
-  "deployment": "pending clean committed manual-only bundle"
+  "deployment": {
+    "id": "dpl_7M9ufsHoRdKjZUmvXrJ3Ub6ut722",
+    "url": "https://eidos-sentinel-qleksybfu-1brentbm-1876s-projects.vercel.app",
+    "state": "READY",
+    "target": "preview"
+  },
+  "source": "19428375a54c2d8b4abc0aeb39858e3161ec0773",
+  "bundleHash": "a6271f66087b974d51fc09faa9a3b7b70b539aa2499adb6c97b68ef2fe9b57c9",
+  "actualNextVsBuiltViteBrowser": {
+    "result": "byte-identical",
+    "archiveBytes": 128347,
+    "archiveSha256": "3f1b0c20f676a51126af4faa6207a6f90c8f0dda2af5d2b09d1f18699846fe71",
+    "receipt": "delivery/compiled-browser-parity/receipt.json"
+  },
+  "independentCompiledBrowserExecution": {
+    "result": "passed",
+    "engines": [
+      "chromium",
+      "firefox",
+      "webkit"
+    ],
+    "widths": [
+      1440,
+      390
+    ],
+    "checks": 6,
+    "receipt": "delivery/compiled-runtime-after/browser/receipt.json"
+  },
+  "sourceMetadataVerified": true,
+  "hostedPersistencePaymentProvider": "not accepted; no database, provider credentials or private archives; every customer feature remains disabled"
 }

@@ -39,16 +39,17 @@
   "manualBackendPreview": {
     "state": "READY",
     "database": "none",
-    "source": "be549a56f15043f7d189db1bad049b904000c344",
-    "bundleHash": "a7baede78b21805167ca61112e0b541128b60cb0979b94524bbc0d4011037b68",
-    "deploymentId": "dpl_Hb3DmunnkTpknbwhqzpGhtKUbqY1",
+    "source": "19428375a54c2d8b4abc0aeb39858e3161ec0773",
+    "bundleHash": "a6271f66087b974d51fc09faa9a3b7b70b539aa2499adb6c97b68ef2fe9b57c9",
+    "deploymentId": "dpl_7M9ufsHoRdKjZUmvXrJ3Ub6ut722",
+    "url": "https://eidos-sentinel-qleksybfu-1brentbm-1876s-projects.vercel.app",
     "authenticatedRuntimeAcceptance": "pending paired frontend CI",
     "unauthenticatedProtectionStatus": 302
   },
   "focusedDeliveryTests": 4,
   "sharedDeliveryContractFiles": 16,
-  "deliveryGraphFiles": 19,
-  "deliveryGraphSha256": "800edfd6034839506f046ee422260b9dedc55e6e9cb23ef034193a35efe76415",
+  "deliveryGraphFiles": 17,
+  "deliveryGraphSha256": "3254b61e995185a2753b98ddf97c378e62c91273b9539d6e5929138e4e55c19f",
   "deliverySource": "Controlled source/storage/order integration passed; hosted persistence remains unaccepted",
   "manualBackendPreviewFirst": {
     "state": "READY",
@@ -58,5 +59,43 @@
     "deploymentId": "dpl_GKzpxmZ16TXCry6Pwr6jX5LgB48w",
     "authenticatedRuntimeAcceptance": "pending frontend CI",
     "unauthenticatedProtectionStatus": 302
+  },
+  "manualBackendPreviewSecond": {
+    "state": "READY",
+    "database": "none",
+    "source": "be549a56f15043f7d189db1bad049b904000c344",
+    "bundleHash": "a7baede78b21805167ca61112e0b541128b60cb0979b94524bbc0d4011037b68",
+    "deploymentId": "dpl_Hb3DmunnkTpknbwhqzpGhtKUbqY1",
+    "authenticatedRuntimeAcceptance": "pending paired frontend CI",
+    "unauthenticatedProtectionStatus": 302
+  },
+  "canonicalRuntimeAcceptance": {
+    "actualNextVsEsbuild": {
+      "byteIdentical": true,
+      "bytes": 66201,
+      "sha256": "b26d51c04ddee2f6ff2cb421d13edaaeb668e64c8e25ba3cc4209ccceb5956a3"
+    },
+    "actualNextVsBuiltVite": {
+      "result": "byte-identical",
+      "archiveBytes": 128347,
+      "archiveSha256": "3f1b0c20f676a51126af4faa6207a6f90c8f0dda2af5d2b09d1f18699846fe71",
+      "receipt": "delivery/compiled-browser-parity/receipt.json"
+    },
+    "independentBrowserExecution": {
+      "result": "passed",
+      "engines": [
+        "chromium",
+        "firefox",
+        "webkit"
+      ],
+      "widths": [
+        1440,
+        390
+      ],
+      "checks": 6,
+      "receipt": "delivery/compiled-runtime-after/browser/receipt.json"
+    },
+    "negativeControl": "Prior actual Next/function-source byte mismatch retained under delivery/compiled-runtime-before",
+    "storedHistoricalArchives": "Read exact stored bytes; never re-render historical purchases"
   }
 }

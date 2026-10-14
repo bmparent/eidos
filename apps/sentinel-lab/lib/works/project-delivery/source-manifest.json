@@ -3,7 +3,7 @@
   "entry": "src/playground/purchaseSnapshot.ts",
   "encoding": "utf8-lf",
   "scope": "Exact source graph after LF normalization for gated project delivery; legacy cloud renderer is untouched.",
-  "inventorySha256": "3254b61e995185a2753b98ddf97c378e62c91273b9539d6e5929138e4e55c19f",
+  "inventorySha256": "bf8825416406e37882a5d17cfc7a2f6590fdff87858c350a09fa45e441f05a47",
   "files": [
     {
       "path": "src/data/buyerArchivePins.json",
@@ -67,8 +67,8 @@
     },
     {
       "path": "src/playground/pageStyles.ts",
-      "bytes": 6296,
-      "sha256": "e13f0039b06fb1be4d9af06c5d1b880893c13f057cfd4ae8cd7cacf434a4d441"
+      "bytes": 6329,
+      "sha256": "519090e2366641830894a5cd70106abc302b437be3e15e7228bc176e6a4a820f"
     },
     {
       "path": "src/playground/purchaseSnapshot.ts",
