@@ -2,7 +2,7 @@
 import {normalizeTarget, ipCollectorConfiguration} from './collector.mjs';
 
 export function targetProbeConfiguration(env={}) {
-  const current=ipCollectorConfiguration(env);
+  const current=ipCollectorConfiguration({...env,OBSERVATORY_COLLECTOR_URL:env.OBSERVATORY_TARGET_COLLECTOR_URL ?? env.OBSERVATORY_COLLECTOR_URL});
   if(!current||env.OBSERVATORY_TARGET_PROBES_ENABLED!=='true')return null;
   return {...current,url:current.url.replace('/api/observatory/ip-observe','/api/observatory/target-observe')};
 }

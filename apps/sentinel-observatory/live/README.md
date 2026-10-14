@@ -24,6 +24,8 @@ The Worker uses the existing authenticated collector binding, resolving its
 `OBSERVATORY_TARGET_PROBES_ENABLED=true`. The original literal-IP route and the
 legacy fallback remain available. A failed configured collector is unavailable,
 never a fabricated successful measurement.
+`OBSERVATORY_TARGET_COLLECTOR_URL` can select a separately verified collector
+preview without replacing the original collector's rollback binding.
 
 `target-brain.mjs` keeps an unchanged Sentinel V3 scalar profile for each numeric
 metric, target and observer identity. DNS/certificate/status/header/page changes
