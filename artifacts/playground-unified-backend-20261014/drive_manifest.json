@@ -1,10 +1,109 @@
 {
-  "drive_copy_attempted": false,
-  "drive_copy_success": false,
-  "drive_root": "G:\\My Drive",
-  "reason": "Mirror will follow final candidate artifact completion; no remote sync claimed",
-  "files_considered": [],
-  "files_copied": [],
+  "drive_copy_attempted": true,
+  "drive_copy_success": true,
+  "drive_root": "G:/My Drive",
+  "drive_run_dir": "G:\\My Drive\\Eidos_Works_Playground\\2026-10-14\\backend-unified-20261014T182356Z",
+  "reason": "Copied to mounted Drive and checked every file hash; remote cloud synchronization not independently verified",
+  "files_considered": [
+    "acceptance.json",
+    "ai-tests-first.log",
+    "ai-tests.log",
+    "app-tests-mail-fixture-assertion-failed.log",
+    "app-tests.log",
+    "backend-preview.json",
+    "build.log",
+    "codex_journal.md",
+    "dependency-audit-after.json",
+    "dependency-audit.json",
+    "hosted-protection.json",
+    "plain_language_test_analysis.md",
+    "preview-environment.json",
+    "retained-archives.json",
+    "source-bundle-inventory.json",
+    "typecheck.log"
+  ],
+  "files_copied": [
+    {
+      "name": "acceptance.json",
+      "sha256": "ea7f65ace4a6dd08b6ac321a65bda2e4d726b6aa5d45e038c628c07f29646d7a",
+      "bytes": 2467
+    },
+    {
+      "name": "ai-tests-first.log",
+      "sha256": "9bcfeeb2ff2eb1e3e3753aec4c74102e1fdee2c14d5ed4f70388f3d18d5aaeb3",
+      "bytes": 1673
+    },
+    {
+      "name": "ai-tests.log",
+      "sha256": "6e937830b60fe7ab7d4762f11fa22ad2cc1fe715f89280117a97586de76244bf",
+      "bytes": 2241
+    },
+    {
+      "name": "app-tests-mail-fixture-assertion-failed.log",
+      "sha256": "3ce32177c677fd00d4bbe1119e9a2e152541bdc625411b2d1d8d668f52a38592",
+      "bytes": 12164
+    },
+    {
+      "name": "app-tests.log",
+      "sha256": "e337b15ed22477c1f229e603e59959de8381ed00d0db5abd46fd66776fc5c2cf",
+      "bytes": 11435
+    },
+    {
+      "name": "backend-preview.json",
+      "sha256": "1531379476748d54ce3aff979c4af201911c758df269de91aef515306e37af22",
+      "bytes": 831
+    },
+    {
+      "name": "build.log",
+      "sha256": "4fba8530a51d88cb4945c48d26bf956247f3bdcda9cb92c7c702d4d6255f771e",
+      "bytes": 1123
+    },
+    {
+      "name": "codex_journal.md",
+      "sha256": "bbfef08a83d16941cc1bb29e7c6d5f00b8af59a16ba0074b70dbc4c8463bd9db",
+      "bytes": 5503
+    },
+    {
+      "name": "dependency-audit-after.json",
+      "sha256": "923e6a5838dfbb0d9c72bfddb6d85a6f9561501f04a601383cbfddacceb4f363",
+      "bytes": 385
+    },
+    {
+      "name": "dependency-audit.json",
+      "sha256": "affd56e6ea0441a20fb073ff5d0c2b49d097bb5d7ba22e98c80c7836444e470c",
+      "bytes": 12277
+    },
+    {
+      "name": "hosted-protection.json",
+      "sha256": "7a3f65871e579bd06990d9ff8b8a874f12c38f6c7ccd0a54c0685c200b7ee58d",
+      "bytes": 307
+    },
+    {
+      "name": "plain_language_test_analysis.md",
+      "sha256": "37a600e7d20ff254d568bc7e5c9b1cb29dd376fb82798bf11e7b1102f11860f6",
+      "bytes": 2678
+    },
+    {
+      "name": "preview-environment.json",
+      "sha256": "05571fce1d847e513478c4180933c8aeb7a2ac94de78210fddffece4e47009cf",
+      "bytes": 4055
+    },
+    {
+      "name": "retained-archives.json",
+      "sha256": "d8c0dde983f9195717dc31e03d5a25012d60f82eed35b64f5f18f3cb69993024",
+      "bytes": 327
+    },
+    {
+      "name": "source-bundle-inventory.json",
+      "sha256": "50ffdbc2a274a86c4bc712505f100865051bc1aa2cb7dd9943d2349e44769354",
+      "bytes": 25204
+    },
+    {
+      "name": "typecheck.log",
+      "sha256": "7b59a4947fcf6b1a7e8133a5082462cb9213c7c9bc79b65c8adbb9a347af7486",
+      "bytes": 51
+    }
+  ],
   "files_skipped": [],
-  "timestamp_utc": "2026-10-14T18:01:16.7499620Z"
+  "timestamp_utc": "2026-10-14T18:23:57.6452349Z"
 }

@@ -1,10 +1,10 @@
 {
-  "timestampUtc": "2026-10-14T18:20:33.2067822Z",
+  "timestampUtc": "2026-10-14T18:23:57.7018725Z",
   "files": [
     {
       "path": "acceptance.json",
-      "bytes": 1981,
-      "sha256": "979643e188063d4ec5564e1cc38d9a453f6a9f15ca5afdc6d135928e82905bc6"
+      "bytes": 2467,
+      "sha256": "ea7f65ace4a6dd08b6ac321a65bda2e4d726b6aa5d45e038c628c07f29646d7a"
     },
     {
       "path": "ai-tests-first.log",
@@ -27,14 +27,19 @@
       "sha256": "e337b15ed22477c1f229e603e59959de8381ed00d0db5abd46fd66776fc5c2cf"
     },
     {
+      "path": "backend-preview.json",
+      "bytes": 831,
+      "sha256": "1531379476748d54ce3aff979c4af201911c758df269de91aef515306e37af22"
+    },
+    {
       "path": "build.log",
       "bytes": 1123,
       "sha256": "4fba8530a51d88cb4945c48d26bf956247f3bdcda9cb92c7c702d4d6255f771e"
     },
     {
       "path": "codex_journal.md",
-      "bytes": 4721,
-      "sha256": "3bdd38cecc85ee9f7eba295860e524600051d3aedc60d0ded6e28689711049b4"
+      "bytes": 5503,
+      "sha256": "bbfef08a83d16941cc1bb29e7c6d5f00b8af59a16ba0074b70dbc4c8463bd9db"
     },
     {
       "path": "dependency-audit-after.json",
@@ -48,8 +53,18 @@
     },
     {
       "path": "drive_manifest.json",
-      "bytes": 325,
-      "sha256": "44ed1d32b825b6038751060f78d69afc9f2d2879881cbfa1ca6ef59113c726d0"
+      "bytes": 3514,
+      "sha256": "42558cdeadf4a461427fe7a9e199e7b55310a2f7e5d2fffafa3c0f673d958b07"
+    },
+    {
+      "path": "hosted-protection.json",
+      "bytes": 307,
+      "sha256": "7a3f65871e579bd06990d9ff8b8a874f12c38f6c7ccd0a54c0685c200b7ee58d"
+    },
+    {
+      "path": "plain_language_test_analysis.md",
+      "bytes": 2678,
+      "sha256": "37a600e7d20ff254d568bc7e5c9b1cb29dd376fb82798bf11e7b1102f11860f6"
     },
     {
       "path": "preview-environment.json",
@@ -60,6 +75,11 @@
       "path": "retained-archives.json",
       "bytes": 327,
       "sha256": "d8c0dde983f9195717dc31e03d5a25012d60f82eed35b64f5f18f3cb69993024"
+    },
+    {
+      "path": "source-bundle-inventory.json",
+      "bytes": 25204,
+      "sha256": "50ffdbc2a274a86c4bc712505f100865051bc1aa2cb7dd9943d2349e44769354"
     },
     {
       "path": "typecheck.log",

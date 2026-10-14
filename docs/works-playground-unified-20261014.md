@@ -54,6 +54,8 @@ The first editor milestone can use `--manual-only` without any database: all dat
 
 The manual deployment exposes the exact committed SHA and bundle hash as `runtimeSourceRevision` and `runtimeBundleHash` on authenticated `/api/public-config`. It intentionally leaves the separate commerce `EIDOS_TEMPLATE_SOURCE_REVISION` unset. The manual-only bundle requires a clean committed source tree and sets the runtime identities in its deployment request.
 
+The first protected manual preview is READY at `https://eidos-sentinel-gddofh939-1brentbm-1876s-projects.vercel.app`. Its deployed source is `0e0aabc48f0ca7894b917495b661ef44cd337dce`, bundle SHA256 `77b27dd43cb78e66b83fff84bfba70c532aaf7d3a367d891e19e4b754023a870`, deployment `dpl_GKzpxmZ16TXCry6Pwr6jX5LgB48w`. All 42 isolated environment overrides are recorded by name only and repeated on the deployment request. The new relay key exists only in ignored configuration, branch/deployment environment and frontend GitHub secret `EIDOS_PLAYGROUND_PLATFORM_TOKEN`. An unauthenticated health request redirects to deployment protection. Authenticated runtime/flag/schema proof is delegated to the paired frontend CI using the approved existing project bypass; READY alone is not that acceptance.
+
 Manual commands from repository root, after the source-controlled Git deployment suppression is pushed and branch overrides are configured:
 
 ```text

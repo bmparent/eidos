@@ -18,8 +18,31 @@
   "hostedAccountAndBillingOwnership": "not_run; all customer feature flags remain false",
   "hostedCommerce": "not_run; no TEST transaction, inbox or refund acceptance claimed",
   "production": "unchanged",
-  "dependencyAudit": {"high": 0, "critical": 0, "total": 0, "note": "Next16.3.8 and compatible transitive security refresh; before/after receipts retained"},
+  "dependencyAudit": {
+    "high": 0,
+    "critical": 0,
+    "total": 0,
+    "note": "Next16.3.8 and compatible transitive security refresh; before/after receipts retained"
+  },
   "independentReview": "Two findings repaired: actual immutable merchant binding and immediate owner budget reduction enforcement at dispatch. New negative/retry/historical tests and independent-connection race pass.",
   "manualPreviewArchives": "Intentionally omitted; zero. Original complete TEST bundle is preserved separately; commerce remains disabled.",
-  "remaining": ["authorized key and explicit test budget", "real rate-card/model comparison", "bounded provider adapter", "hosted metered proposal", "paired TEST database and two-account acceptance", "maintenance cadence", "snapshot delivery and signed payment/mail/refund acceptance", "archive symlink test on capable host"]
+  "remaining": [
+    "authorized key and explicit test budget",
+    "real rate-card/model comparison",
+    "bounded provider adapter",
+    "hosted metered proposal",
+    "paired TEST database and two-account acceptance",
+    "maintenance cadence",
+    "snapshot delivery and signed payment/mail/refund acceptance",
+    "archive symlink test on capable host"
+  ],
+  "manualBackendPreview": {
+    "state": "READY",
+    "database": "none",
+    "source": "0e0aabc48f0ca7894b917495b661ef44cd337dce",
+    "bundleHash": "77b27dd43cb78e66b83fff84bfba70c532aaf7d3a367d891e19e4b754023a870",
+    "deploymentId": "dpl_GKzpxmZ16TXCry6Pwr6jX5LgB48w",
+    "authenticatedRuntimeAcceptance": "pending frontend CI",
+    "unauthenticatedProtectionStatus": 302
+  }
 }
