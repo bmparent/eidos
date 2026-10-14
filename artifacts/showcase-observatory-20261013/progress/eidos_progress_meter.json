@@ -1,0 +1,55 @@
+{
+  "proof_score": null,
+  "reason": "No project-wide accepted scientific gates were reevaluated. This is an application evidence-inspection gate.",
+  "application_gate": {
+    "name": "coordinated evidence inspection",
+    "status": "passed",
+    "evidence": [
+      "../browser-acceptance.json",
+      "../node-tests.log",
+      "../brain-parity.log"
+    ]
+  },
+  "scientific_gates": [
+    {
+      "name": "reproducible baseline",
+      "status": "missing",
+      "reason": "Not evaluated by this presentation task"
+    },
+    {
+      "name": "labeled-domain proof",
+      "status": "missing",
+      "reason": "Not evaluated by this presentation task"
+    },
+    {
+      "name": "precision and false-positive discipline",
+      "status": "missing",
+      "reason": "Not evaluated by this presentation task"
+    },
+    {
+      "name": "Sentinel calibration/generalization",
+      "status": "missing",
+      "reason": "Not evaluated by this presentation task"
+    },
+    {
+      "name": "compression/anomaly preservation",
+      "status": "missing",
+      "reason": "Not evaluated by this presentation task"
+    },
+    {
+      "name": "incident cards/explanation",
+      "status": "missing",
+      "reason": "Not evaluated by this presentation task"
+    },
+    {
+      "name": "domain demos",
+      "status": "missing",
+      "reason": "Not evaluated by this presentation task"
+    },
+    {
+      "name": "one-command final proof",
+      "status": "missing",
+      "reason": "Not evaluated by this presentation task"
+    }
+  ]
+}

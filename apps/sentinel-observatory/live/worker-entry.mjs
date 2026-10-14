@@ -68,7 +68,7 @@ export default {
       const sensor = await snapshot(env);
       return response(JSON.stringify(sensor), 'application/json; charset=utf-8', sensor.connected ? 200 : 503);
     }
-    const routes = {'/': ['html', 'text/html; charset=utf-8'], '/app.js': ['app', 'text/javascript; charset=utf-8'], '/styles.css': ['css', 'text/css; charset=utf-8'], '/brain.mjs': ['brain', 'text/javascript; charset=utf-8'], '/browser-interpreter.mjs': ['interpreter', 'text/javascript; charset=utf-8'], '/browser-model-worker.mjs': ['model_worker', 'text/javascript; charset=utf-8'], '/security-events.mjs': ['security', 'text/javascript; charset=utf-8'], '/network-panel.mjs': ['network_panel', 'text/javascript; charset=utf-8'], '/recorded': ['recorded', 'text/html; charset=utf-8']};
+    const routes = {'/': ['html', 'text/html; charset=utf-8'], '/app.js': ['app', 'text/javascript; charset=utf-8'], '/styles.css': ['css', 'text/css; charset=utf-8'], '/brain.mjs': ['brain', 'text/javascript; charset=utf-8'], '/browser-interpreter.mjs': ['interpreter', 'text/javascript; charset=utf-8'], '/browser-model-worker.mjs': ['model_worker', 'text/javascript; charset=utf-8'], '/security-events.mjs': ['security', 'text/javascript; charset=utf-8'], '/network-panel.mjs': ['network_panel', 'text/javascript; charset=utf-8'], '/evidence-view.mjs': ['evidence_view', 'text/javascript; charset=utf-8'], '/evidence-fixture': ['evidence_fixture', 'text/html; charset=utf-8'], '/recorded': ['recorded', 'text/html; charset=utf-8']};
     const route = routes[path];
     if (!route || !ASSETS[route[0]]) return response('Not found', 'text/plain; charset=utf-8', 404);
     return response(request.method === 'HEAD' ? null : ASSETS[route[0]], route[1]);

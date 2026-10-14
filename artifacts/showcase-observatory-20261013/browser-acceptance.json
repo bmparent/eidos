@@ -1,0 +1,93 @@
+{
+  "environment": {
+    "origin": "http://127.0.0.1:8770",
+    "browser": "155.0.8059.39",
+    "engine": "Chromium",
+    "gpu": "disabled deliberately; SVG/HTML interface",
+    "sourceMode": "explicit synthetic fixture",
+    "physicalDevice": false
+  },
+  "checks": [
+    {
+      "name": "page identity and meaningful rendered content",
+      "status": "passed"
+    },
+    {
+      "name": "duplicate batches retain exactly three records",
+      "status": "passed"
+    },
+    {
+      "name": "synthetic source visibly distinct from observed telemetry",
+      "status": "passed"
+    },
+    {
+      "name": "event selection coordinates list, series, topology and evidence drawer",
+      "status": "passed"
+    },
+    {
+      "name": "view switching preserves event selection",
+      "status": "passed"
+    },
+    {
+      "name": "fixed window filters all views and survives incoming repeated receipts",
+      "status": "passed"
+    },
+    {
+      "name": "invalid time range preserves the prior window",
+      "status": "passed"
+    },
+    {
+      "name": "keyboard host selection synchronizes all views",
+      "status": "passed"
+    },
+    {
+      "name": "downloaded evidence preserves source mode, receipts and selection",
+      "status": "passed",
+      "file": "fixture-export.json"
+    },
+    {
+      "name": "390px reduced-motion fallback remains readable without page overflow",
+      "status": "passed"
+    },
+    {
+      "name": "malformed import preserves retained evidence",
+      "status": "passed"
+    },
+    {
+      "name": "file import is explicitly historical beside synthetic fixture",
+      "status": "passed"
+    },
+    {
+      "name": "model outage retains original evidence and labels measured fallback",
+      "status": "passed"
+    },
+    {
+      "name": "denied feed visibly unauthorized while retained evidence remains",
+      "status": "passed"
+    },
+    {
+      "name": "feed reconnect deduplicates records and pause preserves explicit coverage",
+      "status": "passed"
+    },
+    {
+      "name": "unchanged app entry loads with coordinated network panel",
+      "status": "passed"
+    },
+    {
+      "name": "no unexpected browser runtime or console errors",
+      "status": "passed",
+      "expectedDeniedFeedResponses": 1
+    }
+  ],
+  "consoleErrors": [
+    "Failed to load resource: the server responded with a status of 403 (Forbidden)"
+  ],
+  "screenshots": [
+    "C:\\Users\\bmpar\\codex-worktrees\\showcase-observatory-20261013\\artifacts\\showcase-observatory-20261013\\observatory-desktop-fixture.png",
+    "C:\\Users\\bmpar\\codex-worktrees\\showcase-observatory-20261013\\artifacts\\showcase-observatory-20261013\\observatory-phone-fixture.png"
+  ],
+  "expectedConsoleErrors": [
+    "Failed to load resource: the server responded with a status of 403 (Forbidden)"
+  ],
+  "status": "passed"
+}

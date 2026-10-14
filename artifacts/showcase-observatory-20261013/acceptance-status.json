@@ -1,0 +1,47 @@
+{
+  "timestamp_utc": "2026-10-14T00:00:35.827124+00:00",
+  "branch": "codex/showcase-observatory-20261013",
+  "base_commit": "00d49ff2e8ef74931503fb7a27046857228d0b04",
+  "core_behavior_changed": false,
+  "local_acceptance": "passed",
+  "node_tests": {
+    "passed": 122,
+    "failed": 0
+  },
+  "python_tests": {
+    "passed": 27,
+    "environment_failed": 1,
+    "reason": "Existing symlink test cannot create symlink: Windows WinError1314"
+  },
+  "brain_parity": {
+    "status": "passed",
+    "frames": 954,
+    "comparisons": 41022
+  },
+  "browser": {
+    "status": "passed",
+    "checks": 17,
+    "environment": {
+      "origin": "http://127.0.0.1:8770",
+      "browser": "155.0.8059.39",
+      "engine": "Chromium",
+      "gpu": "disabled deliberately; SVG/HTML interface",
+      "sourceMode": "explicit synthetic fixture",
+      "physicalDevice": false
+    }
+  },
+  "hosted_acceptance": {
+    "status": "passed",
+    "source_mode": "explicit synthetic fixture",
+    "checks": 7,
+    "actual_sensor": "unavailable; no OBSERVATORY_DB on separate candidate",
+    "model": "not configured",
+    "private": true,
+    "deployment": "appgdep_6acec682295c8191ad967510bf5fcf01",
+    "site_source_commit": "6342acf48e95acc3c399db117f0e08456bba7a2d"
+  },
+  "actual_new_sensor_observations": "not_tested",
+  "actual_model_execution": "not_tested",
+  "production_promotion": "not_authorized",
+  "rollback_commit": "00d49ff2e8ef74931503fb7a27046857228d0b04"
+}

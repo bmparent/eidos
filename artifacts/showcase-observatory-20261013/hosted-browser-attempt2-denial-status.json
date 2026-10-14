@@ -1,0 +1,102 @@
+{
+  "url": "https://sentinel-showcase-candidate-20261013.bmparent.chatgpt.site",
+  "source_mode": "hosted explicit fixture; no actual sensor/model claim",
+  "checks": [
+    "private hosted fixture renders",
+    "hosted selection synchronizes list/series/drawer",
+    "hosted time and receipt survive view change",
+    "390px reduced-motion no-GPU hosted fallback",
+    "isolated sensor/model bindings explicitly unavailable"
+  ],
+  "console_errors": [],
+  "browser": "155.0.8059.39",
+  "gpu": "disabled",
+  "screenshots": [
+    "C:\\Users\\bmpar\\codex-worktrees\\showcase-observatory-20261013\\artifacts\\showcase-observatory-20261013\\hosted-observatory-desktop.png",
+    "C:\\Users\\bmpar\\codex-worktrees\\showcase-observatory-20261013\\artifacts\\showcase-observatory-20261013\\hosted-observatory-phone.png"
+  ],
+  "capabilities": {
+    "sensor": {
+      "connected": false,
+      "mode": "observatory_edge",
+      "auto_start": false,
+      "source_id": "observatory-edge",
+      "source_name": "Observatory application-edge sensor",
+      "format": "auto",
+      "interval_ms": 5000,
+      "max_records": 1000,
+      "retention_days": 7,
+      "starts_capture": false,
+      "privacy": "Shows a seven-day window of this Observatory API request outcomes and requested public HEAD metadata, capped at 1000 records. Older rows are purged on the next sensor read or write; no unattended cleanup is claimed. No client IP, cookies, auth headers, user agent, query strings, request bodies, target paths or payloads are collected.",
+      "reason": "Observatory sensor storage is not attached",
+      "coverage": {
+        "scope": "This protected Observatory service only",
+        "missing": [
+          "LAN and internal-network traffic",
+          "Packet capture",
+          "Other sites and remote target visitor traffic",
+          "Provider firewall or IDS events",
+          "Authentication denials before protected Sites dispatch"
+        ]
+      }
+    },
+    "interpretation": {
+      "connected": false,
+      "configured": false,
+      "storage_attached": false,
+      "state": "not_configured",
+      "mode": "hosted_gpt_sol",
+      "model_id": "gpt-6.1-sol",
+      "manual_only": true,
+      "auto": false,
+      "limits": {
+        "daily_requests": 20,
+        "daily_reserved_usd": 0.5,
+        "reserved_usd_per_call": 0.05,
+        "cooldown_ms": 60000,
+        "max_output_tokens": 1024,
+        "max_request_bytes": 6000,
+        "provider_timeout_ms": 30000,
+        "receipt_retention_days": 8
+      },
+      "reason": "GPT-6.1 Sol is not connected: the server-side OpenAI API key is missing.",
+      "privacy": "Only bounded numeric and enum metadata from retained Observatory records is sent to OpenAI. No endpoints, IP addresses, URLs, bodies, headers, raw log text or API keys are sent in the model context. Inference is hosted, not on this device. Interpretation receipts and conservative reservations are retained for eight days and purged on the next valid retained-evidence interpretation request; no unattended cleanup is claimed.",
+      "model_execution_verified": false,
+      "evidence_scope": "Retained native Observatory source records only; browser imports cannot trigger paid inference"
+    }
+  },
+  "sensor_status": 503,
+  "sensor_response": {
+    "connected": false,
+    "mode": "observatory_edge",
+    "auto_start": false,
+    "source_id": "observatory-edge",
+    "source_name": "Observatory application-edge sensor",
+    "format": "auto",
+    "interval_ms": 5000,
+    "max_records": 1000,
+    "retention_days": 7,
+    "starts_capture": false,
+    "privacy": "Shows a seven-day window of this Observatory API request outcomes and requested public HEAD metadata, capped at 1000 records. Older rows are purged on the next sensor read or write; no unattended cleanup is claimed. No client IP, cookies, auth headers, user agent, query strings, request bodies, target paths or payloads are collected.",
+    "reason": "Observatory sensor storage is not attached",
+    "coverage": {
+      "state": "disconnected",
+      "missing": [
+        "LAN and internal-network traffic",
+        "Packet capture",
+        "Other sites and remote target visitor traffic",
+        "Provider firewall or IDS events",
+        "Authentication denials before protected Sites dispatch",
+        "No sensor storage binding"
+      ]
+    },
+    "observed_at": "2026-10-14T00:13:20.549Z",
+    "text": "",
+    "counts": {
+      "records": 0
+    }
+  },
+  "unauthenticated_status": 401,
+  "status": "failed",
+  "error": "AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:\n\n401 !== 403\n\n    at file:///C:/Users/bmpar/codex-worktrees/showcase-observatory-20261013/apps/sentinel-observatory/live/hosted-evidence-qa.mjs:23:173"
+}

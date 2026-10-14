@@ -1,0 +1,15 @@
+{
+  "id": "appgdep_6acec682295c8191ad967510bf5fcf01",
+  "project_id": "appgprj_6acec3e0cc4c8191899f69048a9e7eb8",
+  "title": "Sentinel Observatory \u00b7 Showcase candidate",
+  "version_id": "appgprj_6acec3e0cc4c8191899f69048a9e7eb8~appgver_8d8c42495f7c8191a6b6282a9fe8bd16",
+  "type": "publish",
+  "status": "succeeded",
+  "url": "https://sentinel-showcase-candidate-20261013.bmparent.chatgpt.site",
+  "has_mcp": false,
+  "screenshot_asset_pointer": null,
+  "provider_deployment_id": "site---6acec3e0cc4c8191899f69048a9e7eb8",
+  "failure_message": null,
+  "env_set_revision": 0,
+  "updated_at": "2026-10-14T00:02:15.355183+00:00"
+}

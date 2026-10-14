@@ -1,0 +1,234 @@
+{
+  "version": 2,
+  "selection": {
+    "event_id": "sensor_cb5ef82e2dc8e302",
+    "host": null,
+    "kind": "all",
+    "view": "both",
+    "time_window": {
+      "start": null,
+      "end": null
+    }
+  },
+  "exported_at": "2026-10-13T23:53:11.565Z",
+  "visibility": "sensor-supplied records only",
+  "sources": [
+    {
+      "id": "qa-fixture",
+      "name": "QA fixture · synthetic",
+      "format": "suricata",
+      "mode": "fixture",
+      "sensor_mode": null,
+      "file_name": null,
+      "imported_at": "2026-10-13T23:53:09.570Z",
+      "last_received_at": "2026-10-13T23:53:10.831Z",
+      "rejected_count": 0,
+      "coverage": {
+        "state": "historical_import",
+        "sources": [
+          "suricata"
+        ],
+        "kinds": [
+          "flow",
+          "alert",
+          "dns"
+        ],
+        "first_observed_at": "2026-10-13T12:00:00.000Z",
+        "last_observed_at": "2026-10-13T12:02:00.000Z",
+        "imported_at": "2026-10-13T23:53:09.549Z",
+        "network_visibility": "Only records exported by the connected sensor; no packet capture by Observatory",
+        "missing": [
+          "Traffic outside sensor placement",
+          "Encrypted payload contents",
+          "Source authenticity verification"
+        ]
+      }
+    }
+  ],
+  "events": [
+    {
+      "id": "sensor_7215e705ae49b949",
+      "source_id": "qa-fixture",
+      "source": "suricata",
+      "source_name": "QA fixture · synthetic",
+      "source_event_id": "13",
+      "source_timestamp": "2026-10-13T12:02:00Z",
+      "observed_at": "2026-10-13T12:02:00.000Z",
+      "received_at": "2026-10-13T23:53:09.549Z",
+      "kind": "dns",
+      "actual_security_event": false,
+      "severity": "informational",
+      "summary": "Suricata DNS record: fixture.example",
+      "classification": "network_telemetry",
+      "attack_confirmed": false,
+      "source_authenticity": "not independently verified",
+      "fields": {
+        "src_ip": "192.0.2.11",
+        "dest_ip": "198.51.100.53",
+        "protocol": "UDP",
+        "flow_id": "13",
+        "dns_name": "fixture.example",
+        "dns_rcode": "NOERROR",
+        "dns_type": "A"
+      },
+      "evidence": {
+        "id": "sensor_7215e705ae49b949",
+        "source": "suricata",
+        "source_id": "qa-fixture",
+        "source_event_id": "13",
+        "timestamp": "2026-10-13T12:02:00.000Z",
+        "source_timestamp": "2026-10-13T12:02:00Z",
+        "fields": {
+          "src_ip": "192.0.2.11",
+          "dest_ip": "198.51.100.53",
+          "protocol": "UDP",
+          "flow_id": "13",
+          "dns_name": "fixture.example",
+          "dns_rcode": "NOERROR",
+          "dns_type": "A"
+        }
+      },
+      "limitation": "Logged network metadata; does not prove suspicious activity or comprehensive network visibility"
+    },
+    {
+      "id": "sensor_cb5ef82e2dc8e302",
+      "source_id": "qa-fixture",
+      "source": "suricata",
+      "source_name": "QA fixture · synthetic",
+      "source_event_id": "12",
+      "source_timestamp": "2026-10-13T12:01:00Z",
+      "observed_at": "2026-10-13T12:01:00.000Z",
+      "received_at": "2026-10-13T23:53:09.549Z",
+      "kind": "alert",
+      "actual_security_event": true,
+      "severity": "low",
+      "summary": "Suricata rule match: QA fixture rule · not a real incident",
+      "classification": "sensor_reported_event",
+      "attack_confirmed": false,
+      "source_authenticity": "not independently verified",
+      "fields": {
+        "src_ip": "192.0.2.10",
+        "dest_ip": "198.51.100.20",
+        "protocol": "TCP",
+        "flow_id": "12",
+        "signature_id": "900001",
+        "signature": "QA fixture rule · not a real incident",
+        "action": "allowed",
+        "source_severity": 3
+      },
+      "evidence": {
+        "id": "sensor_cb5ef82e2dc8e302",
+        "source": "suricata",
+        "source_id": "qa-fixture",
+        "source_event_id": "12",
+        "timestamp": "2026-10-13T12:01:00.000Z",
+        "source_timestamp": "2026-10-13T12:01:00Z",
+        "fields": {
+          "src_ip": "192.0.2.10",
+          "dest_ip": "198.51.100.20",
+          "protocol": "TCP",
+          "flow_id": "12",
+          "signature_id": "900001",
+          "signature": "QA fixture rule · not a real incident",
+          "action": "allowed",
+          "source_severity": 3
+        }
+      },
+      "limitation": "A real record reported by the supplied sensor export; rule matches and notices may include false positives or policy events. Confirm with source context."
+    },
+    {
+      "id": "sensor_3f70f5cc7fe5c8f4",
+      "source_id": "qa-fixture",
+      "source": "suricata",
+      "source_name": "QA fixture · synthetic",
+      "source_event_id": "11",
+      "source_timestamp": "2026-10-13T12:00:00Z",
+      "observed_at": "2026-10-13T12:00:00.000Z",
+      "received_at": "2026-10-13T23:53:09.549Z",
+      "kind": "flow",
+      "actual_security_event": false,
+      "severity": "informational",
+      "summary": "Suricata logged a network flow",
+      "classification": "network_telemetry",
+      "attack_confirmed": false,
+      "source_authenticity": "not independently verified",
+      "fields": {
+        "src_ip": "192.0.2.10",
+        "dest_ip": "198.51.100.20",
+        "src_port": 44321,
+        "dest_port": 443,
+        "protocol": "TCP",
+        "flow_id": "11",
+        "bytes": 1030,
+        "packets": 7,
+        "bytes_to_server": 210,
+        "bytes_to_client": 820,
+        "duration_seconds": 1
+      },
+      "evidence": {
+        "id": "sensor_3f70f5cc7fe5c8f4",
+        "source": "suricata",
+        "source_id": "qa-fixture",
+        "source_event_id": "11",
+        "timestamp": "2026-10-13T12:00:00.000Z",
+        "source_timestamp": "2026-10-13T12:00:00Z",
+        "fields": {
+          "src_ip": "192.0.2.10",
+          "dest_ip": "198.51.100.20",
+          "src_port": 44321,
+          "dest_port": 443,
+          "protocol": "TCP",
+          "flow_id": "11",
+          "bytes": 1030,
+          "packets": 7,
+          "bytes_to_server": 210,
+          "bytes_to_client": 820,
+          "duration_seconds": 1
+        }
+      },
+      "limitation": "Logged network metadata; does not prove suspicious activity or comprehensive network visibility"
+    }
+  ],
+  "analysis": {
+    "observations": [
+      {
+        "id": "network_sensor_3f70f5cc7fe5c8f4",
+        "source_id": "qa-fixture",
+        "metric": "log1p_logged_connection_bytes",
+        "observed_at": "2026-10-13T12:00:00.000Z",
+        "value": 1030,
+        "feature": 6.93828448401696,
+        "event_score": null,
+        "samples": 1,
+        "state": "calibrating",
+        "warmup_remaining": 11,
+        "actual_security_event": false,
+        "confidence": "experimental",
+        "evidence_ids": [
+          "sensor_3f70f5cc7fe5c8f4"
+        ],
+        "summary": "Learning a provisional connection-volume baseline",
+        "engine": "Eidos Brain / Sentinel V3 · portable JS port",
+        "engine_scope": "One numeric feature: log1p of bytes reported per logged connection; not threat classification",
+        "limitation": "No labeled network validation. Connection records may have different durations. This flag needs review; it does not establish an attack or predict future activity"
+      }
+    ],
+    "anomalies": [],
+    "summary": {
+      "records": 3,
+      "actual_security_events": 1,
+      "unusual_observations": 0,
+      "calibrated_sources": 0
+    },
+    "coverage": {
+      "state": "experimental_network_features",
+      "missing": [
+        "No attack ground truth",
+        "No throughput estimation",
+        "No zero-fill for unobserved time buckets",
+        "No future prediction"
+      ]
+    }
+  },
+  "interpretations": []
+}

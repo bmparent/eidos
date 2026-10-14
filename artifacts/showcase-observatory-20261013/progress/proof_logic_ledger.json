@@ -1,0 +1,11 @@
+{
+  "logic": "V = fixed time window intersect host filter intersect kind filter over newest2000unique evidence IDs",
+  "meaning": "Explanation before automation; truth that can be revisited",
+  "core_behavior_changed": false,
+  "unproven": [
+    "detection quality",
+    "compression advantage",
+    "actual model execution",
+    "physical devices"
+  ]
+}

@@ -1,0 +1,6 @@
+Presentation-only Observatory milestone
+Python 3.11.0
+Windows-10-10.0.26200-SP0
+Node v24.14.0
+Browser 155.0.8059.39
+GPU disabled; reduced motion; 1440x1000 and390x844 CSS pixels; no physical-device claim

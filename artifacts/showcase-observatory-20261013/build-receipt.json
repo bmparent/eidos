@@ -1,0 +1,17 @@
+{
+  "output": "C:\\Users\\bmpar\\codex-worktrees\\showcase-observatory-20261013\\sites\\showcase-observatory-20261013\\worker\\index.js",
+  "bytes": 360108,
+  "sha256": "368ba1729acd3a5dd932227d1717e41026acd3b3bec1c15cda97150dd7befbf4",
+  "sources": {
+    "html": "7eda4a44f26acc225d4fb378ba2983f119cf6ca59db24a6cc01131499ca9276d",
+    "app": "0d2ab6de403dddf230bb582a897596f74645abba5dfc8fdb0e21fdbd7be4a983",
+    "css": "b59829b996ee8204d029b607f6c2e50fd9e06c5b6c16b711e2a8b3fa92a1453b",
+    "brain": "c6389999043e81288154f9b034dd97ef1b32661b8b2707977ebee2f00b427bd2",
+    "interpreter": "b7499f5ca7e50987c5a0b476b32678fadb31c5a5f208093afc91be49f09d941b",
+    "model_worker": "604cf1d38ab52875ad4e503d971c44b2b3e96267a0218858741712ece11c3144",
+    "security": "5cba4df2e042e3f04d9e3d46eb88e651ea4f1f29532a50b72355d14e41ba76f0",
+    "network_panel": "0f597759aef1e9fbd94523dd6944beee3751428ff45a5f920c7bbcbb87606899",
+    "evidence_view": "0c9e6dc15ac66d2bf8272cc170327efdcd660e4f2260f94f238943a148c26fa8",
+    "evidence_fixture": "96eeb7b4f183cea062225c4ebfb72a0400ef4f2c23bd1e469e7c63bcf3707db2"
+  }
+}

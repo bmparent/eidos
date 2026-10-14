@@ -1,4 +1,5 @@
 import { parseSecurityLog, analyzeSecurityEvents } from '/security-events.mjs';
+import {retainUniqueEvents, selectEvidenceWindow, evidenceSeries, sourceEvidenceStatus} from '/evidence-view.mjs';
 
 // Sensor records are evidence, never executable content. This view keeps imported
 // captures separate from the public HTTP observer and never invents graph traffic.
@@ -28,8 +29,10 @@ const styles=`
 
 export function initializeNetworkPanel(container, options={}) {
   if(!container)throw new Error('A network panel container is required.');
-  const state={sources:[],events:[],analysis:{observations:[],anomalies:[],coverage:{}},selectedId:null,nodeFilter:null,filter:'all',limit:10,busy:false,interpretations:new Map(),interpreting:null,disposed:false,capabilities:null,nativeAutoStarted:false,stream:{active:false,timer:null,controller:null,run:0,lastReceivedAt:null,issue:null}};
-  const ownStyle=document.createElement('style');ownStyle.textContent=styles;container.appendChild(ownStyle);
+  const state={sources:[],events:[],analysis:{observations:[],anomalies:[],coverage:{}},selectedId:null,nodeFilter:null,filter:'all',window:{start:null,end:null},view:'both',limit:10,busy:false,interpretations:new Map(),interpreting:null,disposed:false,capabilities:null,nativeAutoStarted:false,stream:{active:false,timer:null,controller:null,run:0,lastReceivedAt:null,issue:null,unauthorized:false}};
+  const ownStyle=document.createElement('style');ownStyle.textContent=styles+`
+  .sn-coordination{padding:20px 0 0}.sn-view-controls,.sn-time-controls{display:flex;gap:9px;flex-wrap:wrap;align-items:end}.sn-view-controls .sn-button[aria-pressed=true]{background:#25433e;border-color:#b4eedc}.sn-time-controls{margin-top:15px}.sn-time-controls label{font-size:10px;color:#9eacb8;display:flex;flex-direction:column;gap:7px}.sn-time-controls input{color-scheme:dark;background:#10212a;color:#eaf0f1;border:1px solid #405e66;border-radius:4px;font:11px var(--mono,monospace);padding:9px;max-width:100%}.sn-series{padding:22px 0 0}.sn-series h3{font-size:14px;font-weight:450}.sn-series svg{width:100%;min-height:110px}.sn-series-mark{cursor:pointer}.sn-series-mark:focus-visible{outline:2px solid #b4eedc}.sn-series-mark.selected rect{stroke:#eaf0f1;stroke-width:2}.sn-series-events{display:flex;flex-wrap:wrap;gap:7px;margin-top:13px}.sn-series-events button{font:9px var(--mono,monospace);border:1px solid #405e66;border-radius:4px;padding:7px;color:#8acbde}.sn-series-events button[aria-pressed=true]{border-color:#b4eedc;background:#18382f}.sn-coverage-status{border-top:1px solid #2b4350;margin-top:16px;padding-top:14px}.sn-coverage-status strong{font-size:10px;color:#8acbde}.sn-selection-note{border-left:2px solid #efbc7f;padding:10px;font-size:10px;color:#efbc7f}.sn-panel [hidden]{display:none!important}.sn-time-controls .sn-button:focus-visible,.sn-view-controls .sn-button:focus-visible{outline:2px solid #b4eedc;outline-offset:3px}@media(max-width:700px){.sn-time-controls label{min-width:0;flex:1 1 135px}.sn-time-controls input{width:100%;min-width:0}.sn-time-controls .sn-button{flex:1 1 130px;font-size:10px}.sn-view-controls{gap:7px}.sn-view-controls .sn-button{flex:1;font-size:10px;padding:9px}.sn-series-events button{font-size:10px;min-height:36px}}
+  `;container.appendChild(ownStyle);
   const root=document.createElement('div');root.className='sn-panel';
   root.innerHTML=`<div class="sn-heading"><div><h2 id="sn-heading">The connections behind the response.</h2><p>Explore records from connected sources, or import your own network capture. Every relationship and recorded security event stays attached to its evidence.</p></div><span class="sn-badge" data-part="badge">NO SENSOR CONNECTED</span></div>
     <div class="sn-coverage" aria-label="Observation coverage"><div><span class="sn-label">PUBLIC ENDPOINTS</span><strong>HTTP response checks</strong><small>The live field above measures reachability and response controls.</small></div><div><span class="sn-label">SOURCE EVIDENCE</span><strong data-part="coverage-title">Waiting for your source</strong><small data-part="coverage-description">Suricata EVE or Zeek JSONL from systems you monitor.</small></div><div><span class="sn-label">VISIBILITY BOUNDARY</span><strong>Only what the source captured</strong><small data-part="coverage-boundary">Importing a capture does not start packet collection or expose an entire network.</small></div></div>
@@ -38,11 +41,18 @@ export function initializeNetworkPanel(container, options={}) {
     <div class="sn-metrics" aria-label="Sensor evidence measurements"><div><span>Actual records</span><strong data-part="records">0</strong><small>From your sensor sources</small></div><div><span>Observed nodes</span><strong data-part="endpoints">0</strong><small data-part="nodes-note">Addresses in supplied records</small></div><div><span>Recorded security events</span><strong data-part="alerts">0</strong><small>Source labels, not a verdict</small></div><div><span>Latest sensor event</span><strong data-part="latest">—</strong><small data-part="latest-note">No sensor evidence yet</small></div></div>
     <div class="sn-layout"><div class="sn-graph-column"><div class="sn-graph-heading"><span>Observed relationships</span><span data-part="graph-count">AWAITING REAL RECORDS</span></div><div class="sn-graph" data-part="graph" tabindex="0" role="region" aria-label="Scrollable source relationship graph" aria-describedby="sn-graph-pan-hint"><div class="sn-graph-empty"><div class="sn-empty-mark" aria-hidden="true"><span></span></div><h3>Bring your network into view.</h3><p>A sensor capture turns addresses into relationships. The first connection appears when its real record arrives.</p></div></div><p class="sn-graph-pan-hint" data-part="graph-pan-hint" id="sn-graph-pan-hint" hidden>Swipe across the graph to explore. You can also focus it and use the left and right arrow keys.</p><div class="sn-legend" data-part="legend"><span><i style="background:#8acbde"></i>Flow / connection</span><span><i style="background:#b6b0e9"></i>DNS</span><span><i style="background:#b4eedc"></i>TLS</span><span><i style="background:#efbc7f"></i>Recorded alert / notice</span></div><p class="sn-boundary" data-part="graph-boundary">An arc represents a source and destination recorded by a sensor. Its width reflects record count, not network bandwidth. No movement is generated to stand in for missing traffic.</p><div class="sn-node-filter" data-part="node-filter" hidden></div><div class="sn-findings" data-part="findings"></div></div><aside class="sn-inspector" data-part="inspector" aria-labelledby="sn-inspector-title"></aside></div>
     <div class="sn-record-heading"><h3>The sensor evidence record</h3><div class="sn-record-actions"><div class="sn-filter" role="group" aria-label="Filter sensor evidence"><button data-filter="all" class="active" aria-pressed="true">All</button><button data-filter="alerts" aria-pressed="false">Alerts</button><button data-filter="connections" aria-pressed="false">Connections</button><button data-filter="request" aria-pressed="false" hidden>Requests</button><button data-filter="collector" aria-pressed="false" hidden>Checks</button><button data-filter="policy_event" aria-pressed="false" hidden>Controls</button><button data-filter="dns" aria-pressed="false">DNS</button><button data-filter="tls" aria-pressed="false">TLS</button></div><button class="sn-export" data-action="export" disabled>Export evidence</button></div></div><div class="sn-event-head"><span>Source / record</span><span>Recorded kind</span><span>Observed at</span><span></span></div><div data-part="events"></div><button class="sn-more" data-action="more" hidden>Show more records</button>`;
+  const controls=document.createElement('div');controls.className='sn-coordination';
+  controls.innerHTML='<div class="sn-view-controls" role="group" aria-label="Coordinated evidence views"><button class="sn-button" data-view="both" aria-pressed="true">Overview</button><button class="sn-button" data-view="topology" aria-pressed="false">Topology</button><button class="sn-button" data-view="series" aria-pressed="false">Time series</button></div><div class="sn-time-controls"><label>From<input type="datetime-local" data-time="start" step="1"></label><label>Through<input type="datetime-local" data-time="end" step="1"></label><button class="sn-button" data-action="recent-window">Latest 15 minutes</button><button class="sn-button" data-action="all-window">All retained</button></div><p class="sn-boundary" data-part="window-status" role="status">All retained source records. Views share this time window, host and record filter.</p>';
+  root.querySelector('.sn-metrics').before(controls);
+  const series=document.createElement('section');series.className='sn-series';series.setAttribute('aria-label','Recorded evidence time series');series.dataset.part='series';
+  root.querySelector('.sn-graph-column').appendChild(series);
   container.appendChild(root);
   const part=name=>root.querySelector(`[data-part="${name}"]`);
   const action=name=>root.querySelector(`[data-action="${name}"]`);
   const notify=message=>{if(typeof options.onNotice==='function')options.onNotice(message);};
   const selected=()=>state.events.find(event=>event.id===state.selectedId);
+  const windowEvents=()=>selectEvidenceWindow(state.events,{...state.window,host:state.nodeFilter,kind:state.filter});
+  const sourceStatus=source=>sourceEvidenceStatus(source,{active:state.stream.active,hidden:document.visibilityState==='hidden',issue:state.stream.issue,unauthorized:state.stream.unauthorized,lastReceivedAt:source?.lastReceivedAt||state.stream.lastReceivedAt});
   const sourceFor=event=>state.sources.find(source=>source.id===event.source_id);
   const describe=event=>short(event.summary||event.fields?.signature||`${endpointsFor(event).source||'Unknown source'} → ${endpointsFor(event).target||'Unknown destination'}`,240);
   const interpreterEligibility=event=>{
@@ -65,17 +75,17 @@ export function initializeNetworkPanel(container, options={}) {
   };
 
   function getInterpretationContext() {
-    return {selectedEvent:selected()||null,events:state.events.slice(0,200),observations:list(state.analysis.observations).slice(-100),coverage:state.analysis.coverage||{},sources:state.sources.map(({id,name,format,mode,importedAt,lastReceivedAt})=>({id,name,format,mode,imported_at:importedAt,last_received_at:lastReceivedAt||null}))};
+    return {selectedEvent:selected()||null,events:windowEvents().slice(0,200),selection:{event_id:state.selectedId,host:state.nodeFilter,kind:state.filter,view:state.view,time_window:{...state.window}},observations:list(state.analysis.observations).slice(-100),coverage:state.analysis.coverage||{},sources:state.sources.map(({id,name,format,mode,importedAt,lastReceivedAt})=>({id,name,format,mode,imported_at:importedAt,last_received_at:lastReceivedAt||null}))};
   }
   function emitChange(){container.dispatchEvent(new CustomEvent('sentinel-security-evidence',{detail:getInterpretationContext()}));}
   function showMessage(message){part('message').textContent=message||'';part('message').hidden=!message;}
   function rebuild(){
-    state.events=state.sources.flatMap(source=>list(source.events)).sort((a,b)=>stamp(b.observed_at)-stamp(a.observed_at)).slice(0,MAX_SESSION_EVENTS);
+    state.events=retainUniqueEvents(state.sources.flatMap(source=>list(source.events)),MAX_SESSION_EVENTS);
     const retained=new Set(state.events.map(event=>event.id));state.sources.forEach(source=>source.events=source.events.filter(event=>retained.has(event.id)));
     for(const eventId of state.interpretations.keys())if(!retained.has(eventId))state.interpretations.delete(eventId);
     state.analysis=analyzeSecurityEvents(state.events,{binSeconds:60});if(!state.events.some(event=>event.id===state.selectedId))state.selectedId=state.events[0]?.id||null;render();emitChange();
   }
-  function choose(eventId){state.selectedId=eventId;renderGraph();renderInspector();renderEvents();emitChange();}
+  function choose(eventId){state.selectedId=eventId;render();emitChange();}
 
   async function importFile(file) {
     if(!file||state.disposed)return;
@@ -128,7 +138,7 @@ export function initializeNetworkPanel(container, options={}) {
     const controller=new AbortController();state.stream.controller=controller;const timeout=setTimeout(()=>controller.abort(),12000);
     try{
       const response=await fetch('/api/security-events',{method:'GET',cache:'no-store',signal:controller.signal});
-      if(!response.ok)throw new Error(`Local sensor endpoint returned HTTP ${response.status}.`);
+      if(!response.ok){state.stream.unauthorized=response.status===401||response.status===403;throw new Error(`Sensor endpoint returned HTTP ${response.status}.`);}
       const snapshot=await response.json();
       if(!state.stream.active||run!==state.stream.run||state.disposed)return;
       if(!snapshot.connected)throw new Error(short(snapshot.reason||snapshot.error?.message||'The configured sensor log is unavailable.',240));
@@ -138,10 +148,10 @@ export function initializeNetworkPanel(container, options={}) {
       let source=state.sources.find(item=>item.id===snapshot.source_id);
       if(!source){source={id:snapshot.source_id,name:short(snapshot.source_name||(native?'Observatory application-edge sensor':'Local sensor'),100),format:native?'Observatory application-edge':list(batch.coverage?.sources).join(' / ')||'Suricata / Zeek',mode:'live',sensorMode:native?'observatory_edge':'local_log_tail',importedAt:snapshot.observed_at,events:[],rejected:[],rejectedCount:0};state.sources.push(source);}
       const seen=new Set(source.events.map(event=>event.id));const incoming=batch.events.filter(event=>!seen.has(event.id));
-      source.events=[...source.events,...incoming];source.coverage={...batch.coverage,...snapshot.coverage};source.lastReceivedAt=snapshot.observed_at;source.rejected=list(batch.rejected);source.rejectedCount=number(batch.rejected_count)+number(snapshot.counts?.malformed)+number(snapshot.counts?.unsupported)+number(snapshot.counts?.oversized);
-      state.stream.lastReceivedAt=snapshot.observed_at;state.stream.issue=null;
-      if(incoming.length||!state.selectedId)rebuild();else{renderLive();renderSources();renderSummary();}
-    }catch(error){if(!state.stream.active||run!==state.stream.run||state.disposed)return;state.stream.issue=short(error?.message||'The sensor feed could not be read.',240);renderLive();renderSources();renderSummary();}
+      source.events=retainUniqueEvents([...source.events,...incoming]);source.coverage={...batch.coverage,...snapshot.coverage};source.lastReceivedAt=snapshot.observed_at;source.rejected=list(batch.rejected);source.rejectedCount=number(batch.rejected_count)+number(snapshot.counts?.malformed)+number(snapshot.counts?.unsupported)+number(snapshot.counts?.oversized);
+      state.stream.lastReceivedAt=snapshot.observed_at;state.stream.issue=null;state.stream.unauthorized=false;
+      if(incoming.length||!state.selectedId)rebuild();else render();
+    }catch(error){if(!state.stream.active||run!==state.stream.run||state.disposed)return;state.stream.issue=short(error?.message||'The sensor feed could not be read.',240);render();}
     finally{clearTimeout(timeout);if(state.stream.controller===controller)state.stream.controller=null;if(state.stream.active&&run===state.stream.run&&!state.disposed&&document.visibilityState!=='hidden')state.stream.timer=setTimeout(()=>pollStream(run),5000);}
   }
 
@@ -159,7 +169,7 @@ export function initializeNetworkPanel(container, options={}) {
 
   function graphData(){
     const nodes=new Map(),edges=new Map();
-    for(const event of state.events){const endpoints=endpointsFor(event);for(const endpoint of [endpoints.source,endpoints.target])if(endpoint){const key=String(endpoint);const node=nodes.get(key)||{key,count:0};node.count++;nodes.set(key,node);}if(!endpoints.source||!endpoints.target)continue;const source=String(endpoints.source),target=String(endpoints.target);const key=`${source}\u0000${target}`;const edge=edges.get(key)||{key,source,target,count:0,event};edge.count++;if(['alert','notice','policy_event'].includes(event.kind))edge.event=event;edges.set(key,edge);}
+    for(const event of windowEvents()){const endpoints=endpointsFor(event);for(const endpoint of [endpoints.source,endpoints.target])if(endpoint){const key=String(endpoint);const node=nodes.get(key)||{key,count:0};node.count++;nodes.set(key,node);}if(!endpoints.source||!endpoints.target)continue;const source=String(endpoints.source),target=String(endpoints.target);const key=`${source}\u0000${target}`;const edge=edges.get(key)||{key,source,target,count:0,event};edge.count++;if(event.id===state.selectedId||['alert','notice','policy_event'].includes(event.kind)&&edge.event.id!==state.selectedId)edge.event=event;edges.set(key,edge);}
     return {nodes:[...nodes.values()].sort((a,b)=>b.count-a.count),edges:[...edges.values()].sort((a,b)=>b.count-a.count)};
   }
 
@@ -186,7 +196,7 @@ export function initializeNetworkPanel(container, options={}) {
     if(!event){part('inspector').innerHTML='<span class="sn-label">SENSOR EVIDENCE INSPECTOR</span><h3>A connection with a source.</h3><p>Import your own sensor capture, then select an address or record. You can trace the recorded connection, its timestamp and the source that observed it.</p><p class="sn-evidence-id">No sensor evidence has been collected in this tab.</p>';return;}
     const fields=event.fields||{},source=sourceFor(event),interpretation=state.interpretations.get(event.id),eligibility=interpreterEligibility(event);
     const native=event.source==='observatory_edge';
-    const facts=[['Source',source?.name||event.source_id],['Capture type',source?.mode==='live'?'Live sensor records':'Historical import'],['Observed at',date(event.observed_at)],['Record kind',kindFor(event)],['Source endpoint',fields.src_ip||fields.src_endpoint],['Destination endpoint',fields.dest_ip||fields.dest_endpoint],['Source port',fields.src_port],['Destination port',fields.dest_port],['Protocol',fields.protocol],['Request method',fields.method],['HTTP HEAD attempted',typeof fields.head_attempted==='boolean'?fields.head_attempted?'yes':'no':null],['Recorded status',fields.status],['Recorded outcome',fields.outcome],['Route',fields.route],['Duration (ms)',fields.duration_ms],['Recorded control',fields.rule_id],['Control action',fields.rule_action],['Functional check context',fields.test_context==='functional_check'?'Declared functional check':null],['Linked HTTP evidence',fields.linked_evidence_id],['Recorded bytes',fields.bytes],['Recorded packets',fields.packets],['Duration (seconds)',fields.duration_seconds],['DNS name',fields.dns_name],['TLS server name',fields.tls_sni],['TLS version',fields.tls_version],['Sensor severity',event.severity],['Recorded category',fields.category],['Recorded action',fields.action]].filter(([,value])=>value!==null&&value!==undefined&&value!=='');
+    const facts=[['Source',source?.name||event.source_id],['Capture type',source?.mode==='fixture'?'Labeled synthetic fixture':source?.mode==='live'?'Live sensor records':'Historical import'],['Observed at',date(event.observed_at)],['Record kind',kindFor(event)],['Source endpoint',fields.src_ip||fields.src_endpoint],['Destination endpoint',fields.dest_ip||fields.dest_endpoint],['Source port',fields.src_port],['Destination port',fields.dest_port],['Protocol',fields.protocol],['Request method',fields.method],['HTTP HEAD attempted',typeof fields.head_attempted==='boolean'?fields.head_attempted?'yes':'no':null],['Recorded status',fields.status],['Recorded outcome',fields.outcome],['Route',fields.route],['Duration (ms)',fields.duration_ms],['Recorded control',fields.rule_id],['Control action',fields.rule_action],['Functional check context',fields.test_context==='functional_check'?'Declared functional check':null],['Linked HTTP evidence',fields.linked_evidence_id],['Recorded bytes',fields.bytes],['Recorded packets',fields.packets],['Duration (seconds)',fields.duration_seconds],['DNS name',fields.dns_name],['TLS server name',fields.tls_sni],['TLS version',fields.tls_version],['Sensor severity',event.severity],['Recorded category',fields.category],['Recorded action',fields.action]].filter(([,value])=>value!==null&&value!==undefined&&value!=='');
     let modelMarkup='';
     if(interpretation){
       const result=interpretation.result||{},provenance=result.provenance||{},accepted=provenance.model_ran===true&&provenance.output_accepted===true&&provenance.execution_verified!==false;
@@ -201,11 +211,12 @@ export function initializeNetworkPanel(container, options={}) {
   }
 
   function renderFindings(){
-    const findings=list(state.analysis.anomalies).slice(-3).reverse();
+    const visibleIds=new Set(windowEvents().map(event=>event.id));
+    const findings=list(state.analysis.anomalies).filter(finding=>list(finding.evidence_ids).some(id=>visibleIds.has(id))).slice(-3).reverse();
     part('findings').innerHTML=findings.map(finding=>`<div class="sn-finding"><strong>${finding.confidence==='heuristic'?'Review threshold':'Experimental change signal'} · ${esc(finding.metric==='logged_destination_fanout'?'destination diversity':finding.metric==='log1p_logged_connection_bytes'?'recorded connection bytes':finding.metric==='log1p_collector_latency_ms'?'outbound check duration':finding.metric==='log1p_edge_request_duration_ms'?'incoming request duration':short(finding.metric,80))}</strong><p>${esc(short(finding.summary,400))}. ${esc(short(finding.limitation,700))}</p><p>${list(finding.evidence_ids).length} actual source record${list(finding.evidence_ids).length===1?'':'s'} attached · ${esc(finding.confidence||'experimental')}.</p>${list(finding.evidence_ids).length?`<button data-evidence="${esc(finding.evidence_ids[0])}">Inspect the supporting record</button>`:''}</div>`).join('');
   }
 
-  function filteredEvents(){return state.events.filter(event=>(!state.nodeFilter||endpointsFor(event).source===state.nodeFilter||endpointsFor(event).target===state.nodeFilter)&&(state.filter==='all'||state.filter==='alerts'&&['alert','notice'].includes(event.kind)||state.filter==='connections'&&['flow','connection'].includes(event.kind)||state.filter===event.kind));}
+  function filteredEvents(){return windowEvents();}
   function renderEvents(){
     const events=filteredEvents();
     root.querySelectorAll('[data-filter]').forEach(button=>{const active=button.dataset.filter===state.filter;button.classList.toggle('active',active);button.setAttribute('aria-pressed',String(active));});
@@ -230,11 +241,40 @@ export function initializeNetworkPanel(container, options={}) {
     part('records').textContent=state.events.length.toLocaleString();part('endpoints').textContent=graphData().nodes.length.toLocaleString();part('alerts').textContent=state.events.filter(event=>event.actual_security_event===true).length.toLocaleString();part('latest').textContent=latest?time(latest.observed_at):'—';part('latest').style.fontSize=latest?'16px':'';part('latest-note').textContent=latest?`${date(latest.observed_at)} · ${age(latest.observed_at)}`:'No sensor evidence yet';
   }
 
-  function render(){
-    renderSummary();renderLive();renderSources();renderGraph();renderInspector();renderFindings();renderEvents();
+  function renderCoordinatedViews(){
+    const events=windowEvents(),visibleIds=new Set(events.map(event=>event.id)),bins=evidenceSeries(events),latest=events[0];
+    root.querySelectorAll('[data-view]').forEach(button=>button.setAttribute('aria-pressed',String(button.dataset.view===state.view)));
+    root.querySelector('.sn-graph-heading').hidden=state.view==='series';
+    for(const name of ['graph','graph-pan-hint','legend','graph-boundary'])part(name).hidden=state.view==='series'||name==='graph-pan-hint'&&!graphData().nodes.length;
+    part('series').hidden=state.view==='topology';
+    const maximum=Math.max(1,...bins.map(bin=>bin.count)),first=bins[0]?.start||0,last=bins.at(-1)?.start||first;
+    part('series').innerHTML=`<h3>Recorded evidence over time</h3><p class="sn-boundary">Counts of retained records, rather than network bandwidth. Gaps have unknown coverage. Select a mark or a record below to inspect the same evidence in every view.</p>${bins.length?`<svg viewBox="0 0 660 130" role="img" aria-label="Retained evidence counts by occupied time bin; empty intervals have unknown coverage">${bins.map(bin=>{const x=15+(bin.start-first)/Math.max(1,last-first)*610;const selected=bin.eventIds.includes(state.selectedId);return `<g class="sn-series-mark${selected?' selected':''}" role="button" tabindex="0" data-evidence="${esc(selected?state.selectedId:bin.eventIds[0])}" aria-label="${esc(date(new Date(bin.start).toISOString()))}: ${bin.count} retained records; inspect evidence"><rect x="${x}" y="${105-bin.count/maximum*80}" width="12" height="${bin.count/maximum*80}" rx="2" fill="${bin.securityEvents?'#efbc7f':'#8acbde'}"/><title>${bin.count} records · ${bin.securityEvents} recorded security events</title></g>`;}).join('')}</svg><div class="sn-series-events">${events.slice(0,12).map(event=>`<button data-evidence="${esc(event.id)}" aria-pressed="${event.id===state.selectedId}">${esc(time(event.observed_at))} · ${esc(kindFor(event))}</button>`).join('')}</div>`:'<p class="sn-empty-list">No retained evidence in this selection. Current traffic and security state remain unknown.</p>'}`;
+    part('records').textContent=events.length.toLocaleString();part('alerts').textContent=events.filter(event=>event.actual_security_event===true).length.toLocaleString();
+    part('latest').textContent=latest?time(latest.observed_at):'—';part('latest-note').textContent=latest?`${date(latest.observed_at)} · ${age(latest.observed_at)}`:'No evidence in selected window';
+    const fixture=state.sources.some(source=>source.mode==='fixture');
+    if(fixture){part('coverage-title').textContent='Includes labeled synthetic fixture';part('coverage-description').textContent='Synthetic fixture evidence is for testing the views; it does not establish actual sensor observations.';part('graph').querySelector('svg')?.setAttribute('aria-label',`Labeled synthetic fixture relationships: ${graphData().nodes.length} endpoints`);}
+    root.querySelector('.sn-metrics>div>span').textContent=fixture?'Retained records · includes fixture':'Records in selection';
+    root.querySelector('.sn-metrics>div>small').textContent=`${state.events.length} total retained · deduplicated`;
+    part('window-status').textContent=`${state.window.start===null&&state.window.end===null?'All retained times':`${state.window.start===null?'Earliest retained':date(new Date(state.window.start).toISOString())} → ${state.window.end===null?'Latest retained':date(new Date(state.window.end).toISOString())}`} · ${events.length} matching / ${state.events.length} retained records${state.nodeFilter?` · host ${state.nodeFilter}`:''}. Selection remains fixed while new receipts arrive.${fixture?' LABELED FIXTURE present · synthetic, not sensor observations.':''}`;
+    root.querySelectorAll('.sn-source').forEach((element,index)=>{const source=state.sources[index],status=sourceStatus(source);element.querySelector('.sn-source-meta>span').textContent=status.label;if(source.mode==='fixture')element.querySelector('.sn-source-meta>span:last-child').textContent=`${source.events.length} synthetic records`;const note=document.createElement('small');note.className='sn-source-time';note.textContent=status.explanation;element.appendChild(note);});
+    const event=selected();
+    if(event){const source=sourceFor(event),status=sourceStatus(source),coverage=source?.coverage;const block=document.createElement('div');block.className='sn-coverage-status';block.innerHTML=`<strong>${esc(status.label)} · ${esc(source?.mode==='fixture'?'SYNTHETIC EVIDENCE':source?.mode==='live'?'CONNECTED SOURCE':'IMPORTED EVIDENCE')}</strong><p>${esc(status.explanation)}</p><p>Coverage: ${esc(short(coverage?.scope||event.limitation||'Only the fields captured in this source record; full network coverage is unknown.',800))}</p>${list(coverage?.missing).length?`<p>Missing: ${esc(coverage.missing.join('; '))}</p>`:''}<p>Detection rule: ${esc(event.fields?.signature_id||event.fields?.rule_id||event.kind==='notice'&&event.fields?.notice_type||'No recorded detection rule')}. Severity: ${esc(event.severity||'unknown')}.</p>${!visibleIds.has(event.id)?'<p class="sn-selection-note">Selected evidence is outside the current filters. Its receipt remains selected and preserved; use All retained or clear filters to locate it.</p>':''}`;part('inspector').appendChild(block);}
+    const liveSource=state.sources.find(source=>source.mode==='live');
+    if(state.stream.unauthorized)part('badge').textContent='UNAUTHORIZED · CURRENT TRAFFIC UNKNOWN';
+    else if(liveSource)part('badge').textContent=sourceStatus(liveSource).label;
+    else if(fixture)part('badge').textContent='LABELED FIXTURE · SYNTHETIC';
   }
 
-  function getEvidence(){return {version:1,exported_at:new Date().toISOString(),visibility:'sensor-supplied records only',sources:state.sources.map(({id,name,format,mode,sensorMode,fileName,importedAt,lastReceivedAt,rejectedCount,coverage})=>({id,name,format,mode,sensor_mode:sensorMode||null,file_name:fileName||null,imported_at:importedAt,last_received_at:lastReceivedAt||null,rejected_count:rejectedCount,coverage:coverage||null})),events:state.events.slice(),analysis:state.analysis,interpretations:[...state.interpretations.entries()].map(([eventId,entry])=>({event_id:eventId,interpreted_at:entry.timestamp,result:entry.result}))};}
+  function setTimeWindow(start=null,end=null){
+    if(start!==null&&!Number.isFinite(start)||end!==null&&!Number.isFinite(end)||start!==null&&end!==null&&start>end){showMessage('Choose valid dates with From no later than Through. Your existing selection is unchanged.');return false;}
+    state.window={start,end};root.querySelectorAll('[data-time]').forEach(input=>{const value=state.window[input.dataset.time];input.value=value===null?'':new Date(value-new Date(value).getTimezoneOffset()*60000).toISOString().slice(0,19);});state.limit=10;showMessage('');render();emitChange();return true;
+  }
+
+  function render(){
+    renderSummary();renderLive();renderSources();renderGraph();renderInspector();renderFindings();renderEvents();renderCoordinatedViews();
+  }
+
+  function getEvidence(){return {version:2,selection:{event_id:state.selectedId,host:state.nodeFilter,kind:state.filter,view:state.view,time_window:{...state.window}},exported_at:new Date().toISOString(),visibility:'sensor-supplied records only',sources:state.sources.map(({id,name,format,mode,sensorMode,fileName,importedAt,lastReceivedAt,rejectedCount,coverage})=>({id,name,format,mode,sensor_mode:sensorMode||null,file_name:fileName||null,imported_at:importedAt,last_received_at:lastReceivedAt||null,rejected_count:rejectedCount,coverage:coverage||null})),events:state.events.slice(),analysis:state.analysis,interpretations:[...state.interpretations.entries()].map(([eventId,entry])=>({event_id:eventId,interpreted_at:entry.timestamp,result:entry.result}))};}
 
   function exportEvidence(){
     if(!state.events.length)return;
@@ -244,31 +284,36 @@ export function initializeNetworkPanel(container, options={}) {
 
   const clickHandler=async event=>{
     const button=event.target.closest('button');const node=event.target.closest('[data-node]');
-    if(node){state.nodeFilter=state.nodeFilter===node.dataset.node?null:node.dataset.node;state.limit=10;renderGraph();renderEvents();return;}
+    if(node){state.nodeFilter=state.nodeFilter===node.dataset.node?null:node.dataset.node;state.limit=10;render();emitChange();return;}
+    const evidence=event.target.closest('[data-evidence]');if(evidence){choose(evidence.dataset.evidence);return;}
     if(!button)return;
+    if(button.dataset.view){state.view=button.dataset.view;render();emitChange();return;}
+    if(button.dataset.action==='all-window'){root.querySelectorAll('[data-time]').forEach(input=>input.value='');setTimeWindow();return;}
+    if(button.dataset.action==='recent-window'){const end=stamp(state.events[0]?.observed_at);if(!Number.isFinite(end)){showMessage('A retained event is needed to choose its latest 15-minute window.');return;}setTimeWindow(end-15*60000,end);root.querySelectorAll('[data-time]').forEach(input=>{const value=state.window[input.dataset.time];input.value=new Date(value-new Date(value).getTimezoneOffset()*60000).toISOString().slice(0,19);});return;}
     if(button.dataset.remove){if(state.sources.find(source=>source.id===button.dataset.remove)?.mode==='live')stopStream();state.sources=state.sources.filter(source=>source.id!==button.dataset.remove);state.nodeFilter=null;rebuild();return;}
     if(button.dataset.evidence){choose(button.dataset.evidence);return;}
-    if(button.dataset.filter){state.filter=button.dataset.filter;state.limit=10;renderEvents();return;}
+    if(button.dataset.filter){state.filter=button.dataset.filter;state.limit=10;render();emitChange();return;}
     if(button.dataset.action==='import'){part('file').click();return;}
     if(button.dataset.action==='export'){exportEvidence();return;}
     if(button.dataset.action==='more'){state.limit=Math.min(MAX_SESSION_EVENTS,state.limit+25);renderEvents();return;}
-    if(button.dataset.action==='clear-node'){state.nodeFilter=null;renderGraph();renderEvents();return;}
+    if(button.dataset.action==='clear-node'){state.nodeFilter=null;render();emitChange();return;}
     if(button.dataset.action==='stream'){toggleStream();return;}
     if(button.dataset.action==='interpret'&&typeof options.onInterpret==='function'){
       const current=selected();if(!current||state.interpreting)return;const eligibility=interpreterEligibility(current);if(!eligibility.allowed){showMessage(eligibility.reason);return;}state.interpreting=current.id;renderInspector();
-      try{const result=await options.onInterpret(current,state.events.slice(0,100));if(result&&state.events.some(event=>event.id===current.id))state.interpretations.set(current.id,{result,timestamp:new Date().toISOString()});}catch(error){showMessage(`Interpretation unavailable: ${short(error?.message||'The model did not respond.',300)}`);}finally{state.interpreting=null;renderInspector();}
+      try{const result=await options.onInterpret(current,state.events.slice(0,100));if(result&&state.events.some(event=>event.id===current.id))state.interpretations.set(current.id,{result,timestamp:new Date().toISOString()});}catch(error){showMessage(`Interpretation unavailable: ${short(error?.message||'The model did not respond.',300)}`);}finally{state.interpreting=null;render();}
     }
   };
-  const keyHandler=event=>{const node=event.target.closest('[data-node]');if(node&&(event.key==='Enter'||event.key===' ')){event.preventDefault();state.nodeFilter=state.nodeFilter===node.dataset.node?null:node.dataset.node;state.limit=10;renderGraph();renderEvents();}};
+  const keyHandler=event=>{if(event.key!=='Enter'&&event.key!==' ')return;const evidence=event.target.closest('g[data-evidence]');if(evidence){event.preventDefault();choose(evidence.dataset.evidence);return;}const node=event.target.closest('[data-node]');if(node){event.preventDefault();state.nodeFilter=state.nodeFilter===node.dataset.node?null:node.dataset.node;state.limit=10;render();emitChange();}};
+  const timeHandler=event=>{if(!event.target.dataset.time)return;const read=name=>{const value=root.querySelector(`[data-time="${name}"]`).value;return value?new Date(value).getTime():null;};setTimeWindow(read('start'),read('end'));};
   const fileHandler=()=>importFile(part('file').files?.[0]);
-  root.addEventListener('click',clickHandler);root.addEventListener('keydown',keyHandler);part('file').addEventListener('change',fileHandler);document.addEventListener('visibilitychange',visibilityHandler);render();
+  root.addEventListener('click',clickHandler);root.addEventListener('keydown',keyHandler);root.addEventListener('change',timeHandler);part('file').addEventListener('change',fileHandler);document.addEventListener('visibilitychange',visibilityHandler);render();
   return {
-    getEvidence,getInterpretationContext,
+    getEvidence,getInterpretationContext,setTimeWindow,
     selectEvidence(eventIdOrSourceEventId){if(state.disposed)return false;const event=state.events.find(row=>row.id===eventIdOrSourceEventId||row.source_event_id===eventIdOrSourceEventId);if(!event)return false;choose(event.id);return true;},
-    setCapabilities(capabilities){state.capabilities=capabilities||null;renderSummary();renderLive();renderGraph();renderInspector();const sensor=state.capabilities?.security_sensor;if(sensor?.connected&&sensor.mode==='observatory_edge'&&sensor.auto_start===true&&!state.nativeAutoStarted){state.nativeAutoStarted=true;if(!state.stream.active)toggleStream();}},
-    attachInterpretation(eventId,result,timestamp=new Date().toISOString()){if(state.disposed)return false;const event=state.events.find(row=>row.id===eventId||row.source_event_id===eventId);if(!event)return false;state.interpretations.set(event.id,{result,timestamp});renderInspector();return true;},
-    addSourceBatch(batch,metadata={}){if(state.disposed||!list(batch?.events).length)return false;const sourceId=metadata.id||batch.events[0].source_id;const matching=batch.events.filter(event=>event.source_id===sourceId);if(!matching.length)return false;let source=state.sources.find(item=>item.id===sourceId);if(!source){source={id:sourceId,name:short(metadata.name||sourceId,100),format:metadata.format||list(batch.coverage?.sources).join(' / ')||'Sensor',mode:metadata.mode==='live'?'live':'import',importedAt:metadata.importedAt||new Date().toISOString(),events:[],rejected:[],rejectedCount:0};state.sources.push(source);}const seen=new Set(source.events.map(event=>event.id));source.events=[...source.events,...matching.filter(event=>!seen.has(event.id))];source.lastReceivedAt=new Date().toISOString();source.coverage=batch.coverage;source.rejected=list(batch.rejected);source.rejectedCount=number(batch.rejected_count)||number(batch.summary?.rejected);rebuild();return true;},
+    setCapabilities(capabilities){state.capabilities=capabilities||null;render();const sensor=state.capabilities?.security_sensor;if(sensor?.connected&&sensor.mode==='observatory_edge'&&sensor.auto_start===true&&!state.nativeAutoStarted){state.nativeAutoStarted=true;if(!state.stream.active)toggleStream();}},
+    attachInterpretation(eventId,result,timestamp=new Date().toISOString()){if(state.disposed)return false;const event=state.events.find(row=>row.id===eventId||row.source_event_id===eventId);if(!event)return false;state.interpretations.set(event.id,{result,timestamp});render();return true;},
+    addSourceBatch(batch,metadata={}){if(state.disposed||!list(batch?.events).length)return false;const sourceId=metadata.id||batch.events[0].source_id;const matching=batch.events.filter(event=>event.source_id===sourceId);if(!matching.length)return false;let source=state.sources.find(item=>item.id===sourceId);if(!source){source={id:sourceId,name:short(metadata.name||sourceId,100),format:metadata.format||list(batch.coverage?.sources).join(' / ')||'Sensor',mode:metadata.mode==='fixture'?'fixture':metadata.mode==='live'?'live':'import',importedAt:metadata.importedAt||new Date().toISOString(),events:[],rejected:[],rejectedCount:0};state.sources.push(source);}const seen=new Set(source.events.map(event=>event.id));source.events=retainUniqueEvents([...source.events,...matching.filter(event=>!seen.has(event.id))]);source.lastReceivedAt=new Date().toISOString();source.coverage=batch.coverage;source.rejected=list(batch.rejected);source.rejectedCount=number(batch.rejected_count)||number(batch.summary?.rejected);rebuild();return true;},
     clear(){stopStream();state.sources=[];state.events=[];state.selectedId=null;state.nodeFilter=null;state.interpretations.clear();rebuild();},
-    destroy(){state.disposed=true;stopStream();root.removeEventListener('click',clickHandler);root.removeEventListener('keydown',keyHandler);part('file').removeEventListener('change',fileHandler);document.removeEventListener('visibilitychange',visibilityHandler);root.remove();ownStyle.remove();}
+    destroy(){state.disposed=true;stopStream();root.removeEventListener('click',clickHandler);root.removeEventListener('keydown',keyHandler);root.removeEventListener('change',timeHandler);part('file').removeEventListener('change',fileHandler);document.removeEventListener('visibilitychange',visibilityHandler);root.remove();ownStyle.remove();}
   };
 }
