@@ -1,0 +1,10 @@
+{
+  "drive_copy_attempted": false,
+  "drive_copy_success": false,
+  "drive_root": "G:\\My Drive",
+  "reason": "Mirror will follow final candidate artifact completion; no remote sync claimed",
+  "files_considered": [],
+  "files_copied": [],
+  "files_skipped": [],
+  "timestamp_utc": "2026-10-14T18:01:16.7499620Z"
+}

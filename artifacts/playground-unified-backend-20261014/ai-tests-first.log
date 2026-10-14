@@ -1,0 +1,25 @@
+
+> eidos-sentinel-lab@0.2.0 test:playground-ai
+> node --import tsx --test tests/works-playground-ai.test.ts
+
+✔ 01: concurrent $0.60 actions with $1 remaining admit exactly one and only one dispatch (133.9386ms)
+✔ 02: concurrent action replay yields one reservation, dispatch and settlement; conflicting key fails (165.1233ms)
+✔ 03: $50 balance/$10 cap, included consumption and top-ups never lift the cap (322.564ms)
+✔ 04: projects/devices share owner cap and authenticated endpoints reject cross-account IDs/forged owners (128.0563ms)
+✔ 05: unknown pricing, forged totals/model/owner, large context and unbounded tools/retries fail closed (34.7356ms)
+✔ 06: actual usage releases difference; above-bound usage never overcharges and disables route (70.0328ms)
+✔ 07: unusable technical output restores allowance while real provider expense remains counted (59.8765ms)
+✔ 08: submitted timeout/crash/lease expiry retain provider cost; 24h waiver never retroactively debits (79.0993ms)
+✔ 09/13: duplicate/unpaid/out-of-order grants, refunds, owner mismatch and TEST/LIVE isolation (79.6067ms)
+✔ 10: cap edits racing dispatch/settlement preserve the commitment floor and block new work (67.1091ms)
+✔ 11: monthly period is server UTC; pending budget survives, and late settlement stays original month (72.8204ms)
+✔ 12/14: owner aggregate budget admits only one customer; paused route has no provider fallback (65.8771ms)
+✔ migration/schema parity and conservative integer rounding cover sub-cent rates (0.5296ms)
+ℹ tests 13
+ℹ suites 0
+ℹ pass 13
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 6853.0047

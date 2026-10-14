@@ -1,0 +1,60 @@
+{
+  "timestampUtc": "2026-10-14T18:13:45.4977758Z",
+  "files": [
+    {
+      "path": "acceptance.json",
+      "bytes": 1981,
+      "sha256": "979643e188063d4ec5564e1cc38d9a453f6a9f15ca5afdc6d135928e82905bc6"
+    },
+    {
+      "path": "ai-tests-first.log",
+      "bytes": 1673,
+      "sha256": "9bcfeeb2ff2eb1e3e3753aec4c74102e1fdee2c14d5ed4f70388f3d18d5aaeb3"
+    },
+    {
+      "path": "ai-tests.log",
+      "bytes": 2241,
+      "sha256": "6e937830b60fe7ab7d4762f11fa22ad2cc1fe715f89280117a97586de76244bf"
+    },
+    {
+      "path": "app-tests-mail-fixture-assertion-failed.log",
+      "bytes": 12168,
+      "sha256": "b1d77b15135e0830f6cfec10ae440c9c7cb83384cb495f26c1b5553c2e5a2d1e"
+    },
+    {
+      "path": "app-tests.log",
+      "bytes": 11435,
+      "sha256": "e337b15ed22477c1f229e603e59959de8381ed00d0db5abd46fd66776fc5c2cf"
+    },
+    {
+      "path": "build.log",
+      "bytes": 1128,
+      "sha256": "189ef9c50ccfb91f22b91c60b5ed3a6239d4939abe11d34b819db1b982f1771d"
+    },
+    {
+      "path": "codex_journal.md",
+      "bytes": 4058,
+      "sha256": "904687e5eadc6a85cadba1dce266ec600d6278d0d9df129dae07609ce43c41e3"
+    },
+    {
+      "path": "dependency-audit-after.json",
+      "bytes": 385,
+      "sha256": "923e6a5838dfbb0d9c72bfddb6d85a6f9561501f04a601383cbfddacceb4f363"
+    },
+    {
+      "path": "dependency-audit.json",
+      "bytes": 12277,
+      "sha256": "affd56e6ea0441a20fb073ff5d0c2b49d097bb5d7ba22e98c80c7836444e470c"
+    },
+    {
+      "path": "drive_manifest.json",
+      "bytes": 325,
+      "sha256": "44ed1d32b825b6038751060f78d69afc9f2d2879881cbfa1ca6ef59113c726d0"
+    },
+    {
+      "path": "typecheck.log",
+      "bytes": 53,
+      "sha256": "9a216ee216ffece65f8c7311a6df581a1485d1725ca017f4227f18213940a6eb"
+    }
+  ]
+}

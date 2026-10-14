@@ -87,6 +87,9 @@ await test('Published answers work with no database, model key or outbound fetch
     const config = await (await dispatchWorks(request('/api/public-config'), source, {})).json();
     assert.equal(config.aiReady, false);
     assert.equal(config.shopReady, false);
+    const identified = await (await dispatchWorks(request('/api/public-config'), { ...source, EIDOS_SOURCE_COMMIT: 'a'.repeat(40), EIDOS_SOURCE_BUNDLE_HASH: 'b'.repeat(64) }, {})).json();
+    assert.equal(identified.runtimeSourceRevision, 'a'.repeat(40));
+    assert.equal(identified.runtimeBundleHash, 'b'.repeat(64));
   } finally { globalThis.fetch = original; }
 });
 await test('Real libSQL adapter reserves atomically and rolls back failed batches', async () => {

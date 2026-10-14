@@ -45,15 +45,18 @@ export function assertTemplatePaymentMode(env: PlatformEnv, livemode: unknown, s
     (sessionId !== undefined && !new RegExp('^cs_' + keyMode + '_[A-Za-z0-9_]+$').test(sessionId || '')))
     throw new HttpError(400, 'Payment environment does not match this template purchase.');
 }
-async function verifyLiveMerchant(env: PlatformEnv) {
+async function verifyConfiguredMerchant(env: PlatformEnv) {
+  if (!/^acct_[A-Za-z0-9]+$/.test(env.EIDOS_TEMPLATE_STRIPE_ACCOUNT_ID || ''))
+    throw new HttpError(503, 'The payment account must be configured before this purchase.');
   const response = await fetch('https://api.stripe.com/v1/account', {
-    headers: { authorization: 'Bearer ' + env.STRIPE_SECRET_KEY, 'stripe-version': TEMPLATE_LIVE_STRIPE_API_VERSION },
+    headers: { authorization: 'Bearer ' + env.STRIPE_SECRET_KEY, 'stripe-version': /^[sr]k_live_/.test(env.STRIPE_SECRET_KEY || '') ? TEMPLATE_LIVE_STRIPE_API_VERSION : TEMPLATE_STRIPE_API_VERSION },
     signal: AbortSignal.timeout(10000), redirect: 'error',
   });
   if (!response.ok) throw new HttpError(503, 'The payment account could not be verified. Please try again later.');
   const merchant = await response.json() as { id?: string; charges_enabled?: boolean; payouts_enabled?: boolean };
-  if (merchant.id !== env.EIDOS_TEMPLATE_STRIPE_ACCOUNT_ID || merchant.charges_enabled !== true || merchant.payouts_enabled !== true)
+  if (typeof merchant.id !== 'string' || merchant.id !== env.EIDOS_TEMPLATE_STRIPE_ACCOUNT_ID || merchant.charges_enabled !== true || merchant.payouts_enabled !== true)
     throw new HttpError(503, 'The payment account is not ready for this purchase.');
+  return merchant.id;
 }
 async function archive(env: PlatformEnv, key: string) {
   const value = await env.EIDOS_TEMPLATE_ARCHIVES?.get(key);
@@ -91,7 +94,7 @@ export async function templateCheckout(request: Request, env: PlatformEnv, input
   const database = db(env), visitor = await fingerprint(request, env);
   if (!(await reserve(database, 'template-checkout:' + visitor, 1, 20))) throw new HttpError(429, 'Please use an existing checkout or try again tomorrow.');
   await challenge(request, env, input.challenge, 'checkout');
-  if (mode === 'live') await verifyLiveMerchant(env);
+  const verifiedMerchantId = mode === 'live' || env.EIDOS_PLAYGROUND_AI_MODE === 'test' ? await verifyConfiguredMerchant(env) : null;
   const member = await memberFromRequest(request, env, false);
   const receipt = input.attempt === undefined ? randomToken() : clean(input.attempt, 80);
   if (!/^[a-f0-9]{64}$/.test(receipt)) throw new HttpError(400, 'Start a valid checkout attempt.');
@@ -114,6 +117,14 @@ export async function templateCheckout(request: Request, env: PlatformEnv, input
     order = await database.prepare(checkoutSelect + ' WHERE o.id=?').bind(id).first<TemplateOrder>();
   }
   if (!order) throw new HttpError(503, 'Checkout could not be prepared.');
+  if (mode === 'test' && env.EIDOS_PLAYGROUND_AI_MODE === 'test' && verifiedMerchantId) {
+    const { ensureAiLedger } = await import('./playgroundAi');
+    await ensureAiLedger(env);
+    await database.prepare("INSERT OR IGNORE INTO eidos_pg_ai_checkout_merchants(order_id,mode,merchant_id,created_at) SELECT id,'test',?,? FROM eidos_orders WHERE id=? AND session_id IS NULL AND status='pending'")
+      .bind(verifiedMerchantId, new Date().toISOString(), order.id).run();
+    const binding = await database.prepare('SELECT merchant_id FROM eidos_pg_ai_checkout_merchants WHERE order_id=? AND mode=?').bind(order.id, mode).first<{merchant_id:string}>();
+    if (!binding || binding.merchant_id !== verifiedMerchantId) throw new HttpError(409, 'This checkout is bound to a different payment merchant.');
+  }
   const values = new URLSearchParams({
     mode: 'payment', client_reference_id: order.id,
     ...(mode === 'live' ? { integration_identifier: 'eidos-templates-' + [...order.id.replaceAll('-', '').slice(0, 8)].map(c => String.fromCharCode(97 + parseInt(c, 16))).join('') } : {}),
@@ -208,7 +219,7 @@ export async function templateReceiptMail(env: PlatformEnv, order: TemplateOrder
     throw error; // Leave Stripe event unacknowledged so provider retries delivery.
   }
 }
-export async function templatePayment(env: PlatformEnv, event: { id: string; type: string; data: { object: Record<string, unknown> } }, livemode: unknown) {
+export async function templatePayment(env: PlatformEnv, event: { id: string; type: string; account?: unknown; data: { object: Record<string, unknown> } }, livemode: unknown) {
   if (!['checkout.session.completed', 'checkout.session.async_payment_succeeded', 'checkout.session.async_payment_failed', 'checkout.session.expired'].includes(event.type)) return false;
   const object = event.data.object;
   const metadata = object.metadata;
@@ -243,6 +254,19 @@ export async function templatePayment(env: PlatformEnv, event: { id: string; typ
   if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) throw new HttpError(400, 'Verified payment email is required for recovery.');
   if (order.member_id && order.email && email !== order.email) throw new HttpError(400, 'Payment email does not match the account purchase.');
   const paymentIntent = object.payment_intent;
+  // Historical purchases keep their existing receipt path. Only new, checkout-bound
+  // TEST purchases can create allowance evidence; never relabel a historical order.
+  let verifiedAiMerchant: string | null = null;
+  if (env.EIDOS_PLAYGROUND_AI_MODE === 'test') {
+    const { ensureAiLedger } = await import('./playgroundAi');
+    await ensureAiLedger(env);
+    const binding = await database.prepare('SELECT merchant_id FROM eidos_pg_ai_checkout_merchants WHERE order_id=? AND mode=?').bind(order.id, 'test').first<{merchant_id:string}>();
+    if (binding) {
+      verifiedAiMerchant = await verifyConfiguredMerchant(env);
+      if (verifiedAiMerchant !== binding.merchant_id || event.account !== undefined)
+        throw new HttpError(400, 'Payment merchant does not match this direct-account purchase.');
+    }
+  }
   await database.batch([
     database.prepare("UPDATE eidos_orders SET status=CASE WHEN status='refunded' OR EXISTS(SELECT 1 FROM eidos_revoked_payments WHERE payment_intent=?) THEN 'refunded' ELSE 'paid' END,paid_at=COALESCE(paid_at,?),payment_intent=? WHERE id=? AND NOT EXISTS(SELECT 1 FROM eidos_template_payment_failures WHERE order_id=?)")
       .bind(paymentIntent, new Date().toISOString(), paymentIntent, order.id, order.id),
@@ -252,6 +276,10 @@ export async function templatePayment(env: PlatformEnv, event: { id: string; typ
   const paid = await templateOrder(env, order.id);
   if (paid) await templateReceiptMail(env, paid);
   await database.prepare('INSERT OR IGNORE INTO eidos_stripe_events(id,received_at) VALUES(?,?)').bind(event.id, new Date().toISOString()).run();
+  if (verifiedAiMerchant) {
+    const { recordVerifiedAiPayment } = await import('./playgroundAi');
+    await recordVerifiedAiPayment(env, order.id, event.id, livemode === false ? 'test' : 'live', verifiedAiMerchant);
+  }
   return true;
 }
 export const recover = guarded(async ({ request, env }) => {

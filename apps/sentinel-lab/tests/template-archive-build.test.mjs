@@ -6,7 +6,7 @@ import { tmpdir } from 'node:os';
 import path from 'node:path';
 import { verifyPrivateTemplateArchives } from '../scripts/check-template-archives.mjs';
 
-test('paid deployment refuses missing or changed archives and duplicate inventory paths', async () => {
+test('paid deployment refuses missing or changed archives and duplicate inventory paths', async (t) => {
   const root = await mkdtemp(path.join(tmpdir(), 'template-build-'));
   const bytes = Buffer.from('fixture private archive bytes');
   const archives = [];
@@ -26,7 +26,16 @@ test('paid deployment refuses missing or changed archives and duplicate inventor
     await assert.rejects(verifyPrivateTemplateArchives(root, manifest), { code: 'ENOENT' });
     const alternate = path.join(root, 'alternate');
     await writeFile(alternate, bytes);
-    await symlink(alternate, path.join(root, archives[0].archiveKey));
-    await assert.rejects(verifyPrivateTemplateArchives(root, manifest), /Unsafe private/);
+    await t.test('symbolic links cannot stand in for private archives', async (linkTest) => {
+      try { await symlink(alternate, path.join(root, archives[0].archiveKey)); }
+      catch (error) {
+        if (process.platform === 'win32' && error.code === 'EPERM') {
+          linkTest.skip('Windows denies file symlinks without Developer Mode/privilege; rerun on Linux or an authorized symlink-capable host.');
+          return;
+        }
+        throw error;
+      }
+      await assert.rejects(verifyPrivateTemplateArchives(root, manifest), /Unsafe private/);
+    });
   } finally { await rm(root, { recursive: true, force: true }); }
 });
