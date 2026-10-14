@@ -244,6 +244,7 @@ function routeLabel(event) {
   const transport=event?.coverage?.transport;
   if(transport?.kind==='named_service_adapter')return 'Named service · DNS route, not a pinned IP';
   if(transport?.kind==='authenticated_pinned_ip_relay')return 'Direct public IP · address pinned';
+  if(transport?.kind==='authenticated_pinned_target_relay')return 'Public endpoint · address pinned';
   if(event?.coverage?.dns?.pinned_address||event?.coverage?.dns?.address_pinned||event?.coverage?.address_pinned)return 'Address pinned by local collector';
   return event?'Public HTTP/S · collector view':'';
 }
@@ -340,7 +341,7 @@ function evidenceLink(id,label='Inspect cited observation') {
 }
 function observedText(event) {
   if(event.error)return `${event.error.message||'The collector could not complete the observation.'}${finite(event.status)!==null?` HTTP ${event.status} was received before completion stopped.`:''}`;
-  return `The collector received HTTP ${responseText(event)} from this endpoint${finite(event.latency_ms)!==null?' after '+formatNumber(event.latency_ms)+' ms elapsed':''}.${event.response_chain_complete===false?' The response chain is incomplete.':''}${event.redirect||[301,302,303,307,308].includes(event.status)?' This is a redirect response; the collector does not follow it.':''}`;
+  return `The collector received HTTP ${responseText(event)} from this endpoint${finite(event.latency_ms)!==null?' after '+formatNumber(event.latency_ms)+' ms elapsed':''}.${event.response_chain_complete===false?' The response chain is incomplete.':''}${event.redirect||[301,302,303,307,308].includes(event.status)?(event.coverage?.redirect_followed?' The optional probe followed a bounded public redirect chain; first-hop timings remain separate.':' This is a redirect response; the collector did not follow it.'):''}`;
 }
 function hypothesesFor(event) {
   const next='Compare subsequent checks and an independent authorized vantage before attributing a cause.';
@@ -349,6 +350,11 @@ function hypothesesFor(event) {
   if([401,403].includes(event.status))return [{text:'An access policy may be rejecting this unauthenticated HEAD request. That does not establish whether a signed-in browser is affected.',next:'Compare authorized application access and server logs. This collector does not send credentials.'}];
   if(event.status===404)return [{text:'This path may be absent or intentionally hidden by routing or access rules. HTTP 404 alone does not identify which.',next:'Confirm the intended public path and compare an authorized application request.'}];
   if(event.status>=500)return [{text:'An origin or intermediary returned a server-error response. This observation alone cannot attribute the fault.',next:'Compare later responses with authorized origin and edge logs.'}];
+  if(event.target_analysis){
+    if(list(event.target_analysis.signals).some(signal=>signal.state==='unusual'))return [{text:'One or more measured connection stages departed from their provisional baseline and passed the measured-deviation gate. The cause remains unverified.',next}];
+    if(list(event.target_analysis.changes).length)return [{text:'The recorded endpoint metadata changed. DNS rotation, certificate renewal and dynamic content can produce expected changes.',next}];
+    return [];
+  }
   if(event.brain?.event_active)return [{text:'The measured latency behavior differs from its provisional baseline. Network-path variation and application-side variation remain competing explanations.',next}];
   return [];
 }
@@ -451,7 +457,7 @@ function renderInterpreter() {
   $('model-shortcut').textContent=modelState.busy?'Interpretation running ↗':hosted?configured?'Sol configured ↗':'Sol configuration ↗':'Companion interpretation ↗';
   $('model-badge').textContent=modelState.busy?'Interpreting selected evidence':hosted?status.state==='storage_unavailable'||status.storage_attached===false?'Evidence storage unavailable':status.connected===true&&configured?'Sol configured · manual':'Sol not configured':status.connected?'Companion model loaded':configured?'Companion configured':'Companion unavailable';
   $('model-title').textContent=hosted?'Interpret the evidence with Sol.':status.name||status.model||'Use your configured companion.';
-  $('model-description').textContent=hosted?'GPT-6.1 Sol explains your selected observation and recorded controls, with every claim tied to its evidence. Model calls start only when you choose Interpret.':'Uses the model configured on your local collector. This optional path does not download a model in your browser.';
+  $('model-description').textContent=hosted?'GPT-6.1 Sol interprets the selected target’s measurements, baseline comparisons and change events. Every fact cites retained evidence. Model calls start only when you choose Interpret.':'Uses the model configured on your local collector. This optional path does not download a model in your browser.';
   $('model-status').textContent=modelState.issue||status.reason||status.message||(configured?'Ready for a manual interpretation request.':'Sol is not configured; original observations and deterministic notes remain available.');
   $('model-status').classList.toggle('issue',!!modelState.issue||!configured);
   $('model-engine').disabled=modelState.busy;
