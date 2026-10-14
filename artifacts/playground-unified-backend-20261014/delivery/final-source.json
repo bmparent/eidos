@@ -1,0 +1,21 @@
+{
+  "timestampUtc": "2026-10-14T18:48:37.8758157Z",
+  "scope": "Frozen schema-5 delivery graph and immutable TEST order attachment",
+  "backendBase": "18b07a662b1fc67b852a571475f99704c0cbdbc1",
+  "sourceEncoding": "utf8-lf",
+  "graphFiles": 19,
+  "graphSha256": "800edfd6034839506f046ee422260b9dedc55e6e9cb23ef034193a35efe76415",
+  "sharedFilesChecked": 14,
+  "fullSuitePassed": 100,
+  "fullSuiteSkipped": 1,
+  "focusedDeliveryPassed": 4,
+  "authoritativeFrontendServerPassed": 37,
+  "typecheck": "passed",
+  "build": "passed; commerce disabled",
+  "legacyRenderer": "unchanged",
+  "schema5LegacyCloud": "409 preserved",
+  "hostedMigration": "not run",
+  "providerCalls": "none",
+  "manualPreviewBoundary": "No database, archives, AI, accounts, checkout, mail or delivery mode",
+  "deployment": "Pending clean committed source bundle; see backend-preview.json for deployed identity"
+}

@@ -23,7 +23,19 @@ The clean PR74 source `37f4633f236bacae14c5b799becc2d2cea5528f4` was isolated in
 
 `/api/playground/ai` is relayed through the same authenticated Works dispatcher. It exposes authenticated TEST balance/status, explicit owner cap edits, and cancellation only. Unknown/forged fields are rejected. Generation, quoting and provider submission are deliberately unavailable publicly. `EIDOS_PLAYGROUND_AI_MODE` is empty in the candidate environment, all public account/AI/commerce flags stay false, and LIVE funding is rejected even by the internal policy function.
 
-The existing schema-5 HTTP409/local-backup cloud boundary remains intact. This implementation does not assert schema-5 cloud storage, project packaging, inbox arrival, checkout completion, provider execution, or two-account hosted acceptance.
+The existing schema-5 HTTP409/local-backup cloud boundary remains intact. Separate opt-in delivery storage is described below; it does not change the legacy cloud contract. No hosted persistence, inbox arrival, checkout completion, provider execution, or two-account hosted acceptance is claimed.
+
+## Immutable page delivery candidate
+
+The frontend-authoritative schema-5 renderer graph is exported into `lib/works/project-delivery/`, isolated from the accepted legacy schema-1 model. Its manifest records every transitive source file, UTF-8 LF byte length and SHA256; `.gitattributes` preserves those bytes on Windows and Linux. The backend renderer adapter exports only this separate graph. From the frontend repository root, `node scripts/export-playground-delivery.mjs <backend-app-directory>` verifies parity; `--write` installs the graph. Do not use the full legacy platform exporter for this contract.
+
+`GET/POST /api/playground/delivery` uses the authenticated relay and signed-in owner. The independent `EIDOS_PLAYGROUND_DELIVERY_MODE=test` gate is off by default and refuses both canonical `eidos-works.com` hosts and `eidosworks.pages.dev`. Request bodies are bounded to 1,520,000 bytes, canonical snapshots to 1.5 MB, archives to 6 MB, and each owner to 20 snapshots / 30 MB. One transaction inserts the immutable source and chunked archive only if the owner's current quota permits it. Stable request references replay the same snapshot; changed payloads conflict. SQLite rollback and independent worker connections are tested. Browser-supplied archives, HTML, owner IDs and claimed totals are not accepted as authority.
+
+Additive migrations `0006_project_delivery.sql` and `0007_project_delivery_orders.sql` use the existing Works database. The migration runner discovers numbered files; no hosted migration was run. Checkout can attach a previously frozen page only after the actual parent archive bytes/hash/version and signed-in owner match. The attachment joins the initial order transaction, before any external checkout session. A paid webhook must match that immutable attachment and the observed configured TEST merchant. Original archives and receipt downloads retain their established defaults.
+
+The optional `approved-page` download requires the same signed-in owner, paid TEST order, ready fulfillment, no refund/revocation, and exact stored archive/source hashes. Recovery preserves the binding and rejects an independently revoked payment before consuming its token. Current sales availability, current edition pins and a newly changed original archive do not replace an already stored approved archive. The frontend order fixture verifies that historical-download behavior with mocked provider traffic. The backend full suite separately verifies existing original/guest receipts, signed merchant evidence, cap accounting, refunds, mail retries, and archive retention against real libSQL.
+
+The second preview remains manual-only: no database, no archives, no delivery mode, no accounts, AI, checkout, mail or provider credentials. The source can be reviewed there, but authenticated storage and paid recovery still need the separately authorized TEST persistence/payment acceptance gates.
 
 ## Validation and receipts
 

@@ -14,7 +14,11 @@ if (process.argv.includes('--inspect')) {
   if (receipt.branch !== branch || !receipt.deployment?.id) throw Error('No isolated deployment receipt to inspect.');
   const result = vercelApi(options.cli, '/v13/deployments/' + receipt.deployment.id + '?teamId=' + team);
   if (result.target === 'production' || result.projectId !== project) throw Error('Unexpected deployment identity.');
+  if (result.id !== receipt.deployment.id || result.meta?.paidTemplatesGitSha !== receipt.backendSha ||
+      result.meta?.paidTemplatesSourceSha256 !== receipt.bundleHash || result.meta?.manualOnly !== 'true' ||
+      result.meta?.paidTemplatesEnvironmentBranch !== branch) throw Error('Deployment source metadata does not match the frozen manual-only candidate.');
   receipt.deployment = { id: result.id, url: 'https://' + result.url, state: result.readyState, target: result.target || 'preview' };
+  receipt.sourceMetadataVerified = true;
   receipt.inspectedAt = new Date().toISOString();
 } else {
   if (!options.bundle) throw Error('Supply the private bundle request generated from clean reviewed source.');
@@ -39,7 +43,7 @@ if (process.argv.includes('--inspect')) {
   const isolated = JSON.parse(await readFile('apps/sentinel-lab/.vercel/playground-manual.private.json', 'utf8')).env;
   if (!isolated || isolated.PUBLIC_SITE_URL !== 'https://eidosworks-playground-20261014.pages.dev' || (isolated.EIDOS_PLATFORM_TOKEN?.length || 0) < 32 ||
       ['EIDOS_SHOP_ENABLED', 'EIDOS_TEMPLATE_TEST_ENABLED', 'EIDOS_TEMPLATE_LIVE_ENABLED', 'EIDOS_ACCOUNTS_ENABLED', 'EIDOS_AI_ENABLED', 'EIDOS_NEWSLETTER_ENABLED', 'EIDOS_PROACTIVE_ENABLED', 'EIDOS_COMMUNITY_STUDIO_ENABLED'].some(key => isolated[key] !== 'false') ||
-      ['EIDOS_DATABASE_URL', 'EIDOS_DATABASE_AUTH_TOKEN', 'EIDOS_DATABASE_BINDING_PREFIX', 'EIDOS_TEMPLATES_TEST_TURSO_DATABASE_URL', 'EIDOS_TEMPLATES_TEST_TURSO_AUTH_TOKEN', 'OPENAI_API_KEY', 'STRIPE_SECRET_KEY', 'RESEND_API_KEY', 'EIDOS_PLAYGROUND_AI_MODE'].some(key => isolated[key] !== '') ||
+      ['EIDOS_DATABASE_URL', 'EIDOS_DATABASE_AUTH_TOKEN', 'EIDOS_DATABASE_BINDING_PREFIX', 'EIDOS_TEMPLATES_TEST_TURSO_DATABASE_URL', 'EIDOS_TEMPLATES_TEST_TURSO_AUTH_TOKEN', 'OPENAI_API_KEY', 'STRIPE_SECRET_KEY', 'RESEND_API_KEY', 'EIDOS_PLAYGROUND_AI_MODE', 'EIDOS_PLAYGROUND_DELIVERY_MODE'].some(key => isolated[key] !== '') ||
       configuration.variableNames.some(key => !(key in isolated))) throw Error('Isolated per-deployment environment is incomplete.');
   Object.assign(payload.env, isolated);
   receipt = { branch, backendSha: head, bundleHash, manualOnly: true, database: 'none', privateArchiveCount: 0,
