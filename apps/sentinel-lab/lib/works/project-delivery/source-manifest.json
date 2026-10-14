@@ -3,7 +3,7 @@
   "entry": "src/playground/purchaseSnapshot.ts",
   "encoding": "utf8-lf",
   "scope": "Exact source graph after LF normalization for gated project delivery; legacy cloud renderer is untouched.",
-  "inventorySha256": "800edfd6034839506f046ee422260b9dedc55e6e9cb23ef034193a35efe76415",
+  "inventorySha256": "3254b61e995185a2753b98ddf97c378e62c91273b9539d6e5929138e4e55c19f",
   "files": [
     {
       "path": "src/data/buyerArchivePins.json",
@@ -26,11 +26,6 @@
       "sha256": "62355bc5a2f078a07afb1814da3c9d1beb2512cded7d403cac3581d3928993a5"
     },
     {
-      "path": "src/playground/authoringRuntime.ts",
-      "bytes": 26522,
-      "sha256": "02d753f2c2c9d0b606f8588a9f587ab57f9de025226b8cd70c5d7bc97e208213"
-    },
-    {
       "path": "src/playground/authoringSchema.ts",
       "bytes": 6545,
       "sha256": "f91812facca0aef0e2e3aaf1bd403d2427b8e901d81abb5eb667c3955541f8a5"
@@ -39,11 +34,6 @@
       "path": "src/playground/compositionRenderer.ts",
       "bytes": 4758,
       "sha256": "4bc9e5ca286d9f429e16066d12beb5f8a7510953ec54fa8f608011286958792a"
-    },
-    {
-      "path": "src/playground/compositionRuntime.ts",
-      "bytes": 15880,
-      "sha256": "9167f05f6926b6b0e5ac4d45b856d46b9638239b8e50133cc80411939401395e"
     },
     {
       "path": "src/playground/compositionSchema.ts",
@@ -87,13 +77,13 @@
     },
     {
       "path": "src/playground/renderer.ts",
-      "bytes": 10308,
-      "sha256": "0e756262416496c603adf191e2ed818b54810311bdb736ec6593d6acdfcaa20b"
+      "bytes": 10372,
+      "sha256": "e84990d78ab4720ac062852954893a071352e90dc582e78b98eac358b8ba61d1"
     },
     {
-      "path": "src/playground/runtime.ts",
-      "bytes": 15094,
-      "sha256": "0b86c9ef46b61873f7a3ee8a9b05160a6d066d85a74bf72ab187c27b34bdd8aa"
+      "path": "src/playground/runtimeBundle.ts",
+      "bytes": 35874,
+      "sha256": "c1020e8e744bd324bf4fed1c9ef07040222418034334f1692b9c8c4c5ac0cb30"
     },
     {
       "path": "src/playground/studioSchema.ts",

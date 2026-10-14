@@ -1,0 +1,21 @@
+{
+  "timestampUtc": "2026-10-14T19:04:45.3604073Z",
+  "scope": "Canonical runtime fixes cross-build archive identity",
+  "graphFiles": 17,
+  "graphSha256": "3254b61e995185a2753b98ddf97c378e62c91273b9539d6e5929138e4e55c19f",
+  "fullSuitePassed": 100,
+  "fullSuiteSkipped": 1,
+  "typecheck": "passed",
+  "build": "passed",
+  "actualNextVsCanonicalEsbuild": "byte-identical",
+  "archiveSha256": "b26d51c04ddee2f6ff2cb421d13edaaeb668e64c8e25ba3cc4209ccceb5956a3",
+  "archiveBytes": 66201,
+  "scriptParse": "passed",
+  "nameHelperLeak": false,
+  "compiledProbe": "plain Node loading actual optimized Next route; in-memory SQLite; fetch forbidden",
+  "frontendBrowser": "Agent reports built Vite fresh recovery1440/390 and deferred-checkout exact checks passed; final browser matrix independently pending",
+  "legacyCloudRenderer": "unchanged",
+  "originalRuntimeSources": "unchanged",
+  "unknownExportFiles": "rejected before source write; negative control passed",
+  "deployment": "pending clean committed manual-only bundle"
+}

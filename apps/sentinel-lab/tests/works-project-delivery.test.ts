@@ -1,6 +1,6 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import { readFileSync } from 'node:fs';
+import { readFileSync, readdirSync } from 'node:fs';
 import { unlink } from 'node:fs/promises';
 import { createHash } from 'node:crypto';
 import { tmpdir } from 'node:os';
@@ -42,6 +42,9 @@ test('isolated renderer graph matches its portable LF manifest and leaves legacy
   const root = 'lib/works/project-delivery/', manifest = JSON.parse(readFileSync(root + 'source-manifest.json', 'utf8'));
   assert.equal(manifest.encoding, 'utf8-lf');
   const digest = (value: string | Buffer) => createHash('sha256').update(value).digest('hex');
+  const sourceFiles = (folder: string, prefix = 'src'): string[] => readdirSync(folder, { withFileTypes: true })
+    .flatMap(entry => entry.isDirectory() ? sourceFiles(join(folder, entry.name), prefix + '/' + entry.name) : [prefix + '/' + entry.name]);
+  assert.deepEqual(sourceFiles(root + 'src').sort(), manifest.files.map((file: {path: string}) => file.path).sort(), 'No obsolete or unmanifested source is bundled');
   assert.equal(digest(JSON.stringify(manifest.files)), manifest.inventorySha256);
   for (const file of manifest.files) {
     assert.ok(file.path.startsWith('src/playground/') || file.path === 'src/data/buyerArchivePins.json');

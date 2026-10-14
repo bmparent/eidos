@@ -37,6 +37,14 @@ The optional `approved-page` download requires the same signed-in owner, paid TE
 
 The second preview remains manual-only: no database, no archives, no delivery mode, no accounts, AI, checkout, mail or provider credentials. The source can be reviewed there, but authenticated storage and paid recovery still need the separately authorized TEST persistence/payment acceptance gates.
 
+### Canonical runtime correction
+
+Browser acceptance subsequently exposed a cross-build boundary missing from the initial source-level tests: `pageRuntime.toString()` produces different text after Vite, esbuild and Next transforms. The same valid snapshot therefore generated different `script.js` and ZIP hashes. The exact-byte acceptance gate correctly rejected the package. This differs from the separate `tsx` fixture helper issue; the actual Next runtime contained no `__name` leak and executed correctly in desktop/mobile Chromium.
+
+The corrected graph imports checked-in canonical page/composition/authoring runtime strings from `runtimeBundle.ts`. Original runtime behavior is unchanged. Frontend generation/check commands and cross-build regression tests enforce regeneration from those sources. The backend graph now contains exactly 17 files, inventory `3254b61e995185a2753b98ddf97c378e62c91273b9539d6e5929138e4e55c19f`; only the three superseded copies in the isolated graph were removed after comparison with their previous manifest. Legacy cloud source and frontend original runtime sources remain intact. Export and backend tests reject missing, obsolete, unknown or symlinked graph entries.
+
+The actual optimized Next route module was loaded by plain Node with no TypeScript loader, executed against in-memory SQLite, and forbidden from making outbound requests. Its freeze/read result equals the canonical esbuild reference byte-for-byte: 66,201 bytes, SHA256 `b26d51c04ddee2f6ff2cb421d13edaaeb668e64c8e25ba3cc4209ccceb5956a3`. Backend 100 tests, typecheck and optimized build pass again. Pre-fix input/output ZIPs and mismatch receipts are retained under `delivery/compiled-runtime-before/`; the corrected probe, reference builder and ZIPs are under `delivery/compiled-runtime-after/`. Old stored ZIPs are verified as stored rather than silently recompiled. Browser and protected-preview acceptance for the corrected candidate are recorded in subsequent receipts.
+
 ## Validation and receipts
 
 Run from repository root:

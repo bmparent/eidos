@@ -1,0 +1,29 @@
+{
+  "timestampUtc": "2026-10-14T18:58:22.457Z",
+  "source": "Actual compiled Next production module11160, plain Node SQLite freeze/read",
+  "archiveSha256": "ac045ed1b6c533ee6a557a3b419bb330482f7282243d518d0f8022f1f6141f3b",
+  "archiveBytes": 65628,
+  "network": "Blocked all HTTP(S); file URLs only",
+  "physicalDevice": false,
+  "records": [
+    {
+      "width": 1440,
+      "errors": [],
+      "console": [],
+      "requests": [],
+      "checks": [
+        "Actual production Next archive renders independent h1"
+      ]
+    },
+    {
+      "width": 390,
+      "errors": [],
+      "console": [],
+      "requests": [],
+      "checks": [
+        "Actual production Next archive renders independent h1",
+        "Actual compiled runtime opens/closes mobile navigation"
+      ]
+    }
+  ]
+}
