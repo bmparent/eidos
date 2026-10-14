@@ -39,17 +39,17 @@
   "manualBackendPreview": {
     "state": "READY",
     "database": "none",
-    "source": "19428375a54c2d8b4abc0aeb39858e3161ec0773",
-    "bundleHash": "a6271f66087b974d51fc09faa9a3b7b70b539aa2499adb6c97b68ef2fe9b57c9",
-    "deploymentId": "dpl_7M9ufsHoRdKjZUmvXrJ3Ub6ut722",
-    "url": "https://eidos-sentinel-qleksybfu-1brentbm-1876s-projects.vercel.app",
+    "source": "bd3c6ab2a636a5a1783babd304f2ac4c75f7a1b6",
+    "bundleHash": "1e471a710c1d4d1343f0ac50d294f5efcf9c4ef8f2c56a49223f65bb69bda27c",
+    "deploymentId": "dpl_3ybMcNrPqdT9dMWpbVvxDANqSaZr",
+    "url": "https://eidos-sentinel-lz611r2ml-1brentbm-1876s-projects.vercel.app",
     "authenticatedRuntimeAcceptance": "pending paired frontend CI",
     "unauthenticatedProtectionStatus": 302
   },
   "focusedDeliveryTests": 4,
   "sharedDeliveryContractFiles": 16,
   "deliveryGraphFiles": 17,
-  "deliveryGraphSha256": "3254b61e995185a2753b98ddf97c378e62c91273b9539d6e5929138e4e55c19f",
+  "deliveryGraphSha256": "bf8825416406e37882a5d17cfc7a2f6590fdff87858c350a09fa45e441f05a47",
   "deliverySource": "Controlled source/storage/order integration passed; hosted persistence remains unaccepted",
   "manualBackendPreviewFirst": {
     "state": "READY",
@@ -70,6 +70,52 @@
     "unauthenticatedProtectionStatus": 302
   },
   "canonicalRuntimeAcceptance": {
+    "actualNextVsEsbuild": {
+      "byteIdentical": true,
+      "bytes": 66234,
+      "sha256": "f3e34c10ab71b52c6750b458b16d57ea0da4a27c444bbc25e6a66579bbb649d8",
+      "receipt": "delivery/mobile-final-compiled/receipt.json"
+    },
+    "actualNextVsBuiltVite": {
+      "byteIdentical": true,
+      "bytes": 128380,
+      "sha256": "9def4cc49c1f79a061af9470c46fb96d6aa3550ba490304770ea1550364f29ed",
+      "receipt": "delivery/mobile-final-browser-parity/receipt.json"
+    },
+    "runtimeScriptUnchanged": {
+      "sha256": "b9198e45b85fcb7e2302d648b81eb0b6e3922bde14797b3a241695c03527334e",
+      "bytes": 20813,
+      "priorIndependentBrowserChecks": 6,
+      "receipt": "delivery/compiled-runtime-after/browser/receipt.json"
+    },
+    "mobileNumberLayout": {
+      "beforeAfterRecords": 12,
+      "afterPassed": 6,
+      "widths": [
+        320,
+        390
+      ],
+      "engines": [
+        "chromium",
+        "firefox",
+        "webkit"
+      ],
+      "receipt": "delivery/mobile-number-layout/receipt.json"
+    },
+    "negativeControl": "Prior actual Next/function-source byte mismatch retained under delivery/compiled-runtime-before",
+    "storedHistoricalArchives": "Read exact stored bytes; never re-render historical purchases"
+  },
+  "manualBackendPreviewThird": {
+    "state": "READY",
+    "database": "none",
+    "source": "19428375a54c2d8b4abc0aeb39858e3161ec0773",
+    "bundleHash": "a6271f66087b974d51fc09faa9a3b7b70b539aa2499adb6c97b68ef2fe9b57c9",
+    "deploymentId": "dpl_7M9ufsHoRdKjZUmvXrJ3Ub6ut722",
+    "url": "https://eidos-sentinel-qleksybfu-1brentbm-1876s-projects.vercel.app",
+    "authenticatedRuntimeAcceptance": "pending paired frontend CI",
+    "unauthenticatedProtectionStatus": 302
+  },
+  "canonicalRuntimeAcceptanceBeforeMobile": {
     "actualNextVsEsbuild": {
       "byteIdentical": true,
       "bytes": 66201,

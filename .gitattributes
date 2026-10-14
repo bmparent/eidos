@@ -6,5 +6,5 @@
 # Frozen delivery source inventory is UTF-8 LF on every checkout platform.
 /apps/sentinel-lab/lib/works/project-delivery/** text eol=lf -whitespace
 /apps/sentinel-lab/lib/works/vendor/functions/_shared/platform/projectDeliveryRenderer.ts text eol=lf
-# Retain delivery test/evidence bytes, including terminal spacing and CRLF.
-/artifacts/playground-unified-backend-20261014/delivery/** -text -whitespace
+# Retain all Playground evidence bytes so manifest hashes survive checkout.
+/artifacts/playground-unified-backend-20261014/** -text -whitespace
