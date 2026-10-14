@@ -5,7 +5,7 @@ export function prepareTargetInterpretation(event) {
   const finite=value=>typeof value==='number'&&Number.isFinite(value)?value:null;
   const metricNames=['dns_ms','tcp_ms','tls_ms','response_wait_ms','headers_ms','failure_ratio','icmp_rtt_ms','icmp_loss_ratio'];
   const states=['calibrating','observing','unusual','unavailable'];
-  const metrics=(analysis.signals ?? []).filter(x=>metricNames.includes(x.metric)).map(x=>({metric:x.metric,state:states.includes(x.state)?x.state:'unavailable',value:finite(x.value),prior_median:finite(x.prior_median),event_score:finite(x.event_score),samples:Number.isSafeInteger(x.sample_count)?x.sample_count:0}));
+  const metrics=(analysis.signals ?? []).filter(x=>metricNames.includes(x.metric)).map(x=>({metric:x.metric,state:states.includes(x.state)?x.state:'unavailable',value:finite(x.value),prior_median:finite(x.prior_median),event_score:finite(x.event_score),measured_deviation:x.measured_deviation===true,deviation_threshold:finite(x.deviation_threshold),raw_engine_change:x.raw_engine_change===true,samples:Number.isSafeInteger(x.sample_count)?x.sample_count:0}));
   const changeCodes=['dns_changed','certificate_changed','http_status_changed','response_metadata_changed','page_changed','certificate_expiring','probe_failed','path_changed'];
   const changes=(analysis.changes ?? []).map(x=>x.code).filter(x=>changeCodes.includes(x));
   const safe={kind:'target_probe',method:'HEAD',status:Number.isInteger(event.status)?event.status:null,

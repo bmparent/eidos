@@ -6,7 +6,7 @@ import {retainTargetObservation, targetHistory} from './target-store.mjs';
 
 // build_worker.py embeds the exact inspected web sources here. No runtime CDN.
 const ASSETS = /* OBSERVATORY_ASSETS */ Object.freeze({});
-const VERSION = 'sentinel-live-v6-target-streams';
+const VERSION = 'sentinel-live-v7-target-streams';
 const SECURITY = {
   'cache-control': 'no-store',
   'x-content-type-options': 'nosniff',
@@ -70,7 +70,7 @@ export default {
         transport: 'Cloudflare Worker public HTTP HEAD',
         sampling: 'While connected and visible in your browser; no unattended background monitor',
         history: 'Server-retained target evidence and versioned metric baselines, plus browser history. Collection remains foreground only.',
-        target_probes: {connected:Boolean(targetProbeConfiguration(env)),profile:'target-metrics-v1',available:['dns','tcp','tls','http'],optional:['page_fingerprint','public_redirect_chain'],path:'local_companion_required',history_limit:128,retention_days:7},
+        target_probes: {connected:Boolean(targetProbeConfiguration(env)),profile:'target-metrics-v2',available:['dns','tcp','tls','http'],optional:['page_fingerprint','public_redirect_chain'],path:'local_companion_required',history_limit:128,retention_days:7},
         missing_coverage: ['Visitor traffic', 'Packet capture', 'Internal services', 'Origin processing time', 'Hosted ICMP/traceroute'],
       }), 'application/json; charset=utf-8');
     }

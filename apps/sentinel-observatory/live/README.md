@@ -31,7 +31,10 @@ preview without replacing the original collector's rollback binding.
 metric, target and observer identity. DNS/certificate/status/header/page changes
 are explicit events. Missing timings are excluded; actual failed probes have a
 separate failure-ratio stream. Settings/collector changes and gaps above five
-minutes explicitly rewarm calibration. Related changes form an evidence-linked
+minutes explicitly rewarm calibration. The v2 operational gate requires a Sentinel change plus a measured departure
+from the preceding 16-sample median beyond six scaled MADs and a minimum of
+5 ms/25% for timings or 0.10 for ratios. Raw engine scores remain inspectable;
+this transparent gate is not proof of detector benefit. Related changes form an evidence-linked
 episode, not a root-cause or attack verdict.
 
 Schema migration 0003 adds versioned checkpoints and authoritative target records.

@@ -1,7 +1,7 @@
 /** Per-target/per-metric integration. SentinelPort's numerical core is unchanged. */
 import {SentinelPort, ENGINE_PROVENANCE} from './brain.mjs';
 
-export const TARGET_PROFILE = 'target-metrics-v1';
+export const TARGET_PROFILE = 'target-metrics-v2';
 export const TARGET_METRICS = Object.freeze({
   dns_ms:{label:'DNS lookup',unit:'ms'},tcp_ms:{label:'TCP connection',unit:'ms'},tls_ms:{label:'TLS handshake',unit:'ms'},
   response_wait_ms:{label:'HTTP response wait',unit:'ms'},headers_ms:{label:'First-hop response headers',unit:'ms'},
@@ -42,12 +42,12 @@ export class TargetBrain {
     this.checkpointIssue=null;
     if(saved){
       try{
-        if(saved.profile!==TARGET_PROFILE||JSON.stringify(saved).length>90000||!Number.isSafeInteger(saved.samples)||saved.samples<0||!Number.isSafeInteger(saved.generation)||saved.generation<1||!Array.isArray(saved.seen)||saved.seen.length>512||!Array.isArray(saved.failure_window)||saved.failure_window.length>20||saved.failure_window.some(x=>x!==0&&x!==1))throw new Error('invalid_checkpoint');
+        if(![TARGET_PROFILE,'target-metrics-v1'].includes(saved.profile)||JSON.stringify(saved).length>90000||!Number.isSafeInteger(saved.samples)||saved.samples<0||!Number.isSafeInteger(saved.generation)||saved.generation<1||!Array.isArray(saved.seen)||saved.seen.length>512||!Array.isArray(saved.failure_window)||saved.failure_window.length>20||saved.failure_window.some(x=>x!==0&&x!==1))throw new Error('invalid_checkpoint');
         for(const [key,series] of Object.entries(saved.series ?? {})){
           if(!Object.hasOwn(TARGET_METRICS,key)||!Array.isArray(series.values)||series.values.length>32||series.values.some(x=>number(x)===null))throw new Error('invalid_checkpoint');
           restoreDetector(series.detector);
         }
-        this.data=clone(saved);
+        this.data=clone(saved);this.data.profile=TARGET_PROFILE;
       }catch{this.checkpointIssue='The retained baseline was incompatible or invalid; calibration restarted.';}
     }
   }
@@ -73,11 +73,19 @@ export class TargetBrain {
       const definition=TARGET_METRICS[key];
       if(value===null){signals.push({metric:key,...definition,value:null,state:'unavailable',event_score:null,sample_count:d.series[key]?.detector?.t ?? 0,evidence_ids:[event.id]});continue;}
       const prior=d.series[key],detector=prior?restoreDetector(prior.detector):new SentinelPort(),history=prior?.values ?? [];
-      const expected=median(history),result=detector.step(Math.log1p(value)),change=!result.warmup&&result.status!=='GREEN';
+      const expected=median(history),result=detector.step(Math.log1p(value)),rawChange=!result.warmup&&result.status!=='GREEN';
+      // Internal reservoir dynamics are not external network incidents. Require
+      // a measured departure as well, and expose both decisions independently.
+      const mad=expected===null?null:median(history.map(x=>Math.abs(x-expected)));
+      const minimum=definition.unit==='ratio'?0.1:Math.max(5,Math.abs(expected ?? 0)*0.25);
+      const deviationThreshold=mad===null?null:Math.max(minimum,6*1.4826*mad);
+      const measuredDeviation=expected!==null&&deviationThreshold!==null&&Math.abs(value-expected)>deviationThreshold;
+      const change=rawChange&&measuredDeviation;
       signals.push({metric:key,...definition,value,prior_median:expected,delta:expected===null?null:value-expected,
         state:result.warmup?'calibrating':change?'unusual':'observing',sample_count:detector.t,warmup_remaining:Math.max(0,12-detector.t),
-        event_score:result.warmup?null:result.event_score,evidence_ids:[...(history.length&&d.last_id?[d.last_id]:[]),event.id],baseline_evidence_ids:prior?.evidence_ids ?? [],
-        meaning:'Experimental within-stream numerical change; not an attack probability'});
+        event_score:result.warmup?null:result.event_score,raw_engine_change:rawChange,measured_deviation:measuredDeviation,deviation_threshold:deviationThreshold,
+        evidence_ids:[...(history.length&&d.last_id?[d.last_id]:[]),event.id],baseline_evidence_ids:prior?.evidence_ids ?? [],
+        meaning:'Operational flag requires both Sentinel change and a measured departure beyond the prior median/MAD gate; not an attack probability'});
       d.series[key]={detector:clone(detector),values:[...history,value].slice(-16),evidence_ids:[...(prior?.evidence_ids ?? []),event.id].slice(-16)};
     }
     const p=event.probes,last=d.last_facts,changes=[];

@@ -43,7 +43,7 @@ export function createCompanion({database=new CompanionDatabase(),port=8767,path
             }finally{pathActive=false;}}
         }else response=json({error:'not_found'},404);
       }else if(incoming.method==='GET'){
-        if(url.pathname==='/api/capabilities')response=json({mode:'local',direct_ip:true,interval_ms:15000,max_targets:4,hosted_interpretation:hostedInterpretationCapability(env),model:hostedInterpretationCapability(env),target_probes:{connected:true,path:'local_commands',profile:'target-metrics-v1'},security_sensor:{connected:false,reason:'Use retained target evidence; no network log sensor attached'}});
+        if(url.pathname==='/api/capabilities')response=json({mode:'local',direct_ip:true,interval_ms:15000,max_targets:4,hosted_interpretation:hostedInterpretationCapability(env),model:hostedInterpretationCapability(env),target_probes:{connected:true,path:'local_commands',profile:'target-metrics-v2'},security_sensor:{connected:false,reason:'Use retained target evidence; no network log sensor attached'}});
         else if(url.pathname==='/api/target-history')response=json(await targetHistory(env,url.searchParams.get('target_id')));
         else if(url.pathname==='/api/model/status')response=json({available:false,connected:false,reason:'Optional Python/Qwen companion remains a separate launcher.'});
         else if(assets[url.pathname]){const file=assets[url.pathname],type=file.endsWith('.css')?'text/css':file.endsWith('.html')?'text/html':'text/javascript';response=new Response(await readFile(new URL(file,import.meta.url)),{headers:{'content-type':type+'; charset=utf-8','cache-control':'no-store'}});}

@@ -122,6 +122,23 @@ test('categorical DNS/certificate changes retain evidence and are not attack ver
   assert.equal(result.security_verdict,'not_assessed');assert.equal(result.episode.evidence_ids.length,2);
 });
 
+test('quiet numerical streams do not become operational anomalies solely from reservoir dynamics',()=>{
+  const brain=new TargetBrain();let rawFlags=0,operationalFlags=0;
+  for(let i=1;i<=80;i++){
+    const event=fixture(i);event.probes.tcp.duration_ms=12+(i%5-2)*0.1;
+    const signal=brain.observe(event).signals.find(x=>x.metric==='tcp_ms');
+    if(i>12){rawFlags+=Number(signal.raw_engine_change);operationalFlags+=Number(signal.state==='unusual');}
+  }
+  assert.ok(rawFlags>0,'The fixture exercises internal changes');assert.equal(operationalFlags,0);
+  const changed=fixture(81);changed.probes.tcp.duration_ms=120;
+  const signal=brain.observe(changed).signals.find(x=>x.metric==='tcp_ms');assert.equal(signal.measured_deviation,true);assert.equal(signal.state,'unusual');
+});
+
+test('v1 checkpoints migrate to the measured-deviation profile without discarding their samples',()=>{
+  const first=new TargetBrain();first.observe(fixture(1));const saved=first.checkpoint();saved.profile='target-metrics-v1';
+  const second=new TargetBrain(saved),result=second.observe(fixture(2));assert.equal(result.profile,'target-metrics-v2');assert.equal(result.history_samples,2);
+});
+
 test('collector/settings changes rewarm; stale and out-of-order frames never contaminate calibration',()=>{
   const brain=new TargetBrain();for(let i=1;i<=14;i++)brain.observe(fixture(i));
   assert.equal(brain.observe(fixture(3)).state,'duplicate');
