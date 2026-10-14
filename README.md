@@ -12,6 +12,7 @@ Start here when you need to understand what `/eidos` contains and what the curre
 - `eidos/AUDIT/` - static audit maps for the core loop, reservoir, predictor, normalization, surprise gate, and artifact receipts.
 - `docs/controlled_memory_benchmark.md` - isolated state-rounding benchmark, frozen protocol, exact controls, and reproduction commands.
 - `docs/memory_utility_readiness.md` - chronological data preparation, label-isolation checks, and explicit utility blockers.
+- `apps/sentinel-observatory/README.md` - local real-HTTP evidence observatory, safe recorded replay, experimental Sentinel signals, and prospective latency baseline comparison.
 - `eidos/artifacts/` - repo-local proof receipts, including manifests, summaries, ledgers, reports, and Drive-copy records.
 
 ## Proof Posture

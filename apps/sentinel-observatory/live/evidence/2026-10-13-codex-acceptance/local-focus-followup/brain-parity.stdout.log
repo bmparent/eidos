@@ -1,0 +1,85 @@
+{
+  "schema": "eidos.sentinel.js-parity-receipt.v1",
+  "verified_at": "2026-10-14T01:10:00.699Z",
+  "method": "Recorded and test-only frames passed through canonical Python reference and JavaScript port, in sequence",
+  "numerical_tolerance": "1e-7 absolute + 1e-8 * abs(reference); exact status/string/boolean agreement",
+  "status": "PASS",
+  "frames": 954,
+  "field_comparisons": 41022,
+  "max_absolute_error": 0.00004506399272941053,
+  "max_relative_error_denominator_at_least_one": 3.4109834284670893e-10,
+  "failures": [],
+  "cases": [
+    {
+      "id": "recorded-account",
+      "provenance": "recorded real response latencies; parity-only replay",
+      "frames": 28,
+      "max_absolute_error": 5.587935447692871e-9,
+      "source_sha256": "28f3f9599ace9900f6c1890f9fa1b5a86e7cc4c6366246946696763a5f5a7587"
+    },
+    {
+      "id": "recorded-community",
+      "provenance": "recorded real response latencies; parity-only replay",
+      "frames": 29,
+      "max_absolute_error": 7.450580596923828e-9,
+      "source_sha256": "28f3f9599ace9900f6c1890f9fa1b5a86e7cc4c6366246946696763a5f5a7587"
+    },
+    {
+      "id": "recorded-home",
+      "provenance": "recorded real response latencies; parity-only replay",
+      "frames": 28,
+      "max_absolute_error": 3.725290298461914e-9,
+      "source_sha256": "28f3f9599ace9900f6c1890f9fa1b5a86e7cc4c6366246946696763a5f5a7587"
+    },
+    {
+      "id": "recorded-playground",
+      "provenance": "recorded real response latencies; parity-only replay",
+      "frames": 28,
+      "max_absolute_error": 2.7939677238464355e-9,
+      "source_sha256": "28f3f9599ace9900f6c1890f9fa1b5a86e7cc4c6366246946696763a5f5a7587"
+    },
+    {
+      "id": "recorded-probe",
+      "provenance": "recorded real response latencies; parity-only replay",
+      "frames": 1,
+      "max_absolute_error": 1.3877787807814457e-17,
+      "source_sha256": "28f3f9599ace9900f6c1890f9fa1b5a86e7cc4c6366246946696763a5f5a7587"
+    },
+    {
+      "id": "synthetic-regime-changes",
+      "provenance": "TEST FIXTURE ONLY; never telemetry",
+      "frames": 500,
+      "max_absolute_error": 0.00004506399272941053,
+      "source_sha256": null
+    },
+    {
+      "id": "synthetic-zero-and-extreme",
+      "provenance": "TEST FIXTURE ONLY; never telemetry",
+      "frames": 160,
+      "max_absolute_error": 1.4210854715202004e-14,
+      "source_sha256": null
+    },
+    {
+      "id": "synthetic-stationary",
+      "provenance": "TEST FIXTURE ONLY; never telemetry",
+      "frames": 180,
+      "max_absolute_error": 4.656612873077393e-10,
+      "source_sha256": null
+    }
+  ],
+  "reference_sha256": "a329238fc3bbb555631cb93f340c8c58f91518ac961c37105ceb61754ac33554",
+  "module_sha256": "c6389999043e81288154f9b034dd97ef1b32661b8b2707977ebee2f00b427bd2",
+  "canonical_source_hashes": {
+    "sentinel_v3.py": "b76207726fbcc29f626bdef773519c13f26885c2839c34825dee565906a1eef5",
+    "calibration.py": "f2f07b148c17f2734fd089fd02614231bf82bb7e3789c1643636fec7c9d64505",
+    "input_detectors.py": "7bee75283675893bf43b5e64551c6cd640adec0859f4c4361b075b85dd631253",
+    "hysteresis.py": "f63785d58ca85a21fe2abd734b335a5d064d832f51b762466f97c7fda2390b66",
+    "normal_suppression.py": "2b1c820a299335e863a1c2451fbbe000a68215f3d53563a2d08f01e39467cc99",
+    "event_merge.py": "50ace015d4bc7ad4577b8bc41f2e28a390b2292d8f47303aa1b962bd86e46f9d"
+  },
+  "limits": [
+    "One-feature,32-reservoir,warmup12,rolling8,seed42,cadence-neutral profile only",
+    "Numerical equivalence for these inputs does not establish security detection quality or forecast skill",
+    "Recorded-data parity replay does not create or score live-issued forecasts"
+  ]
+}

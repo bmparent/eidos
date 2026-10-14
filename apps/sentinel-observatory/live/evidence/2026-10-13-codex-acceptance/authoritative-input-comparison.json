@@ -1,0 +1,19 @@
+{
+  "event_id": "edge_add9ea4f6d3c429d8c9a1202e50fe31d",
+  "event_type": "collector",
+  "timestamp": "2026-10-14T00:14:34.647Z",
+  "status": 301,
+  "duration_ms": 41.98,
+  "outcome": "ok",
+  "head_attempted": true,
+  "linked_evidence_id": "evt_fe7cd21a06dd4dd694dce191b6d21ea1",
+  "network": {
+    "scope": "observatory_outbound_head_connection",
+    "peer_matches_destination": true,
+    "socket_connected": true,
+    "tls_verified": true,
+    "tls_protocol": "TLSv1.3",
+    "bytes_read": 176,
+    "bytes_written": 291
+  }
+}

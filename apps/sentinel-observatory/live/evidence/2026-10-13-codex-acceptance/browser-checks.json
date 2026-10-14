@@ -1,0 +1,362 @@
+{
+  "url": "https://sentinel-evidence-observatory.bmparent.chatgpt.site/#connect-target",
+  "title": "Sentinel — Live Observatory",
+  "authenticated_owner": true,
+  "viewports": [
+    {
+      "width": 1440,
+      "height": 900
+    },
+    {
+      "width": 390,
+      "height": 844
+    }
+  ],
+  "product_runtime_sha": "857b2022df7ef7ec379850bc2c327f398c725776",
+  "sites_source_sha": "d0b06304055fef1cccf3ace36b3b6d9acde2054f",
+  "deployment_id": "appgdep_6aced528a8808191b054fcb487216dbf",
+  "environment_revision": 5,
+  "checks": [
+    {
+      "check": "desktop_connect_pause",
+      "status": "passed",
+      "observed_at": "2026-10-13T23:42:44.038Z",
+      "note": "Public 1.1.1.1 response rendered and target changed to Paused; evidence retained.",
+      "sites_source_sha": "54e7ba3392e0fd840ce1718a1fdcbebc4bb7fdac",
+      "environment_revision": 4
+    },
+    {
+      "check": "desktop_sensor_filters",
+      "status": "passed",
+      "details": [
+        {
+          "filter": "Requests",
+          "pressed": "true",
+          "rendered_count": 10,
+          "rows": [
+            "Observatory received POST /api/observe; returned 200Observatory application-edge sensor · edge_bbe27952cc1d4ba6aabdbbe2ff855ea7Incoming request19:42:41↗",
+            "Observatory received POST /api/observe; returned 200Observatory application-edge sensor · edge_bc0cd9a29ab642f981564e77a084c115Incoming request19:42:25↗",
+            "Observatory received POST /api/observe; returned 200Observatory application-edge sensor · edge_0380fd15a4f74a9fa891ee6945714894Incoming request19:42:10↗"
+          ]
+        },
+        {
+          "filter": "Checks",
+          "pressed": "true",
+          "rendered_count": 10,
+          "rows": [
+            "Observatory HEAD returned 301 for 1.1.1.1Observatory application-edge sensor · TCPOutbound check19:42:41↗",
+            "Observatory HEAD returned 301 for 1.1.1.1Observatory application-edge sensor · TCPOutbound check19:42:25↗",
+            "Observatory HEAD returned 301 for 1.1.1.1Observatory application-edge sensor · TCPOutbound check19:42:10↗"
+          ]
+        },
+        {
+          "filter": "Controls",
+          "pressed": "true",
+          "rendered_count": 10,
+          "rows": [
+            "Observatory enforced deny: payload_too_large (functional check)Observatory application-edge sensor · edge_564963b35cc747308071183bdce3dacdControl enforcement17:18:41↗",
+            "Observatory enforced deny: recursive_target (functional check)Observatory application-edge sensor · edge_1cd098b2b156446988b7dfda0537f1c2Control enforcement17:18:27↗",
+            "Observatory enforced deny: credentials_not_allowed (functional check)Observatory application-edge sensor · edge_ff424fc461d34e66b09320da3768f639Control enforcement17:18:22↗"
+          ]
+        }
+      ],
+      "sites_source_sha": "54e7ba3392e0fd840ce1718a1fdcbebc4bb7fdac",
+      "environment_revision": 4
+    },
+    {
+      "check": "missing_key_ui_fallback",
+      "status": "passed",
+      "model_ran": false,
+      "note": "Manual evidence-notes action preserves stored facts and explicit missing server key.",
+      "sites_source_sha": "54e7ba3392e0fd840ce1718a1fdcbebc4bb7fdac",
+      "environment_revision": 4
+    },
+    {
+      "check": "ui_json_exports",
+      "status": "passed",
+      "endpoint_file": "endpoint-ui-export.json",
+      "endpoint_count": 5,
+      "sensor_file": "sensor-ui-export.json",
+      "sensor_count": 104,
+      "sites_source_sha": "54e7ba3392e0fd840ce1718a1fdcbebc4bb7fdac",
+      "environment_revision": 4
+    },
+    {
+      "check": "sensor_control_focus_before_fix",
+      "status": "failed",
+      "details": {
+        "focusTag": "BODY",
+        "focusText": "\n  Skip to connect a target\n  \n    sentinelby eidos\n    Live observatoryRecorded"
+      },
+      "note": "Focus measured after a real feed polling interval.",
+      "sites_source_sha": "54e7ba3392e0fd840ce1718a1fdcbebc4bb7fdac",
+      "environment_revision": 4,
+      "resolved_by": "sensor_control_focus_after_fix"
+    },
+    {
+      "check": "mobile_reload_retention",
+      "status": "passed",
+      "viewport": {
+        "width": 390,
+        "height": 844
+      },
+      "note": "Five real observations restored with target paused; no automatic reconnect.",
+      "sites_source_sha": "54e7ba3392e0fd840ce1718a1fdcbebc4bb7fdac",
+      "environment_revision": 4
+    },
+    {
+      "check": "mobile_graph_keyboard_pan",
+      "status": "passed",
+      "before": {
+        "content": 840,
+        "left": 0,
+        "tabIndex": 0,
+        "width": 330
+      },
+      "after": {
+        "content": 840,
+        "left": 120,
+        "width": 330
+      },
+      "sites_source_sha": "54e7ba3392e0fd840ce1718a1fdcbebc4bb7fdac",
+      "environment_revision": 4
+    },
+    {
+      "check": "mobile_fact_citation_and_raw_inspector",
+      "status": "passed",
+      "source_record": "edge_9783c3e0962a427bb54ba2d27d93fd34",
+      "note": "Fact citation selected retained outbound HTTP301 record; normalized metadata expanded.",
+      "sites_source_sha": "54e7ba3392e0fd840ce1718a1fdcbebc4bb7fdac",
+      "environment_revision": 4
+    },
+    {
+      "check": "sensor_control_focus_after_fix",
+      "status": "passed",
+      "details": {
+        "focusTag": "BUTTON",
+        "focusText": "Pause sensor feed"
+      },
+      "sites_source": "bb2bc77c7d9eaef67d6ff4833781e3c8517771d8",
+      "note": "Focus survived an observed freshness-text update from a real feed poll.",
+      "sites_source_sha": "bb2bc77c7d9eaef67d6ff4833781e3c8517771d8",
+      "environment_revision": 5
+    },
+    {
+      "check": "sensor_pointer_pause_resume_after_fix",
+      "status": "passed",
+      "sites_source_sha": "bb2bc77c7d9eaef67d6ff4833781e3c8517771d8",
+      "environment_revision": 5
+    },
+    {
+      "check": "actual_ui_sol_first_result",
+      "status": "passed",
+      "requested_evidence_id": "evt_fe7cd21a06dd4dd694dce191b6d21ea1",
+      "note": "First UI request completed; provider receipt independently inspected in durable model jobs.",
+      "sites_source_sha": "bb2bc77c7d9eaef67d6ff4833781e3c8517771d8",
+      "environment_revision": 5
+    },
+    {
+      "check": "actual_ui_sol_cached_result",
+      "status": "passed",
+      "requested_evidence_id": "evt_fe7cd21a06dd4dd694dce191b6d21ea1",
+      "note": "Repeated same evidence; one completed durable provider job independently verified.",
+      "sites_source_sha": "bb2bc77c7d9eaef67d6ff4833781e3c8517771d8",
+      "environment_revision": 5
+    },
+    {
+      "check": "native_sensor_alias_cached_interpretation",
+      "status": "passed",
+      "source_record": "edge_add9ea4f6d3c429d8c9a1202e50fe31d",
+      "note": "Sensor interpretation of the same canonical record reused accepted Sol output.",
+      "sites_source_sha": "bb2bc77c7d9eaef67d6ff4833781e3c8517771d8",
+      "environment_revision": 5
+    },
+    {
+      "check": "final_desktop_sol_render",
+      "status": "passed",
+      "viewport": {
+        "width": 1440,
+        "height": 900
+      },
+      "console": [],
+      "sites_source_sha": "bb2bc77c7d9eaef67d6ff4833781e3c8517771d8",
+      "environment_revision": 5
+    },
+    {
+      "check": "desktop_keyboard_dialog_and_connect_focus",
+      "status": "passed",
+      "details": {
+        "id": "connect-button",
+        "tag": "BUTTON"
+      },
+      "sites_source_sha": "bb2bc77c7d9eaef67d6ff4833781e3c8517771d8",
+      "environment_revision": 5
+    },
+    {
+      "check": "final_sol_ui_exports",
+      "status": "passed",
+      "files": [
+        "endpoint-ui-export-final.json",
+        "sensor-ui-export-final.json"
+      ],
+      "sites_source_sha": "bb2bc77c7d9eaef67d6ff4833781e3c8517771d8",
+      "environment_revision": 5
+    },
+    {
+      "check": "final_selected_sol_verification_visible",
+      "status": "passed",
+      "note": "Native inspector displays Model ran yes, output accepted yes and Cached server result at both viewports.",
+      "sites_source_sha": "bb2bc77c7d9eaef67d6ff4833781e3c8517771d8",
+      "environment_revision": 5
+    },
+    {
+      "check": "final_deployed_desktop_filters",
+      "status": "passed",
+      "details": [
+        {
+          "filter": "Requests",
+          "pressed": "true",
+          "rows": [
+            "Observatory received POST /api/observe; returned 200Observatory application-edge sensor · edge_6d003ac6b94a45a3aa72c5b1428adb60Incoming request20:14:34↗",
+            "Observatory received POST /api/observe; returned 200Observatory application-edge sensor · edge_16d94d87e01348bbab37bb701fb3e7b6Incoming request20:14:19↗",
+            "Observatory received POST /api/observe; returned 200Observatory application-edge sensor · edge_40115a38a11c4ac1812888bce0f762c6Incoming request20:14:03↗"
+          ]
+        },
+        {
+          "filter": "Checks",
+          "pressed": "true",
+          "rows": [
+            "Observatory HEAD returned 301 for 1.1.1.1Observatory application-edge sensor · TCPOutbound check20:14:34↗",
+            "Observatory HEAD returned 301 for 1.1.1.1Observatory application-edge sensor · TCPOutbound check20:14:19↗",
+            "Observatory HEAD returned 301 for 1.1.1.1Observatory application-edge sensor · TCPOutbound check20:14:03↗"
+          ]
+        },
+        {
+          "filter": "Controls",
+          "pressed": "true",
+          "rows": [
+            "Observatory enforced deny: payload_too_large (functional check)Observatory application-edge sensor · edge_564963b35cc747308071183bdce3dacdControl enforcement17:18:41↗",
+            "Observatory enforced deny: recursive_target (functional check)Observatory application-edge sensor · edge_1cd098b2b156446988b7dfda0537f1c2Control enforcement17:18:27↗",
+            "Observatory enforced deny: credentials_not_allowed (functional check)Observatory application-edge sensor · edge_ff424fc461d34e66b09320da3768f639Control enforcement17:18:22↗"
+          ]
+        }
+      ],
+      "sites_source_sha": "bb2bc77c7d9eaef67d6ff4833781e3c8517771d8",
+      "environment_revision": 5
+    },
+    {
+      "check": "final_deployed_mobile_graph",
+      "status": "passed",
+      "note": "Scrollable 840px source graph stays within 330px mobile region and supports keyboard controls.",
+      "sites_source_sha": "bb2bc77c7d9eaef67d6ff4833781e3c8517771d8",
+      "environment_revision": 5
+    },
+    {
+      "check": "graph_keyboard_focus_before_followup",
+      "status": "failed",
+      "observed_at": "2026-10-14T01:03:19.925Z",
+      "details": {
+        "activeTag": "BODY",
+        "node": null,
+        "filter": "Showing records for 1.1.1.1"
+      },
+      "sites_source_sha": "bb2bc77c7d9eaef67d6ff4833781e3c8517771d8",
+      "environment_revision": 5,
+      "resolved_by": "graph_keyboard_focus_after_followup"
+    },
+    {
+      "check": "graph_keyboard_focus_after_followup",
+      "status": "passed",
+      "observed_at": "2026-10-14T01:05:22.186Z",
+      "details": {
+        "filter": "Showing records for 1.1.1.1Show all endpoints",
+        "node": "1.1.1.1",
+        "tag": "g"
+      },
+      "sites_source_sha": "d0b06304055fef1cccf3ace36b3b6d9acde2054f",
+      "environment_revision": 5
+    },
+    {
+      "check": "sensor_record_keyboard_focus_after_followup",
+      "status": "passed",
+      "observed_at": "2026-10-14T01:05:22.362Z",
+      "details": {
+        "evidence": "native_e15ce93ff142bfa3",
+        "inspector": true,
+        "tag": "BUTTON"
+      },
+      "sites_source_sha": "d0b06304055fef1cccf3ace36b3b6d9acde2054f",
+      "environment_revision": 5
+    },
+    {
+      "check": "sensor_source_focus_after_real_refresh",
+      "status": "passed",
+      "observed_at": "2026-10-14T01:05:25.209Z",
+      "details": {
+        "freshness": "Receiving the Observatory’s actual incoming requests and outbound check records every 5 seconds. Last received 21:05:24.",
+        "label": "Remove Observatory application-edge sensor",
+        "source": "observatory-edge",
+        "tag": "BUTTON"
+      },
+      "sites_source_sha": "d0b06304055fef1cccf3ace36b3b6d9acde2054f",
+      "environment_revision": 5
+    },
+    {
+      "check": "feed_control_focus_after_followup",
+      "status": "passed",
+      "observed_at": "2026-10-14T01:06:10.326Z",
+      "details": {
+        "activeControl": "stream",
+        "freshness": "Receiving the Observatory’s actual incoming requests and outbound check records every 5 seconds. Last received 21:06:07.",
+        "label": "Pause sensor feed"
+      },
+      "sites_source_sha": "d0b06304055fef1cccf3ace36b3b6d9acde2054f",
+      "environment_revision": 5
+    },
+    {
+      "check": "final_version_ui_cache",
+      "status": "passed",
+      "observed_at": "2026-10-14T01:06:10.557Z",
+      "note": "Manual repeat of the retained first HTTP evidence displayed cached server result and linked canonical citations after native feed resolution.",
+      "sites_source_sha": "d0b06304055fef1cccf3ace36b3b6d9acde2054f",
+      "environment_revision": 5
+    },
+    {
+      "check": "mobile_focus_and_overflow_after_followup",
+      "status": "passed",
+      "observed_at": "2026-10-14T01:06:27.138Z",
+      "details": {
+        "activeNode": "1.1.1.1",
+        "bodyWidth": 375,
+        "clientWidth": 375,
+        "graphContent": 840,
+        "graphWidth": 330,
+        "viewport": 390
+      },
+      "sites_source_sha": "d0b06304055fef1cccf3ace36b3b6d9acde2054f",
+      "environment_revision": 5
+    },
+    {
+      "check": "final_version_native_alias_cache",
+      "status": "passed",
+      "observed_at": "2026-10-14T01:12:04.080Z",
+      "note": "Canonical native alias returned the completed cached Sol response after the UI-only version-12 deployment.",
+      "sites_source_sha": "d0b06304055fef1cccf3ace36b3b6d9acde2054f",
+      "environment_revision": 5
+    },
+    {
+      "check": "version12_ui_exports",
+      "status": "passed",
+      "observed_at": "2026-10-14T01:12:34.744Z",
+      "endpoint_file": "endpoint-ui-export-final.json",
+      "sensor_file": "sensor-ui-export-final.json",
+      "sensor_count": 110,
+      "sensor_interpretations": 1,
+      "sites_source_sha": "d0b06304055fef1cccf3ace36b3b6d9acde2054f",
+      "environment_revision": 5
+    }
+  ],
+  "console": [],
+  "teardown": "Endpoint and sensor feed left paused; viewport override reset.",
+  "final_verified_at_utc": "2026-10-14T01:12:34.744Z"
+}

@@ -1,0 +1,185 @@
+{
+  "schema": "sentinel-sol-ui-audit-v1",
+  "created_at": "2026-10-13T21:15:07.488594+00:00",
+  "result": "passed",
+  "source_frozen": true,
+  "sources": {
+    "live/web/app.js": "a6ae479093b35fb3ea32893ce8c56b1c5b3e81dcab4e9a65d949ea81ba7b6c5f",
+    "live/web/index.html": "10c3310c6d1c7a7348eefc133dafb90dd18926b6e24f01d400d35e9b547d1706",
+    "live/web/styles.css": "173d5d689a2e902a94cc3687b8efade48ced1e6e4c5df56cf2e8fa3fc418fbe7",
+    "live/web/network-panel.mjs": "ff191bbbff879eab4c868a223cb3c1523825567063fc43dd5934f442ddfbfe70"
+  },
+  "environment": {
+    "method": "Exact source executed by Linkedom DOM contracts; compiled Worker syntax check",
+    "browser_plugin_available": false,
+    "chromium_executable_available": false,
+    "pixel_verification": false,
+    "actual_model_execution": false,
+    "actual_network_measurements_in_ui_tests": false,
+    "fixture_only": true
+  },
+  "model_behavior": {
+    "primary": "GPT-6.1 Sol server",
+    "request": "POST /api/interpret with evidence_id only",
+    "automatic_model_calls": false,
+    "browser_model_downloads": false,
+    "optional_companion": "Only configured local CPU model; not selected automatically",
+    "reserved_daily_budget_usd": 0.5,
+    "reserved_per_new_call_usd": 0.05,
+    "maximum_new_provider_attempts_per_day": 10,
+    "daily_request_guard": 20,
+    "cooldown_ms": 60000
+  },
+  "app_contract": {
+    "passed": true,
+    "fixture_only": true,
+    "actual_network": false,
+    "actual_model": false,
+    "pixel_verification": false,
+    "checks": [
+      "Sol is primary and no browser model/download/automatic inference control remains",
+      "Actual API receipt in fixture DOM never starts a paid interpretation automatically",
+      "Mobile evidence field and timeline have readable keyboard-scrollable viewports",
+      "Busy double-click issues one bounded manual request containing only evidence_id",
+      "Accepted Sol facts/provenance render safely and citations select native evidence",
+      "Cached manual result is visibly identified",
+      "Budget/cooldown failure preserves prior interpretation and never automatically retries",
+      "Mismatched returned evidence ID is rejected before attachment",
+      "Unverified provider attempt stays distinct from no model invocation",
+      "Missing model configuration retains deterministic evidence notes without claiming Sol ran",
+      "Export retains actual fixture evidence and full interpretation provenance",
+      "Second observation 304 is a non-redirect and cannot trigger automatic model calls",
+      "Pause preserves observations and interpretation without reconnecting",
+      "Missing authoritative storage prevents model requests despite a configured key"
+    ],
+    "requests": [
+      {
+        "path": "/api/capabilities",
+        "method": "GET",
+        "body": null
+      },
+      {
+        "path": "/api/observe",
+        "method": "POST",
+        "body": {
+          "target": "https://1.1.1.1/"
+        }
+      },
+      {
+        "path": "/api/interpret",
+        "method": "POST",
+        "body": {
+          "evidence_id": "evt_11111111111111111111111111111111"
+        }
+      },
+      {
+        "path": "/api/interpret",
+        "method": "POST",
+        "body": {
+          "evidence_id": "evt_11111111111111111111111111111111"
+        }
+      },
+      {
+        "path": "/api/interpret",
+        "method": "POST",
+        "body": {
+          "evidence_id": "evt_11111111111111111111111111111111"
+        }
+      },
+      {
+        "path": "/api/interpret",
+        "method": "POST",
+        "body": {
+          "evidence_id": "evt_11111111111111111111111111111111"
+        }
+      },
+      {
+        "path": "/api/interpret",
+        "method": "POST",
+        "body": {
+          "evidence_id": "evt_11111111111111111111111111111111"
+        }
+      },
+      {
+        "path": "/api/capabilities",
+        "method": "GET",
+        "body": null
+      },
+      {
+        "path": "/api/interpret",
+        "method": "POST",
+        "body": {
+          "evidence_id": "evt_11111111111111111111111111111111"
+        }
+      },
+      {
+        "path": "/api/observe",
+        "method": "POST",
+        "body": {
+          "target": "https://1.1.1.1/"
+        }
+      },
+      {
+        "path": "/api/capabilities",
+        "method": "GET",
+        "body": null
+      }
+    ]
+  },
+  "network_contract": {
+    "passed": true,
+    "visual_verification": false,
+    "actual_network": false,
+    "fixture_only": true,
+    "checks": [
+      "empty source has no invented graph records",
+      "untrusted source labels remain inert",
+      "real source relationships and record filters inspect normalized evidence",
+      "accepted model facts/hypotheses/provenance and fallback reasons render accurately",
+      "completed interpretations persist in evidence export payload",
+      "two large source batches remain capped at 2000 before analysis",
+      "local log sensor feed starts only on user click",
+      "empty successful feed stays connected without invented records",
+      "old source events remain visibly old after fresh polling",
+      "background, feed errors and manual pause preserve records with accurate health labels",
+      "authorized native capability auto-starts once only after source connected",
+      "native source graph includes actual symbolic components and public endpoint",
+      "control enforcement and functional checks do not become attack claims",
+      "native graph source and request/check/control filters use normalized records",
+      "manual pause survives repeated native capability updates",
+      "collector preflight with no HEAD stays inspectable and creates no target traffic arc",
+      "functional check labels remain declarations rather than verified authorization",
+      "imported sensor records do not invoke hosted paid interpretation",
+      "source polls and record selection never invoke the model",
+      "manual native interpretation calls callback once while pending",
+      "canonical edge source IDs select the actual inspector record",
+      "unconfigured hosted interpreter is honest and disabled",
+      "export click creates JSON containing source metadata, actual records, analysis and Sol provenance",
+      "mobile graph contract uses horizontal viewport with 840px SVG and 14/12px text rules",
+      "real graph viewport is keyboard focusable and carries a swipe/arrow hint",
+      "uncertain provider execution stays not verified while source facts and fallback reason remain visible",
+      "cached server result and canonical/requested evidence IDs render and survive JSON export"
+    ],
+    "requests": 4,
+    "interpretation_callback_calls": 1,
+    "evidence_change_events": 10
+  },
+  "build_validation": {
+    "command": "python live/build_worker.py --output /tmp/sentinel-ui-finish-qa/sol-audit-worker.mjs --recorded /workspace/scratch/cef7aa8a2f87/observatory-capture-site/recorded.html",
+    "compiled_worker_sha256": "e499a58c8e23d163cf0343d02daaff34c67b19b7c5cffe117d8f17c423d91e3d",
+    "node_syntax_check": "passed"
+  },
+  "commands": [
+    "node /tmp/sentinel-ui-finish-qa/sol-ui-contract.mjs",
+    "node /tmp/sentinel-network-qa/contract.mjs",
+    "node --check live/web/app.js",
+    "node --check live/web/network-panel.mjs",
+    "node --check /tmp/sentinel-ui-finish-qa/sol-audit-worker.mjs"
+  ],
+  "limitations": [
+    "No live browser or pixel rendering proof; mobile readability is verified through DOM and CSS viewport contracts.",
+    "No actual Sol API invocation in these UI tests; accepted/rejected/cached/provider-uncertain states use clearly labelled fixture responses.",
+    "Server configuration and actual provider authorization remain separate parent-level acceptance checks.",
+    "Imported Suricata/Zeek and local-tail records remain browser evidence; paid server interpretation is limited to authoritative native server evidence."
+  ]
+}

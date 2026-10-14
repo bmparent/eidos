@@ -1,0 +1,356 @@
+{
+  "started_at": "2026-10-13T20:21:29.911432+00:00",
+  "origin": "https://sentinel-evidence-observatory.bmparent.chatgpt.site",
+  "requests": [
+    {
+      "path": "/",
+      "status": 200,
+      "sha256": "7d40e38a1e080878fa9a2af50776d3106168e7ac819a07cff7feba425787d6da"
+    },
+    {
+      "path": "/app.js",
+      "status": 200,
+      "sha256": "715489d374faab08f9802ecad9a0cafe55d0abc7e71997d7ad86cac1facb8071"
+    },
+    {
+      "path": "/network-panel.mjs",
+      "status": 200,
+      "sha256": "a5bbc450c0d755801fad3f585d6128b398f0cb4ddbf57b029c426317c4702d68"
+    },
+    {
+      "path": "/security-events.mjs",
+      "status": 200,
+      "sha256": "1b37d5dd1c1a5c372be04d5f3230349ce9def751af2444622a9fe1a0099a8b0f"
+    },
+    {
+      "path": "/browser-interpreter.mjs",
+      "status": 200,
+      "sha256": "01adb12135aab58c4733d4ce42fb4cff8936fe7b2b402a41da5c259bfa6a3061"
+    },
+    {
+      "path": "/browser-model-worker.mjs",
+      "status": 200,
+      "sha256": "ede10441a7baa1a9f74560dc7219d6ecc48e66cc76e2730ff5e85aeb473d6026"
+    },
+    {
+      "path": "/api/observe",
+      "status": 200,
+      "payload": {
+        "event": {
+          "id": "evt_d97747681908451db8c230e74e78ebbc",
+          "source_id": "target_9234f5f6f83adff9",
+          "target": "1.1.1.1",
+          "url": "https://1.1.1.1/",
+          "observed_at": "2026-10-13T20:22:22.523Z",
+          "completed_at": "2026-10-13T20:22:22.559Z",
+          "latency_ms": 44.837,
+          "elapsed_ms": 44.837,
+          "status": 301,
+          "kind": "measurement",
+          "method": "HEAD",
+          "error": null,
+          "headers": {
+            "server": "cloudflare"
+          },
+          "security_headers": {
+            "hsts_present": false,
+            "csp_present": false,
+            "x_content_type_options": "absent",
+            "frame_options": "absent",
+            "referrer_policy": "absent",
+            "cache_private": false,
+            "cache_no_store": false
+          },
+          "redirect": {
+            "followed": false,
+            "target": null,
+            "validation": "withheld_outside_boundary"
+          },
+          "redirect_count": 0,
+          "response_chain_complete": false,
+          "coverage": {
+            "vantage": "Vercel Node public-only pinned-address HTTP client",
+            "sampling": "One requested HEAD; no crawling or traffic capture",
+            "head_attempted": true,
+            "redirect_followed": false,
+            "body_collected": false,
+            "dns": {
+              "state": "literal_public_ip_pinned",
+              "address_pinned": true,
+              "resolver": "none: literal public IP"
+            },
+            "transport": {
+              "kind": "authenticated_pinned_ip_relay",
+              "direct_ip": true,
+              "requested_url": "https://1.1.1.1/",
+              "effective_url": "https://1.1.1.1/",
+              "tls_server_name": "1.1.1.1",
+              "address_pinned": true
+            },
+            "relay": {
+              "hostname": "eidos-sentinel-lzzhgixpu-1brentbm-1876s-projects.vercel.app",
+              "evidence_checked_against_requested_target": true
+            },
+            "missing": [
+              "Visitor traffic",
+              "Origin logs",
+              "Internal network",
+              "Packet capture",
+              "Certificate inspection",
+              "Authenticated application state"
+            ],
+            "dns_rebinding": "A validated numeric public IP is the transport destination; no target DNS lookup or alias is used.",
+            "protections": "Observational only; no network protections or defensive actions changed"
+          },
+          "client_request_started_at": "2026-10-13T20:22:17.745240+00:00",
+          "client_received_at": "2026-10-13T20:22:22.611847+00:00"
+        },
+        "target": {
+          "id": "target_9234f5f6f83adff9",
+          "url": "https://1.1.1.1/",
+          "label": "1.1.1.1"
+        },
+        "retry_after_ms": 15000,
+        "rate_limit_scope": "Per isolate and canonical target; not durable or globally coordinated"
+      }
+    }
+  ],
+  "events": [
+    {
+      "id": "evt_d97747681908451db8c230e74e78ebbc",
+      "source_id": "target_9234f5f6f83adff9",
+      "target": "1.1.1.1",
+      "url": "https://1.1.1.1/",
+      "observed_at": "2026-10-13T20:22:22.523Z",
+      "completed_at": "2026-10-13T20:22:22.559Z",
+      "latency_ms": 44.837,
+      "elapsed_ms": 44.837,
+      "status": 301,
+      "kind": "measurement",
+      "method": "HEAD",
+      "error": null,
+      "headers": {
+        "server": "cloudflare"
+      },
+      "security_headers": {
+        "hsts_present": false,
+        "csp_present": false,
+        "x_content_type_options": "absent",
+        "frame_options": "absent",
+        "referrer_policy": "absent",
+        "cache_private": false,
+        "cache_no_store": false
+      },
+      "redirect": {
+        "followed": false,
+        "target": null,
+        "validation": "withheld_outside_boundary"
+      },
+      "redirect_count": 0,
+      "response_chain_complete": false,
+      "coverage": {
+        "vantage": "Vercel Node public-only pinned-address HTTP client",
+        "sampling": "One requested HEAD; no crawling or traffic capture",
+        "head_attempted": true,
+        "redirect_followed": false,
+        "body_collected": false,
+        "dns": {
+          "state": "literal_public_ip_pinned",
+          "address_pinned": true,
+          "resolver": "none: literal public IP"
+        },
+        "transport": {
+          "kind": "authenticated_pinned_ip_relay",
+          "direct_ip": true,
+          "requested_url": "https://1.1.1.1/",
+          "effective_url": "https://1.1.1.1/",
+          "tls_server_name": "1.1.1.1",
+          "address_pinned": true
+        },
+        "relay": {
+          "hostname": "eidos-sentinel-lzzhgixpu-1brentbm-1876s-projects.vercel.app",
+          "evidence_checked_against_requested_target": true
+        },
+        "missing": [
+          "Visitor traffic",
+          "Origin logs",
+          "Internal network",
+          "Packet capture",
+          "Certificate inspection",
+          "Authenticated application state"
+        ],
+        "dns_rebinding": "A validated numeric public IP is the transport destination; no target DNS lookup or alias is used.",
+        "protections": "Observational only; no network protections or defensive actions changed"
+      },
+      "client_request_started_at": "2026-10-13T20:22:17.745240+00:00",
+      "client_received_at": "2026-10-13T20:22:22.611847+00:00"
+    }
+  ],
+  "actual_network": true,
+  "browser_rendered": false,
+  "unauthenticated_api_status": 403,
+  "capabilities": {
+    "version": "sentinel-live-v3",
+    "mode": "hosted",
+    "direct_ip": true,
+    "ip_transport": "Authenticated Node collector; validated literal public address pinned, TLS verified",
+    "interval_ms": 15000,
+    "max_targets": 4,
+    "model": {
+      "connected": false,
+      "mode": "browser_local_qwen_opt_in",
+      "local_adapter_available": true,
+      "browser_adapter_available": true,
+      "model_id": "Qwen3-0.6B",
+      "hardware": "WebGPU",
+      "eido_status": "evaluation_candidate"
+    },
+    "security_sensor": {
+      "connected": false,
+      "mode": "browser_log_import",
+      "formats": [
+        "Suricata EVE JSON",
+        "Zeek JSON"
+      ],
+      "reason": "No packet or security sensor is attached to this hosted service. Import a real log or connect the local sensor companion."
+    },
+    "recorded_url": "/recorded",
+    "transport": "Cloudflare Worker public HTTP HEAD",
+    "sampling": "While connected and visible in your browser; no unattended background monitor",
+    "history": "Browser-local retained records; export JSON for a portable copy",
+    "missing_coverage": [
+      "Visitor traffic",
+      "Packet capture",
+      "Internal services",
+      "Origin processing time",
+      "TLS certificate inspection"
+    ]
+  },
+  "private_ip_rejection": {
+    "status": 400,
+    "payload": {
+      "error": {
+        "code": "non_public_target",
+        "message": "Private, loopback, reserved, and special-use IP ranges cannot be monitored."
+      }
+    }
+  },
+  "sensor_status": {
+    "connected": false,
+    "observed_at": "2026-10-13T20:22:17.729Z",
+    "source_id": null,
+    "source_name": null,
+    "format": "auto",
+    "text": "",
+    "coverage": {
+      "state": "disconnected",
+      "missing": [
+        "Network traffic sensor",
+        "IDS alerts",
+        "Firewall events"
+      ]
+    }
+  },
+  "url_check": {
+    "status": 200,
+    "payload": {
+      "event": {
+        "id": "evt_62cc9f2dab314a51b093d1b8eadac5aa",
+        "source_id": "target_cfb9136e88533abf",
+        "target": "eidos-works.com",
+        "url": "https://eidos-works.com/",
+        "observed_at": "2026-10-13T20:22:26.491Z",
+        "completed_at": "2026-10-13T20:22:26.650Z",
+        "latency_ms": 159,
+        "status": 200,
+        "kind": "measurement",
+        "method": "HEAD",
+        "error": null,
+        "headers": {
+          "cf-cache-status": "DYNAMIC",
+          "server": "cloudflare",
+          "content-type": "text/html; charset=utf-8",
+          "date": "Tue, 13 Oct 2026 20:22:26 GMT"
+        },
+        "security_headers": {
+          "hsts_present": false,
+          "csp_present": false,
+          "x_content_type_options": "nosniff",
+          "frame_options": "absent",
+          "referrer_policy": "strict-origin-when-cross-origin",
+          "cache_private": false,
+          "cache_no_store": false
+        },
+        "redirect": null,
+        "redirect_count": 0,
+        "response_chain_complete": true,
+        "coverage": {
+          "vantage": "Cloudflare Worker public HTTP subrequest",
+          "sampling": "One requested HEAD; no crawling or traffic capture",
+          "head_attempted": true,
+          "redirect_followed": false,
+          "body_collected": false,
+          "dns": {
+            "address_count": 4,
+            "resolver": "Cloudflare DNS over HTTPS",
+            "state": "public_addresses_preflight",
+            "address_pinned": false
+          },
+          "missing": [
+            "Visitor traffic",
+            "Origin logs",
+            "Internal network",
+            "Packet capture",
+            "Certificate inspection",
+            "Authenticated application state"
+          ],
+          "dns_rebinding": "DNS is preflight-checked but not pinned to the later fetch. This is not complete rebinding protection.",
+          "protections": "Observational only; no network protections or defensive actions changed"
+        },
+        "elapsed_ms": 180
+      },
+      "target": {
+        "id": "target_cfb9136e88533abf",
+        "url": "https://eidos-works.com/",
+        "label": "eidos-works.com"
+      },
+      "retry_after_ms": 15000,
+      "rate_limit_scope": "Per isolate and canonical target; not durable or globally coordinated"
+    }
+  },
+  "success": true,
+  "finished_at": "2026-10-13T20:22:26.676536+00:00",
+  "asset_source_checks": [
+    {
+      "path": "/",
+      "sha256": "7d40e38a1e080878fa9a2af50776d3106168e7ac819a07cff7feba425787d6da",
+      "matches_final_source": true
+    },
+    {
+      "path": "/app.js",
+      "sha256": "715489d374faab08f9802ecad9a0cafe55d0abc7e71997d7ad86cac1facb8071",
+      "matches_final_source": true
+    },
+    {
+      "path": "/network-panel.mjs",
+      "sha256": "a5bbc450c0d755801fad3f585d6128b398f0cb4ddbf57b029c426317c4702d68",
+      "matches_final_source": true
+    },
+    {
+      "path": "/security-events.mjs",
+      "sha256": "1b37d5dd1c1a5c372be04d5f3230349ce9def751af2444622a9fe1a0099a8b0f",
+      "matches_final_source": true
+    },
+    {
+      "path": "/browser-interpreter.mjs",
+      "sha256": "01adb12135aab58c4733d4ce42fb4cff8936fe7b2b402a41da5c259bfa6a3061",
+      "matches_final_source": true
+    },
+    {
+      "path": "/browser-model-worker.mjs",
+      "sha256": "ede10441a7baa1a9f74560dc7219d6ecc48e66cc76e2730ff5e85aeb473d6026",
+      "matches_final_source": true
+    }
+  ],
+  "site_source_commit": "3624fffd27312385c922cbbcb7684deffb216932"
+}

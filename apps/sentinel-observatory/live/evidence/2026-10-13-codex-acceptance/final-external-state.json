@@ -1,0 +1,77 @@
+{
+  "access": {
+    "project_id": "appgprj_6ace6f7f4a5481918adb34a5cb366de3",
+    "url": "https://sentinel-evidence-observatory.bmparent.chatgpt.site",
+    "current_user_role": "owner",
+    "access_mode": "custom",
+    "policy_revision": 1,
+    "allowed_user_count": 1,
+    "external_visitor_count": 0,
+    "group_count": 0,
+    "owner_only": true
+  },
+  "environment": {
+    "project_id": "appgprj_6ace6f7f4a5481918adb34a5cb366de3",
+    "revision": 5,
+    "entries": [
+      {
+        "key": "OBSERVATORY_COLLECTOR_BYPASS_TOKEN",
+        "is_secret": true
+      },
+      {
+        "key": "OBSERVATORY_COLLECTOR_SECRET",
+        "is_secret": true
+      },
+      {
+        "key": "OBSERVATORY_COLLECTOR_URL",
+        "is_secret": true
+      },
+      {
+        "key": "OPENAI_API_KEY",
+        "is_secret": true
+      }
+    ]
+  },
+  "jobs": {
+    "project_id": "appgprj_6ace6f7f4a5481918adb34a5cb366de3",
+    "binding_name": "OBSERVATORY_DB",
+    "table_name": "observatory_model_jobs",
+    "count": 2,
+    "has_more": false,
+    "total_reserved_usd": 0.1,
+    "rows": [
+      {
+        "id": "8fd53bbcba8529dadf146944507b812c3a99fabc23b9d5dfa471d3286aed83c7",
+        "evidence_id": "edge_add9ea4f6d3c429d8c9a1202e50fe31d",
+        "model": "gpt-6.1-sol",
+        "prompt_version": "observatory-sol-catalogue-v1",
+        "day": "2026-10-14",
+        "status": "completed",
+        "created_at": "2026-10-14T00:15:26.750Z",
+        "updated_at": "2026-10-14T00:15:31.253Z",
+        "reserved_micro_usd": 50000,
+        "input_tokens": 390,
+        "output_tokens": 54,
+        "prompt_sha256": "546437e30571484528a799d8d37b977c8dcb69cfca371f043d954d065f751290",
+        "error_code": null
+      },
+      {
+        "id": "a3a00c161746dab3640fac17213f9cfd1efd73689be1536396772104f65b8948",
+        "evidence_id": "edge_9783c3e0962a427bb54ba2d27d93fd34",
+        "model": "gpt-6.1-sol",
+        "prompt_version": "observatory-sol-catalogue-v1",
+        "day": "2026-10-14",
+        "status": "completed",
+        "created_at": "2026-10-14T00:20:00.864Z",
+        "updated_at": "2026-10-14T00:20:04.505Z",
+        "reserved_micro_usd": 50000,
+        "input_tokens": 390,
+        "output_tokens": 70,
+        "prompt_sha256": "6b70c8aa3ff769e7513cd172df1017f5fe32ca13e0bbec293fe8eba224b72b5e",
+        "error_code": null
+      }
+    ],
+    "note": "Native table viewer truncates result_json values; full provider receipt was read through the authoritative interpretation cache and saved separately."
+  },
+  "verified_at_utc": "2026-10-14T01:07:35.736Z"
+}

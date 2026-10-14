@@ -1,0 +1,556 @@
+{
+  "started_at": "2026-10-13T20:42:07.416685+00:00",
+  "origin": "https://sentinel-evidence-observatory.bmparent.chatgpt.site",
+  "actual_network": true,
+  "functional_checks_declared": true,
+  "requests": [
+    {
+      "status": 200,
+      "sensor_write": "stored",
+      "body": {
+        "event": {
+          "id": "evt_ba5db2e2585547b18d9bc9f67cc7158f",
+          "source_id": "target_9234f5f6f83adff9",
+          "target": "1.1.1.1",
+          "url": "https://1.1.1.1/",
+          "observed_at": "2026-10-13T20:42:26.522Z",
+          "completed_at": "2026-10-13T20:42:26.555Z",
+          "latency_ms": 42.864,
+          "elapsed_ms": 42.864,
+          "status": 301,
+          "kind": "measurement",
+          "method": "HEAD",
+          "error": null,
+          "headers": {
+            "server": "cloudflare"
+          },
+          "security_headers": {
+            "hsts_present": false,
+            "csp_present": false,
+            "x_content_type_options": "absent",
+            "frame_options": "absent",
+            "referrer_policy": "absent",
+            "cache_private": false,
+            "cache_no_store": false
+          },
+          "redirect": {
+            "followed": false,
+            "target": null,
+            "validation": "withheld_outside_boundary"
+          },
+          "redirect_count": 0,
+          "response_chain_complete": false,
+          "coverage": {
+            "vantage": "Vercel Node public-only pinned-address HTTP client",
+            "sampling": "One requested HEAD; no crawling or traffic capture",
+            "head_attempted": true,
+            "redirect_followed": false,
+            "body_collected": false,
+            "dns": {
+              "state": "literal_public_ip_pinned",
+              "address_pinned": true,
+              "resolver": "none: literal public IP"
+            },
+            "transport": {
+              "kind": "authenticated_pinned_ip_relay",
+              "direct_ip": true,
+              "requested_url": "https://1.1.1.1/",
+              "effective_url": "https://1.1.1.1/",
+              "tls_server_name": "1.1.1.1",
+              "address_pinned": true
+            },
+            "relay": {
+              "hostname": "eidos-sentinel-idvlsumqq-1brentbm-1876s-projects.vercel.app",
+              "evidence_checked_against_requested_target": true
+            },
+            "network": {
+              "scope": "observatory_outbound_head_connection",
+              "destination_ip": "1.1.1.1",
+              "destination_port": 443,
+              "protocol": "TCP",
+              "application_protocol": "HTTPS",
+              "peer_ip": "1.1.1.1",
+              "peer_port": 443,
+              "peer_matches_destination": true,
+              "socket_connected": true,
+              "tls_verified": true,
+              "tls_protocol": "TLSv1.3",
+              "bytes_written": 291,
+              "bytes_read": 176,
+              "packet_counts_available": false,
+              "source_address_collected": false,
+              "counter_scope": "Node application socket counters; not packet counts, interface totals, or TLS wire overhead",
+              "limitation": "Only this Observatory HEAD connection is visible; no target visitor traffic or internal network is captured"
+            },
+            "missing": [
+              "Visitor traffic",
+              "Origin logs",
+              "Internal network",
+              "Packet capture",
+              "Certificate inspection",
+              "Authenticated application state"
+            ],
+            "dns_rebinding": "A validated numeric public IP is the transport destination; no target DNS lookup or alias is used.",
+            "protections": "Observational only; no network protections or defensive actions changed"
+          }
+        },
+        "target": {
+          "id": "target_9234f5f6f83adff9",
+          "url": "https://1.1.1.1/",
+          "label": "1.1.1.1"
+        },
+        "retry_after_ms": 15000,
+        "rate_limit_scope": "Per isolate and canonical target; not durable or globally coordinated"
+      }
+    },
+    {
+      "status": 400,
+      "sensor_write": "stored",
+      "body": {
+        "error": {
+          "code": "non_public_target",
+          "message": "Private, loopback, reserved, and special-use IP ranges cannot be monitored."
+        }
+      }
+    },
+    {
+      "status": 200,
+      "sensor_write": "stored",
+      "body": {
+        "event": {
+          "id": "evt_80bd1e38134c4f4f818c7d5f788bb40e",
+          "source_id": "target_cfb9136e88533abf",
+          "target": "eidos-works.com",
+          "url": "https://eidos-works.com/",
+          "observed_at": "2026-10-13T20:42:34.330Z",
+          "completed_at": "2026-10-13T20:42:34.498Z",
+          "latency_ms": 168,
+          "status": 200,
+          "kind": "measurement",
+          "method": "HEAD",
+          "error": null,
+          "headers": {
+            "cf-cache-status": "DYNAMIC",
+            "server": "cloudflare",
+            "content-type": "text/html; charset=utf-8",
+            "date": "Tue, 13 Oct 2026 20:42:34 GMT"
+          },
+          "security_headers": {
+            "hsts_present": false,
+            "csp_present": false,
+            "x_content_type_options": "nosniff",
+            "frame_options": "absent",
+            "referrer_policy": "strict-origin-when-cross-origin",
+            "cache_private": false,
+            "cache_no_store": false
+          },
+          "redirect": null,
+          "redirect_count": 0,
+          "response_chain_complete": true,
+          "coverage": {
+            "vantage": "Cloudflare Worker public HTTP subrequest",
+            "sampling": "One requested HEAD; no crawling or traffic capture",
+            "head_attempted": true,
+            "redirect_followed": false,
+            "body_collected": false,
+            "dns": {
+              "address_count": 4,
+              "resolver": "Cloudflare DNS over HTTPS",
+              "state": "public_addresses_preflight",
+              "address_pinned": false
+            },
+            "missing": [
+              "Visitor traffic",
+              "Origin logs",
+              "Internal network",
+              "Packet capture",
+              "Certificate inspection",
+              "Authenticated application state"
+            ],
+            "dns_rebinding": "DNS is preflight-checked but not pinned to the later fetch. This is not complete rebinding protection.",
+            "protections": "Observational only; no network protections or defensive actions changed"
+          },
+          "elapsed_ms": 181
+        },
+        "target": {
+          "id": "target_cfb9136e88533abf",
+          "url": "https://eidos-works.com/",
+          "label": "eidos-works.com"
+        },
+        "retry_after_ms": 15000,
+        "rate_limit_scope": "Per isolate and canonical target; not durable or globally coordinated"
+      }
+    }
+  ],
+  "unauthenticated_api_status": 403,
+  "capabilities": {
+    "version": "sentinel-live-v4-sensor",
+    "mode": "hosted",
+    "direct_ip": true,
+    "ip_transport": "Authenticated Node collector; validated literal public address pinned, TLS verified",
+    "interval_ms": 15000,
+    "max_targets": 4,
+    "model": {
+      "connected": false,
+      "mode": "browser_local_qwen_opt_in",
+      "local_adapter_available": true,
+      "browser_adapter_available": true,
+      "model_id": "Qwen3-0.6B",
+      "hardware": "WebGPU",
+      "eido_status": "evaluation_candidate"
+    },
+    "security_sensor": {
+      "connected": true,
+      "mode": "observatory_edge",
+      "auto_start": true,
+      "source_id": "observatory-edge",
+      "source_name": "Observatory application-edge sensor",
+      "format": "auto",
+      "interval_ms": 5000,
+      "max_records": 1000,
+      "retention_days": 7,
+      "starts_capture": false,
+      "privacy": "Shows a seven-day window of this Observatory API request outcomes and requested public HEAD metadata, capped at 1000 records. Older rows are purged on the next sensor read or write; no unattended cleanup is claimed. No client IP, cookies, auth headers, user agent, query strings, request bodies, target paths or payloads are collected.",
+      "reason": "Attached to actual Observatory API traffic and requested outbound HEAD checks",
+      "coverage": {
+        "scope": "This protected Observatory service only",
+        "missing": [
+          "LAN and internal-network traffic",
+          "Packet capture",
+          "Other sites and remote target visitor traffic",
+          "Provider firewall or IDS events",
+          "Authentication denials before protected Sites dispatch"
+        ]
+      }
+    },
+    "recorded_url": "/recorded",
+    "transport": "Cloudflare Worker public HTTP HEAD",
+    "sampling": "While connected and visible in your browser; no unattended background monitor",
+    "history": "Browser-local retained records; export JSON for a portable copy",
+    "missing_coverage": [
+      "Visitor traffic",
+      "Packet capture",
+      "Internal services",
+      "Origin processing time",
+      "TLS certificate inspection"
+    ]
+  },
+  "before": {
+    "status": 200,
+    "sensor_write": null,
+    "body": {
+      "connected": true,
+      "mode": "observatory_edge",
+      "auto_start": true,
+      "source_id": "observatory-edge",
+      "source_name": "Observatory application-edge sensor",
+      "format": "auto",
+      "interval_ms": 5000,
+      "max_records": 1000,
+      "retention_days": 7,
+      "starts_capture": false,
+      "privacy": "Shows a seven-day window of this Observatory API request outcomes and requested public HEAD metadata, capped at 1000 records. Older rows are purged on the next sensor read or write; no unattended cleanup is claimed. No client IP, cookies, auth headers, user agent, query strings, request bodies, target paths or payloads are collected.",
+      "reason": "Attached to actual Observatory API traffic and requested outbound HEAD checks",
+      "coverage": {
+        "state": "observatory_edge",
+        "scope": "Only /api/observe requests reaching this service and requested outbound HEAD checks",
+        "missing": [
+          "LAN and internal-network traffic",
+          "Packet capture",
+          "Other sites and remote target visitor traffic",
+          "Provider firewall or IDS events",
+          "Authentication denials before protected Sites dispatch"
+        ],
+        "retention_days": 7,
+        "retention_cleanup": "Older records purged on sensor read/write; no unattended cleanup",
+        "max_records": 1000,
+        "newest_event_at": null
+      },
+      "observed_at": "2026-10-13T20:42:21.832Z",
+      "text": "",
+      "counts": {
+        "records": 0
+      }
+    }
+  },
+  "public_ip_event": {
+    "id": "evt_ba5db2e2585547b18d9bc9f67cc7158f",
+    "source_id": "target_9234f5f6f83adff9",
+    "target": "1.1.1.1",
+    "url": "https://1.1.1.1/",
+    "observed_at": "2026-10-13T20:42:26.522Z",
+    "completed_at": "2026-10-13T20:42:26.555Z",
+    "latency_ms": 42.864,
+    "elapsed_ms": 42.864,
+    "status": 301,
+    "kind": "measurement",
+    "method": "HEAD",
+    "error": null,
+    "headers": {
+      "server": "cloudflare"
+    },
+    "security_headers": {
+      "hsts_present": false,
+      "csp_present": false,
+      "x_content_type_options": "absent",
+      "frame_options": "absent",
+      "referrer_policy": "absent",
+      "cache_private": false,
+      "cache_no_store": false
+    },
+    "redirect": {
+      "followed": false,
+      "target": null,
+      "validation": "withheld_outside_boundary"
+    },
+    "redirect_count": 0,
+    "response_chain_complete": false,
+    "coverage": {
+      "vantage": "Vercel Node public-only pinned-address HTTP client",
+      "sampling": "One requested HEAD; no crawling or traffic capture",
+      "head_attempted": true,
+      "redirect_followed": false,
+      "body_collected": false,
+      "dns": {
+        "state": "literal_public_ip_pinned",
+        "address_pinned": true,
+        "resolver": "none: literal public IP"
+      },
+      "transport": {
+        "kind": "authenticated_pinned_ip_relay",
+        "direct_ip": true,
+        "requested_url": "https://1.1.1.1/",
+        "effective_url": "https://1.1.1.1/",
+        "tls_server_name": "1.1.1.1",
+        "address_pinned": true
+      },
+      "relay": {
+        "hostname": "eidos-sentinel-idvlsumqq-1brentbm-1876s-projects.vercel.app",
+        "evidence_checked_against_requested_target": true
+      },
+      "network": {
+        "scope": "observatory_outbound_head_connection",
+        "destination_ip": "1.1.1.1",
+        "destination_port": 443,
+        "protocol": "TCP",
+        "application_protocol": "HTTPS",
+        "peer_ip": "1.1.1.1",
+        "peer_port": 443,
+        "peer_matches_destination": true,
+        "socket_connected": true,
+        "tls_verified": true,
+        "tls_protocol": "TLSv1.3",
+        "bytes_written": 291,
+        "bytes_read": 176,
+        "packet_counts_available": false,
+        "source_address_collected": false,
+        "counter_scope": "Node application socket counters; not packet counts, interface totals, or TLS wire overhead",
+        "limitation": "Only this Observatory HEAD connection is visible; no target visitor traffic or internal network is captured"
+      },
+      "missing": [
+        "Visitor traffic",
+        "Origin logs",
+        "Internal network",
+        "Packet capture",
+        "Certificate inspection",
+        "Authenticated application state"
+      ],
+      "dns_rebinding": "A validated numeric public IP is the transport destination; no target DNS lookup or alias is used.",
+      "protections": "Observational only; no network protections or defensive actions changed"
+    }
+  },
+  "after": {
+    "status": 200,
+    "sensor_write": null,
+    "body": {
+      "connected": true,
+      "mode": "observatory_edge",
+      "auto_start": true,
+      "source_id": "observatory-edge",
+      "source_name": "Observatory application-edge sensor",
+      "format": "auto",
+      "interval_ms": 5000,
+      "max_records": 1000,
+      "retention_days": 7,
+      "starts_capture": false,
+      "privacy": "Shows a seven-day window of this Observatory API request outcomes and requested public HEAD metadata, capped at 1000 records. Older rows are purged on the next sensor read or write; no unattended cleanup is claimed. No client IP, cookies, auth headers, user agent, query strings, request bodies, target paths or payloads are collected.",
+      "reason": "Attached to actual Observatory API traffic and requested outbound HEAD checks",
+      "coverage": {
+        "state": "observatory_edge",
+        "scope": "Only /api/observe requests reaching this service and requested outbound HEAD checks",
+        "missing": [
+          "LAN and internal-network traffic",
+          "Packet capture",
+          "Other sites and remote target visitor traffic",
+          "Provider firewall or IDS events",
+          "Authentication denials before protected Sites dispatch"
+        ],
+        "retention_days": 7,
+        "retention_cleanup": "Older records purged on sensor read/write; no unattended cleanup",
+        "max_records": 1000,
+        "newest_event_at": "2026-10-13T20:42:34.498Z"
+      },
+      "observed_at": "2026-10-13T20:42:39.482Z",
+      "text": "{\"sensor\":\"observatory_edge\",\"timestamp\":\"2026-10-13T20:42:26.555Z\",\"event_id\":\"edge_42b3af7cd9af45f3a47ab4dfab5b65cf\",\"event_type\":\"collector\",\"route\":\"observe\",\"method\":\"HEAD\",\"status\":301,\"duration_ms\":42.864,\"src_endpoint\":\"Observatory observer\",\"dest_endpoint\":\"1.1.1.1\",\"outcome\":\"ok\",\"head_attempted\":true,\"linked_evidence_id\":\"evt_ba5db2e2585547b18d9bc9f67cc7158f\",\"transport\":\"authenticated_pinned_ip_relay\",\"network\":{\"scope\":\"observatory_outbound_head_connection\",\"destination_ip\":\"1.1.1.1\",\"destination_port\":443,\"protocol\":\"TCP\",\"application_protocol\":\"HTTPS\",\"peer_ip\":\"1.1.1.1\",\"peer_port\":443,\"peer_matches_destination\":true,\"socket_connected\":true,\"tls_verified\":true,\"tls_protocol\":\"TLSv1.3\",\"bytes_written\":291,\"bytes_read\":176},\"test_context\":\"functional_check\"}\n{\"sensor\":\"observatory_edge\",\"timestamp\":\"2026-10-13T20:42:26.595Z\",\"event_id\":\"edge_2192e06504374b9abd8b4216ff8bfadc\",\"event_type\":\"request\",\"route\":\"observe\",\"method\":\"POST\",\"status\":200,\"duration_ms\":1058,\"timestamp_scope\":\"response_completed_at\",\"src_endpoint\":\"Your Observatory session\",\"dest_endpoint\":\"Sentinel edge\",\"outcome\":\"ok\",\"test_context\":\"functional_check\"}\n{\"sensor\":\"observatory_edge\",\"timestamp\":\"2026-10-13T20:42:30.238Z\",\"event_id\":\"edge_8df42d274fbf4a0e9480c61bd9ca8490\",\"event_type\":\"policy_event\",\"route\":\"observe\",\"method\":\"POST\",\"status\":400,\"duration_ms\":0,\"timestamp_scope\":\"response_completed_at\",\"src_endpoint\":\"Your Observatory session\",\"dest_endpoint\":\"Sentinel edge\",\"outcome\":\"blocked\",\"test_context\":\"functional_check\",\"rule_id\":\"non_public_target\",\"rule_action\":\"deny\"}\n{\"sensor\":\"observatory_edge\",\"timestamp\":\"2026-10-13T20:42:30.238Z\",\"event_id\":\"edge_dc2c692869af42e6bb5920f9517b0f7d\",\"event_type\":\"request\",\"route\":\"observe\",\"method\":\"POST\",\"status\":400,\"duration_ms\":0,\"timestamp_scope\":\"response_completed_at\",\"src_endpoint\":\"Your Observatory session\",\"dest_endpoint\":\"Sentinel edge\",\"outcome\":\"blocked\",\"test_context\":\"functional_check\"}\n{\"sensor\":\"observatory_edge\",\"timestamp\":\"2026-10-13T20:42:34.498Z\",\"event_id\":\"edge_69134a22f0af4d25aafb47754011bc42\",\"event_type\":\"collector\",\"route\":\"observe\",\"method\":\"HEAD\",\"status\":200,\"duration_ms\":168,\"src_endpoint\":\"Observatory observer\",\"dest_endpoint\":\"eidos-works.com\",\"outcome\":\"ok\",\"head_attempted\":true,\"linked_evidence_id\":\"evt_80bd1e38134c4f4f818c7d5f788bb40e\",\"transport\":\"cloudflare_public_head\",\"network\":null,\"test_context\":\"functional_check\"}\n{\"sensor\":\"observatory_edge\",\"timestamp\":\"2026-10-13T20:42:34.498Z\",\"event_id\":\"edge_82a9b5c5b6db4f9481ffe2cee34903e7\",\"event_type\":\"request\",\"route\":\"observe\",\"method\":\"POST\",\"status\":200,\"duration_ms\":181,\"timestamp_scope\":\"response_completed_at\",\"src_endpoint\":\"Your Observatory session\",\"dest_endpoint\":\"Sentinel edge\",\"outcome\":\"ok\",\"test_context\":\"functional_check\"}",
+      "counts": {
+        "records": 6
+      }
+    }
+  },
+  "raw_records": [
+    {
+      "sensor": "observatory_edge",
+      "timestamp": "2026-10-13T20:42:26.555Z",
+      "event_id": "edge_42b3af7cd9af45f3a47ab4dfab5b65cf",
+      "event_type": "collector",
+      "route": "observe",
+      "method": "HEAD",
+      "status": 301,
+      "duration_ms": 42.864,
+      "src_endpoint": "Observatory observer",
+      "dest_endpoint": "1.1.1.1",
+      "outcome": "ok",
+      "head_attempted": true,
+      "linked_evidence_id": "evt_ba5db2e2585547b18d9bc9f67cc7158f",
+      "transport": "authenticated_pinned_ip_relay",
+      "network": {
+        "scope": "observatory_outbound_head_connection",
+        "destination_ip": "1.1.1.1",
+        "destination_port": 443,
+        "protocol": "TCP",
+        "application_protocol": "HTTPS",
+        "peer_ip": "1.1.1.1",
+        "peer_port": 443,
+        "peer_matches_destination": true,
+        "socket_connected": true,
+        "tls_verified": true,
+        "tls_protocol": "TLSv1.3",
+        "bytes_written": 291,
+        "bytes_read": 176
+      },
+      "test_context": "functional_check"
+    },
+    {
+      "sensor": "observatory_edge",
+      "timestamp": "2026-10-13T20:42:26.595Z",
+      "event_id": "edge_2192e06504374b9abd8b4216ff8bfadc",
+      "event_type": "request",
+      "route": "observe",
+      "method": "POST",
+      "status": 200,
+      "duration_ms": 1058,
+      "timestamp_scope": "response_completed_at",
+      "src_endpoint": "Your Observatory session",
+      "dest_endpoint": "Sentinel edge",
+      "outcome": "ok",
+      "test_context": "functional_check"
+    },
+    {
+      "sensor": "observatory_edge",
+      "timestamp": "2026-10-13T20:42:30.238Z",
+      "event_id": "edge_8df42d274fbf4a0e9480c61bd9ca8490",
+      "event_type": "policy_event",
+      "route": "observe",
+      "method": "POST",
+      "status": 400,
+      "duration_ms": 0,
+      "timestamp_scope": "response_completed_at",
+      "src_endpoint": "Your Observatory session",
+      "dest_endpoint": "Sentinel edge",
+      "outcome": "blocked",
+      "test_context": "functional_check",
+      "rule_id": "non_public_target",
+      "rule_action": "deny"
+    },
+    {
+      "sensor": "observatory_edge",
+      "timestamp": "2026-10-13T20:42:30.238Z",
+      "event_id": "edge_dc2c692869af42e6bb5920f9517b0f7d",
+      "event_type": "request",
+      "route": "observe",
+      "method": "POST",
+      "status": 400,
+      "duration_ms": 0,
+      "timestamp_scope": "response_completed_at",
+      "src_endpoint": "Your Observatory session",
+      "dest_endpoint": "Sentinel edge",
+      "outcome": "blocked",
+      "test_context": "functional_check"
+    },
+    {
+      "sensor": "observatory_edge",
+      "timestamp": "2026-10-13T20:42:34.498Z",
+      "event_id": "edge_69134a22f0af4d25aafb47754011bc42",
+      "event_type": "collector",
+      "route": "observe",
+      "method": "HEAD",
+      "status": 200,
+      "duration_ms": 168,
+      "src_endpoint": "Observatory observer",
+      "dest_endpoint": "eidos-works.com",
+      "outcome": "ok",
+      "head_attempted": true,
+      "linked_evidence_id": "evt_80bd1e38134c4f4f818c7d5f788bb40e",
+      "transport": "cloudflare_public_head",
+      "network": null,
+      "test_context": "functional_check"
+    },
+    {
+      "sensor": "observatory_edge",
+      "timestamp": "2026-10-13T20:42:34.498Z",
+      "event_id": "edge_82a9b5c5b6db4f9481ffe2cee34903e7",
+      "event_type": "request",
+      "route": "observe",
+      "method": "POST",
+      "status": 200,
+      "duration_ms": 181,
+      "timestamp_scope": "response_completed_at",
+      "src_endpoint": "Your Observatory session",
+      "dest_endpoint": "Sentinel edge",
+      "outcome": "ok",
+      "test_context": "functional_check"
+    }
+  ],
+  "repeat": {
+    "status": 200,
+    "sensor_write": null,
+    "body": {
+      "connected": true,
+      "mode": "observatory_edge",
+      "auto_start": true,
+      "source_id": "observatory-edge",
+      "source_name": "Observatory application-edge sensor",
+      "format": "auto",
+      "interval_ms": 5000,
+      "max_records": 1000,
+      "retention_days": 7,
+      "starts_capture": false,
+      "privacy": "Shows a seven-day window of this Observatory API request outcomes and requested public HEAD metadata, capped at 1000 records. Older rows are purged on the next sensor read or write; no unattended cleanup is claimed. No client IP, cookies, auth headers, user agent, query strings, request bodies, target paths or payloads are collected.",
+      "reason": "Attached to actual Observatory API traffic and requested outbound HEAD checks",
+      "coverage": {
+        "state": "observatory_edge",
+        "scope": "Only /api/observe requests reaching this service and requested outbound HEAD checks",
+        "missing": [
+          "LAN and internal-network traffic",
+          "Packet capture",
+          "Other sites and remote target visitor traffic",
+          "Provider firewall or IDS events",
+          "Authentication denials before protected Sites dispatch"
+        ],
+        "retention_days": 7,
+        "retention_cleanup": "Older records purged on sensor read/write; no unattended cleanup",
+        "max_records": 1000,
+        "newest_event_at": "2026-10-13T20:42:34.498Z"
+      },
+      "observed_at": "2026-10-13T20:42:45.278Z",
+      "text": "{\"sensor\":\"observatory_edge\",\"timestamp\":\"2026-10-13T20:42:26.555Z\",\"event_id\":\"edge_42b3af7cd9af45f3a47ab4dfab5b65cf\",\"event_type\":\"collector\",\"route\":\"observe\",\"method\":\"HEAD\",\"status\":301,\"duration_ms\":42.864,\"src_endpoint\":\"Observatory observer\",\"dest_endpoint\":\"1.1.1.1\",\"outcome\":\"ok\",\"head_attempted\":true,\"linked_evidence_id\":\"evt_ba5db2e2585547b18d9bc9f67cc7158f\",\"transport\":\"authenticated_pinned_ip_relay\",\"network\":{\"scope\":\"observatory_outbound_head_connection\",\"destination_ip\":\"1.1.1.1\",\"destination_port\":443,\"protocol\":\"TCP\",\"application_protocol\":\"HTTPS\",\"peer_ip\":\"1.1.1.1\",\"peer_port\":443,\"peer_matches_destination\":true,\"socket_connected\":true,\"tls_verified\":true,\"tls_protocol\":\"TLSv1.3\",\"bytes_written\":291,\"bytes_read\":176},\"test_context\":\"functional_check\"}\n{\"sensor\":\"observatory_edge\",\"timestamp\":\"2026-10-13T20:42:26.595Z\",\"event_id\":\"edge_2192e06504374b9abd8b4216ff8bfadc\",\"event_type\":\"request\",\"route\":\"observe\",\"method\":\"POST\",\"status\":200,\"duration_ms\":1058,\"timestamp_scope\":\"response_completed_at\",\"src_endpoint\":\"Your Observatory session\",\"dest_endpoint\":\"Sentinel edge\",\"outcome\":\"ok\",\"test_context\":\"functional_check\"}\n{\"sensor\":\"observatory_edge\",\"timestamp\":\"2026-10-13T20:42:30.238Z\",\"event_id\":\"edge_8df42d274fbf4a0e9480c61bd9ca8490\",\"event_type\":\"policy_event\",\"route\":\"observe\",\"method\":\"POST\",\"status\":400,\"duration_ms\":0,\"timestamp_scope\":\"response_completed_at\",\"src_endpoint\":\"Your Observatory session\",\"dest_endpoint\":\"Sentinel edge\",\"outcome\":\"blocked\",\"test_context\":\"functional_check\",\"rule_id\":\"non_public_target\",\"rule_action\":\"deny\"}\n{\"sensor\":\"observatory_edge\",\"timestamp\":\"2026-10-13T20:42:30.238Z\",\"event_id\":\"edge_dc2c692869af42e6bb5920f9517b0f7d\",\"event_type\":\"request\",\"route\":\"observe\",\"method\":\"POST\",\"status\":400,\"duration_ms\":0,\"timestamp_scope\":\"response_completed_at\",\"src_endpoint\":\"Your Observatory session\",\"dest_endpoint\":\"Sentinel edge\",\"outcome\":\"blocked\",\"test_context\":\"functional_check\"}\n{\"sensor\":\"observatory_edge\",\"timestamp\":\"2026-10-13T20:42:34.498Z\",\"event_id\":\"edge_69134a22f0af4d25aafb47754011bc42\",\"event_type\":\"collector\",\"route\":\"observe\",\"method\":\"HEAD\",\"status\":200,\"duration_ms\":168,\"src_endpoint\":\"Observatory observer\",\"dest_endpoint\":\"eidos-works.com\",\"outcome\":\"ok\",\"head_attempted\":true,\"linked_evidence_id\":\"evt_80bd1e38134c4f4f818c7d5f788bb40e\",\"transport\":\"cloudflare_public_head\",\"network\":null,\"test_context\":\"functional_check\"}\n{\"sensor\":\"observatory_edge\",\"timestamp\":\"2026-10-13T20:42:34.498Z\",\"event_id\":\"edge_82a9b5c5b6db4f9481ffe2cee34903e7\",\"event_type\":\"request\",\"route\":\"observe\",\"method\":\"POST\",\"status\":200,\"duration_ms\":181,\"timestamp_scope\":\"response_completed_at\",\"src_endpoint\":\"Your Observatory session\",\"dest_endpoint\":\"Sentinel edge\",\"outcome\":\"ok\",\"test_context\":\"functional_check\"}",
+      "counts": {
+        "records": 6
+      }
+    }
+  },
+  "new_record_count": 6,
+  "policy_detection_count": 1,
+  "success": true,
+  "finished_at": "2026-10-13T20:42:45.532495+00:00"
+}

@@ -1,0 +1,16 @@
+{
+  "id": "appgdep_6ace9781d36c8191a50c8a4acfaff764",
+  "project_id": "appgprj_6ace6f7f4a5481918adb34a5cb366de3",
+  "title": "Sentinel Observatory · Live Connections",
+  "version_id": "appgprj_6ace6f7f4a5481918adb34a5cb366de3~appgver_1f0e5689d66881919b503601b171d68a",
+  "type": "publish",
+  "status": "succeeded",
+  "url": "https://sentinel-evidence-observatory.bmparent.chatgpt.site",
+  "has_mcp": false,
+  "screenshot_asset_pointer": null,
+  "provider_deployment_id": "site---6ace6f7f4a5481918adb34a5cb366de3",
+  "failure_message": null,
+  "env_set_revision": 4,
+  "updated_at": "2026-10-13T20:41:44.765517+00:00",
+  "source_commit": "501f4fdd79ff04008257148744d31a7cac5d21e8"
+}

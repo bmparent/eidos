@@ -1,0 +1,155 @@
+{
+  "product_head": "00d49ff2e8ef74931503fb7a27046857228d0b04",
+  "provider_calls": 0,
+  "core_behavior_changed": false,
+  "checks": [
+    {
+      "name": "node-regressions",
+      "argv": [
+        "node",
+        "--test",
+        "--test-reporter=junit",
+        "apps/sentinel-observatory/live/collector.test.mjs",
+        "apps/sentinel-observatory/live/brain.test.mjs",
+        "apps/sentinel-observatory/live/browser-interpreter.test.mjs",
+        "apps/sentinel-observatory/live/security-events.test.mjs",
+        "apps/sentinel-observatory/live/hosted-sensor.test.mjs",
+        "apps/sentinel-observatory/live/sol-interpreter.test.mjs"
+      ],
+      "cwd": ".",
+      "started_at_utc": "2026-10-13T23:44:16.523499+00:00",
+      "finished_at_utc": "2026-10-13T23:44:20.710888+00:00",
+      "duration_seconds": 4.187,
+      "exit_code": 0,
+      "status": "passed",
+      "reason": null,
+      "stdout": "node-tests.xml",
+      "stderr": "node-regressions.stderr.log",
+      "provider_calls": 0,
+      "evidence_level": "local_regression",
+      "test_cases": 115,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    {
+      "name": "python-regressions",
+      "argv": [
+        "C:\\Python311\\python.exe",
+        "-m",
+        "unittest",
+        "discover",
+        "-s",
+        "apps/sentinel-observatory/live",
+        "-p",
+        "test_*.py",
+        "-v"
+      ],
+      "cwd": ".",
+      "started_at_utc": "2026-10-13T23:44:20.723775+00:00",
+      "finished_at_utc": "2026-10-13T23:44:23.140467+00:00",
+      "duration_seconds": 2.406,
+      "exit_code": 0,
+      "status": "passed",
+      "reason": null,
+      "stdout": "python-regressions.stdout.log",
+      "stderr": "python-regressions.stderr.log",
+      "provider_calls": 0,
+      "evidence_level": "local_regression"
+    },
+    {
+      "name": "brain-parity",
+      "argv": [
+        "node",
+        "apps/sentinel-observatory/live/verify_brain_parity.mjs"
+      ],
+      "cwd": ".",
+      "started_at_utc": "2026-10-13T23:44:23.172925+00:00",
+      "finished_at_utc": "2026-10-13T23:44:23.779242+00:00",
+      "duration_seconds": 0.61,
+      "exit_code": 0,
+      "status": "passed",
+      "reason": null,
+      "stdout": "brain-parity.stdout.log",
+      "stderr": "brain-parity.stderr.log",
+      "provider_calls": 0,
+      "evidence_level": "local_regression"
+    },
+    {
+      "name": "app-syntax",
+      "argv": [
+        "node",
+        "--check",
+        "apps/sentinel-observatory/live/web/app.js"
+      ],
+      "cwd": ".",
+      "started_at_utc": "2026-10-13T23:44:23.801012+00:00",
+      "finished_at_utc": "2026-10-13T23:44:24.025714+00:00",
+      "duration_seconds": 0.219,
+      "exit_code": 0,
+      "status": "passed",
+      "reason": null,
+      "stdout": "app-syntax.stdout.log",
+      "stderr": "app-syntax.stderr.log",
+      "provider_calls": 0,
+      "evidence_level": "local_regression"
+    },
+    {
+      "name": "network-panel-syntax",
+      "argv": [
+        "node",
+        "--check",
+        "apps/sentinel-observatory/live/web/network-panel.mjs"
+      ],
+      "cwd": ".",
+      "started_at_utc": "2026-10-13T23:44:24.049877+00:00",
+      "finished_at_utc": "2026-10-13T23:44:24.268321+00:00",
+      "duration_seconds": 0.219,
+      "exit_code": 0,
+      "status": "passed",
+      "reason": null,
+      "stdout": "network-panel-syntax.stdout.log",
+      "stderr": "network-panel-syntax.stderr.log",
+      "provider_calls": 0,
+      "evidence_level": "local_regression"
+    },
+    {
+      "name": "sol-syntax",
+      "argv": [
+        "node",
+        "--check",
+        "apps/sentinel-observatory/live/sol-interpreter.mjs"
+      ],
+      "cwd": ".",
+      "started_at_utc": "2026-10-13T23:44:24.294284+00:00",
+      "finished_at_utc": "2026-10-13T23:44:24.520351+00:00",
+      "duration_seconds": 0.235,
+      "exit_code": 0,
+      "status": "passed",
+      "reason": null,
+      "stdout": "sol-syntax.stdout.log",
+      "stderr": "sol-syntax.stderr.log",
+      "provider_calls": 0,
+      "evidence_level": "local_regression"
+    },
+    {
+      "name": "whitespace",
+      "argv": [
+        "git",
+        "diff",
+        "--check"
+      ],
+      "cwd": ".",
+      "started_at_utc": "2026-10-13T23:44:24.532792+00:00",
+      "finished_at_utc": "2026-10-13T23:44:24.917676+00:00",
+      "duration_seconds": 0.39,
+      "exit_code": 0,
+      "status": "passed",
+      "reason": null,
+      "stdout": "whitespace.stdout.log",
+      "stderr": "whitespace.stderr.log",
+      "provider_calls": 0,
+      "evidence_level": "local_regression"
+    }
+  ]
+}
