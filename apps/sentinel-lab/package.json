@@ -5,6 +5,7 @@
   "private": true,
   "scripts": {
     "dev": "next dev",
+    "prebuild": "node scripts/check-template-archives.mjs",
     "build": "next build",
     "start": "next start",
     "lint": "tsc --noEmit",

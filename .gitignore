@@ -9,3 +9,4 @@ __pycache__/
 artifacts/controlled_memory_*/
 # Buyer packages are generated from pinned site sources, then uploaded privately.
 /apps/sentinel-lab/private/templates/
+/apps/sentinel-lab/private/templates-manifest.json
