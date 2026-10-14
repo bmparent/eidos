@@ -1,0 +1,72 @@
+{
+  "kind": "synthetic_integration_evaluation",
+  "live_records_created": 0,
+  "profile": "target-metrics-v2",
+  "cases": [
+    {
+      "scenario": "steady",
+      "metric": "tcp_ms",
+      "quiet_samples": 88,
+      "changed_samples": 0,
+      "quiet_raw_flags": 87,
+      "quiet_operational_flags": 0,
+      "changed_raw_flags": 0,
+      "changed_operational_flags": 0,
+      "quiet_simple_gate_flags": 0,
+      "changed_simple_gate_flags": 0
+    },
+    {
+      "scenario": "small_jitter",
+      "metric": "tcp_ms",
+      "quiet_samples": 88,
+      "changed_samples": 0,
+      "quiet_raw_flags": 87,
+      "quiet_operational_flags": 0,
+      "changed_raw_flags": 0,
+      "changed_operational_flags": 0,
+      "quiet_simple_gate_flags": 0,
+      "changed_simple_gate_flags": 0
+    },
+    {
+      "scenario": "TCP_step",
+      "metric": "tcp_ms",
+      "quiet_samples": 68,
+      "changed_samples": 20,
+      "quiet_raw_flags": 67,
+      "quiet_operational_flags": 0,
+      "changed_raw_flags": 20,
+      "changed_operational_flags": 8,
+      "quiet_simple_gate_flags": 0,
+      "changed_simple_gate_flags": 8
+    },
+    {
+      "scenario": "DNS_step",
+      "metric": "dns_ms",
+      "quiet_samples": 68,
+      "changed_samples": 20,
+      "quiet_raw_flags": 67,
+      "quiet_operational_flags": 0,
+      "changed_raw_flags": 20,
+      "changed_operational_flags": 8,
+      "quiet_simple_gate_flags": 0,
+      "changed_simple_gate_flags": 8
+    },
+    {
+      "scenario": "response_wait_step",
+      "metric": "response_wait_ms",
+      "quiet_samples": 68,
+      "changed_samples": 20,
+      "quiet_raw_flags": 67,
+      "quiet_operational_flags": 0,
+      "changed_raw_flags": 20,
+      "changed_operational_flags": 8,
+      "quiet_simple_gate_flags": 0,
+      "changed_simple_gate_flags": 8
+    }
+  ],
+  "limits": [
+    "Finite controlled numeric sequences, not a labeled security dataset.",
+    "A simple measured-deviation baseline receives the same comparisons.",
+    "This does not establish Sentinel advantage, root-cause accuracy, attack detection or forecast skill."
+  ]
+}

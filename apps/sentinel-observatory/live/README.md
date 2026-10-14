@@ -4,6 +4,78 @@ Private live app: https://sentinel-evidence-observatory.bmparent.chatgpt.site
 
 Enter a public URL or IP, select **Connect**, and watch evidence arrive. **Test public IP** selects Cloudflare's public 1.1.1.1 HTTPS endpoint. Each visual mark opens the original observation, response, timing, collection boundary and Sentinel analysis. Pause, remove and export controls preserve the collected evidence.
 
+## Target probes and durable Brain integration (2026-10-14)
+
+The optional unified Node collector adds actual DNS lookup timing/address sets,
+TCP connection timing, TLS handshake/certificate metadata, first-hop HTTP-header
+timing and response-wait timing. Literal IPs have no invented DNS timing; HTTP
+has no invented TLS timing. The numeric destination is pinned after validating
+every returned address. TLS validates the original hostname/IP. No credentials
+are forwarded and insecure retry is never used.
+
+The two visible options enable up to three separately validated public redirects
+and a bounded page fingerprint. A page check makes one GET at the final observed
+endpoint and hashes at most 64 KiB in memory. Response content is never retained.
+Complete-body and bounded-prefix fingerprints are distinguished. Dynamic content,
+DNS rotation and normal certificate renewal can all produce legitimate changes.
+
+The Worker uses the existing authenticated collector binding, resolving its
+`ip-observe` route to `target-observe` only when server configuration
+`OBSERVATORY_TARGET_PROBES_ENABLED=true`. The original literal-IP route and the
+legacy fallback remain available. A failed configured collector is unavailable,
+never a fabricated successful measurement.
+`OBSERVATORY_TARGET_COLLECTOR_URL` can select a separately verified collector
+preview without replacing the original collector's rollback binding.
+
+`target-brain.mjs` keeps an unchanged Sentinel V3 scalar profile for each numeric
+metric, target and observer identity. DNS/certificate/status/header/page changes
+are explicit events. Missing timings are excluded; actual failed probes have a
+separate failure-ratio stream. Settings/collector changes and gaps above five
+minutes explicitly rewarm calibration. The v2 operational gate requires a Sentinel change plus a measured departure
+from the preceding 16-sample median beyond six scaled MADs and a minimum of
+5 ms/25% for timings or 0.10 for ratios. Raw engine scores remain inspectable;
+this transparent gate is not proof of detector benefit. Related changes form an evidence-linked
+episode, not a root-cause or attack verdict.
+
+Schema migration 0003 adds versioned checkpoints and authoritative target records.
+Compare-and-swap transactions prevent concurrent writes from losing learned
+state. Duplicate evidence is not learned twice; out-of-order records are retained
+without training. The latest 2,048 records and 64 target checkpoints are kept
+within seven days, with cleanup on collection. History returns the latest 128
+records for a selected target. Foreground sampling still pauses in a hidden tab;
+retained state does not imply unattended collection.
+
+Sol v2 receives allowlisted measured values, prior medians, Sentinel scores,
+calibration states and explicit change codes. Facts and citations are rebuilt
+from retained server evidence. Endpoints, IP addresses, certificate fingerprints,
+page content and arbitrary source strings stay outside the model context. Manual
+invocation, durable cache, cooldown and spending reservations remain in force.
+
+### Optional Node companion and network path tools
+
+With Node 24+ run from the repository root:
+
+```sh
+node apps/sentinel-observatory/live/node-companion.mjs
+```
+
+Open `http://127.0.0.1:8767`. This companion supplies the same endpoint probes and
+durable SQLite analysis. Evidence is retained in the user's local
+`.sentinel-observatory/target-evidence.sqlite`; the listener accepts loopback Host
+and exact-origin writes only. The original Python/Qwen companion is preserved.
+
+Manual **Measure ping** and **Trace route** use fixed system-command arguments
+against a validated/pinned public address. They need installed `ping` and
+`traceroute` (Windows: `tracert`); the app does not install tools or change
+privileges. Missing tools, filtered replies and unparseable output are explicit.
+Ping emits three probes and a trace stops at eight hops. Private router addresses
+are omitted. Results join the next actual endpoint observation and feed the
+separate ICMP metric streams. Hosted Sites/Vercel does not claim ICMP coverage.
+
+The optional local Sol endpoint uses an existing server-side `OPENAI_API_KEY` if
+the operator supplies one; without it, retained deterministic evidence is usable.
+No hosted key is downloaded into this companion.
+
 ## Live endpoint observations
 
 The hosted app collects public HTTP/S DNS-name endpoints in its Cloudflare Worker. Public literal IPs use a separately authenticated Node collector in the existing Sentinel Lab Vercel preview. The Node collector connects to the validated numeric IP, performs one HEAD request, verifies TLS against that IP, and never follows redirects or reads response bodies. HTTP uses port80 and HTTPS443. Private, reserved, local and special-use addresses are rejected.

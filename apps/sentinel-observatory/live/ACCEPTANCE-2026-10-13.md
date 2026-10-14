@@ -39,3 +39,11 @@ Original actual evidence is under `evidence/2026-10-13/`. These files contain no
 -Source syntax, whitespace/diff and Worker artifact export checks passed.
 
 These checks do not establish incident-detection precision, model ranking usefulness, longitudinal forecast skill, physical-device rendering or browser-GPU inference. An imported sensor alert is a recorded detection, not an independently confirmed incident. Current missing sensor coverage remains visible.
+
+## 2026-10-14 continuation — target probes
+
+The owner-private live Site is updated to version 15 with target-specific probes,
+retained per-metric Sentinel analysis and richer Sol evidence. See
+[TARGET-PROBES-ACCEPTANCE-2026-10-14.md](./TARGET-PROBES-ACCEPTANCE-2026-10-14.md)
+for the exact deployed pair, hosted receipts, measured-deviation comparison,
+verification limits and rollback. Earlier acceptance history remains unchanged.

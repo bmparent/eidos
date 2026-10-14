@@ -426,6 +426,7 @@ def make_handler(observer):
                      "/browser-interpreter.mjs": ROOT / "web" / "browser-interpreter.mjs",
                      "/browser-model-worker.mjs": ROOT / "web" / "browser-model-worker.mjs",
                      "/network-panel.mjs": ROOT / "web" / "network-panel.mjs",
+                     "/target-panel.mjs": ROOT / "web" / "target-panel.mjs",
                      "/security-events.mjs": ROOT / "security-events.mjs"}
             path = known.get(self.path)
             if path is None or not path.is_file():

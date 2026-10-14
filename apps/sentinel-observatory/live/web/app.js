@@ -1,4 +1,5 @@
 import {LiveBrain, analyzeEvidence, ENGINE_PROVENANCE} from '/brain.mjs';
+import {renderTargetPanel} from '/target-panel.mjs';
 
 // All received content is inert data. Neither measurements nor stored records
 // can execute code, provide instructions, or initiate defensive actions.
@@ -119,7 +120,7 @@ async function sampleTarget(target) {
   let retryDelay=Math.max(MIN_INTERVAL,state.capabilities?.interval_ms||0);
   renderCards();renderStatus();
   try {
-    const response=await fetch('/api/observe',{method:'POST',headers:{'Content-Type':'application/json'},credentials:'same-origin',cache:'no-store',body:JSON.stringify({target:target.url}),signal:target.controller.signal});
+    const response=await fetch('/api/observe',{method:'POST',headers:{'Content-Type':'application/json'},credentials:'same-origin',cache:'no-store',body:JSON.stringify({target:target.url,...(state.capabilities?.target_probes?.connected?{page_check:$('probe-page').checked,follow_redirects:$('probe-redirects').checked}:{})}),signal:target.controller.signal});
     let payload;try{payload=await response.json();}catch{throw new Error('The collector returned an unreadable response. No observation was added.');}
     const clientReceived=new Date().toISOString();
     if(!connected(target)||target.run!==run)return;
@@ -151,14 +152,14 @@ async function sampleTarget(target) {
     if(typeof metadata.url==='string')target.url=metadata.url;
     target.label=String(metadata.label||event.target||safeLabel(target.url)).slice(0,200);
     if(!duplicate)target.lastIssue=null;
-    try { event.brain=(target.brain||=newBrain()).observe(event); }
+    try { if(!hydrateTargetAnalysis(event))event.brain=(target.brain||=newBrain()).observe(event); }
     catch { event.brain={state:'unavailable',reason:'The numerical analysis could not process this observation. Original evidence is preserved.',signals:[],forecast:{issued:null,comparison:null}}; }
     event.analysis=analyzeEvidence(event,[...state.events].reverse());
     state.events.unshift(event);state.events=state.events.slice(0,MAX_EVENTS);
     if(!state.selectedId||!state.events.some(previous=>previous.id===state.selectedId))state.selectedId=event.id;
     if(state.followLatest&&(!state.sourceFilter||state.sourceFilter===target.sourceId))state.selectedId=event.id;
     retryDelay=Math.max(retryDelay,finite(payload.retry_after_ms)||0);
-    persist();renderAll();
+    persist();renderAll();if(event.target_storage==='retained'&&!target.historyLoaded)restoreTargetHistory(target);
   } catch(error) {
     if(connected(target)&&target.run===run)target.lastIssue=watchdogExpired?'The collector did not answer within 18 seconds. No measurement was invented; a later check will try again.':error.name==='AbortError'?'The local request was cancelled. No result was received.':String(error.message||'The collector is unreachable. Retained evidence is unchanged.').slice(0,400);
   } finally {
@@ -168,6 +169,22 @@ async function sampleTarget(target) {
   }
 }
 
+function hydrateTargetAnalysis(event) {
+  const a=event.target_analysis;if(!a)return false;
+  event.brain={...a,signals:(a.signals||[]).filter(s=>finite(s.value)!==null),baseline_scope:a.baseline_scope,calibration_note:a.calibration_reset||'Separate retained metric streams; current-frame change detection.',session_epoch:'server-'+a.generation,event_active:!!a.episode,forecast:{issued:null,comparison:null}};return true;
+}
+async function restoreTargetHistory(target) {
+  if(!target.sourceId||target.historyLoaded||!state.capabilities?.target_probes?.connected)return;
+  target.historyLoaded=true;
+  try {
+    const response=await fetch('/api/target-history?target_id='+encodeURIComponent(target.sourceId),{credentials:'same-origin',cache:'no-store',signal:AbortSignal.timeout(6000)});
+    if(!response.ok)throw new Error('history_unavailable');const payload=await response.json();
+    if(!payload.available||!Array.isArray(payload.events))throw new Error('history_unavailable');
+    const known=new Set(state.events.map(e=>e.id));
+    for(const event of payload.events.slice(0,128))if(event.source_id===target.sourceId&&/^evt_[a-f0-9]{32}$/.test(event.id||'')&&!known.has(event.id)){hydrateTargetAnalysis(event);event.restored_from_server=true;state.events.push(event);known.add(event.id);}
+    state.events.sort((a,b)=>stamp(b.completed_at)-stamp(a.completed_at));state.events=state.events.slice(0,MAX_EVENTS);persist();renderAll();
+  }catch{target.historyLoaded=false;}
+}
 function changeIds() {
   const previous=new Map(),changed=new Set();
   for(const event of [...state.events].reverse()){
@@ -227,6 +244,7 @@ function routeLabel(event) {
   const transport=event?.coverage?.transport;
   if(transport?.kind==='named_service_adapter')return 'Named service · DNS route, not a pinned IP';
   if(transport?.kind==='authenticated_pinned_ip_relay')return 'Direct public IP · address pinned';
+  if(transport?.kind==='authenticated_pinned_target_relay')return 'Public endpoint · address pinned';
   if(event?.coverage?.dns?.pinned_address||event?.coverage?.dns?.address_pinned||event?.coverage?.address_pinned)return 'Address pinned by local collector';
   return event?'Public HTTP/S · collector view':'';
 }
@@ -323,7 +341,7 @@ function evidenceLink(id,label='Inspect cited observation') {
 }
 function observedText(event) {
   if(event.error)return `${event.error.message||'The collector could not complete the observation.'}${finite(event.status)!==null?` HTTP ${event.status} was received before completion stopped.`:''}`;
-  return `The collector received HTTP ${responseText(event)} from this endpoint${finite(event.latency_ms)!==null?' after '+formatNumber(event.latency_ms)+' ms elapsed':''}.${event.response_chain_complete===false?' The response chain is incomplete.':''}${event.redirect||[301,302,303,307,308].includes(event.status)?' This is a redirect response; the collector does not follow it.':''}`;
+  return `The collector received HTTP ${responseText(event)} from this endpoint${finite(event.latency_ms)!==null?' after '+formatNumber(event.latency_ms)+' ms elapsed':''}.${event.response_chain_complete===false?' The response chain is incomplete.':''}${event.redirect||[301,302,303,307,308].includes(event.status)?(event.coverage?.redirect_followed?' The optional probe followed a bounded public redirect chain; first-hop timings remain separate.':' This is a redirect response; the collector did not follow it.'):''}`;
 }
 function hypothesesFor(event) {
   const next='Compare subsequent checks and an independent authorized vantage before attributing a cause.';
@@ -332,6 +350,11 @@ function hypothesesFor(event) {
   if([401,403].includes(event.status))return [{text:'An access policy may be rejecting this unauthenticated HEAD request. That does not establish whether a signed-in browser is affected.',next:'Compare authorized application access and server logs. This collector does not send credentials.'}];
   if(event.status===404)return [{text:'This path may be absent or intentionally hidden by routing or access rules. HTTP 404 alone does not identify which.',next:'Confirm the intended public path and compare an authorized application request.'}];
   if(event.status>=500)return [{text:'An origin or intermediary returned a server-error response. This observation alone cannot attribute the fault.',next:'Compare later responses with authorized origin and edge logs.'}];
+  if(event.target_analysis){
+    if(list(event.target_analysis.signals).some(signal=>signal.state==='unusual'))return [{text:'One or more measured connection stages departed from their provisional baseline and passed the measured-deviation gate. The cause remains unverified.',next}];
+    if(list(event.target_analysis.changes).length)return [{text:'The recorded endpoint metadata changed. DNS rotation, certificate renewal and dynamic content can produce expected changes.',next}];
+    return [];
+  }
   if(event.brain?.event_active)return [{text:'The measured latency behavior differs from its provisional baseline. Network-path variation and application-side variation remain competing explanations.',next}];
   return [];
 }
@@ -340,6 +363,7 @@ function securityMarkup(headers) {
   return '<dl class="security-grid">'+keys.map(([key,label])=>{const value=headers?.[key];return `<div><dt>${label}</dt><dd>${value===null||value===undefined?'not captured':value===true?'present':value===false?'absent':esc(value)}</dd></div>`;}).join('')+'</dl>';
 }
 function renderInspector() {
+  renderTargetPanel($('target-probes'),{event:selectedEvent()||state.events[0],events:state.events,capabilities:state.capabilities});
   const event=selectedEvent();if(!event)return;
   const signature=JSON.stringify(event);if(signature===state.inspectorSignature)return;
   const wasOpen=document.querySelector('.technical-details')?.open,previousId=$('inspector-content').dataset.event;
@@ -380,6 +404,13 @@ function renderTimeline(events,changes) {
   $('timeline-period').textContent=`${values.length} actual points · collector clock`;
 }
 function renderForecast() {
+  const retained=(selectedEvent()||state.events[0])?.target_analysis;
+  if(retained){
+    const streams=retained.signals||[],ready=streams.filter(s=>['observing','unusual'].includes(s.state)).length;
+    $('forecast-title').textContent=ready?`${ready} metric streams have a provisional baseline.`:'Learning each measured stream separately.';
+    $('forecast-description').textContent='Server-retained Brain / Sentinel baselines survive a browser refresh. Each metric has its own calibration. These are observed change signals; future incidents are not predicted.';
+    $('forecast-metrics').hidden=true;return;
+  }
   // Current live epochs only: reload never backfills the numerical engine.
   const summaries=state.targets.flatMap(target=>target.brain?.summary().sources||[]);
   const comparisons=summaries.map(source=>source.forecast).filter(comparison=>finite(comparison?.scored_count)>0);
@@ -426,7 +457,7 @@ function renderInterpreter() {
   $('model-shortcut').textContent=modelState.busy?'Interpretation running ↗':hosted?configured?'Sol configured ↗':'Sol configuration ↗':'Companion interpretation ↗';
   $('model-badge').textContent=modelState.busy?'Interpreting selected evidence':hosted?status.state==='storage_unavailable'||status.storage_attached===false?'Evidence storage unavailable':status.connected===true&&configured?'Sol configured · manual':'Sol not configured':status.connected?'Companion model loaded':configured?'Companion configured':'Companion unavailable';
   $('model-title').textContent=hosted?'Interpret the evidence with Sol.':status.name||status.model||'Use your configured companion.';
-  $('model-description').textContent=hosted?'GPT-6.1 Sol explains your selected observation and recorded controls, with every claim tied to its evidence. Model calls start only when you choose Interpret.':'Uses the model configured on your local collector. This optional path does not download a model in your browser.';
+  $('model-description').textContent=hosted?'GPT-6.1 Sol interprets the selected target’s measurements, baseline comparisons and change events. Every fact cites retained evidence. Model calls start only when you choose Interpret.':'Uses the model configured on your local collector. This optional path does not download a model in your browser.';
   $('model-status').textContent=modelState.issue||status.reason||status.message||(configured?'Ready for a manual interpretation request.':'Sol is not configured; original observations and deterministic notes remain available.');
   $('model-status').classList.toggle('issue',!!modelState.issue||!configured);
   $('model-engine').disabled=modelState.busy;
@@ -453,7 +484,7 @@ async function requestHostedInterpretation(evidenceId) {
   let payload;try{payload=await response.json();}catch{throw new Error('The interpreter returned an unreadable response. Original evidence remains unchanged.');}
   if(!response.ok)throw new Error(readableError(payload,response.status===429?'The server’s interpretation limit or cooldown is active. No automatic retry will run.':response.status===409?'Another interpretation is in progress. Request this evidence again after it finishes.':'The server could not interpret this evidence.'));
   if(payload.evidence_id!==evidenceId)throw new Error('The interpreter returned a different evidence ID. The result was not attached.');
-  if(!/^edge_[0-9a-f]{32}$/i.test(payload.source_event_id||'')||evidenceId.startsWith('edge_')&&payload.source_event_id!==evidenceId)throw new Error('The interpreter returned an invalid source receipt. The result was not attached.');
+  if(!/^(edge|evt)_[0-9a-f]{32}$/i.test(payload.source_event_id||'')||evidenceId.startsWith('edge_')&&payload.source_event_id!==evidenceId||payload.source_event_id?.startsWith('evt_')&&payload.source_event_id!==evidenceId)throw new Error('The interpreter returned an invalid source receipt. The result was not attached.');
   if(!payload.analysis||!['model','deterministic'].includes(payload.analysis.kind))throw new Error('The interpreter returned an invalid result. Original evidence remains unchanged.');
   if(payload.model)modelState.hostedStatus=payload.model;
   return payload;
@@ -490,7 +521,8 @@ async function interpretSensorEvent(event) {
   }catch(error){modelState.issue=String(error.message||'Sol could not interpret this sensor evidence. Original records remain available.').slice(0,500);notify(modelState.issue);}
   finally{modelState.busy=false;renderInterpreter();}
 }
-function renderAll() {renderStatus();renderCards();renderMetrics();renderField();renderInspector();renderRecord();renderForecast();renderInterpreter();}
+function renderAll() {
+  renderTargetPanel($('target-probes'),{event:selectedEvent()||state.events[0],events:state.events,capabilities:state.capabilities});renderStatus();renderCards();renderMetrics();renderField();renderInspector();renderRecord();renderForecast();renderInterpreter();}
 
 async function loadCapabilities() {
   try {
@@ -504,6 +536,8 @@ async function loadCapabilities() {
       $('connection-hint').textContent='Authorized public websites · every 15+ seconds · up to four targets. Direct public IPs require the local collector.';
       document.querySelector('.intro>div>p').innerHTML='Connect a public website and watch actual observations arrive.<br>Public IP monitoring is available through the same interface in the local collector.';
     }else if(capabilities.mode==='local')$('connection-hint').textContent='Local collector · authorized public websites or public IPs · every 15+ seconds · up to four targets.';
+    for(const target of state.targets)restoreTargetHistory(target);
+    $('probe-options').hidden=!capabilities.target_probes?.connected;
     refreshCompanionModel();renderStatus();renderInterpreter();
   }catch{/* Capability lookup is optional; it never starts sampling or blocks Connect. */}
 }
@@ -535,7 +569,7 @@ document.querySelectorAll('[data-filter]').forEach(button=>button.addEventListen
 $('show-more').addEventListener('click',()=>{state.limit+=12;renderRecord();});
 $('export-button').addEventListener('click',()=>{
   if(!state.events.length)return;
-  const exported={schema:'sentinel-live-evidence-v1',exported_at:new Date().toISOString(),mode:'recorded_actual_observations',session_started_at:state.sessionStarted,source:'Browser session; no automatic history replay into Brain',engine:ENGINE_PROVENANCE,model:{engine:modelState.engine,manual_only:true,status:activeModelStatus(),role:'Evidence-linked interpretation; causes remain unverified'},capabilities:state.capabilities,scope:{protocols:['HTTP','HTTPS'],method:'HEAD',sampling:'Foreground, >=15 seconds after each result; gaps and failures retained',missing:['Visitor traffic','Internal networks','Packet contents','Origin logs','Authenticated state']},targets:state.targets.map(target=>({source_id:target.sourceId,url:target.url,label:target.label})),events:state.events,network_sensor_evidence:networkPanel?.getEvidence()||null};
+  const exported={schema:'sentinel-live-evidence-v2',exported_at:new Date().toISOString(),mode:'recorded_actual_observations',session_started_at:state.sessionStarted,source:'Measured endpoint evidence; authoritative server analysis is identified per record',engine:ENGINE_PROVENANCE,model:{engine:modelState.engine,manual_only:true,status:activeModelStatus(),role:'Evidence-linked interpretation; causes remain unverified'},capabilities:state.capabilities,scope:{protocols:['HTTP','HTTPS'],method:'HEAD',sampling:'Foreground, >=15 seconds after each result; gaps and failures retained',missing:['Visitor traffic','Internal networks','Packet contents','Origin logs','Authenticated state']},targets:state.targets.map(target=>({source_id:target.sourceId,url:target.url,label:target.label})),events:state.events,network_sensor_evidence:networkPanel?.getEvidence()||null};
   const blob=new Blob([JSON.stringify(exported,null,2)],{type:'application/json'}),url=URL.createObjectURL(blob),link=document.createElement('a');
   link.href=url;link.download='Sentinel_Evidence_'+new Date().toISOString().replace(/[:.]/g,'-')+'.json';document.body.append(link);link.click();link.remove();setTimeout(()=>URL.revokeObjectURL(url),1000);notify('Actual session evidence exported. Review it before sharing.');
 });

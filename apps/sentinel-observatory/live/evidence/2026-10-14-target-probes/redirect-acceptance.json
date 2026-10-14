@@ -1,0 +1,300 @@
+{
+  "status": 200,
+  "response": {
+    "event": {
+      "id": "evt_b171f775501c44a7adda35d4203ca266",
+      "source_id": "target_4c3e95599003d2e8",
+      "target": "one.one.one.one",
+      "url": "http://one.one.one.one/",
+      "method": "HEAD",
+      "kind": "measurement",
+      "observed_at": "2026-10-14T18:21:18.310Z",
+      "completed_at": "2026-10-14T18:21:18.372Z",
+      "latency_ms": 5.2,
+      "elapsed_ms": 62.181,
+      "status": 301,
+      "error": null,
+      "headers": {
+        "server": "cloudflare",
+        "content-type": "text/html",
+        "cf-cache-status": null
+      },
+      "security_headers": {
+        "hsts_present": false,
+        "csp_present": false,
+        "x_content_type_options": "absent",
+        "frame_options": "absent",
+        "referrer_policy": "absent",
+        "cache_private": false,
+        "cache_no_store": false
+      },
+      "redirect": {
+        "followed": true,
+        "target": "https://one.one.one.one/",
+        "validation": "public_pinned_on_each_hop"
+      },
+      "redirect_count": 1,
+      "response_chain_complete": true,
+      "probe_version": "target-probes-v1",
+      "collector_id": "node-pinned-target-v1:iad1",
+      "probe_options": {
+        "page_check": false,
+        "follow_redirects": true
+      },
+      "probes": {
+        "dns": {
+          "state": "ok",
+          "duration_ms": 1.491,
+          "addresses": [
+            "1.0.0.1",
+            "1.1.1.1",
+            "2606:4700:4700::1001",
+            "2606:4700:4700::1111"
+          ]
+        },
+        "tcp": {
+          "state": "ok",
+          "duration_ms": 2.427
+        },
+        "tls": {
+          "state": "not_applicable",
+          "duration_ms": null,
+          "protocol": null,
+          "certificate": null
+        },
+        "http": {
+          "state": "ok",
+          "response_wait_ms": 2.774,
+          "headers_ms": 5.2,
+          "header_signature": "db452e732f29e80699701c45eed9b1249cbff6b0191d6593885bf2e575384d9b",
+          "chain": [
+            {
+              "status": 301,
+              "url": "http://one.one.one.one/"
+            },
+            {
+              "status": 200,
+              "url": "https://one.one.one.one/"
+            }
+          ],
+          "final_status": 200,
+          "chain_state": null
+        },
+        "page": {
+          "state": "disabled"
+        },
+        "path": {
+          "state": "unavailable",
+          "reason": "local_companion_required"
+        }
+      },
+      "coverage": {
+        "vantage": "Node public-only pinned endpoint observer",
+        "transport": {
+          "kind": "authenticated_pinned_target_relay",
+          "effective_url": "http://one.one.one.one/"
+        },
+        "sampling": "First-hop timings; optional public redirect chain and bounded page fingerprint",
+        "head_attempted": true,
+        "redirect_followed": true,
+        "body_collected": false,
+        "dns": {
+          "state": "resolved_public_and_pinned",
+          "address_pinned": true
+        },
+        "network": {
+          "scope": "observatory_outbound_head_connection",
+          "destination_ip": "1.0.0.1",
+          "destination_port": 80,
+          "protocol": "TCP",
+          "application_protocol": "HTTP",
+          "peer_ip": "1.0.0.1",
+          "peer_port": 80,
+          "peer_matches_destination": true,
+          "socket_connected": true,
+          "tls_verified": null,
+          "tls_protocol": null,
+          "bytes_read": 222,
+          "bytes_written": 312,
+          "packet_counts_available": false,
+          "counter_scope": "This HEAD connection only; application socket counters"
+        },
+        "missing": [
+          "Target visitor traffic",
+          "Internal network",
+          "Packet capture",
+          "Origin processing time",
+          "Hosted ICMP or traceroute"
+        ]
+      },
+      "target_analysis": {
+        "profile": "target-metrics-v2",
+        "engine": "Eidos Brain / Sentinel V3 \u00b7 portable JS port",
+        "source": "authoritative_server",
+        "source_id": "target_4c3e95599003d2e8",
+        "evidence_id": "evt_b171f775501c44a7adda35d4203ca266",
+        "observed_at": "2026-10-14T18:21:18.372Z",
+        "experimental": true,
+        "security_verdict": "not_assessed",
+        "forecast_claim": "Current-frame change detection; no incident prediction",
+        "signals": [
+          {
+            "metric": "dns_ms",
+            "label": "DNS lookup",
+            "unit": "ms",
+            "value": 1.491,
+            "prior_median": null,
+            "delta": null,
+            "state": "calibrating",
+            "sample_count": 1,
+            "warmup_remaining": 11,
+            "event_score": null,
+            "raw_engine_change": false,
+            "measured_deviation": false,
+            "deviation_threshold": null,
+            "evidence_ids": [
+              "evt_b171f775501c44a7adda35d4203ca266"
+            ],
+            "baseline_evidence_ids": [],
+            "meaning": "Operational flag requires both Sentinel change and a measured departure beyond the prior median/MAD gate; not an attack probability"
+          },
+          {
+            "metric": "tcp_ms",
+            "label": "TCP connection",
+            "unit": "ms",
+            "value": 2.427,
+            "prior_median": null,
+            "delta": null,
+            "state": "calibrating",
+            "sample_count": 1,
+            "warmup_remaining": 11,
+            "event_score": null,
+            "raw_engine_change": false,
+            "measured_deviation": false,
+            "deviation_threshold": null,
+            "evidence_ids": [
+              "evt_b171f775501c44a7adda35d4203ca266"
+            ],
+            "baseline_evidence_ids": [],
+            "meaning": "Operational flag requires both Sentinel change and a measured departure beyond the prior median/MAD gate; not an attack probability"
+          },
+          {
+            "metric": "tls_ms",
+            "label": "TLS handshake",
+            "unit": "ms",
+            "value": null,
+            "state": "unavailable",
+            "event_score": null,
+            "sample_count": 0,
+            "evidence_ids": [
+              "evt_b171f775501c44a7adda35d4203ca266"
+            ]
+          },
+          {
+            "metric": "response_wait_ms",
+            "label": "HTTP response wait",
+            "unit": "ms",
+            "value": 2.774,
+            "prior_median": null,
+            "delta": null,
+            "state": "calibrating",
+            "sample_count": 1,
+            "warmup_remaining": 11,
+            "event_score": null,
+            "raw_engine_change": false,
+            "measured_deviation": false,
+            "deviation_threshold": null,
+            "evidence_ids": [
+              "evt_b171f775501c44a7adda35d4203ca266"
+            ],
+            "baseline_evidence_ids": [],
+            "meaning": "Operational flag requires both Sentinel change and a measured departure beyond the prior median/MAD gate; not an attack probability"
+          },
+          {
+            "metric": "headers_ms",
+            "label": "First-hop response headers",
+            "unit": "ms",
+            "value": 5.2,
+            "prior_median": null,
+            "delta": null,
+            "state": "calibrating",
+            "sample_count": 1,
+            "warmup_remaining": 11,
+            "event_score": null,
+            "raw_engine_change": false,
+            "measured_deviation": false,
+            "deviation_threshold": null,
+            "evidence_ids": [
+              "evt_b171f775501c44a7adda35d4203ca266"
+            ],
+            "baseline_evidence_ids": [],
+            "meaning": "Operational flag requires both Sentinel change and a measured departure beyond the prior median/MAD gate; not an attack probability"
+          },
+          {
+            "metric": "failure_ratio",
+            "label": "Failed probes \u00b7 last 20",
+            "unit": "ratio",
+            "value": 0,
+            "prior_median": null,
+            "delta": null,
+            "state": "calibrating",
+            "sample_count": 1,
+            "warmup_remaining": 11,
+            "event_score": null,
+            "raw_engine_change": false,
+            "measured_deviation": false,
+            "deviation_threshold": null,
+            "evidence_ids": [
+              "evt_b171f775501c44a7adda35d4203ca266"
+            ],
+            "baseline_evidence_ids": [],
+            "meaning": "Operational flag requires both Sentinel change and a measured departure beyond the prior median/MAD gate; not an attack probability"
+          },
+          {
+            "metric": "icmp_rtt_ms",
+            "label": "ICMP round trip",
+            "unit": "ms",
+            "value": null,
+            "state": "unavailable",
+            "event_score": null,
+            "sample_count": 0,
+            "evidence_ids": [
+              "evt_b171f775501c44a7adda35d4203ca266"
+            ]
+          },
+          {
+            "metric": "icmp_loss_ratio",
+            "label": "ICMP probe loss",
+            "unit": "ratio",
+            "value": null,
+            "state": "unavailable",
+            "event_score": null,
+            "sample_count": 0,
+            "evidence_ids": [
+              "evt_b171f775501c44a7adda35d4203ca266"
+            ]
+          }
+        ],
+        "changes": [],
+        "state": "calibrating",
+        "episode": null,
+        "generation": 1,
+        "history_samples": 1,
+        "calibration_reset": null,
+        "coverage_gap_ms": null,
+        "collector_id": "node-pinned-target-v1:iad1",
+        "baseline_scope": "Separate metric, target, probe settings and collector identity",
+        "missing_data_policy": "Unmeasured values excluded; failed observations counted separately; no gap filled with zero"
+      },
+      "target_storage": "retained"
+    },
+    "target": {
+      "id": "target_4c3e95599003d2e8",
+      "url": "http://one.one.one.one/",
+      "label": "one.one.one.one"
+    },
+    "retry_after_ms": 15000,
+    "rate_limit_scope": "Per isolate and canonical target; not durable or globally coordinated"
+  },
+  "kind": "actual_public_redirect_probe"
+}
