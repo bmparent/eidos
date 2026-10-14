@@ -1,0 +1,5 @@
+Python: 3.11.0 (main, Oct 24 2022, 18:26:48) [MSC v.1933 64 bit (AMD64)]
+Node: v24.14.0
+Platform: Windows-10-10.0.26200-SP0
+Credentials: not read or captured
+Provider calls: none

@@ -71,6 +71,7 @@
         "error_code": null
       }
     ],
-    "note": "Native table viewer truncated result_json values; full validated provider receipt was read through the authoritative interpretation cache and saved separately."
-  }
+    "note": "Native table viewer truncates result_json values; full provider receipt was read through the authoritative interpretation cache and saved separately."
+  },
+  "verified_at_utc": "2026-10-14T01:07:35.736Z"
 }

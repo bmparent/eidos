@@ -12,9 +12,9 @@
       "height": 844
     }
   ],
-  "product_runtime_sha": "702d6f67f8c2b7bdb9bac83db7d007c878369b86",
-  "sites_source_sha": "bb2bc77c7d9eaef67d6ff4833781e3c8517771d8",
-  "deployment_id": "appgdep_6acec8be2d8081918792a2e7a6042ed1",
+  "product_runtime_sha": "857b2022df7ef7ec379850bc2c327f398c725776",
+  "sites_source_sha": "d0b06304055fef1cccf3ace36b3b6d9acde2054f",
+  "deployment_id": "appgdep_6aced528a8808191b054fcb487216dbf",
   "environment_revision": 5,
   "checks": [
     {
@@ -250,8 +250,113 @@
       "note": "Scrollable 840px source graph stays within 330px mobile region and supports keyboard controls.",
       "sites_source_sha": "bb2bc77c7d9eaef67d6ff4833781e3c8517771d8",
       "environment_revision": 5
+    },
+    {
+      "check": "graph_keyboard_focus_before_followup",
+      "status": "failed",
+      "observed_at": "2026-10-14T01:03:19.925Z",
+      "details": {
+        "activeTag": "BODY",
+        "node": null,
+        "filter": "Showing records for 1.1.1.1"
+      },
+      "sites_source_sha": "bb2bc77c7d9eaef67d6ff4833781e3c8517771d8",
+      "environment_revision": 5,
+      "resolved_by": "graph_keyboard_focus_after_followup"
+    },
+    {
+      "check": "graph_keyboard_focus_after_followup",
+      "status": "passed",
+      "observed_at": "2026-10-14T01:05:22.186Z",
+      "details": {
+        "filter": "Showing records for 1.1.1.1Show all endpoints",
+        "node": "1.1.1.1",
+        "tag": "g"
+      },
+      "sites_source_sha": "d0b06304055fef1cccf3ace36b3b6d9acde2054f",
+      "environment_revision": 5
+    },
+    {
+      "check": "sensor_record_keyboard_focus_after_followup",
+      "status": "passed",
+      "observed_at": "2026-10-14T01:05:22.362Z",
+      "details": {
+        "evidence": "native_e15ce93ff142bfa3",
+        "inspector": true,
+        "tag": "BUTTON"
+      },
+      "sites_source_sha": "d0b06304055fef1cccf3ace36b3b6d9acde2054f",
+      "environment_revision": 5
+    },
+    {
+      "check": "sensor_source_focus_after_real_refresh",
+      "status": "passed",
+      "observed_at": "2026-10-14T01:05:25.209Z",
+      "details": {
+        "freshness": "Receiving the Observatory’s actual incoming requests and outbound check records every 5 seconds. Last received 21:05:24.",
+        "label": "Remove Observatory application-edge sensor",
+        "source": "observatory-edge",
+        "tag": "BUTTON"
+      },
+      "sites_source_sha": "d0b06304055fef1cccf3ace36b3b6d9acde2054f",
+      "environment_revision": 5
+    },
+    {
+      "check": "feed_control_focus_after_followup",
+      "status": "passed",
+      "observed_at": "2026-10-14T01:06:10.326Z",
+      "details": {
+        "activeControl": "stream",
+        "freshness": "Receiving the Observatory’s actual incoming requests and outbound check records every 5 seconds. Last received 21:06:07.",
+        "label": "Pause sensor feed"
+      },
+      "sites_source_sha": "d0b06304055fef1cccf3ace36b3b6d9acde2054f",
+      "environment_revision": 5
+    },
+    {
+      "check": "final_version_ui_cache",
+      "status": "passed",
+      "observed_at": "2026-10-14T01:06:10.557Z",
+      "note": "Manual repeat of the retained first HTTP evidence displayed cached server result and linked canonical citations after native feed resolution.",
+      "sites_source_sha": "d0b06304055fef1cccf3ace36b3b6d9acde2054f",
+      "environment_revision": 5
+    },
+    {
+      "check": "mobile_focus_and_overflow_after_followup",
+      "status": "passed",
+      "observed_at": "2026-10-14T01:06:27.138Z",
+      "details": {
+        "activeNode": "1.1.1.1",
+        "bodyWidth": 375,
+        "clientWidth": 375,
+        "graphContent": 840,
+        "graphWidth": 330,
+        "viewport": 390
+      },
+      "sites_source_sha": "d0b06304055fef1cccf3ace36b3b6d9acde2054f",
+      "environment_revision": 5
+    },
+    {
+      "check": "final_version_native_alias_cache",
+      "status": "passed",
+      "observed_at": "2026-10-14T01:12:04.080Z",
+      "note": "Canonical native alias returned the completed cached Sol response after the UI-only version-12 deployment.",
+      "sites_source_sha": "d0b06304055fef1cccf3ace36b3b6d9acde2054f",
+      "environment_revision": 5
+    },
+    {
+      "check": "version12_ui_exports",
+      "status": "passed",
+      "observed_at": "2026-10-14T01:12:34.744Z",
+      "endpoint_file": "endpoint-ui-export-final.json",
+      "sensor_file": "sensor-ui-export-final.json",
+      "sensor_count": 110,
+      "sensor_interpretations": 1,
+      "sites_source_sha": "d0b06304055fef1cccf3ace36b3b6d9acde2054f",
+      "environment_revision": 5
     }
   ],
   "console": [],
-  "teardown": "Endpoint and sensor feed left paused; viewport override reset."
+  "teardown": "Endpoint and sensor feed left paused; viewport override reset.",
+  "final_verified_at_utc": "2026-10-14T01:12:34.744Z"
 }

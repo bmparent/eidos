@@ -1,5 +1,5 @@
 {
-  "sites_source_sha": "bb2bc77c7d9eaef67d6ff4833781e3c8517771d8",
+  "sites_source_sha": "d0b06304055fef1cccf3ace36b3b6d9acde2054f",
   "baseline_sites_sha": "54e7ba3392e0fd840ce1718a1fdcbebc4bb7fdac",
   "unchanged": [
     "recorded.html",
@@ -7,6 +7,6 @@
     ".openai/hosting.json"
   ],
   "recorded_sha256": "1cbdc8d477763928e6180c0f6d8c7261cd0894bba50241323eaaade6b89fbb24",
-  "worker_sha256": "c57a2cf25de9c73d05535ec7619d79f6a0b79685042ae0c5043e0611791147c5",
+  "worker_sha256": "08b78952a24207f0880bfdcf4be733b93adbedc3e03883369a076d25425c4ea0",
   "d1_binding": "OBSERVATORY_DB"
 }

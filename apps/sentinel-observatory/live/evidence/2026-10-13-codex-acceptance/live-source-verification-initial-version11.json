@@ -1,0 +1,31 @@
+{
+  "sites_source_sha": "bb2bc77c7d9eaef67d6ff4833781e3c8517771d8",
+  "deployment_id": "appgdep_6acec8be2d8081918792a2e7a6042ed1",
+  "environment_revision": 5,
+  "checks": [
+    {
+      "route": "/network-panel.mjs",
+      "status": 200,
+      "source_path": "apps/sentinel-observatory/live/web/network-panel.mjs",
+      "normalized_source_matches": true,
+      "served_sha256": "45e9b251df3d31f8413efabf3a0b3553cdc87afffa1e75dd10ca819af8c53aab"
+    },
+    {
+      "route": "/brain.mjs",
+      "status": 200,
+      "source_path": "apps/sentinel-observatory/live/brain.mjs",
+      "normalized_source_matches": true,
+      "served_sha256": "dbd0654feb62cb13af44382a9c2e6c21785cd761028bd61366b89fde51ca3d3e"
+    },
+    {
+      "route": "/recorded",
+      "status": 200,
+      "original_content_prefix_and_closing_match": true,
+      "provider_added_cloudflare_challenge_script": true,
+      "provider_injection_bytes": 938,
+      "served_sha256": "4e8dbaa39090fc46b8e73a1444ea8eefaaf80a15de12112bf0aebf1989e70231",
+      "note": "The original recorded HTML is preserved; Cloudflare appends its challenge-platform script before the closing body. No security protection was disabled.",
+      "normalized_source_recorded_sha256": "a96bada34c90cc6a13cf93682f1b99be030470020407a63367794016b364bb8f"
+    }
+  ]
+}

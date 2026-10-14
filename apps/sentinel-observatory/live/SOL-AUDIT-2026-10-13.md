@@ -7,11 +7,11 @@ Draft PR: https://github.com/bmparent/eidos/pull/73
 
 ## Exact accepted deployment
 
-- Product runtime: `702d6f67f8c2b7bdb9bac83db7d007c878369b86`.
-- Sites source: `bb2bc77c7d9eaef67d6ff4833781e3c8517771d8`.
-- Deployment: `appgdep_6acec8be2d8081918792a2e7a6042ed1`; succeeded at environment revision **5**.
-- Saved version: `appgprj_6ace6f7f4a5481918adb34a5cb366de3~appgver_6f82db7dbf20819192d8525457d0f205`.
-- Worker SHA-256: `c57a2cf25de9c73d05535ec7619d79f6a0b79685042ae0c5043e0611791147c5`.
+- Product runtime: `857b2022df7ef7ec379850bc2c327f398c725776`.
+- Sites source: `d0b06304055fef1cccf3ace36b3b6d9acde2054f`.
+- Deployment: `appgdep_6aced528a8808191b054fcb487216dbf`; succeeded at environment revision **5**.
+- Saved version: **12** (`appgprj_6ace6f7f4a5481918adb34a5cb366de3~appgver_99a1705f061c819181c2cd6534b30e6c`).
+- Worker SHA-256: `08b78952a24207f0880bfdcf4be733b93adbedc3e03883369a076d25425c4ea0`.
 - Existing `OBSERVATORY_DB`, collector secrets and owner-only policy revision 1 were preserved. No external viewers were added. Applied migrations and the recorded capture were preserved.
 - Final live JavaScript assets match the normalized inspected source. `/recorded` preserves the original recorded HTML; Cloudflare adds its challenge-platform script before the closing body. The original source file is unchanged, and no hosting protection was disabled. See `live-source-verification.json` and `source-invariants.json`.
 
@@ -20,6 +20,8 @@ Draft PR: https://github.com/bmparent/eidos/pull/73
 The key named **Sentinel Observatory** was created for **Personal / eidos_brain** through the connected OpenAI Developers encrypted-key workflow and bound only as server secret `OPENAI_API_KEY`. The picker did not appear; the owner selected the exact project through the connector's target list and an explicit chat choice. No API-key file or plaintext key log was produced.
 
 The authenticated UI manually requested `evt_fe7cd21a06dd4dd694dce191b6d21ea1`. The server resolved canonical `edge_add9ea4f6d3c429d8c9a1202e50fe31d` and accepted a completed `gpt-6.1-sol` response: `resp_08c8f5f69e4799b9016acec99fd21087d291d1c2ab9830e892`, 390 input / 54 output / 444 total tokens, low reasoning, `model_ran:true`, `output_accepted:true`. All seven facts and both conditional explanations cite the retained canonical record. Its HTTP 301, 41.98 ms, verified TLS and 176/291 socket counters match the saved comparison receipt. No cause or attack was invented.
+
+The actual provider execution occurred on saved version 11; version 12 changes only keyboard focus handling. Its manual UI repeat and authoritative API readback returned the same completed provider response from cache, with the durable job ledger still at two intentional attempts. The original version-11 deployment and source receipts are retained beside the current receipts.
 
 Repeating the same evidence in the UI and selecting its native alias returned the cached result. The job ledger remained at one job until a separately declared concurrency test intentionally created the second attempt. That test returned 200 for its completed provider response, **409** for the concurrent duplicate, and **429** for different evidence during cooldown. Two completed jobs reserve **$0.10** in total; this is not an invoice. The actual first cache gate passed without a second provider call.
 
@@ -31,13 +33,15 @@ Authenticated owner Chromium browser checks passed at **1440x900** and **390x844
 
 Fixed: sensor polling replaced the pause/resume button and dropped focus; it now retains DOM identity across real freshness updates. Collapsed mobile line breaks no longer join words/sentences. The deadline test now verifies watchdog scheduling/expiration deterministically. Symlink tests separate ordinary-path checks, a real-OS permission skip, and rejection of symlink metadata before opening.
 
+A final keyboard check on version 11 exposed focus returning to BODY after graph-node activation. Version 12 restores graph, source and evidence-row focus using stable record keys. Real desktop activation, evidence-row selection, source focus during a measured feed refresh, and narrow-mobile focus/overflow checks passed. Both original focus failures remain in `browser-checks.json` with explicit links to passing followups.
+
 ## Validation and preserved failures
 
 - 115 Node tests passed; Node JUnit XML retained.
 - Python: 30 run, 29 passed, one explicit skip. Real OS symlink creation is skipped on this Windows host (WinError 1314). Relative/directory rejection and symlink-metadata rejection before open pass.
 - Canonical numerical parity: 954 frames / 41,022 comparisons passed.
 - Syntax, whitespace and exact compiled Worker ESM validation passed.
-- The initial Python deadline and symlink failures are retained in the top-level local logs; the successful rerun is in `local-after-fixes/`.
+- The initial Python deadline and symlink failures are retained in the top-level local logs; successful reruns are in `local-after-fixes/` and `local-focus-followup/`. The latter records the exact deployed product runtime commit.
 - Packaging first selected unavailable WSL Bash (`HCS_E_CONNECTION_TIMEOUT`). The same supported Sites source helper succeeded using installed Git Bash and local archive handling. A short-lived source credential was renewed; no hosting audience or database migration was changed to work around this.
 - The native table viewer truncated `result_json`; the full validated receipt was saved through authoritative cached API readback. The table ledger independently confirms job count, status, reservations and tokens.
 
@@ -48,6 +52,7 @@ node --test --test-reporter=junit apps/sentinel-observatory/live/collector.test.
 python -m unittest discover -s apps/sentinel-observatory/live -p 'test_*.py' -v
 node apps/sentinel-observatory/live/verify_brain_parity.mjs
 python apps/sentinel-observatory/live/evidence/2026-10-13-codex-acceptance/run_local_checks.py --out apps/sentinel-observatory/live/evidence/2026-10-13-codex-acceptance/local-after-fixes
+python apps/sentinel-observatory/live/evidence/2026-10-13-codex-acceptance/run_local_checks.py --out apps/sentinel-observatory/live/evidence/2026-10-13-codex-acceptance/local-focus-followup
 node --check apps/sentinel-observatory/live/web/network-panel.mjs
 git diff --check
 ```
@@ -73,10 +78,10 @@ Drive disposition and checksums: `drive_manifest.json`. The mirror copies to a n
 **passed**: finite private Observatory credential activation, actual manual Sol execution, authoritative cache/control checks, and authenticated rendered desktop/mobile acceptance. This is the attached task's app gate.
 
 ### Previous state
-The deployed app had no OpenAI key, no actual Sol receipt, and no rendered browser acceptance. The live pause control was replaced by each feed update and lost keyboard focus. Two Python checks relied on a tiny wall-clock window or unavailable Windows symlink privilege.
+The deployed app had no OpenAI key, no actual Sol receipt, and no rendered browser acceptance. Feed updates and graph activation replaced focused controls. Two Python checks relied on a tiny wall-clock window or unavailable Windows symlink privilege.
 
 ### Technical logic utilized
-The server resolves a retained evidence ID, sanitizes bounded scalar metadata, reserves one durable attempt, calls exact `gpt-6.1-sol`, and validates the completed provider identity, usage and eligible structured ranking. Code rebuilds facts and citations from the authoritative record. The linked HTTP ID and canonical edge ID share the same cache. Polling and normal selection are read-only with respect to model jobs. The UI fix preserves the pause/resume button's DOM identity while updating freshness text.
+The server resolves a retained evidence ID, sanitizes bounded scalar metadata, reserves one durable attempt, calls exact `gpt-6.1-sol`, and validates the completed provider identity, usage and eligible structured ranking. Code rebuilds facts and citations from the authoritative record. The linked HTTP ID and canonical edge ID share the same cache. Polling and normal selection are read-only with respect to model jobs. The UI preserves the pause/resume button's DOM identity and restores graph, source and evidence-row focus by stable record keys after rendering.
 
 ### Math / scoring logic
 `accepted = completed_provider_response AND exact_model AND valid_usage AND eligible_ranking AND authoritative_input_ids`.
@@ -88,13 +93,13 @@ Canonical parity uses `abs(actual-reference) <= 1e-7 + 1e-8 * abs(reference)` wi
 Explanation before automation; restraint before alarm. Reproducibility is truth that can be revisited. A successful model call is separated from the truth of a security diagnosis.
 
 ### Why this is better
-Before: credential and rendered acceptance were pending; focus vanished during feed refresh. After: real provider IDs and usage exist, cached aliases reuse them, live duplicate/cooldown requests reject safely, and the focused control survives an observed real feed update. Initial test failures and the remaining OS skip remain visible.
+Before: credential and rendered acceptance were pending; focus vanished during feed refresh or graph activation. After: real provider IDs and usage exist, cached aliases reuse them, live duplicate/cooldown requests reject safely, and graph, record and source controls keep keyboard focus through selection or a real feed refresh. Initial failures, their passing followups, and the remaining OS skip stay visible.
 
 ### How this moves Eidos closer to the north-star goal
 Eidos Brain is a self-monitoring streaming intelligence codec. It learns live streams, compresses predictable behavior, preserves meaningful anomalies, monitors its own internal state, and emits human-readable incident receipts. This milestone strengthens reproducible operation and evidence-linked explanations. It does not evaluate streaming learning quality, compression value, anomaly-preservation quality, or superiority to other detectors/compressors.
 
 ### Evidence
-`actual-sol-provider-receipt.json`, `authoritative-input-comparison.json`, `hosted-concurrency-cooldown.json`, `hosted-negative-after-key.json`, `final-external-state.json`, `browser-checks.json`, both final UI exports, screenshots, `local-after-fixes/node-tests.xml`, Python logs, parity receipt, `deployment-sol-configured.json`, and `drive_manifest.json`.
+`actual-sol-provider-receipt.json`, `final-version-cache-readback.json`, `authoritative-input-comparison.json`, `hosted-concurrency-cooldown.json`, `hosted-negative-after-key.json`, `final-external-state.json`, `browser-checks.json`, both final UI exports, screenshots, `local-focus-followup/node-tests.xml`, Python logs, parity receipt, `deployment-sol-configured.json`, and `drive_manifest.json`.
 
 ### Remaining uncertainty
 Ranking usefulness and detection quality remain unproven. No labeled-domain, compression, GPU, physical-phone or alternate-browser acceptance is claimed. Provider outages and daily-dollar exhaustion were tested through isolated fixtures rather than deliberately damaging credentials or spending the remaining budget. Real OS symlink creation is skipped on this Windows host (WinError 1314). Relative/directory rejection and symlink-metadata rejection before open pass. Mounted Drive readback does not independently establish cloud synchronization. Eido remains an evaluation candidate.

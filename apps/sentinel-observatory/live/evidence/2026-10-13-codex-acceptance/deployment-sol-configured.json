@@ -1,8 +1,8 @@
 {
-  "id": "appgdep_6acec8be2d8081918792a2e7a6042ed1",
+  "id": "appgdep_6aced528a8808191b054fcb487216dbf",
   "project_id": "appgprj_6ace6f7f4a5481918adb34a5cb366de3",
   "title": "Sentinel Observatory · Live Connections",
-  "version_id": "appgprj_6ace6f7f4a5481918adb34a5cb366de3~appgver_6f82db7dbf20819192d8525457d0f205",
+  "version_id": "appgprj_6ace6f7f4a5481918adb34a5cb366de3~appgver_99a1705f061c819181c2cd6534b30e6c",
   "type": "publish",
   "status": "succeeded",
   "url": "https://sentinel-evidence-observatory.bmparent.chatgpt.site",
@@ -11,8 +11,9 @@
   "provider_deployment_id": "site---6ace6f7f4a5481918adb34a5cb366de3",
   "failure_message": null,
   "env_set_revision": 5,
-  "updated_at": "2026-10-14T00:11:48.112700+00:00",
-  "sites_source_sha": "bb2bc77c7d9eaef67d6ff4833781e3c8517771d8",
-  "product_runtime_sha": "702d6f67f8c2b7bdb9bac83db7d007c878369b86",
-  "worker_sha256": "c57a2cf25de9c73d05535ec7619d79f6a0b79685042ae0c5043e0611791147c5"
+  "updated_at": "2026-10-14T01:04:50.270662+00:00",
+  "sites_source_sha": "d0b06304055fef1cccf3ace36b3b6d9acde2054f",
+  "product_runtime_sha": "857b2022df7ef7ec379850bc2c327f398c725776",
+  "worker_sha256": "08b78952a24207f0880bfdcf4be733b93adbedc3e03883369a076d25425c4ea0",
+  "version_number": 12
 }

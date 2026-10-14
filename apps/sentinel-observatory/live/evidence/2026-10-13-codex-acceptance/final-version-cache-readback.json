@@ -1,0 +1,146 @@
+{
+  "sites_source_sha": "d0b06304055fef1cccf3ace36b3b6d9acde2054f",
+  "product_runtime_sha": "857b2022df7ef7ec379850bc2c327f398c725776",
+  "deployment_id": "appgdep_6aced528a8808191b054fcb487216dbf",
+  "environment_revision": 5,
+  "verified_at_utc": "2026-10-14T01:09:06.219Z",
+  "status": 200,
+  "response": {
+    "evidence_id": "evt_fe7cd21a06dd4dd694dce191b6d21ea1",
+    "source_event_id": "edge_add9ea4f6d3c429d8c9a1202e50fe31d",
+    "analysis": {
+      "kind": "model",
+      "summary": "The retained Observatory record reports an outbound collector observation.",
+      "facts": [
+        {
+          "text": "The retained Observatory record reports an outbound collector observation.",
+          "evidence_ids": [
+            "edge_add9ea4f6d3c429d8c9a1202e50fe31d"
+          ]
+        },
+        {
+          "text": "The source records HTTP 301 for this outbound observation.",
+          "evidence_ids": [
+            "edge_add9ea4f6d3c429d8c9a1202e50fe31d"
+          ]
+        },
+        {
+          "text": "This is a redirect response; it does not establish the redirected destination’s result.",
+          "evidence_ids": [
+            "edge_add9ea4f6d3c429d8c9a1202e50fe31d"
+          ]
+        },
+        {
+          "text": "The source records 41.98 ms elapsed for this operation.",
+          "evidence_ids": [
+            "edge_add9ea4f6d3c429d8c9a1202e50fe31d"
+          ]
+        },
+        {
+          "text": "The source classifies this operation as ok.",
+          "evidence_ids": [
+            "edge_add9ea4f6d3c429d8c9a1202e50fe31d"
+          ]
+        },
+        {
+          "text": "The collector records 176 socket bytes read and 291 socket bytes written. These are collector counters, not target visitor traffic.",
+          "evidence_ids": [
+            "edge_add9ea4f6d3c429d8c9a1202e50fe31d"
+          ]
+        },
+        {
+          "text": "The collector reports successful TLS certificate validation for this observation.",
+          "evidence_ids": [
+            "edge_add9ea4f6d3c429d8c9a1202e50fe31d"
+          ]
+        }
+      ],
+      "hypotheses": [
+        {
+          "text": "The redirect response could leave the redirected destination outside this observation.",
+          "support": [
+            "edge_add9ea4f6d3c429d8c9a1202e50fe31d"
+          ],
+          "against": [],
+          "next_observation": "Inspect the recorded observation boundary before requesting broader monitoring."
+        },
+        {
+          "text": "The collector’s connection path or upstream endpoint could contribute to its response or failure.",
+          "support": [
+            "edge_add9ea4f6d3c429d8c9a1202e50fe31d"
+          ],
+          "against": [],
+          "next_observation": "Repeat the same bounded check and compare with another authorized observation point."
+        }
+      ],
+      "unknowns": [
+        "GPT-6.1 Sol ranked predefined conditional possibilities; cause and ranking usefulness remain unproven.",
+        "This is the Observatory service’s own activity, not a target visitor stream or a network packet capture.",
+        "Target internals, visitor impact, the cause of failure and user intent remain unverified."
+      ],
+      "provenance": {
+        "engine": "OpenAI Responses API",
+        "model_requested": "gpt-6.1-sol",
+        "model_ran": true,
+        "output_accepted": true,
+        "input_evidence_ids": [
+          "edge_add9ea4f6d3c429d8c9a1202e50fe31d"
+        ],
+        "linked_evidence_id": "evt_fe7cd21a06dd4dd694dce191b6d21ea1",
+        "inference_attempted": true,
+        "execution_verified": true,
+        "reserved_usd": 0.05,
+        "prompt_version": "observatory-sol-catalogue-v1",
+        "prompt_sha256": "546437e30571484528a799d8d37b977c8dcb69cfca371f043d954d065f751290",
+        "model": "gpt-6.1-sol",
+        "provider_model": "gpt-6.1-sol",
+        "provider_response_id": "resp_08c8f5f69e4799b9016acec99fd21087d291d1c2ab9830e892",
+        "output_sha256": "8def41cb0147c494176623eadb6a835aeec904fe0cb4c6454e2f71bbe3df0ea7",
+        "ranked_codes": [
+          "redirect_boundary",
+          "observation_path"
+        ],
+        "usage": {
+          "input_tokens": 390,
+          "output_tokens": 54,
+          "total_tokens": 444
+        },
+        "inference_ms": 4433,
+        "reasoning_effort": "low",
+        "service_tier": "default",
+        "local_only": false,
+        "provider_store": false,
+        "estimated_standard_usd": 0.00132,
+        "role": "ranked_catalogue_selection",
+        "durable_cache_confirmed": true,
+        "validation": "Cached eligible ranking revalidated; facts, wording and citations rebuilt from the current authoritative record",
+        "facts_policy": "The model ranks fixed conditional possibilities. It cannot author facts, citations, diagnoses or defensive actions."
+      }
+    },
+    "cached": true,
+    "model": {
+      "connected": true,
+      "configured": true,
+      "storage_attached": true,
+      "state": "available",
+      "mode": "hosted_gpt_sol",
+      "model_id": "gpt-6.1-sol",
+      "manual_only": true,
+      "auto": false,
+      "limits": {
+        "daily_requests": 20,
+        "daily_reserved_usd": 0.5,
+        "reserved_usd_per_call": 0.05,
+        "cooldown_ms": 60000,
+        "max_output_tokens": 1024,
+        "max_request_bytes": 6000,
+        "provider_timeout_ms": 30000,
+        "receipt_retention_days": 8
+      },
+      "reason": "Ready for a manual interpretation of retained server evidence; no model call has been proved by this capability check.",
+      "privacy": "Only bounded numeric and enum metadata from retained Observatory records is sent to OpenAI. No endpoints, IP addresses, URLs, bodies, headers, raw log text or API keys are sent in the model context. Inference is hosted, not on this device. Interpretation receipts and conservative reservations are retained for eight days and purged on the next valid retained-evidence interpretation request; no unattended cleanup is claimed.",
+      "model_execution_verified": false,
+      "evidence_scope": "Retained native Observatory source records only; browser imports cannot trigger paid inference"
+    }
+  }
+}

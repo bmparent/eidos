@@ -1,12 +1,12 @@
 {
   "schema": "eidos.observatory.acceptance.v1",
   "run_id": "sentinel-observatory-sol-acceptance-20261013",
-  "timestamp_utc": "2026-10-14T00:50:38.954446+00:00",
+  "timestamp_utc": "2026-10-14T01:13:05.504107+00:00",
   "status": "passed",
   "scope": "Finite owner-private Sol and rendered application acceptance",
-  "product_runtime_sha": "702d6f67f8c2b7bdb9bac83db7d007c878369b86",
-  "sites_source_sha": "bb2bc77c7d9eaef67d6ff4833781e3c8517771d8",
-  "deployment_id": "appgdep_6acec8be2d8081918792a2e7a6042ed1",
+  "product_runtime_sha": "857b2022df7ef7ec379850bc2c327f398c725776",
+  "sites_source_sha": "d0b06304055fef1cccf3ace36b3b6d9acde2054f",
+  "deployment_id": "appgdep_6aced528a8808191b054fcb487216dbf",
   "environment_revision": 5,
   "core_behavior_changed": false,
   "tests": {

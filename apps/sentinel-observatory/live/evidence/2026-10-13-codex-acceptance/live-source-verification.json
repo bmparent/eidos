@@ -1,14 +1,15 @@
 {
-  "sites_source_sha": "bb2bc77c7d9eaef67d6ff4833781e3c8517771d8",
-  "deployment_id": "appgdep_6acec8be2d8081918792a2e7a6042ed1",
+  "sites_source_sha": "d0b06304055fef1cccf3ace36b3b6d9acde2054f",
+  "deployment_id": "appgdep_6aced528a8808191b054fcb487216dbf",
   "environment_revision": 5,
+  "verified_at_utc": "2026-10-14T01:09:53.990Z",
   "checks": [
     {
       "route": "/network-panel.mjs",
       "status": 200,
       "source_path": "apps/sentinel-observatory/live/web/network-panel.mjs",
       "normalized_source_matches": true,
-      "served_sha256": "45e9b251df3d31f8413efabf3a0b3553cdc87afffa1e75dd10ca819af8c53aab"
+      "served_sha256": "562679f8b0b10667b245a564858a64824bfa190b6b79f98b1c114b65175cecd2"
     },
     {
       "route": "/brain.mjs",
@@ -23,7 +24,7 @@
       "original_content_prefix_and_closing_match": true,
       "provider_added_cloudflare_challenge_script": true,
       "provider_injection_bytes": 938,
-      "served_sha256": "4e8dbaa39090fc46b8e73a1444ea8eefaaf80a15de12112bf0aebf1989e70231",
+      "served_sha256": "6f042a1fcea0afb1ffc47b7b0b548184525f22034b2bdc9d4e302bb0e5fdb191",
       "note": "The original recorded HTML is preserved; Cloudflare appends its challenge-platform script before the closing body. No security protection was disabled.",
       "normalized_source_recorded_sha256": "a96bada34c90cc6a13cf93682f1b99be030470020407a63367794016b364bb8f"
     }
