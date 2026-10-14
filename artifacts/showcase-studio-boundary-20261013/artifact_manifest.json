@@ -1,0 +1,50 @@
+{
+  "timestamp_utc": "2026-10-14T00:29:37.093815+00:00",
+  "files": [
+    {
+      "path": "acceptance.json",
+      "bytes": 831,
+      "sha256": "23b32cbbc842397a15d9b70ac5734960c661ca0dfc478f774f6885cd1978a441"
+    },
+    {
+      "path": "app-tests.log",
+      "bytes": 8810,
+      "sha256": "f4e410a21f5f5d66bedeee624f2efc6fdb72e4081493160e572a28bd1d804974"
+    },
+    {
+      "path": "codex_journal.md",
+      "bytes": 4364,
+      "sha256": "a97c34642c430e7943d8ecc6eb7052083ed75daca9a60f756299a4d43241794e"
+    },
+    {
+      "path": "deployment.json",
+      "bytes": 587,
+      "sha256": "4ddad6fcd426f323c63dd1313f45ef4581504650aea633e2dbba1ee8dece60c3"
+    },
+    {
+      "path": "hosted-boundary-acceptance.json",
+      "bytes": 1755,
+      "sha256": "226c9445ad7ba35fde56e687c06e02d22ed2ccfc14bf49deb7cc342be8bc1436"
+    },
+    {
+      "path": "hosted-verification-attempt1.json",
+      "bytes": 386,
+      "sha256": "02122cb696f12b01fe1b161502c4e0c2862a136f7cd15c22fec097183c39f562"
+    },
+    {
+      "path": "plain_language_test_analysis.md",
+      "bytes": 1776,
+      "sha256": "c8b564542dfec798f055e71ec466ecc947ed959442cf667bc385c0a870933724"
+    },
+    {
+      "path": "preview-environment.json",
+      "bytes": 1459,
+      "sha256": "08a94efd368003af8d9c5dadb7c53d02a2b6aac20fc27ec6cccaf485d9f72ffb"
+    },
+    {
+      "path": "typecheck.log",
+      "bytes": 51,
+      "sha256": "7b59a4947fcf6b1a7e8133a5082462cb9213c7c9bc79b65c8adbb9a347af7486"
+    }
+  ]
+}
