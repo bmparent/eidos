@@ -1,3 +1,13 @@
+# Sentinel Observatory continuation completed
+
+The finite private Sol/provider/cache/control and authenticated desktop/mobile acceptance passed on 2026-10-13. Preserve the working server secret; do not provision another key for this completed handoff.
+
+Product `702d6f67f8c2b7bdb9bac83db7d007c878369b86`; Sites `bb2bc77c7d9eaef67d6ff4833781e3c8517771d8`; deployment `appgdep_6acec8be2d8081918792a2e7a6042ed1`; environment revision 5. Read [SOL-AUDIT-2026-10-13.md](./SOL-AUDIT-2026-10-13.md) and [the acceptance report](./evidence/2026-10-13-codex-acceptance/acceptance_report.md) for receipts, test scope and remaining scientific limits.
+
+## Historical handoff
+
+
+
 # Sentinel Observatory: activate GPT-6.1 Sol and finish live acceptance
 
 Continue the existing Observatory. Do not rebuild it or replace its evidence with demo data.

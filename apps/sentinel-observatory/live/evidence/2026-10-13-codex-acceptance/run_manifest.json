@@ -1,0 +1,72 @@
+{
+  "schema": "eidos.observatory.acceptance.v1",
+  "run_id": "sentinel-observatory-sol-acceptance-20261013",
+  "timestamp_utc": "2026-10-14T00:50:38.954446+00:00",
+  "status": "passed",
+  "scope": "Finite owner-private Sol and rendered application acceptance",
+  "product_runtime_sha": "702d6f67f8c2b7bdb9bac83db7d007c878369b86",
+  "sites_source_sha": "bb2bc77c7d9eaef67d6ff4833781e3c8517771d8",
+  "deployment_id": "appgdep_6acec8be2d8081918792a2e7a6042ed1",
+  "environment_revision": 5,
+  "core_behavior_changed": false,
+  "tests": {
+    "node_passed": 115,
+    "python_ran": 30,
+    "python_passed": 29,
+    "python_skipped": 1,
+    "python_skip_reason": "Real OS symlink creation is skipped on this Windows host (WinError 1314). Relative/directory rejection and symlink-metadata rejection before open pass.",
+    "parity_frames": 954,
+    "parity_comparisons": 41022,
+    "provider_failure_tests": "Isolated fixtures only; no real credentials modified",
+    "compiled_worker": "ESM validation passed",
+    "rendered_browser": "Authenticated desktop 1440x900 and narrow mobile 390x844 passed"
+  },
+  "metrics": {
+    "provider_attempts": 2,
+    "reserved_usd": 0.1,
+    "actual_billed_usd": null,
+    "billing_note": "Reservations and code estimates are not a provider invoice.",
+    "first_usage": {
+      "input_tokens": 390,
+      "output_tokens": 54,
+      "total_tokens": 444
+    },
+    "second_usage": {
+      "input_tokens": 390,
+      "output_tokens": 70,
+      "total_tokens": 460
+    },
+    "native_normalized_records": 110,
+    "native_record_kinds": {
+      "request": 58,
+      "collector": 30,
+      "policy_event": 22
+    },
+    "raw_control_enforcement_records": 22,
+    "merged_incident_count": null,
+    "calibrated_precision": null,
+    "raw_precision": null,
+    "recall": null,
+    "false_positive_events": null,
+    "false_positives_per_10k": null,
+    "unknown_reason": "This finite app acceptance has no labeled attack/benign truth set or accepted incident ledger. Control records and experimental changes are not attack labels."
+  },
+  "access": {
+    "project_id": "appgprj_6ace6f7f4a5481918adb34a5cb366de3",
+    "url": "https://sentinel-evidence-observatory.bmparent.chatgpt.site",
+    "current_user_role": "owner",
+    "access_mode": "custom",
+    "policy_revision": 1,
+    "allowed_user_count": 1,
+    "external_visitor_count": 0,
+    "group_count": 0,
+    "owner_only": true
+  },
+  "drive_manifest": "drive_manifest.json",
+  "expected_artifact_omissions": {
+    "pytest_results.xml": "The existing Python tests use unittest; exact results and the skip are retained in logs. Node JUnit XML is saved.",
+    "compressed_streams": "No compression experiment was requested.",
+    "crash_scan": "No new crash-resistance milestone is claimed.",
+    "raw_provider_request": "Excluded to minimize retained provider context; hashes, bounded authoritative input comparison, IDs, usage and accepted output receipts are saved."
+  }
+}

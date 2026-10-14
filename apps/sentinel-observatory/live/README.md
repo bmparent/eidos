@@ -46,7 +46,7 @@ Paid calls run manually, with low reasoning effort and at most1024 output tokens
 
 The optional local CPU interpreter uses the existing tested Qwen GGUF adapter. Configure `OBSERVATORY_MODEL_PATH` to a compatible Qwen3 GGUF after installing the optional llama-cpp-python runtime. The local `/api/analyze` route accepts retained observation IDs, not arbitrary client-created evidence, and bounds/caches model work. Historical browser Qwen source and receipts remain available as prior implementation evidence; hosted interpretation does not invoke them. Eido remains an evaluation candidate; this app does not represent an unqualified Eido checkpoint as loaded.
 
-Credential provisioning and the remaining actual-provider/browser checks are documented in [CODEX-HANDOFF-SOL.md](./CODEX-HANDOFF-SOL.md).
+Actual private Sol/provider/cache/control and authenticated desktop/mobile acceptance are documented in [SOL-AUDIT-2026-10-13.md](./SOL-AUDIT-2026-10-13.md). [CODEX-HANDOFF-SOL.md](./CODEX-HANDOFF-SOL.md) preserves the completed continuation and historical handoff. Scientific ranking and detection usefulness remain unproven.
 
 ## Local public URL/IP companion
 

@@ -1,0 +1,12 @@
+{
+  "sites_source_sha": "bb2bc77c7d9eaef67d6ff4833781e3c8517771d8",
+  "baseline_sites_sha": "54e7ba3392e0fd840ce1718a1fdcbebc4bb7fdac",
+  "unchanged": [
+    "recorded.html",
+    "drizzle",
+    ".openai/hosting.json"
+  ],
+  "recorded_sha256": "1cbdc8d477763928e6180c0f6d8c7261cd0894bba50241323eaaade6b89fbb24",
+  "worker_sha256": "c57a2cf25de9c73d05535ec7619d79f6a0b79685042ae0c5043e0611791147c5",
+  "d1_binding": "OBSERVATORY_DB"
+}

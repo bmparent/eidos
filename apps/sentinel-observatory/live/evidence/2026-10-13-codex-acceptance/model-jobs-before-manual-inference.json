@@ -1,0 +1,32 @@
+{
+  "project_id": "appgprj_6ace6f7f4a5481918adb34a5cb366de3",
+  "binding_name": "OBSERVATORY_DB",
+  "table_name": "observatory_model_jobs",
+  "columns": [
+    "id",
+    "evidence_id",
+    "model",
+    "prompt_version",
+    "day",
+    "status",
+    "created_at",
+    "updated_at",
+    "reserved_micro_usd",
+    "input_tokens",
+    "output_tokens",
+    "prompt_sha256",
+    "result_json",
+    "error_code"
+  ],
+  "rows": [],
+  "limit": 25,
+  "offset": 0,
+  "has_more": false,
+  "model_projection": {
+    "truncated": false,
+    "truncated_values": 0,
+    "omitted_columns": 0,
+    "omitted_rows": 0,
+    "next_offset": null
+  }
+}

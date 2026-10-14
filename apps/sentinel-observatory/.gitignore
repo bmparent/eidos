@@ -4,4 +4,7 @@ data/
 .venv/
 __pycache__/
 *.log
+
+# Retain sanitized logs for this finite acceptance run only.
+!live/evidence/2026-10-13-codex-acceptance/**/*.log
 recordings/

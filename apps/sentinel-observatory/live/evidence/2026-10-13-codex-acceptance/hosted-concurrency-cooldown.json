@@ -1,0 +1,193 @@
+{
+  "started_at_utc": "2026-10-14T00:20:00.418Z",
+  "finished_at_utc": "2026-10-14T00:20:04.598Z",
+  "evidence_level": "actual_hosted_service_access_control_acceptance",
+  "purpose": "One additional intentional provider attempt verifies concurrent reservation and cooldown without changing limits or credentials",
+  "same_evidence_id": "evt_586517cbdd3344b183efc1fc91fcbdbd",
+  "different_evidence_id": "evt_1004e2088626405285d885824791ea08",
+  "first": {
+    "status": 200,
+    "body": {
+      "evidence_id": "evt_586517cbdd3344b183efc1fc91fcbdbd",
+      "source_event_id": "edge_9783c3e0962a427bb54ba2d27d93fd34",
+      "analysis": {
+        "kind": "model",
+        "summary": "The retained Observatory record reports an outbound collector observation.",
+        "facts": [
+          {
+            "text": "The retained Observatory record reports an outbound collector observation.",
+            "evidence_ids": [
+              "edge_9783c3e0962a427bb54ba2d27d93fd34"
+            ]
+          },
+          {
+            "text": "The source records HTTP 301 for this outbound observation.",
+            "evidence_ids": [
+              "edge_9783c3e0962a427bb54ba2d27d93fd34"
+            ]
+          },
+          {
+            "text": "This is a redirect response; it does not establish the redirected destination’s result.",
+            "evidence_ids": [
+              "edge_9783c3e0962a427bb54ba2d27d93fd34"
+            ]
+          },
+          {
+            "text": "The source records 27.912 ms elapsed for this operation.",
+            "evidence_ids": [
+              "edge_9783c3e0962a427bb54ba2d27d93fd34"
+            ]
+          },
+          {
+            "text": "The source classifies this operation as ok.",
+            "evidence_ids": [
+              "edge_9783c3e0962a427bb54ba2d27d93fd34"
+            ]
+          },
+          {
+            "text": "The collector records 176 socket bytes read and 291 socket bytes written. These are collector counters, not target visitor traffic.",
+            "evidence_ids": [
+              "edge_9783c3e0962a427bb54ba2d27d93fd34"
+            ]
+          },
+          {
+            "text": "The collector reports successful TLS certificate validation for this observation.",
+            "evidence_ids": [
+              "edge_9783c3e0962a427bb54ba2d27d93fd34"
+            ]
+          }
+        ],
+        "hypotheses": [
+          {
+            "text": "The redirect response could leave the redirected destination outside this observation.",
+            "support": [
+              "edge_9783c3e0962a427bb54ba2d27d93fd34"
+            ],
+            "against": [],
+            "next_observation": "Inspect the recorded observation boundary before requesting broader monitoring."
+          },
+          {
+            "text": "The collector’s connection path or upstream endpoint could contribute to its response or failure.",
+            "support": [
+              "edge_9783c3e0962a427bb54ba2d27d93fd34"
+            ],
+            "against": [],
+            "next_observation": "Repeat the same bounded check and compare with another authorized observation point."
+          }
+        ],
+        "unknowns": [
+          "GPT-6.1 Sol ranked predefined conditional possibilities; cause and ranking usefulness remain unproven.",
+          "This is the Observatory service’s own activity, not a target visitor stream or a network packet capture.",
+          "Target internals, visitor impact, the cause of failure and user intent remain unverified."
+        ],
+        "provenance": {
+          "engine": "OpenAI Responses API",
+          "model": "gpt-6.1-sol",
+          "provider_model": "gpt-6.1-sol",
+          "provider_response_id": "resp_0775c5ae2056b9e0016acecab130c087d29d85e4fa44308eed",
+          "model_ran": true,
+          "execution_verified": true,
+          "inference_attempted": true,
+          "output_accepted": true,
+          "prompt_version": "observatory-sol-catalogue-v1",
+          "prompt_sha256": "6b70c8aa3ff769e7513cd172df1017f5fe32ca13e0bbec293fe8eba224b72b5e",
+          "output_sha256": "8def41cb0147c494176623eadb6a835aeec904fe0cb4c6454e2f71bbe3df0ea7",
+          "input_evidence_ids": [
+            "edge_9783c3e0962a427bb54ba2d27d93fd34"
+          ],
+          "linked_evidence_id": "evt_586517cbdd3344b183efc1fc91fcbdbd",
+          "ranked_codes": [
+            "redirect_boundary",
+            "observation_path"
+          ],
+          "usage": {
+            "input_tokens": 390,
+            "output_tokens": 70,
+            "total_tokens": 460
+          },
+          "inference_ms": 3572,
+          "reasoning_effort": "low",
+          "service_tier": "default",
+          "local_only": false,
+          "provider_store": false,
+          "reserved_usd": 0.05,
+          "estimated_standard_usd": 0.00148,
+          "estimate_scope": "Token estimate at the documented standard uncached input/output rates, not an invoice; discounts, cache writes or regional charges may differ.",
+          "role": "ranked_catalogue_selection",
+          "validation": "Two distinct eligible catalogue codes; all facts, wording and citations are generated by deterministic source rules",
+          "input_policy": "Only bounded numeric and enum native service metadata; raw logs, endpoints, IPs, URLs, paths, bodies, headers and credentials excluded",
+          "facts_policy": "The model ranks fixed conditional possibilities. It cannot author facts, citations, diagnoses or defensive actions."
+        }
+      },
+      "cached": false,
+      "model": {
+        "connected": true,
+        "configured": true,
+        "storage_attached": true,
+        "state": "available",
+        "mode": "hosted_gpt_sol",
+        "model_id": "gpt-6.1-sol",
+        "manual_only": true,
+        "auto": false,
+        "limits": {
+          "daily_requests": 20,
+          "daily_reserved_usd": 0.5,
+          "reserved_usd_per_call": 0.05,
+          "cooldown_ms": 60000,
+          "max_output_tokens": 1024,
+          "max_request_bytes": 6000,
+          "provider_timeout_ms": 30000,
+          "receipt_retention_days": 8
+        },
+        "reason": "Ready for a manual interpretation of retained server evidence; no model call has been proved by this capability check.",
+        "privacy": "Only bounded numeric and enum metadata from retained Observatory records is sent to OpenAI. No endpoints, IP addresses, URLs, bodies, headers, raw log text or API keys are sent in the model context. Inference is hosted, not on this device. Interpretation receipts and conservative reservations are retained for eight days and purged on the next valid retained-evidence interpretation request; no unattended cleanup is claimed.",
+        "model_execution_verified": false,
+        "evidence_scope": "Retained native Observatory source records only; browser imports cannot trigger paid inference"
+      }
+    }
+  },
+  "concurrent_duplicate": {
+    "status": 409,
+    "body": {
+      "error": {
+        "code": "interpretation_pending",
+        "message": "An interpretation is already reserved for this evidence. No second provider call will be sent."
+      },
+      "retry_after_ms": 60000
+    }
+  },
+  "different_evidence_during_cooldown": {
+    "status": 429,
+    "body": {
+      "error": {
+        "code": "interpretation_budget_or_cooldown",
+        "message": "The interpretation cooldown or reserved daily budget was reached. No provider call was made."
+      },
+      "retry_after_ms": 60000,
+      "model": {
+        "connected": true,
+        "configured": true,
+        "storage_attached": true,
+        "state": "available",
+        "mode": "hosted_gpt_sol",
+        "model_id": "gpt-6.1-sol",
+        "manual_only": true,
+        "auto": false,
+        "limits": {
+          "daily_requests": 20,
+          "daily_reserved_usd": 0.5,
+          "reserved_usd_per_call": 0.05,
+          "cooldown_ms": 60000,
+          "max_output_tokens": 1024,
+          "max_request_bytes": 6000,
+          "provider_timeout_ms": 30000,
+          "receipt_retention_days": 8
+        },
+        "reason": "Ready for a manual interpretation of retained server evidence; no model call has been proved by this capability check.",
+        "privacy": "Only bounded numeric and enum metadata from retained Observatory records is sent to OpenAI. No endpoints, IP addresses, URLs, bodies, headers, raw log text or API keys are sent in the model context. Inference is hosted, not on this device. Interpretation receipts and conservative reservations are retained for eight days and purged on the next valid retained-evidence interpretation request; no unattended cleanup is claimed.",
+        "model_execution_verified": false,
+        "evidence_scope": "Retained native Observatory source records only; browser imports cannot trigger paid inference"
+      }
+    }
+  }
+}
