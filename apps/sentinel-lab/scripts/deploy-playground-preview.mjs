@@ -27,7 +27,7 @@ if (process.argv.includes('--inspect')) {
     throw Error('Bundle must match the unchanged committed manual-only source and Preview target.');
   const inventory = [];
   for (const file of payload.files) {
-    if (!file.file.startsWith('apps/sentinel-lab/') || file.file.includes('..') || /(^|\/)(\.env[^/]*|\.vercel|private\/templates)(\/|$)/.test(file.file) || file.encoding !== 'base64') throw Error('Unsafe manual-only bundle path.');
+    if (!file.file.startsWith('apps/sentinel-lab/') || file.file.split(/[\\/]/).includes('..') || /(^|\/)(\.env[^/]*|\.vercel|private\/templates)(\/|$)/.test(file.file) || file.encoding !== 'base64') throw Error('Unsafe manual-only bundle path.');
     const data = Buffer.from(file.data, 'base64');
     if (!data.equals(await readFile(file.file))) throw Error('Bundle source changed since freeze.');
     inventory.push({ file: file.file, bytes: data.length, sha256: createHash('sha256').update(data).digest('hex') });
