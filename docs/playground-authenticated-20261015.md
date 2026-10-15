@@ -43,3 +43,20 @@ The additive TEST-ledger setup passed against the existing approved validation d
 Current validation: backend 140 passed plus one existing Windows symlink skip; frontend platform 36 passed; backend typecheck and optimized build, frontend Functions compilation, and deployment/verification helper syntax checks passed. The first count-probe fixtures exposed an adapter-result-shape assumption before any provider call. The claim now verifies its durable unique client token rather than relying on batch result metadata, and its concurrency, failure, replay and policy-reconfiguration fixtures pass.
 
 No count or generation request has been submitted. The one-count exception is still awaiting owner approval independently of key rotation. Authenticated funded customer inference, actual usage/cost, two-account hosted isolation, model comparison and production release remain unproven.
+
+## Subsequent authenticated count acceptance
+
+The owner corrected the exact Preview Secret, and a fresh protected deployment (`dpl_8PwhFhCpJvdj5HF7G9sJZyvzv1C4`) authenticated with OpenAI HTTP 200. Both requested model IDs are listed; missing-token and wrong-origin negatives still reject. The earlier 401 observations above remain historical. Evidence is in `rotation-v3/`.
+
+The owner then explicitly approved the one-time count exception. Protected deployment `dpl_EtvmuXCjyknG5Fa9MVJzsfNY31vF` submitted one fixed public Sol count. OpenAI returned **701 input tokens**, HTTP 200, provider request `req_91e73b7e1c5e40d39a9cd846dc247661`. Its frozen 3,586-byte payload includes the schema and all supported input-bearing fields. The request hash, client identity and provider identity match across the HTTP and durable-journal receipts.
+
+Fresh-process readback confirms exactly one diagnostic claim and result, zero generation actions and the entire $5 held with dispatch paused. Actual count cost remains unknown (`null`). The project usage dashboard displayed “No data”; missing usage is not zero-cost evidence. No hold was released and no generation or further count was submitted. This is one Sol count acceptance, not model quality, generation-cost, funded customer, Astra-count or production acceptance.
+
+Repo-root commands for this acceptance:
+
+```text
+node scripts/submit_playground_count_probe.mjs --receipt=<protected-count-deployment-receipt> --out=<versioned-count-evidence> --cli=<authenticated-vercel-cli-entry>
+node scripts/verify_playground_count_receipt.mjs --configuration=<existing-ignored-test-config> --out=<versioned-count-evidence>
+```
+
+The submit helper writes a local start receipt exclusively and refuses blind resubmission; server claims remain independently fenced. The readback helper only reads the approved TEST ledger and never releases liability. See `artifacts/playground-authenticated-20261015/count-v1/RESULT.md` and its JSON/request receipts. No core Brain/Sentinel research behavior changed.

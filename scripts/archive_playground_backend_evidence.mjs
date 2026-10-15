@@ -31,7 +31,7 @@ async function files(directory,prefix=''){
   return list.sort();
 }
 const sourcePaths=git('ls-files','--','apps/sentinel-lab').split(/\r?\n/).filter(file=>file&&!/(^|\/)(\.env[^/]*|\.vercel|\.next|node_modules|private)(\/|$)/.test(file));
-const extraSource=authenticated?['scripts/archive_playground_backend_evidence.mjs','scripts/verify_playground_provider_auth.mjs','docs/playground-authenticated-20261015.md']:['scripts/archive_playground_backend_evidence.mjs','docs/works-playground-continuation-20261014.md'];
+const extraSource=authenticated?['scripts/archive_playground_backend_evidence.mjs','scripts/verify_playground_provider_auth.mjs','scripts/submit_playground_count_probe.mjs','scripts/verify_playground_count_receipt.mjs','docs/playground-authenticated-20261015.md']:['scripts/archive_playground_backend_evidence.mjs','docs/works-playground-continuation-20261014.md'];
 sourcePaths.push(...extraSource);
 const sourceFiles=[];
 for(const file of sourcePaths.sort()){
