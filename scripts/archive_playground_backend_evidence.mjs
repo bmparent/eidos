@@ -4,7 +4,8 @@ import { createHash } from 'node:crypto';
 import { execFileSync } from 'node:child_process';
 import path from 'node:path';
 
-const local=path.resolve('artifacts/playground-unified-backend-20261014'),timestamp=new Date().toISOString();
+const authenticated=process.argv.includes('--authenticated');
+const local=path.resolve(authenticated?'artifacts/playground-authenticated-20261015':'artifacts/playground-unified-backend-20261014'),timestamp=new Date().toISOString();
 const dateArg=process.argv.find(value=>value.startsWith('--date='));
 const date=dateArg?dateArg.slice(7):timestamp.slice(0,10);
 if(!/^\d{4}-\d{2}-\d{2}$/.test(date))throw Error('Use --date=YYYY-MM-DD for the client task date.');
@@ -30,10 +31,11 @@ async function files(directory,prefix=''){
   return list.sort();
 }
 const sourcePaths=git('ls-files','--','apps/sentinel-lab').split(/\r?\n/).filter(file=>file&&!/(^|\/)(\.env[^/]*|\.vercel|\.next|node_modules|private)(\/|$)/.test(file));
-sourcePaths.push('scripts/archive_playground_backend_evidence.mjs','docs/works-playground-continuation-20261014.md');
+const extraSource=authenticated?['scripts/archive_playground_backend_evidence.mjs','scripts/verify_playground_provider_auth.mjs','docs/playground-authenticated-20261015.md']:['scripts/archive_playground_backend_evidence.mjs','docs/works-playground-continuation-20261014.md'];
+sourcePaths.push(...extraSource);
 const sourceFiles=[];
 for(const file of sourcePaths.sort()){
-  if(!file.startsWith('apps/sentinel-lab/')&&!['scripts/archive_playground_backend_evidence.mjs','docs/works-playground-continuation-20261014.md'].includes(file))throw Error('Unexpected source inventory path.');
+  if(!file.startsWith('apps/sentinel-lab/')&&!extraSource.includes(file))throw Error('Unexpected source inventory path.');
   const stat=await lstat(file);if(!stat.isFile()||stat.isSymbolicLink())throw Error('Unsafe source inventory file: '+file);
   const data=await readFile(file);sourceFiles.push({path:file,bytes:data.length,sha256:sha(data)});
 }
