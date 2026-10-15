@@ -60,3 +60,22 @@ node scripts/verify_playground_count_receipt.mjs --configuration=<existing-ignor
 ```
 
 The submit helper writes a local start receipt exclusively and refuses blind resubmission; server claims remain independently fenced. The readback helper only reads the approved TEST ledger and never releases liability. See `artifacts/playground-authenticated-20261015/count-v1/RESULT.md` and its JSON/request receipts. No core Brain/Sentinel research behavior changed.
+
+## Conservative count reconciliation and one real generation
+
+The [general pricing rule](https://developers.openai.com/api/docs/pricing) establishes that the Responses API has no separate API charge and tokens use the chosen model's input/output rates. Together with the exact count, this supports retaining **1,753 microdollars ($0.001753)** for all 701 input tokens at Sol's highest reviewed input-category rate, $2.50 per million. This is a conservative interpretation of the general pricing terms, **not an explicit count-endpoint fee confirmation or a settled invoice**. Actual count cost remains `null`. The dashboard's absent data is not evidence of zero cost. Further count calls remain disabled; `EIDOS_PLAYGROUND_INPUT_COUNT_PRICING` stays unset.
+
+The append-only `eidos_pg_ai_diagnostic_costs` table records bounded and settled diagnostic expenses separately. Original claim/result journal entries remain unchanged. Policy snapshots and all three atomic customer admission writes include these liabilities. Reconfiguring the policy cannot create extra budget by omitting the count expense. A later settled receipt takes precedence over a pessimistic bound without deleting either receipt.
+
+The protected `test-generation-one` Preview diagnostic can generate one fixed public Sol sample using the existing exact count. It accepts no customer prompt, model or funding. One SQLite write checks the count identity, payload, pricing reconciliation and shared lifetime budget, then reserves $0.12 before network I/O. Concurrent or repeated calls cannot dispatch again. It uses the same adapter request, typed-operation validation and usage parser as customer proposals. Missing usage retains the maximum and pauses the policy; known technical failure retains provider cost. Customer accounts and all public AI/commerce flags stay disabled. Operator inference does not prove funded customer acceptance or model-comparison quality.
+
+Repo-root commands:
+
+```text
+node --import ./apps/sentinel-lab/node_modules/tsx/dist/loader.mjs apps/sentinel-lab/scripts/reconcile-playground-count.ts --configuration=<existing-ignored-test-config> --pricing-evidence=<reviewed-public-pricing-receipt> --out=<versioned-evidence> --apply
+node apps/sentinel-lab/scripts/deploy-playground-auth-check.mjs --generation-probe --configuration=<existing-ignored-test-config> --out=<versioned-evidence> --cli=<authenticated-vercel-cli-entry> --deploy
+node scripts/submit_playground_generation_probe.mjs --receipt=<generation-deployment-receipt> --out=<versioned-evidence> --cli=<authenticated-vercel-cli-entry>
+node --import ./apps/sentinel-lab/node_modules/tsx/dist/loader.mjs apps/sentinel-lab/scripts/verify-playground-generation.ts --configuration=<existing-ignored-test-config> --out=<versioned-evidence>
+```
+
+The generation helper writes its local start marker exclusively and cannot blind-retry. Never delete that marker or the fixed server claim. Inspect `generation-v1/` for the actual outcome and lifetime budget rather than treating this procedure as proof that generation passed.

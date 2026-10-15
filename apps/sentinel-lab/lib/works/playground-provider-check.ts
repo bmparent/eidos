@@ -1,7 +1,7 @@
 import { timingSafeEqual } from 'node:crypto';
 
 export const diagnosticReply = (body: unknown, status = 200) => Response.json(body, { status, headers: { 'cache-control': 'no-store' } });
-export function authorizePlaygroundDiagnostic(request: Request, env: Record<string, string | undefined>, mode: 'test-auth' | 'test-count-one') {
+export function authorizePlaygroundDiagnostic(request: Request, env: Record<string, string | undefined>, mode: 'test-auth' | 'test-count-one' | 'test-generation-one') {
   if (env.VERCEL_ENV !== 'preview' || env.EIDOS_PLAYGROUND_PROVIDER_DIAGNOSTICS !== mode) return diagnosticReply({ error: 'Not found.' }, 404);
   const expected = env.EIDOS_PLATFORM_TOKEN || '', actual = request.headers.get('x-eidos-platform-token') || '';
   if (expected.length < 32 || Buffer.byteLength(actual) !== Buffer.byteLength(expected) || !timingSafeEqual(Buffer.from(actual), Buffer.from(expected)))

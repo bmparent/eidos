@@ -6,7 +6,12 @@ import { hash, readText, type Database } from './vendor/functions/_shared/platfo
 import { createProject } from './project-delivery/src/playground/model';
 import { createProposalContext } from './project-delivery/src/playground/aiOperations';
 
-const claimId = 'playground-owner-count-probe-20261015-sol';
+export const ownerCountClaimId = 'playground-owner-count-probe-20261015-sol';
+export function ownerCountRequest() {
+  const project=createProject(), section=project.sections.find(s=>s.id==='hero')!;
+  return buildAiProviderRequest({documentId:'owner-count-probe-public-fixture',revision:'1',scope:'section',targetId:section.id,
+    instruction:'Clarify this public sample headline.',context:JSON.stringify(createProposalContext(project,section.id,'','section'))},providerTestRateCard('gpt-6.1-sol'));
+}
 /** One operator-only count. Unknown billing blocks the entire TEST budget indefinitely. */
 export async function probePlaygroundCount(request: Request, source: Record<string,string|undefined> = process.env, transport: typeof fetch = fetch, suppliedDb?: Database) {
   const denied = authorizePlaygroundDiagnostic(request,source,'test-count-one');
@@ -14,9 +19,7 @@ export async function probePlaygroundCount(request: Request, source: Record<stri
   if (!source.EIDOS_PLAYGROUND_OPENAI_API_KEY || source.EIDOS_PLAYGROUND_OPENAI_API_KEY.length < 20) return reply({ error:'dedicated_key_missing' },503);
   const database = suppliedDb || platformDatabase(source);
   if (!database || (!suppliedDb && source.EIDOS_DATABASE_BINDING_PREFIX !== 'EIDOS_TEMPLATES_TEST')) return reply({ error:'approved_test_database_required' },503);
-  const env={EIDOS_DB:database}, project=createProject(), section=project.sections.find(s=>s.id==='hero')!;
-  const built=buildAiProviderRequest({documentId:'owner-count-probe-public-fixture',revision:'1',scope:'section',targetId:section.id,
-    instruction:'Clarify this public sample headline.',context:JSON.stringify(createProposalContext(project,section.id,'','section'))},providerTestRateCard('gpt-6.1-sol'));
+  const env={EIDOS_DB:database}, built=ownerCountRequest(), claimId=ownerCountClaimId;
   const requestHash=await hash(built.countSerialized), now=new Date().toISOString(),clientRequestId=crypto.randomUUID();
   try {
     await ensureAiLedger(env);

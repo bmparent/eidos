@@ -118,20 +118,32 @@ const providerCommitted = `CASE WHEN provider_status='held' THEN provider_maximu
 // This ceiling is checked inside each atomic write, including after a concurrent
 // operator update. Synthetic accounting fixtures retain their existing budgets.
 const realBudgetBound = `(json_extract(p.rate_json,'$.evidence')!='owner-approved' OR p.provider_budget<=${REAL_PROVIDER_TEST_BUDGET})`;
+/** SQL-only mode expressions are supplied by this module and the owner probe. */
+export function diagnosticProviderLiability(mode: string, category: 'all' | 'held' | 'bounded' | 'settled' = 'all') {
+  const amount = category === 'held' ? 'CASE WHEN s.claim_id IS NULL AND b.claim_id IS NULL THEN json_extract(h.detail_json,\'$.providerHeldMicros\') ELSE 0 END'
+    : category === 'bounded' ? 'CASE WHEN s.claim_id IS NULL THEN COALESCE(b.provider_cost,0) ELSE 0 END'
+    : category === 'settled' ? 'COALESCE(s.provider_cost,0)'
+    : 'COALESCE(s.provider_cost,b.provider_cost,json_extract(h.detail_json,\'$.providerHeldMicros\'))';
+  return `(SELECT COALESCE(SUM(${amount}),0) FROM eidos_pg_ai_journal h
+    LEFT JOIN eidos_pg_ai_diagnostic_costs s ON s.claim_id=h.id AND s.mode=h.mode AND s.status='settled'
+    LEFT JOIN eidos_pg_ai_diagnostic_costs b ON b.claim_id=h.id AND b.mode=h.mode AND b.status='bounded'
+    WHERE h.mode=${mode} AND h.event IN ('diagnostic_count_hold','diagnostic_generation_hold'))`;
+}
 /** Operator snapshot. A lower budget blocks new dispatch immediately; existing submitted costs remain obligations. */
 export async function aiPolicyStatus(env: PlatformEnv, mode: AiMode) {
   const snapshot = await db(env).prepare(`SELECT p.provider_budget configuredBudget,p.enabled,p.paused_reason pausedReason,
     COALESCE(SUM(CASE WHEN a.provider_status='held' AND a.state='reserved' THEN a.provider_maximum ELSE 0 END),0) reserved,
     COALESCE(SUM(CASE WHEN a.provider_status='held' AND a.state!='reserved' THEN a.provider_maximum ELSE 0 END),0) submitted,
     COALESCE(SUM(CASE WHEN a.provider_status='settled' THEN a.provider_cost ELSE 0 END),0) settled,
-    COALESCE(SUM(CASE WHEN a.provider_status='pessimistic' THEN a.provider_cost ELSE 0 END),0) unresolved
+    COALESCE(SUM(CASE WHEN a.provider_status='pessimistic' THEN a.provider_cost ELSE 0 END),0) unresolved,
+    ${diagnosticProviderLiability('p.mode','held')} diagnosticHeld,
+    ${diagnosticProviderLiability('p.mode','bounded')} diagnosticPessimistic,
+    ${diagnosticProviderLiability('p.mode','settled')} diagnosticSettled
     FROM eidos_pg_ai_policies p LEFT JOIN eidos_pg_ai_actions a ON a.mode=p.mode WHERE p.mode=? GROUP BY p.mode`).bind(mode)
-    .first<{configuredBudget:number;enabled:number;pausedReason:string|null;reserved:number;submitted:number;settled:number;unresolved:number}>();
+    .first<{configuredBudget:number;enabled:number;pausedReason:string|null;reserved:number;submitted:number;settled:number;unresolved:number;diagnosticHeld:number;diagnosticPessimistic:number;diagnosticSettled:number}>();
   if (!snapshot) throw new HttpError(503, 'AI policy is not configured.');
-  const probe = await db(env).prepare("SELECT COALESCE(SUM(json_extract(detail_json,'$.providerHeldMicros')),0) held FROM eidos_pg_ai_journal WHERE mode=? AND event='diagnostic_count_hold'").bind(mode).first<{held:number}>();
-  const diagnosticHeld = money(probe?.held || 0);
-  const committed = money(snapshot.reserved + snapshot.submitted + snapshot.settled + snapshot.unresolved + diagnosticHeld);
-  return { ...snapshot, diagnosticHeld, enabled: Boolean(snapshot.enabled), committed, remaining: Math.max(0, snapshot.configuredBudget - committed),
+  const committed = money(snapshot.reserved + snapshot.submitted + snapshot.settled + snapshot.unresolved + snapshot.diagnosticHeld + snapshot.diagnosticPessimistic + snapshot.diagnosticSettled);
+  return { ...snapshot, enabled: Boolean(snapshot.enabled), committed, remaining: Math.max(0, snapshot.configuredBudget - committed),
     overBudget: committed > snapshot.configuredBudget, dispatchBlocked: !snapshot.enabled || Boolean(snapshot.pausedReason) || committed > snapshot.configuredBudget };
 }
 /** Server-only pricing lookup; browsers cannot provide model or rate parameters. */
@@ -229,7 +241,7 @@ export async function reserveAiAction(env: PlatformEnv, owner: string, mode: AiM
       AND b.requested_limit >= maximum+(SELECT COALESCE(SUM(${customerCommitted}),0) FROM eidos_pg_ai_actions WHERE owner_id=? AND mode=? AND period=?))
     AND NOT EXISTS(SELECT 1 FROM eidos_pg_ai_grants g JOIN eidos_orders o ON o.id=g.order_id WHERE g.owner_id=eidos_pg_ai_actions.owner_id AND g.mode=eidos_pg_ai_actions.mode AND (o.status!='paid' OR g.reversed=1 OR EXISTS(SELECT 1 FROM eidos_revoked_payments r WHERE r.payment_intent=g.payment_intent)))
     AND EXISTS(SELECT 1 FROM eidos_pg_ai_policies p WHERE p.mode=? AND p.enabled=1 AND p.paused_reason IS NULL AND p.rate_json=?
-      AND ${realBudgetBound} AND p.provider_budget >= provider_maximum+(SELECT COALESCE(SUM(${providerCommitted}),0) FROM eidos_pg_ai_actions WHERE mode=?)) RETURNING id`)
+      AND ${realBudgetBound} AND p.provider_budget >= provider_maximum+${diagnosticProviderLiability('p.mode')}+(SELECT COALESCE(SUM(${providerCommitted}),0) FROM eidos_pg_ai_actions WHERE mode=?)) RETURNING id`)
     .bind(owner, mode, owner, mode, id, owner, mode, at.toISOString(), period, owner, mode, owner, mode, period, mode, action.rate_json, mode).first();
   if (!result) {
     const current = await ownedAiAction(env, owner, mode, id);
@@ -248,7 +260,7 @@ export async function claimAiDispatch(env: PlatformEnv, owner: string, mode: AiM
     AND EXISTS(SELECT 1 FROM eidos_pg_ai_accounts a WHERE a.owner_id=? AND a.mode=? AND a.frozen=0)
     AND NOT EXISTS(SELECT 1 FROM eidos_pg_ai_grants g JOIN eidos_orders o ON o.id=g.order_id WHERE g.owner_id=eidos_pg_ai_actions.owner_id AND g.mode=eidos_pg_ai_actions.mode AND (o.status!='paid' OR g.reversed=1 OR EXISTS(SELECT 1 FROM eidos_revoked_payments r WHERE r.payment_intent=g.payment_intent)))
     AND EXISTS(SELECT 1 FROM eidos_pg_ai_policies p WHERE p.mode=? AND p.enabled=1 AND p.paused_reason IS NULL AND p.rate_json=eidos_pg_ai_actions.rate_json
-      AND ${realBudgetBound} AND p.provider_budget >= (SELECT COALESCE(SUM(${providerCommitted}),0) FROM eidos_pg_ai_actions WHERE mode=?)) RETURNING id`)
+      AND ${realBudgetBound} AND p.provider_budget >= ${diagnosticProviderLiability('p.mode')}+(SELECT COALESCE(SUM(${providerCommitted}),0) FROM eidos_pg_ai_actions WHERE mode=?)) RETURNING id`)
     .bind(token, at.toISOString(), new Date(at.getTime() + CUSTOMER_HOLD_WINDOW_MS).toISOString(), id, owner, mode, at.toISOString(), monthlyPeriod(at).period, owner, mode, mode, mode).first();
   return claimed ? token : null;
 }
@@ -267,7 +279,7 @@ export async function claimAiInputCount(env: PlatformEnv, owner: string, mode: A
       AND NOT EXISTS(SELECT 1 FROM eidos_pg_ai_grants g JOIN eidos_orders o ON o.id=g.order_id WHERE g.owner_id=a.owner_id AND g.mode=a.mode
         AND (o.status!='paid' OR g.reversed=1 OR EXISTS(SELECT 1 FROM eidos_revoked_payments r WHERE r.payment_intent=g.payment_intent)))
       AND EXISTS(SELECT 1 FROM eidos_pg_ai_policies p WHERE p.mode=a.mode AND p.enabled=1 AND p.paused_reason IS NULL AND p.rate_json=a.rate_json
-        AND ${realBudgetBound} AND p.provider_budget>=a.provider_maximum+(SELECT COALESCE(SUM(${providerCommitted}),0) FROM eidos_pg_ai_actions WHERE mode=a.mode))
+        AND ${realBudgetBound} AND p.provider_budget>=a.provider_maximum+${diagnosticProviderLiability('p.mode')}+(SELECT COALESCE(SUM(${providerCommitted}),0) FROM eidos_pg_ai_actions WHERE mode=a.mode))
       AND (SELECT COUNT(*) FROM eidos_pg_ai_count_claims WHERE mode=a.mode)<${AI_COUNT_LIMITS.lifetime}
       AND (SELECT COUNT(*) FROM eidos_pg_ai_count_claims WHERE mode=a.mode AND created_at>?)<${AI_COUNT_LIMITS.globalHour}
       AND (SELECT COUNT(*) FROM eidos_pg_ai_count_claims WHERE mode=a.mode AND owner_id=a.owner_id AND created_at>?)<${AI_COUNT_LIMITS.perOwnerHour}

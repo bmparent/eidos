@@ -72,6 +72,14 @@ CREATE TABLE IF NOT EXISTS eidos_pg_ai_journal (
  id TEXT PRIMARY KEY, owner_id TEXT, mode TEXT NOT NULL CHECK(mode IN ('test','live')), action_id TEXT,
  event TEXT NOT NULL, detail_json TEXT NOT NULL, created_at TEXT NOT NULL
 );
+-- Append-only diagnostic expenses. A pricing bound remains pessimistic until a
+-- separate settled receipt exists. Original claim/result journal rows survive.
+CREATE TABLE IF NOT EXISTS eidos_pg_ai_diagnostic_costs (
+ claim_id TEXT NOT NULL REFERENCES eidos_pg_ai_journal(id), mode TEXT NOT NULL CHECK(mode='test'),
+ status TEXT NOT NULL CHECK(status IN ('bounded','settled')),
+ provider_cost INTEGER NOT NULL CHECK(typeof(provider_cost)='integer' AND provider_cost>=0 AND provider_cost<=1000000000000),
+ evidence_json TEXT NOT NULL, created_at TEXT NOT NULL, PRIMARY KEY(claim_id,status)
+);
 CREATE VIEW IF NOT EXISTS eidos_pg_ai_balances AS
  SELECT a.owner_id,a.mode,a.requested_limit,a.frozen,
  COALESCE((SELECT SUM(g.amount-g.revoked_amount) FROM eidos_pg_ai_grants g WHERE g.owner_id=a.owner_id AND g.mode=a.mode AND g.kind='included'),0)-COALESCE((SELECT SUM(CASE WHEN x.customer_status='held' THEN x.held_included WHEN x.customer_status='settled' THEN x.charged_included ELSE 0 END) FROM eidos_pg_ai_actions x WHERE x.owner_id=a.owner_id AND x.mode=a.mode),0) AS available_included,

@@ -7,6 +7,9 @@ import { vercelApi } from './vercel-preview-client.mjs';
 
 const cli = process.argv.find(s => s.startsWith('--cli='))?.slice(6);
 const countProbe = process.argv.includes('--count-probe');
+const generationProbe = process.argv.includes('--generation-probe');
+if(countProbe&&generationProbe)throw Error('Choose one diagnostic mode.');
+const prefix=generationProbe?'generation':countProbe?'count':'auth';
 const configuration = process.argv.find(s => s.startsWith('--configuration='))?.slice('--configuration='.length);
 const git = (...args) => execFileSync('git', args, { encoding: 'utf8' }).trim();
 const branch = 'codex/playground-unified-20261014', project = 'prj_5aL0COF1DONfPKI4fv25NitAdkOE', team = 'team_TEsnMvKU6SdbYjVhws6Ttp8H';
@@ -28,30 +31,30 @@ const sourceCommit = git('rev-parse', 'HEAD'), bundleHash = createHash('sha256')
 const env = { ...JSON.parse(await readFile('apps/sentinel-lab/.vercel/playground-manual.private.json', 'utf8')).env,
   EIDOS_SOURCE_COMMIT: sourceCommit, EIDOS_SOURCE_BUNDLE_HASH: bundleHash, EIDOS_PLAYGROUND_PROVIDER_DIAGNOSTICS: 'test-auth',
   EIDOS_PLAYGROUND_AI_ENABLED: 'false', EIDOS_PLAYGROUND_INPUT_COUNT_PRICING: '' };
-if (countProbe) {
+if (countProbe || generationProbe) {
   if (!configuration) throw Error('Supply the existing ignored approved TEST database configuration.');
   const input = JSON.parse(await readFile(configuration, 'utf8')).env;
   if (input.EIDOS_DATABASE_BINDING_PREFIX !== 'EIDOS_TEMPLATES_TEST' || !new URL(input.EIDOS_TEMPLATES_TEST_TURSO_DATABASE_URL).hostname.includes('validation') || !input.EIDOS_TEMPLATES_TEST_TURSO_AUTH_TOKEN)
     throw Error('Only the approved isolated TEST database may persist the count hold.');
   for (const key of ['EIDOS_DATABASE_BINDING_PREFIX','EIDOS_TEMPLATES_TEST_TURSO_DATABASE_URL','EIDOS_TEMPLATES_TEST_TURSO_AUTH_TOKEN']) env[key] = input[key];
-  env.EIDOS_PLAYGROUND_PROVIDER_DIAGNOSTICS = 'test-count-one';
+  env.EIDOS_PLAYGROUND_PROVIDER_DIAGNOSTICS = generationProbe?'test-generation-one':'test-count-one';
 }
 // Inherit the explicitly approved branch Secret inside Vercel. Never read its value locally.
 delete env.EIDOS_PLAYGROUND_OPENAI_API_KEY;
 if (['EIDOS_ACCOUNTS_ENABLED','EIDOS_AI_ENABLED','EIDOS_SHOP_ENABLED','EIDOS_TEMPLATE_TEST_ENABLED','EIDOS_TEMPLATE_LIVE_ENABLED'].some(k => env[k] !== 'false') ||
     ['EIDOS_DATABASE_URL','EIDOS_DATABASE_AUTH_TOKEN'].some(k => env[k] !== '') ||
-    (!countProbe && ['EIDOS_DATABASE_BINDING_PREFIX','EIDOS_TEMPLATES_TEST_TURSO_AUTH_TOKEN'].some(k => env[k] !== ''))) throw Error('Diagnostic must disable all customer/provider generation and exclude fallback databases.');
+    (!countProbe && !generationProbe && ['EIDOS_DATABASE_BINDING_PREFIX','EIDOS_TEMPLATES_TEST_TURSO_AUTH_TOKEN'].some(k => env[k] !== ''))) throw Error('Diagnostic must disable all customer generation and exclude fallback databases.');
 const receipt = { timestampUtc: new Date().toISOString(), branch, project, team, sourceCommit, bundleHash, files: inventory,
-  dedicatedKey: 'Inherited approved Preview branch Secret; never read locally', accounts: false, inference: false, tokenCounting: countProbe ? 'one operator probe; unknown billing holds all $5' : false, database: countProbe ? 'approved TEST validation binding' : false, aliasChanged: false };
+  dedicatedKey: 'Inherited approved Preview branch Secret; never read locally', accounts: false, inference: generationProbe?'one fixed public operator sample with durable aggregate reservation':false, tokenCounting: countProbe ? 'one operator probe; unknown billing holds all $5' : false, database: countProbe||generationProbe ? 'approved TEST validation binding' : false, aliasChanged: false };
 await mkdir(out, { recursive: true });
-await writeFile(out + (countProbe ? '/count-source.json' : '/auth-source.json'), JSON.stringify(receipt, null, 2) + '\n');
+await writeFile(out + '/'+prefix+'-source.json', JSON.stringify(receipt, null, 2) + '\n');
 if (process.argv.includes('--deploy')) {
   const result = vercelApi(cli, '/v13/deployments?forceNew=1&teamId=' + team, 'POST', {
     name: 'eidos-sentinel-lab', project, files, env, projectSettings: { rootDirectory: 'apps/sentinel-lab' },
     gitMetadata: { remoteUrl: 'https://github.com/bmparent/eidos', commitRef: branch, commitSha: sourceCommit, dirty: false },
-    meta: { playgroundDiagnostic: countProbe ? 'count-one' : 'auth-only', playgroundGitSha: sourceCommit, playgroundBundleHash: bundleHash, paidTemplatesEnvironmentBranch: branch },
+    meta: { playgroundDiagnostic: generationProbe?'generation-one':countProbe ? 'count-one' : 'auth-only', playgroundGitSha: sourceCommit, playgroundBundleHash: bundleHash, paidTemplatesEnvironmentBranch: branch },
   });
   if (result.target === 'production') throw Error('Unexpected deployment target. Inspect immediately.');
-  await writeFile(out + (countProbe ? '/count-deployment.json' : '/auth-deployment.json'), JSON.stringify({ timestampUtc: new Date().toISOString(), sourceCommit, bundleHash, id: result.id, url: 'https://' + result.url, state: result.readyState, target: result.target || 'preview' }, null, 2) + '\n');
+  await writeFile(out + '/'+prefix+'-deployment.json', JSON.stringify({ timestampUtc: new Date().toISOString(), sourceCommit, bundleHash, id: result.id, url: 'https://' + result.url, state: result.readyState, target: result.target || 'preview' }, null, 2) + '\n');
   console.log(JSON.stringify({ id: result.id, url: 'https://' + result.url, sourceCommit, bundleHash, state: result.readyState, target: result.target || 'preview' }));
 } else console.log(JSON.stringify({ sourceCommit, bundleHash, fileCount: files.length, dryRun: true }));

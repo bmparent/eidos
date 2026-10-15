@@ -65,6 +65,22 @@ async function fixture(budget = 5 * USD, databaseUrl = ':memory:') {
     counts: () => counts, generations: () => generations, bodies: () => ({countBody,generationBody}), close: () => client.close() };
 }
 
+test('diagnostic liabilities participate in count, reserve and dispatch admission after policy reconfiguration',async()=>{
+  const f=await fixture(200000);
+  try{
+    await f.env.EIDOS_DB!.prepare("INSERT INTO eidos_pg_ai_journal(id,mode,event,detail_json,created_at) VALUES('diagnostic-fixture','test','diagnostic_count_hold',?,?)")
+      .bind(JSON.stringify({providerHeldMicros:100001}),at.toISOString()).run();
+    await assert.rejects(f.quote(),/owner budget/);assert.equal(f.counts(),0);
+    await configureAiPolicy(f.env,'test',card,300000,true);
+    const action=await f.quote();await configureAiPolicy(f.env,'test',card,200000,true);
+    await assert.rejects(reserveAiAction(f.env,'owner','test',action.id,at),/owner budget/);
+    await f.env.EIDOS_DB!.prepare("INSERT INTO eidos_pg_ai_diagnostic_costs(claim_id,mode,status,provider_cost,evidence_json,created_at) VALUES('diagnostic-fixture','test','settled',100001,'{}',?)").bind(at.toISOString()).run();
+    await configureAiPolicy(f.env,'test',card,300000,true);await reserveAiAction(f.env,'owner','test',action.id,at);
+    await configureAiPolicy(f.env,'test',card,200000,true);assert.equal(await claimAiDispatch(f.env,'owner','test',action.id,at),null);
+    assert.equal(f.generations(),0);assert.equal((await aiPolicyStatus(f.env,'test')).diagnosticSettled,100001);
+  }finally{f.close();}
+});
+
 test('provider request has explicit scope, typed schema, fixed standard tier, total output cap, no cache writes/tools/subagents', () => {
   const built = buildAiProviderRequest(brief, card), request = built.request;
   assert.equal(request.service_tier,'default'); assert.equal(request.max_output_tokens,card.maxOutputTokens); assert.equal(request.reasoning.effort,'medium');
