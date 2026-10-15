@@ -1,0 +1,33 @@
+{
+  "audit_time": "2026-10-15T15:05:12Z",
+  "retained_targets": 5,
+  "retained_observations": 54,
+  "observations_with_http_status": 43,
+  "observations_with_error": 11,
+  "initial_cached_checks": [
+    {
+      "cached": true,
+      "kind": "model",
+      "accepted": true,
+      "execution_verified": true,
+      "prompt_version": "observatory-sol-target-streams-v2"
+    },
+    {
+      "cached": true,
+      "kind": "deterministic",
+      "accepted": false,
+      "execution_verified": true,
+      "prompt_version": "observatory-sol-target-streams-v2"
+    },
+    {
+      "cached": true,
+      "kind": "model",
+      "accepted": true,
+      "execution_verified": true,
+      "prompt_version": "observatory-sol-target-streams-v2"
+    }
+  ],
+  "initial_new_provider_calls": 0,
+  "release_new_provider_calls": 1,
+  "release_cached_repeat": true
+}
