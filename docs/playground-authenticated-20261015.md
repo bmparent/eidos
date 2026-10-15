@@ -79,3 +79,12 @@ node --import ./apps/sentinel-lab/node_modules/tsx/dist/loader.mjs apps/sentinel
 ```
 
 The generation helper writes its local start marker exclusively and cannot blind-retry. Never delete that marker or the fixed server claim. Inspect `generation-v1/` for the actual outcome and lifetime budget rather than treating this procedure as proof that generation passed.
+
+The real protected generation now passed at application source `00f467f00786a2c605dcb55641212af19098442a`, Preview `dpl_4DJ3rXsJvW8LGtaYTxwezHh9z3Bh`. Sol returned a validated headline edit with 701 input and 34 output tokens; every cache/reasoning category is explicitly present and zero. Metered generation expense is $0.001742. With the retained $0.001753 count ceiling, the lifetime commitment is $0.003495 and remaining budget is $4.996505. Fresh-process readback matches request hashes and provider/client identities. Hosted 401/403 negatives, two settled 409 replays and local no-resubmit checks pass without another generation.
+
+The actual returned operation was applied and packaged through the shared renderer, then opened in Chrome at desktop and mobile sizes. The headline renders, navigation expands/collapses, and no relevant console error or horizontal overflow appeared. This is one operator headline edit, not a funded customer flow, Astra comparison or production release. See `generation-v1/RESULT.md` for receipts, math and remaining gates. No API key action is required.
+
+```text
+node scripts/verify_playground_generation_guards.mjs --out=<versioned-evidence> --cli=<authenticated-vercel-cli-entry>
+node --import ./apps/sentinel-lab/node_modules/tsx/dist/loader.mjs scripts/render_playground_generation.mts --out=<versioned-evidence>
+```
