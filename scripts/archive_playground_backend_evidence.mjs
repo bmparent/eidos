@@ -54,12 +54,13 @@ if(driveRoot){
   try{
     await mkdir(parent,{recursive:true});await mkdir(destination);
     for(const file of manifest.files){const target=path.join(destination,file.path);await mkdir(path.dirname(target),{recursive:true});await copyFile(path.join(local,file.path),target,constants.COPYFILE_EXCL);if(sha(await readFile(target))!==file.sha256)throw Error('Mirror checksum mismatch: '+file.path);drive.files_copied.push({...file,verified:true});}
-    await copyFile(path.join(metadata,'artifact_manifest.json'),path.join(destination,'artifact_manifest.json'),constants.COPYFILE_EXCL);
-    if(sha(await readFile(path.join(destination,'artifact_manifest.json')))!==sha(manifestBytes))throw Error('Mirror artifact manifest checksum mismatch.');
+    const mirroredMetadata=path.join(destination,metadataRelative);await mkdir(mirroredMetadata,{recursive:true});
+    await copyFile(path.join(metadata,'artifact_manifest.json'),path.join(mirroredMetadata,'artifact_manifest.json'),constants.COPYFILE_EXCL);
+    if(sha(await readFile(path.join(mirroredMetadata,'artifact_manifest.json')))!==sha(manifestBytes))throw Error('Mirror artifact manifest checksum mismatch.');
     drive.drive_copy_success=true;drive.reason='Every listed artifact and the artifact manifest copied with matching SHA256 readback. Mounted-folder copy does not establish remote cloud synchronization.';
   }catch(error){drive.reason=error.message;drive.files_skipped=manifest.files.filter(file=>!drive.files_copied.some(copied=>copied.path===file.path)).map(file=>({path:file.path,reason:drive.reason}));}
 }
 let driveBytes=Buffer.from(JSON.stringify(drive,null,2)+'\n');await writeFile(path.join(metadata,'drive_manifest.json'),driveBytes);
 let driveMetadataVerified=false;
-if(drive.drive_copy_success){try{await copyFile(path.join(metadata,'drive_manifest.json'),path.join(drive.drive_run_dir,'drive_manifest.json'),constants.COPYFILE_EXCL);driveMetadataVerified=sha(await readFile(path.join(drive.drive_run_dir,'drive_manifest.json')))===sha(driveBytes);if(!driveMetadataVerified)throw Error('Drive manifest checksum mismatch.');}catch(error){drive.drive_copy_success=false;drive.reason=error.message;driveBytes=Buffer.from(JSON.stringify(drive,null,2)+'\n');await writeFile(path.join(metadata,'drive_manifest.json'),driveBytes);}}
+if(drive.drive_copy_success){try{const mirroredManifest=path.join(drive.drive_run_dir,metadataRelative,'drive_manifest.json');await copyFile(path.join(metadata,'drive_manifest.json'),mirroredManifest,constants.COPYFILE_EXCL);driveMetadataVerified=sha(await readFile(mirroredManifest))===sha(driveBytes);if(!driveMetadataVerified)throw Error('Drive manifest checksum mismatch.');}catch(error){drive.drive_copy_success=false;drive.reason=error.message;driveBytes=Buffer.from(JSON.stringify(drive,null,2)+'\n');await writeFile(path.join(metadata,'drive_manifest.json'),driveBytes);}}
 console.log(JSON.stringify({local,sourceCommit,sourceFiles:sourceFiles.length,artifactFiles:manifest.files.length,artifactBytes:manifest.files.reduce((sum,file)=>sum+file.bytes,0),metadataDirectory:metadata,artifactManifestSha256:sha(manifestBytes),driveManifestSha256:sha(driveBytes),drive_copy_success:drive.drive_copy_success,driveMetadataVerified,drive_run_dir:drive.drive_run_dir,reason:drive.reason}));
