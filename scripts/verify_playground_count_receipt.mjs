@@ -34,6 +34,7 @@ try{
     result.state==='counted'&&result.providerStatus===200&&result.model==='gpt-6.1-sol'&&Number.isSafeInteger(result.inputTokens)&&
     hold.providerHeldMicros===5000000&&receipt.configuredBudgetMicros===5000000&&!receipt.generationEnabled&&
     receipt.pausedReason==='owner_count_billing_unknown_entire_5_usd_held'&&result.generationRequests===0;
-  await writeFile(path.join(out,'count-request.json'),hold.requestJson+'\n');
+  // Preserve the actual HTTP bytes, including their lack of a trailing newline.
+  await writeFile(path.join(out,'count-request.json'),hold.requestJson);
 }catch{Object.assign(receipt,{passed:false,reason:'Durable count reconciliation failed; private database details suppressed.'});}
 finally{client.close();await writeFile(path.join(out,'count-ledger-readback.json'),JSON.stringify(receipt,null,2)+'\n');console.log(JSON.stringify(receipt));if(!receipt.passed)process.exitCode=1;}

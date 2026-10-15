@@ -35,6 +35,6 @@ for(const item of cases){
   if(!safe.passed)break;
 }
 const receipt={timestampUtc:new Date().toISOString(),deploymentId:deployment.id,deploymentUrl:deployment.url,results,
-  generationRequests:0,countRequests:0,secretValuesRead:false,privateHeaders:'stdin',passed:results.every(x=>x.passed)};
+  generationRequests:0,countRequests:0,providerKeyReadLocally:false,secretValuesPrinted:false,privateHeaders:'stdin',passed:results.every(x=>x.passed)};
 await mkdir(out,{recursive:true});await writeFile(path.join(out,process.argv.includes('--expect-revoked')?'old-key-revocation.json':'replacement-authentication.json'),JSON.stringify(receipt,null,2)+'\n');
 console.log(JSON.stringify(receipt));if(!receipt.passed)process.exitCode=1;

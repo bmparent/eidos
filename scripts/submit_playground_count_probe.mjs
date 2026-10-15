@@ -27,6 +27,6 @@ const receipt={timestampUtc:new Date().toISOString(),deploymentId:deployment.id,
   inputTokens:Number.isSafeInteger(value.inputTokens)&&value.inputTokens>=0?value.inputTokens:null,
   providerRequestId:ascii(value.providerRequestId),clientRequestId:ascii(value.clientRequestId),requestHash:/^[a-f0-9]{64}$/.test(value.requestHash||'')?value.requestHash:null,
   providerHeldMicros:Number.isSafeInteger(value.providerHeldMicros)?value.providerHeldMicros:null,billing:'unknown',
-  generationRequests:value.generationRequests===0?0:null,automaticRetry:false,secretValuesRead:false};
+  generationRequests:value.generationRequests===0?0:null,automaticRetry:false,providerKeyReadLocally:false,secretValuesPrinted:false};
 receipt.passed=result.status===0&&status===200&&receipt.state==='counted'&&receipt.model==='gpt-6.1-sol'&&receipt.inputTokens!==null&&receipt.providerHeldMicros===5000000&&receipt.generationRequests===0;
 await writeFile(path.join(out,'count-http-receipt.json'),JSON.stringify(receipt,null,2)+'\n');console.log(JSON.stringify(receipt));if(!receipt.passed)process.exitCode=1;
