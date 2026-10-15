@@ -31,3 +31,15 @@ node apps/sentinel-lab/scripts/deploy-playground-auth-check.mjs --count-probe --
 ```
 
 The last command is a dry run; `--deploy` creates the protected one-count backend only after the owner authorizes that exception. The public manual preview stays pinned to its earlier database-free deployment.
+
+## Rotation and durable TEST setup
+
+An existing OpenAI key-creation dialog unexpectedly returned a plaintext secret in browser tool output. It was not copied into source, public artifacts or a local env file. The owner confirmed revocation and replacement. The previous protected deployment now receives OpenAI 401, verifying that its captured key is revoked.
+
+The fresh protected Preview `dpl_5PT2sZzgRhHSUditYGHuZ53kAco1`, from source `bff5f9a4484f3293948acf5d2337666559ddb6f3` and bundle `9e4fc2ff8718ee4d8fc2807eba20cda56fcd9fe4f0113702d2c170550f02bfb7`, also receives OpenAI 401. Direct authenticated CLI metadata shows the Production Secret entry was updated at `1792097136789`, while the branch-specific Preview entry retains `1792021933232`. The exact Preview branch replacement is therefore pending owner action. No secret was decrypted, read back, copied from Production or retargeted. Runtime receipts are saved under `artifacts/playground-authenticated-20261015/rotation-v2/`; the original successful authentication receipt remains historical.
+
+The additive TEST-ledger setup passed against the existing approved validation database. Its policy has a $5 aggregate lifetime budget, no commitments, generation disabled and no pause reason. Before/after counts match: four members, fifteen orders, nine template-order records, three projects and zero Playground orders. No customer identity, paid status or funding was manufactured. See `test-ledger-setup.json`.
+
+Current validation: backend 140 passed plus one existing Windows symlink skip; frontend platform 36 passed; backend typecheck and optimized build, frontend Functions compilation, and deployment/verification helper syntax checks passed. The first count-probe fixtures exposed an adapter-result-shape assumption before any provider call. The claim now verifies its durable unique client token rather than relying on batch result metadata, and its concurrency, failure, replay and policy-reconfiguration fixtures pass.
+
+No count or generation request has been submitted. The one-count exception is still awaiting owner approval independently of key rotation. Authenticated funded customer inference, actual usage/cost, two-account hosted isolation, model comparison and production release remain unproven.
