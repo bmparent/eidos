@@ -63,7 +63,7 @@ async function sensorReadResponse(response, deadline = performance.now() + 2500)
     let offset = 0;
     for (const chunk of chunks) {all.set(chunk, offset); offset += chunk.length;}
     return sensorObject(JSON.parse(new TextDecoder().decode(all)));
-  } catch {void reader.cancel().catch(() => {}); return {};}
+  } catch(error) {void reader.cancel().catch(() => {}); throw error;}
   finally {reader.releaseLock();}
 }
 
@@ -123,7 +123,7 @@ export async function recordObservation(env, request, response, ctx = {}) {
           method: 'HEAD', status: sensorStatus(event.status), duration_ms: sensorNumber(event.latency_ms),
           src_endpoint: 'Observatory observer', dest_endpoint: destination, outcome: sensorOutcome(event.error, sensorStatus(event.status)),
           head_attempted: event.coverage?.head_attempted === true, linked_evidence_id: event.id,
-          transport: ['authenticated_pinned_ip_relay', 'named_service_adapter'].includes(transport) ? transport : 'cloudflare_public_head',
+          transport: ['authenticated_pinned_target_relay', 'authenticated_pinned_ip_relay', 'named_service_adapter'].includes(transport) ? transport : 'cloudflare_public_head',
           network, test_context: testContext});
       }
     }
@@ -189,7 +189,7 @@ function sensorAuthoritativeRow(row) {
     ...(code ? {rule_id: code, rule_action: sensorRules[code]} : {}),
     ...(collector ? {head_attempted: typeof raw.head_attempted === 'boolean' ? raw.head_attempted : null,
       linked_evidence_id: /^evt_[a-f0-9]{32}$/.test(raw.linked_evidence_id ?? '') ? raw.linked_evidence_id : null,
-      transport: ['authenticated_pinned_ip_relay', 'cloudflare_public_head', 'named_service_adapter'].includes(raw.transport) ? raw.transport : null,
+      transport: ['authenticated_pinned_target_relay', 'authenticated_pinned_ip_relay', 'cloudflare_public_head', 'named_service_adapter'].includes(raw.transport) ? raw.transport : null,
       network: sensorNetwork(raw.network)} : {timestamp_scope: 'response_completed_at'}),
     ...(raw.test_context === 'functional_check' ? {test_context: 'functional_check'} : {})};
 }

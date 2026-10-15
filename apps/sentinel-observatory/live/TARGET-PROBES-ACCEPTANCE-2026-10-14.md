@@ -105,3 +105,5 @@ It ignores the new target-probe flags and uses the preserved original collector
 binding. Migration 0003 is additive and can remain. The original recorded capture
 and separate Showcase candidate are preserved. Main and unrelated release gates
 were not merged or promoted by this private app update.
+
+Follow-up: [15 October reliability audit](RELIABILITY-AUDIT-2026-10-15.md) records the interpretation defects, private hardening release, and remaining product qualification gates.

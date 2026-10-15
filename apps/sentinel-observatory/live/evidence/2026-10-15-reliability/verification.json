@@ -1,0 +1,435 @@
+{
+  "checked_at": "2026-10-15T15:16:39Z",
+  "assets": [
+    {
+      "path": "/app.js",
+      "sha256": "fe8fbcbc24f9fef22250f0e15c31df0881ff37145cec3bac9a725b6d976e61e5",
+      "matches_source": true
+    },
+    {
+      "path": "/probe-explanation.mjs",
+      "sha256": "b2933e9da64fdddbe19f92457afcbff7f8f59882c45daba0c04ad18c56b84129",
+      "matches_source": true
+    },
+    {
+      "path": "/network-panel.mjs",
+      "sha256": "24fc78aa3517ca9f36690e2f413dd55047c5be0ec189252d0f63f05d48a18635",
+      "matches_source": true
+    },
+    {
+      "path": "/",
+      "sha256": "65d7b8a7362ec77fbe55f847273ce48203d2b0fb43ff1416432a1cabbe49d0ff",
+      "matches_source": true
+    }
+  ],
+  "capabilities": {
+    "version": "sentinel-live-v8-evidence-explanations",
+    "mode": "hosted",
+    "direct_ip": true,
+    "ip_transport": "Authenticated Node collector; validated literal public address pinned, TLS verified",
+    "interval_ms": 15000,
+    "max_targets": 4,
+    "model": {
+      "connected": true,
+      "configured": true,
+      "storage_attached": true,
+      "state": "available",
+      "mode": "hosted_gpt_sol",
+      "model_id": "gpt-6.1-sol",
+      "manual_only": true,
+      "auto": false,
+      "limits": {
+        "daily_requests": 20,
+        "daily_reserved_usd": 0.5,
+        "reserved_usd_per_call": 0.05,
+        "cooldown_ms": 60000,
+        "max_output_tokens": 1024,
+        "max_request_bytes": 6000,
+        "provider_timeout_ms": 30000,
+        "receipt_retention_days": 8
+      },
+      "reason": "Ready for a manual interpretation of retained server evidence; no model call has been proved by this capability check.",
+      "privacy": "Only bounded numeric and enum metadata from retained Observatory records is sent to OpenAI. No endpoints, IP addresses, URLs, bodies, headers, raw log text or API keys are sent in the model context. Inference is hosted, not on this device. Interpretation receipts and conservative reservations are retained for eight days and purged on the next valid retained-evidence interpretation request; no unattended cleanup is claimed.",
+      "model_execution_verified": false,
+      "evidence_scope": "Retained native Observatory source records only; browser imports cannot trigger paid inference",
+      "eido_status": "evaluation_candidate"
+    },
+    "hosted_interpretation": {
+      "connected": true,
+      "configured": true,
+      "storage_attached": true,
+      "state": "available",
+      "mode": "hosted_gpt_sol",
+      "model_id": "gpt-6.1-sol",
+      "manual_only": true,
+      "auto": false,
+      "limits": {
+        "daily_requests": 20,
+        "daily_reserved_usd": 0.5,
+        "reserved_usd_per_call": 0.05,
+        "cooldown_ms": 60000,
+        "max_output_tokens": 1024,
+        "max_request_bytes": 6000,
+        "provider_timeout_ms": 30000,
+        "receipt_retention_days": 8
+      },
+      "reason": "Ready for a manual interpretation of retained server evidence; no model call has been proved by this capability check.",
+      "privacy": "Only bounded numeric and enum metadata from retained Observatory records is sent to OpenAI. No endpoints, IP addresses, URLs, bodies, headers, raw log text or API keys are sent in the model context. Inference is hosted, not on this device. Interpretation receipts and conservative reservations are retained for eight days and purged on the next valid retained-evidence interpretation request; no unattended cleanup is claimed.",
+      "model_execution_verified": false,
+      "evidence_scope": "Retained native Observatory source records only; browser imports cannot trigger paid inference"
+    },
+    "security_sensor": {
+      "connected": true,
+      "mode": "observatory_edge",
+      "auto_start": true,
+      "source_id": "observatory-edge",
+      "source_name": "Observatory application-edge sensor",
+      "format": "auto",
+      "interval_ms": 5000,
+      "max_records": 1000,
+      "retention_days": 7,
+      "starts_capture": false,
+      "privacy": "Shows a seven-day window of this Observatory API request outcomes and requested public HEAD metadata, capped at 1000 records. Older rows are purged on the next sensor read or write; no unattended cleanup is claimed. No client IP, cookies, auth headers, user agent, query strings, request bodies, target paths or payloads are collected.",
+      "reason": "Attached to actual Observatory API traffic and requested outbound HEAD checks",
+      "coverage": {
+        "scope": "This protected Observatory service only",
+        "missing": [
+          "LAN and internal-network traffic",
+          "Packet capture",
+          "Other sites and remote target visitor traffic",
+          "Provider firewall or IDS events",
+          "Authentication denials before protected Sites dispatch"
+        ]
+      }
+    },
+    "recorded_url": "/recorded",
+    "transport": "Cloudflare Worker public HTTP HEAD",
+    "sampling": "While connected and visible in your browser; no unattended background monitor",
+    "history": "Server-retained target evidence and versioned metric baselines, plus browser history. Collection remains foreground only.",
+    "target_probes": {
+      "connected": true,
+      "profile": "target-metrics-v2",
+      "available": [
+        "dns",
+        "tcp",
+        "tls",
+        "http"
+      ],
+      "optional": [
+        "page_fingerprint",
+        "public_redirect_chain"
+      ],
+      "path": "local_companion_required",
+      "history_limit": 128,
+      "retention_days": 7
+    },
+    "missing_coverage": [
+      "Visitor traffic",
+      "Packet capture",
+      "Internal services",
+      "Origin processing time",
+      "Hosted ICMP/traceroute"
+    ]
+  },
+  "interpretation": {
+    "evidence_id": "evt_5dec9f105c384f8aa8b7d2251b43760c",
+    "source_event_id": "evt_5dec9f105c384f8aa8b7d2251b43760c",
+    "analysis": {
+      "kind": "model",
+      "summary": "Timed out before a TCP connection was established after 12.00 seconds; no first-hop HTTP response was received.",
+      "facts": [
+        {
+          "text": "Timed out before a TCP connection was established after 12.00 seconds; no first-hop HTTP response was received.",
+          "evidence_ids": [
+            "evt_5dec9f105c384f8aa8b7d2251b43760c"
+          ]
+        },
+        {
+          "text": "Recorded failure: timeout. Failure stage: tcp. A failed probe does not establish a target-wide outage or its cause.",
+          "evidence_ids": [
+            "evt_5dec9f105c384f8aa8b7d2251b43760c"
+          ]
+        },
+        {
+          "text": "Failed probes \u00b7 last 20: 100.0%; prior window median 100.0%. Analysis state: calibrating.",
+          "evidence_ids": [
+            "evt_1aff3f8c2ae5470b94348954e4603b60",
+            "evt_9bbefb94096949a9a6d884bbbd08ab15",
+            "evt_a09d609e113d40ce9474b85610fb52a8",
+            "evt_582256b38c0442b8b74b43b683bb6578",
+            "evt_af7aa3d1f78a4ef2bab438ddb4deedb3",
+            "evt_51e8ede2f74b45679e4ad6b2624b0d46",
+            "evt_60404921531b41c6bfb8d43f31bc598e",
+            "evt_1cc140680ded40b3a712b25b85448729",
+            "evt_3286b6adc91a4096b20ba7c4c351de30",
+            "evt_a12a2857edda4e048ea9b6d6f39f1aa3",
+            "evt_5dec9f105c384f8aa8b7d2251b43760c"
+          ]
+        },
+        {
+          "text": "This observation failed; target-wide availability is unconfirmed",
+          "evidence_ids": [
+            "evt_5dec9f105c384f8aa8b7d2251b43760c"
+          ]
+        }
+      ],
+      "next_checks": [
+        {
+          "text": "Confirm that this address is intended to serve public HTTP/S on the selected port. A public IP alone need not host a website; compare another authorized observation point.",
+          "evidence_ids": [
+            "evt_5dec9f105c384f8aa8b7d2251b43760c"
+          ]
+        }
+      ],
+      "hypotheses": [
+        {
+          "text": "Timed out before a TCP connection was established after 12.00 seconds; no first-hop HTTP response was received.",
+          "support": [
+            "evt_5dec9f105c384f8aa8b7d2251b43760c"
+          ],
+          "against": [],
+          "next_observation": "Confirm that this address is intended to serve public HTTP/S on the selected port. A public IP alone need not host a website; compare another authorized observation point."
+        },
+        {
+          "text": "These endpoint measurements leave the cause and target-wide impact unresolved.",
+          "support": [
+            "evt_5dec9f105c384f8aa8b7d2251b43760c"
+          ],
+          "against": [],
+          "next_observation": "Compare subsequent samples and another observation point."
+        }
+      ],
+      "unknowns": [
+        "GPT-6.1 Sol ranked predefined conditional possibilities; cause and ranking usefulness remain unproven.",
+        "Only this probe\u2019s public endpoint behavior was measured.",
+        "A Sentinel score is experimental change evidence, not an attack probability.",
+        "Target internals, visitor traffic and root cause remain unobserved."
+      ],
+      "provenance": {
+        "engine": "OpenAI Responses API",
+        "model": "gpt-6.1-sol",
+        "provider_model": "gpt-6.1-sol",
+        "provider_response_id": "resp_078a43d2bcac6412016ad0ee736f0487d0b02715d7b404adcc",
+        "model_ran": true,
+        "execution_verified": true,
+        "inference_attempted": true,
+        "output_accepted": true,
+        "prompt_version": "observatory-sol-target-stages-v3",
+        "prompt_sha256": "e37455475caeea513c256994ede20ca82b51eed686142c86927a939f16f6b7a2",
+        "output_sha256": "2737a963d5a4fd402fde2e8c1845d36708c3b169d60bb261a9a9f1e7596b9940",
+        "input_evidence_ids": [
+          "evt_5dec9f105c384f8aa8b7d2251b43760c",
+          "evt_1aff3f8c2ae5470b94348954e4603b60",
+          "evt_9bbefb94096949a9a6d884bbbd08ab15",
+          "evt_a09d609e113d40ce9474b85610fb52a8",
+          "evt_582256b38c0442b8b74b43b683bb6578",
+          "evt_af7aa3d1f78a4ef2bab438ddb4deedb3",
+          "evt_51e8ede2f74b45679e4ad6b2624b0d46",
+          "evt_60404921531b41c6bfb8d43f31bc598e",
+          "evt_1cc140680ded40b3a712b25b85448729",
+          "evt_3286b6adc91a4096b20ba7c4c351de30",
+          "evt_a12a2857edda4e048ea9b6d6f39f1aa3"
+        ],
+        "linked_evidence_id": null,
+        "ranked_codes": [
+          "probe_failed",
+          "corroboration_needed"
+        ],
+        "usage": {
+          "input_tokens": 722,
+          "output_tokens": 24,
+          "total_tokens": 746
+        },
+        "inference_ms": 3071,
+        "reasoning_effort": "low",
+        "service_tier": "default",
+        "local_only": false,
+        "provider_store": false,
+        "reserved_usd": 0.05,
+        "estimated_standard_usd": 0.001684,
+        "estimate_scope": "Token estimate at the documented standard uncached input/output rates, not an invoice; discounts, cache writes or regional charges may differ.",
+        "role": "ranked_catalogue_selection",
+        "validation": "Two distinct eligible catalogue codes; all facts, wording and citations are generated by deterministic source rules",
+        "input_policy": "Only bounded numeric and enum native service metadata; raw logs, endpoints, IPs, URLs, paths, bodies, headers and credentials excluded",
+        "facts_policy": "The model ranks fixed conditional possibilities. It cannot author facts, citations, diagnoses or defensive actions."
+      }
+    },
+    "cached": false,
+    "model": {
+      "connected": true,
+      "configured": true,
+      "storage_attached": true,
+      "state": "available",
+      "mode": "hosted_gpt_sol",
+      "model_id": "gpt-6.1-sol",
+      "manual_only": true,
+      "auto": false,
+      "limits": {
+        "daily_requests": 20,
+        "daily_reserved_usd": 0.5,
+        "reserved_usd_per_call": 0.05,
+        "cooldown_ms": 60000,
+        "max_output_tokens": 1024,
+        "max_request_bytes": 6000,
+        "provider_timeout_ms": 30000,
+        "receipt_retention_days": 8
+      },
+      "reason": "Ready for a manual interpretation of retained server evidence; no model call has been proved by this capability check.",
+      "privacy": "Only bounded numeric and enum metadata from retained Observatory records is sent to OpenAI. No endpoints, IP addresses, URLs, bodies, headers, raw log text or API keys are sent in the model context. Inference is hosted, not on this device. Interpretation receipts and conservative reservations are retained for eight days and purged on the next valid retained-evidence interpretation request; no unattended cleanup is claimed.",
+      "model_execution_verified": false,
+      "evidence_scope": "Retained native Observatory source records only; browser imports cannot trigger paid inference"
+    }
+  },
+  "cached_repeat": {
+    "evidence_id": "evt_5dec9f105c384f8aa8b7d2251b43760c",
+    "source_event_id": "evt_5dec9f105c384f8aa8b7d2251b43760c",
+    "analysis": {
+      "kind": "model",
+      "summary": "Timed out before a TCP connection was established after 12.00 seconds; no first-hop HTTP response was received.",
+      "facts": [
+        {
+          "text": "Timed out before a TCP connection was established after 12.00 seconds; no first-hop HTTP response was received.",
+          "evidence_ids": [
+            "evt_5dec9f105c384f8aa8b7d2251b43760c"
+          ]
+        },
+        {
+          "text": "Recorded failure: timeout. Failure stage: tcp. A failed probe does not establish a target-wide outage or its cause.",
+          "evidence_ids": [
+            "evt_5dec9f105c384f8aa8b7d2251b43760c"
+          ]
+        },
+        {
+          "text": "Failed probes \u00b7 last 20: 100.0%; prior window median 100.0%. Analysis state: calibrating.",
+          "evidence_ids": [
+            "evt_1aff3f8c2ae5470b94348954e4603b60",
+            "evt_9bbefb94096949a9a6d884bbbd08ab15",
+            "evt_a09d609e113d40ce9474b85610fb52a8",
+            "evt_582256b38c0442b8b74b43b683bb6578",
+            "evt_af7aa3d1f78a4ef2bab438ddb4deedb3",
+            "evt_51e8ede2f74b45679e4ad6b2624b0d46",
+            "evt_60404921531b41c6bfb8d43f31bc598e",
+            "evt_1cc140680ded40b3a712b25b85448729",
+            "evt_3286b6adc91a4096b20ba7c4c351de30",
+            "evt_a12a2857edda4e048ea9b6d6f39f1aa3",
+            "evt_5dec9f105c384f8aa8b7d2251b43760c"
+          ]
+        },
+        {
+          "text": "This observation failed; target-wide availability is unconfirmed",
+          "evidence_ids": [
+            "evt_5dec9f105c384f8aa8b7d2251b43760c"
+          ]
+        }
+      ],
+      "next_checks": [
+        {
+          "text": "Confirm that this address is intended to serve public HTTP/S on the selected port. A public IP alone need not host a website; compare another authorized observation point.",
+          "evidence_ids": [
+            "evt_5dec9f105c384f8aa8b7d2251b43760c"
+          ]
+        }
+      ],
+      "hypotheses": [
+        {
+          "text": "Timed out before a TCP connection was established after 12.00 seconds; no first-hop HTTP response was received.",
+          "support": [
+            "evt_5dec9f105c384f8aa8b7d2251b43760c"
+          ],
+          "against": [],
+          "next_observation": "Confirm that this address is intended to serve public HTTP/S on the selected port. A public IP alone need not host a website; compare another authorized observation point."
+        },
+        {
+          "text": "These endpoint measurements leave the cause and target-wide impact unresolved.",
+          "support": [
+            "evt_5dec9f105c384f8aa8b7d2251b43760c"
+          ],
+          "against": [],
+          "next_observation": "Compare subsequent samples and another observation point."
+        }
+      ],
+      "unknowns": [
+        "GPT-6.1 Sol ranked predefined conditional possibilities; cause and ranking usefulness remain unproven.",
+        "Only this probe\u2019s public endpoint behavior was measured.",
+        "A Sentinel score is experimental change evidence, not an attack probability.",
+        "Target internals, visitor traffic and root cause remain unobserved."
+      ],
+      "provenance": {
+        "engine": "OpenAI Responses API",
+        "model_requested": "gpt-6.1-sol",
+        "model_ran": true,
+        "output_accepted": true,
+        "input_evidence_ids": [
+          "evt_5dec9f105c384f8aa8b7d2251b43760c",
+          "evt_1aff3f8c2ae5470b94348954e4603b60",
+          "evt_9bbefb94096949a9a6d884bbbd08ab15",
+          "evt_a09d609e113d40ce9474b85610fb52a8",
+          "evt_582256b38c0442b8b74b43b683bb6578",
+          "evt_af7aa3d1f78a4ef2bab438ddb4deedb3",
+          "evt_51e8ede2f74b45679e4ad6b2624b0d46",
+          "evt_60404921531b41c6bfb8d43f31bc598e",
+          "evt_1cc140680ded40b3a712b25b85448729",
+          "evt_3286b6adc91a4096b20ba7c4c351de30",
+          "evt_a12a2857edda4e048ea9b6d6f39f1aa3"
+        ],
+        "linked_evidence_id": null,
+        "inference_attempted": true,
+        "execution_verified": true,
+        "rejection_code": "cached_result_unavailable",
+        "reserved_usd": 0.05,
+        "prompt_version": "observatory-sol-target-stages-v3",
+        "prompt_sha256": "e37455475caeea513c256994ede20ca82b51eed686142c86927a939f16f6b7a2",
+        "model": "gpt-6.1-sol",
+        "provider_model": "gpt-6.1-sol",
+        "provider_response_id": "resp_078a43d2bcac6412016ad0ee736f0487d0b02715d7b404adcc",
+        "output_sha256": "2737a963d5a4fd402fde2e8c1845d36708c3b169d60bb261a9a9f1e7596b9940",
+        "ranked_codes": [
+          "probe_failed",
+          "corroboration_needed"
+        ],
+        "usage": {
+          "input_tokens": 722,
+          "output_tokens": 24,
+          "total_tokens": 746
+        },
+        "inference_ms": 3071,
+        "reasoning_effort": "low",
+        "service_tier": "default",
+        "local_only": false,
+        "provider_store": false,
+        "estimated_standard_usd": 0.001684,
+        "role": "ranked_catalogue_selection",
+        "durable_cache_confirmed": true,
+        "validation": "Cached eligible ranking revalidated; facts, wording and citations rebuilt from the current authoritative record",
+        "facts_policy": "The model ranks fixed conditional possibilities. It cannot author facts, citations, diagnoses or defensive actions."
+      }
+    },
+    "cached": true,
+    "model": {
+      "connected": true,
+      "configured": true,
+      "storage_attached": true,
+      "state": "available",
+      "mode": "hosted_gpt_sol",
+      "model_id": "gpt-6.1-sol",
+      "manual_only": true,
+      "auto": false,
+      "limits": {
+        "daily_requests": 20,
+        "daily_reserved_usd": 0.5,
+        "reserved_usd_per_call": 0.05,
+        "cooldown_ms": 60000,
+        "max_output_tokens": 1024,
+        "max_request_bytes": 6000,
+        "provider_timeout_ms": 30000,
+        "receipt_retention_days": 8
+      },
+      "reason": "Ready for a manual interpretation of retained server evidence; no model call has been proved by this capability check.",
+      "privacy": "Only bounded numeric and enum metadata from retained Observatory records is sent to OpenAI. No endpoints, IP addresses, URLs, bodies, headers, raw log text or API keys are sent in the model context. Inference is hosted, not on this device. Interpretation receipts and conservative reservations are retained for eight days and purged on the next valid retained-evidence interpretation request; no unattended cleanup is claimed.",
+      "model_execution_verified": false,
+      "evidence_scope": "Retained native Observatory source records only; browser imports cannot trigger paid inference"
+    }
+  },
+  "anonymous_status": 403,
+  "status": "passed"
+}
