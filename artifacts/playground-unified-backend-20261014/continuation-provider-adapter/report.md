@@ -10,11 +10,13 @@ The server now supports a full-input quote, exact-maximum approval, one provider
 - Extended optional rate/usage categories for cache reads, cache writes and reasoning, preserving historical cards and fixtures. Recorded provider identities cannot be replaced during reconciliation; response-header identity survives malformed response bodies.
 - Added dedicated server credential and activation types/environment forwarding. `OPENAI_API_KEY` is never a Playground fallback. Secret values were not read, logged or used.
 - Added a separate public `playgroundAiReady` configuration flag so a dedicated Playground key does not depend on the unrelated legacy assistant key. Legacy `aiReady` is preserved. Account readiness remains separate, and the authenticated ledger is the final budget gate. Public readiness performs no database or provider I/O. The adapter also enforces the global `EIDOS_AI_ENABLED` kill switch before count or generation dispatch.
-- Added 16 adapter/API regressions and two focused ledger regressions. The existing 23 accounting regressions remain covered.
+- Added 22 adapter/API regressions and two focused ledger regressions. The existing 23 accounting regressions remain covered. A later focused security review repaired the atomic real-budget ceiling and bounded, durable input-count admission; see `security-review.md`.
 
 ## Validated behavior
 
 Initial `npm --prefix apps/sentinel-lab run test:playground-ai`: **39 passed, 0 failed**. This includes 25 accounting tests and 14 provider adapter/API tests. Subsequent readiness/global-kill validation: **41 passed, 0 failed**, recorded in `focused-readiness-tests.txt` (25 accounting plus 16 adapter/API tests).
+
+Final security-repair validation: **47 passed, 0 failed** in `focused-security-tests.txt`, plus passed backend TypeScript checking in `backend-security-typecheck.txt`. This includes the six subsequent security regressions and the unchanged earlier accounting/readiness regressions.
 
 Initial `npm --prefix apps/sentinel-lab test`: **126 passed, 0 failed, 1 skipped** across both test commands, before the subsequent readiness/global-kill patch. Final backend validation is being rerun by the root task and must be cited separately. The skip is the existing Windows symlink privilege limitation; it requires a symlink-capable Linux or authorized Windows host.
 
@@ -25,6 +27,8 @@ Every provider response in these tests is synthetic. The HTTP success test stubs
 ## Cost and dispatch logic
 
 The hard provider budget is **$5 aggregate across the existing persistent test-mode ledger**, including reserved, submitted, settled and unresolved actions. It does not reset when a model changes or a month rolls over. A higher configured budget is rejected by this adapter. A fresh persistent database would be a separate budget, so operators must reuse the same configured TEST ledger for every test process/model.
+
+The real-card $5 ceiling is now also enforced within the atomic reservation, dispatch and counting-admission SQL, so a concurrent operator budget increase cannot bypass the adapter's preliminary check. Count requests require a durable one-time claim after quote/reference/account validation and atomic account/policy admission. Counting attempts are bounded to 20 per owner/hour, 60 globally/hour and 200 lifetime per TEST ledger; failed and uncertain attempts remain counted. They do not debit or reserve customer money.
 
 Before generation, the full input is counted using `POST /v1/responses/input_tokens`. The exact counted payload is frozen and reused byte-for-byte for generation. A missing, malformed, unsupported, oversized or changed count/payload blocks generation. UTF-8 byte counts are used only for bounded memory, never claimed as a complete token bound.
 

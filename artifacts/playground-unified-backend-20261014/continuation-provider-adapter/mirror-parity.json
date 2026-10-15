@@ -1,26 +1,37 @@
 [
   {
     "path": "functions/_shared/platform/core.ts",
-    "equal": true
+    "equal": true,
+    "sha256": "58323c84063d8f9fa55d4897234b86154a1e48764b755e3cb2ddf40f5e283f75"
   },
   {
     "path": "functions/_shared/platform/playgroundAi.ts",
-    "equal": true
+    "equal": true,
+    "sha256": "1d3bf7ce735e9e7575232d58b7bc89f6551ea199e1c49463dc5a490670eec2d9"
   },
   {
     "path": "functions/_shared/platform/playgroundAiSchema.ts",
-    "equal": true
+    "equal": true,
+    "sha256": "8f65a7c69acd1e83484229dda4bef5bc6b011a6a1e38b1a6f880024ca743749b"
   },
   {
     "path": "functions/_shared/platform/playgroundAiProvider.ts",
-    "equal": true
+    "equal": true,
+    "sha256": "d927ae39c9161928aae4a3c145d3933f809fd56c959cff862559c9564e3e9fdb"
   },
   {
     "path": "functions/api/playground/ai.ts",
-    "equal": true
+    "equal": true,
+    "sha256": "e6669a0e557cafd8cf5ecc6b0d8949edab96b490366d8b8da6f83cf8109599a1"
+  },
+  {
+    "path": "functions/api/public-config.ts",
+    "equal": true,
+    "sha256": "114d56a8b52c0731f30df233ef2c29333e687bde8954c2315cddb9db852e8feb"
   },
   {
     "path": "migrations/0005_playground_ai.sql",
-    "equal": true
+    "equal": true,
+    "sha256": "bad71d8000a831b3c46a316aec238d8134e8f00432f347f3fe9f6af9d1064936"
   }
 ]

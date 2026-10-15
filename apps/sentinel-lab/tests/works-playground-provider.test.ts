@@ -1,11 +1,14 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
+import { unlink } from 'node:fs/promises';
+import { tmpdir } from 'node:os';
+import { join } from 'node:path';
 import { createClient } from '@libsql/client';
 import { adaptDatabase } from '../lib/works/database';
 import { hash, type PlatformEnv } from '../lib/works/vendor/functions/_shared/platform/core';
 import { aiBalance, aiPolicyStatus, configureAiPolicy, ensureAiLedger, ownedAiAction, publicAiAction, reconcileAiDeadlines, setAiLimit, USD,
-  type AiBrief, type AiRateCard } from '../lib/works/vendor/functions/_shared/platform/playgroundAi';
+  AI_COUNT_LIMITS, claimAiDispatch, reserveAiAction, type AiBrief, type AiRateCard } from '../lib/works/vendor/functions/_shared/platform/playgroundAi';
 import { aiProviderAvailability, buildAiProviderRequest, generateProviderAiAction, parseAiProviderUsage, providerTestRateCard, quoteProviderAiAction } from '../lib/works/vendor/functions/_shared/platform/playgroundAiProvider';
 import { onRequestGet, onRequestPost } from '../lib/works/vendor/functions/api/playground/ai';
 import { onRequestGet as publicConfig } from '../lib/works/vendor/functions/api/public-config';
@@ -27,8 +30,8 @@ const metered = { input_tokens: 1000, input_tokens_details: { cached_tokens: 100
 const responseBody = (change: Record<string, unknown> = {}) => ({ id: 'resp_controlled', model: card.model, service_tier: 'default', status: 'completed', usage: metered,
   output: [{ type: 'reasoning', summary: [] }, { type: 'message', role: 'assistant', status: 'completed', content: [{ type: 'output_text', text: JSON.stringify(proposal) }] }], ...change });
 const json = (value: unknown, status = 200) => new Response(JSON.stringify(value), { status, headers: { 'content-type': 'application/json', 'x-request-id': 'req_controlled' } });
-async function fixture(budget = 5 * USD) {
-  const client = createClient({ url: ':memory:' }), database = adaptDatabase(client);
+async function fixture(budget = 5 * USD, databaseUrl = ':memory:') {
+  const client = createClient({ url: databaseUrl }), database = adaptDatabase(client);
   for (const name of ['0001_eidos_platform.sql','0002_members.sql','0004_paid_templates.sql']) await client.executeMultiple(readFileSync(new URL('../lib/works/vendor/migrations/' + name, import.meta.url), 'utf8'));
   const env: PlatformEnv = { EIDOS_DB: database, EIDOS_AI_ENABLED: 'true', EIDOS_PLAYGROUND_AI_MODE: 'test', EIDOS_PLAYGROUND_AI_ENABLED: 'true', EIDOS_PLAYGROUND_OPENAI_API_KEY: 'controlled-not-a-real-provider-secret' };
   await ensureAiLedger(env);
@@ -44,7 +47,11 @@ async function fixture(budget = 5 * USD) {
   let counted: () => Response = () => json({ object: 'response.input_tokens', input_tokens: 1500 });
   const transport: typeof fetch = async (url, init) => {
     assert.ok(init); assert.equal(init.redirect, 'error');
-    if (String(url).endsWith('/input_tokens')) { counts++; countBody = String(init.body); return counted(); }
+    if (String(url).endsWith('/input_tokens')) { counts++; countBody = String(init.body);
+      const claimId=new Headers(init.headers).get('x-client-request-id');
+      const claimed=await database.prepare('SELECT state,request_json FROM eidos_pg_ai_count_claims WHERE client_request_id=?').bind(claimId).first<{state:string;request_json:string}>();
+      assert.equal(claimed?.state,'submitted');assert.equal(claimed?.request_json,countBody);
+      return counted(); }
     assert.equal(String(url), 'https://api.openai.com/v1/responses'); generations++; generationBody = String(init.body);
     const requestId = new Headers(init.headers).get('x-client-request-id'); assert.ok(requestId);
     const action = await ownedAiAction(env, 'owner', 'test', requestId);
@@ -81,7 +88,9 @@ test('exact full input count and payload hash are durable; idempotent quote does
 test('unsupported, oversized and failed full-input counting never submit generation or create a quote', async () => {
   for (const body of [{object:'response.input_tokens',input_tokens:32001},{object:'wrong',input_tokens:10},{object:'response.input_tokens',input_tokens:null}]) {
     const f = await fixture(); try { f.counted(()=>json(body)); await assert.rejects(f.quote(),/exceeds|could not be counted/); assert.equal(f.generations(),0);
-      assert.equal((await f.database.prepare('SELECT COUNT(*) count FROM eidos_pg_ai_actions').first<{count:number}>())?.count,0);
+      assert.equal((await f.database.prepare("SELECT COUNT(*) count FROM eidos_pg_ai_actions WHERE state='cancelled' AND provider_status='none'").first<{count:number}>())?.count,1);
+      assert.equal((await f.database.prepare("SELECT COUNT(*) count FROM eidos_pg_ai_count_claims WHERE state='failed'").first<{count:number}>())?.count,1);
+      assert.equal((await aiPolicyStatus(f.env,'test')).committed,0);
     } finally {f.close();}
   }
 });
@@ -178,9 +187,107 @@ test('different models share the same lifetime budget and unresolved commitments
   const f=await fixture(150000);try{const a=await f.quote();f.generated(()=>{throw Error('connection ended');});
     const first=await f.generate(a.id,a.maximum);assert.equal(first.provider_status,'held');assert.equal(a.provider_maximum,100000);
     await configureAiPolicy(f.env,'test',{...card,model:'gpt-6-astra',version:'second-model-controlled'},150000,true);
-    const second=await f.quote();await assert.rejects(f.generate(second.id,second.maximum),/owner budget|allowance/);assert.equal(f.generations(),1);
+    await assert.rejects(f.quote(),/owner budget|allowance/);assert.equal(f.generations(),1);assert.equal(f.counts(),1);
     const status=await aiPolicyStatus(f.env,'test');assert.equal(status.committed,100000);assert.equal(status.remaining,50000);
   }finally{f.close();}
+});
+test('real provider $5 ceiling is enforced inside reservation and dispatch after an operator budget increase',async()=>{
+  const f=await fixture();try{
+    const a=await f.quote(),b=await f.quote();
+    // Exercise the same frozen rates with real-card evidence. A direct SQL
+    // operator update simulates drift after the adapter's preliminary check.
+    const real={...card,evidence:'owner-approved' as const};
+    await assert.rejects(configureAiPolicy(f.env,'test',real,5*USD+1,true),/cannot exceed \$5/);
+    await configureAiPolicy(f.env,'test',real,5*USD,true);
+    await f.database.prepare('UPDATE eidos_pg_ai_actions SET rate_json=? WHERE id IN (?,?)').bind(JSON.stringify(real),a.id,b.id).run();
+    await reserveAiAction(f.env,'owner','test',b.id,at);
+    await f.database.prepare('UPDATE eidos_pg_ai_policies SET provider_budget=? WHERE mode=?').bind(6*USD,'test').run();
+    await assert.rejects(reserveAiAction(f.env,'owner','test',a.id,at),/owner budget|allowance/);
+    assert.equal(await claimAiDispatch(f.env,'owner','test',b.id,at),null);assert.equal(f.generations(),0);
+    assert.equal((await ownedAiAction(f.env,'owner','test',a.id)).state,'quoted');assert.equal((await ownedAiAction(f.env,'owner','test',b.id)).state,'reserved');
+    // Historical synthetic accounting policy budgets remain supported.
+    await configureAiPolicy(f.env,'test',card,10*USD,true);
+  }finally{f.close();}
+});
+test('invalid reference, missing account, zero cap/funds, frozen and reversed funding reject before counting I/O',async()=>{
+  for(const change of ['invalid','missing','zero-cap','zero-funds','frozen','reversed','zero-budget']){const f=await fixture();try{
+    if(change==='zero-cap')await setAiLimit(f.env,'owner','test',0,at);
+    if(change==='zero-funds')await f.database.prepare('UPDATE eidos_pg_ai_grants SET revoked_amount=amount').run();
+    if(change==='frozen')await f.database.prepare('UPDATE eidos_pg_ai_accounts SET frozen=1').run();
+    if(change==='reversed')await f.database.prepare("UPDATE eidos_orders SET status='refunded'").run();
+    if(change==='zero-budget')await configureAiPolicy(f.env,'test',card,0,true);
+    const owner=change==='missing'?'member-without-limit':'owner',key=change==='invalid'?'bad':'early-check-reference';
+    await assert.rejects(quoteProviderAiAction(f.env,owner,'test',key,brief,f.options),/unique action|limit|allowance|owner budget/);
+    assert.equal(f.counts(),0);assert.equal(f.generations(),0);assert.equal((await f.database.prepare('SELECT COUNT(*) count FROM eidos_pg_ai_count_claims').first<{count:number}>())?.count,0);
+  }finally{f.close();}}
+});
+test('concurrent identical quotes make one durable count attempt; unknown/failed counting never retries that action',async()=>{
+  const f=await fixture();try{
+    const results=await Promise.allSettled(Array.from({length:12},()=>f.quote({},'concurrent-count-reference')));
+    assert.ok(results.some(r=>r.status==='fulfilled'));assert.equal(f.counts(),1);assert.equal(f.generations(),0);
+    assert.equal((await f.database.prepare('SELECT COUNT(*) count FROM eidos_pg_ai_count_claims').first<{count:number}>())?.count,1);
+    await f.quote({},'concurrent-count-reference');assert.equal(f.counts(),1);
+  }finally{f.close();}
+  const failed=await fixture();try{
+    failed.counted(()=>{throw Error('connection lost');});await assert.rejects(failed.quote({},'failed-count-reference'),/will not retry/);
+    await assert.rejects(failed.quote({},'failed-count-reference'),/already recorded/);assert.equal(failed.counts(),1);
+    const record=await failed.database.prepare('SELECT client_request_id,provider_request_id,input_tokens,state FROM eidos_pg_ai_count_claims').first<{client_request_id:string;provider_request_id:string|null;input_tokens:number|null;state:string}>();
+    assert.ok(record?.client_request_id);assert.equal(record?.provider_request_id,null);assert.equal(record?.input_tokens,null);assert.equal(record?.state,'failed');
+  }finally{failed.close();}
+});
+test('counting is bounded per owner/hour and lifetime across models, with retained receipts after failures and rollover',async()=>{
+  const f=await fixture();try{
+    for(let i=0;i<AI_COUNT_LIMITS.perOwnerHour;i++)await f.quote();
+    await assert.rejects(f.quote(),/counting quota/);assert.equal(f.counts(),AI_COUNT_LIMITS.perOwnerHour);
+    await configureAiPolicy(f.env,'test',{...card,model:'gpt-6-astra',version:'same-count-quota-model'},5*USD,true);
+    await assert.rejects(f.quote(),/counting quota/);assert.equal(f.counts(),AI_COUNT_LIMITS.perOwnerHour);
+  }finally{f.close();}
+  const lifetime=await fixture();try{
+    const seed=await lifetime.quote();
+    // Fill retained historical count receipts directly in this synthetic DB,
+    // rather than issuing hundreds of artificial transport calls.
+    const rows=AI_COUNT_LIMITS.lifetime-1;
+    await lifetime.database.prepare(`WITH RECURSIVE seq(n) AS (SELECT 1 UNION ALL SELECT n+1 FROM seq WHERE n<?)
+      INSERT INTO eidos_pg_ai_actions(id,owner_id,mode,idempotency_key,fingerprint,document_id,revision,scope,payload_json,period,resets_at,rate_json,estimate,maximum,provider_maximum,created_at,expires_at)
+      SELECT 'historical-count-'||n,owner_id,mode,'historical-key-'||n,fingerprint,document_id,revision,scope,payload_json,period,resets_at,rate_json,estimate,maximum,provider_maximum,created_at,expires_at FROM eidos_pg_ai_actions,seq WHERE id=?`)
+      .bind(rows,seed.id).run();
+    await lifetime.database.prepare(`INSERT INTO eidos_pg_ai_count_claims(action_id,owner_id,mode,request_hash,request_json,client_request_id,state,created_at)
+      SELECT id,owner_id,mode,?,?,'historical-client-'||id,'failed',? FROM eidos_pg_ai_actions WHERE id LIKE 'historical-count-%'`)
+      .bind('a'.repeat(64),'{}','2026-09-01T00:00:00.000Z').run();
+    await assert.rejects(lifetime.quote(),/counting quota/);assert.equal(lifetime.counts(),1);
+    assert.equal((await lifetime.database.prepare('SELECT COUNT(*) count FROM eidos_pg_ai_count_claims').first<{count:number}>())?.count,AI_COUNT_LIMITS.lifetime);
+  }finally{lifetime.close();}
+});
+test('global hourly count quota is shared across owners before any new upstream count',async()=>{
+  const f=await fixture();try{
+    const seed=await f.quote(), rows=AI_COUNT_LIMITS.globalHour-1;
+    await f.database.prepare(`WITH RECURSIVE seq(n) AS (SELECT 1 UNION ALL SELECT n+1 FROM seq WHERE n<?)
+      INSERT INTO eidos_pg_ai_actions(id,owner_id,mode,idempotency_key,fingerprint,document_id,revision,scope,payload_json,period,resets_at,rate_json,estimate,maximum,provider_maximum,created_at,expires_at)
+      SELECT 'global-count-'||n,owner_id,mode,'global-key-'||n,fingerprint,document_id,revision,scope,payload_json,period,resets_at,rate_json,estimate,maximum,provider_maximum,created_at,expires_at FROM eidos_pg_ai_actions,seq WHERE id=?`)
+      .bind(rows,seed.id).run();
+    // Historical owner tags are synthetic accounting inputs. This isolates the
+    // global hourly boundary from the independently tested owner boundary.
+    await f.database.prepare(`INSERT INTO eidos_pg_ai_count_claims(action_id,owner_id,mode,request_hash,request_json,client_request_id,state,created_at)
+      SELECT id,'other-'||id,mode,?,?,'global-client-'||id,'failed',? FROM eidos_pg_ai_actions WHERE id LIKE 'global-count-%'`)
+      .bind('b'.repeat(64),'{}',at.toISOString()).run();
+    await assert.rejects(f.quote(),/counting quota/);assert.equal(f.counts(),1);
+    assert.equal((await f.database.prepare('SELECT COUNT(*) count FROM eidos_pg_ai_count_claims WHERE owner_id=?').bind('owner').first<{count:number}>())?.count,1);
+  }finally{f.close();}
+});
+test('independent database connections cannot double-claim the same input count',async t=>{
+  const path=join(tmpdir(),'eidos-count-claims-'+crypto.randomUUID()+'.db'),url='file:'+path.replaceAll('\\','/');
+  const f=await fixture(5*USD,url),other=createClient({url}),otherEnv={...f.env,EIDOS_DB:adaptDatabase(other)};
+  try{
+    const quotes=await Promise.allSettled(Array.from({length:8},(_,i)=>quoteProviderAiAction(i%2?otherEnv:f.env,'owner','test','cross-worker-count',brief,f.options)));
+    assert.ok(quotes.some(q=>q.status==='fulfilled'));assert.equal(f.counts(),1);assert.equal(f.generations(),0);
+    const claims=await other.execute('SELECT COUNT(*) count FROM eidos_pg_ai_count_claims');assert.equal(Number(claims.rows[0].count),1);
+  }finally{
+    other.close();f.close();
+    for(const suffix of ['','-wal','-shm'])await unlink(path+suffix).catch(error=>{
+      if(error.code==='EBUSY'&&process.platform==='win32')t.diagnostic('Windows libSQL retains the synthetic temp database handle until process exit: '+path+suffix);
+      else if(error.code!=='ENOENT')throw error;
+    });
+  }
 });
 test('reported provider overrun remains visible, caps customer charge and pauses the route',async()=>{
   const f=await fixture();try{const a=await f.quote();f.generated(()=>json(responseBody({usage:{...metered,output_tokens:20000,total_tokens:21000}})));

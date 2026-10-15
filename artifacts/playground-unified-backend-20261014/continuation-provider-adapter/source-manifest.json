@@ -1,6 +1,6 @@
 {
-  "timestampUtc": "2026-10-14T23:53:08.2213448Z",
-  "sourceRevision": "c37870bd2c7453fca4dbc8d65275902e4473be95",
+  "timestampUtc": "2026-10-15T00:09:19.4536821Z",
+  "sourceRevision": "472a915c787838eccffea49570b4a4dd824dd669",
   "sourceState": "uncommitted tested working tree",
   "providerRequests": 0,
   "providerTestBudgetMicros": 5000000,
@@ -13,18 +13,18 @@
     },
     {
       "path": "apps/sentinel-lab/lib/works/vendor/functions/_shared/platform/playgroundAi.ts",
-      "bytes": 37505,
-      "sha256": "d16de593641edfa18d0cff382d2d4606ca3149d9fbdf4c5e861222892b74ec9e"
+      "bytes": 42913,
+      "sha256": "1d3bf7ce735e9e7575232d58b7bc89f6551ea199e1c49463dc5a490670eec2d9"
     },
     {
       "path": "apps/sentinel-lab/lib/works/vendor/functions/_shared/platform/playgroundAiSchema.ts",
-      "bytes": 6343,
-      "sha256": "dd0df0e1924adbde340730d46b795ae8537a1c9770b76d8bf2ec321900eb9a82"
+      "bytes": 7212,
+      "sha256": "8f65a7c69acd1e83484229dda4bef5bc6b011a6a1e38b1a6f880024ca743749b"
     },
     {
       "path": "apps/sentinel-lab/lib/works/vendor/functions/_shared/platform/playgroundAiProvider.ts",
-      "bytes": 15422,
-      "sha256": "12caca18ae19e8b4ad28e2c5907e6461eb9b548b7f7648fa4d89375833ebe2d6"
+      "bytes": 16495,
+      "sha256": "d927ae39c9161928aae4a3c145d3933f809fd56c959cff862559c9564e3e9fdb"
     },
     {
       "path": "apps/sentinel-lab/lib/works/vendor/functions/_shared/platform/playgroundAiRenderer.ts",
@@ -38,8 +38,8 @@
     },
     {
       "path": "apps/sentinel-lab/lib/works/vendor/migrations/0005_playground_ai.sql",
-      "bytes": 6255,
-      "sha256": "627a173627dd345d3ca6741c5d964d034de46f8b7d26322a4195ded69028cac8"
+      "bytes": 7113,
+      "sha256": "bad71d8000a831b3c46a316aec238d8134e8f00432f347f3fe9f6af9d1064936"
     },
     {
       "path": "apps/sentinel-lab/lib/works/dispatch.ts",
@@ -63,8 +63,8 @@
     },
     {
       "path": "apps/sentinel-lab/tests/works-playground-provider.test.ts",
-      "bytes": 22463,
-      "sha256": "71ed08a0dff9b0e972bd02209c2d77622344d31c81773fa2c722841ac82a7dab"
+      "bytes": 32006,
+      "sha256": "bbda1b571da2030243a3405d420e2b7493dbb03321f0acaecaa53920b9dba4a6"
     },
     {
       "path": "apps/sentinel-lab/package.json",

@@ -57,6 +57,17 @@ CREATE TABLE IF NOT EXISTS eidos_pg_ai_preflights (
  request_json TEXT NOT NULL, input_tokens INTEGER NOT NULL CHECK(typeof(input_tokens)='integer' AND input_tokens>=0),
  count_request_id TEXT NOT NULL, created_at TEXT NOT NULL
 );
+-- Every zero-fee counting attempt is claimed before outbound I/O and retained.
+-- Quotas are shared by the same persistent ledger across workers and models.
+CREATE TABLE IF NOT EXISTS eidos_pg_ai_count_claims (
+ action_id TEXT PRIMARY KEY REFERENCES eidos_pg_ai_actions(id), owner_id TEXT NOT NULL,
+ mode TEXT NOT NULL CHECK(mode IN ('test','live')), request_hash TEXT NOT NULL, request_json TEXT NOT NULL,
+ client_request_id TEXT NOT NULL UNIQUE, provider_request_id TEXT, input_tokens INTEGER,
+ state TEXT NOT NULL CHECK(state IN ('submitted','counted','failed')), failure_reason TEXT,
+ created_at TEXT NOT NULL, completed_at TEXT,
+ CHECK(input_tokens IS NULL OR (typeof(input_tokens)='integer' AND input_tokens>=0 AND input_tokens<=10000000))
+);
+CREATE INDEX IF NOT EXISTS pg_ai_count_owner_created ON eidos_pg_ai_count_claims(owner_id,mode,created_at);
 CREATE TABLE IF NOT EXISTS eidos_pg_ai_journal (
  id TEXT PRIMARY KEY, owner_id TEXT, mode TEXT NOT NULL CHECK(mode IN ('test','live')), action_id TEXT,
  event TEXT NOT NULL, detail_json TEXT NOT NULL, created_at TEXT NOT NULL

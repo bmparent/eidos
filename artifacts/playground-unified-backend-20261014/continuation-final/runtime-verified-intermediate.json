@@ -1,0 +1,25 @@
+{
+  "timestampUtc": "2026-10-15T00:04:21.306Z",
+  "deploymentId": "dpl_5KAs6EwYSGYkNG9Pe3ti5Wy6Dp1X",
+  "url": "https://eidos-sentinel-fct87awlk-1brentbm-1876s-projects.vercel.app",
+  "expectedSource": "472a915c787838eccffea49570b4a4dd824dd669",
+  "expectedBundle": "7cada06966c9e7e85059097ccca7633c2d6a504b239b5b06ea9e33b0cab3dc4b",
+  "unauthenticatedStatus": 302,
+  "authenticatedStatus": 200,
+  "cliExitCode": 0,
+  "flags": {
+    "communityReady": false,
+    "accountsReady": false,
+    "aiReady": false,
+    "playgroundAiReady": false,
+    "shopReady": false,
+    "localTest": false
+  },
+  "runtimeSourceRevision": "472a915c787838eccffea49570b4a4dd824dd669",
+  "runtimeBundleHash": "7cada06966c9e7e85059097ccca7633c2d6a504b239b5b06ea9e33b0cab3dc4b",
+  "secretsPrinted": false,
+  "headerTransport": "stdin to native curl --header @-",
+  "providerCalls": 0,
+  "scope": "This exact manual-only source stage; final candidate acceptance is separate",
+  "passed": true
+}

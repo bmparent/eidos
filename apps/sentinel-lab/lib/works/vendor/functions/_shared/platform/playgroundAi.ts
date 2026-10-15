@@ -4,6 +4,8 @@ import schema from './playgroundAiSchema';
 /** Accounting only. No provider transport is enabled by this module. Never accept a rate card from a browser. */
 export type AiMode = 'test' | 'live';
 export const USD = 1_000_000;
+export const REAL_PROVIDER_TEST_BUDGET = 5 * USD;
+export const AI_COUNT_LIMITS = { perOwnerHour: 20, globalHour: 60, lifetime: 200 } as const;
 export const CUSTOMER_HOLD_WINDOW_MS = 24 * 60 * 60 * 1000;
 const MAX_MONEY = 1_000_000_000_000;
 const initialized = new WeakMap<Database, Promise<unknown>>();
@@ -86,6 +88,8 @@ async function policy(env: PlatformEnv, mode: AiMode, at: Date, mustEnable = tru
 export async function configureAiPolicy(env: PlatformEnv, mode: AiMode, card: AiRateCard, providerBudget: number, enabled = false) {
   await ensureAiLedger(env);
   validateRateCard(card); money(providerBudget);
+  if (card.evidence === 'owner-approved' && providerBudget > REAL_PROVIDER_TEST_BUDGET)
+    throw new HttpError(503, 'The real provider test budget cannot exceed $5.');
   if (mode === 'live' && enabled) throw new HttpError(503, 'LIVE AI funding has not been approved.');
   await db(env).batch([
     db(env).prepare('INSERT INTO eidos_pg_ai_policies(mode,enabled,provider_budget,rate_json,updated_at) VALUES(?,?,?,?,?) ON CONFLICT(mode) DO UPDATE SET enabled=excluded.enabled,provider_budget=excluded.provider_budget,rate_json=excluded.rate_json,updated_at=excluded.updated_at')
@@ -111,6 +115,9 @@ export async function setAiLimit(env: PlatformEnv, owner: string, mode: AiMode, 
 interface Balance { owner_id: string; mode: AiMode; requested_limit: number; frozen: number; available_included: number; available_purchased: number }
 const customerCommitted = `CASE WHEN customer_status='held' THEN maximum WHEN customer_status='settled' THEN charged_included+charged_purchased ELSE 0 END`;
 const providerCommitted = `CASE WHEN provider_status='held' THEN provider_maximum WHEN provider_status IN ('settled','pessimistic') THEN provider_cost ELSE 0 END`;
+// This ceiling is checked inside each atomic write, including after a concurrent
+// operator update. Synthetic accounting fixtures retain their existing budgets.
+const realBudgetBound = `(json_extract(p.rate_json,'$.evidence')!='owner-approved' OR p.provider_budget<=${REAL_PROVIDER_TEST_BUDGET})`;
 /** Operator snapshot. A lower budget blocks new dispatch immediately; existing submitted costs remain obligations. */
 export async function aiPolicyStatus(env: PlatformEnv, mode: AiMode) {
   const snapshot = await db(env).prepare(`SELECT p.provider_budget configuredBudget,p.enabled,p.paused_reason pausedReason,
@@ -220,7 +227,7 @@ export async function reserveAiAction(env: PlatformEnv, owner: string, mode: AiM
       AND b.requested_limit >= maximum+(SELECT COALESCE(SUM(${customerCommitted}),0) FROM eidos_pg_ai_actions WHERE owner_id=? AND mode=? AND period=?))
     AND NOT EXISTS(SELECT 1 FROM eidos_pg_ai_grants g JOIN eidos_orders o ON o.id=g.order_id WHERE g.owner_id=eidos_pg_ai_actions.owner_id AND g.mode=eidos_pg_ai_actions.mode AND (o.status!='paid' OR g.reversed=1 OR EXISTS(SELECT 1 FROM eidos_revoked_payments r WHERE r.payment_intent=g.payment_intent)))
     AND EXISTS(SELECT 1 FROM eidos_pg_ai_policies p WHERE p.mode=? AND p.enabled=1 AND p.paused_reason IS NULL AND p.rate_json=?
-      AND p.provider_budget >= provider_maximum+(SELECT COALESCE(SUM(${providerCommitted}),0) FROM eidos_pg_ai_actions WHERE mode=?)) RETURNING id`)
+      AND ${realBudgetBound} AND p.provider_budget >= provider_maximum+(SELECT COALESCE(SUM(${providerCommitted}),0) FROM eidos_pg_ai_actions WHERE mode=?)) RETURNING id`)
     .bind(owner, mode, owner, mode, id, owner, mode, at.toISOString(), period, owner, mode, owner, mode, period, mode, action.rate_json, mode).first();
   if (!result) {
     const current = await ownedAiAction(env, owner, mode, id);
@@ -239,9 +246,48 @@ export async function claimAiDispatch(env: PlatformEnv, owner: string, mode: AiM
     AND EXISTS(SELECT 1 FROM eidos_pg_ai_accounts a WHERE a.owner_id=? AND a.mode=? AND a.frozen=0)
     AND NOT EXISTS(SELECT 1 FROM eidos_pg_ai_grants g JOIN eidos_orders o ON o.id=g.order_id WHERE g.owner_id=eidos_pg_ai_actions.owner_id AND g.mode=eidos_pg_ai_actions.mode AND (o.status!='paid' OR g.reversed=1 OR EXISTS(SELECT 1 FROM eidos_revoked_payments r WHERE r.payment_intent=g.payment_intent)))
     AND EXISTS(SELECT 1 FROM eidos_pg_ai_policies p WHERE p.mode=? AND p.enabled=1 AND p.paused_reason IS NULL AND p.rate_json=eidos_pg_ai_actions.rate_json
-      AND p.provider_budget >= (SELECT COALESCE(SUM(${providerCommitted}),0) FROM eidos_pg_ai_actions WHERE mode=?)) RETURNING id`)
+      AND ${realBudgetBound} AND p.provider_budget >= (SELECT COALESCE(SUM(${providerCommitted}),0) FROM eidos_pg_ai_actions WHERE mode=?)) RETURNING id`)
     .bind(token, at.toISOString(), new Date(at.getTime() + CUSTOMER_HOLD_WINDOW_MS).toISOString(), id, owner, mode, at.toISOString(), monthlyPeriod(at).period, owner, mode, mode, mode).first();
   return claimed ? token : null;
+}
+/** Zero-priced input counting is bounded and idempotent even though no money is reserved yet. */
+export interface AiCountClaim { action_id: string; client_request_id: string; request_hash: string; state: 'submitted'|'counted'|'failed' }
+export async function claimAiInputCount(env: PlatformEnv, owner: string, mode: AiMode, id: string, requestJson: string, at = new Date()) {
+  const action = await ownedAiAction(env, owner, mode, id);
+  if (typeof requestJson !== 'string' || new TextEncoder().encode(requestJson).length > 100000) throw new HttpError(413, 'The provider input is too large.');
+  const requestHash = await hash(requestJson), clientId = crypto.randomUUID(), hourStart = new Date(at.getTime()-60*60*1000).toISOString();
+  const claimed = await db(env).prepare(`INSERT INTO eidos_pg_ai_count_claims(action_id,owner_id,mode,request_hash,request_json,client_request_id,state,created_at)
+    SELECT a.id,a.owner_id,a.mode,?,?,?,'submitted',? FROM eidos_pg_ai_actions a
+    WHERE a.id=? AND a.owner_id=? AND a.mode=? AND a.state='quoted' AND a.dispatch_token IS NULL AND a.expires_at>? AND a.period=?
+      AND EXISTS(SELECT 1 FROM eidos_pg_ai_balances b WHERE b.owner_id=a.owner_id AND b.mode=a.mode AND b.frozen=0 AND b.available_included>=0 AND b.available_purchased>=0
+        AND b.available_included+b.available_purchased>=a.maximum AND b.requested_limit>=a.maximum+
+          (SELECT COALESCE(SUM(${customerCommitted}),0) FROM eidos_pg_ai_actions WHERE owner_id=a.owner_id AND mode=a.mode AND period=a.period))
+      AND NOT EXISTS(SELECT 1 FROM eidos_pg_ai_grants g JOIN eidos_orders o ON o.id=g.order_id WHERE g.owner_id=a.owner_id AND g.mode=a.mode
+        AND (o.status!='paid' OR g.reversed=1 OR EXISTS(SELECT 1 FROM eidos_revoked_payments r WHERE r.payment_intent=g.payment_intent)))
+      AND EXISTS(SELECT 1 FROM eidos_pg_ai_policies p WHERE p.mode=a.mode AND p.enabled=1 AND p.paused_reason IS NULL AND p.rate_json=a.rate_json
+        AND ${realBudgetBound} AND p.provider_budget>=a.provider_maximum+(SELECT COALESCE(SUM(${providerCommitted}),0) FROM eidos_pg_ai_actions WHERE mode=a.mode))
+      AND (SELECT COUNT(*) FROM eidos_pg_ai_count_claims WHERE mode=a.mode)<${AI_COUNT_LIMITS.lifetime}
+      AND (SELECT COUNT(*) FROM eidos_pg_ai_count_claims WHERE mode=a.mode AND created_at>?)<${AI_COUNT_LIMITS.globalHour}
+      AND (SELECT COUNT(*) FROM eidos_pg_ai_count_claims WHERE mode=a.mode AND owner_id=a.owner_id AND created_at>?)<${AI_COUNT_LIMITS.perOwnerHour}
+      AND NOT EXISTS(SELECT 1 FROM eidos_pg_ai_count_claims WHERE action_id=a.id)
+    ON CONFLICT(action_id) DO NOTHING RETURNING action_id`)
+    .bind(requestHash, requestJson, clientId, at.toISOString(), id, owner, mode, at.toISOString(), monthlyPeriod(at).period, hourStart, hourStart).first();
+  if (claimed) return { action_id: id, client_request_id: clientId, request_hash: requestHash, state: 'submitted' } satisfies AiCountClaim;
+  const existing = await db(env).prepare('SELECT * FROM eidos_pg_ai_count_claims WHERE action_id=? AND owner_id=? AND mode=?').bind(id, owner, mode).first<AiCountClaim>();
+  if (existing && existing.request_hash !== requestHash) throw new HttpError(409, 'This counting reference belongs to a different frozen request.');
+  if (existing) throw new HttpError(409, existing.state === 'submitted' ? 'This full-input quote is still being prepared. Do not submit another count.' : 'This counting attempt is already recorded. Use a fresh action reference.');
+  // Neither funds nor quota can be bypassed by opening another project/device.
+  if (action.state !== 'quoted') throw new HttpError(409, 'This action cannot request another input count.');
+  throw new HttpError(409, 'AI allowance, monthly limit, owner budget or counting quota blocks this quote. Manual editing remains available.');
+}
+export async function finishAiInputCount(env: PlatformEnv, owner: string, mode: AiMode, id: string, clientId: string,
+  evidence: { success: boolean; providerRequestId?: string; inputTokens?: number; reason?: string }, at = new Date()) {
+  if (evidence.providerRequestId !== undefined && !/^[!-~]{1,200}$/.test(evidence.providerRequestId)) throw new HttpError(409, 'Invalid counting identity.');
+  if (evidence.inputTokens !== undefined) boundedInteger(evidence.inputTokens,0,10_000_000);
+  await db(env).prepare(`UPDATE eidos_pg_ai_count_claims SET state=?,provider_request_id=?,input_tokens=?,failure_reason=?,completed_at=?
+    WHERE action_id=? AND owner_id=? AND mode=? AND client_request_id=? AND state='submitted'`)
+    .bind(evidence.success?'counted':'failed', evidence.providerRequestId || null, evidence.inputTokens ?? null, evidence.reason?.slice(0,100) || null,
+      at.toISOString(),id,owner,mode,clientId).run();
 }
 export interface AiUsage {
   inputTokens: number; outputTokens: number; calls: number; paidTools: number;

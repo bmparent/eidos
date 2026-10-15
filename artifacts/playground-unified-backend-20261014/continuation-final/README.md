@@ -1,5 +1,7 @@
 # Final audited backend continuation — 2026-10-14
 
+This folder is now a retained **intermediate source-stage receipt for `472a915c787838eccffea49570b4a4dd824dd669`**, rather than final release acceptance. A later review found an operator-update race in the atomic $5 ceiling and missing durable upstream pre-count admission. Those narrow fixes require a new source freeze, combined validation and disabled preview. The original checks below remain valid for their recorded source stage; no raw result is discarded or relabeled as later source evidence.
+
 Final source checks passed after the dedicated-readiness/global-kill fix:
 
 - `full-tests.log`: 128 passed, zero failed, one explicit existing Windows private-archive symlink skip (19 JavaScript tests + 109 TypeScript tests). The skip needs a Linux or otherwise symlink-capable host; all other archive gate checks ran.

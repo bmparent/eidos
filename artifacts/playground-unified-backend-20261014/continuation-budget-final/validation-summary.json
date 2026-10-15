@@ -1,0 +1,70 @@
+{
+  "timestampUtc": "2026-10-15T00:15:11.138Z",
+  "tests": {
+    "passed": 134,
+    "failed": 0,
+    "skipped": 1,
+    "reason": "Existing Windows private archive symlink test needs a symlink-capable host",
+    "log": "full-tests.log"
+  },
+  "focused": {
+    "passed": 47,
+    "failed": 0,
+    "log": "../continuation-provider-adapter/focused-security-tests.txt"
+  },
+  "typecheck": "passed",
+  "optimizedNextBuild": "passed",
+  "compiledBrowser": {
+    "passed": true,
+    "bytes": 128594,
+    "sha256": "044459b53a6dbc32163061bfe49e201ad695ef7f08c3ac3d322ec3f635333bf8",
+    "receipt": "compiled-browser-parity/receipt.json"
+  },
+  "compiledReference": {
+    "passed": true,
+    "bytes": 68025,
+    "sha256": "7036f418606de0f87fab460a13b632237bad849e14c48e7b0881ab081ec672e4",
+    "receipt": "compiled-current-reference/receipt.json"
+  },
+  "sourceFiles": [
+    {
+      "path": "apps/sentinel-lab/lib/works/vendor/functions/_shared/platform/playgroundAi.ts",
+      "sha256": "1d3bf7ce735e9e7575232d58b7bc89f6551ea199e1c49463dc5a490670eec2d9"
+    },
+    {
+      "path": "apps/sentinel-lab/lib/works/vendor/functions/_shared/platform/playgroundAiProvider.ts",
+      "sha256": "d927ae39c9161928aae4a3c145d3933f809fd56c959cff862559c9564e3e9fdb"
+    },
+    {
+      "path": "apps/sentinel-lab/lib/works/vendor/functions/_shared/platform/playgroundAiSchema.ts",
+      "sha256": "8f65a7c69acd1e83484229dda4bef5bc6b011a6a1e38b1a6f880024ca743749b"
+    },
+    {
+      "path": "apps/sentinel-lab/lib/works/vendor/migrations/0005_playground_ai.sql",
+      "sha256": "bad71d8000a831b3c46a316aec238d8134e8f00432f347f3fe9f6af9d1064936"
+    },
+    {
+      "path": "apps/sentinel-lab/scripts/deploy-playground-preview.mjs",
+      "sha256": "6d7246b86e4e5c49489ba0b11ca1506dabd1881c71a95be569030c3670d4b7e6"
+    },
+    {
+      "path": "scripts/archive_playground_backend_evidence.mjs",
+      "sha256": "b52d1ee6b1b5ff0cebeaae7c44f6071a36d37a4620cffc3f605632057fdffe0e"
+    }
+  ],
+  "providerCalls": 0,
+  "realPaymentCalls": 0,
+  "realMailCalls": 0,
+  "privateArchivesBundled": 0,
+  "database": "none in manual deployment",
+  "keyBinding": "Dedicated Preview branch Secret metadata verified; key value not read; manual deployment explicitly blank",
+  "inputCountBilling": "unverified; generation remains gated",
+  "historicalIntermediateSource": "472a915c787838eccffea49570b4a4dd824dd669",
+  "currentCommittedSource": "Recorded by deployment/runtime receipt after this source freeze",
+  "remaining": [
+    "Actual provider usage/cost and model comparison",
+    "Hosted authenticated persistence",
+    "Real TEST payment/refund/inbox recovery",
+    "Human and physical-device acceptance"
+  ]
+}

@@ -1,9 +1,9 @@
 import { db, hash, HttpError, readText, record, type PlatformEnv } from './core';
-import { activeAiRateCard, aiPolicyStatus, claimAiDispatch, markAiUnknown, money, ownedAiAction, quoteAiAction, recordAiProviderReceipt,
+import { activeAiRateCard, aiPolicyStatus, cancelAiAction, claimAiDispatch, claimAiInputCount, finishAiInputCount, markAiUnknown, money, ownedAiAction, quoteAiAction, recordAiProviderReceipt, REAL_PROVIDER_TEST_BUDGET,
   reserveAiAction, settleAiAction, USD, validateAiBrief, validateRateCard, type AiBrief, type AiMode, type AiRateCard, type AiUsage } from './playgroundAi';
 import { applyContextProposal, operationSchema, proposalTargetId, validateProposal, validateProposalContext } from './playgroundAiRenderer';
 
-export const PLAYGROUND_PROVIDER_TEST_BUDGET = 5 * USD;
+export const PLAYGROUND_PROVIDER_TEST_BUDGET = REAL_PROVIDER_TEST_BUDGET;
 /** Reviewed 2026-10-14 against official Standard short-context pricing. Never choose a model implicitly. */
 export function providerTestRateCard(model: AiRateCard['model']): AiRateCard {
   const astra = model === 'gpt-6-astra';
@@ -87,33 +87,47 @@ async function providerJson(response: Response, max: number) {
 }
 export async function quoteProviderAiAction(env: PlatformEnv, owner: string, mode: AiMode, key: string, input: AiBrief, options: AiProviderOptions = {}) {
   const card = await admitted(env, mode, options), built = buildAiProviderRequest(input, card);
-  // Durable idempotency reuse does not repeat even the counting preflight.
-  const previous = await db(env).prepare('SELECT id FROM eidos_pg_ai_actions WHERE owner_id=? AND mode=? AND idempotency_key=?').bind(owner, mode, key).first<{id:string}>();
+  // Validate the reference and require a configured billing account before any
+  // outbound count. The atomic claim also checks funds, cap, source reversals,
+  // current policy and shared counting quotas without reserving customer money.
+  const action = await quoteAiAction(env, owner, mode, key, input, options.at), requestHash = await hash(built.serialized);
+  const previous = await db(env).prepare('SELECT * FROM eidos_pg_ai_preflights WHERE action_id=?').bind(action.id).first<Preflight>();
   if (previous) {
-    const action = await quoteAiAction(env, owner, mode, key, input, options.at);
-    const saved = await db(env).prepare('SELECT * FROM eidos_pg_ai_preflights WHERE action_id=?').bind(action.id).first<Preflight>();
-    if (!saved || saved.request_hash !== await hash(built.serialized)) throw new HttpError(409, 'This quote needs a fresh action reference.');
+    if (previous.request_hash !== requestHash) throw new HttpError(409, 'This quote needs a fresh action reference.');
     return action;
   }
-  const clientRequestId = crypto.randomUUID(), controller = new AbortController();
+  const claim = await claimAiInputCount(env, owner, mode, action.id, built.serialized, options.at), controller = new AbortController();
   const timer = setTimeout(() => controller.abort(), Math.min(card.maxRuntimeMs, 15000));
-  let count: number, countRequestId: string;
+  let count: number | undefined, countRequestId: string | undefined;
   try {
     const response = await (options.transport || fetch)(endpoint + '/input_tokens', { method: 'POST', redirect: 'error', signal: controller.signal,
-      headers: { authorization: 'Bearer ' + env.EIDOS_PLAYGROUND_OPENAI_API_KEY, 'content-type': 'application/json', 'x-client-request-id': clientRequestId }, body: built.serialized });
+      headers: { authorization: 'Bearer ' + env.EIDOS_PLAYGROUND_OPENAI_API_KEY, 'content-type': 'application/json', 'x-client-request-id': claim.client_request_id }, body: built.serialized });
+    const requestId = response.headers.get('x-request-id');
+    if (identity(requestId)) countRequestId = requestId;
     if (!response.ok) throw Error('provider_count_rejected');
-    const result = await providerJson(response, 16000), requestId = response.headers.get('x-request-id');
-    if (result.object !== 'response.input_tokens' || !integer(result.input_tokens) || !identity(requestId)) throw Error('provider_count_invalid');
-    count = Number(result.input_tokens); countRequestId = requestId;
-  } catch { throw new HttpError(503, 'The full provider input could not be counted. No generation was submitted.'); }
+    const result = await providerJson(response, 16000);
+    if (result.object !== 'response.input_tokens' || !integer(result.input_tokens) || !countRequestId) throw Error('provider_count_invalid');
+    count = Number(result.input_tokens);
+    if (count > card.maxInputTokens) throw new HttpError(413, 'The full provider input exceeds this action limit. Choose a narrower scope.');
+  } catch (error) {
+    await finishAiInputCount(env, owner, mode, action.id, claim.client_request_id, { success: false, providerRequestId: countRequestId, inputTokens: count,
+      reason: controller.signal.aborted?'count_timeout_no_retry':'count_rejected_no_retry' }, options.at);
+    await cancelAiAction(env, owner, mode, action.id);
+    if (error instanceof HttpError) throw error;
+    throw new HttpError(503, 'The full provider input could not be counted. No generation was submitted. This counting attempt will not retry.');
+  }
   finally { clearTimeout(timer); }
-  if (count > card.maxInputTokens) throw new HttpError(413, 'The full provider input exceeds this action limit. Choose a narrower scope.');
-  const action = await quoteAiAction(env, owner, mode, key, input, options.at), requestHash = await hash(built.serialized);
-  await db(env).prepare('INSERT OR IGNORE INTO eidos_pg_ai_preflights(action_id,request_hash,request_json,input_tokens,count_request_id,created_at) VALUES(?,?,?,?,?,?)')
-    .bind(action.id, requestHash, built.serialized, count, countRequestId, (options.at || new Date()).toISOString()).run();
+  // Complete the proof and counting receipt together. A crash before this
+  // transaction leaves the submitted count claim retained and non-retryable.
+  await db(env).batch([
+    db(env).prepare('INSERT OR IGNORE INTO eidos_pg_ai_preflights(action_id,request_hash,request_json,input_tokens,count_request_id,created_at) VALUES(?,?,?,?,?,?)')
+      .bind(action.id, requestHash, built.serialized, count, countRequestId, (options.at || new Date()).toISOString()),
+    db(env).prepare("UPDATE eidos_pg_ai_count_claims SET state='counted',provider_request_id=?,input_tokens=?,completed_at=? WHERE action_id=? AND owner_id=? AND mode=? AND client_request_id=? AND state='submitted'")
+      .bind(countRequestId,count,(options.at||new Date()).toISOString(),action.id,owner,mode,claim.client_request_id),
+  ]);
   const saved = await db(env).prepare('SELECT * FROM eidos_pg_ai_preflights WHERE action_id=?').bind(action.id).first<Preflight>();
   if (!saved || saved.request_hash !== requestHash || saved.input_tokens > card.maxInputTokens) throw new HttpError(409, 'This quote needs a fresh action reference.');
-  return action;
+  return ownedAiAction(env, owner, mode, action.id);
 }
 export function parseAiProviderUsage(value: unknown): AiUsage {
   if (!record(value) || !integer(value.input_tokens) || !integer(value.output_tokens) || !integer(value.total_tokens) ||

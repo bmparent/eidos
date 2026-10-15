@@ -1,7 +1,7 @@
 {
-  "timestampUtc": "2026-10-14T18:21:18.055Z",
-  "backendSha": "0e0aabc48f0ca7894b917495b661ef44cd337dce",
-  "bundleHash": "77b27dd43cb78e66b83fff84bfba70c532aaf7d3a367d891e19e4b754023a870",
+  "timestampUtc": "2026-10-14T23:57:48.145Z",
+  "backendSha": "472a915c787838eccffea49570b4a4dd824dd669",
+  "bundleHash": "7cada06966c9e7e85059097ccca7633c2d6a504b239b5b06ea9e33b0cab3dc4b",
   "archiveCount": 0,
   "files": [
     {
@@ -211,8 +211,103 @@
     },
     {
       "file": "apps/sentinel-lab/lib/works/dispatch.ts",
-      "bytes": 8234,
-      "sha256": "fc59e03e8636a789bf89ba8597ec80efd114ce79507e513099036846765e0076"
+      "bytes": 8558,
+      "sha256": "3f19b0e338a64cee5d63948b7d0fc1d860b2a05ba30b6849029621494e0ad790"
+    },
+    {
+      "file": "apps/sentinel-lab/lib/works/project-delivery/source-manifest.json",
+      "bytes": 3773,
+      "sha256": "c6f186bc38145ff750c822143175749208cec1cba231525f0bdb8711afe62b15"
+    },
+    {
+      "file": "apps/sentinel-lab/lib/works/project-delivery/src/data/buyerArchivePins.json",
+      "bytes": 1151,
+      "sha256": "8c34ec4e1d8e14945eb2d6afbd8bb9f5d64eb0920df387a5ee972bcf712d561b"
+    },
+    {
+      "file": "apps/sentinel-lab/lib/works/project-delivery/src/playground/aiOperations.ts",
+      "bytes": 14092,
+      "sha256": "60506bc3f9c1f5d856c339ff4958e53ac0122c18e4166ed949d181b5590de7bd"
+    },
+    {
+      "file": "apps/sentinel-lab/lib/works/project-delivery/src/playground/approved-glass-preset.json",
+      "bytes": 1150,
+      "sha256": "aa1a9e6df894b1b7bb7f84e4dd52b866cf1efac59d422bae2c260361ea0739d2"
+    },
+    {
+      "file": "apps/sentinel-lab/lib/works/project-delivery/src/playground/artworkSchema.ts",
+      "bytes": 8090,
+      "sha256": "109b7f51e562a980a1b3ae102fb177c660373cd7772171ddb38de7da6f154b72"
+    },
+    {
+      "file": "apps/sentinel-lab/lib/works/project-delivery/src/playground/authoringRenderer.ts",
+      "bytes": 6290,
+      "sha256": "2f7afde3ce27a92893558b0f27123e796c07434eb4b66214eef525d7ae4f342f"
+    },
+    {
+      "file": "apps/sentinel-lab/lib/works/project-delivery/src/playground/authoringSchema.ts",
+      "bytes": 7168,
+      "sha256": "f531a72064b9b32783b17bba0bd08350120a2f9219173ab3db849b06b6d25a08"
+    },
+    {
+      "file": "apps/sentinel-lab/lib/works/project-delivery/src/playground/compositionRenderer.ts",
+      "bytes": 4758,
+      "sha256": "4bc9e5ca286d9f429e16066d12beb5f8a7510953ec54fa8f608011286958792a"
+    },
+    {
+      "file": "apps/sentinel-lab/lib/works/project-delivery/src/playground/compositionSchema.ts",
+      "bytes": 4287,
+      "sha256": "a247863688e0260f29d9fdc9fe9c26f848b05dcff5489e601051f851b90851b9"
+    },
+    {
+      "file": "apps/sentinel-lab/lib/works/project-delivery/src/playground/export.ts",
+      "bytes": 14461,
+      "sha256": "9575ddbb7e8ea03ba9188aee68881f1c6f51f97c002daa832f6648b957b36fe6"
+    },
+    {
+      "file": "apps/sentinel-lab/lib/works/project-delivery/src/playground/glassBundle.ts",
+      "bytes": 19326,
+      "sha256": "4901aeb6df7a71fd647d949e49f148cdcfcf80af26c524ac2e77a917bb648e04"
+    },
+    {
+      "file": "apps/sentinel-lab/lib/works/project-delivery/src/playground/media.ts",
+      "bytes": 2320,
+      "sha256": "9f680330107ac6bd152ecbc333fe36447836bf65caf7213d7dda09bdf8ee975b"
+    },
+    {
+      "file": "apps/sentinel-lab/lib/works/project-delivery/src/playground/model.ts",
+      "bytes": 19122,
+      "sha256": "b9c1a2fe81221df8072e2e98e12ffd484af027d16a1d552fde11a5592b41cc47"
+    },
+    {
+      "file": "apps/sentinel-lab/lib/works/project-delivery/src/playground/motionSchema.ts",
+      "bytes": 5869,
+      "sha256": "416b4a8ceb2120b8d58e9b0172c79ce3f770c92a2aceecad736399c91e5b525e"
+    },
+    {
+      "file": "apps/sentinel-lab/lib/works/project-delivery/src/playground/pageStyles.ts",
+      "bytes": 6329,
+      "sha256": "519090e2366641830894a5cd70106abc302b437be3e15e7228bc176e6a4a820f"
+    },
+    {
+      "file": "apps/sentinel-lab/lib/works/project-delivery/src/playground/purchaseSnapshot.ts",
+      "bytes": 22435,
+      "sha256": "e35e447581821f61f0b05055b7add192c14ccadebfa815c762cc000eb4ec39ba"
+    },
+    {
+      "file": "apps/sentinel-lab/lib/works/project-delivery/src/playground/renderer.ts",
+      "bytes": 10372,
+      "sha256": "e84990d78ab4720ac062852954893a071352e90dc582e78b98eac358b8ba61d1"
+    },
+    {
+      "file": "apps/sentinel-lab/lib/works/project-delivery/src/playground/runtimeBundle.ts",
+      "bytes": 39100,
+      "sha256": "3185ff7acf232be3149e8abbf993e8880ae0ee55b77e499fc0824af5f17bc2d0"
+    },
+    {
+      "file": "apps/sentinel-lab/lib/works/project-delivery/src/playground/studioSchema.ts",
+      "bytes": 1050,
+      "sha256": "d83711c21198ba00574c96443ce957badd9df5731de1305fb44b5168e74a99c3"
     },
     {
       "file": "apps/sentinel-lab/lib/works/templateArchives.ts",
@@ -231,8 +326,8 @@
     },
     {
       "file": "apps/sentinel-lab/lib/works/vendor/functions/_shared/platform/core.ts",
-      "bytes": 10765,
-      "sha256": "d341266bd24be5fe8dbd47091d8c0bad6450b7f61924d46b70f6095661a4520e"
+      "bytes": 10901,
+      "sha256": "58323c84063d8f9fa55d4897234b86154a1e48764b755e3cb2ddf40f5e283f75"
     },
     {
       "file": "apps/sentinel-lab/lib/works/vendor/functions/_shared/platform/kitArchive.ts",
@@ -271,13 +366,23 @@
     },
     {
       "file": "apps/sentinel-lab/lib/works/vendor/functions/_shared/platform/playgroundAi.ts",
-      "bytes": 30804,
-      "sha256": "fd2adadc434c8f6438f67968bb853c0b9dddc9a4a9c678d638a4faa58bb6aee2"
+      "bytes": 37505,
+      "sha256": "d16de593641edfa18d0cff382d2d4606ca3149d9fbdf4c5e861222892b74ec9e"
+    },
+    {
+      "file": "apps/sentinel-lab/lib/works/vendor/functions/_shared/platform/playgroundAiProvider.ts",
+      "bytes": 15422,
+      "sha256": "12caca18ae19e8b4ad28e2c5907e6461eb9b548b7f7648fa4d89375833ebe2d6"
+    },
+    {
+      "file": "apps/sentinel-lab/lib/works/vendor/functions/_shared/platform/playgroundAiRenderer.ts",
+      "bytes": 178,
+      "sha256": "e3752fd05273b7e7546d600d72d05b64bb3f4b9f8987132777e68e9bf8197432"
     },
     {
       "file": "apps/sentinel-lab/lib/works/vendor/functions/_shared/platform/playgroundAiSchema.ts",
-      "bytes": 5832,
-      "sha256": "0f7559f69d4550399eba394e2c8fadbd7e5484aecfdc064c7cb5893db7a5e23c"
+      "bytes": 6343,
+      "sha256": "dd0df0e1924adbde340730d46b795ae8537a1c9770b76d8bf2ec321900eb9a82"
     },
     {
       "file": "apps/sentinel-lab/lib/works/vendor/functions/_shared/platform/playgroundOrders.ts",
@@ -288,6 +393,31 @@
       "file": "apps/sentinel-lab/lib/works/vendor/functions/_shared/platform/playgroundSchema.ts",
       "bytes": 1515,
       "sha256": "5ac48c62fc8983544198e76a29decfb0053e21e04c1b55b111f2a83c68af4b5e"
+    },
+    {
+      "file": "apps/sentinel-lab/lib/works/vendor/functions/_shared/platform/projectDelivery.ts",
+      "bytes": 9817,
+      "sha256": "b17d270cd7b5f40a711cb3ac67553cd5d927b2def25ab045ba7befab467f8614"
+    },
+    {
+      "file": "apps/sentinel-lab/lib/works/vendor/functions/_shared/platform/projectDeliveryOrders.ts",
+      "bytes": 8541,
+      "sha256": "90d8218230a1b5e56a6cd4d1a30822a39e1587bc5fc141069d5d836488eb615a"
+    },
+    {
+      "file": "apps/sentinel-lab/lib/works/vendor/functions/_shared/platform/projectDeliveryOrdersSchema.ts",
+      "bytes": 1331,
+      "sha256": "99f909e2ef9d0e3e7327557239d2ee7a97815e689ebb4f274d53d8af77156209"
+    },
+    {
+      "file": "apps/sentinel-lab/lib/works/vendor/functions/_shared/platform/projectDeliveryRenderer.ts",
+      "bytes": 144,
+      "sha256": "b971661fc639da6c98eef3e43a4c005177fafc662c7dee29497bb307611521a6"
+    },
+    {
+      "file": "apps/sentinel-lab/lib/works/vendor/functions/_shared/platform/projectDeliverySchema.ts",
+      "bytes": 1342,
+      "sha256": "9ff3edfd777b43410d7499e6a2abb66625187b6b15f6bc889324c2b917913c4b"
     },
     {
       "file": "apps/sentinel-lab/lib/works/vendor/functions/_shared/platform/shop.ts",
@@ -311,8 +441,8 @@
     },
     {
       "file": "apps/sentinel-lab/lib/works/vendor/functions/_shared/platform/templateShop.ts",
-      "bytes": 28543,
-      "sha256": "325c97b13acb692bdbc1f5e8359cc6e53556aa94686e9e097a49002a7026c620"
+      "bytes": 34779,
+      "sha256": "b4a333664bfc0c076930f55620c815779bd6cb3f514d9b3e6ca5d54c82a5fc5d"
     },
     {
       "file": "apps/sentinel-lab/lib/works/vendor/functions/_shared/snapshot/http.ts",
@@ -381,13 +511,18 @@
     },
     {
       "file": "apps/sentinel-lab/lib/works/vendor/functions/api/playground/ai.ts",
-      "bytes": 2318,
-      "sha256": "f732b515a21847957876af5d9c583834477c4ca4aa0f1025e3947099231a8210"
+      "bytes": 3292,
+      "sha256": "e6669a0e557cafd8cf5ecc6b0d8949edab96b490366d8b8da6f83cf8109599a1"
     },
     {
       "file": "apps/sentinel-lab/lib/works/vendor/functions/api/playground/checkout.ts",
       "bytes": 549,
       "sha256": "84698a9d6458bd32aa1e6e8593f86043a7a32715f499998e60f88b944da98259"
+    },
+    {
+      "file": "apps/sentinel-lab/lib/works/vendor/functions/api/playground/delivery.ts",
+      "bytes": 1309,
+      "sha256": "0a8f465d54abfa9221b9be25d9b9eb2b55850a408b47e9ec2adc1110c1cc0fb2"
     },
     {
       "file": "apps/sentinel-lab/lib/works/vendor/functions/api/playground/projects.ts",
@@ -406,8 +541,8 @@
     },
     {
       "file": "apps/sentinel-lab/lib/works/vendor/functions/api/public-config.ts",
-      "bytes": 1102,
-      "sha256": "58e2b162e17733cfdd2288f1cb77e375e66917f6815397594e276ca943c4d98a"
+      "bytes": 1699,
+      "sha256": "114d56a8b52c0731f30df233ef2c29333e687bde8954c2315cddb9db852e8feb"
     },
     {
       "file": "apps/sentinel-lab/lib/works/vendor/functions/api/shop/catalog.ts",
@@ -421,8 +556,8 @@
     },
     {
       "file": "apps/sentinel-lab/lib/works/vendor/functions/api/shop/download.ts",
-      "bytes": 1235,
-      "sha256": "51f989cc8662cd0f8ca57229941f567075adc6b8a3174a6eca672608504d5ea9"
+      "bytes": 1397,
+      "sha256": "7a680207bd912a53faad60aaf6347bbef523f871ddad1d47e921a7f1aaaa9728"
     },
     {
       "file": "apps/sentinel-lab/lib/works/vendor/functions/api/shop/recover.ts",
@@ -481,8 +616,18 @@
     },
     {
       "file": "apps/sentinel-lab/lib/works/vendor/migrations/0005_playground_ai.sql",
-      "bytes": 5751,
-      "sha256": "531525eb781671d6ffb887de783c773d3023383bd1110ad97e53d0e7ae2fd8b8"
+      "bytes": 6255,
+      "sha256": "627a173627dd345d3ca6741c5d964d034de46f8b7d26322a4195ded69028cac8"
+    },
+    {
+      "file": "apps/sentinel-lab/lib/works/vendor/migrations/0006_project_delivery.sql",
+      "bytes": 1307,
+      "sha256": "711faa1efc31c66ae37056c1eec51aca3f8ffeba975a4d9873b0282fc8c9ba43"
+    },
+    {
+      "file": "apps/sentinel-lab/lib/works/vendor/migrations/0007_project_delivery_orders.sql",
+      "bytes": 1299,
+      "sha256": "34fb25d8792c96cb0d26206bd4ca40ecc1bcace4865f47fc5d8a5b7278b7d41f"
     },
     {
       "file": "apps/sentinel-lab/lib/works/vendor/src/playground/approved-glass-preset.json",
@@ -536,8 +681,8 @@
     },
     {
       "file": "apps/sentinel-lab/package.json",
-      "bytes": 999,
-      "sha256": "7f4eb304a67e39ffbde9a95cb5a5e079ded9bbe12a81e1abeaf993f5d7a9ce50"
+      "bytes": 1134,
+      "sha256": "1e19f65ebbffe508a2af1471c52e4636598c6c343c629df6ce830569f2a817b3"
     },
     {
       "file": "apps/sentinel-lab/scripts/browser-qa.mjs",
@@ -556,8 +701,8 @@
     },
     {
       "file": "apps/sentinel-lab/scripts/configure-playground-preview.mjs",
-      "bytes": 6610,
-      "sha256": "a6fdcfbacf812bad7d6b9ad739229b5f7ede0ed111363b3ef0b752b37c733b30"
+      "bytes": 6646,
+      "sha256": "c24ce0c65eebf7c23c4c554f6ba881e3603e74428483a012c0dc772548b95ed8"
     },
     {
       "file": "apps/sentinel-lab/scripts/configure-studio-preview.mjs",
@@ -571,8 +716,8 @@
     },
     {
       "file": "apps/sentinel-lab/scripts/deploy-playground-preview.mjs",
-      "bytes": 5681,
-      "sha256": "9874706e7e366f3081aead6a8f3d3191ab3c36f8cdbd5cc0437c671ef5333012"
+      "bytes": 6288,
+      "sha256": "6d7246b86e4e5c49489ba0b11ca1506dabd1881c71a95be569030c3670d4b7e6"
     },
     {
       "file": "apps/sentinel-lab/scripts/deploy-templates-preview.mjs",
