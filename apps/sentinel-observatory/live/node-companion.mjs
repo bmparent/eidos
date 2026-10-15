@@ -16,7 +16,7 @@ export function createCompanion({database=new CompanionDatabase(),port=8767,path
   const pending=new Map(),pathRates=new Map();let pathActive=false;
   const env={OBSERVATORY_DB:database,OBSERVATORY_TARGET_PROBES_ENABLED:'true',OPENAI_API_KEY:process.env.OPENAI_API_KEY};
   const json=(data,status=200)=>new Response(JSON.stringify(data),{status,headers:{'content-type':'application/json','cache-control':'no-store','x-content-type-options':'nosniff'}});
-  const assets={'/':'web/index.html','/app.js':'web/app.js','/styles.css':'web/styles.css','/brain.mjs':'brain.mjs','/target-panel.mjs':'web/target-panel.mjs','/network-panel.mjs':'web/network-panel.mjs','/security-events.mjs':'security-events.mjs'};
+  const assets={'/':'web/index.html','/app.js':'web/app.js','/styles.css':'web/styles.css','/brain.mjs':'brain.mjs','/probe-explanation.mjs':'probe-explanation.mjs','/target-panel.mjs':'web/target-panel.mjs','/network-panel.mjs':'web/network-panel.mjs','/security-events.mjs':'security-events.mjs'};
   const server=createServer(async(incoming,outgoing)=>{
     try{
       const address=server.address(),actualPort=typeof address==='object'?address.port:port,origin=`http://127.0.0.1:${actualPort}`;

@@ -7,7 +7,7 @@ import {resolveTargetEvidence} from './target-store.mjs';
 import {prepareTargetInterpretation} from './target-interpretation.mjs';
 
 export const SOL_MODEL_ID='gpt-6.1-sol';
-export const SOL_PROMPT_VERSION='observatory-sol-target-streams-v2';
+export const SOL_PROMPT_VERSION='observatory-sol-target-stages-v3';
 export const SOL_LIMITS=Object.freeze({daily_requests:20,daily_reserved_usd:0.50,reserved_usd_per_call:0.05,
   cooldown_ms:60000,max_output_tokens:1024,max_request_bytes:6000,provider_timeout_ms:30000,receipt_retention_days:8});
 const solEndpoint='https://api.openai.com/v1/responses';
@@ -83,7 +83,7 @@ export function solPrepareEvidence(raw={}) {
 }
 
 export function solDeterministic(prepared,reason,extra={}) {
-  return {kind:'deterministic',summary:prepared.summary,facts:prepared.facts,hypotheses:[],unknowns:prepared.unknowns,
+  return {kind:'deterministic',summary:prepared.summary,facts:prepared.facts,next_checks:prepared.next_checks??[],hypotheses:[],unknowns:prepared.unknowns,
     provenance:{engine:'authoritative-measurement-template',model_requested:SOL_MODEL_ID,model_ran:false,output_accepted:false,
       input_evidence_ids:prepared.input_evidence_ids??[prepared.evidence_id],linked_evidence_id:prepared.linked_evidence_id,reason,...extra}};
 }
@@ -91,7 +91,7 @@ export function solDeterministic(prepared,reason,extra={}) {
 function solAPIRequest(prepared) {
   const codes=Object.keys(prepared.catalogue);
   return {model:SOL_MODEL_ID,reasoning:{effort:'low'},store:false,service_tier:'default',max_output_tokens:SOL_LIMITS.max_output_tokens,
-    instructions:solInstructions,input:JSON.stringify({source:'observatory_edge',measurement:prepared.safe,
+    instructions:solInstructions,input:JSON.stringify({source:prepared.safe.kind==='target_probe'?'target_probe':'observatory_edge',measurement:prepared.safe,
       candidates:Object.fromEntries(codes.map(code=>[code,{label:prepared.catalogue[code].label,possibility:prepared.catalogue[code].text}]))}),
     text:{format:{type:'json_schema',name:'observatory_candidate_ranking',strict:true,schema:{type:'object',properties:{ranking:{type:'array',items:{type:'string',enum:codes},minItems:2,maxItems:2}},required:['ranking'],additionalProperties:false}}}};
 }
@@ -168,12 +168,13 @@ function solCacheResult(row,prepared,requestedId,capabilities,promptHash) {
     &&prior.prompt_sha256===promptHash&&row.status==='completed'&&original.kind==='model'&&verified&&prior.output_accepted===true&&prior.model===SOL_MODEL_ID
     &&/^[a-f0-9]{64}$/.test(prior.output_sha256??'')&&Array.isArray(ranking)&&ranking.length===2&&new Set(ranking).size===2&&ranking.every(code=>typeof code==='string'&&Object.hasOwn(prepared.catalogue,code))
     &&solInteger(prior.usage?.input_tokens)!==null&&prior.usage.input_tokens<=10000&&solInteger(prior.usage?.output_tokens)!==null&&prior.usage.output_tokens<=SOL_LIMITS.max_output_tokens;
-  let analysis=solDeterministic(prepared,'The previous provider attempt is retained; authoritative facts remain available and no repeat call will be sent.',
-    {inference_attempted:prior.inference_attempted===true,model_ran:prior.inference_attempted===false?false:verified?true:null,execution_verified:verified,output_accepted:false,reserved_usd:0.05,prompt_version:SOL_PROMPT_VERSION,prompt_sha256:promptHash});
+  const contextChanged=row.prompt_sha256!==promptHash;
+  let analysis=solDeterministic(prepared,contextChanged?'The saved interpretation used an earlier evidence context. Current measurement facts were rebuilt; the old ranking is not reused and no repeat provider call was sent.':'The previous provider attempt is retained; authoritative facts remain available and no repeat call will be sent.',
+    {inference_attempted:prior.inference_attempted===true,model_ran:prior.inference_attempted===false?false:verified?true:null,execution_verified:verified,output_accepted:false,rejection_code:contextChanged?'cached_context_changed':row.error_code??'cached_result_unavailable',reserved_usd:0.05,prompt_version:SOL_PROMPT_VERSION,prompt_sha256:promptHash});
   if(verified)Object.assign(analysis.provenance,{model:SOL_MODEL_ID,provider_model:prior.provider_model,provider_response_id:prior.provider_response_id});
   if(valid){
     const usage={input_tokens:prior.usage.input_tokens,output_tokens:prior.usage.output_tokens,total_tokens:prior.usage.input_tokens+prior.usage.output_tokens};
-    analysis={kind:'model',summary:prepared.summary,facts:prepared.facts,
+    analysis={kind:'model',summary:prepared.summary,facts:prepared.facts,next_checks:prepared.next_checks??[],
       hypotheses:ranking.map(code=>{const {label,...item}=prepared.catalogue[code];return item;}),
       unknowns:['GPT-6.1 Sol ranked predefined conditional possibilities; cause and ranking usefulness remain unproven.',...prepared.unknowns],
       provenance:{...analysis.provenance,engine:'OpenAI Responses API',model:SOL_MODEL_ID,model_ran:true,output_accepted:true,output_sha256:prior.output_sha256,
@@ -220,13 +221,13 @@ export async function handleInterpretation(request,env={},ctx={},options={}) {
     // The deployed Sites edge supports manual redirect mode. Never forward the
     // server credential to a redirect destination, even when it is returned by API.
     const response=await solTimeout(fetchImpl(solEndpoint,{method:'POST',headers:{'Content-Type':'application/json',Authorization:`Bearer ${solKey(env)}`},body:serialized,signal:controller.signal,redirect:'manual'}),timeoutMs);
-    if(!response.ok||response.redirected){void response.body?.cancel().catch(()=>{});errorCode='provider_http_error';throw new Error(errorCode);}
+    if(!response.ok||response.redirected){void response.body?.cancel().catch(()=>{});errorCode=response.redirected?'provider_http_error':[401,403].includes(response.status)?'provider_authentication_error':response.status===429?'provider_rate_limited':response.status>=500?'provider_unavailable':'provider_http_error';throw new Error(errorCode);}
     const providerBody=JSON.parse(await solReadStream(response,65536,Math.max(1,timeoutMs-(performance.now()-started))));
     verified=solProviderIdentity(providerBody);
     if(verified)providerIdentity={model:SOL_MODEL_ID,provider_model:providerBody.model,provider_response_id:providerBody.id};
     const provider=solProviderResult(providerBody,prepared);verified=true;usage=provider.usage;
     const outputHash=await solHash(provider.raw);
-    analysis={kind:'model',summary:prepared.summary,facts:prepared.facts,
+    analysis={kind:'model',summary:prepared.summary,facts:prepared.facts,next_checks:prepared.next_checks??[],
       hypotheses:provider.ranking.map(code=>{const {label,...item}=prepared.catalogue[code];return item;}),
       unknowns:['GPT-6.1 Sol ranked predefined conditional possibilities; cause and ranking usefulness remain unproven.',...prepared.unknowns],
       provenance:{engine:'OpenAI Responses API',model:SOL_MODEL_ID,provider_model:provider.provider_model,provider_response_id:provider.response_id,
@@ -241,8 +242,9 @@ export async function handleInterpretation(request,env={},ctx={},options={}) {
     status='completed';errorCode=null;
   }catch(error){
     controller.abort();
-    if(!['provider_http_error','request_cancelled_before_dispatch'].includes(errorCode))errorCode=request.signal?.aborted?'request_cancelled_after_dispatch':providerTimedOut||error?.message==='bounded_deadline'?'provider_timeout':'provider_output_rejected';
-    analysis=solDeterministic(prepared,'The provider attempt failed or its output could not be verified; showing authoritative measurement facts. The attempt remains reserved and will not be automatically repeated.',
+    if(!['provider_http_error','provider_authentication_error','provider_rate_limited','provider_unavailable','request_cancelled_before_dispatch'].includes(errorCode))errorCode=request.signal?.aborted?'request_cancelled_after_dispatch':providerTimedOut||error?.message==='bounded_deadline'?'provider_timeout':'provider_output_rejected';
+    const failureMessage={provider_authentication_error:'The model provider rejected the server credentials or their access scope.',provider_rate_limited:'The model provider rate-limited this request.',provider_unavailable:'The model provider returned a service failure.',provider_timeout:'The model provider did not complete within the configured deadline.'}[errorCode]??'The provider attempt failed or its output could not be verified.';
+    analysis=solDeterministic(prepared,failureMessage+' Showing authoritative measurement facts. The attempt remains reserved and will not be automatically repeated.',
       {inference_attempted:errorCode!=='request_cancelled_before_dispatch',model_ran:errorCode==='request_cancelled_before_dispatch'?false:verified?true:null,execution_verified:verified,output_accepted:false,rejection_code:errorCode,prompt_version:SOL_PROMPT_VERSION,prompt_sha256:promptHash,reserved_usd:0.05});
     if(providerIdentity)Object.assign(analysis.provenance,providerIdentity);
     status=errorCode==='provider_output_rejected'?'rejected':'failed';

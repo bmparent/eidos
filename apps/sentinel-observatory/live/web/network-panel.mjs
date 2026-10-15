@@ -53,6 +53,7 @@ export function initializeNetworkPanel(container, options={}) {
   const interpreterEligibility=event=>{
     const model=state.capabilities?.hosted_interpretation;
     if(!event||event.source!=='observatory_edge'||sourceFor(event)?.mode!=='live'||!/^edge_[a-f0-9]{32}$/.test(event.source_event_id||''))return {allowed:false,reason:'Imported and local sensor records are not registered with the hosted interpreter. Their evidence remains available here.'};
+    if(event.kind==='request')return {allowed:false,reason:'This is an Observatory service request receipt. Select a monitored endpoint above for its connection explanation; this receipt does not describe the endpoint’s health.'};
     if(!model)return {allowed:false,reason:'Server interpreter availability is still being checked.'};
     if(model.configured!==true||model.connected!==true)return {allowed:false,reason:short(model.reason||'The server interpreter is not configured.',400)};
     return {allowed:true,model:model.model_id||'Connected server interpreter',reason:'Manual server interpretation · one request when you click. The server reads its saved source record by evidence ID.'};

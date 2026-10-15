@@ -6,7 +6,7 @@ import {retainTargetObservation, targetHistory} from './target-store.mjs';
 
 // build_worker.py embeds the exact inspected web sources here. No runtime CDN.
 const ASSETS = /* OBSERVATORY_ASSETS */ Object.freeze({});
-const VERSION = 'sentinel-live-v7-target-streams';
+const VERSION = 'sentinel-live-v8-evidence-explanations';
 const SECURITY = {
   'cache-control': 'no-store',
   'x-content-type-options': 'nosniff',
@@ -82,7 +82,7 @@ export default {
       const history = await targetHistory(env,new URL(request.url).searchParams.get('target_id'));
       return response(JSON.stringify(history),'application/json; charset=utf-8',history.available?200:503);
     }
-    const routes = {'/': ['html', 'text/html; charset=utf-8'], '/app.js': ['app', 'text/javascript; charset=utf-8'], '/styles.css': ['css', 'text/css; charset=utf-8'], '/brain.mjs': ['brain', 'text/javascript; charset=utf-8'], '/browser-interpreter.mjs': ['interpreter', 'text/javascript; charset=utf-8'], '/browser-model-worker.mjs': ['model_worker', 'text/javascript; charset=utf-8'], '/security-events.mjs': ['security', 'text/javascript; charset=utf-8'], '/network-panel.mjs': ['network_panel', 'text/javascript; charset=utf-8'], '/target-panel.mjs': ['target_panel', 'text/javascript; charset=utf-8'], '/recorded': ['recorded', 'text/html; charset=utf-8']};
+    const routes = {'/': ['html', 'text/html; charset=utf-8'], '/app.js': ['app', 'text/javascript; charset=utf-8'], '/styles.css': ['css', 'text/css; charset=utf-8'], '/brain.mjs': ['brain', 'text/javascript; charset=utf-8'], '/browser-interpreter.mjs': ['interpreter', 'text/javascript; charset=utf-8'], '/browser-model-worker.mjs': ['model_worker', 'text/javascript; charset=utf-8'], '/security-events.mjs': ['security', 'text/javascript; charset=utf-8'], '/network-panel.mjs': ['network_panel', 'text/javascript; charset=utf-8'], '/target-panel.mjs': ['target_panel', 'text/javascript; charset=utf-8'], '/probe-explanation.mjs': ['probe_explanation', 'text/javascript; charset=utf-8'], '/recorded': ['recorded', 'text/html; charset=utf-8']};
     const route = routes[path];
     if (!route || !ASSETS[route[0]]) return response('Not found', 'text/plain; charset=utf-8', 404);
     return response(request.method === 'HEAD' ? null : ASSETS[route[0]], route[1]);

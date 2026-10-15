@@ -30,6 +30,27 @@ const solFixtureProvider=(overrides={})=>({id:'resp_fixture_only',model:SOL_MODE
 const solFixtureReply=body=>new Response(JSON.stringify(body),{headers:{'Content-Type':'application/json'}});
 const solFixtureCall=(request,env,fetchImpl,options={})=>handleInterpretation(request,env,{}, {fetchImpl,...options});
 
+test('changed cached context explains its incompatibility and never dispatches another provider call',async()=>{
+  const db=new SolD1Fixture();try{
+    solFixtureStore(db);let calls=0;
+    const fake=async()=>{calls++;return solFixtureReply(solFixtureProvider());};
+    await solFixtureCall(solFixtureRequest(),solFixtureEnv(db),fake);
+    db.sqlite.prepare("UPDATE observatory_model_jobs SET prompt_sha256=?").run('a'.repeat(64));
+    const response=await solFixtureCall(solFixtureRequest(),solFixtureEnv(db),fake),body=await response.json();
+    assert.equal(body.cached,true);assert.equal(body.analysis.provenance.output_accepted,false);
+    assert.equal(body.analysis.provenance.rejection_code,'cached_context_changed');assert.match(body.analysis.provenance.reason,/earlier evidence context/);assert.equal(calls,1);
+  }finally{db.close();}
+});
+
+test('provider authentication, throttling and service failure retain distinct bounded error codes',async()=>{
+  for(const [status,code] of [[401,'provider_authentication_error'],[429,'provider_rate_limited'],[503,'provider_unavailable']]){
+    const db=new SolD1Fixture();try{
+      solFixtureStore(db);const response=await solFixtureCall(solFixtureRequest(),solFixtureEnv(db),async()=>new Response('secret provider body',{status}));
+      const body=await response.json();assert.equal(body.analysis.provenance.rejection_code,code);assert.ok(!JSON.stringify(body).includes('secret provider body'));
+    }finally{db.close();}
+  }
+});
+
 test('missing server key is explicit and cannot trigger a provider call',async()=>{
   const db=new SolD1Fixture();try{
     solFixtureStore(db);let calls=0;

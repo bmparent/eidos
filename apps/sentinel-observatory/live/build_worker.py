@@ -25,6 +25,7 @@ def build(output: Path, recorded: Path | None = None) -> dict:
         'security': ROOT / 'security-events.mjs',
         'network_panel': ROOT / 'web' / 'network-panel.mjs',
         'target_panel': ROOT / 'web' / 'target-panel.mjs',
+        'probe_explanation': ROOT / 'probe-explanation.mjs',
     }
     if recorded:
         sources['recorded'] = recorded
@@ -53,7 +54,8 @@ def build(output: Path, recorded: Path | None = None) -> dict:
     modules += module('target-brain.mjs', ['TargetBrain', 'TARGET_PROFILE'], ["import {SentinelPort, ENGINE_PROVENANCE} from './brain.mjs';"])
     modules += module('target-store.mjs', ['retainTargetObservation', 'targetHistory', 'resolveTargetEvidence'], ["import {TargetBrain, TARGET_PROFILE} from './target-brain.mjs';"])
     modules += module('target-relay.mjs', ['targetProbeConfiguration', 'collectTargetRelayObservation'], ["import {normalizeTarget, ipCollectorConfiguration} from './collector.mjs';"])
-    modules += module('target-interpretation.mjs', ['prepareTargetInterpretation'])
+    modules += module('probe-explanation.mjs', ['probeExplanation'])
+    modules += module('target-interpretation.mjs', ['prepareTargetInterpretation'], ["import {probeExplanation} from './probe-explanation.mjs';"])
     sol = sol.replace("import {resolveTargetEvidence} from './target-store.mjs';", '').replace("import {prepareTargetInterpretation} from './target-interpretation.mjs';", '')
     entry = (ROOT / 'worker-entry.mjs').read_text(encoding='utf-8')
     required_import = "import {handleObservation, ipCollectorConfiguration} from './collector.mjs';"
