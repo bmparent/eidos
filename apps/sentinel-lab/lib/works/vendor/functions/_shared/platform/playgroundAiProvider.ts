@@ -77,7 +77,12 @@ export function buildAiProviderRequest(input: AiBrief, card: AiRateCard) {
   // This is only a byte/memory bound. It is deliberately not called a full
   // token bound: provider roles, schema and model framing require exact count.
   if (new TextEncoder().encode(serialized).length > 100000) throw new HttpError(413, 'The selected context is too large.');
-  return { request, serialized, context };
+  // The count endpoint accepts input-bearing fields, not generation controls.
+  // See the official per-run spending-controller guide and count reference.
+  const countRequest = { model: request.model, instructions: request.instructions, input: request.input,
+    reasoning: request.reasoning, tools: request.tools, tool_choice: request.tool_choice,
+    parallel_tool_calls: request.parallel_tool_calls, truncation: request.truncation, text: request.text };
+  return { request, serialized, context, countRequest, countSerialized: JSON.stringify(countRequest) };
 }
 async function providerJson(response: Response, max: number) {
   if (!response.headers.get('content-type')?.toLowerCase().startsWith('application/json')) throw Error('provider_content_type');
@@ -96,12 +101,12 @@ export async function quoteProviderAiAction(env: PlatformEnv, owner: string, mod
     if (previous.request_hash !== requestHash) throw new HttpError(409, 'This quote needs a fresh action reference.');
     return action;
   }
-  const claim = await claimAiInputCount(env, owner, mode, action.id, built.serialized, options.at), controller = new AbortController();
+  const claim = await claimAiInputCount(env, owner, mode, action.id, built.countSerialized, options.at), controller = new AbortController();
   const timer = setTimeout(() => controller.abort(), Math.min(card.maxRuntimeMs, 15000));
   let count: number | undefined, countRequestId: string | undefined;
   try {
     const response = await (options.transport || fetch)(endpoint + '/input_tokens', { method: 'POST', redirect: 'error', signal: controller.signal,
-      headers: { authorization: 'Bearer ' + env.EIDOS_PLAYGROUND_OPENAI_API_KEY, 'content-type': 'application/json', 'x-client-request-id': claim.client_request_id }, body: built.serialized });
+      headers: { authorization: 'Bearer ' + env.EIDOS_PLAYGROUND_OPENAI_API_KEY, 'content-type': 'application/json', 'x-client-request-id': claim.client_request_id }, body: built.countSerialized });
     const requestId = response.headers.get('x-request-id');
     if (identity(requestId)) countRequestId = requestId;
     if (!response.ok) throw Error('provider_count_rejected');

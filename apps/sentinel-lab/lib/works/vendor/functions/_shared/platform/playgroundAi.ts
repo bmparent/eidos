@@ -128,8 +128,10 @@ export async function aiPolicyStatus(env: PlatformEnv, mode: AiMode) {
     FROM eidos_pg_ai_policies p LEFT JOIN eidos_pg_ai_actions a ON a.mode=p.mode WHERE p.mode=? GROUP BY p.mode`).bind(mode)
     .first<{configuredBudget:number;enabled:number;pausedReason:string|null;reserved:number;submitted:number;settled:number;unresolved:number}>();
   if (!snapshot) throw new HttpError(503, 'AI policy is not configured.');
-  const committed = money(snapshot.reserved + snapshot.submitted + snapshot.settled + snapshot.unresolved);
-  return { ...snapshot, enabled: Boolean(snapshot.enabled), committed, remaining: Math.max(0, snapshot.configuredBudget - committed),
+  const probe = await db(env).prepare("SELECT COALESCE(SUM(json_extract(detail_json,'$.providerHeldMicros')),0) held FROM eidos_pg_ai_journal WHERE mode=? AND event='diagnostic_count_hold'").bind(mode).first<{held:number}>();
+  const diagnosticHeld = money(probe?.held || 0);
+  const committed = money(snapshot.reserved + snapshot.submitted + snapshot.settled + snapshot.unresolved + diagnosticHeld);
+  return { ...snapshot, diagnosticHeld, enabled: Boolean(snapshot.enabled), committed, remaining: Math.max(0, snapshot.configuredBudget - committed),
     overBudget: committed > snapshot.configuredBudget, dispatchBlocked: !snapshot.enabled || Boolean(snapshot.pausedReason) || committed > snapshot.configuredBudget };
 }
 /** Server-only pricing lookup; browsers cannot provide model or rate parameters. */

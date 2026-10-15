@@ -1,13 +1,19 @@
 import { timingSafeEqual } from 'node:crypto';
 
-/** Read-only owner diagnostic. No inference, counting, database writes or key readback. */
-export async function checkPlaygroundProvider(request: Request, env: Record<string, string | undefined> = process.env, transport: typeof fetch = fetch) {
-  const reply = (body: unknown, status = 200) => Response.json(body, { status, headers: { 'cache-control': 'no-store' } });
-  if (env.VERCEL_ENV !== 'preview' || env.EIDOS_PLAYGROUND_PROVIDER_DIAGNOSTICS !== 'test-auth') return reply({ error: 'Not found.' }, 404);
+export const diagnosticReply = (body: unknown, status = 200) => Response.json(body, { status, headers: { 'cache-control': 'no-store' } });
+export function authorizePlaygroundDiagnostic(request: Request, env: Record<string, string | undefined>, mode: 'test-auth' | 'test-count-one') {
+  if (env.VERCEL_ENV !== 'preview' || env.EIDOS_PLAYGROUND_PROVIDER_DIAGNOSTICS !== mode) return diagnosticReply({ error: 'Not found.' }, 404);
   const expected = env.EIDOS_PLATFORM_TOKEN || '', actual = request.headers.get('x-eidos-platform-token') || '';
   if (expected.length < 32 || Buffer.byteLength(actual) !== Buffer.byteLength(expected) || !timingSafeEqual(Buffer.from(actual), Buffer.from(expected)))
-    return reply({ error: 'Owner diagnostic authentication required.' }, 401);
-  if (request.headers.get('x-eidos-site-origin') !== 'https://eidosworks-playground-20261014.pages.dev') return reply({ error: 'Unrecognized origin.' }, 403);
+    return diagnosticReply({ error: 'Owner diagnostic authentication required.' }, 401);
+  if (request.headers.get('x-eidos-site-origin') !== 'https://eidosworks-playground-20261014.pages.dev') return diagnosticReply({ error: 'Unrecognized origin.' }, 403);
+  return null;
+}
+
+/** Read-only owner diagnostic. No inference, counting, database writes or key readback. */
+export async function checkPlaygroundProvider(request: Request, env: Record<string, string | undefined> = process.env, transport: typeof fetch = fetch) {
+  const reply = diagnosticReply, rejected = authorizePlaygroundDiagnostic(request, env, 'test-auth');
+  if (rejected) return rejected;
   const key = env.EIDOS_PLAYGROUND_OPENAI_API_KEY;
   if (!key || key.length < 20) return reply({ authenticated: false, reason: 'dedicated_key_missing', inferenceRequests: 0 }, 503);
   try {

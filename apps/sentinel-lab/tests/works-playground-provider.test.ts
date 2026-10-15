@@ -80,7 +80,9 @@ test('exact full input count and payload hash are durable; idempotent quote does
   const f = await fixture(); try {
     const action = await f.quote({},'same-controlled-action'); assert.equal(f.counts(),1); assert.equal(f.generations(),0);
     const stored = await f.database.prepare('SELECT * FROM eidos_pg_ai_preflights WHERE action_id=?').bind(action.id).first<{input_tokens:number;request_hash:string;request_json:string}>();
-    assert.equal(stored?.input_tokens,1500); assert.match(stored!.request_hash,/^[a-f0-9]{64}$/); assert.equal(stored?.request_json,f.bodies().countBody);
+    assert.equal(stored?.input_tokens,1500); assert.match(stored!.request_hash,/^[a-f0-9]{64}$/);
+    assert.equal(stored?.request_json,buildAiProviderRequest(brief,card).serialized);
+    assert.equal(f.bodies().countBody,buildAiProviderRequest(brief,card).countSerialized);
     assert.equal((await f.quote({},'same-controlled-action')).id,action.id); assert.equal(f.counts(),1);
     await assert.rejects(f.quote({instruction:'Different instruction'},'same-controlled-action'),/different scope|another request/); assert.equal(f.counts(),1);
   } finally {f.close();}
@@ -134,7 +136,10 @@ test('exact maximum approval and atomic duplicate admission yield one generation
   const f = await fixture(); try {
     const a = await f.quote(); await assert.rejects(f.generate(a.id,a.maximum-1),/exact maximum/); assert.equal(f.generations(),0);
     const settled = await Promise.all(Array.from({length:8},()=>f.generate(a.id,a.maximum))); assert.equal(f.generations(),1);
-    assert.ok(settled.some(a=>a.state==='settled')); assert.equal(f.bodies().generationBody,f.bodies().countBody);
+    assert.ok(settled.some(a=>a.state==='settled'));
+    const full=JSON.parse(f.bodies().generationBody),counted=JSON.parse(f.bodies().countBody);
+    for(const field of ['model','instructions','input','reasoning','tools','tool_choice','parallel_tool_calls','truncation','text']) assert.deepEqual(counted[field],full[field]);
+    for(const field of ['max_output_tokens','service_tier','store','stream','background','prompt_cache_options']) assert.equal(field in counted,false);
     const final = await ownedAiAction(f.env,'owner','test',a.id); assert.equal(final.provider_cost,2910); assert.equal(final.charged_purchased,10000);
     assert.deepEqual(publicAiAction(final).result,proposal); assert.equal(publicAiAction(final).targetId,'hero');
     assert.equal((await f.generate(a.id,a.maximum)).state,'settled'); assert.equal(f.generations(),1);

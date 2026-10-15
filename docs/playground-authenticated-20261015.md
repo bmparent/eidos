@@ -15,3 +15,19 @@ node apps/sentinel-lab/scripts/deploy-playground-auth-check.mjs --cli=<authentic
 Receipts go to `artifacts/playground-authenticated-20261015/`. A successful metadata request proves credential authentication and listed model access; inference, actual usage, token-count billing, owner isolation, TEST funding and release acceptance require their own observations.
 
 An existing ignored configuration was found in the retained paid-template backend worktree. A read-only connection to its explicitly selected `EIDOS_TEMPLATES_TEST` validation database succeeded. Its contents remain private. No credentials were read from the Vercel Secret API and no other branch bindings were changed.
+
+## Token-count request repair and remaining billing gate
+
+The [official spending-controller guide](https://developers.openai.com/cookbook/articles/per_run_spending_controller_responses_api#check-the-budget-before-each-request) says to send generation controls such as `max_output_tokens`, `service_tier` and `store` only with the response request. The [count reference](https://developers.openai.com/api/reference/cli/resources/responses/subresources/input_tokens/methods/count) establishes the supported input-bearing fields. The paired adapters now send a count payload containing the identical model, input, instructions, reasoning, schema and tools, without generation-only settings. The durable count claim freezes that exact count payload while the preflight separately freezes/hashes the complete generation payload. Fixture assertions enforce both contracts.
+
+The [token-count guide](https://developers.openai.com/api/docs/guides/token-counting) and [pricing page](https://developers.openai.com/api/docs/pricing) do not explicitly establish a count-endpoint fee. `EIDOS_PLAYGROUND_INPUT_COUNT_PRICING=verified-zero` remains unset. The [provider spend-limit guide](https://developers.openai.com/api/docs/guides/spend-limits) also warns that enforcement can lag; it cannot establish an exact per-test bound.
+
+A separate one-time operator probe is prepared for an explicit owner exception to the handoff's unknown-cost prohibition. It accepts no customer model/input/body. It counts one fixed public Sol sample, with no generation. Before network I/O, one atomic TEST-ledger transaction claims the entire $5 as unknown liability and pauses dispatch. Concurrent requests, failure, restart or policy reconfiguration cannot initiate another count or release that hold. It never asserts that $5 is the actual fee or a documented fee maximum. No code automatically reconciles this uncertainty. It must remain blocked until billing evidence is reviewed.
+
+```text
+node --import ./apps/sentinel-lab/node_modules/tsx/dist/loader.mjs apps/sentinel-lab/scripts/prepare-playground-ai-test.ts --configuration=<existing-ignored-test-config>
+node --import ./apps/sentinel-lab/node_modules/tsx/dist/loader.mjs apps/sentinel-lab/scripts/prepare-playground-ai-test.ts --configuration=<existing-ignored-test-config> --apply
+node apps/sentinel-lab/scripts/deploy-playground-auth-check.mjs --count-probe --configuration=<existing-ignored-test-config> --cli=<authenticated-vercel-cli-entry>
+```
+
+The last command is a dry run; `--deploy` creates the protected one-count backend only after the owner authorizes that exception. The public manual preview stays pinned to its earlier database-free deployment.
