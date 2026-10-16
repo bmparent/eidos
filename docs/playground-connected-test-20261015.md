@@ -30,6 +30,12 @@ All 32 immutable archive byte counts and SHA-256 values were restored and checke
 
 ## Hosted state and continuation
 
+### Owner-selected mail name — 2026-10-16 UTC
+
+The owner saved the existing Resend credential as `RESEND_playground_preview`. Metadata inspection found this new entry assigned to Production. Its existing entry was moved to Preview, branch `codex/playground-unified-20261014`, with a metadata-only PATCH containing `target` and `gitBranch`; no secret was decrypted, replaced, printed or supplied. Both OpenAI entries retained identical IDs, update timestamps and targets. The scope receipt is `artifacts/playground-authenticated-20261015/release-continuation/mail-alias-20261016/scope-repair.json`.
+
+The Works adapter and private presence diagnostic now resolve that alias only when `VERCEL_ENV=preview`, `EIDOS_PLAYGROUND_DELIVERY_MODE=test` and `PUBLIC_SITE_URL=https://eidosworks-playground-test-20261015.pages.dev`. An existing nonempty `RESEND_API_KEY` retains priority. Other hosts and Production ignore the alias. Deployment inherits the authorized alias rather than exporting its value. This change does not require revoking either provider key. Hosted presence, provider acceptance and inbox arrival remain separate checks recorded after redeployment.
+
 Protected backend `dpl_7tit8cwPPHhq1tBEuG3wVRT57a9T` is READY at application source `2a06e12528cb42b00f8dbfdc1219e64c5a719e9f`, bundle `297768a1e45b4bda2acbfcd736266192f1cbfba0638c8e072ebfebb426cc5f46`. Application CI `38829258229` passed on that source. The private runtime check confirms accounts enabled, TEST database selected, sender/rate/Turnstile present and the dedicated Playground key present. **RESEND_API_KEY is absent at runtime**, despite its Preview branch metadata entry. Account readiness consequently remains false. The owner has been asked to privately update only that exact Preview branch mail entry; the OpenAI key needs no replacement.
 
 A fresh hosted provider metadata check also passed on this exact backend: `/v1/models` authenticated with both Sol and Astra listed, zero inference/count requests, and no project/organization response headers. This separately confirms the OpenAI credential still works without spending generation tokens.

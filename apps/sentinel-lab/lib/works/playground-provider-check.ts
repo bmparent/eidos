@@ -1,4 +1,5 @@
 import { timingSafeEqual } from 'node:crypto';
+import { worksMailKey } from './mail-key';
 
 export const diagnosticReply = (body: unknown, status = 200) => Response.json(body, { status, headers: { 'cache-control': 'no-store' } });
 export function authorizePlaygroundDiagnostic(request: Request, env: Record<string, string | undefined>, mode: 'test-auth' | 'test-count-one' | 'test-generation-one') {
@@ -14,7 +15,7 @@ export function authorizePlaygroundDiagnostic(request: Request, env: Record<stri
 export async function checkPlaygroundProvider(request: Request, env: Record<string, string | undefined> = process.env, transport: typeof fetch = fetch) {
   const reply = diagnosticReply, rejected = authorizePlaygroundDiagnostic(request, env, 'test-auth');
   if (rejected) return rejected;
-  const bindings = { accountsEnabled: env.EIDOS_ACCOUNTS_ENABLED === 'true', mailKeyPresent: Boolean(env.RESEND_API_KEY),
+  const bindings = { accountsEnabled: env.EIDOS_ACCOUNTS_ENABLED === 'true', mailKeyPresent: Boolean(worksMailKey(env)),
     mailFromPresent: Boolean(env.EIDOS_MAIL_FROM), rateSecretReady: (env.EIDOS_RATE_SECRET?.length || 0) >= 32,
     turnstileSitePresent: Boolean(env.TURNSTILE_SITE_KEY), turnstileSecretPresent: Boolean(env.TURNSTILE_SECRET_KEY),
     playgroundKeyPresent: (env.EIDOS_PLAYGROUND_OPENAI_API_KEY?.length || 0) >= 20,

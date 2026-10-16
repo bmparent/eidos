@@ -11,6 +11,7 @@ import * as memberUnsubscribe from './vendor/functions/api/members/unsubscribe';
 import { timingSafeEqual } from 'node:crypto';
 import { platformDatabase } from './database';
 import { templateArchives } from './templateArchives';
+import { worksMailKey } from './mail-key';
 import { json, readText, type Context, type PlatformEnv } from './vendor/functions/_shared/platform/core';
 import * as assistant from './vendor/functions/api/assistant';
 import * as config from './vendor/functions/api/public-config';
@@ -63,7 +64,7 @@ const names = [
 ] as const;
 export function platformEnvironment(source: Record<string, string | undefined> = process.env): PlatformEnv {
   const selected = Object.fromEntries(names.map(name => [name, source[name]]));
-  return { ...selected, EIDOS_RUNTIME: 'sentinel', EIDOS_DB: platformDatabase(source), EIDOS_TEMPLATE_ARCHIVES: templateArchives };
+  return { ...selected, RESEND_API_KEY: worksMailKey(source), EIDOS_RUNTIME: 'sentinel', EIDOS_DB: platformDatabase(source), EIDOS_TEMPLATE_ARCHIVES: templateArchives };
 }
 function authenticated(request: Request, expected?: string) {
   const actual = request.headers.get('x-eidos-platform-token') || '';

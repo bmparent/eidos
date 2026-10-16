@@ -27,7 +27,7 @@ export function testEnvironment(configuration, relay) {
     EIDOS_COMMUNITY_STUDIO_ENABLED: 'false', EIDOS_PROACTIVE_ENABLED: 'false', EIDOS_NEWSLETTER_ENABLED: 'false',
     EIDOS_ADMIN_TOKEN: '', EIDOS_MAINTENANCE_TOKEN: '', EIDOS_MAIL_DAILY_LIMIT: '30', EIDOS_LOCAL_TEST: 'false' };
   // Inherit only the already authorized Preview branch secrets. Never export/decrypt either key.
-  delete env.RESEND_API_KEY; delete env.EIDOS_PLAYGROUND_OPENAI_API_KEY;
+  delete env.RESEND_API_KEY; delete env.RESEND_playground_preview; delete env.EIDOS_PLAYGROUND_OPENAI_API_KEY;
   return env;
 }
 async function main() {
@@ -47,7 +47,7 @@ async function main() {
   const relay=JSON.parse(await readFile(app+'.vercel/playground-manual.private.json','utf8')).env.EIDOS_PLATFORM_TOKEN;
   const env=testEnvironment(configuration,relay), sha=git('rev-parse','HEAD');
   const bindings=vercelApi(args.cli,'/v10/projects/'+project+'/env?decrypt=false&teamId='+team);
-  for(const name of ['RESEND_API_KEY','EIDOS_PLAYGROUND_OPENAI_API_KEY']) if(!bindings.envs?.some(e=>e.key===name&&e.gitBranch===branch&&e.target?.includes('preview'))) throw Error('The authorized Preview branch secret is missing: '+name);
+  for(const names of [['RESEND_API_KEY','RESEND_playground_preview'],['EIDOS_PLAYGROUND_OPENAI_API_KEY']]) if(!bindings.envs?.some(e=>names.includes(e.key)&&e.gitBranch===branch&&e.target?.includes('preview'))) throw Error('The authorized Preview branch secret is missing: '+names.join(' or '));
   const manifest=JSON.parse(await readFile(app+'private/templates-manifest.json','utf8'));
   const count=await verifyPrivateTemplateArchives(path.resolve(app,'private'),manifest);
   if(count!==32)throw Error('Preserve all 8 current and 24 retained archives.');
