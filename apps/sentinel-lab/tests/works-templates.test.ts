@@ -352,6 +352,26 @@ test('official public TEST challenge still calls siteverify and is confined to e
   } finally {f.close();}
 });
 
+test('Playground TEST member challenge requires exact candidate, account flag and real siteverify success', async () => {
+  const f = await fixture(); let calls = 0;
+  try {
+    const origin = 'https://eidosworks-playground-test-20261015.pages.dev';
+    const env = { ...f.env, PUBLIC_SITE_URL: origin, EIDOS_ACCOUNTS_ENABLED: 'true', EIDOS_TEMPLATE_TEST_CHALLENGE: 'true',
+      TURNSTILE_SITE_KEY: '1x00000000000000000000AA', TURNSTILE_SECRET_KEY: '1x0000000000000000000000000000000AA' };
+    const request = new Request(origin + '/api/members/auth');
+    globalThis.fetch = async () => { calls++; return Response.json({ success: true, hostname: 'example.com', metadata: { result_with_testing_key: true } }); };
+    await challenge(request, env, 'XXXX.DUMMY.TOKEN.XXXX', 'member');
+    assert.equal(calls, 1);
+    for (const config of [{ ...env, EIDOS_ACCOUNTS_ENABLED: 'false' }, { ...env, EIDOS_TEMPLATE_TEST_ENABLED: 'false' },
+      { ...env, PUBLIC_SITE_URL: 'https://eidos-works.com' }, { ...env, STRIPE_SECRET_KEY: 'sk_live_forbidden' },
+      { ...env, TURNSTILE_SECRET_KEY: 'other' }]) await assert.rejects(challenge(request, config, 'XXXX.DUMMY.TOKEN.XXXX', 'member'));
+    await assert.rejects(challenge(new Request('https://unrelated.pages.dev/api/members/auth'), env, 'XXXX.DUMMY.TOKEN.XXXX', 'member'));
+    await assert.rejects(challenge(request, env, 'XXXX.DUMMY.TOKEN.XXXX', 'newsletter'));
+    globalThis.fetch = async () => Response.json({ success: false, hostname: 'example.com', metadata: { result_with_testing_key: true } });
+    await assert.rejects(challenge(request, env, 'XXXX.DUMMY.TOKEN.XXXX', 'member'));
+  } finally { f.close(); }
+});
+
 test('checkout attempt retry preserves one ledger order and same server-owned TEST price', async () => {
   const f=await fixture(), receipt='a'.repeat(64);
   try {

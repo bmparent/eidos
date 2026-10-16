@@ -100,7 +100,7 @@ export async function dispatchWorks(request: Request, source: Record<string, str
     const session = (request.headers.get('cookie') || '').split(';').map(s=>s.trim()).find(s=>/^__Host-eidos_session=[a-f0-9]{64}$/.test(s));
     if (session) headers.set('cookie',session);
     headers.set('CF-Connecting-IP', request.headers.get('x-eidos-client-ip') || 'unknown');
-    const payload = request.method === 'POST' ? await readText(request, path === '/api/playground/projects' ? 2_020_000 : path === '/api/playground/delivery' ? 1_520_000 : ['/api/shop/webhook','/api/playground/webhook'].includes(path) ? 64000 : 12000) : undefined;
+    const payload = request.method === 'POST' ? await readText(request, path === '/api/playground/projects' ? 2_020_000 : path === '/api/playground/delivery' ? 1_520_000 : path === '/api/playground/ai' ? 110000 : ['/api/shop/webhook','/api/playground/webhook'].includes(path) ? 64000 : 12000) : undefined;
     const forwarded = new Request(actualSite + path + inputUrl.search, {
       method: request.method, headers, body: payload,
     });
