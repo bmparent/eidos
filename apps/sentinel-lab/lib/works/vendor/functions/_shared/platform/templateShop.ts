@@ -12,7 +12,7 @@ export interface TemplateOrder extends Order {
   archive_key: string; archive_sha256: string; download_name: string; guide_path: string;
   member_id: string | null; email: string | null; email_hash: string | null; receipt_expires: number;
   session_url: string | null; checkout_expires: number; mail_status: string; fulfillment_type: string; fulfillment_status: string;
-  payment_failed: number;
+  payment_failed: number; mail_provider_id?: string | null;
 }
 const now = () => Math.floor(Date.now() / 1000);
 const checkoutSelect = 'SELECT o.*, t.*, EXISTS(SELECT 1 FROM eidos_template_payment_failures f WHERE f.order_id=o.id) AS payment_failed FROM eidos_orders o JOIN eidos_template_orders t ON t.order_id=o.id';
@@ -215,7 +215,7 @@ export async function templateStatus(request: Request, env: PlatformEnv, order: 
   }
   return json({ status: order.status, orderId: order.id, productId: order.product_id, editionId: order.edition_id,
     version: order.version, downloadName: order.download_name, guidePath: order.guide_path, fulfillmentType: order.fulfillment_type,
-    fulfillmentStatus: order.fulfillment_status, mailStatus: order.mail_status, paymentState: order.status === 'pending' ? order.payment_failed ? 'failed' : order.checkout_expires <= now() ? 'expired' : 'pending' : order.status,
+    fulfillmentStatus: order.fulfillment_status, mailStatus: order.mail_provider_id ? 'sent' : order.mail_status, paymentState: order.status === 'pending' ? order.payment_failed ? 'failed' : order.checkout_expires <= now() ? 'expired' : 'pending' : order.status,
     downloadToken, downloadExpires: downloadToken ? downloadExpires : null, ...(approvedPage ? { approvedPage } : {}) });
 }
 export async function templateDownload(request: Request, env: PlatformEnv, order: TemplateOrder, token: unknown, artifact: unknown = 'original') {
@@ -252,7 +252,7 @@ async function recoveryToken(env: PlatformEnv, orderId: string, stableReceipt = 
   return token;
 }
 export async function templateReceiptMail(env: PlatformEnv, order: TemplateOrder) {
-  if (!order.email || order.status !== 'paid' || order.mail_status === 'sent') return;
+  if (!order.email || order.status !== 'paid' || order.mail_status === 'sent' || order.mail_provider_id) return;
   const token = await recoveryToken(env, order.id, true);
   const test = order.session_id?.startsWith('cs_test_') === true;
   try {
@@ -260,7 +260,8 @@ export async function templateReceiptMail(env: PlatformEnv, order: TemplateOrder
       text: `Your ${test ? 'TEST ' : ''}purchase of ${order.product_id}, ${order.edition_id}, version ${order.version} is verified.\nOpen this one-time recovery link within 30 minutes: ${siteOrigin(env)}/shop/start#token=${token}\nInstallation guide: ${siteOrigin(env)}${order.guide_path}\nIf this link expires, use ${siteOrigin(env)}/shop/start to request a new link.\nThis is transactional delivery and does not subscribe you to marketing.` }, 'eidos-template-receipt-' + order.id);
     await db(env).prepare("UPDATE eidos_template_orders SET mail_status='sent',mail_provider_id=? WHERE order_id=?").bind(providerId, order.id).run();
   } catch (error) {
-    await db(env).prepare("UPDATE eidos_template_orders SET mail_status='failed' WHERE order_id=?").bind(order.id).run();
+    // A late failed attempt must not erase an earlier provider-accepted receipt.
+    await db(env).prepare("UPDATE eidos_template_orders SET mail_status='failed' WHERE order_id=? AND mail_status<>'sent' AND mail_provider_id IS NULL").bind(order.id).run();
     throw error; // Leave Stripe event unacknowledged so provider retries delivery.
   }
 }
@@ -350,7 +351,7 @@ export const recover = guarded(async ({ request, env }) => {
         const token = await recoveryToken(env, order.id);
         try { await sendMemberMail(env, { to: email, subject: 'Recover your Eidos template purchase' + (order.session_id?.startsWith('cs_test_') ? ' (TEST)' : ''), text: `Open within 30 minutes: ${siteOrigin(env)}/shop/start#token=${token}\nPurchase: ${order.product_id}, version ${order.version}.\nIf you did not request this message, ignore it.` }, 'eidos-template-recovery-' + await hash(token)); }
         catch { /* Enumeration-safe response; provider failure is recorded internally. */
-          await database.prepare("UPDATE eidos_template_orders SET mail_status='failed' WHERE order_id=?").bind(order.id).run();
+          await database.prepare("UPDATE eidos_template_orders SET mail_status='failed' WHERE order_id=? AND mail_status<>'sent' AND mail_provider_id IS NULL").bind(order.id).run();
         }
       }
     }

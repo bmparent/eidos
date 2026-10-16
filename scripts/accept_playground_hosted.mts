@@ -24,8 +24,15 @@ let state:Record<string,any>={};try{state=JSON.parse(await readFile(privateFile,
 await mkdir(root,{recursive:true});await mkdir(privateRoot,{recursive:true});
 const saveState=()=>writeFile(privateFile,JSON.stringify(state),{mode:0o600});
 async function privateInput() {
-  const rl=createInterface({input:process.stdin,output:process.stdout});const line=await rl.question('');rl.close();process.stdin.pause();
-  const input=JSON.parse(line);if(!/^[a-f0-9]{64}$/.test(input.token))throw Error('Supply the one-time inbox token privately on stdin.');return input.token as string;
+  // An interactive runner must disable both console and readline echo before the secret arrives.
+  const terminal=process.stdin.isTTY,wasRaw=process.stdin.isRaw;
+  if(terminal)process.stdin.setRawMode(true);
+  const rl=createInterface({input:process.stdin,terminal:false});
+  try {
+    console.log('Private inbox token input ready; echo disabled.');
+    const line=await rl.question('');
+    const input=JSON.parse(line);if(!/^[a-f0-9]{64}$/.test(input.token))throw Error('Supply the one-time inbox token privately on stdin.');return input.token as string;
+  } finally { rl.close();process.stdin.pause();if(terminal)process.stdin.setRawMode(Boolean(wasRaw)); }
 }
 async function testDatabase() {
   if(!args.configuration)throw Error('Supply the existing ignored approved TEST configuration.');
@@ -73,7 +80,9 @@ try {
     if(r.status!==200||r.data.runtimeSourceRevision!==deployment.backendSha||r.data.runtimeBundleHash!==deployment.bundleHash||r.data.accountsReady!==true||r.data.shopReady!==true||r.data.playgroundAiReady!==false)throw Error('Runtime readiness mismatch.');
   } else if(args.phase==='signin') {
     receipt.attempts=[];
+    if(args.slot&&!['business','personal'].includes(args.slot))throw Error('Choose an owned inbox.');
     for(const [slot,actor] of Object.entries(actors)) {
+      if(args.slot&&args.slot!==slot)continue;
       if(state[slot]?.cookie){receipt.attempts.push({slot,alreadyAuthenticated:true});continue;}
       const r=await call('/api/members/auth',{...actor,kind:'person',newsletter:false,challenge:'XXXX.DUMMY.TOKEN.XXXX'});
       receipt.attempts.push({slot,status:r.status,error:r.data?.error||null,mailAccepted:r.status===200});
@@ -84,9 +93,21 @@ try {
     if(state[slot]?.cookie)throw Error('This owned inbox already has a genuine session.');
     const token=await privateInput();
     const r=await call('/api/members/auth',{action:'verify',token});
-    receipt.slot=slot;receipt.status=r.status;receipt.memberIdSha256=r.data?.member?.id?sha(r.data.member.id):null;
-    if(r.status!==200||!r.cookie||!r.data?.member?.id)throw Error('Normal one-time verification did not establish a session.');
-    state[slot]={cookie:r.cookie,memberId:r.data.member.id};await saveState();
+    receipt.slot=slot;receipt.status=r.status;receipt.cookiePresent=Boolean(r.cookie);
+    if(r.status!==200||!r.cookie||!r.data?.member?.username)throw Error('Normal one-time verification did not establish a session.');
+    // Public members omit database IDs. Read the genuine newly issued session only,
+    // and check ownership through the normal authenticated account endpoint.
+    state[slot]={cookie:r.cookie};await saveState();
+    const account=await call('/api/members/account',undefined,slot);receipt.accountStatus=account.status;
+    if(account.status!==200||account.data?.member?.email!==actors[slot].email||account.data?.member?.username!==r.data.member.username)throw Error('The genuine session does not match the requested owned inbox.');
+    const {client}=await testDatabase();
+    try {
+      const sessionHash=sha(r.cookie.slice('__Host-eidos_session='.length));
+      const result=await client.execute({sql:'SELECT s.member_id,m.email,m.username FROM eidos_member_sessions s JOIN eidos_email_members m ON m.id=s.member_id WHERE s.token_hash=? AND s.expires>? AND m.disabled=0',args:[sessionHash,Math.floor(Date.now()/1000)]});
+      const row=result.rows[0];
+      if(result.rows.length!==1||row.email!==actors[slot].email||row.username!==r.data.member.username||typeof row.member_id!=='string')throw Error('The issued session owner could not be verified.');
+      state[slot].memberId=row.member_id;receipt.memberIdSha256=sha(row.member_id);await saveState();
+    } finally {client.close();}
     const replay=await call('/api/members/auth',{action:'verify',token});
     receipt.consumedLinkReplayStatus=replay.status; if(replay.status!==400)throw Error('The one-time link was reusable.');
   } else if(args.phase==='freeze') {

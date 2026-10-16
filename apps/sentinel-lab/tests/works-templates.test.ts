@@ -5,7 +5,7 @@ import { createHash, createHmac } from 'node:crypto';
 import { createClient } from '@libsql/client';
 import { adaptDatabase } from '../lib/works/database';
 import { challenge, hash, type PlatformEnv } from '../lib/works/vendor/functions/_shared/platform/core';
-import { catalog, recover, redeem, templateLiveReady, templateTestReady } from '../lib/works/vendor/functions/_shared/platform/templateShop';
+import { catalog, recover, redeem, templateLiveReady, templateTestReady, templateOrder, templateReceiptMail } from '../lib/works/vendor/functions/_shared/platform/templateShop';
 import { templateProducts } from '../lib/works/vendor/functions/_shared/platform/templateCatalog';
 import { onRequestPost as checkout } from '../lib/works/vendor/functions/api/shop/checkout';
 import { onRequestPost as status } from '../lib/works/vendor/functions/api/shop/status';
@@ -494,6 +494,34 @@ test('receipt email retries keep provider idempotency body stable and paid acces
     assert.equal(f.mails.length,2);assert.equal(f.mails[0].text,f.mails[1].text);assert.equal(f.mails[0].idempotency,f.mails[1].idempotency);
     assert.equal((await f.database.prepare('SELECT COUNT(*) n FROM eidos_stripe_events WHERE id=?').bind('evt_mail_retry').first<{n:number}>())?.n,1);
   }finally{f.close();}
+});
+
+test('late receipt failure cannot overwrite acceptance, including stale writes from older hooks',async()=>{
+  const f=await fixture(),receipt='e'.repeat(64);
+  let release!:()=>void;
+  try {
+    const row=await f.begin(receipt);
+    await f.database.prepare("UPDATE eidos_orders SET status='paid' WHERE id=?").bind(row.id).run();
+    await f.database.prepare('UPDATE eidos_template_orders SET email=? WHERE order_id=?').bind('receipt-race@example.test',row.id).run();
+    const pending=(await templateOrder(f.env,String(row.id)))!,fixtureFetch=globalThis.fetch;
+    let entered!:()=>void,first=true;
+    const gate=new Promise<void>(resolve=>{release=resolve;}),started=new Promise<void>(resolve=>{entered=resolve;});
+    globalThis.fetch=async(url,init)=>{
+      if(String(url)==='https://api.resend.com/emails'&&first){first=false;entered();await gate;return Response.json({}, {status:503});}
+      return fixtureFetch(url,init);
+    };
+    const lateFailure=templateReceiptMail(f.env,pending).then(()=>false,()=>true);
+    await started;await templateReceiptMail(f.env,pending);release();assert.equal(await lateFailure,true);
+    const accepted=await f.database.prepare('SELECT mail_status,mail_provider_id FROM eidos_template_orders WHERE order_id=?').bind(row.id).first<{mail_status:string;mail_provider_id:string}>();
+    assert.equal(accepted?.mail_status,'sent');assert.ok(accepted?.mail_provider_id);
+    // An old deployment can still write its last failure into the shared TEST row.
+    await f.database.prepare("UPDATE eidos_template_orders SET mail_status='failed' WHERE order_id=?").bind(row.id).run();
+    assert.equal((await(await f.call(status,'/api/shop/status',{receipt})).json()).mailStatus,'sent');
+    const calls=f.mails.length;await templateReceiptMail(f.env,(await templateOrder(f.env,String(row.id)))!);
+    assert.equal(f.mails.length,calls);
+    const raw=await f.database.prepare('SELECT mail_status,mail_provider_id FROM eidos_template_orders WHERE order_id=?').bind(row.id).first<{mail_status:string;mail_provider_id:string}>();
+    assert.equal(raw?.mail_status,'failed');assert.equal(raw?.mail_provider_id,accepted?.mail_provider_id);
+  } finally {release?.();f.close();}
 });
 
 test('receipt email retry after thirty minutes renews an unused link without changing provider payload',async(t)=>{
