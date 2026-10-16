@@ -155,6 +155,20 @@ try {
     receipt.downloads={approved:{status:approved.status,bytes:approved.bytes.length,sha256:sha(approved.bytes)},original:{status:original.status,bytes:original.bytes.length,sha256:sha(original.bytes)},otherOwnerStatus:otherDownload.status,anonymousStatus:anonymousDownload.status};
     if(other.status!==403||approved.status!==200||sha(approved.bytes)!==state.delivery.archiveSha256||original.status!==200||sha(original.bytes)!==snapshot.parent.sha256||original.bytes.length!==snapshot.parent.bytes||otherDownload.status!==403||![401,403].includes(anonymousDownload.status))throw Error('Paid delivery bytes or ownership failed.');
     await writeFile(path.join(root,'hosted-approved-public-sample.zip'),approved.bytes);
+  } else if(args.phase==='payment-evidence') {
+    if(!state.orderId)throw Error('Verify the owned genuine TEST purchase first.');
+    const {client,configuration}=await testDatabase();
+    try {
+      const rows=await client.execute({sql:'SELECT p.*,o.session_id,t.mail_status,t.mail_provider_id FROM eidos_pg_ai_paid_receipts p JOIN eidos_orders o ON o.id=p.order_id JOIN eidos_template_orders t ON t.order_id=o.id WHERE p.order_id=?',args:[state.orderId]});
+      const row=rows.rows[0];
+      if(rows.rows.length!==1||row.mode!=='test'||row.merchant_id!=='acct_1Rj03gKC8pRG5Tr9'||row.amount_cents!==9900||!String(row.session_id).startsWith('cs_test_')||!String(row.event_id).startsWith('evt_')||!/^[sr]k_test_/.test(configuration.STRIPE_SECRET_KEY||''))throw Error('Matching signed TEST payment evidence is missing.');
+      const response=await fetch('https://api.stripe.com/v1/events/'+encodeURIComponent(String(row.event_id)),{headers:{authorization:'Bearer '+configuration.STRIPE_SECRET_KEY,'stripe-version':'2025-06-30.basil'},redirect:'error',signal:AbortSignal.timeout(15000)});
+      const event=await response.json(),object=event.data?.object;
+      if(!response.ok||event.livemode!==false||event.type!=='checkout.session.completed'||object?.id!==row.session_id||object.payment_status!=='paid'||object.amount_total!==9900||object.currency!=='usd'||object.payment_intent!==row.payment_intent)throw Error('Provider event does not match the signed application receipt.');
+      receipt.event={id:event.id,type:event.type,livemode:event.livemode,amountCents:object.amount_total,currency:object.currency,paymentStatus:object.payment_status,pendingWebhooks:event.pending_webhooks};
+      receipt.mail={rawAttemptStatus:row.mail_status,providerAcceptanceId:row.mail_provider_id,effectiveStatus:row.mail_provider_id?'sent':row.mail_status,inboxArrival:'Recorded separately in mail-alias-20261016/inbox-observations.json'};
+      receipt.endpointAcknowledgement=event.pending_webhooks===0?'All subscribed webhook endpoints have acknowledged the event.':'Event API does not establish acknowledgement by this specific endpoint.';
+    } finally {client.close();}
   } else if(args.phase==='fund') {
     if(!state.orderId||!state.business?.memberId)throw Error('Verify the genuine paid account purchase first.');
     const {client,env}=await testDatabase();
