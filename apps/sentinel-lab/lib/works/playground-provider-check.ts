@@ -14,6 +14,13 @@ export function authorizePlaygroundDiagnostic(request: Request, env: Record<stri
 export async function checkPlaygroundProvider(request: Request, env: Record<string, string | undefined> = process.env, transport: typeof fetch = fetch) {
   const reply = diagnosticReply, rejected = authorizePlaygroundDiagnostic(request, env, 'test-auth');
   if (rejected) return rejected;
+  const bindings = { accountsEnabled: env.EIDOS_ACCOUNTS_ENABLED === 'true', mailKeyPresent: Boolean(env.RESEND_API_KEY),
+    mailFromPresent: Boolean(env.EIDOS_MAIL_FROM), rateSecretReady: (env.EIDOS_RATE_SECRET?.length || 0) >= 32,
+    turnstileSitePresent: Boolean(env.TURNSTILE_SITE_KEY), turnstileSecretPresent: Boolean(env.TURNSTILE_SECRET_KEY),
+    playgroundKeyPresent: (env.EIDOS_PLAYGROUND_OPENAI_API_KEY?.length || 0) >= 20,
+    validationDatabaseSelected: env.EIDOS_DATABASE_BINDING_PREFIX === 'EIDOS_TEMPLATES_TEST' };
+  if (request.headers.get('x-eidos-bindings-only') === 'true') return reply({ bindings, inferenceRequests: 0, countRequests: 0,
+    sourceCommit: env.EIDOS_SOURCE_COMMIT || null, bundleHash: env.EIDOS_SOURCE_BUNDLE_HASH || null });
   const key = env.EIDOS_PLAYGROUND_OPENAI_API_KEY;
   if (!key || key.length < 20) return reply({ authenticated: false, reason: 'dedicated_key_missing', inferenceRequests: 0 }, 503);
   try {
@@ -26,7 +33,10 @@ export async function checkPlaygroundProvider(request: Request, env: Record<stri
     const data = JSON.parse(text);
     if (!Array.isArray(data.data)) throw Error('invalid_metadata');
     const ids = new Set(data.data.map((entry: { id?: unknown }) => entry?.id));
-    return reply({ authenticated: true, providerStatus: response.status, providerRequestId,
+    const projectHeader=response.headers.get('openai-project'), organizationHeader=response.headers.get('openai-organization');
+    return reply({ authenticated: true, providerStatus: response.status, providerRequestId, bindings,
+      providerProject: /^proj_[A-Za-z0-9_-]{1,100}$/.test(projectHeader || '') ? projectHeader : null,
+      providerOrganization: /^org-[A-Za-z0-9_-]{1,100}$/.test(organizationHeader || '') ? organizationHeader : null,
       models: { 'gpt-6-astra': ids.has('gpt-6-astra'), 'gpt-6.1-sol': ids.has('gpt-6.1-sol') },
       inferenceRequests: 0, countRequests: 0, generationAccess: 'not_tested',
       sourceCommit: env.EIDOS_SOURCE_COMMIT || null, bundleHash: env.EIDOS_SOURCE_BUNDLE_HASH || null });

@@ -18,7 +18,7 @@ export function testEnvironment(configuration, relay) {
       !/^[sr]k_test_/.test(configuration.STRIPE_SECRET_KEY || '') || (relay?.length || 0) < 32)
     throw Error('Only the approved TEST database, merchant key and existing relay are allowed.');
   const env = { ...configuration, PUBLIC_SITE_URL: testSite, EIDOS_PREVIEW_ORIGINS: testSite, EIDOS_PLATFORM_TOKEN: relay,
-    EIDOS_RUNTIME: 'sentinel', EIDOS_ACCOUNTS_ENABLED: 'true', EIDOS_SHOP_ENABLED: 'true', EIDOS_TEMPLATE_TEST_ENABLED: 'true',
+    EIDOS_RUNTIME: 'sentinel', EIDOS_PLAYGROUND_PROVIDER_DIAGNOSTICS: 'test-auth', EIDOS_ACCOUNTS_ENABLED: 'true', EIDOS_SHOP_ENABLED: 'true', EIDOS_TEMPLATE_TEST_ENABLED: 'true',
     EIDOS_TEMPLATE_LIVE_ENABLED: 'false', EIDOS_TEMPLATE_STRIPE_ACCOUNT_ID: merchant, EIDOS_TEMPLATE_TEST_CHALLENGE: 'true',
     TURNSTILE_SITE_KEY: '1x00000000000000000000AA', TURNSTILE_SECRET_KEY: '1x0000000000000000000000000000000AA',
     EIDOS_PLAYGROUND_DELIVERY_MODE: 'test', EIDOS_PLAYGROUND_AI_MODE: 'test', EIDOS_PLAYGROUND_AI_ENABLED: 'false',

@@ -6,6 +6,16 @@ const token = 'owner-diagnostic-fixture-32-characters', key = 'provider-secret-f
 const env = { VERCEL_ENV: 'preview', EIDOS_PLAYGROUND_PROVIDER_DIAGNOSTICS: 'test-auth', EIDOS_PLATFORM_TOKEN: token, EIDOS_PLAYGROUND_OPENAI_API_KEY: key };
 const request = (changes: Record<string, string> = {}) => new Request('https://preview.test/api/playground-provider-check', { headers: { 'x-eidos-platform-token': token, 'x-eidos-site-origin': 'https://eidosworks-playground-20261014.pages.dev', ...changes } });
 
+test('owner binding inspection is private and returns presence only without any provider call', async()=>{
+  let calls=0;const transport:typeof fetch=async()=>{calls++;throw Error('No network');};
+  const source={...env,EIDOS_ACCOUNTS_ENABLED:'true',RESEND_API_KEY:'re_private_fixture',EIDOS_MAIL_FROM:'private-fixture@example.test',EIDOS_RATE_SECRET:'r'.repeat(32),EIDOS_DATABASE_BINDING_PREFIX:'EIDOS_TEMPLATES_TEST'};
+  const response=await checkPlaygroundProvider(request({'x-eidos-bindings-only':'true'}),source,transport),body=await response.text();
+  assert.equal(response.status,200);assert.equal(calls,0);
+  assert.equal(JSON.parse(body).bindings.mailKeyPresent,true);assert.equal(JSON.parse(body).bindings.accountsEnabled,true);
+  assert.equal(body.includes(source.RESEND_API_KEY),false);assert.equal(body.includes(source.EIDOS_MAIL_FROM),false);assert.equal(body.includes(key),false);
+  assert.equal((await checkPlaygroundProvider(request({'x-eidos-bindings-only':'true','x-eidos-platform-token':'wrong'}),source,transport)).status,401);
+});
+
 test('diagnostic fails closed outside Preview, without explicit flag, token or exact origin', async () => {
   const forbidden: typeof fetch = async () => { throw Error('network must not be reached'); };
   for (const [input, req, status] of [
