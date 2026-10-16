@@ -39,7 +39,7 @@ async function testDatabase() {
 async function call(route:string,body?:unknown,slot?:string,diagnostic=false) {
   if(!(diagnostic&&route==='/api/playground-provider-check')&&route!=='/api/public-config'&&!/^\/api\/(?:members|playground|shop)\/[a-z-]+(?:\?[^#]*)?$/.test(route))throw Error('Unexpected API route.');
   const id=randomBytes(12).toString('hex'), headerFile=path.join(privateRoot,id+'.headers.private'),bodyFile=path.join(privateRoot,id+'.body.private'),outputHeaders=path.join(privateRoot,id+'.response.private');
-  const headers=['x-eidos-platform-token: '+relay,'x-eidos-site-origin: '+(diagnostic?'https://eidosworks-playground-20261014.pages.dev':origin),'origin: '+origin,'content-type: application/json',...(diagnostic?['x-eidos-bindings-only: true']:[])];
+  const headers=['x-eidos-platform-token: '+relay,'x-eidos-site-origin: '+(diagnostic?'https://eidosworks-playground-20261014.pages.dev':origin),'origin: '+origin,'content-type: application/json',...(diagnostic&&args.phase!=='provider-metadata'?['x-eidos-bindings-only: true']:[])];
   const session=slot?state[slot]?.cookie:undefined;
   if(session){if(!/^__Host-eidos_session=[a-f0-9]{64}$/.test(session))throw Error('Invalid saved session shape.');headers.push('cookie: '+session);}
   await writeFile(headerFile,headers.join('\n')+'\n',{mode:0o600,flag:'wx'});
@@ -62,7 +62,10 @@ const receipt:Record<string,any>={timestampUtc:new Date().toISOString(),phase:ar
   openaiCalls:0,syntheticSessions:false,syntheticPaidRows:false,secretValuesPrinted:false};
 let file='hosted-'+args.phase+'-'+Date.now()+'.json';
 try {
-  if(args.phase==='bindings') {
+  if(args.phase==='provider-metadata') {
+    const r=await call('/api/playground-provider-check',undefined,undefined,true);receipt.status=r.status;receipt.provider=r.data;receipt.openaiCalls=1;
+    if(r.status!==200||!r.data?.authenticated||r.data.inferenceRequests!==0||r.data.countRequests!==0)throw Error('Runtime readiness mismatch.');
+  } else if(args.phase==='bindings') {
     const r=await call('/api/playground-provider-check',undefined,undefined,true);receipt.status=r.status;receipt.runtime=r.data;
     if(r.status!==200)throw Error('Runtime readiness mismatch.');
   } else if(args.phase==='preflight') {
