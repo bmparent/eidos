@@ -76,7 +76,7 @@ async function main() {
     try {stored=JSON.parse(await readFile(privatePath,'utf8'));}catch(error){if(error.code!=='ENOENT')throw error;}
     if(stored) {
       const endpoint=await stripe('webhook_endpoints/'+stored.endpointId);
-      if(endpoint.livemode!==false||endpoint.url!==testSite+'/api/shop/webhook'||endpoint.status!=='enabled'||!stored.webhookSecret?.startsWith('whsec_'))throw Error('Stored TEST endpoint differs from its approved candidate.');
+      if(endpoint.livemode!==false||endpoint.url!==testSite+'/api/shop/webhook'||!['enabled','disabled'].includes(endpoint.status)||!stored.webhookSecret?.startsWith('whsec_'))throw Error('Stored TEST endpoint differs from its approved candidate.');
     } else {
       const data={url:testSite+'/api/shop/webhook',api_version:'2025-06-30.basil',description:'Isolated Eidos Playground TEST acceptance 2026-10-15'};
       ['checkout.session.completed','checkout.session.async_payment_succeeded','checkout.session.async_payment_failed','checkout.session.expired','charge.refunded','charge.dispute.created'].forEach((name,i)=>data['enabled_events['+i+']']=name);
@@ -92,6 +92,7 @@ async function main() {
     if(r.target==='production')throw Error('Unexpected production target; inspect immediately.');
     Object.assign(receipt,{deployed:true,stripeEndpoint:stored.endpointId,deployment:{id:r.id,url:'https://'+r.url,state:r.readyState||r.status,target:r.target||'preview'}});
   }
+  if(receipt.deployment)await writeFile(output+'/test-backend-'+receipt.deployment.id+'.json',JSON.stringify(receipt,null,2)+'\n');
   await writeFile(receiptPath,JSON.stringify(receipt,null,2)+'\n');console.log(JSON.stringify(receipt));
 }
 if(process.argv[1]&&path.resolve(process.argv[1])===fileURLToPath(import.meta.url)) main().catch(()=>{console.error('Isolated TEST deployment failed; private details suppressed.');process.exitCode=1;});

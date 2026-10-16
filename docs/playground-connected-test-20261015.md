@@ -24,6 +24,32 @@ The first deployment form only freezes the inventory. The explicit `--deploy` fo
 
 ## Validation and journal
 
-The full application suite and optimized build passed locally. The new deployment guards passed 2 tests; the changed TEST challenge was covered in the 24-test template suite. Frontend relay tests passed 5 tests, including acceptance at exactly 110,000 bytes, overflow rejection before transport and the longer AI deadline. The original direct root invocation of `works-platform.test.ts` failed because that older suite resolves migrations against the application working directory; the supported root command `npm --prefix apps/sentinel-lab test` passed without changing the older test behavior. Logs are retained under `artifacts/playground-authenticated-20261015/release-continuation/`.
+The full application suite and optimized build passed locally. The final deployment/endpoint guards passed 3 tests; the changed TEST challenge was covered in the 24-test template suite. The private presence-only binding diagnostic passed 4 tests and makes no provider request when invoked with its binding-only header. Frontend relay tests passed 5 tests, including acceptance at exactly 110,000 bytes, overflow rejection before transport and the longer AI deadline. The original direct root invocation of `works-platform.test.ts` failed because that older suite resolves migrations against the application working directory; the supported root command `npm --prefix apps/sentinel-lab test` passed without changing the older test behavior. Logs are retained under `artifacts/playground-authenticated-20261015/release-continuation/`.
 
 All 32 immutable archive byte counts and SHA-256 values were restored and checked against the existing frozen receipt; no original archive was modified. This documentation records source preparation, not completed hosted account/payment/mail tests. Their subsequent receipts must establish real sign-in, Stripe signed-event acknowledgement, inbox delivery, exact approved-page download and refund revocation. Model comparison, human review, physical-device checks, LIVE pricing/funding and production activation remain separate gates.
+
+## Hosted state and continuation
+
+Protected backend `dpl_7tit8cwPPHhq1tBEuG3wVRT57a9T` is READY at application source `2a06e12528cb42b00f8dbfdc1219e64c5a719e9f`, bundle `297768a1e45b4bda2acbfcd736266192f1cbfba0638c8e072ebfebb426cc5f46`. Application CI `38829258229` passed on that source. The private runtime check confirms accounts enabled, TEST database selected, sender/rate/Turnstile present and the dedicated Playground key present. **RESEND_API_KEY is absent at runtime**, despite its Preview branch metadata entry. Account readiness consequently remains false. The owner has been asked to privately update only that exact Preview branch mail entry; the OpenAI key needs no replacement.
+
+The new Stripe TEST endpoint `we_1UQym7KC8pRG5Tr9lcIO9qKu` is disabled until the connected frontend passes its exact runtime/signature checks. Existing endpoints were not modified. The connected TEST frontend has not been published. Its workflow is registered and its validation passed; an early manual run was canceled before deployment after runtime preflight found the missing mail binding. The existing manual frontend was independently rebuilt and deployed at `0e9931a1ea0126b2f4b104e60affe9ff6bebf3e7` with hosted assets, identity and disabled-feature checks passing.
+
+`scripts/accept_playground_hosted.mts` is the prepared acceptance runner. It uses ordinary sign-in links for the two owned inboxes, not inserted member/session rows. Magic-link and recovery tokens enter privately on stdin; secure session/download capabilities remain only in an ignored `.vercel` file. Relay headers and request bodies use temporary ignored files rather than process arguments. Public evidence contains hashed member IDs, statuses, hashes and totals, not tokens.
+
+After the mail binding is saved, redeploy the exact reviewed application and update the frontend pin to that new deployment. Recheck private bindings and account readiness, then manually dispatch `playground-test-preview.yml` on the isolated branch. Only after the published relay passes may this command enable this task's TEST endpoint:
+
+```text
+node scripts/toggle_playground_test_webhook.mjs --configuration=<approved ignored TEST configuration> --state=enabled
+```
+
+Acceptance phases run from the backend root with the same `--cli` and, for `fund`, `refund` and `ledger`, `--configuration`:
+
+```text
+node --import ./apps/sentinel-lab/node_modules/tsx/dist/loader.mjs scripts/accept_playground_hosted.mts --cli=<authenticated CLI> --phase=preflight
+```
+
+The ordered phases are `signin`, `verify --slot=business`, `verify --slot=personal`, `freeze`, `checkout`, genuine Stripe TEST payment, `payment`, `fund`, `recover`, `redeem`, `payment`, `refund`, `revocation`, `ledger`. Verification/redeem require the actual matching inbox token on stdin; do not paste it into chat or shell arguments. `fund` calls the existing verified-paid-order grant logic for exactly $1 of TEST included allowance, preserving the owner's chosen $1 monthly cap. It cannot grant without matching signed payment/merchant evidence. No LIVE funding policy is implied. `refund` submits a real TEST refund of only that newly accepted owned paid order. No phase marks paid or manufactures a webhook signature.
+
+These phases are prepared, **not passed** while mail is missing. API acceptance is separate from browser checkout/return, actual receipt/recovery inbox arrival and Stripe endpoint-specific delivery acknowledgement. The existing broad editor CI also retained a WebKit mobile artwork click timeout at `0e9931a`; one identical failed-job rerun was requested and must be read back before declaring that gate passed.
+
+The authenticated provider cost CSV reports zero for both October 15 key totals, including the known metered generation. It does not establish final settlement or count-specific fees. The original 1,753-microdollar count liability is retained; further counts and customer AI remain disabled. Fresh ledger readback still shows 4 members, 15 orders, 9 template orders, 0 AI actions and 0 AI grants. Delivery tables remain uninitialized until the first genuine authorized freeze, rather than seeded for acceptance.

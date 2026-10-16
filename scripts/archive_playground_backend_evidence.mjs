@@ -15,7 +15,7 @@ if(git('diff','HEAD','--','apps/sentinel-lab'))throw Error('Application source c
 const sha=data=>createHash('sha256').update(data).digest('hex');
 const runId='backend-'+sourceCommit.slice(0,8)+'-'+timestamp.replace(/[:.]/g,'-');
 const metadataRelative='archive_receipts/'+runId,metadata=path.join(local,metadataRelative);
-const fixtureZips=new Set(['reference.zip','canonical-reference.zip','compiled-server-approved.zip','browser-approved.zip','fixture-input.zip']);
+const fixtureZips=new Set(['reference.zip','canonical-reference.zip','compiled-server-approved.zip','browser-approved.zip','fixture-input.zip','hosted-approved-public-sample.zip']);
 async function files(directory,prefix=''){
   const list=[];
   for(const entry of await readdir(directory,{withFileTypes:true})){
@@ -31,7 +31,7 @@ async function files(directory,prefix=''){
   return list.sort();
 }
 const sourcePaths=git('ls-files','--','apps/sentinel-lab').split(/\r?\n/).filter(file=>file&&!/(^|\/)(\.env[^/]*|\.vercel|\.next|node_modules|private)(\/|$)/.test(file));
-const extraSource=authenticated?['scripts/archive_playground_backend_evidence.mjs','scripts/verify_playground_provider_auth.mjs','scripts/submit_playground_count_probe.mjs','scripts/submit_playground_generation_probe.mjs','scripts/verify_playground_count_receipt.mjs','scripts/verify_playground_generation_guards.mjs','scripts/render_playground_generation.mts','docs/playground-authenticated-20261015.md']:['scripts/archive_playground_backend_evidence.mjs','docs/works-playground-continuation-20261014.md'];
+const extraSource=authenticated?['scripts/archive_playground_backend_evidence.mjs','scripts/verify_playground_provider_auth.mjs','scripts/submit_playground_count_probe.mjs','scripts/submit_playground_generation_probe.mjs','scripts/verify_playground_count_receipt.mjs','scripts/verify_playground_generation_guards.mjs','scripts/render_playground_generation.mts','scripts/audit_playground_release.mts','scripts/deploy_playground_test_candidate.mjs','scripts/test_playground_test_candidate.mjs','scripts/toggle_playground_test_webhook.mjs','scripts/accept_playground_hosted.mts','docs/playground-authenticated-20261015.md','docs/playground-connected-test-20261015.md']:['scripts/archive_playground_backend_evidence.mjs','docs/works-playground-continuation-20261014.md'];
 sourcePaths.push(...extraSource);
 const sourceFiles=[];
 for(const file of sourcePaths.sort()){
