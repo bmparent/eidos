@@ -43,6 +43,7 @@ export const onRequestPost = guarded(async ({ request, env }) => {
   if (templateRevocation) assertTemplatePaymentMode(env, record(parsed) ? parsed.livemode : undefined, templateRevocation.session_id);
   if (
     !templateRevocation &&
+    env.EIDOS_PLAYGROUND_AI_MODE !== 'test' &&
     await database
       .prepare('SELECT id FROM eidos_stripe_events WHERE id=?')
       .bind(event.id)
@@ -51,7 +52,7 @@ export const onRequestPost = guarded(async ({ request, env }) => {
     return json({ received: true });
   // Older paired hooks share the event ledger but do not know template side
   // tables. Reconcile a known TEST payment's revocation even if one got here first.
-  if (await templatePayment(env, event, record(parsed) ? parsed.livemode : undefined)) return json({ received: true });
+  if (await templatePayment(env, { ...event, account: record(parsed) ? parsed.account : undefined }, record(parsed) ? parsed.livemode : undefined)) return json({ received: true });
   if (
     [
       'checkout.session.completed',

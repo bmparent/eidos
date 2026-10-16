@@ -1,0 +1,23 @@
+✖ 06: extreme retail markup cannot prevent above-bound settlement and the route pause (219.8721ms)
+ℹ tests 1
+ℹ suites 0
+ℹ pass 0
+ℹ fail 1
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 3397.4803
+
+✖ failing tests:
+
+test at apps\sentinel-lab\tests\works-playground-ai.test.ts:1:9793
+✖ 06: extreme retail markup cannot prevent above-bound settlement and the route pause (219.8721ms)
+  Error: AI bound exceeds the supported amount.
+      at ceilingRatio (C:\Users\bmpar\codex-worktrees\playground-unified-backend-20261014\apps\sentinel-lab\lib\works\vendor\functions\_shared\platform\playgroundAi.ts:30:41)
+      at retailCharge (C:\Users\bmpar\codex-worktrees\playground-unified-backend-20261014\apps\sentinel-lab\lib\works\vendor\functions\_shared\platform\playgroundAi.ts:67:18)
+      at settleAiAction (C:\Users\bmpar\codex-worktrees\playground-unified-backend-20261014\apps\sentinel-lab\lib\works\vendor\functions\_shared\platform\playgroundAi.ts:284:89)
+      at async TestContext.<anonymous> (C:\Users\bmpar\codex-worktrees\playground-unified-backend-20261014\apps\sentinel-lab\tests\works-playground-ai.test.ts:141:21)
+      at async Test.run (node:internal/test_runner/test:1125:7)
+      at async startSubtestAfterBootstrap (node:internal/test_runner/harness:358:3) {
+    status: 503
+  }

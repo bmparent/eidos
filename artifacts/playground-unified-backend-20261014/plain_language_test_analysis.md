@@ -1,0 +1,13 @@
+# Backend accounting and manual preview evidence
+
+The code now prevents two concurrent actions from spending the same customer allowance or owner budget. It uses integer microdollars and one conditional database write for admission. A second atomic check prevents reserved work from starting after the owner lowers the upstream budget. A one-time dispatch claim prevents duplicated requests; unknown provider outcomes keep an upstream obligation while the customer's hold expires after 24 hours. Late evidence cannot charge a customer after that waiver.
+
+Signed payment fixtures now observe the actual merchant identity at checkout and payment processing, rather than copying an account label. An immutable order binding is required for allowance credit. Wrong merchant and connected-account events reject; historical guest receipts and email retries continue without inventing credit.
+
+The controlled accounting suite passes 15 tests. The full application suite passes 96 tests with one explicit Windows symlink privilege skip. Typecheck and the Next 16.3.8 production build pass. The original critical/high dependency audit is retained; the scoped security updates produce an audit with zero vulnerabilities. The added mail retry test initially expected the wrong 503/502 status, and the original failure is retained beside the successful rerun. No actual paid AI call or payment occurred.
+
+The new isolated backend deployment is READY and protected. Its source and bundle identity are recorded in backend-preview.json. It deliberately has no database, no paid archives and no provider/payment/mail credentials. Accounts, AI, commerce, newsletter, community studios and proactive behavior are off. This proves a deployable manual editor backend boundary, not persistence, hosted billing, signed commercial transactions or delivered inbox mail. The frontend CI must still check the authenticated runtime pin and disabled flags before publishing its paired preview.
+
+The original 32 private archives (8 current and 24 retained) were verified read-only against frozen byte counts and SHA256 hashes. All match; the new manual bundle intentionally contains zero. The archive guard remains required for future commerce enablement.
+
+Independent review found and closed the actual-merchant binding and budget-reduction dispatch gaps. Remaining gates are the owner's authorized key and explicit spend budget, approved current model prices, provider adapter/model comparison, hosted two-account persistence and billing tests, maintenance scheduling, signed TEST transaction/recovery/refund/inbox proof, and integrated snapshot entitlement delivery. Public AI and production remain off.

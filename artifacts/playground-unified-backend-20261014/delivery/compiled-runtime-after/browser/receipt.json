@@ -1,0 +1,73 @@
+{
+  "timestampUtc": "2026-10-14T19:07:30.716Z",
+  "source": "Actual compiled Next production module, plain Node SQLite freeze/read",
+  "archiveSha256": "b26d51c04ddee2f6ff2cb421d13edaaeb668e64c8e25ba3cc4209ccceb5956a3",
+  "archiveBytes": 66201,
+  "network": "Blocked all HTTP(S); file URLs only",
+  "physicalDevice": false,
+  "records": [
+    {
+      "engine": "chromium",
+      "width": 1440,
+      "errors": [],
+      "console": [],
+      "requests": [],
+      "checks": [
+        "Actual compiled Next package renders independent content"
+      ]
+    },
+    {
+      "engine": "chromium",
+      "width": 390,
+      "errors": [],
+      "console": [],
+      "requests": [],
+      "checks": [
+        "Actual compiled Next package renders independent content",
+        "Actual compiled package runtime opens and closes mobile navigation"
+      ]
+    },
+    {
+      "engine": "firefox",
+      "width": 1440,
+      "errors": [],
+      "console": [],
+      "requests": [],
+      "checks": [
+        "Actual compiled Next package renders independent content"
+      ]
+    },
+    {
+      "engine": "firefox",
+      "width": 390,
+      "errors": [],
+      "console": [],
+      "requests": [],
+      "checks": [
+        "Actual compiled Next package renders independent content",
+        "Actual compiled package runtime opens and closes mobile navigation"
+      ]
+    },
+    {
+      "engine": "webkit",
+      "width": 1440,
+      "errors": [],
+      "console": [],
+      "requests": [],
+      "checks": [
+        "Actual compiled Next package renders independent content"
+      ]
+    },
+    {
+      "engine": "webkit",
+      "width": 390,
+      "errors": [],
+      "console": [],
+      "requests": [],
+      "checks": [
+        "Actual compiled Next package renders independent content",
+        "Actual compiled package runtime opens and closes mobile navigation"
+      ]
+    }
+  ]
+}

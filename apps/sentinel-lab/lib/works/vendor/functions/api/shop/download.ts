@@ -7,7 +7,8 @@ export const onRequestPost = guarded(async ({ request, env }) => {
   const input = await body(request, 1000);
   const order = await receiptOrder(env, input.receipt);
   const purchasedTemplate = await templateOrder(env, order.id);
-  if (purchasedTemplate) return templateDownload(request, env, purchasedTemplate, input.downloadToken);
+  if (purchasedTemplate) return templateDownload(request, env, purchasedTemplate, input.downloadToken, input.artifact);
+  if (input.artifact !== undefined && input.artifact !== 'original') throw new HttpError(400, 'This purchase has no approved page attachment.');
   if (order.status !== 'paid')
     throw new HttpError(
       403,

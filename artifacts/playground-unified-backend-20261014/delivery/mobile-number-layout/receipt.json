@@ -1,0 +1,339 @@
+{
+  "timestampUtc": "2026-10-14T19:15:11.900Z",
+  "source": "Public frozen page package, independent file opening",
+  "cssSourceSha256": "3214b1f1ea64d3da89b4564c3f85b6761ec236c9d23ca17cfcf87dc21ab5a4ba",
+  "baseline": "C:\\Users\\bmpar\\codex-worktrees\\playground-unified-site-20261014\\artifacts\\playground-unified\\service-number-wrap\\before",
+  "physicalDevice": false,
+  "records": [
+    {
+      "engine": "chromium",
+      "width": 320,
+      "stage": "before",
+      "errors": [],
+      "requests": [],
+      "rows": [
+        {
+          "number": "01",
+          "numberLines": 2,
+          "heading": "A clear first conversation",
+          "headingLines": 2
+        },
+        {
+          "number": "02",
+          "numberLines": 2,
+          "heading": "A plan built around your needs",
+          "headingLines": 2
+        },
+        {
+          "number": "03",
+          "numberLines": 2,
+          "heading": "Careful work, from start to finish",
+          "headingLines": 2
+        }
+      ],
+      "reproducedBrokenNumber": true
+    },
+    {
+      "engine": "chromium",
+      "width": 320,
+      "stage": "after",
+      "errors": [],
+      "requests": [],
+      "rows": [
+        {
+          "number": "01",
+          "numberLines": 1,
+          "heading": "A clear first conversation",
+          "headingLines": 2
+        },
+        {
+          "number": "02",
+          "numberLines": 1,
+          "heading": "A plan built around your needs",
+          "headingLines": 2
+        },
+        {
+          "number": "03",
+          "numberLines": 1,
+          "heading": "Careful work, from start to finish",
+          "headingLines": 2
+        }
+      ]
+    },
+    {
+      "engine": "chromium",
+      "width": 390,
+      "stage": "before",
+      "errors": [],
+      "requests": [],
+      "rows": [
+        {
+          "number": "01",
+          "numberLines": 1,
+          "heading": "A clear first conversation",
+          "headingLines": 1
+        },
+        {
+          "number": "02",
+          "numberLines": 2,
+          "heading": "A plan built around your needs",
+          "headingLines": 2
+        },
+        {
+          "number": "03",
+          "numberLines": 2,
+          "heading": "Careful work, from start to finish",
+          "headingLines": 2
+        }
+      ],
+      "reproducedBrokenNumber": true
+    },
+    {
+      "engine": "chromium",
+      "width": 390,
+      "stage": "after",
+      "errors": [],
+      "requests": [],
+      "rows": [
+        {
+          "number": "01",
+          "numberLines": 1,
+          "heading": "A clear first conversation",
+          "headingLines": 1
+        },
+        {
+          "number": "02",
+          "numberLines": 1,
+          "heading": "A plan built around your needs",
+          "headingLines": 2
+        },
+        {
+          "number": "03",
+          "numberLines": 1,
+          "heading": "Careful work, from start to finish",
+          "headingLines": 2
+        }
+      ]
+    },
+    {
+      "engine": "firefox",
+      "width": 320,
+      "stage": "before",
+      "errors": [],
+      "requests": [],
+      "rows": [
+        {
+          "number": "01",
+          "numberLines": 2,
+          "heading": "A clear first conversation",
+          "headingLines": 2
+        },
+        {
+          "number": "02",
+          "numberLines": 2,
+          "heading": "A plan built around your needs",
+          "headingLines": 2
+        },
+        {
+          "number": "03",
+          "numberLines": 2,
+          "heading": "Careful work, from start to finish",
+          "headingLines": 2
+        }
+      ],
+      "reproducedBrokenNumber": true
+    },
+    {
+      "engine": "firefox",
+      "width": 320,
+      "stage": "after",
+      "errors": [],
+      "requests": [],
+      "rows": [
+        {
+          "number": "01",
+          "numberLines": 1,
+          "heading": "A clear first conversation",
+          "headingLines": 2
+        },
+        {
+          "number": "02",
+          "numberLines": 1,
+          "heading": "A plan built around your needs",
+          "headingLines": 2
+        },
+        {
+          "number": "03",
+          "numberLines": 1,
+          "heading": "Careful work, from start to finish",
+          "headingLines": 2
+        }
+      ]
+    },
+    {
+      "engine": "firefox",
+      "width": 390,
+      "stage": "before",
+      "errors": [],
+      "requests": [],
+      "rows": [
+        {
+          "number": "01",
+          "numberLines": 1,
+          "heading": "A clear first conversation",
+          "headingLines": 1
+        },
+        {
+          "number": "02",
+          "numberLines": 2,
+          "heading": "A plan built around your needs",
+          "headingLines": 2
+        },
+        {
+          "number": "03",
+          "numberLines": 2,
+          "heading": "Careful work, from start to finish",
+          "headingLines": 2
+        }
+      ],
+      "reproducedBrokenNumber": true
+    },
+    {
+      "engine": "firefox",
+      "width": 390,
+      "stage": "after",
+      "errors": [],
+      "requests": [],
+      "rows": [
+        {
+          "number": "01",
+          "numberLines": 1,
+          "heading": "A clear first conversation",
+          "headingLines": 1
+        },
+        {
+          "number": "02",
+          "numberLines": 1,
+          "heading": "A plan built around your needs",
+          "headingLines": 2
+        },
+        {
+          "number": "03",
+          "numberLines": 1,
+          "heading": "Careful work, from start to finish",
+          "headingLines": 2
+        }
+      ]
+    },
+    {
+      "engine": "webkit",
+      "width": 320,
+      "stage": "before",
+      "errors": [],
+      "requests": [],
+      "rows": [
+        {
+          "number": "01",
+          "numberLines": 1,
+          "heading": "A clear first conversation",
+          "headingLines": 2
+        },
+        {
+          "number": "02",
+          "numberLines": 1,
+          "heading": "A plan built around your needs",
+          "headingLines": 2
+        },
+        {
+          "number": "03",
+          "numberLines": 1,
+          "heading": "Careful work, from start to finish",
+          "headingLines": 2
+        }
+      ],
+      "reproducedBrokenNumber": false
+    },
+    {
+      "engine": "webkit",
+      "width": 320,
+      "stage": "after",
+      "errors": [],
+      "requests": [],
+      "rows": [
+        {
+          "number": "01",
+          "numberLines": 1,
+          "heading": "A clear first conversation",
+          "headingLines": 2
+        },
+        {
+          "number": "02",
+          "numberLines": 1,
+          "heading": "A plan built around your needs",
+          "headingLines": 2
+        },
+        {
+          "number": "03",
+          "numberLines": 1,
+          "heading": "Careful work, from start to finish",
+          "headingLines": 2
+        }
+      ]
+    },
+    {
+      "engine": "webkit",
+      "width": 390,
+      "stage": "before",
+      "errors": [],
+      "requests": [],
+      "rows": [
+        {
+          "number": "01",
+          "numberLines": 1,
+          "heading": "A clear first conversation",
+          "headingLines": 1
+        },
+        {
+          "number": "02",
+          "numberLines": 1,
+          "heading": "A plan built around your needs",
+          "headingLines": 2
+        },
+        {
+          "number": "03",
+          "numberLines": 1,
+          "heading": "Careful work, from start to finish",
+          "headingLines": 2
+        }
+      ],
+      "reproducedBrokenNumber": false
+    },
+    {
+      "engine": "webkit",
+      "width": 390,
+      "stage": "after",
+      "errors": [],
+      "requests": [],
+      "rows": [
+        {
+          "number": "01",
+          "numberLines": 1,
+          "heading": "A clear first conversation",
+          "headingLines": 1
+        },
+        {
+          "number": "02",
+          "numberLines": 1,
+          "heading": "A plan built around your needs",
+          "headingLines": 2
+        },
+        {
+          "number": "03",
+          "numberLines": 1,
+          "heading": "Careful work, from start to finish",
+          "headingLines": 2
+        }
+      ]
+    }
+  ]
+}

@@ -1,5 +1,7 @@
 import * as memberAuth from './vendor/functions/api/members/auth';
 import * as playgroundProjects from './vendor/functions/api/playground/projects';
+import * as playgroundAi from './vendor/functions/api/playground/ai';
+import * as playgroundDelivery from './vendor/functions/api/playground/delivery';
 import * as playgroundCheckout from './vendor/functions/api/playground/checkout';
 import * as playgroundPurchases from './vendor/functions/api/playground/purchases';
 import * as playgroundWebhook from './vendor/functions/api/playground/webhook';
@@ -9,6 +11,7 @@ import * as memberUnsubscribe from './vendor/functions/api/members/unsubscribe';
 import { timingSafeEqual } from 'node:crypto';
 import { platformDatabase } from './database';
 import { templateArchives } from './templateArchives';
+import { worksMailKey } from './mail-key';
 import { json, readText, type Context, type PlatformEnv } from './vendor/functions/_shared/platform/core';
 import * as assistant from './vendor/functions/api/assistant';
 import * as config from './vendor/functions/api/public-config';
@@ -32,6 +35,8 @@ type Handler = (context: Context) => Promise<Response>;
 type Module = { onRequestGet?: Handler; onRequestPost?: Handler };
 const routes: Record<string, Module> = {
   '/api/playground/projects': playgroundProjects,
+  '/api/playground/ai': playgroundAi,
+  '/api/playground/delivery': playgroundDelivery,
   '/api/playground/checkout': playgroundCheckout, '/api/playground/purchases': playgroundPurchases, '/api/playground/webhook': playgroundWebhook,
   '/api/members/auth': memberAuth, '/api/members/account': memberAccount,
   '/api/members/directory': memberDirectory, '/api/members/unsubscribe': memberUnsubscribe,
@@ -55,10 +60,11 @@ const names = [
   'EIDOS_TEMPLATE_TEST_ENABLED', 'EIDOS_TEMPLATE_TEST_CHALLENGE', 'EIDOS_TEMPLATE_VERIFIED_EDITIONS', 'EIDOS_TEMPLATE_SOURCE_REVISION',
   'EIDOS_TEMPLATE_LIVE_ENABLED', 'EIDOS_TEMPLATE_STRIPE_ACCOUNT_ID',
   'EIDOS_PLAYGROUND_STRIPE_KEY', 'EIDOS_PLAYGROUND_WEBHOOK_SECRET', 'EIDOS_PLAYGROUND_TEST_PRICE_CENTS',
+  'EIDOS_PLAYGROUND_AI_MODE', 'EIDOS_PLAYGROUND_AI_ENABLED', 'EIDOS_PLAYGROUND_INPUT_COUNT_PRICING', 'EIDOS_PLAYGROUND_OPENAI_API_KEY', 'EIDOS_PLAYGROUND_DELIVERY_MODE',
 ] as const;
 export function platformEnvironment(source: Record<string, string | undefined> = process.env): PlatformEnv {
   const selected = Object.fromEntries(names.map(name => [name, source[name]]));
-  return { ...selected, EIDOS_RUNTIME: 'sentinel', EIDOS_DB: platformDatabase(source), EIDOS_TEMPLATE_ARCHIVES: templateArchives };
+  return { ...selected, RESEND_API_KEY: worksMailKey(source), EIDOS_RUNTIME: 'sentinel', EIDOS_DB: platformDatabase(source), EIDOS_TEMPLATE_ARCHIVES: templateArchives };
 }
 function authenticated(request: Request, expected?: string) {
   const actual = request.headers.get('x-eidos-platform-token') || '';
@@ -71,8 +77,10 @@ export async function dispatchWorks(request: Request, source: Record<string, str
   try {
     const inputUrl = new URL(request.url);
     const path = inputUrl.pathname.replace(/^\/api\/works\/v1/, '').replace(/\/$/, '') || '/';
+    const runtimeSourceRevision = /^[a-f0-9]{40}$/.test(source.EIDOS_SOURCE_COMMIT || source.VERCEL_GIT_COMMIT_SHA || '') ? (source.EIDOS_SOURCE_COMMIT || source.VERCEL_GIT_COMMIT_SHA) : null;
+    const runtimeBundleHash = /^[a-f0-9]{64}$/.test(source.EIDOS_SOURCE_BUNDLE_HASH || '') ? source.EIDOS_SOURCE_BUNDLE_HASH : null;
     if (path === '/health' && request.method === 'GET')
-      return json({ service: 'eidos-works-platform', version: 1 });
+      return json({ service: 'eidos-works-platform', version: 1, runtimeSourceRevision, runtimeBundleHash });
     if (!authenticated(request, source.EIDOS_PLATFORM_TOKEN)) return json({ error: 'Studio relay authentication required.' }, 401);
     const expectedSite = new URL(source.PUBLIC_SITE_URL || 'https://eidos-works.com').origin;
     const actualSite = request.headers.get('x-eidos-site-origin');
@@ -93,13 +101,15 @@ export async function dispatchWorks(request: Request, source: Record<string, str
     const session = (request.headers.get('cookie') || '').split(';').map(s=>s.trim()).find(s=>/^__Host-eidos_session=[a-f0-9]{64}$/.test(s));
     if (session) headers.set('cookie',session);
     headers.set('CF-Connecting-IP', request.headers.get('x-eidos-client-ip') || 'unknown');
-    const payload = request.method === 'POST' ? await readText(request, path === '/api/playground/projects' ? 2_020_000 : ['/api/shop/webhook','/api/playground/webhook'].includes(path) ? 64000 : 12000) : undefined;
+    const payload = request.method === 'POST' ? await readText(request, path === '/api/playground/projects' ? 2_020_000 : path === '/api/playground/delivery' ? 1_520_000 : path === '/api/playground/ai' ? 110000 : ['/api/shop/webhook','/api/playground/webhook'].includes(path) ? 64000 : 12000) : undefined;
     const forwarded = new Request(actualSite + path + inputUrl.search, {
       method: request.method, headers, body: payload,
     });
     const env = suppliedEnv || platformEnvironment(source);
     // Build/test callers may inject local fixtures; production environment never enables bypasses.
-    return handler({ request: forwarded, env, params: match ? { id: match[1] } : undefined });
+    const response = await handler({ request: forwarded, env, params: match ? { id: match[1] } : undefined });
+    if (path === '/api/public-config' && response.ok) return json({ ...await response.json(), runtimeSourceRevision, runtimeBundleHash });
+    return response;
   } catch {
     return json({ error: 'The studio service is temporarily unavailable.' }, 503);
   }

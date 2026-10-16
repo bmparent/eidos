@@ -1,0 +1,8 @@
+{
+  "timestampUtc": "2026-10-14T18:22:34.835Z",
+  "url": "https://eidos-sentinel-gddofh939-1brentbm-1876s-projects.vercel.app/api/works/v1/health",
+  "status": 302,
+  "unauthenticatedProtected": true,
+  "bodySaved": false,
+  "authenticatedRuntimeCheck": "pending frontend CI with approved project bypass"
+}

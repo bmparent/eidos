@@ -1,0 +1,7 @@
+{
+  "status": "harness_failed",
+  "scope": "Provider protection assertion",
+  "observed_status": 302,
+  "redirect_host": "vercel.com",
+  "reason": "Initial harness allowed only401/403; the provider correctly redirected to its sign-in protection. Six preceding application checks passed. Harness corrected to accept only denial or an explicit vercel.com authentication redirect."
+}

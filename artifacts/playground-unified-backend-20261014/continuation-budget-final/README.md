@@ -1,0 +1,15 @@
+# Final budget/count-admission source stage — 2026-10-14
+
+After the two narrow security fixes froze, the combined backend suite passed 134 tests, zero failures and one existing Windows private-archive symlink skip. The focused provider/accounting suite passed 47 tests, backend typecheck passed and the optimized Next 16.3.8 build passed. Logs are in this folder and `../continuation-provider-adapter/`.
+
+The real-provider $5 ceiling is enforced inside the atomic reservation/dispatch/count writes even after concurrent operator changes. Upstream counting now requires valid bounded input, a valid action reference, funded/unfrozen account admission and a durable one-time claim before network I/O. Count attempts are bounded per owner/hour, globally/hour and lifetime across models; failures/unknown outcomes retain their claim and do not automatically retry. The new focused regressions include independent database connections.
+
+`compiled-browser-parity/receipt.json` records the actual final optimized Next route module loaded by plain Node, with real SQLite and outbound fetch forbidden. It reproduced the exact current built Vite browser ZIP: **128,594 bytes**, SHA-256 `044459b53a6dbc32163061bfe49e201ad695ef7f08c3ac3d322ec3f635333bf8`. The input ZIP and snapshot were copied unchanged from the frontend's `continuation-built/purchase/chromium/1440-deferred-checkout/` fixture. This tests byte equality to an actual built-browser review; physical-device and real commerce acceptance remain separate.
+
+`compiled-current-reference/receipt.json` separately records exact equality to the fresh current-source public Matter fixture: **68,025 bytes**, SHA-256 `7036f418606de0f87fab460a13b632237bad849e14c48e7b0881ab081ec672e4`. Both scripts parsed, no transformed-name helper leaked, and no provider call occurred. The shared renderer graph remains 18 files with inventory `19960a2f371b413e041e19773f5f2512efb72f43d32e984ed97d62e5c774471c`.
+
+The earlier `472a915` disabled deployment and all its receipts stay retained as an intermediate stage. The latest exact manual deployment is recorded by `backend-preview.json` after source commit/deploy; this folder's runtime receipt verifies its protected source/hash and all public readiness flags false. Dedicated-key/input-count-pricing deployment overrides are explicitly blank, regardless of the owner's preserved branch Secret. No database, original archive, model call, payment or mail is introduced by the manual deployment.
+
+The archive helper syntax check passed. Its initial dry-run correctly refused the not-yet-committed application fixes; a clean-source dry-run and the actual configured mirror follow the source commit. Fresh versioned source/artifact/Drive manifests preserve old archives, reject private/env/symlink/unapproved-ZIP paths and verify copied bytes. Remote Drive cloud synchronization is not established by a mounted-folder checksum.
+
+Input-count billing, actual provider usage/cost, model comparison, hosted authenticated persistence, real TEST payment/refund/inbox recovery and human/device acceptance remain open. No stronger release claim is made.

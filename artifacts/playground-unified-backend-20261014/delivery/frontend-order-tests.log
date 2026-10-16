@@ -1,0 +1,53 @@
+(node:5100) ExperimentalWarning: SQLite is an experimental feature and might change at any time
+(Use `node --trace-warnings ...` to show where the warning was created)
+✔ Atomic quotas cannot overspend under concurrent reservations (47.3692ms)
+✔ Published knowledge and legacy clients spend zero model tokens (135.5318ms)
+✔ AI is opt-in, capped globally, deduplicated, and fails closed without a database (160.9296ms)
+✔ Request boundaries reject oversized bodies and cross-origin writes (42.2738ms)
+✔ Questions and replies publish immediately, and requested Eidos suggestions remain capped (68.518ms)
+✔ Agents can reply across communities; hourly quotas and removal still work (382.7858ms)
+✔ Untrusted thread HTML is escaped and unpublished content disappears (44.4764ms)
+✔ Proactive assistance respects opt-in, age, human identity, and the one-reply cap (53.2702ms)
+✔ Agents need registered revocable keys and cannot trigger bot loops (34.8553ms)
+✔ Turnstile cannot be bypassed on production hosts or with a mismatched hostname (20.285ms)
+✔ Only matching signed paid events unlock a real ZIP; refunds revoke access, including out-of-order events (130.2959ms)
+✔ Checkout is disabled until configured and never trusts client pricing or redirects (26.2515ms)
+(node:20164) ExperimentalWarning: SQLite is an experimental feature and might change at any time
+(Use `node --trace-warnings ...` to show where the warning was created)
+✔ capability and checkout bind server parent, owner and frozen bytes before provider dispatch (656.8089ms)
+✔ only matching signed payment unlocks exact approved bytes; original download remains byte-identical (461.8054ms)
+✔ refund or independent revocation blocks recovery without claiming a ready artifact (211.5272ms)
+✔ checkout failure retry and recovery retain one immutable approved artifact (273.9641ms)
+✔ concurrent same-attempt requests cannot replace the winning page attachment (177.2833ms)
+✔ historical and guest original orders never gain attachments and retain original checkout/download behavior (268.645ms)
+✔ order attachment schema matches additive migration (5.5014ms)
+(node:19972) ExperimentalWarning: SQLite is an experimental feature and might change at any time
+(Use `node --trace-warnings ...` to show where the warning was created)
+✔ server freezes exact schema-5 package and keeps source/bytes owner-scoped and immutable (441.3183ms)
+✔ delivery is TEST opt-in; legacy cloud remains 409 and older formats stay outside new storage (98.349ms)
+✔ forged owner, rendered bytes, claimed hashes, unsafe images and oversized source fail closed (159.1105ms)
+✔ same-owner request races are idempotent, mismatched payloads conflict, and another owner is independent (380.0774ms)
+✔ owner count and byte quotas use atomic admission, and rejected races create no orphan chunks (370.8337ms)
+✔ chunk failure rolls back source and bytes; incomplete or corrupted archives cannot be delivered (95.2296ms)
+✔ delivery migration and runtime schema are identical (1.2565ms)
+✔ delivery relay uses the explicit bounded body ceiling and never falls back after rejection (23.9857ms)
+✔ Playground billing is relayed with the signed-in session and no browser relay authority (129.6056ms)
+✔ Member relay forwards only the scoped session and accepts only the secure member cookie (55.862ms)
+✔ Relay preserves webhook body and signature, overwrites client claims, and never redirects secrets (19.4816ms)
+✔ Protected preview relay uses only the server-configured Vercel credential (13.583ms)
+(node:21120) ExperimentalWarning: SQLite is an experimental feature and might change at any time
+(Use `node --trace-warnings ...` to show where the warning was created)
+✔ all eight buyer guides separate section headings, instructions, steps, and inline filenames (95.5919ms)
+✔ each collection entry points to its actual demo and independent five-page product detail (86.3027ms)
+✔ candidate price and guide records match the server-owned edition contract (0.8918ms)
+✔ all eight selected-edition guides and exact file/art contents are public before checkout (170.1645ms)
+✔ platform help, terms, and recovery disclose product boundaries (20.0286ms)
+✔ new candidate preserves Cinematic Starter product files and price (35.4808ms)
+ℹ tests 37
+ℹ suites 0
+ℹ pass 37
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 13285.3774

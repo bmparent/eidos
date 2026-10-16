@@ -1,15 +1,18 @@
-import { body, challenge, clean, db, fingerprint, guarded, hash, HttpError, json, origin, record, reserve, siteOrigin, type PlatformEnv } from './core';
+import { body, challenge, clean, db, fingerprint, guarded, hash, HttpError, json, local, origin, record, reserve, siteOrigin, type PlatformEnv } from './core';
 import { memberFromRequest, randomToken } from './memberAuth';
 import { sendMemberMail } from './memberMail';
 import { templateProduct, templateProducts, TEMPLATE_STRIPE_API_VERSION, TEMPLATE_LIVE_STRIPE_API_VERSION, type TemplateProduct } from './templateCatalog';
 import type { Order } from './shop';
+import { approvedOrderArchive, assertDeliveryAttempt, assertDeliveryOwner, deliveryOrderBinding, deliveryOrderMetadata, deliveryOrderRevoked, insertDeliveryOrder, prepareDeliveryOrder, verifiedDeliveryParent } from './projectDeliveryOrders';
+import { DELIVERY_LIMITS, requireProjectDelivery } from './projectDelivery';
+import { hashBytes } from './projectDeliveryRenderer';
 
 export interface TemplateOrder extends Order {
   order_id: string; product_id: string; edition_id: string; version: string; price_cents: number;
   archive_key: string; archive_sha256: string; download_name: string; guide_path: string;
   member_id: string | null; email: string | null; email_hash: string | null; receipt_expires: number;
   session_url: string | null; checkout_expires: number; mail_status: string; fulfillment_type: string; fulfillment_status: string;
-  payment_failed: number;
+  payment_failed: number; mail_provider_id?: string | null;
 }
 const now = () => Math.floor(Date.now() / 1000);
 const checkoutSelect = 'SELECT o.*, t.*, EXISTS(SELECT 1 FROM eidos_template_payment_failures f WHERE f.order_id=o.id) AS payment_failed FROM eidos_orders o JOIN eidos_template_orders t ON t.order_id=o.id';
@@ -45,15 +48,18 @@ export function assertTemplatePaymentMode(env: PlatformEnv, livemode: unknown, s
     (sessionId !== undefined && !new RegExp('^cs_' + keyMode + '_[A-Za-z0-9_]+$').test(sessionId || '')))
     throw new HttpError(400, 'Payment environment does not match this template purchase.');
 }
-async function verifyLiveMerchant(env: PlatformEnv) {
+async function verifyConfiguredMerchant(env: PlatformEnv) {
+  if (!/^acct_[A-Za-z0-9]+$/.test(env.EIDOS_TEMPLATE_STRIPE_ACCOUNT_ID || ''))
+    throw new HttpError(503, 'The payment account must be configured before this purchase.');
   const response = await fetch('https://api.stripe.com/v1/account', {
-    headers: { authorization: 'Bearer ' + env.STRIPE_SECRET_KEY, 'stripe-version': TEMPLATE_LIVE_STRIPE_API_VERSION },
+    headers: { authorization: 'Bearer ' + env.STRIPE_SECRET_KEY, 'stripe-version': /^[sr]k_live_/.test(env.STRIPE_SECRET_KEY || '') ? TEMPLATE_LIVE_STRIPE_API_VERSION : TEMPLATE_STRIPE_API_VERSION },
     signal: AbortSignal.timeout(10000), redirect: 'error',
   });
   if (!response.ok) throw new HttpError(503, 'The payment account could not be verified. Please try again later.');
   const merchant = await response.json() as { id?: string; charges_enabled?: boolean; payouts_enabled?: boolean };
-  if (merchant.id !== env.EIDOS_TEMPLATE_STRIPE_ACCOUNT_ID || merchant.charges_enabled !== true || merchant.payouts_enabled !== true)
+  if (typeof merchant.id !== 'string' || merchant.id !== env.EIDOS_TEMPLATE_STRIPE_ACCOUNT_ID || merchant.charges_enabled !== true || merchant.payouts_enabled !== true)
     throw new HttpError(503, 'The payment account is not ready for this purchase.');
+  return merchant.id;
 }
 async function archive(env: PlatformEnv, key: string) {
   const value = await env.EIDOS_TEMPLATE_ARCHIVES?.get(key);
@@ -78,54 +84,93 @@ export const catalog = guarded(async ({ env }) => {
     { id: 'switchboard-godaddy-v1', productId: 'switchboard-godaddy-v1', editionId: 'godaddy', priceCents: 2900, version: null, available: false, status: 'platform_installation_blocked' },
   ] });
 });
+export async function projectDeliveryCapabilities(request: Request, env: PlatformEnv, ownerId: string) {
+  requireProjectDelivery(env);
+  const localTest = local(request, env), challengeReady = localTest || Boolean(env.TURNSTILE_SITE_KEY && env.TURNSTILE_SECRET_KEY && env.EIDOS_RATE_SECRET && env.EIDOS_RATE_SECRET.length >= 32);
+  const base = { mode: 'test', ownerId, limits: DELIVERY_LIMITS, turnstileSiteKey: env.TURNSTILE_SITE_KEY || '', localTest };
+  if (!templateTestReady(env) || !challengeReady) return { ...base, available: false, reason: 'The isolated TEST checkout or verification service is not configured.', products: [] };
+  await verifyConfiguredMerchant(env);
+  const products = [];
+  for (const product of templateProducts.filter(value => value.editionId === 'developer' && verifiedEdition(env, value))) {
+    const value = await archive(env, product.archiveKey);
+    try {
+      const parent = await verifiedDeliveryParent(product, value);
+      products.push({ productId: product.id, editionId: product.editionId, version: product.version, priceCents: product.priceCents,
+        currency: 'usd', parentArchiveSha256: parent.sha256, parentArchiveBytes: parent.bytes });
+    } catch (error) { if (!(error instanceof HttpError) || error.status !== 409) throw error; }
+  }
+  return { ...base, available: products.length > 0, reason: products.length ? null : 'No developer edition matches its verified parent archive.', products };
+}
 export async function templateCheckout(request: Request, env: PlatformEnv, input: Record<string, unknown>) {
   const mode = purchaseMode(env);
   const product = templateProduct(input.productId, input.editionId);
   if (!product) throw new HttpError(400, 'Choose a supported product and edition.');
-  for (const field of ['price', 'priceCents', 'amount', 'currency', 'version', 'archiveKey', 'priceId'])
+  for (const field of ['price', 'priceCents', 'amount', 'currency', 'version', 'archiveKey', 'priceId', 'owner', 'ownerId', 'snapshot', 'snapshotHash', 'archiveSha256', 'archiveBytes', 'html', 'archive', 'output'])
     if (input[field] !== undefined) throw new HttpError(400, 'Prices and package versions are set by the server.');
   if (input.acceptTerms !== true) throw new HttpError(400, 'Please accept the product terms before checkout.');
   if (!verifiedEdition(env, product)) throw new HttpError(503, 'This edition has not passed installation acceptance and cannot be purchased.');
   if (clean(input.website)) throw new HttpError(400, 'Please try again.');
-  const item = await archive(env, product.archiveKey);
   const database = db(env), visitor = await fingerprint(request, env);
   if (!(await reserve(database, 'template-checkout:' + visitor, 1, 20))) throw new HttpError(429, 'Please use an existing checkout or try again tomorrow.');
   await challenge(request, env, input.challenge, 'checkout');
-  if (mode === 'live') await verifyLiveMerchant(env);
   const member = await memberFromRequest(request, env, false);
+  if (input.deliveryId !== undefined && mode !== 'test') throw new HttpError(503, 'Approved page attachments are available only in TEST.');
   const receipt = input.attempt === undefined ? randomToken() : clean(input.attempt, 80);
   if (!/^[a-f0-9]{64}$/.test(receipt)) throw new HttpError(400, 'Start a valid checkout attempt.');
   const receiptHash = await hash(receipt);
   let order = await database.prepare(checkoutSelect + ' WHERE o.receipt_hash=?').bind(receiptHash).first<TemplateOrder>();
-  if (order) {
-    if (order.product_id !== product.id || order.edition_id !== product.editionId || order.member_id !== (member?.id || null))
-      throw new HttpError(409, 'This attempt belongs to a different purchase.');
-    if (order.status !== 'pending' || order.payment_failed || order.checkout_expires <= now()) throw new HttpError(409, 'This checkout is complete, failed or expired. Check its status before starting again.');
-    if (order.session_id) assertTemplatePaymentMode(env, mode === 'live', order.session_id);
-    if (order.session_url) return json({ url: order.session_url });
-  } else {
+  if (order && (order.product_id !== product.id || order.edition_id !== product.editionId || order.member_id !== (member?.id || null)))
+    throw new HttpError(409, 'This attempt belongs to a different purchase.');
+  // A retry resumes the original immutable purchase, even when the current
+  // catalog points at a newer archive. Attached-page validation stays separate.
+  const archiveKey = order && input.deliveryId === undefined ? order.archive_key : product.archiveKey;
+  const item = await archive(env, archiveKey);
+  const prepared = input.deliveryId === undefined ? null : await prepareDeliveryOrder(env, member?.id, input.deliveryId, product, item);
+  const verifiedMerchantId = mode === 'live' || env.EIDOS_PLAYGROUND_AI_MODE === 'test' || prepared ? await verifyConfiguredMerchant(env) : null;
+  if (!order) {
     const id = crypto.randomUUID(), created = new Date().toISOString(), expires = now() + 1800;
     await database.batch([
-      database.prepare('INSERT INTO eidos_orders(id,receipt_hash,created_at) VALUES(?,?,?)').bind(id, receiptHash, created),
-      database.prepare('INSERT INTO eidos_template_orders(order_id,product_id,edition_id,version,price_cents,archive_key,archive_sha256,download_name,guide_path,member_id,email,email_hash,receipt_expires,checkout_expires,created_at) VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)')
+      database.prepare('INSERT OR IGNORE INTO eidos_orders(id,receipt_hash,created_at) VALUES(?,?,?)').bind(id, receiptHash, created),
+      database.prepare('INSERT INTO eidos_template_orders(order_id,product_id,edition_id,version,price_cents,archive_key,archive_sha256,download_name,guide_path,member_id,email,email_hash,receipt_expires,checkout_expires,created_at) SELECT ?,?,?,?,?,?,?,?,?,?,?,?,?,?,? FROM eidos_orders WHERE id=?')
         .bind(id, product.id, product.editionId, product.version, product.priceCents, product.archiveKey, item.sha256, product.downloadName, product.guidePath,
-          member?.id || null, member?.email || null, member?.email ? await hash(member.email.toLowerCase()) : null, now() + 86400, expires, created),
+          member?.id || null, member?.email || null, member?.email ? await hash(member.email.toLowerCase()) : null, now() + 86400, expires, created, id),
+      ...(prepared ? [insertDeliveryOrder(env, id, prepared, verifiedMerchantId!)] : []),
     ]);
-    order = await database.prepare(checkoutSelect + ' WHERE o.id=?').bind(id).first<TemplateOrder>();
+    order = await database.prepare(checkoutSelect + ' WHERE o.receipt_hash=?').bind(receiptHash).first<TemplateOrder>();
   }
   if (!order) throw new HttpError(503, 'Checkout could not be prepared.');
+  if (order.product_id !== product.id || order.edition_id !== product.editionId || order.member_id !== (member?.id || null))
+    throw new HttpError(409, 'This attempt belongs to a different purchase.');
+  const deliveryBinding = await deliveryOrderBinding(env, order.id);
+  assertDeliveryAttempt(deliveryBinding, input.deliveryId);
+  if (deliveryBinding && deliveryBinding.merchant_id !== verifiedMerchantId) throw new HttpError(409, 'This approved page is bound to a different merchant.');
+  if (order.status !== 'pending' || order.payment_failed || order.checkout_expires <= now()) throw new HttpError(409, 'This checkout is complete, failed or expired. Check its status before starting again.');
+  const retainedArchive = order.archive_key === archiveKey ? item : await archive(env, order.archive_key);
+  if (retainedArchive.sha256 !== order.archive_sha256 || await hashBytes(retainedArchive.bytes) !== order.archive_sha256)
+    throw new HttpError(503, 'The original purchased archive does not match its receipt. Contact support; do not repurchase.');
+  if (order.session_id) assertTemplatePaymentMode(env, mode === 'live', order.session_id);
+  if (order.session_url) return json({ url: order.session_url });
+  if (mode === 'test' && env.EIDOS_PLAYGROUND_AI_MODE === 'test' && verifiedMerchantId) {
+    const { ensureAiLedger } = await import('./playgroundAi');
+    await ensureAiLedger(env);
+    await database.prepare("INSERT OR IGNORE INTO eidos_pg_ai_checkout_merchants(order_id,mode,merchant_id,created_at) SELECT id,'test',?,? FROM eidos_orders WHERE id=? AND session_id IS NULL AND status='pending'")
+      .bind(verifiedMerchantId, new Date().toISOString(), order.id).run();
+    const binding = await database.prepare('SELECT merchant_id FROM eidos_pg_ai_checkout_merchants WHERE order_id=? AND mode=?').bind(order.id, mode).first<{merchant_id:string}>();
+    if (!binding || binding.merchant_id !== verifiedMerchantId) throw new HttpError(409, 'This checkout is bound to a different payment merchant.');
+  }
   const values = new URLSearchParams({
     mode: 'payment', client_reference_id: order.id,
     ...(mode === 'live' ? { integration_identifier: 'eidos-templates-' + [...order.id.replaceAll('-', '').slice(0, 8)].map(c => String.fromCharCode(97 + parseInt(c, 16))).join('') } : {}),
-    'metadata[eidos_product]': product.id, 'metadata[eidos_edition]': product.editionId,
-    'metadata[eidos_version]': product.version, 'metadata[eidos_order_id]': order.id,
+    'metadata[eidos_product]': order.product_id, 'metadata[eidos_edition]': order.edition_id,
+    'metadata[eidos_version]': order.version, 'metadata[eidos_order_id]': order.id,
+    ...(deliveryBinding ? { 'metadata[eidos_delivery_id]': deliveryBinding.delivery_id, 'metadata[eidos_snapshot_hash]': deliveryBinding.snapshot_hash, 'metadata[eidos_delivery_archive_sha256]': deliveryBinding.archive_sha256 } : {}),
     'payment_intent_data[metadata][eidos_order_id]': order.id,
-    success_url: siteOrigin(env) + '/shop/start#receipt=' + receipt,
-    cancel_url: siteOrigin(env) + '/shop/' + product.id.split('-')[0] + '/?checkout=cancelled',
+    success_url: siteOrigin(env) + (deliveryBinding ? '/playground/?checkout=returned#receipt=' : '/shop/start#receipt=') + receipt,
+    cancel_url: siteOrigin(env) + (deliveryBinding ? '/playground/?checkout=cancelled' : '/shop/' + product.id.split('-')[0] + '/?checkout=cancelled'),
     'line_items[0][quantity]': '1', 'line_items[0][price_data][currency]': 'usd',
     'line_items[0][price_data][unit_amount]': String(order.price_cents),
     'line_items[0][price_data][product_data][name]': 'Eidos ' + product.name + (mode === 'test' ? ' (TEST)' : ''),
-    'line_items[0][price_data][product_data][description]': 'Version ' + product.version + '. Digital files; third-party hosting, platform plans, booking, forms and commerce services are separate.',
+    'line_items[0][price_data][product_data][description]': 'Version ' + order.version + '. Digital files; third-party hosting, platform plans, booking, forms and commerce services are separate.',
     expires_at: String(order.checkout_expires),
     ...(member?.email ? { customer_email: member.email } : {}),
   });
@@ -154,9 +199,14 @@ async function authorizedTemplateOrder(request: Request, env: PlatformEnv, order
   if (order.receipt_expires <= now()) throw new HttpError(401, 'This purchase link expired. Recover your purchase by email.');
   const member = await memberFromRequest(request, env, false);
   if (member && order.member_id && member.id !== order.member_id) throw new HttpError(403, 'This purchase belongs to another account.');
+  return member;
 }
 export async function templateStatus(request: Request, env: PlatformEnv, order: TemplateOrder) {
-  await authorizedTemplateOrder(request, env, order);
+  const member = await authorizedTemplateOrder(request, env, order);
+  const binding = await deliveryOrderBinding(env, order.id);
+  const approvedPage = binding ? member?.id === binding.owner_id
+    ? deliveryOrderMetadata(binding, await deliveryOrderRevoked(env, order) ? 'revoked' : order.status === 'paid' && order.fulfillment_status === 'ready' ? 'ready' : 'pending')
+    : { state: 'sign_in_required' } : undefined;
   let downloadToken: string | null = null;
   const downloadExpires = now() + 600;
   if (order.status === 'paid') {
@@ -165,15 +215,21 @@ export async function templateStatus(request: Request, env: PlatformEnv, order: 
   }
   return json({ status: order.status, orderId: order.id, productId: order.product_id, editionId: order.edition_id,
     version: order.version, downloadName: order.download_name, guidePath: order.guide_path, fulfillmentType: order.fulfillment_type,
-    fulfillmentStatus: order.fulfillment_status, mailStatus: order.mail_status, paymentState: order.status === 'pending' ? order.payment_failed ? 'failed' : order.checkout_expires <= now() ? 'expired' : 'pending' : order.status,
-    downloadToken, downloadExpires: downloadToken ? downloadExpires : null });
+    fulfillmentStatus: order.fulfillment_status, mailStatus: order.mail_provider_id ? 'sent' : order.mail_status, paymentState: order.status === 'pending' ? order.payment_failed ? 'failed' : order.checkout_expires <= now() ? 'expired' : 'pending' : order.status,
+    downloadToken, downloadExpires: downloadToken ? downloadExpires : null, ...(approvedPage ? { approvedPage } : {}) });
 }
-export async function templateDownload(request: Request, env: PlatformEnv, order: TemplateOrder, token: unknown) {
-  await authorizedTemplateOrder(request, env, order);
+export async function templateDownload(request: Request, env: PlatformEnv, order: TemplateOrder, token: unknown, artifact: unknown = 'original') {
+  if (!['original', 'approved-page'].includes(String(artifact))) throw new HttpError(400, 'Choose the original package or approved page.');
+  const member = await authorizedTemplateOrder(request, env, order);
   if (order.status !== 'paid' || order.fulfillment_status !== 'ready') throw new HttpError(403, 'A verified, completed purchase is required to download this package.');
   if (typeof token !== 'string' || !/^[a-f0-9]{64}$/.test(token)) throw new HttpError(401, 'Open your purchase start page to create a fresh download link.');
   const allowed = await db(env).prepare('SELECT order_id FROM eidos_template_downloads WHERE token_hash=? AND order_id=? AND expires>?').bind(await hash(token), order.id, now()).first();
   if (!allowed) throw new HttpError(401, 'Download link expired. Reopen your purchase start page.');
+  if (artifact === 'approved-page') {
+    const approved = await approvedOrderArchive(env, member?.id, order);
+    return new Response(new Uint8Array(approved.bytes).buffer, { headers: { 'content-type': 'application/zip', 'content-disposition': `attachment; filename="${approved.downloadName}"`,
+      'cache-control': 'private, no-store', 'referrer-policy': 'no-referrer', 'x-content-type-options': 'nosniff', 'x-eidos-archive-sha256': approved.sha256 } });
+  }
   const value = await archive(env, order.archive_key);
   if (value.sha256 !== order.archive_sha256) throw new HttpError(503, 'The original purchased archive does not match its receipt. Contact support; do not repurchase.');
   return new Response(new Uint8Array(value.bytes).buffer, { headers: { 'content-type': 'application/zip', 'content-disposition': `attachment; filename="${order.download_name}"`,
@@ -196,7 +252,7 @@ async function recoveryToken(env: PlatformEnv, orderId: string, stableReceipt = 
   return token;
 }
 export async function templateReceiptMail(env: PlatformEnv, order: TemplateOrder) {
-  if (!order.email || order.status !== 'paid' || order.mail_status === 'sent') return;
+  if (!order.email || order.status !== 'paid' || order.mail_status === 'sent' || order.mail_provider_id) return;
   const token = await recoveryToken(env, order.id, true);
   const test = order.session_id?.startsWith('cs_test_') === true;
   try {
@@ -204,11 +260,12 @@ export async function templateReceiptMail(env: PlatformEnv, order: TemplateOrder
       text: `Your ${test ? 'TEST ' : ''}purchase of ${order.product_id}, ${order.edition_id}, version ${order.version} is verified.\nOpen this one-time recovery link within 30 minutes: ${siteOrigin(env)}/shop/start#token=${token}\nInstallation guide: ${siteOrigin(env)}${order.guide_path}\nIf this link expires, use ${siteOrigin(env)}/shop/start to request a new link.\nThis is transactional delivery and does not subscribe you to marketing.` }, 'eidos-template-receipt-' + order.id);
     await db(env).prepare("UPDATE eidos_template_orders SET mail_status='sent',mail_provider_id=? WHERE order_id=?").bind(providerId, order.id).run();
   } catch (error) {
-    await db(env).prepare("UPDATE eidos_template_orders SET mail_status='failed' WHERE order_id=?").bind(order.id).run();
+    // A late failed attempt must not erase an earlier provider-accepted receipt.
+    await db(env).prepare("UPDATE eidos_template_orders SET mail_status='failed' WHERE order_id=? AND mail_status<>'sent' AND mail_provider_id IS NULL").bind(order.id).run();
     throw error; // Leave Stripe event unacknowledged so provider retries delivery.
   }
 }
-export async function templatePayment(env: PlatformEnv, event: { id: string; type: string; data: { object: Record<string, unknown> } }, livemode: unknown) {
+export async function templatePayment(env: PlatformEnv, event: { id: string; type: string; account?: unknown; data: { object: Record<string, unknown> } }, livemode: unknown) {
   if (!['checkout.session.completed', 'checkout.session.async_payment_succeeded', 'checkout.session.async_payment_failed', 'checkout.session.expired'].includes(event.type)) return false;
   const object = event.data.object;
   const metadata = object.metadata;
@@ -243,6 +300,25 @@ export async function templatePayment(env: PlatformEnv, event: { id: string; typ
   if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) throw new HttpError(400, 'Verified payment email is required for recovery.');
   if (order.member_id && order.email && email !== order.email) throw new HttpError(400, 'Payment email does not match the account purchase.');
   const paymentIntent = object.payment_intent;
+  const deliveryBinding = await deliveryOrderBinding(env, order.id);
+  if (deliveryBinding) {
+    if (livemode !== false || event.account !== undefined || await verifyConfiguredMerchant(env) !== deliveryBinding.merchant_id ||
+      order.member_id !== deliveryBinding.owner_id || metadata.eidos_delivery_id !== deliveryBinding.delivery_id || metadata.eidos_snapshot_hash !== deliveryBinding.snapshot_hash || metadata.eidos_delivery_archive_sha256 !== deliveryBinding.archive_sha256)
+      throw new HttpError(400, 'Payment does not match the approved page, owner, or merchant.');
+  }
+  // Historical purchases keep their existing receipt path. Only new, checkout-bound
+  // TEST purchases can create allowance evidence; never relabel a historical order.
+  let verifiedAiMerchant: string | null = null;
+  if (env.EIDOS_PLAYGROUND_AI_MODE === 'test') {
+    const { ensureAiLedger } = await import('./playgroundAi');
+    await ensureAiLedger(env);
+    const binding = await database.prepare('SELECT merchant_id FROM eidos_pg_ai_checkout_merchants WHERE order_id=? AND mode=?').bind(order.id, 'test').first<{merchant_id:string}>();
+    if (binding) {
+      verifiedAiMerchant = await verifyConfiguredMerchant(env);
+      if (verifiedAiMerchant !== binding.merchant_id || event.account !== undefined)
+        throw new HttpError(400, 'Payment merchant does not match this direct-account purchase.');
+    }
+  }
   await database.batch([
     database.prepare("UPDATE eidos_orders SET status=CASE WHEN status='refunded' OR EXISTS(SELECT 1 FROM eidos_revoked_payments WHERE payment_intent=?) THEN 'refunded' ELSE 'paid' END,paid_at=COALESCE(paid_at,?),payment_intent=? WHERE id=? AND NOT EXISTS(SELECT 1 FROM eidos_template_payment_failures WHERE order_id=?)")
       .bind(paymentIntent, new Date().toISOString(), paymentIntent, order.id, order.id),
@@ -252,6 +328,10 @@ export async function templatePayment(env: PlatformEnv, event: { id: string; typ
   const paid = await templateOrder(env, order.id);
   if (paid) await templateReceiptMail(env, paid);
   await database.prepare('INSERT OR IGNORE INTO eidos_stripe_events(id,received_at) VALUES(?,?)').bind(event.id, new Date().toISOString()).run();
+  if (verifiedAiMerchant) {
+    const { recordVerifiedAiPayment } = await import('./playgroundAi');
+    await recordVerifiedAiPayment(env, order.id, event.id, livemode === false ? 'test' : 'live', verifiedAiMerchant);
+  }
   return true;
 }
 export const recover = guarded(async ({ request, env }) => {
@@ -271,7 +351,7 @@ export const recover = guarded(async ({ request, env }) => {
         const token = await recoveryToken(env, order.id);
         try { await sendMemberMail(env, { to: email, subject: 'Recover your Eidos template purchase' + (order.session_id?.startsWith('cs_test_') ? ' (TEST)' : ''), text: `Open within 30 minutes: ${siteOrigin(env)}/shop/start#token=${token}\nPurchase: ${order.product_id}, version ${order.version}.\nIf you did not request this message, ignore it.` }, 'eidos-template-recovery-' + await hash(token)); }
         catch { /* Enumeration-safe response; provider failure is recorded internally. */
-          await database.prepare("UPDATE eidos_template_orders SET mail_status='failed' WHERE order_id=?").bind(order.id).run();
+          await database.prepare("UPDATE eidos_template_orders SET mail_status='failed' WHERE order_id=? AND mail_status<>'sent' AND mail_provider_id IS NULL").bind(order.id).run();
         }
       }
     }
@@ -287,6 +367,11 @@ export const redeem = guarded(async ({ request, env }) => {
   if (!link) throw new HttpError(401, 'This recovery link is invalid or expired.');
   const order = await templateOrder(env, link.order_id), member = await memberFromRequest(request, env, false);
   if (!order || (member && order.member_id && member.id !== order.member_id)) throw new HttpError(403, 'This purchase belongs to another account.');
+  const binding = await deliveryOrderBinding(env, order.id);
+  if (binding) {
+    assertDeliveryOwner(binding, member?.id);
+    if (await deliveryOrderRevoked(env, order)) throw new HttpError(403, 'This approved page purchase was revoked.');
+  }
   assertTemplatePaymentMode(env, order.session_id?.startsWith('cs_live_') === true, order.session_id);
   const receipt = randomToken();
   const results = await database.batch([
@@ -296,5 +381,7 @@ export const redeem = guarded(async ({ request, env }) => {
   ]);
   const first = results[0] as { meta?: { changes?: number }; rowsAffected?: number };
   if ((first.meta?.changes ?? first.rowsAffected) !== 1) throw new HttpError(401, 'This recovery link is invalid or expired.');
-  return json({ receipt });
+  const currentOrder = binding ? await templateOrder(env, order.id) : null;
+  const approvedPage = binding && currentOrder ? deliveryOrderMetadata(binding, await deliveryOrderRevoked(env, currentOrder) ? 'revoked' : currentOrder.status === 'paid' && currentOrder.fulfillment_status === 'ready' ? 'ready' : 'pending') : undefined;
+  return json({ receipt, ...(approvedPage ? { continuePath: '/playground/?checkout=returned#receipt=' + receipt, approvedPage } : {}) });
 });

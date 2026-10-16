@@ -1,0 +1,286 @@
+{
+  "timestampUtc": "2026-10-14T23:45:00.302Z",
+  "projectId": "prj_5aL0COF1DONfPKI4fv25NitAdkOE",
+  "teamId": "team_TEsnMvKU6SdbYjVhws6Ttp8H",
+  "metadataOnly": true,
+  "decryptionRequested": false,
+  "valuesAccessed": false,
+  "matchingVariables": [
+    {
+      "id": "mj4prYyQIZvTkx3n",
+      "name": "eidos_sentinel_lab",
+      "type": "sensitive",
+      "targets": [
+        "production"
+      ],
+      "gitBranch": null,
+      "createdAt": 1792021264921,
+      "updatedAt": 1792021264921
+    },
+    {
+      "id": "4BO5TGlix3gzH5yE",
+      "name": "EIDOS_PLAYGROUND_DELIVERY_MODE",
+      "type": "encrypted",
+      "targets": [
+        "preview"
+      ],
+      "gitBranch": "codex/playground-unified-20261014",
+      "createdAt": 1792003226962,
+      "updatedAt": 1792003226962
+    },
+    {
+      "id": "S9RVub6qFEmikofu",
+      "name": "EIDOS_PLAYGROUND_WEBHOOK_SECRET",
+      "type": "sensitive",
+      "targets": [
+        "preview"
+      ],
+      "gitBranch": "codex/playground-unified-20261014",
+      "createdAt": 1792001842231,
+      "updatedAt": 1792003234355
+    },
+    {
+      "id": "znWFDhMjPMNbX85I",
+      "name": "EIDOS_PLAYGROUND_STRIPE_KEY",
+      "type": "sensitive",
+      "targets": [
+        "preview"
+      ],
+      "gitBranch": "codex/playground-unified-20261014",
+      "createdAt": 1792001835426,
+      "updatedAt": 1792003230596
+    },
+    {
+      "id": "fQR4Tb21XYNkHTHX",
+      "name": "EIDOS_PLAYGROUND_AI_MODE",
+      "type": "encrypted",
+      "targets": [
+        "preview"
+      ],
+      "gitBranch": "codex/playground-unified-20261014",
+      "createdAt": 1792001827294,
+      "updatedAt": 1792003220553
+    },
+    {
+      "id": "j6EHBhOJ5kxEnHxo",
+      "name": "OPENAI_API_KEY",
+      "type": "sensitive",
+      "targets": [
+        "preview"
+      ],
+      "gitBranch": "codex/playground-unified-20261014",
+      "createdAt": 1792001820843,
+      "updatedAt": 1792003213993
+    },
+    {
+      "id": "cYs84seoMgKitqYr",
+      "name": "EIDOS_PLAYGROUND_WEBHOOK_SECRET",
+      "type": "sensitive",
+      "targets": [
+        "preview"
+      ],
+      "gitBranch": "codex/showcase-studio-boundary-20261013",
+      "createdAt": 1791937496196,
+      "updatedAt": 1791937591060
+    },
+    {
+      "id": "9UVP9tTX5G2orkOv",
+      "name": "EIDOS_PLAYGROUND_STRIPE_KEY",
+      "type": "sensitive",
+      "targets": [
+        "preview"
+      ],
+      "gitBranch": "codex/showcase-studio-boundary-20261013",
+      "createdAt": 1791937494942,
+      "updatedAt": 1791937583134
+    },
+    {
+      "id": "oWzwt1ziNYYBQ2Ec",
+      "name": "OPENAI_API_KEY",
+      "type": "sensitive",
+      "targets": [
+        "preview"
+      ],
+      "gitBranch": "codex/showcase-studio-boundary-20261013",
+      "createdAt": 1791937493032,
+      "updatedAt": 1791937574115
+    },
+    {
+      "id": "Uo7EEXeHXeqrriKH",
+      "name": "EIDOS_PLAYGROUND_AI_ENABLED",
+      "type": "encrypted",
+      "targets": [
+        "preview"
+      ],
+      "gitBranch": "codex/works-paired-integration-20260927",
+      "createdAt": 1790905714514,
+      "updatedAt": 1790905714514
+    },
+    {
+      "id": "iNiqG4N5rvft3Fz2",
+      "name": "EIDOS_PLAYGROUND_AI_KILL",
+      "type": "encrypted",
+      "targets": [
+        "preview"
+      ],
+      "gitBranch": "codex/works-paired-integration-20260927",
+      "createdAt": 1790905714514,
+      "updatedAt": 1790905714514
+    },
+    {
+      "id": "uLX6ngcIqINpMC9w",
+      "name": "EIDOS_PLAYGROUND_IMAGE_ENABLED",
+      "type": "encrypted",
+      "targets": [
+        "preview"
+      ],
+      "gitBranch": "codex/works-paired-integration-20260927",
+      "createdAt": 1790905714514,
+      "updatedAt": 1790905714514
+    },
+    {
+      "id": "oSRPAwOuBTY57EFE",
+      "name": "EIDOS_PLAYGROUND_AUTHORING_ENABLED",
+      "type": "encrypted",
+      "targets": [
+        "preview"
+      ],
+      "gitBranch": "codex/works-paired-integration-20260927",
+      "createdAt": 1790905714514,
+      "updatedAt": 1790905714514
+    },
+    {
+      "id": "IUfoH5IKPHmKhvQB",
+      "name": "EIDOS_PLAYGROUND_AUTHORING_ENABLED",
+      "type": "sensitive",
+      "targets": [
+        "preview"
+      ],
+      "gitBranch": "codex/owner-console-backend-20260924",
+      "createdAt": 1790292910708,
+      "updatedAt": 1790292910708
+    },
+    {
+      "id": "JfltlIuqFB7yEaNv",
+      "name": "EIDOS_PLAYGROUND_IMAGE_ENABLED",
+      "type": "encrypted",
+      "targets": [
+        "preview"
+      ],
+      "gitBranch": "codex/works-audit-backend-20260921",
+      "createdAt": 1790123793915,
+      "updatedAt": 1790123793915
+    },
+    {
+      "id": "MOUcsNi9o1KjcZKY",
+      "name": "EIDOS_PLAYGROUND_AUTHORING_ENABLED",
+      "type": "encrypted",
+      "targets": [
+        "preview"
+      ],
+      "gitBranch": "codex/works-audit-backend-20260921",
+      "createdAt": 1790123791773,
+      "updatedAt": 1790187179911
+    },
+    {
+      "id": "b9sm53bnaIK8KMM1",
+      "name": "EIDOS_PLAYGROUND_AI_ENABLED",
+      "type": "encrypted",
+      "targets": [
+        "preview"
+      ],
+      "gitBranch": "codex/works-accounts-backend-20260912",
+      "createdAt": 1789244569909,
+      "updatedAt": 1789244569909
+    },
+    {
+      "id": "7JC5es1PvJMoNYjo",
+      "name": "EIDOS_PLAYGROUND_AI_KILL",
+      "type": "encrypted",
+      "targets": [
+        "preview"
+      ],
+      "gitBranch": "codex/works-accounts-backend-20260912",
+      "createdAt": 1789244569909,
+      "updatedAt": 1789244569909
+    },
+    {
+      "id": "Ads9rnpQvLTmlmnK",
+      "name": "EIDOS_PLAYGROUND_IMAGE_ENABLED",
+      "type": "encrypted",
+      "targets": [
+        "preview"
+      ],
+      "gitBranch": "codex/playground-spatial-composition-backend-20260910",
+      "createdAt": 1789077834449,
+      "updatedAt": 1789077834449
+    },
+    {
+      "id": "Bpg3HTYkF5Le9R1H",
+      "name": "EIDOS_PLAYGROUND_AI_KILL",
+      "type": "encrypted",
+      "targets": [
+        "preview"
+      ],
+      "gitBranch": "codex/playground-spatial-composition-backend-20260910",
+      "createdAt": 1789077834108,
+      "updatedAt": 1789077834108
+    },
+    {
+      "id": "5F7zFaRw4zeR40DL",
+      "name": "EIDOS_PLAYGROUND_AI_ENABLED",
+      "type": "encrypted",
+      "targets": [
+        "preview"
+      ],
+      "gitBranch": "codex/playground-spatial-composition-backend-20260910",
+      "createdAt": 1789077833782,
+      "updatedAt": 1789077833782
+    },
+    {
+      "id": "ZyDU7nS2cJ2N3Q6d",
+      "name": "EIDOS_PLAYGROUND_AI_ENABLED",
+      "type": "encrypted",
+      "targets": [
+        "preview"
+      ],
+      "gitBranch": "codex/playground-integration-backend-20260910",
+      "createdAt": 1789057171192,
+      "updatedAt": 1789057171192
+    },
+    {
+      "id": "ZAYUlEHJoSg4yZfV",
+      "name": "EIDOS_PLAYGROUND_AI_KILL",
+      "type": "encrypted",
+      "targets": [
+        "preview"
+      ],
+      "gitBranch": "codex/playground-integration-backend-20260910",
+      "createdAt": 1789057171192,
+      "updatedAt": 1789057171192
+    },
+    {
+      "id": "J8wCpdBAUs64kAA0",
+      "name": "EIDOS_PLAYGROUND_IMAGE_ENABLED",
+      "type": "encrypted",
+      "targets": [
+        "preview"
+      ],
+      "gitBranch": "codex/playground-integration-backend-20260910",
+      "createdAt": 1789057171192,
+      "updatedAt": 1789057171192
+    },
+    {
+      "id": "LZSU73GSYchzy1dJ",
+      "name": "OPENAI_API_KEY",
+      "type": "encrypted",
+      "targets": [
+        "production",
+        "preview"
+      ],
+      "gitBranch": null,
+      "createdAt": 1788643206126,
+      "updatedAt": 1788643206126
+    }
+  ]
+}

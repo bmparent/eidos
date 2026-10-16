@@ -1,0 +1,62 @@
+{
+  "timestampUtc": "2026-10-14T19:18:52.718Z",
+  "source": "bd3c6ab2a636a5a1783babd304f2ac4c75f7a1b6",
+  "bundleHash": "1e471a710c1d4d1343f0ac50d294f5efcf9c4ef8f2c56a49223f65bb69bda27c",
+  "graphFiles": 17,
+  "graphSha256": "bf8825416406e37882a5d17cfc7a2f6590fdff87858c350a09fa45e441f05a47",
+  "sharedContractFiles": 16,
+  "fullSuitePassed": 100,
+  "fullSuiteSkipped": 1,
+  "skipReason": "Windows EPERM denies file symlink fixture; missing/altered/duplicate archive checks passed",
+  "typecheck": "passed",
+  "optimizedBuild": "passed",
+  "proof": {
+    "actualNextVsEsbuild": {
+      "byteIdentical": true,
+      "bytes": 66234,
+      "sha256": "f3e34c10ab71b52c6750b458b16d57ea0da4a27c444bbc25e6a66579bbb649d8",
+      "receipt": "delivery/mobile-final-compiled/receipt.json"
+    },
+    "actualNextVsBuiltVite": {
+      "byteIdentical": true,
+      "bytes": 128380,
+      "sha256": "9def4cc49c1f79a061af9470c46fb96d6aa3550ba490304770ea1550364f29ed",
+      "receipt": "delivery/mobile-final-browser-parity/receipt.json"
+    },
+    "runtimeScriptUnchanged": {
+      "sha256": "b9198e45b85fcb7e2302d648b81eb0b6e3922bde14797b3a241695c03527334e",
+      "bytes": 20813,
+      "priorIndependentBrowserChecks": 6,
+      "receipt": "delivery/compiled-runtime-after/browser/receipt.json"
+    },
+    "mobileNumberLayout": {
+      "beforeAfterRecords": 12,
+      "afterPassed": 6,
+      "widths": [
+        320,
+        390
+      ],
+      "engines": [
+        "chromium",
+        "firefox",
+        "webkit"
+      ],
+      "receipt": "delivery/mobile-number-layout/receipt.json"
+    },
+    "negativeControl": "Prior actual Next/function-source byte mismatch retained under delivery/compiled-runtime-before",
+    "storedHistoricalArchives": "Read exact stored bytes; never re-render historical purchases"
+  },
+  "deployment": {
+    "id": "dpl_3ybMcNrPqdT9dMWpbVvxDANqSaZr",
+    "url": "https://eidos-sentinel-lz611r2ml-1brentbm-1876s-projects.vercel.app",
+    "state": "READY",
+    "target": "preview"
+  },
+  "sourceMetadataVerified": true,
+  "database": "none",
+  "privateArchiveCount": 0,
+  "privateArchiveCompleteness": "Intentionally omitted from disabled manual preview; original complete TEST bundle and 32 archives retained unchanged",
+  "accountAiCommerceMailDelivery": "disabled",
+  "hostedPersistencePaymentProvider": "not accepted",
+  "physicalDevice": "not tested"
+}

@@ -31,6 +31,10 @@ export interface PlatformEnv {
   EIDOS_PLAYGROUND_STRIPE_KEY?: string;
   EIDOS_PLAYGROUND_WEBHOOK_SECRET?: string;
   EIDOS_PLAYGROUND_TEST_PRICE_CENTS?: string;
+  EIDOS_PLAYGROUND_AI_MODE?: string;
+  EIDOS_PLAYGROUND_AI_ENABLED?: string;
+  EIDOS_PLAYGROUND_INPUT_COUNT_PRICING?: string;
+  EIDOS_PLAYGROUND_OPENAI_API_KEY?: string;
   EIDOS_KIT_WEBHOOK_SECRET?: string;
   EIDOS_SHOP_ENABLED?: string;
   EIDOS_TEMPLATE_TEST_ENABLED?: string;
@@ -259,14 +263,19 @@ export async function challenge(
     metadata?: { result_with_testing_key?: boolean };
   };
   // Cloudflare's public TEST keys deliberately return example.com and no action.
-  // Keep that documented behavior confined to the one isolated commerce candidate.
+  // Keep that documented behavior confined to explicitly named TEST candidates.
+  const testOrigin = siteOrigin(env);
+  const candidateAction = testOrigin === 'https://eidosworks-templates-test-20261010.pages.dev'
+    ? ['checkout','recovery'].includes(action)
+    : testOrigin === 'https://eidosworks-playground-test-20261015.pages.dev' &&
+      ['checkout','recovery','member'].includes(action);
   const isolatedTestChallenge = env.EIDOS_TEMPLATE_TEST_CHALLENGE === 'true' &&
     env.EIDOS_TEMPLATE_TEST_ENABLED === 'true' && /^[sr]k_test_/.test(env.STRIPE_SECRET_KEY || '') &&
     env.TURNSTILE_SITE_KEY === '1x00000000000000000000AA' &&
     env.TURNSTILE_SECRET_KEY === '1x0000000000000000000000000000000AA' &&
-    siteOrigin(env) === 'https://eidosworks-templates-test-20261010.pages.dev' &&
-    new URL(request.url).hostname === 'eidosworks-templates-test-20261010.pages.dev' &&
-    ['checkout','recovery'].includes(action) && result.metadata?.result_with_testing_key === true &&
+    new URL(request.url).origin === testOrigin && candidateAction &&
+    (action !== 'member' || env.EIDOS_ACCOUNTS_ENABLED === 'true') &&
+    result.metadata?.result_with_testing_key === true &&
     result.hostname === 'example.com';
   if (
     !response.ok ||

@@ -2,6 +2,7 @@ import { clean, db, hash, HttpError, type PlatformEnv } from './core';
 import { validateProject, type Project } from '../../../src/playground/model';
 import schema from './playgroundSchema';
 import type { Database } from './core';
+import { assertCloudStudioBoundary } from './studioBoundary';
 const initialized = new WeakMap<Database,Promise<unknown>>();
 // Additive, transactional feature initialization on the existing database. No earlier schema is altered.
 export async function ensurePlayground(env: PlatformEnv) {
@@ -36,6 +37,7 @@ export async function projectRevision(env: PlatformEnv, owner: string, projectId
   return { project, revision, document: validateProject(document) };
 }
 export async function saveProject(env: PlatformEnv, owner: string, input: Record<string, unknown>) {
+  assertCloudStudioBoundary(input.document);
   const database = db(env);
   let document: Project;
   try { document = validateProject(input.document); } catch (error) { throw new HttpError(400, (error as Error).message); }

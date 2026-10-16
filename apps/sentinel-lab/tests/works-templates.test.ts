@@ -5,13 +5,14 @@ import { createHash, createHmac } from 'node:crypto';
 import { createClient } from '@libsql/client';
 import { adaptDatabase } from '../lib/works/database';
 import { challenge, hash, type PlatformEnv } from '../lib/works/vendor/functions/_shared/platform/core';
-import { catalog, recover, redeem, templateLiveReady, templateTestReady } from '../lib/works/vendor/functions/_shared/platform/templateShop';
+import { catalog, recover, redeem, templateLiveReady, templateTestReady, templateOrder, templateReceiptMail } from '../lib/works/vendor/functions/_shared/platform/templateShop';
 import { templateProducts } from '../lib/works/vendor/functions/_shared/platform/templateCatalog';
 import { onRequestPost as checkout } from '../lib/works/vendor/functions/api/shop/checkout';
 import { onRequestPost as status } from '../lib/works/vendor/functions/api/shop/status';
 import { onRequestPost as download } from '../lib/works/vendor/functions/api/shop/download';
 import { onRequestPost as webhook } from '../lib/works/vendor/functions/api/shop/webhook';
 import { kitArchiveBase64 } from '../lib/works/vendor/functions/_shared/platform/kitArchive';
+import { setAiLimit, grantPaidAiBalance, aiBalance } from '../lib/works/vendor/functions/_shared/platform/playgroundAi';
 
 const origin = 'http://localhost:4319';
 function request(path: string, payload: unknown, cookie = '', requestOrigin = origin) {
@@ -40,7 +41,10 @@ async function fixture(mode: 'test' | 'live' = 'test') {
   let sessionMode: 'test' | 'live' = mode;
   let failMail = false, failCheckout = false;
   globalThis.fetch = async (url, init) => {
-    if (String(url) === 'https://api.stripe.com/v1/account') return Response.json(merchant);
+    if (String(url) === 'https://api.stripe.com/v1/account') {
+      assert.equal(new Headers(init?.headers).get('stripe-version'), mode === 'live' ? '2026-08-26.dahlia' : '2025-06-30.basil');
+      return Response.json(merchant);
+    }
     if (String(url) === 'https://challenges.cloudflare.com/turnstile/v0/siteverify') {
       const form = JSON.parse(String(init?.body)) as { response: string };
       return Response.json({ success: true, hostname: 'eidos-works.com', action: form.response.includes('recovery') ? 'recovery' : 'checkout' });
@@ -70,8 +74,8 @@ async function fixture(mode: 'test' | 'live' = 'test') {
     const row = await database.prepare('SELECT o.*,t.* FROM eidos_orders o JOIN eidos_template_orders t ON t.order_id=o.id WHERE o.receipt_hash=?').bind(await hash(attempt)).first<Record<string,unknown>>();
     assert.ok(row); return row;
   }
-  async function event(row: Record<string,unknown>, id: string, overrides: Record<string,unknown> = {}, type = 'checkout.session.completed', livemode = mode === 'live', signature = true) {
-    const payload = {id, type, livemode, data:{object:{ id:row.session_id, client_reference_id:row.id, mode:'payment', currency:'usd', amount_total:row.price_cents,
+  async function event(row: Record<string,unknown>, id: string, overrides: Record<string,unknown> = {}, type = 'checkout.session.completed', livemode = mode === 'live', signature = true, account?: string) {
+    const payload = {id, type, livemode, ...(account ? { account } : {}), data:{object:{ id:row.session_id, client_reference_id:row.id, mode:'payment', currency:'usd', amount_total:row.price_cents,
       payment_status:'paid', payment_intent:'pi_' + mode + '_' + row.id, customer_details:{email:'buyer@example.test'},
       metadata:{eidos_product:row.product_id,eidos_edition:row.edition_id,eidos_version:row.version,eidos_order_id:row.id}, ...overrides }}};
     const raw = JSON.stringify(payload), timestamp = Math.floor(Date.now()/1000);
@@ -80,6 +84,59 @@ async function fixture(mode: 'test' | 'live' = 'test') {
   }
   return { env, database, client, call, begin, event, mails, sessions, setMerchant(value:typeof merchant){merchant=value;}, setSessionMode(value:'test'|'live'){sessionMode=value;}, setBytes(value:Uint8Array){bytes=value;}, setFailMail(value:boolean){failMail=value;}, setFailCheckout(value:boolean){failCheckout=value;}, close(){globalThis.fetch=originalFetch;client.close();} };
 }
+
+test('signed matching TEST payment journals AI merchant evidence once and refund prevents reusable credit', async () => {
+  const f = await fixture(), token = '3'.repeat(64);
+  try {
+    Object.assign(f.env, { EIDOS_PLAYGROUND_AI_MODE: 'test', EIDOS_TEMPLATE_STRIPE_ACCOUNT_ID: 'acct_fixturemerchant' });
+    await f.database.prepare('INSERT INTO eidos_email_members(id,email,username,kind,created_at,newsletter_after) VALUES(?,?,?,?,?,?)').bind('ai-buyer','ai@example.test','ai_buyer','person','2026-10-14','2026-10-14').run();
+    await f.database.prepare('INSERT INTO eidos_member_sessions(token_hash,member_id,expires) VALUES(?,?,?)').bind(await hash(token),'ai-buyer',Math.floor(Date.now()/1000)+3600).run();
+    await setAiLimit(f.env, 'ai-buyer', 'test', 1000000);
+    f.setMerchant({id:'acct_wrongmerchant',charges_enabled:true,payouts_enabled:true});
+    assert.equal((await f.call(checkout,'/api/shop/checkout',{productId:'switchboard-developer-v1',editionId:'developer',acceptTerms:true,attempt:'7'.repeat(64),challenge:'fixture-checkout'},'eidos_session_local='+token)).status,503);
+    assert.equal(f.sessions.length,0);
+    f.setMerchant({id:'acct_fixturemerchant',charges_enabled:true,payouts_enabled:true});
+    const row = await f.begin('7'.repeat(64), 'developer', 'eidos_session_local=' + token);
+    const rule = { productId:String(row.product_id), editionId:String(row.edition_id), version:String(row.version), priceCents:Number(row.price_cents), grantVersion:'controlled-fixture-v1', kind:'included' as const, amount:500000 };
+    await assert.rejects(grantPaidAiBalance(f.env,'ai-buyer','test',String(row.id),rule), /verified paid/);
+    f.setMerchant({id:'acct_wrongmerchant',charges_enabled:true,payouts_enabled:true});
+    assert.equal((await f.event(row,'evt_ai_wrong_merchant',{customer_details:{email:'ai@example.test'}})).status,503);
+    assert.equal(await f.database.prepare('SELECT order_id FROM eidos_pg_ai_paid_receipts WHERE order_id=?').bind(row.id).first(),null);
+    await assert.rejects(grantPaidAiBalance(f.env,'ai-buyer','test',String(row.id),rule), /verified paid/);
+    f.setMerchant({id:'acct_fixturemerchant',charges_enabled:true,payouts_enabled:true});
+    assert.equal((await f.event(row,'evt_ai_wrong_mode',{customer_details:{email:'ai@example.test'}},'checkout.session.completed',true)).status,400);
+    assert.equal((await f.event(row,'evt_ai_connected',{customer_details:{email:'ai@example.test'}},'checkout.session.completed',false,true,'acct_connected')).status,400);
+    f.setFailMail(true);
+    assert.equal((await f.event(row,'evt_ai_paid',{customer_details:{email:'ai@example.test'}})).status,503);
+    assert.equal(await f.database.prepare('SELECT order_id FROM eidos_pg_ai_paid_receipts WHERE order_id=?').bind(row.id).first(),null);
+    f.setFailMail(false);
+    assert.equal((await f.event(row,'evt_ai_paid',{customer_details:{email:'ai@example.test'}})).status,200);
+    const receipt = await f.database.prepare('SELECT merchant_id,mode,currency,amount_cents FROM eidos_pg_ai_paid_receipts WHERE order_id=?').bind(row.id).first();
+    assert.deepEqual(receipt,{merchant_id:'acct_fixturemerchant',mode:'test',currency:'usd',amount_cents:Number(row.price_cents)});
+    assert.equal((await grantPaidAiBalance(f.env,'ai-buyer','test',String(row.id),rule)).granted,true);
+    assert.equal((await f.event(row,'evt_ai_paid',{customer_details:{email:'ai@example.test'}})).status,200);
+    assert.equal((await grantPaidAiBalance(f.env,'ai-buyer','test',String(row.id),rule)).granted,false);
+    assert.equal((await aiBalance(f.env,'ai-buyer','test')).availableIncluded,500000);
+    assert.equal((await f.event(row,'evt_ai_refund',{payment_intent:'pi_test_'+row.id},'charge.refunded')).status,200);
+    assert.equal((await f.event(row,'evt_ai_paid_late',{customer_details:{email:'ai@example.test'}})).status,200);
+    assert.equal((await grantPaidAiBalance(f.env,'ai-buyer','test',String(row.id),rule)).granted,false);
+  } finally { f.close(); }
+});
+
+test('enabling allowance accounting preserves historical guest receipts without inventing merchant evidence', async () => {
+  const f = await fixture(), receipt = 'a'.repeat(64);
+  try {
+    const row = await f.begin(receipt);
+    Object.assign(f.env, { EIDOS_PLAYGROUND_AI_MODE: 'test', EIDOS_TEMPLATE_STRIPE_ACCOUNT_ID: 'acct_fixturemerchant' });
+    f.setMerchant({id:'acct_unrelated',charges_enabled:true,payouts_enabled:true});
+    assert.equal((await f.event(row,'evt_historical_paid')).status,200);
+    assert.equal((await f.event(row,'evt_historical_paid')).status,200);
+    const ready = await (await f.call(status,'/api/shop/status',{receipt})).json();
+    assert.equal(ready.status,'paid'); assert.ok(ready.downloadToken);
+    assert.equal((await f.call(download,'/api/shop/download',{receipt,downloadToken:ready.downloadToken})).status,200);
+    assert.equal(await f.database.prepare('SELECT order_id FROM eidos_pg_ai_paid_receipts WHERE order_id=?').bind(row.id).first(),null);
+  } finally { f.close(); }
+});
 
 test('template TEST gate rejects LIVE, production host, missing archives and unverified CMS; server prices cannot be overridden', async () => {
   const f=await fixture();
@@ -295,6 +352,26 @@ test('official public TEST challenge still calls siteverify and is confined to e
   } finally {f.close();}
 });
 
+test('Playground TEST member challenge requires exact candidate, account flag and real siteverify success', async () => {
+  const f = await fixture(); let calls = 0;
+  try {
+    const origin = 'https://eidosworks-playground-test-20261015.pages.dev';
+    const env = { ...f.env, PUBLIC_SITE_URL: origin, EIDOS_ACCOUNTS_ENABLED: 'true', EIDOS_TEMPLATE_TEST_CHALLENGE: 'true',
+      TURNSTILE_SITE_KEY: '1x00000000000000000000AA', TURNSTILE_SECRET_KEY: '1x0000000000000000000000000000000AA' };
+    const request = new Request(origin + '/api/members/auth');
+    globalThis.fetch = async () => { calls++; return Response.json({ success: true, hostname: 'example.com', metadata: { result_with_testing_key: true } }); };
+    await challenge(request, env, 'XXXX.DUMMY.TOKEN.XXXX', 'member');
+    assert.equal(calls, 1);
+    for (const config of [{ ...env, EIDOS_ACCOUNTS_ENABLED: 'false' }, { ...env, EIDOS_TEMPLATE_TEST_ENABLED: 'false' },
+      { ...env, PUBLIC_SITE_URL: 'https://eidos-works.com' }, { ...env, STRIPE_SECRET_KEY: 'sk_live_forbidden' },
+      { ...env, TURNSTILE_SECRET_KEY: 'other' }]) await assert.rejects(challenge(request, config, 'XXXX.DUMMY.TOKEN.XXXX', 'member'));
+    await assert.rejects(challenge(new Request('https://unrelated.pages.dev/api/members/auth'), env, 'XXXX.DUMMY.TOKEN.XXXX', 'member'));
+    await assert.rejects(challenge(request, env, 'XXXX.DUMMY.TOKEN.XXXX', 'newsletter'));
+    globalThis.fetch = async () => Response.json({ success: false, hostname: 'example.com', metadata: { result_with_testing_key: true } });
+    await assert.rejects(challenge(request, env, 'XXXX.DUMMY.TOKEN.XXXX', 'member'));
+  } finally { f.close(); }
+});
+
 test('checkout attempt retry preserves one ledger order and same server-owned TEST price', async () => {
   const f=await fixture(), receipt='a'.repeat(64);
   try {
@@ -312,6 +389,54 @@ test('checkout attempt retry preserves one ledger order and same server-owned TE
     assert.equal(pending.status,'pending'); assert.equal(pending.downloadToken,null);
     assert.equal((await f.call(checkout,'/api/shop/checkout',{...payload,editionId:'wordpress',productId:'switchboard-wordpress-v1'})).status,409);
   } finally {f.close();}
+});
+
+test('pending original retry after catalog change retains its version, price, signed payment and historical archive', async () => {
+  const f = await fixture(), receipt = 'd'.repeat(64);
+  try {
+    const payload = { productId: 'switchboard-developer-v1', editionId: 'developer', acceptTerms: true, attempt: receipt };
+    f.setFailCheckout(true); assert.equal((await f.call(checkout, '/api/shop/checkout', payload)).status, 502);
+    const pending = await f.database.prepare('SELECT id FROM eidos_orders WHERE receipt_hash=?').bind(await hash(receipt)).first<{ id: string }>(); assert.ok(pending);
+    // Model an immutable pending snapshot made under the previous server catalog.
+    const originalBytes = new Uint8Array([80, 75, 3, 4, 6, 5, 4, 3]), originalHash = createHash('sha256').update(originalBytes).digest('hex');
+    const originalKey = 'templates/switchboard/1.0.2/developer.zip', originalName = 'eidos-switchboard-developer-1.0.2.zip';
+    await f.database.prepare('UPDATE eidos_template_orders SET version=?,price_cents=?,archive_key=?,archive_sha256=?,download_name=? WHERE order_id=?').bind('1.0.2', 8900, originalKey, originalHash, originalName, pending.id).run();
+    // Retrying this original needs its historical archive, not availability of
+    // the latest package currently advertised by the catalog.
+    f.env.EIDOS_TEMPLATE_ARCHIVES = { async get(key) { return key === originalKey ? { bytes: originalBytes, sha256: originalHash } : null; } };
+    f.setFailCheckout(false); const order = await f.begin(receipt); await f.begin(receipt);
+    assert.equal(f.sessions.length, 1); const sent = f.sessions[0];
+    assert.equal(sent.get('metadata[eidos_version]'), '1.0.2'); assert.equal(sent.get('line_items[0][price_data][unit_amount]'), '8900');
+    assert.match(sent.get('line_items[0][price_data][product_data][description]')!, /^Version 1\.0\.2\./);
+    assert.equal(templateProducts.find(product => product.id === payload.productId)!.version, '1.0.3');
+    assert.equal(templateProducts.find(product => product.id === payload.productId)!.priceCents, 9900);
+    const metadata = Object.fromEntries([...sent.entries()].filter(([key]) => key.startsWith('metadata[')).map(([key, value]) => [key.slice(9, -1), value]));
+    assert.equal((await f.event(order, 'evt_pending_original_retry', { metadata })).status, 200);
+    assert.equal((await f.event(order, 'evt_pending_original_retry', { metadata })).status, 200);
+    const paid = await (await f.call(status, '/api/shop/status', { receipt })).json(); assert.equal(paid.status, 'paid'); assert.equal(paid.version, '1.0.2');
+    const archive = await f.call(download, '/api/shop/download', { receipt, downloadToken: paid.downloadToken }); assert.equal(archive.status, 200);
+    assert.equal(archive.headers.get('x-eidos-archive-sha256'), originalHash); assert.deepEqual(new Uint8Array(await archive.arrayBuffer()), originalBytes);
+    assert.ok(archive.headers.get('content-disposition')!.includes(originalName));
+    assert.equal((await f.database.prepare('SELECT COUNT(*) n FROM eidos_orders').first<{ n: number }>())?.n, 1);
+  } finally { f.close(); }
+});
+
+test('pending original retry refuses unavailable or changed retained archive before provider dispatch', async () => {
+  const f = await fixture(), receipt = 'e'.repeat(64);
+  try {
+    const payload = { productId: 'switchboard-developer-v1', editionId: 'developer', acceptTerms: true, attempt: receipt };
+    f.setFailCheckout(true); assert.equal((await f.call(checkout, '/api/shop/checkout', payload)).status, 502);
+    const pending = await f.database.prepare('SELECT id FROM eidos_orders WHERE receipt_hash=?').bind(await hash(receipt)).first<{ id: string }>(); assert.ok(pending);
+    const oldKey = 'templates/switchboard/1.0.2/developer.zip';
+    const originalBytes = new Uint8Array([80, 75, 3, 4, 7]), originalHash = createHash('sha256').update(originalBytes).digest('hex');
+    await f.database.prepare('UPDATE eidos_template_orders SET version=?,archive_key=?,archive_sha256=? WHERE order_id=?').bind('1.0.2', oldKey, originalHash, pending.id).run();
+    const current = f.env.EIDOS_TEMPLATE_ARCHIVES!; f.setFailCheckout(false);
+    for (const retained of [null, { bytes: originalBytes, sha256: '2'.repeat(64) }, { bytes: new Uint8Array([1, 2, 3]), sha256: originalHash }]) {
+      f.env.EIDOS_TEMPLATE_ARCHIVES = { async get(key) { return key === oldKey ? retained : current.get(key); } };
+      assert.equal((await f.call(checkout, '/api/shop/checkout', payload)).status, 503); assert.equal(f.sessions.length, 0);
+    }
+    assert.equal((await f.database.prepare('SELECT session_id FROM eidos_orders WHERE id=?').bind(pending.id).first<{ session_id: string | null }>())?.session_id, null);
+  } finally { f.close(); }
 });
 
 test('signed paid fulfillment, delayed state, duplicate webhook, snapshot integrity and expiring download links', async () => {
@@ -369,6 +494,34 @@ test('receipt email retries keep provider idempotency body stable and paid acces
     assert.equal(f.mails.length,2);assert.equal(f.mails[0].text,f.mails[1].text);assert.equal(f.mails[0].idempotency,f.mails[1].idempotency);
     assert.equal((await f.database.prepare('SELECT COUNT(*) n FROM eidos_stripe_events WHERE id=?').bind('evt_mail_retry').first<{n:number}>())?.n,1);
   }finally{f.close();}
+});
+
+test('late receipt failure cannot overwrite acceptance, including stale writes from older hooks',async()=>{
+  const f=await fixture(),receipt='e'.repeat(64);
+  let release!:()=>void;
+  try {
+    const row=await f.begin(receipt);
+    await f.database.prepare("UPDATE eidos_orders SET status='paid' WHERE id=?").bind(row.id).run();
+    await f.database.prepare('UPDATE eidos_template_orders SET email=? WHERE order_id=?').bind('receipt-race@example.test',row.id).run();
+    const pending=(await templateOrder(f.env,String(row.id)))!,fixtureFetch=globalThis.fetch;
+    let entered!:()=>void,first=true;
+    const gate=new Promise<void>(resolve=>{release=resolve;}),started=new Promise<void>(resolve=>{entered=resolve;});
+    globalThis.fetch=async(url,init)=>{
+      if(String(url)==='https://api.resend.com/emails'&&first){first=false;entered();await gate;return Response.json({}, {status:503});}
+      return fixtureFetch(url,init);
+    };
+    const lateFailure=templateReceiptMail(f.env,pending).then(()=>false,()=>true);
+    await started;await templateReceiptMail(f.env,pending);release();assert.equal(await lateFailure,true);
+    const accepted=await f.database.prepare('SELECT mail_status,mail_provider_id FROM eidos_template_orders WHERE order_id=?').bind(row.id).first<{mail_status:string;mail_provider_id:string}>();
+    assert.equal(accepted?.mail_status,'sent');assert.ok(accepted?.mail_provider_id);
+    // An old deployment can still write its last failure into the shared TEST row.
+    await f.database.prepare("UPDATE eidos_template_orders SET mail_status='failed' WHERE order_id=?").bind(row.id).run();
+    assert.equal((await(await f.call(status,'/api/shop/status',{receipt})).json()).mailStatus,'sent');
+    const calls=f.mails.length;await templateReceiptMail(f.env,(await templateOrder(f.env,String(row.id)))!);
+    assert.equal(f.mails.length,calls);
+    const raw=await f.database.prepare('SELECT mail_status,mail_provider_id FROM eidos_template_orders WHERE order_id=?').bind(row.id).first<{mail_status:string;mail_provider_id:string}>();
+    assert.equal(raw?.mail_status,'failed');assert.equal(raw?.mail_provider_id,accepted?.mail_provider_id);
+  } finally {release?.();f.close();}
 });
 
 test('receipt email retry after thirty minutes renews an unused link without changing provider payload',async(t)=>{

@@ -1,0 +1,34 @@
+✔ 01: concurrent $0.60 actions with $1 remaining admit exactly one and only one dispatch (395.7769ms)
+✔ 02: concurrent action replay yields one reservation, dispatch and settlement; conflicting key fails (1615.3893ms)
+✔ 03: $50 balance/$10 cap, included consumption and top-ups never lift the cap (1078.459ms)
+✔ 04: projects/devices share owner cap and authenticated endpoints reject cross-account IDs/forged owners (344.8439ms)
+✔ 05: unknown pricing, forged totals/model/owner, large context and unbounded tools/retries fail closed (136.1274ms)
+✔ 06: actual usage releases difference; above-bound usage never overcharges and disables route (164.9566ms)
+✔ 06: extreme retail markup cannot prevent above-bound settlement and the route pause (124.687ms)
+✔ 07: unusable technical output restores allowance while real provider expense remains counted (174.4881ms)
+✔ 06/08: unmeterable usage pauses dispatch, retains unknown liability and never revives a waived charge (1008.1199ms)
+✔ 08: submitted timeout/crash/lease expiry retain provider cost; 24h waiver never retroactively debits (239.1654ms)
+✔ 08: pessimistic reconciliation retains provider identity; matching late evidence preserves the waiver (200.4301ms)
+✔ 09/13: duplicate/unpaid/out-of-order grants, refunds, owner mismatch and TEST/LIVE isolation (303.8722ms)
+✔ 09/13: mixed consumed and held grants stay frozen through refunds, cancellation and late evidence (453.6337ms)
+✔ 10: cap edits racing dispatch/settlement preserve the commitment floor and block new work (226.3461ms)
+✔ 11: monthly period is server UTC; pending budget survives, and late settlement stays original month (181.9095ms)
+✔ 11: ample provider budget does not duplicate prepaid balance when old and new month work coexist (250.5773ms)
+✔ 12/14: owner aggregate budget admits only one customer; paused route has no provider fallback (244.8326ms)
+✔ migration/schema parity and conservative integer rounding cover sub-cent rates (4.3997ms)
+✔ independent database connections serialize shared provider/customer admission (980.0382ms)
+ℹ Windows libSQL retains the synthetic temp database handle until process exit: C:\Users\bmpar\AppData\Local\Temp\eidos-ai-fixture-c13eced5-03a4-43dc-9f9f-e03a90744fc7.db
+✔ owner budget reductions block reserved dispatch atomically across independent database connections (1103.8646ms)
+ℹ Windows libSQL retains the synthetic temp database handle until process exit: C:\Users\bmpar\AppData\Local\Temp\eidos-ai-budget-fixture-cadc29d8-41ff-4d76-abf2-8172681abdd6.db
+✔ 10: independent clients serialize customer cap reductions against admission, dispatch and settlement (1063.5795ms)
+ℹ Windows libSQL retains the synthetic temp database handle until process exit: C:\Users\bmpar\AppData\Local\Temp\eidos-ai-customer-cap-e90718c1-8e48-4585-a0c7-deae6cc23d02.db
+✔ concurrent conflicting reconciliation cannot replace the first recorded provider identity (831.908ms)
+ℹ Windows libSQL retains the synthetic temp database handle until process exit: C:\Users\bmpar\AppData\Local\Temp\eidos-ai-identity-fixture-5d057006-a87b-47cb-9a94-e17a4f41b71d.db
+ℹ tests 22
+ℹ suites 0
+ℹ pass 22
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 43513.5233

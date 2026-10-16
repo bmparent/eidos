@@ -1,0 +1,96 @@
+{
+  "timestampUtc": "2026-10-14T18:40:39.8822836Z",
+  "scope": "Immutable TEST-only approved page attachment to existing template orders",
+  "status": "local source and controlled integration fixtures passed",
+  "command": "node --import tsx --test scripts/test-project-delivery-orders.ts scripts/test-project-delivery.ts scripts/test-template-shop.ts scripts/test-platform.ts scripts/test-relay.ts",
+  "tests": {
+    "passed": 37,
+    "failed": 0,
+    "log": "tests-rerun.txt",
+    "firstAttempt": {
+      "passed": 36,
+      "failed": 1,
+      "log": "tests.txt",
+      "reason": "Legacy template UI JSON.parse collided with concurrent template manifest generation; serialized rerun passed."
+    }
+  },
+  "lint": "Scoped server/helper/API/tests ESLint passed",
+  "typecheck": "Pending client integration correction in TemplateShop.tsx continuePath typing; no server error reported",
+  "evidence": [
+    "immutable owner and delivery binding before external dispatch",
+    "same attempt different or omitted attachment conflicts",
+    "signed TEST payment metadata and merchant match",
+    "original archive default byte-identical",
+    "approved archive exact stored bytes and SHA-256",
+    "existing paid retrieval survives disabled sales/edition verification/current original archive failure",
+    "refund and raw payment revocation block retrieval and recovery",
+    "owner recovery rotates receipt and retains artifact",
+    "concurrent competing attachments admit one winner",
+    "guest and historical unbound originals unchanged",
+    "additive schema migration parity"
+  ],
+  "boundaries": [
+    "No actual Stripe session/payment, mail, provider, hosted flag, or hosted migration performed",
+    "All outbound requests in tests are intercepted controlled fixtures",
+    "Physical device, real inbox arrival, and hosted acceptance remain unproven",
+    "Raster server checks validate bounded container structure; browser decode is separate",
+    "No staging or commit by this agent"
+  ],
+  "sources": [
+    {
+      "path": "functions/_shared/platform/projectDelivery.ts",
+      "bytes": 9817,
+      "sha256": "b17d270cd7b5f40a711cb3ac67553cd5d927b2def25ab045ba7befab467f8614"
+    },
+    {
+      "path": "functions/_shared/platform/projectDeliveryRenderer.ts",
+      "bytes": 402,
+      "sha256": "9c5441db3d3dc20197bfadd81e65a12967126b82ec103386272f29a2d99c5154"
+    },
+    {
+      "path": "functions/_shared/platform/projectDeliveryOrders.ts",
+      "bytes": 8541,
+      "sha256": "90d8218230a1b5e56a6cd4d1a30822a39e1587bc5fc141069d5d836488eb615a"
+    },
+    {
+      "path": "functions/_shared/platform/projectDeliveryOrdersSchema.ts",
+      "bytes": 1331,
+      "sha256": "99f909e2ef9d0e3e7327557239d2ee7a97815e689ebb4f274d53d8af77156209"
+    },
+    {
+      "path": "functions/_shared/platform/templateShop.ts",
+      "bytes": 33890,
+      "sha256": "d4aa6ca2204ef6b3a07f34897700566efd795dd4e980a1ba4a1931280206bca7"
+    },
+    {
+      "path": "functions/api/playground/delivery.ts",
+      "bytes": 1309,
+      "sha256": "0a8f465d54abfa9221b9be25d9b9eb2b55850a408b47e9ec2adc1110c1cc0fb2"
+    },
+    {
+      "path": "functions/api/shop/download.ts",
+      "bytes": 1397,
+      "sha256": "7a680207bd912a53faad60aaf6347bbef523f871ddad1d47e921a7f1aaaa9728"
+    },
+    {
+      "path": "migrations/0007_project_delivery_orders.sql",
+      "bytes": 1299,
+      "sha256": "34fb25d8792c96cb0d26206bd4ca40ecc1bcace4865f47fc5d8a5b7278b7d41f"
+    },
+    {
+      "path": "scripts/test-project-delivery.ts",
+      "bytes": 13682,
+      "sha256": "81f6cd3c0d5f75212b250d3d0fc5ea430c3fc01be1709138e78b817a28c5fbb2"
+    },
+    {
+      "path": "scripts/test-project-delivery-orders.ts",
+      "bytes": 18688,
+      "sha256": "8e1fc33c0dae86df4b592ec89612d1ebf7e9e600263203999b820e204c12f780"
+    },
+    {
+      "path": "docs/playground-project-delivery.md",
+      "bytes": 8744,
+      "sha256": "6cecfd91c962aa356c0bb5f6e1347935f9560b97e87fe2f3416788ced7bf0d3d"
+    }
+  ]
+}

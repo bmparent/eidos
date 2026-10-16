@@ -1,0 +1,29 @@
+
+> eidos-sentinel-lab@0.2.0 test:playground-ai
+> node --import tsx --test tests/works-playground-ai.test.ts
+
+✔ 01: concurrent $0.60 actions with $1 remaining admit exactly one and only one dispatch (65.33ms)
+✔ 02: concurrent action replay yields one reservation, dispatch and settlement; conflicting key fails (104.4991ms)
+✔ 03: $50 balance/$10 cap, included consumption and top-ups never lift the cap (270.6388ms)
+✔ 04: projects/devices share owner cap and authenticated endpoints reject cross-account IDs/forged owners (106.6421ms)
+✔ 05: unknown pricing, forged totals/model/owner, large context and unbounded tools/retries fail closed (32.1568ms)
+✔ 06: actual usage releases difference; above-bound usage never overcharges and disables route (102.7021ms)
+✔ 07: unusable technical output restores allowance while real provider expense remains counted (89.3076ms)
+✔ 08: submitted timeout/crash/lease expiry retain provider cost; 24h waiver never retroactively debits (89.4125ms)
+✔ 09/13: duplicate/unpaid/out-of-order grants, refunds, owner mismatch and TEST/LIVE isolation (91.0618ms)
+✔ 10: cap edits racing dispatch/settlement preserve the commitment floor and block new work (74.7144ms)
+✔ 11: monthly period is server UTC; pending budget survives, and late settlement stays original month (78.3581ms)
+✔ 12/14: owner aggregate budget admits only one customer; paused route has no provider fallback (113.4382ms)
+✔ migration/schema parity and conservative integer rounding cover sub-cent rates (1.0007ms)
+✔ independent database connections serialize shared provider/customer admission (397.5968ms)
+ℹ Windows libSQL retains the synthetic temp database handle until process exit: C:\Users\bmpar\AppData\Local\Temp\eidos-ai-fixture-dc187759-e2c7-42c4-8356-012a7f6e8a71.db
+✔ owner budget reductions block reserved dispatch atomically across independent database connections (628.4147ms)
+ℹ Windows libSQL retains the synthetic temp database handle until process exit: C:\Users\bmpar\AppData\Local\Temp\eidos-ai-budget-fixture-ce653618-c828-485d-b6fa-d9caf8947804.db
+ℹ tests 15
+ℹ suites 0
+ℹ pass 15
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 3098.6359
