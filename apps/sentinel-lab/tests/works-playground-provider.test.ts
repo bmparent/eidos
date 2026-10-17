@@ -362,15 +362,22 @@ test('nonzero count liability commits before I/O, stays separate from customer c
     await assert.rejects(f.quote({}, 'next-count'), /owner budget/); assert.equal(f.counts(), 1);
   } finally { f.close(); }
 });
-test('failed count retains maximum and never retries even after policy/model/month changes', async () => {
+test('failed count survives month rollover, never retries and blocks fresh-model admission against the shared budget', async () => {
   const f = await fixture(); try {
     f.options.countLiability = await countBound();
     f.counted(() => { throw new DOMException('Timed out after submission', 'AbortError'); });
     await assert.rejects(f.quote({}, 'lost-count'), /will not retry/);
     assert.equal((await aiPolicyStatus(f.env, 'test')).committed, 70000);
-    await configureAiPolicy(f.env, 'test', { ...card, model: 'gpt-6-astra' }, 200000, true);
+    f.options.at = new Date('2026-11-02T00:00:00.000Z');
+    await assert.rejects(f.quote({}, 'lost-count'), /already recorded/);
+    const nextCard: AiRateCard = { ...card, model: 'gpt-6-astra' };
+    await configureAiPolicy(f.env, 'test', nextCard, 200000, true);
     assert.equal((await aiPolicyStatus(f.env, 'test')).committed, 70000);
-    await assert.rejects(f.quote({}, 'lost-count'));
+    f.options.countLiability = { ...await countBound(), requestHash: await hash(buildAiProviderRequest(brief, nextCard).countSerialized) };
+    // The new request has matching evidence, but the retained prior-month
+    // 70,000 plus this count's 70,000 and generation's 100,000 exceed the cap.
+    await assert.rejects(f.quote({}, 'fresh-model-next-month'), /owner budget/);
+    assert.equal((await aiPolicyStatus(f.env, 'test')).committed, 70000);
     assert.equal(f.counts(), 1); assert.equal(f.generations(), 0);
   } finally { f.close(); }
 });
