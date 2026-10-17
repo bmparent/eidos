@@ -11,6 +11,7 @@ import { dispatchWorks, platformEnvironment } from '../lib/works/dispatch';
 import { hash } from '../lib/works/vendor/functions/_shared/platform/core';
 import { DELIVERY_LIMITS, ensureProjectDelivery, freezeProjectDelivery, readProjectDeliveryArchive, type ProjectDeliveryEnv } from '../lib/works/vendor/functions/_shared/platform/projectDelivery';
 import schema from '../lib/works/vendor/functions/_shared/platform/projectDeliverySchema';
+import liveSchema from '../lib/works/vendor/functions/_shared/platform/projectDeliveryLiveSchema';
 import orderSchema from '../lib/works/vendor/functions/_shared/platform/projectDeliveryOrdersSchema';
 import { createProject, upgradeProject } from '../lib/works/project-delivery/src/playground/model';
 import { createProject as createLegacyProject } from '../lib/works/vendor/src/playground/model';
@@ -132,4 +133,31 @@ test('real libSQL chunk faults roll back and separate worker connections cannot 
       else if (error.code !== 'ENOENT') throw error;
     });
   }
+});
+
+test('LIVE delivery opt-in propagates without defaults and preserves TEST data through isolated libsql storage', async () => {
+  const f = await fixture();
+  try {
+    assert.equal((platformEnvironment({}) as ProjectDeliveryEnv).EIDOS_PLAYGROUND_DELIVERY_LIVE_ENABLED, undefined);
+    assert.equal((platformEnvironment({ EIDOS_PLAYGROUND_DELIVERY_LIVE_ENABLED: 'true' }) as ProjectDeliveryEnv).EIDOS_PLAYGROUND_DELIVERY_LIVE_ENABLED, 'true');
+    assert.equal(liveSchema, readFileSync('lib/works/vendor/migrations/0008_project_delivery_live.sql', 'utf8'));
+    const old = await freezeProjectDelivery(f.env, 'alice', { requestId: 'preserved-test-page', snapshot: f.snapshot });
+    const oldRows = await f.database.prepare('SELECT * FROM eidos_pg_delivery_snapshots').all();
+    const testEnv = { ...f.env };
+    Object.assign(f.env, { EIDOS_PLAYGROUND_DELIVERY_MODE: 'live', PUBLIC_SITE_URL: 'https://eidos-works.com', EIDOS_LOCAL_TEST: 'false',
+      STRIPE_SECRET_KEY: 'sk_live_controlled_fixture', EIDOS_TEMPLATE_STRIPE_ACCOUNT_ID: 'acct_controlledfixture',
+      EIDOS_TEMPLATE_LIVE_ENABLED: 'true', EIDOS_SHOP_ENABLED: 'true', EIDOS_KIT_WEBHOOK_SECRET: 'whsec_controlled_fixture', RESEND_API_KEY: 're_controlled_fixture',
+      EIDOS_TEMPLATE_ARCHIVES: { async get() { return null; } } });
+    await assert.rejects(() => freezeProjectDelivery(f.env, 'alice', { requestId: 'gated-live-page', snapshot: f.snapshot }), /not enabled/);
+    f.env.EIDOS_PLAYGROUND_DELIVERY_LIVE_ENABLED = 'true';
+    const live = await freezeProjectDelivery(f.env, 'alice', { requestId: 'isolated-live-page', snapshot: f.snapshot });
+    assert.equal(live.mode, 'live'); assert.notEqual(live.id, old.id);
+    assert.deepEqual(await f.database.prepare('SELECT * FROM eidos_pg_delivery_snapshots').all(), oldRows);
+    await assert.rejects(() => readProjectDeliveryArchive(f.env, 'alice', old.id), /not found/);
+    await assert.rejects(() => readProjectDeliveryArchive(testEnv, 'alice', live.id), /not found/);
+    await assert.rejects(() => readProjectDeliveryArchive(f.env, 'bob', live.id), /not found/);
+    f.env.EIDOS_PLAYGROUND_DELIVERY_LIVE_ENABLED = 'false'; f.env.EIDOS_SHOP_ENABLED = 'false';
+    assert.equal((await readProjectDeliveryArchive(f.env, 'alice', live.id)).archiveSha256, live.archiveSha256);
+    assert.equal((await readProjectDeliveryArchive(testEnv, 'alice', old.id)).archiveSha256, old.archiveSha256);
+  } finally { f.close(); }
 });
