@@ -2,7 +2,10 @@
   "$schema": "https://openapi.vercel.sh/vercel.json",
   "git": {
     "deploymentEnabled": {
-      "codex/playground-unified-20261014": false
+      "codex/playground-unified-20261014": false,
+      "fix/playground-live-delivery-20261017": false,
+      "fix/playground-ai-accounting-20261017": false,
+      "integrate/playground-readiness-20261017": false
     }
   }
 }

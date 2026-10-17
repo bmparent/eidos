@@ -4,7 +4,7 @@ import { sendMemberMail } from './memberMail';
 import { templateProduct, templateProducts, TEMPLATE_STRIPE_API_VERSION, TEMPLATE_LIVE_STRIPE_API_VERSION, type TemplateProduct } from './templateCatalog';
 import type { Order } from './shop';
 import { approvedOrderArchive, assertDeliveryAttempt, assertDeliveryOwner, deliveryOrderBinding, deliveryOrderMetadata, deliveryOrderRevoked, insertDeliveryOrder, prepareDeliveryOrder, verifiedDeliveryParent } from './projectDeliveryOrders';
-import { DELIVERY_LIMITS, requireProjectDelivery } from './projectDelivery';
+import { DELIVERY_LIMITS, requireProjectDelivery, type ProjectDeliveryEnv } from './projectDelivery';
 import { hashBytes } from './projectDeliveryRenderer';
 
 export interface TemplateOrder extends Order {
@@ -84,11 +84,12 @@ export const catalog = guarded(async ({ env }) => {
     { id: 'switchboard-godaddy-v1', productId: 'switchboard-godaddy-v1', editionId: 'godaddy', priceCents: 2900, version: null, available: false, status: 'platform_installation_blocked' },
   ] });
 });
-export async function projectDeliveryCapabilities(request: Request, env: PlatformEnv, ownerId: string) {
-  requireProjectDelivery(env);
+export async function projectDeliveryCapabilities(request: Request, env: ProjectDeliveryEnv, ownerId: string) {
+  const mode = requireProjectDelivery(env);
   const localTest = local(request, env), challengeReady = localTest || Boolean(env.TURNSTILE_SITE_KEY && env.TURNSTILE_SECRET_KEY && env.EIDOS_RATE_SECRET && env.EIDOS_RATE_SECRET.length >= 32);
-  const base = { mode: 'test', ownerId, limits: DELIVERY_LIMITS, turnstileSiteKey: env.TURNSTILE_SITE_KEY || '', localTest };
-  if (!templateTestReady(env) || !challengeReady) return { ...base, available: false, reason: 'The isolated TEST checkout or verification service is not configured.', products: [] };
+  const base = { mode, ownerId, limits: DELIVERY_LIMITS, turnstileSiteKey: env.TURNSTILE_SITE_KEY || '', localTest };
+  const salesReady = mode === 'live' ? env.EIDOS_PLAYGROUND_DELIVERY_LIVE_ENABLED === 'true' && templateLiveReady(env) : templateTestReady(env);
+  if (!salesReady || !challengeReady) return { ...base, available: false, reason: mode === 'live' ? 'New approved-page purchases are not enabled. Existing paid downloads remain available.' : 'The isolated TEST checkout or verification service is not configured.', products: [] };
   await verifyConfiguredMerchant(env);
   const products = [];
   for (const product of templateProducts.filter(value => value.editionId === 'developer' && verifiedEdition(env, value))) {
@@ -114,13 +115,17 @@ export async function templateCheckout(request: Request, env: PlatformEnv, input
   if (!(await reserve(database, 'template-checkout:' + visitor, 1, 20))) throw new HttpError(429, 'Please use an existing checkout or try again tomorrow.');
   await challenge(request, env, input.challenge, 'checkout');
   const member = await memberFromRequest(request, env, false);
-  if (input.deliveryId !== undefined && mode !== 'test') throw new HttpError(503, 'Approved page attachments are available only in TEST.');
+  if (input.deliveryId !== undefined && requireProjectDelivery(env) !== mode) throw new HttpError(503, 'Approved page and checkout modes do not match.');
   const receipt = input.attempt === undefined ? randomToken() : clean(input.attempt, 80);
   if (!/^[a-f0-9]{64}$/.test(receipt)) throw new HttpError(400, 'Start a valid checkout attempt.');
   const receiptHash = await hash(receipt);
   let order = await database.prepare(checkoutSelect + ' WHERE o.receipt_hash=?').bind(receiptHash).first<TemplateOrder>();
   if (order && (order.product_id !== product.id || order.edition_id !== product.editionId || order.member_id !== (member?.id || null)))
     throw new HttpError(409, 'This attempt belongs to a different purchase.');
+  if (input.deliveryId !== undefined && input.reviewedPriceCents !== undefined && (!Number.isSafeInteger(input.reviewedPriceCents) || input.reviewedPriceCents !== (order?.price_cents ?? product.priceCents)))
+    throw new HttpError(409, 'This attempt has a different immutable price. Check purchase status and review its original price before retrying.');
+  if (input.deliveryId !== undefined && mode === 'live' && input.reviewedPriceCents === undefined)
+    throw new HttpError(400, 'Review the purchase price before continuing.');
   // A retry resumes the original immutable purchase, even when the current
   // catalog points at a newer archive. Attached-page validation stays separate.
   const archiveKey = order && input.deliveryId === undefined ? order.archive_key : product.archiveKey;
@@ -141,6 +146,8 @@ export async function templateCheckout(request: Request, env: PlatformEnv, input
   if (!order) throw new HttpError(503, 'Checkout could not be prepared.');
   if (order.product_id !== product.id || order.edition_id !== product.editionId || order.member_id !== (member?.id || null))
     throw new HttpError(409, 'This attempt belongs to a different purchase.');
+  if (input.deliveryId !== undefined && input.reviewedPriceCents !== undefined && input.reviewedPriceCents !== order.price_cents)
+    throw new HttpError(409, 'This attempt has a different immutable price. Check purchase status and review its original price before retrying.');
   const deliveryBinding = await deliveryOrderBinding(env, order.id);
   assertDeliveryAttempt(deliveryBinding, input.deliveryId);
   if (deliveryBinding && deliveryBinding.merchant_id !== verifiedMerchantId) throw new HttpError(409, 'This approved page is bound to a different merchant.');
@@ -213,7 +220,7 @@ export async function templateStatus(request: Request, env: PlatformEnv, order: 
     downloadToken = randomToken();
     await db(env).prepare('INSERT INTO eidos_template_downloads(token_hash,order_id,expires) VALUES(?,?,?)').bind(await hash(downloadToken), order.id, downloadExpires).run();
   }
-  return json({ status: order.status, orderId: order.id, productId: order.product_id, editionId: order.edition_id,
+  return json({ status: order.status, orderId: order.id, priceCents: order.price_cents, currency: 'usd', productId: order.product_id, editionId: order.edition_id,
     version: order.version, downloadName: order.download_name, guidePath: order.guide_path, fulfillmentType: order.fulfillment_type,
     fulfillmentStatus: order.fulfillment_status, mailStatus: order.mail_provider_id ? 'sent' : order.mail_status, paymentState: order.status === 'pending' ? order.payment_failed ? 'failed' : order.checkout_expires <= now() ? 'expired' : 'pending' : order.status,
     downloadToken, downloadExpires: downloadToken ? downloadExpires : null, ...(approvedPage ? { approvedPage } : {}) });
@@ -302,7 +309,7 @@ export async function templatePayment(env: PlatformEnv, event: { id: string; typ
   const paymentIntent = object.payment_intent;
   const deliveryBinding = await deliveryOrderBinding(env, order.id);
   if (deliveryBinding) {
-    if (livemode !== false || event.account !== undefined || await verifyConfiguredMerchant(env) !== deliveryBinding.merchant_id ||
+    if (livemode !== (deliveryBinding.mode === 'live') || requireProjectDelivery(env) !== deliveryBinding.mode || event.account !== undefined || await verifyConfiguredMerchant(env) !== deliveryBinding.merchant_id ||
       order.member_id !== deliveryBinding.owner_id || metadata.eidos_delivery_id !== deliveryBinding.delivery_id || metadata.eidos_snapshot_hash !== deliveryBinding.snapshot_hash || metadata.eidos_delivery_archive_sha256 !== deliveryBinding.archive_sha256)
       throw new HttpError(400, 'Payment does not match the approved page, owner, or merchant.');
   }
