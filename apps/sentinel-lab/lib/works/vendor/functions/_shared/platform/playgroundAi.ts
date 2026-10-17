@@ -264,13 +264,20 @@ export async function claimAiDispatch(env: PlatformEnv, owner: string, mode: AiM
     .bind(token, at.toISOString(), new Date(at.getTime() + CUSTOMER_HOLD_WINDOW_MS).toISOString(), id, owner, mode, at.toISOString(), monthlyPeriod(at).period, owner, mode, mode, mode).first();
   return claimed ? token : null;
 }
-/** Zero-priced input counting is bounded and idempotent even though no money is reserved yet. */
+/** Count liabilities are owner expenses, independent of customer generation charges.
+ * A server-reviewed bound must cover the complete frozen count request. The
+ * transport adapter owns evidence admission; this ledger never guesses a bound. */
+export interface AiCountLiability { requestHash: string; maximumMicros: number; evidenceId: string }
+/** Claims and any nonzero liability are committed in one transaction before I/O. */
 export interface AiCountClaim { action_id: string; client_request_id: string; request_hash: string; state: 'submitted'|'counted'|'failed' }
-export async function claimAiInputCount(env: PlatformEnv, owner: string, mode: AiMode, id: string, requestJson: string, at = new Date()) {
+export async function claimAiInputCount(env: PlatformEnv, owner: string, mode: AiMode, id: string, requestJson: string, at = new Date(), liability?: AiCountLiability) {
   const action = await ownedAiAction(env, owner, mode, id);
   if (typeof requestJson !== 'string' || new TextEncoder().encode(requestJson).length > 100000) throw new HttpError(413, 'The provider input is too large.');
   const requestHash = await hash(requestJson), clientId = crypto.randomUUID(), hourStart = new Date(at.getTime()-60*60*1000).toISOString();
-  const claimed = await db(env).prepare(`INSERT INTO eidos_pg_ai_count_claims(action_id,owner_id,mode,request_hash,request_json,client_request_id,state,created_at)
+  const countMaximum = liability ? money(liability.maximumMicros, true) : 0;
+  if (liability && (liability.requestHash !== requestHash || !/^[a-zA-Z0-9._-]{4,100}$/.test(liability.evidenceId)))
+    throw new HttpError(409, 'The count liability does not cover this frozen request.');
+  const claim = db(env).prepare(`INSERT INTO eidos_pg_ai_count_claims(action_id,owner_id,mode,request_hash,request_json,client_request_id,state,created_at)
     SELECT a.id,a.owner_id,a.mode,?,?,?,'submitted',? FROM eidos_pg_ai_actions a
     WHERE a.id=? AND a.owner_id=? AND a.mode=? AND a.state='quoted' AND a.dispatch_token IS NULL AND a.expires_at>? AND a.period=?
       AND EXISTS(SELECT 1 FROM eidos_pg_ai_balances b WHERE b.owner_id=a.owner_id AND b.mode=a.mode AND b.frozen=0 AND b.available_included>=0 AND b.available_purchased>=0
@@ -279,13 +286,23 @@ export async function claimAiInputCount(env: PlatformEnv, owner: string, mode: A
       AND NOT EXISTS(SELECT 1 FROM eidos_pg_ai_grants g JOIN eidos_orders o ON o.id=g.order_id WHERE g.owner_id=a.owner_id AND g.mode=a.mode
         AND (o.status!='paid' OR g.reversed=1 OR EXISTS(SELECT 1 FROM eidos_revoked_payments r WHERE r.payment_intent=g.payment_intent)))
       AND EXISTS(SELECT 1 FROM eidos_pg_ai_policies p WHERE p.mode=a.mode AND p.enabled=1 AND p.paused_reason IS NULL AND p.rate_json=a.rate_json
-        AND ${realBudgetBound} AND p.provider_budget>=a.provider_maximum+${diagnosticProviderLiability('p.mode')}+(SELECT COALESCE(SUM(${providerCommitted}),0) FROM eidos_pg_ai_actions WHERE mode=a.mode))
+        AND ${realBudgetBound} AND p.provider_budget>=${countMaximum}+a.provider_maximum+${diagnosticProviderLiability('p.mode')}+(SELECT COALESCE(SUM(${providerCommitted}),0) FROM eidos_pg_ai_actions WHERE mode=a.mode))
       AND (SELECT COUNT(*) FROM eidos_pg_ai_count_claims WHERE mode=a.mode)<${AI_COUNT_LIMITS.lifetime}
       AND (SELECT COUNT(*) FROM eidos_pg_ai_count_claims WHERE mode=a.mode AND created_at>?)<${AI_COUNT_LIMITS.globalHour}
       AND (SELECT COUNT(*) FROM eidos_pg_ai_count_claims WHERE mode=a.mode AND owner_id=a.owner_id AND created_at>?)<${AI_COUNT_LIMITS.perOwnerHour}
       AND NOT EXISTS(SELECT 1 FROM eidos_pg_ai_count_claims WHERE action_id=a.id)
     ON CONFLICT(action_id) DO NOTHING RETURNING action_id`)
-    .bind(requestHash, requestJson, clientId, at.toISOString(), id, owner, mode, at.toISOString(), monthlyPeriod(at).period, hourStart, hourStart).first();
+    .bind(requestHash, requestJson, clientId, at.toISOString(), id, owner, mode, at.toISOString(), monthlyPeriod(at).period, hourStart, hourStart);
+  // batch is an atomic transaction on both D1 and the libSQL adapter. The
+  // second write only follows THIS winning claim, not a replay's existing row.
+  // A crash after commit retains the full ceiling, including when transport
+  // never starts; no timeout/cancel/refund releases an unknown provider cost.
+  await db(env).batch([claim, db(env).prepare(`INSERT INTO eidos_pg_ai_journal(id,owner_id,mode,action_id,event,detail_json,created_at)
+    SELECT ?,owner_id,mode,action_id,'diagnostic_count_hold',?,? FROM eidos_pg_ai_count_claims
+    WHERE action_id=? AND client_request_id=? AND ?>0`)
+    .bind('customer-count-' + id, JSON.stringify({ providerHeldMicros: countMaximum, requestHash, clientRequestId: clientId,
+      evidenceId: liability?.evidenceId ?? null, actualCostMicros: null }), at.toISOString(), id, clientId, countMaximum)]);
+  const claimed = await db(env).prepare('SELECT action_id FROM eidos_pg_ai_count_claims WHERE action_id=? AND client_request_id=?').bind(id, clientId).first();
   if (claimed) return { action_id: id, client_request_id: clientId, request_hash: requestHash, state: 'submitted' } satisfies AiCountClaim;
   const existing = await db(env).prepare('SELECT * FROM eidos_pg_ai_count_claims WHERE action_id=? AND owner_id=? AND mode=?').bind(id, owner, mode).first<AiCountClaim>();
   if (existing && existing.request_hash !== requestHash) throw new HttpError(409, 'This counting reference belongs to a different frozen request.');

@@ -1,7 +1,7 @@
 import { platformDatabase } from './database';
 import { authorizePlaygroundDiagnostic, diagnosticReply as reply } from './playground-provider-check';
 import { buildAiProviderRequest, providerTestRateCard } from './vendor/functions/_shared/platform/playgroundAiProvider';
-import { ensureAiLedger, USD } from './vendor/functions/_shared/platform/playgroundAi';
+import { diagnosticProviderLiability, ensureAiLedger, USD } from './vendor/functions/_shared/platform/playgroundAi';
 import { hash, readText, type Database } from './vendor/functions/_shared/platform/core';
 import { createProject } from './project-delivery/src/playground/model';
 import { createProposalContext } from './project-delivery/src/playground/aiOperations';
@@ -29,6 +29,7 @@ export async function probePlaygroundCount(request: Request, source: Record<stri
       database.prepare(`INSERT OR IGNORE INTO eidos_pg_ai_journal(id,owner_id,mode,action_id,event,detail_json,created_at)
         SELECT ?,NULL,'test',NULL,'diagnostic_count_hold',?,? FROM eidos_pg_ai_policies p
         WHERE p.mode='test' AND p.enabled=0 AND p.paused_reason IS NULL AND p.provider_budget=?
+          AND ${diagnosticProviderLiability('p.mode')}=0
           AND NOT EXISTS(SELECT 1 FROM eidos_pg_ai_actions WHERE mode='test' AND provider_status!='none')`)
         .bind(claimId,JSON.stringify({providerHeldMicros:5*USD,billing:'unknown',requestHash,clientRequestId,model:'gpt-6.1-sol',requestJson:built.countSerialized}),now,5*USD),
       database.prepare(`UPDATE eidos_pg_ai_policies SET enabled=0,paused_reason='owner_count_billing_unknown_entire_5_usd_held',updated_at=?

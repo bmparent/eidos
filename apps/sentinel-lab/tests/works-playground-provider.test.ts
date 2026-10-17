@@ -8,8 +8,8 @@ import { createClient } from '@libsql/client';
 import { adaptDatabase } from '../lib/works/database';
 import { hash, type PlatformEnv } from '../lib/works/vendor/functions/_shared/platform/core';
 import { aiBalance, aiPolicyStatus, configureAiPolicy, ensureAiLedger, ownedAiAction, publicAiAction, reconcileAiDeadlines, setAiLimit, USD,
-  AI_COUNT_LIMITS, claimAiDispatch, reserveAiAction, type AiBrief, type AiRateCard } from '../lib/works/vendor/functions/_shared/platform/playgroundAi';
-import { aiProviderAvailability, buildAiProviderRequest, generateProviderAiAction, parseAiProviderUsage, providerTestRateCard, quoteProviderAiAction } from '../lib/works/vendor/functions/_shared/platform/playgroundAiProvider';
+  AI_COUNT_LIMITS, claimAiDispatch, claimAiInputCount, quoteAiAction, cancelAiAction, reserveAiAction, type AiBrief, type AiRateCard } from '../lib/works/vendor/functions/_shared/platform/playgroundAi';
+import { aiProviderAvailability, buildAiProviderRequest, generateProviderAiAction, parseAiProviderUsage, providerTestRateCard, quoteProviderAiAction, type AiProviderOptions } from '../lib/works/vendor/functions/_shared/platform/playgroundAiProvider';
 import { onRequestGet, onRequestPost } from '../lib/works/vendor/functions/api/playground/ai';
 import { onRequestGet as publicConfig } from '../lib/works/vendor/functions/api/public-config';
 import { createProposalContext } from '../lib/works/project-delivery/src/playground/aiOperations';
@@ -51,6 +51,10 @@ async function fixture(budget = 5 * USD, databaseUrl = ':memory:') {
       const claimId=new Headers(init.headers).get('x-client-request-id');
       const claimed=await database.prepare('SELECT state,request_json FROM eidos_pg_ai_count_claims WHERE client_request_id=?').bind(claimId).first<{state:string;request_json:string}>();
       assert.equal(claimed?.state,'submitted');assert.equal(claimed?.request_json,countBody);
+      if (options.countLiability) {
+        const hold = await database.prepare("SELECT detail_json FROM eidos_pg_ai_journal WHERE action_id=(SELECT action_id FROM eidos_pg_ai_count_claims WHERE client_request_id=?) AND event='diagnostic_count_hold'").bind(claimId).first<{detail_json:string}>();
+        assert.equal(JSON.parse(hold!.detail_json).providerHeldMicros, options.countLiability.maximumMicros);
+      }
       return counted(); }
     assert.equal(String(url), 'https://api.openai.com/v1/responses'); generations++; generationBody = String(init.body);
     const requestId = new Headers(init.headers).get('x-client-request-id'); assert.ok(requestId);
@@ -58,7 +62,7 @@ async function fixture(budget = 5 * USD, databaseUrl = ':memory:') {
     assert.equal(action.state, 'submitted'); assert.equal(action.customer_status, 'held'); assert.equal(action.provider_status, 'held');
     return generated(init);
   };
-  const options = { transport, at };
+  const options: AiProviderOptions = { transport, at };
   return { client, database, env, options, quote: (change: Partial<AiBrief> = {}, key = 'controlled-action-' + ++serial) => quoteProviderAiAction(env,'owner','test',key,{...brief,...change},options),
     generate: (id: string, maximum: number) => generateProviderAiAction(env,'owner','test',id,maximum,options),
     generated: (fn: typeof generated) => { generated = fn; }, counted: (fn: typeof counted) => { counted = fn; },
@@ -299,9 +303,11 @@ test('independent database connections cannot double-claim the same input count'
   const path=join(tmpdir(),'eidos-count-claims-'+crypto.randomUUID()+'.db'),url='file:'+path.replaceAll('\\','/');
   const f=await fixture(5*USD,url),other=createClient({url}),otherEnv={...f.env,EIDOS_DB:adaptDatabase(other)};
   try{
+    f.options.countLiability = await countBound();
     const quotes=await Promise.allSettled(Array.from({length:8},(_,i)=>quoteProviderAiAction(i%2?otherEnv:f.env,'owner','test','cross-worker-count',brief,f.options)));
     assert.ok(quotes.some(q=>q.status==='fulfilled'));assert.equal(f.counts(),1);assert.equal(f.generations(),0);
     const claims=await other.execute('SELECT COUNT(*) count FROM eidos_pg_ai_count_claims');assert.equal(Number(claims.rows[0].count),1);
+    assert.equal((await aiPolicyStatus(otherEnv, 'test')).committed, 70000);
   }finally{
     other.close();f.close();
     for(const suffix of ['','-wal','-shm'])await unlink(path+suffix).catch(error=>{
@@ -339,4 +345,94 @@ test('authenticated API derives billing owner, rejects forged routing/caps, and 
     assert.equal(received.action.state,'settled');assert.deepEqual(received.action.result,proposal);assert.equal(received.balance.settled,10000);assert.equal(calls,2);
     const receipt=await onRequestGet({env:f.env,request:new Request('http://localhost/api/playground/ai?id='+action.id,{headers})});assert.equal(receipt.status,200);assert.equal(calls,2);
   }finally{globalThis.fetch=originalFetch;f.close();}
+});
+
+const countBound = async (maximumMicros = 70000) => ({ requestHash: await hash(buildAiProviderRequest(brief, card).countSerialized), maximumMicros, evidenceId: 'controlled-full-request-bound-v1' });
+test('nonzero count liability commits before I/O, stays separate from customer charges and survives cancellation', async () => {
+  const f = await fixture(200000); try {
+    f.options.countLiability = await countBound();
+    f.counted(() => json({ object: 'response.input_tokens', input_tokens: 1500 }));
+    const action = await f.quote();
+    const status = await aiPolicyStatus(f.env, 'test');
+    assert.equal(status.committed, 70000); assert.equal(status.diagnosticHeld, 70000);
+    assert.equal((await aiBalance(f.env, 'owner', 'test', at)).settled, 0);
+    assert.equal((await aiBalance(f.env, 'owner', 'test', at)).pending, 0);
+    await cancelAiAction(f.env, 'owner', 'test', action.id);
+    assert.equal((await aiPolicyStatus(f.env, 'test')).committed, 70000);
+    await assert.rejects(f.quote({}, 'next-count'), /owner budget/); assert.equal(f.counts(), 1);
+  } finally { f.close(); }
+});
+test('failed count survives month rollover, never retries and blocks fresh-model admission against the shared budget', async () => {
+  const f = await fixture(); try {
+    f.options.countLiability = await countBound();
+    f.counted(() => { throw new DOMException('Timed out after submission', 'AbortError'); });
+    await assert.rejects(f.quote({}, 'lost-count'), /will not retry/);
+    assert.equal((await aiPolicyStatus(f.env, 'test')).committed, 70000);
+    f.options.at = new Date('2026-11-02T00:00:00.000Z');
+    await assert.rejects(f.quote({}, 'lost-count'), /already recorded/);
+    const nextCard: AiRateCard = { ...card, model: 'gpt-6-astra' };
+    await configureAiPolicy(f.env, 'test', nextCard, 200000, true);
+    assert.equal((await aiPolicyStatus(f.env, 'test')).committed, 70000);
+    f.options.countLiability = { ...await countBound(), requestHash: await hash(buildAiProviderRequest(brief, nextCard).countSerialized) };
+    // The new request has matching evidence, but the retained prior-month
+    // 70,000 plus this count's 70,000 and generation's 100,000 exceed the cap.
+    await assert.rejects(f.quote({}, 'fresh-model-next-month'), /owner budget/);
+    assert.equal((await aiPolicyStatus(f.env, 'test')).committed, 70000);
+    assert.equal(f.counts(), 1); assert.equal(f.generations(), 0);
+  } finally { f.close(); }
+});
+test('concurrent differently keyed counts atomically share the owner budget and retain just the winning hold', async () => {
+  const f = await fixture(200000); try {
+    f.options.countLiability = await countBound();
+    const results = await Promise.allSettled([f.quote({}, 'bounded-count-a'), f.quote({}, 'bounded-count-b')]);
+    assert.equal(results.filter(r => r.status === 'fulfilled').length, 1);
+    assert.equal(f.counts(), 1); assert.equal((await aiPolicyStatus(f.env, 'test')).committed, 70000);
+  } finally { f.close(); }
+});
+test('a committed count claim survives a crash before transport and cannot dispatch twice', async () => {
+  const f = await fixture(); try {
+    const action = await quoteAiAction(f.env, 'owner', 'test', 'crashed-count', brief, at);
+    const serialized = buildAiProviderRequest(brief, card).countSerialized, bound = await countBound();
+    await claimAiInputCount(f.env, 'owner', 'test', action.id, serialized, at, bound);
+    await assert.rejects(claimAiInputCount(f.env, 'owner', 'test', action.id, serialized, at, bound), /still being prepared/);
+    assert.equal((await aiPolicyStatus(f.env, 'test')).committed, 70000); assert.equal(f.counts(), 0);
+    await cancelAiAction(f.env, 'owner', 'test', action.id);
+    assert.equal((await aiPolicyStatus(f.env, 'test')).committed, 70000);
+  } finally { f.close(); }
+});
+test('missing justified real bound and mismatched request evidence reject before transport', async () => {
+  const f = await fixture(); try {
+    f.options.countLiability = { ...await countBound(), requestHash: '0'.repeat(64) };
+    await assert.rejects(f.quote(), /does not cover/); assert.equal(f.counts(), 0);
+    f.options.countLiability = await countBound();
+    await configureAiPolicy(f.env, 'test', providerTestRateCard('gpt-6.1-sol'), 5 * USD, true);
+    await assert.rejects(f.quote(), /No reviewed full-request/); assert.equal(f.counts(), 0);
+    assert.equal((await aiPolicyStatus(f.env, 'test')).committed, 0);
+  } finally { f.close(); }
+});
+test('count liabilities participate in generation reservation and dispatch after budget reductions', async () => {
+  const f = await fixture(200000); try {
+    f.options.countLiability = await countBound(); const action = await f.quote();
+    await configureAiPolicy(f.env, 'test', card, 150000, true);
+    await assert.rejects(reserveAiAction(f.env, 'owner', 'test', action.id, at), /owner budget/);
+    await configureAiPolicy(f.env, 'test', card, 200000, true);
+    await reserveAiAction(f.env, 'owner', 'test', action.id, at);
+    assert.equal((await aiPolicyStatus(f.env, 'test')).committed, 170000);
+    await configureAiPolicy(f.env, 'test', card, 150000, true);
+    assert.equal(await claimAiDispatch(f.env, 'owner', 'test', action.id, at), null);
+    assert.equal(f.generations(), 0);
+  } finally { f.close(); }
+});
+
+test('failure to persist liability rolls back the count claim before any transport can start', async () => {
+  const f = await fixture(); try {
+    const action = await quoteAiAction(f.env, 'owner', 'test', 'atomic-count-rollback', brief, at);
+    // Controlled conflicting journal row forces the second transaction write to
+    // fail. The first write must not leave a dispatchable unreserved claim.
+    await f.database.prepare("INSERT INTO eidos_pg_ai_journal(id,mode,event,detail_json,created_at) VALUES(?,'test','fixture-conflict','{}',?)")
+      .bind('customer-count-' + action.id, at.toISOString()).run();
+    await assert.rejects(claimAiInputCount(f.env, 'owner', 'test', action.id, buildAiProviderRequest(brief, card).countSerialized, at, await countBound()));
+    assert.equal(await f.database.prepare('SELECT action_id FROM eidos_pg_ai_count_claims WHERE action_id=?').bind(action.id).first(), null);
+    assert.equal(f.counts(), 0); assert.equal((await aiPolicyStatus(f.env, 'test')).committed, 0);
+  } finally { f.close(); }
 });
