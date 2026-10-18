@@ -128,11 +128,11 @@ function classify(error) {
   return /^(?:ERR_TLS_|ERR_SSL_|CERT_|DEPTH_ZERO|SELF_SIGNED|UNABLE_TO_)/.test(code)?'tls_error':code==='ABORT_ERR'?'cancelled':code==='ETIMEDOUT'?'timeout':/^(?:EAI_|ENOTFOUND|dns_|DNS_)/.test(code)?'dns_failure':'transport_error';
 }
 
-function connectionEvidence(target,dns,result) {
+function connectionEvidence(target,dns,result,error=null) {
   return {scope:'observatory_outbound_head_connection',destination_ip:dns.address,destination_port:target.url.startsWith('https:')?443:80,
     protocol:'TCP',application_protocol:target.url.startsWith('https:')?'HTTPS':'HTTP',peer_ip:result.peer_ip,
-    peer_port:target.url.startsWith('https:')?443:80,peer_matches_destination:result.peer_ip===dns.address,
-    socket_connected:result.timing.tcp_ms!==null,tls_verified:target.url.startsWith('https:')?result.certificate?.identity_verified===true:null,
+    peer_port:target.url.startsWith('https:')?443:80,peer_matches_destination:result.peer_ip===null?null:result.peer_ip===dns.address,
+    socket_connected:result.timing.tcp_ms!==null,tls_verified:!target.url.startsWith('https:')?null:classify(error)==='tls_error'?false:result.certificate?.identity_verified===true?true:null,
     tls_protocol:result.tls_protocol,bytes_read:result.bytes_read,bytes_written:result.bytes_written,packet_counts_available:false,
     counter_scope:'Selected HEAD attempt only; application socket counters'};
 }
@@ -156,7 +156,7 @@ async function attemptAddresses(target,dns,options,deadline,event,hop,method='HE
       outcome:error?classify(error):'response',status:result?.status ?? null,
       timing:result?.timing ?? {tcp_ms:null,tls_ms:null,response_wait_ms:null,headers_ms:null},
       tls_protocol:result?.tls_protocol ?? null,certificate:result?.certificate ?? null,
-      network:result?connectionEvidence(target,pinned,result):null};
+      network:result?connectionEvidence(target,pinned,result,error):null};
     event.attempts.push(row);
     if(!error)return {result,dns:pinned,attempt:row.index};
     if(classify(error)==='cancelled')throw error;
@@ -170,7 +170,7 @@ function retainFirstStages(event,current,dns,result,error=null) {
   event.probes.tcp={state:result.timing.tcp_ms!==null?'ok':code==='cancelled'?'unavailable':'failed',duration_ms:result.timing.tcp_ms};
   event.probes.tls={state:!secure?'not_applicable':code==='tls_error'?'failed':result.certificate?.identity_verified===true?'ok':'unavailable',
     duration_ms:result.timing.tls_ms,protocol:result.tls_protocol,certificate:result.certificate};
-  event.coverage.network=connectionEvidence(current,dns,result);
+  event.coverage.network=connectionEvidence(current,dns,result,error);
 }
 
 export async function observeTarget(input, options={}) {

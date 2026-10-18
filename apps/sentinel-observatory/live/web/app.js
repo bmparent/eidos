@@ -347,6 +347,7 @@ function observedText(event) {
 }
 function hypothesesFor(event) {
   const next='Compare subsequent checks and an independent authorized vantage before attributing a cause.';
+  if(event.probe_version==='target-probes-v1'&&(event.error||[405,501].includes(event.status))){const diagnosis=probeExplanation(event);return [{text:diagnosis.summary,next:diagnosis.next_check}];}
   if(isIncomplete(event))return [{text:'Collector connectivity, DNS, destination delay, and filtering are competing possibilities. This measurement does not distinguish them.',next}];
   if(event.status===429)return [{text:'The endpoint may be applying a request limit. Its scope and reason are not established by this response alone.',next:'Review the endpoint’s authorized server logs and retry policy before increasing any sampling.'}];
   if([401,403].includes(event.status))return [{text:'An access policy may be rejecting this unauthenticated HEAD request. That does not establish whether a signed-in browser is affected.',next:'Compare authorized application access and server logs. This collector does not send credentials.'}];

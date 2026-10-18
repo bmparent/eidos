@@ -21,7 +21,7 @@ try{for(const viewport of [{width:1440,height:1000},{width:390,height:844}]){
   await page.screenshot({path:join(out,`failure-${viewport.width}.png`),fullPage:true});
   const downloadPromise=page.waitForEvent('download');await page.locator('#export-button').click();const download=await downloadPromise;await download.saveAs(join(out,`export-${viewport.width}.json`));
   await page.reload({waitUntil:'networkidle'});assert.match(await page.locator('#target-list').innerText(),/paused/i);
-  await page.locator('[data-filter="all"]').click();
+  await page.locator('.record-section [data-filter="all"]').click();
   await page.locator('#probe-get').check();await page.locator('#connect-target').fill('https://example.com/get405_ok');await page.locator('#connect-button').click();
   await page.waitForFunction(()=>document.querySelector('#inspector-content')?.textContent.includes('separate GET fallback returned HTTP 200'),{timeout:15000});
   await page.locator('#pause-all').click();

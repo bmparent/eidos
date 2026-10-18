@@ -46,3 +46,12 @@ test('HEAD coverage and cancellation wording do not manufacture an outage or an 
   for(const status of [405,501])assert.match(probeExplanation({status,probes:{http:{get_fallback:{attempted:true,status:200}}}}).summary,/method coverage.*separate GET fallback returned HTTP 200/);
   assert.equal(probeExplanation({status:null,error:{code:'cancelled'}}).stage,'cancelled');
 });
+
+test('unmeasured TLS validation and a missing peer remain unknown, rather than failed',async()=>{
+  const transport=await createFaultTransport();try{
+    const raw=await observeTarget('https://example.com/tcp_timeout',transport.optionsFor('tcp_timeout'));
+    assert.equal(raw.event.coverage.network.tls_verified,null);assert.equal(raw.event.coverage.network.peer_matches_destination,null);
+    const event=normalizeTargetProbe(raw,normalizeTarget('https://example.com/tcp_timeout'));
+    assert.equal(event.coverage.network.tls_verified,null);assert.equal(event.coverage.network.peer_matches_destination,null);
+  }finally{await transport.close();}
+});
