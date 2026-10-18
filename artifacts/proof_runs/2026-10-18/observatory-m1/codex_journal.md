@@ -108,3 +108,5 @@ The richer engine supplied no detector advantage on these timing generators. Pub
 17. Unproven: compression, generalization, Sol usefulness, commercial operation and physical devices.
 
 Final full Node suite: 152 passed. Drive root discovery uses EIDOS_PROOF_DRIVE_DIR then EIDOS_ARTIFACT_ROOT. Configured root: G:\My Drive; final destination is Eidos_Brain_Proof_Phase/2026-10-18/observatory-m1 beneath the selected root. Actual copied files, skipped files, checksums and result are recorded in drive_manifest.json.
+
+One fresh manual gpt-6.1-sol provider check used 736 input / 24 output tokens and its repeat was cached with the same provider receipt. Existing server credentials and hard budget were reused; no new key or automatic loop. This proves execution/cache behavior, not usefulness. Exact owner-private request was one retained evidence ID, evt_395a8240465a41e3a4684fd43c418152, sent to /api/interpret. See model-provider-check/manual-sol-verification.json.

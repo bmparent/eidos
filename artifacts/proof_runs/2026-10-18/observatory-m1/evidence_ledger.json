@@ -209,6 +209,36 @@
         "hosted/receipt.json",
         "hosted/public-test-observation.json"
       ]
+    },
+    {
+      "requirement": "manual_sol_execution_cache",
+      "status": "passed",
+      "environment": "owner-private Sites v17 / real OpenAI Responses API",
+      "runtime_commit": "4a9bd8b9da652a1d6587412316e18d97d35d76f8",
+      "site_source_commit": "0295a79cfea528efa8295a766c64c5d2b3f4524c",
+      "configuration": "Existing server credential, gpt-6.1-sol, manual trigger, hard budget; no new key",
+      "input_sha256": "8b4ac919afbe5528f1c40c34b7bd416453e32878e9f5180d48899af1565090d8",
+      "observation": {
+        "evidence_id": "evt_395a8240465a41e3a4684fd43c418152",
+        "first_status": 200,
+        "output_accepted": true,
+        "provider_execution_verified": true,
+        "provider_model": "gpt-6.1-sol",
+        "usage": {
+          "input_tokens": 736,
+          "output_tokens": 24,
+          "total_tokens": 760
+        },
+        "cached_repeat": true,
+        "same_provider_receipt": true,
+        "quality_score": null,
+        "quality_reason": "Execution/cache check only; no independent human usefulness review"
+      },
+      "receipts": [
+        "model-provider-check/manual-sol-verification.json",
+        "model-provider-check/receipt.json"
+      ],
+      "quality": "not scored; human review remains open"
     }
   ],
   "limits": "Row timestamps identify package audit time; precise individual run start/end times are in referenced manifests. No pilot or human review is inferred."

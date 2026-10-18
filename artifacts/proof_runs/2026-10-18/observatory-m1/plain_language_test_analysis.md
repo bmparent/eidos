@@ -1,6 +1,6 @@
 # Observatory first milestone — measured engineering result
 
-Runtime code 4a9bd8b9da652a1d6587412316e18d97d35d76f8; proof assembly commit 4f680d0afb299195ae59283679005e81a8f37df9. Original continuation c184ae06819e7ad326f141f378b2d83f9b91152c, stacked on PR77.
+Runtime code 4a9bd8b9da652a1d6587412316e18d97d35d76f8; proof assembly commit e7b15cff2a951e9366777f9885fd6dbd8c586bf2. Original continuation c184ae06819e7ad326f141f378b2d83f9b91152c, stacked on PR77.
 
 Controlled corpus: 72/72 across 12 families. Clean checkout: 151 Node tests passed. Python: 31 passed, one Windows symlink privilege skip. Numerical parity: 954 frames / 41022 field comparisons. Next build and production fixture separation passed. Local browser: 2 viewports. Fresh hosted checks: True.
 
@@ -68,3 +68,5 @@ artifacts/proof_runs/2026-10-18/observatory-m1/clean-corpus/run_manifest.json an
 Synthetic faults are not live pilot observations. The original corpus evaluation cases are consumed regression cases after repair. Model/provider simulations are not genuine Sol usefulness evidence. Two tenants, independent observers, durable scheduling, outbox delivery, backup/restore, load capacity, seven-day coverage, measured commercial cost and physical-device behavior remain unproven. No Sentinel superiority was observed.
 
 Final full Node suite including capacity release: 152 passed; the separate clean-checkout suite passed 151.
+
+Fresh manual Sol check: provider execution verified=True, output accepted=True, cached repeat=True, same provider receipt=True. Usage: {'input_tokens': 736, 'output_tokens': 24, 'total_tokens': 760}. This was one manual provider attempt on existing retained public-example evidence, within the existing server budget. No key was created/rotated. Human usefulness remains unscored; no controlled-corpus ranked arm is inferred. See model-provider-check/manual-sol-verification.json.

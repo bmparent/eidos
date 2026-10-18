@@ -1,7 +1,7 @@
 {
   "schema": "observatory-milestone-package-v1",
-  "assembled_at": "2026-10-18T21:30:55.452309+00:00",
-  "assembly_commit": "4f680d0afb299195ae59283679005e81a8f37df9",
+  "assembled_at": "2026-10-18T21:40:42.474612+00:00",
+  "assembly_commit": "e7b15cff2a951e9366777f9885fd6dbd8c586bf2",
   "runtime_code_commit": "4a9bd8b9da652a1d6587412316e18d97d35d76f8",
   "core_behavior_changed": false,
   "corpus_manifest": "artifacts\\proof_runs\\2026-10-18\\observatory-m1\\clean-corpus\\run_manifest.json",

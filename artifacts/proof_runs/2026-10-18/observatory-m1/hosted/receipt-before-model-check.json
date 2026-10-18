@@ -1,0 +1,135 @@
+{
+  "schema": "private-hosted-acceptance-v1",
+  "timestamp": "2026-10-18T21:25:20.105Z",
+  "origin": "https://sentinel-evidence-observatory.bmparent.chatgpt.site",
+  "version": "sentinel-live-v9-bounded-attempt-evidence",
+  "receipts": [
+    {
+      "check": "served_source",
+      "route": "/probe-explanation.mjs",
+      "sha256": "aef08b946d19e738619da86303219f026212a6da49219a9dd067fc1c9175ee9d",
+      "expected_sha256": "aef08b946d19e738619da86303219f026212a6da49219a9dd067fc1c9175ee9d",
+      "passed": true
+    },
+    {
+      "check": "served_source",
+      "route": "/target-panel.mjs",
+      "sha256": "873adb11629a40d13c65cc3a3644cd5f71c4aef755430d381b2edd38b6cf0284",
+      "expected_sha256": "873adb11629a40d13c65cc3a3644cd5f71c4aef755430d381b2edd38b6cf0284",
+      "passed": true
+    },
+    {
+      "check": "served_source",
+      "route": "/app.js",
+      "sha256": "af2c5a67b6682ed9f90581dae6e8790314c07d2f075ec943e8313bb0eaeadbdb",
+      "expected_sha256": "af2c5a67b6682ed9f90581dae6e8790314c07d2f075ec943e8313bb0eaeadbdb",
+      "passed": true
+    },
+    {
+      "check": "served_source",
+      "route": "/styles.css",
+      "sha256": "fb94b09a77b0cb1bb3480db641555fba6a5afde01350772eca3c4c5d08fa8ca9",
+      "expected_sha256": "fb94b09a77b0cb1bb3480db641555fba6a5afde01350772eca3c4c5d08fa8ca9",
+      "passed": true
+    },
+    {
+      "check": "anonymous_denied",
+      "status": 401,
+      "passed": true
+    },
+    {
+      "check": "loopback",
+      "status": 400,
+      "passed": true
+    },
+    {
+      "check": "metadata",
+      "status": 400,
+      "passed": true
+    },
+    {
+      "check": "private_ipv6",
+      "status": 400,
+      "passed": true
+    },
+    {
+      "check": "credentials",
+      "status": 400,
+      "passed": true
+    },
+    {
+      "check": "port",
+      "status": 400,
+      "passed": true
+    },
+    {
+      "check": "recursive",
+      "status": 400,
+      "passed": true
+    },
+    {
+      "check": "forged_tenant",
+      "status": 400,
+      "passed": true
+    },
+    {
+      "check": "missing_evidence_no_model_dispatch",
+      "status": 404,
+      "passed": true
+    },
+    {
+      "check": "cross_origin_denied",
+      "status": 403,
+      "passed": true
+    },
+    {
+      "check": "one_explicit_public_test",
+      "target": "https://example.com/",
+      "status": 200,
+      "contract": "target-evidence-v2",
+      "evidence_id": "evt_395a8240465a41e3a4684fd43c418152",
+      "storage": "retained",
+      "passed": true
+    },
+    {
+      "check": "hosted_retention",
+      "passed": true
+    }
+  ],
+  "passed": true,
+  "actual_model_calls": 0,
+  "two_tenant_test": "not tested; owner-private service access is not tenant identity",
+  "continuous_pilot": "not started",
+  "browser": [
+    {
+      "viewport": {
+        "width": 1440,
+        "height": 1000
+      },
+      "url": "https://sentinel-evidence-observatory.bmparent.chatgpt.site",
+      "empty_authenticated_page": true,
+      "keyboard_and_coverage_dialog": "passed",
+      "console_errors": [],
+      "layout": {
+        "width": 1440,
+        "scroll": 1440
+      },
+      "physical_device": "not tested"
+    },
+    {
+      "viewport": {
+        "width": 390,
+        "height": 844
+      },
+      "url": "https://sentinel-evidence-observatory.bmparent.chatgpt.site",
+      "empty_authenticated_page": true,
+      "keyboard_and_coverage_dialog": "passed",
+      "console_errors": [],
+      "layout": {
+        "width": 390,
+        "scroll": 390
+      },
+      "physical_device": "not tested"
+    }
+  ]
+}
