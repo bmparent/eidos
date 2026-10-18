@@ -1,0 +1,56 @@
+[
+  {
+    "viewport": {
+      "width": 1440,
+      "height": 1000
+    },
+    "environment": "local_synthetic_fixture",
+    "url": "http://127.0.0.1:8788",
+    "page_identity": "passed",
+    "content": "passed",
+    "console_errors": [],
+    "interactions": [
+      "connect controlled TLS/header failure",
+      "inspect retained partial TLS",
+      "keyboard filter focus",
+      "pause",
+      "download export",
+      "reload paused history",
+      "explicit GET fallback retains HEAD 405 and separate GET 200"
+    ],
+    "layout": {
+      "width": 1440,
+      "scroll": 1440,
+      "reduced": true
+    },
+    "physical_device": "not tested",
+    "browser_plugin": "Browser skill not listed; CUA in-app tab call timed out; bundled Playwright fallback used"
+  },
+  {
+    "viewport": {
+      "width": 390,
+      "height": 844
+    },
+    "environment": "local_synthetic_fixture",
+    "url": "http://127.0.0.1:8788",
+    "page_identity": "passed",
+    "content": "passed",
+    "console_errors": [],
+    "interactions": [
+      "connect controlled TLS/header failure",
+      "inspect retained partial TLS",
+      "keyboard filter focus",
+      "pause",
+      "download export",
+      "reload paused history",
+      "explicit GET fallback retains HEAD 405 and separate GET 200"
+    ],
+    "layout": {
+      "width": 390,
+      "scroll": 390,
+      "reduced": true
+    },
+    "physical_device": "not tested",
+    "browser_plugin": "Browser skill not listed; CUA in-app tab call timed out; bundled Playwright fallback used"
+  }
+]

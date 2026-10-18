@@ -1,0 +1,9 @@
+{
+  "status": "blocked",
+  "packet_cases": 71,
+  "actual_human_reviews": 0,
+  "appropriate_next_action_rate": null,
+  "sol_ranked_arm": "missing",
+  "comparison_ready": false,
+  "reason": "A single available arm can support factual/action review; it cannot establish Sol ranking benefit. Do not expose the key to reviewers or inference."
+}

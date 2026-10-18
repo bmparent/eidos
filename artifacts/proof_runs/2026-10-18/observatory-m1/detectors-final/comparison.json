@@ -1,0 +1,346 @@
+{
+  "schema": "detector-results-v1",
+  "evidence_class": "synthetic_engineering",
+  "config_sha256": "7dcb7e3212764d345573b5252d7a5738dabd4fa313c5863cf1d45f19ae0dbac7",
+  "streams": 72,
+  "frames": 11520,
+  "methods": {
+    "gate": {
+      "observed_adapter_ms": 313.1027000000297,
+      "splits": {
+        "development": {
+          "tp": 48,
+          "fp": 24,
+          "fn": 4,
+          "duplicate_incidents": 0,
+          "fault_events": 52,
+          "benign_frames": 4888,
+          "unknown_frames": 1784,
+          "measured_frames": 5896,
+          "precision": 0.6666666666666666,
+          "recall": 0.9230769230769231,
+          "false_incidents_per_benign_target_day": 1.414075286415712,
+          "missing_fraction": 0.23229166666666667,
+          "mean_detection_delay_seconds": 0,
+          "mean_recovery_delay_seconds": 0,
+          "stream_cluster_ci95": {
+            "precision": [
+              0.5897435897435898,
+              0.7714285714285715
+            ],
+            "recall": [
+              0.8333333333333334,
+              0.9836065573770492
+            ],
+            "false_incidents_per_benign_target_day": [
+              0.7435456110154905,
+              2.1386138613861387
+            ],
+            "mean_detection_delay_seconds": [
+              0,
+              0
+            ],
+            "mean_recovery_delay_seconds": [
+              0,
+              0
+            ]
+          }
+        },
+        "locked_evaluation": {
+          "tp": 24,
+          "fp": 12,
+          "fn": 2,
+          "duplicate_incidents": 0,
+          "fault_events": 26,
+          "benign_frames": 2444,
+          "unknown_frames": 892,
+          "measured_frames": 2948,
+          "precision": 0.6666666666666666,
+          "recall": 0.9230769230769231,
+          "false_incidents_per_benign_target_day": 1.414075286415712,
+          "missing_fraction": 0.23229166666666667,
+          "mean_detection_delay_seconds": 0,
+          "mean_recovery_delay_seconds": 0,
+          "stream_cluster_ci95": {
+            "precision": [
+              0.5555555555555556,
+              0.8333333333333334
+            ],
+            "recall": [
+              0.782608695652174,
+              1
+            ],
+            "false_incidents_per_benign_target_day": [
+              0.447900466562986,
+              2.480814408770556
+            ],
+            "mean_detection_delay_seconds": [
+              0,
+              0
+            ],
+            "mean_recovery_delay_seconds": [
+              0,
+              0
+            ]
+          }
+        }
+      }
+    },
+    "sentinel_plus_gate": {
+      "observed_adapter_ms": 16147.498299999974,
+      "splits": {
+        "development": {
+          "tp": 48,
+          "fp": 24,
+          "fn": 4,
+          "duplicate_incidents": 0,
+          "fault_events": 52,
+          "benign_frames": 4888,
+          "unknown_frames": 1784,
+          "measured_frames": 5896,
+          "precision": 0.6666666666666666,
+          "recall": 0.9230769230769231,
+          "false_incidents_per_benign_target_day": 1.414075286415712,
+          "missing_fraction": 0.23229166666666667,
+          "mean_detection_delay_seconds": 0,
+          "mean_recovery_delay_seconds": 0,
+          "stream_cluster_ci95": {
+            "precision": [
+              0.5897435897435898,
+              0.7714285714285715
+            ],
+            "recall": [
+              0.8333333333333334,
+              0.9836065573770492
+            ],
+            "false_incidents_per_benign_target_day": [
+              0.7435456110154905,
+              2.1386138613861387
+            ],
+            "mean_detection_delay_seconds": [
+              0,
+              0
+            ],
+            "mean_recovery_delay_seconds": [
+              0,
+              0
+            ]
+          }
+        },
+        "locked_evaluation": {
+          "tp": 24,
+          "fp": 12,
+          "fn": 2,
+          "duplicate_incidents": 0,
+          "fault_events": 26,
+          "benign_frames": 2444,
+          "unknown_frames": 892,
+          "measured_frames": 2948,
+          "precision": 0.6666666666666666,
+          "recall": 0.9230769230769231,
+          "false_incidents_per_benign_target_day": 1.414075286415712,
+          "missing_fraction": 0.23229166666666667,
+          "mean_detection_delay_seconds": 0,
+          "mean_recovery_delay_seconds": 0,
+          "stream_cluster_ci95": {
+            "precision": [
+              0.5555555555555556,
+              0.8333333333333334
+            ],
+            "recall": [
+              0.782608695652174,
+              1
+            ],
+            "false_incidents_per_benign_target_day": [
+              0.447900466562986,
+              2.480814408770556
+            ],
+            "mean_detection_delay_seconds": [
+              0,
+              0
+            ],
+            "mean_recovery_delay_seconds": [
+              0,
+              0
+            ]
+          }
+        }
+      }
+    },
+    "ewma": {
+      "observed_adapter_ms": 47.099100000051976,
+      "splits": {
+        "development": {
+          "tp": 52,
+          "fp": 22,
+          "fn": 0,
+          "duplicate_incidents": 0,
+          "fault_events": 52,
+          "benign_frames": 4888,
+          "unknown_frames": 1784,
+          "measured_frames": 5896,
+          "precision": 0.7027027027027027,
+          "recall": 1,
+          "false_incidents_per_benign_target_day": 1.2962356792144027,
+          "missing_fraction": 0.23229166666666667,
+          "mean_detection_delay_seconds": 69.23076923076923,
+          "mean_recovery_delay_seconds": 6386.538461538462,
+          "stream_cluster_ci95": {
+            "precision": [
+              0.5125,
+              0.9076923076923077
+            ],
+            "recall": [
+              1,
+              1
+            ],
+            "false_incidents_per_benign_target_day": [
+              0.35064935064935066,
+              2.436835891381346
+            ],
+            "mean_detection_delay_seconds": [
+              14.754098360655737,
+              150
+            ],
+            "mean_recovery_delay_seconds": [
+              5710.526315789473,
+              6984.782608695652
+            ]
+          }
+        },
+        "locked_evaluation": {
+          "tp": 26,
+          "fp": 12,
+          "fn": 0,
+          "duplicate_incidents": 0,
+          "fault_events": 26,
+          "benign_frames": 2444,
+          "unknown_frames": 892,
+          "measured_frames": 2948,
+          "precision": 0.6842105263157895,
+          "recall": 1,
+          "false_incidents_per_benign_target_day": 1.414075286415712,
+          "missing_fraction": 0.23229166666666667,
+          "mean_detection_delay_seconds": 69.23076923076923,
+          "mean_recovery_delay_seconds": 6542.307692307692,
+          "stream_cluster_ci95": {
+            "precision": [
+              0.4146341463414634,
+              1
+            ],
+            "recall": [
+              1,
+              1
+            ],
+            "false_incidents_per_benign_target_day": [
+              0,
+              3.15512708150745
+            ],
+            "mean_detection_delay_seconds": [
+              0,
+              195.65217391304347
+            ],
+            "mean_recovery_delay_seconds": [
+              5442.857142857143,
+              7400
+            ]
+          }
+        }
+      }
+    },
+    "cusum": {
+      "observed_adapter_ms": 20.191100000040706,
+      "splits": {
+        "development": {
+          "tp": 52,
+          "fp": 28,
+          "fn": 0,
+          "duplicate_incidents": 5,
+          "fault_events": 52,
+          "benign_frames": 4888,
+          "unknown_frames": 1784,
+          "measured_frames": 5896,
+          "precision": 0.65,
+          "recall": 1,
+          "false_incidents_per_benign_target_day": 1.6497545008183307,
+          "missing_fraction": 0.23229166666666667,
+          "mean_detection_delay_seconds": 69.23076923076923,
+          "mean_recovery_delay_seconds": 0,
+          "stream_cluster_ci95": {
+            "precision": [
+              0.4752475247524752,
+              0.8382352941176471
+            ],
+            "recall": [
+              1,
+              1
+            ],
+            "false_incidents_per_benign_target_day": [
+              0.6428571428571429,
+              2.8908406524466748
+            ],
+            "mean_detection_delay_seconds": [
+              14.754098360655737,
+              150
+            ],
+            "mean_recovery_delay_seconds": [
+              0,
+              0
+            ]
+          }
+        },
+        "locked_evaluation": {
+          "tp": 26,
+          "fp": 14,
+          "fn": 0,
+          "duplicate_incidents": 2,
+          "fault_events": 26,
+          "benign_frames": 2444,
+          "unknown_frames": 892,
+          "measured_frames": 2948,
+          "precision": 0.65,
+          "recall": 1,
+          "false_incidents_per_benign_target_day": 1.6497545008183307,
+          "missing_fraction": 0.23229166666666667,
+          "mean_detection_delay_seconds": 69.23076923076923,
+          "mean_recovery_delay_seconds": 0,
+          "stream_cluster_ci95": {
+            "precision": [
+              0.39473684210526316,
+              0.9333333333333333
+            ],
+            "recall": [
+              1,
+              1
+            ],
+            "false_incidents_per_benign_target_day": [
+              0.24140821458507966,
+              3.4024390243902443
+            ],
+            "mean_detection_delay_seconds": [
+              0,
+              195.65217391304347
+            ],
+            "mean_recovery_delay_seconds": [
+              0,
+              0
+            ]
+          }
+        }
+      }
+    }
+  },
+  "limits": [
+    "Synthetic timing labels, not attack labels or pilot outcomes.",
+    "Sentinel timings include the multi-metric adapter; simple gate is standalone median/MAD and excludes integration overhead.",
+    "Recovery delay is event end beyond known fault end; alarms stopping early can report zero. An event at end of stream is right-censored, not a verified recovery.",
+    "Bootstrap units are whole streams; repeated related generators limit external validity.",
+    "No threshold tuning after this lock; core and production default unchanged."
+  ],
+  "conclusion": {
+    "sentinel_precision_minus_gate": 0,
+    "sentinel_recall_minus_gate": 0,
+    "superiority_established": false,
+    "production_default_changed": false
+  }
+}

@@ -1,0 +1,20 @@
+{
+  "schema": "observatory-retained-failures-v1",
+  "source": "Observed command/tool outputs, retained here alongside raw run folders",
+  "failures": [
+    {"run":"initial focused collector tests","passed":23,"total":24,"observed":"TLS state fixture expected failed, received ok","repair":"Explicit TLS validation failure takes precedence in the failure-stage state"},
+    {"run":"corpus-attempt-1","passed":70,"total":72,"observed":"page_prefix and page_interrupted rejected as invalid_attempt_outcome","receipt":"corpus-attempt-1/raw_cases.jsonl","repair":"Settle bounded body result before abort; retain received GET status on subsequent body interruption"},
+    {"run":"parallel Node tests","receipt":"node-tests-final.txt","observed":"Real local TLS setup could exceed the 180 ms test budget on the loaded host; one production-import test path was wrong","repair":"Use one-second local fixture deadline and serial test execution; production shared deadline remains 12000 ms"},
+    {"run":"detectors-attempt-1","observed":"ReferenceError: fileURLToPath is not defined","receipt":"detectors-attempt-1.txt","repair":"Import the URL helper; retain partial output"},
+    {"run":"browser attempts","receipts":["browser-attempt-1.txt","browser-attempt-2.txt","browser-attempt-3.txt","browser-attempt-4.txt"],"observed":["Old preview process retained the short test deadline","Strict selector matched both record and sensor All controls","Missing favicon generated 404","Two viewport sessions collided with the target cooldown"],"repair":"Restart own preview, scope selector, inline favicon, distinct logical fixture destinations per viewport"},
+    {"run":"Sites package helper build","observed":"Cannot find module .../node_modules/npm/bin/npm-prefix.js and npm-cli.js","repair":"Run the already inspected portable Node build directly through the source helper"},
+    {"run":"Sites package helper tar","observed":"tar (child): Cannot connect to C: resolve failed","repair":"Git Bash with TAR_OPTIONS=--force-local; exact pushed source reused"},
+    {"run":"recorded capture checkout","observed_sha256":"1cbdc8d477763928e6180c0f6d8c7261cd0894bba50241323eaaade6b89fbb24","expected_sha256":"a96bada34c90cc6a13cf93682f1b99be030470020407a63367794016b364bb8f","repair":"Restore exact Git blob and preserve its bytes with .gitattributes"},
+    {"run":"first hosted candidate","receipt":"hosted-attempt-1/attempt.json","observed":"target_collector_unavailable; branch-scoped collector credential absent","repair":"Reuse existing credential on isolated preview branch and redeploy same runtime"},
+    {"run":"Vercel redeploy request","observed":"400 bad_request: target should be production, staging, or a custom environment identifier","repair":"Omit optional target for existing preview redeploy; resulting target is null, not production"},
+    {"run":"hosted verification stdin/browser adapter","observed":"Windows raw terminal delivered CR; mobile header coverage control is intentionally hidden","repair":"Accept CR or LF on hidden stdin and use visible inline mobile coverage control"}
+  ],
+  "secrets_recorded": false,
+  "thresholds_tuned_against_final_cases": false,
+  "original_evaluation_cases_consumed": true
+}

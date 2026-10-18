@@ -1,0 +1,8 @@
+{
+  "corpus": "artifacts\\proof_runs\\2026-10-18\\observatory-m1\\clean-corpus",
+  "detectors": "artifacts\\proof_runs\\2026-10-18\\observatory-m1\\detectors-final",
+  "browser": "artifacts\\proof_runs\\2026-10-18\\observatory-m1\\browser-final",
+  "seed": 42,
+  "core_behavior_changed": false,
+  "transport_behavior_changed": "Requested TLS/partial-evidence repair and bounded alternate attempts; GET fallback opt-in; 12-second production deadline retained"
+}

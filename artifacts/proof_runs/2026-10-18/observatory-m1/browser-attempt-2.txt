@@ -1,0 +1,16 @@
+node:internal/modules/run_main:107
+    triggerUncaughtException(
+    ^
+
+locator.click: Error: strict mode violation: locator('[data-filter="all"]') resolved to 2 elements:
+    1) <button class="active" data-filter="all" aria-pressed="true">All</button> aka getByLabel('Filter sensor evidence').getByText('All', { exact: true })
+    2) <button class="active" data-filter="all" aria-pressed="true">All</button> aka getByRole('button', { name: 'All' })
+
+Call log:
+  - waiting for locator('[data-filter="all"]')
+
+    at C:\Users\bmpar\codex-worktrees\observatory-fault-harness-20261018\apps\sentinel-observatory\live\fault-harness\browser-qa.mjs:24:45 {
+  log: [ `  - waiting for locator('[data-filter="all"]')` ]
+}
+
+Node.js v24.14.0

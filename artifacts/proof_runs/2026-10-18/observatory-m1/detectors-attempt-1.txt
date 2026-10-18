@@ -1,0 +1,11 @@
+file:///C:/Users/bmpar/codex-worktrees/observatory-fault-harness-20261018/apps/sentinel-observatory/live/fault-harness/compare-detectors.mjs:70
+writeFileSync(join(out,'manifest.json'),JSON.stringify({schema:'detector-run-manifest-v1',command:`node apps/sentinel-observatory/live/fault-harness/compare-detectors.mjs --out ${out}`,timestamp:new Date().toISOString(),config_sha256:sha(configBytes),input_sha256:sha(readFileSync(join(out,'streams.jsonl'))),runner_sha256:sha(readFileSync(fileURLToPath(import.meta.url))),engine_sha256:sha(readFileSync(new URL('../brain.mjs',import.meta.url))),peak_rss_bytes:process.resourceUsage().maxRSS*1024,node:process.version},null,2)+'\n');
+                                                                                                                                                                                                                                                                                                                                       ^
+
+ReferenceError: fileURLToPath is not defined
+    at file:///C:/Users/bmpar/codex-worktrees/observatory-fault-harness-20261018/apps/sentinel-observatory/live/fault-harness/compare-detectors.mjs:70:328
+    at ModuleJob.run (node:internal/modules/esm/module_job:430:25)
+    at async onImport.tracePromise.__proto__ (node:internal/modules/esm/loader:661:26)
+    at async asyncRunEntryPointWithESMLoader (node:internal/modules/run_main:101:5)
+
+Node.js v24.14.0

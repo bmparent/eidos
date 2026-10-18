@@ -1,0 +1,13 @@
+{
+  "schema": "detector-run-manifest-v1",
+  "source_commit": "fde7a8d07db4072eaca5cadbfcbfd96ec3f03c19",
+  "command": "node apps/sentinel-observatory/live/fault-harness/compare-detectors.mjs --out C:\\Users\\bmpar\\codex-worktrees\\observatory-fault-harness-20261018\\artifacts\\proof_runs\\2026-10-18\\observatory-m1\\detectors-final",
+  "timestamp": "2026-10-18T21:19:35.533Z",
+  "config_sha256": "7dcb7e3212764d345573b5252d7a5738dabd4fa313c5863cf1d45f19ae0dbac7",
+  "input_sha256": "b27fc1cb95814afc69be016bed65de02aacf9f6777e6c4591c9a0d798ed0c64c",
+  "runner_sha256": "ccd5513596c173c58873b1d6d6f13a75faaafa764af1719367daf6ee6b7fd90e",
+  "engine_sha256": "c6389999043e81288154f9b034dd97ef1b32661b8b2707977ebee2f00b427bd2",
+  "target_adapter_sha256": "bc5a2b2e15cbb72e811dce456727cb74886c8157a2e2c24b37e23c8d782ec7d6",
+  "peak_rss_bytes": 78225408,
+  "node": "v24.14.0"
+}

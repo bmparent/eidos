@@ -1,0 +1,9 @@
+{
+  "passed": false,
+  "public_example_observation": "target_collector_unavailable",
+  "cause": "OBSERVATORY_COLLECTOR_SECRET was scoped only to PR77 preview branch; the new branch initially had no collector secret",
+  "independent_browser_harness_issue": "Desktop passed; mobile used a header button intentionally hidden at that width. The supported inline coverage control is used in the corrected verifier.",
+  "repair": "Existing collector secret reused only on the isolated preview branch, exact runtime commit redeployed; Site binding updated and saved version 17 redeployed with environment revision 8",
+  "endpoint_failure_invented": false,
+  "actual_openai_calls": 0
+}

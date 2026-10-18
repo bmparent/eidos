@@ -1,0 +1,89 @@
+{
+  "schema": "observatory-engineering-run-v1",
+  "source_commit": "c184ae06819e7ad326f141f378b2d83f9b91152c",
+  "dirty": true,
+  "command": "node apps/sentinel-observatory/live/fault-harness/run.mjs --out artifacts/proof_runs/2026-10-18/observatory-m1/corpus-attempt-1",
+  "node": "v24.14.0",
+  "platform": "win32",
+  "architecture": "x64",
+  "engine": "portable scalar Sentinel V3, 32 reservoirs; unchanged brain.mjs",
+  "prompt_version": "observatory-sol-target-stages-v3",
+  "input_hashes": {
+    "scenarios.json": "2ce872b282e9e7406c61348b1804a7af419a2d803b71e163e758d21f41d47cde",
+    "protocol.json": "196f879bc93cbe88db63d42feed97d5a71ac28e142c0a55a5c914f57f136e4a4",
+    "assertions.json": "fd804eca286b562ee44e31239865f4745d1c0db54479b9a72d8364515a80ef9a"
+  },
+  "source_hashes": {
+    "brain.mjs": "c6389999043e81288154f9b034dd97ef1b32661b8b2707977ebee2f00b427bd2",
+    "brain.test.mjs": "4cab864ddd34d8772a6e6fa956a0726c50190cd2b65623d2152f87dc15f789c4",
+    "browser-interpreter.test.mjs": "dd465ffbecec1a2f7c0568a10a879f2d189f57fa978497a0a2dc9a74e91a9a8e",
+    "build_worker.py": "597aa2c7020b014a111b89b69f3478ffa94ccd1eb3a1a0d182151ac7755e9610",
+    "collector.mjs": "f408af93cceab5cfbe45d2c588d2c926225c08babe3a5a6a0199dfea013fc09d",
+    "collector.test.mjs": "6e27feca5a4a1a19d2e536e9008e490edd748db85e01f6e8d0010142e6d9c2b1",
+    "evaluate-target-integration.mjs": "a1599f4d3d47f33e6077c58416dff8b2ae8b0ff9f1775aed49699237526c489e",
+    "generate_brain_reference.py": "b5565a86350e2fae4be718b0e9178099b3efc2b22192e3e88d0e3afbeb0bb1c9",
+    "hosted-sensor.mjs": "7302dc4183056e576fc161f82b8f017b7b1a42046d1b53357bf6fc0f959286fa",
+    "hosted-sensor.test.mjs": "cca3dcf175a33aec4dfbe6a76919adc1067174692f5441bd302d0d229ba67fd6",
+    "local_server.py": "011eb4eefe30b4f8fd005fc8a14fec7d0622c38c020c5f7b54d661bd73aafbf7",
+    "node-companion.mjs": "48efbb3b81c92d3de4caa823ed25675ff49414df6f5bfde1a3f7bb4f269f3632",
+    "node-probes.mjs": "3ed527b1964a6c6ca18d493ac14fbb00caf1484a03f61113c5143b1f430f0db3",
+    "path-probes.mjs": "292f226dfeb280d8d20fb3967bae73950decfebf85a14d7c91f823029d04b37b",
+    "path-probes.test.mjs": "ac3856dd8a246e0c2ab79cb4c356abe8c94e31d66bb12bf1ca7d6101f7e017d8",
+    "probe-explanation.mjs": "cd96928638a5a91ee7025ce74b971fe4a74a70f2cb6432a532ce257064203186",
+    "probe-explanation.test.mjs": "322b35177491ad71f3d9d745c9433d385d90ce5ddcd46a97fea4397881b59209",
+    "security-events.mjs": "5cba4df2e042e3f04d9e3d46eb88e651ea4f1f29532a50b72355d14e41ba76f0",
+    "security-events.test.mjs": "764f5a4973b4bfff0cf712f1c769d65df071a3cc2a631bf25b31f577a39d0e1f",
+    "sensor_log.py": "35f699d22ed0da0319267e5142f8cd5864919e5f12dec99564aaf92daa6de198",
+    "sol-interpreter.mjs": "316438af8f8ca411c86cf3656626752becd340394b40ce7bd4a8d68f23b59c23",
+    "sol-interpreter.test.mjs": "ca4c22f7dc09bab72951cdc29ed1d0545790e9970be4e8505baf1878ecbabe7c",
+    "sqlite-store.mjs": "397be0db0c04b0042cee2095de3b500e2e63bfbb82feeddfdb24e6c4118c627e",
+    "target-brain.mjs": "bc5a2b2e15cbb72e811dce456727cb74886c8157a2e2c24b37e23c8d782ec7d6",
+    "target-interpretation.mjs": "4200b389bf87bf8e45d020a7d6dd3ad6a3b744a13152dd0775158d1d5906ffeb",
+    "target-probes.test.mjs": "151f6c4a02287d7510d014ca19f5c9135763bb645df02fb339a04b0fbf469957",
+    "target-relay.mjs": "70fdabd8d9f59128161c0dc518c56c898748ce53831b1b58d2bcad1cf56cfdc5",
+    "target-store.mjs": "27becaeaf6755d533dbad7d2e71275e9b27320ece93468049eee3b2713c0c5bc",
+    "test_local_model.py": "b4941fc40c349703c0324d008d4684142aecff159bea876294d66d2377213945",
+    "test_local_server.py": "cc38fadd2ff57c2bdf14c90b663f9689d89547fefd4f534f4208881dbe584617",
+    "test_sensor_log.py": "4454d16168af1844989c6f9dc053da03bd3465e3c92449d37bafcbffed44268d",
+    "verify_brain_parity.mjs": "11ce805cd9eae4035e46dfdc40b78c885d7f373c73479a22ad02270b228ff8b7",
+    "worker-entry.mjs": "2f8cffd3c262d77beece146a44dafc53e78726521bb4ffb7321a03cdf5a94042",
+    "fault-harness/assertions.json": "fd804eca286b562ee44e31239865f4745d1c0db54479b9a72d8364515a80ef9a",
+    "fault-harness/freeze.mjs": "ec217e719e0aaeb4e6d77ac7cb5cd2aed4d4ca78a33e1e754563abf4e04b89d6",
+    "fault-harness/protocol.json": "196f879bc93cbe88db63d42feed97d5a71ac28e142c0a55a5c914f57f136e4a4",
+    "fault-harness/registry-lock.json": "6315776808886490a923618b7df75f130662b895b563ba6c82b1e3e689a4a6dd",
+    "fault-harness/run.mjs": "1a821d2e0abd52595d9b32ea181ed978df18fe2c976f036faa462afa045d696f",
+    "fault-harness/scenarios.json": "2ce872b282e9e7406c61348b1804a7af419a2d803b71e163e758d21f41d47cde",
+    "fault-harness/scoring-lock.json": "2d9cdf7b34ce738d24767c4df147ce5fb09d1a6128b03ecae5ceee8a154832a8",
+    "fault-harness/transport.mjs": "253d1aca97156b9b95a9b594184666bc480638321071402bb076f3f46b2b9b66"
+  },
+  "raw_cases_sha256": "86c7190f536b73a689753f707a69e2208d62bf07d5c0bd7ec3afd01ce4eedc5f",
+  "summary": {
+    "schema": "observatory-fault-results-v1",
+    "evidence_class": "synthetic_controlled",
+    "started_at": "2026-10-18T20:54:57.643Z",
+    "completed_at": "2026-10-18T20:55:03.629Z",
+    "cases": 72,
+    "passed": 70,
+    "failed": 2,
+    "families": 12,
+    "splits": {
+      "development": {
+        "total": 48,
+        "passed": 47
+      },
+      "locked_evaluation": {
+        "total": 24,
+        "passed": 23
+      }
+    },
+    "external_endpoint_requests": 0,
+    "actual_openai_calls": 0,
+    "limitations": [
+      "Synthetic local faults; not real pilot observations.",
+      "DNS answers and TCP blackholes are explicit test simulations; HTTP/TLS/refusal cases use real local sockets.",
+      "Wall-clock timing and event UUIDs vary; assertions use frozen tolerances.",
+      "No independent human explanation scores.",
+      "No tenant isolation, hosted unattended scheduling or second observer acceptance inferred."
+    ]
+  }
+}

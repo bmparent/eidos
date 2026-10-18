@@ -1,0 +1,30 @@
+{
+  "schema": "observatory-pilot-plan-v1",
+  "status": "not_started",
+  "durable_run_id": null,
+  "authorized_targets": [],
+  "two_independent_observers": false,
+  "automatic_model_calls": false,
+  "proposed_cadence_seconds": 300,
+  "example_targets": 2,
+  "example_observers": 2,
+  "estimated_checks_per_day": 1152,
+  "estimated_seven_day_checks": 8064,
+  "actual_checks": null,
+  "actual_cost_usd": null,
+  "blocking_implementation": [
+    "tenant membership and ownership migration",
+    "durable schedule/job reservation/leases",
+    "observer-specific baseline keys",
+    "incident state and idempotent outbox",
+    "retention above global 2048-record cap"
+  ],
+  "external_acceptance": [
+    "supported hosting schedule/worker configuration and current entitlement",
+    "two actual authorized identities",
+    "second independent collector failure domain",
+    "explicit pilot target allowlist",
+    "seven elapsed days and independent explanation reviewers"
+  ],
+  "resumption": "Implement scoped durable monitor jobs, then create a pilot manifest with actual observers and allowlist. Do not resume a nonexistent pilot or create retrospective slots."
+}

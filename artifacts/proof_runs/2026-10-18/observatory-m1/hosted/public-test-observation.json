@@ -1,0 +1,356 @@
+{
+  "event": {
+    "id": "evt_395a8240465a41e3a4684fd43c418152",
+    "source_id": "target_0c8b41cfdcb3c914",
+    "target": "example.com",
+    "url": "https://example.com/",
+    "method": "HEAD",
+    "kind": "measurement",
+    "measurement_contract": "target-evidence-v2",
+    "attempts": [
+      {
+        "index": 0,
+        "hop": 0,
+        "method": "HEAD",
+        "url": "https://example.com/",
+        "address": "104.20.23.154",
+        "family": 4,
+        "observer": "node-pinned-target-v1:iad1",
+        "started_at": "2026-10-18T21:25:19.531Z",
+        "completed_at": "2026-10-18T21:25:19.563Z",
+        "elapsed_ms": 31.722,
+        "budget_ms": 3991.568,
+        "outcome": "response",
+        "status": 200,
+        "timing": {
+          "tcp_ms": 12.125,
+          "tls_ms": 6.779,
+          "response_wait_ms": 8.95,
+          "headers_ms": 27.854
+        },
+        "tls_protocol": "TLSv1.3",
+        "certificate": {
+          "valid_from": "2026-09-26T22:49:11.000Z",
+          "valid_to": "2026-12-25T22:56:35.000Z",
+          "fingerprint256": "85ca6ab068e9bcce88b6c4aa3c47f7d17228134a457f870d3800e6223a0df07a",
+          "issuer": "SSL Corporation",
+          "identity_verified": true
+        },
+        "network": {
+          "destination_ip": "104.20.23.154",
+          "peer_ip": "104.20.23.154",
+          "socket_connected": true,
+          "tls_verified": true,
+          "tls_protocol": "TLSv1.3",
+          "bytes_read": 311,
+          "bytes_written": 308
+        }
+      }
+    ],
+    "selected_attempt": 0,
+    "deadline_ms": 12000,
+    "observed_at": "2026-10-18T21:25:19.506Z",
+    "completed_at": "2026-10-18T21:25:19.563Z",
+    "latency_ms": 27.854,
+    "elapsed_ms": 57.583,
+    "status": 200,
+    "error": null,
+    "headers": {
+      "server": "cloudflare",
+      "content-type": "text/html",
+      "cf-cache-status": "hit"
+    },
+    "security_headers": {
+      "hsts_present": false,
+      "csp_present": false,
+      "x_content_type_options": "absent",
+      "frame_options": "absent",
+      "referrer_policy": "absent",
+      "cache_private": false,
+      "cache_no_store": false
+    },
+    "redirect": null,
+    "redirect_count": 0,
+    "response_chain_complete": true,
+    "probe_version": "target-probes-v1",
+    "collector_id": "node-pinned-target-v1:iad1",
+    "probe_options": {
+      "page_check": false,
+      "follow_redirects": false,
+      "get_fallback": false
+    },
+    "probes": {
+      "dns": {
+        "state": "ok",
+        "duration_ms": 21.894,
+        "addresses": [
+          "104.20.23.154",
+          "172.66.147.243",
+          "2606:4700:10::6814:179a",
+          "2606:4700:10::ac42:93f3"
+        ]
+      },
+      "tcp": {
+        "state": "ok",
+        "duration_ms": 12.125
+      },
+      "tls": {
+        "state": "ok",
+        "duration_ms": 6.779,
+        "protocol": "TLSv1.3",
+        "certificate": {
+          "valid_from": "2026-09-26T22:49:11.000Z",
+          "valid_to": "2026-12-25T22:56:35.000Z",
+          "fingerprint256": "85ca6ab068e9bcce88b6c4aa3c47f7d17228134a457f870d3800e6223a0df07a",
+          "issuer": "SSL Corporation",
+          "identity_verified": true
+        }
+      },
+      "http": {
+        "state": "ok",
+        "response_wait_ms": 8.95,
+        "headers_ms": 27.854,
+        "header_signature": "db452e732f29e80699701c45eed9b1249cbff6b0191d6593885bf2e575384d9b",
+        "chain": [
+          {
+            "status": 200,
+            "url": "https://example.com/",
+            "method": "HEAD",
+            "attempt": 0
+          }
+        ],
+        "final_status": 200,
+        "chain_state": null,
+        "method_coverage": null,
+        "get_fallback": null
+      },
+      "page": {
+        "state": "disabled"
+      },
+      "path": {
+        "state": "unavailable",
+        "reason": "local_companion_required"
+      }
+    },
+    "coverage": {
+      "vantage": "Node public-only pinned endpoint observer",
+      "transport": {
+        "kind": "authenticated_pinned_target_relay",
+        "effective_url": "https://example.com/"
+      },
+      "sampling": "First-hop timings; optional public redirect chain and bounded page fingerprint",
+      "head_attempted": true,
+      "redirect_followed": false,
+      "body_collected": false,
+      "dns": {
+        "state": "resolved_public_and_pinned",
+        "address_pinned": true
+      },
+      "addresses": {
+        "validated": 4,
+        "attempted": 1,
+        "limit": 3,
+        "scope": "Bounded attempts from this observer; target-wide availability remains unknown"
+      },
+      "network": {
+        "scope": "observatory_outbound_head_connection",
+        "destination_ip": "104.20.23.154",
+        "destination_port": 443,
+        "protocol": "TCP",
+        "application_protocol": "HTTPS",
+        "peer_ip": "104.20.23.154",
+        "peer_port": 443,
+        "peer_matches_destination": true,
+        "socket_connected": true,
+        "tls_verified": true,
+        "tls_protocol": "TLSv1.3",
+        "bytes_read": 311,
+        "bytes_written": 308,
+        "packet_counts_available": false,
+        "counter_scope": "This HEAD connection only; application socket counters"
+      },
+      "missing": [
+        "Target visitor traffic",
+        "Internal network",
+        "Packet capture",
+        "Origin processing time",
+        "Hosted ICMP or traceroute"
+      ]
+    },
+    "target_analysis": {
+      "profile": "target-metrics-v2",
+      "engine": "Eidos Brain / Sentinel V3 · portable JS port",
+      "source": "authoritative_server",
+      "source_id": "target_0c8b41cfdcb3c914",
+      "evidence_id": "evt_395a8240465a41e3a4684fd43c418152",
+      "observed_at": "2026-10-18T21:25:19.563Z",
+      "experimental": true,
+      "security_verdict": "not_assessed",
+      "forecast_claim": "Current-frame change detection; no incident prediction",
+      "signals": [
+        {
+          "metric": "dns_ms",
+          "label": "DNS lookup",
+          "unit": "ms",
+          "value": 21.894,
+          "prior_median": null,
+          "delta": null,
+          "state": "calibrating",
+          "sample_count": 1,
+          "warmup_remaining": 11,
+          "event_score": null,
+          "raw_engine_change": false,
+          "measured_deviation": false,
+          "deviation_threshold": null,
+          "evidence_ids": [
+            "evt_395a8240465a41e3a4684fd43c418152"
+          ],
+          "baseline_evidence_ids": [],
+          "meaning": "Operational flag requires both Sentinel change and a measured departure beyond the prior median/MAD gate; not an attack probability"
+        },
+        {
+          "metric": "tcp_ms",
+          "label": "TCP connection",
+          "unit": "ms",
+          "value": 12.125,
+          "prior_median": null,
+          "delta": null,
+          "state": "calibrating",
+          "sample_count": 1,
+          "warmup_remaining": 11,
+          "event_score": null,
+          "raw_engine_change": false,
+          "measured_deviation": false,
+          "deviation_threshold": null,
+          "evidence_ids": [
+            "evt_395a8240465a41e3a4684fd43c418152"
+          ],
+          "baseline_evidence_ids": [],
+          "meaning": "Operational flag requires both Sentinel change and a measured departure beyond the prior median/MAD gate; not an attack probability"
+        },
+        {
+          "metric": "tls_ms",
+          "label": "TLS handshake",
+          "unit": "ms",
+          "value": 6.779,
+          "prior_median": null,
+          "delta": null,
+          "state": "calibrating",
+          "sample_count": 1,
+          "warmup_remaining": 11,
+          "event_score": null,
+          "raw_engine_change": false,
+          "measured_deviation": false,
+          "deviation_threshold": null,
+          "evidence_ids": [
+            "evt_395a8240465a41e3a4684fd43c418152"
+          ],
+          "baseline_evidence_ids": [],
+          "meaning": "Operational flag requires both Sentinel change and a measured departure beyond the prior median/MAD gate; not an attack probability"
+        },
+        {
+          "metric": "response_wait_ms",
+          "label": "HTTP response wait",
+          "unit": "ms",
+          "value": 8.95,
+          "prior_median": null,
+          "delta": null,
+          "state": "calibrating",
+          "sample_count": 1,
+          "warmup_remaining": 11,
+          "event_score": null,
+          "raw_engine_change": false,
+          "measured_deviation": false,
+          "deviation_threshold": null,
+          "evidence_ids": [
+            "evt_395a8240465a41e3a4684fd43c418152"
+          ],
+          "baseline_evidence_ids": [],
+          "meaning": "Operational flag requires both Sentinel change and a measured departure beyond the prior median/MAD gate; not an attack probability"
+        },
+        {
+          "metric": "headers_ms",
+          "label": "First-hop response headers",
+          "unit": "ms",
+          "value": 27.854,
+          "prior_median": null,
+          "delta": null,
+          "state": "calibrating",
+          "sample_count": 1,
+          "warmup_remaining": 11,
+          "event_score": null,
+          "raw_engine_change": false,
+          "measured_deviation": false,
+          "deviation_threshold": null,
+          "evidence_ids": [
+            "evt_395a8240465a41e3a4684fd43c418152"
+          ],
+          "baseline_evidence_ids": [],
+          "meaning": "Operational flag requires both Sentinel change and a measured departure beyond the prior median/MAD gate; not an attack probability"
+        },
+        {
+          "metric": "failure_ratio",
+          "label": "Failed probes · last 20",
+          "unit": "ratio",
+          "value": 0,
+          "prior_median": null,
+          "delta": null,
+          "state": "calibrating",
+          "sample_count": 1,
+          "warmup_remaining": 11,
+          "event_score": null,
+          "raw_engine_change": false,
+          "measured_deviation": false,
+          "deviation_threshold": null,
+          "evidence_ids": [
+            "evt_395a8240465a41e3a4684fd43c418152"
+          ],
+          "baseline_evidence_ids": [],
+          "meaning": "Operational flag requires both Sentinel change and a measured departure beyond the prior median/MAD gate; not an attack probability"
+        },
+        {
+          "metric": "icmp_rtt_ms",
+          "label": "ICMP round trip",
+          "unit": "ms",
+          "value": null,
+          "state": "unavailable",
+          "event_score": null,
+          "sample_count": 0,
+          "evidence_ids": [
+            "evt_395a8240465a41e3a4684fd43c418152"
+          ]
+        },
+        {
+          "metric": "icmp_loss_ratio",
+          "label": "ICMP probe loss",
+          "unit": "ratio",
+          "value": null,
+          "state": "unavailable",
+          "event_score": null,
+          "sample_count": 0,
+          "evidence_ids": [
+            "evt_395a8240465a41e3a4684fd43c418152"
+          ]
+        }
+      ],
+      "changes": [],
+      "state": "calibrating",
+      "episode": null,
+      "generation": 1,
+      "history_samples": 1,
+      "calibration_reset": null,
+      "coverage_gap_ms": null,
+      "collector_id": "node-pinned-target-v1:iad1",
+      "baseline_scope": "Separate metric, target, probe settings and collector identity",
+      "missing_data_policy": "Unmeasured values excluded; failed observations counted separately; no gap filled with zero"
+    },
+    "target_storage": "retained"
+  },
+  "target": {
+    "id": "target_0c8b41cfdcb3c914",
+    "url": "https://example.com/",
+    "label": "example.com"
+  },
+  "retry_after_ms": 15000,
+  "rate_limit_scope": "Per isolate and canonical target; not durable or globally coordinated"
+}

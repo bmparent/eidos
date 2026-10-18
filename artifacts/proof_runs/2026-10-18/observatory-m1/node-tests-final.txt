@@ -1,0 +1,247 @@
+✔ portable canonical-source hashes match generated reference (57.8014ms)
+✔ Python parity: recorded-account (recorded real response latencies; parity-only replay) (71.8626ms)
+✔ Python parity: recorded-community (recorded real response latencies; parity-only replay) (15.4402ms)
+✔ Python parity: recorded-home (recorded real response latencies; parity-only replay) (47.0274ms)
+✔ Python parity: recorded-playground (recorded real response latencies; parity-only replay) (15.451ms)
+✔ Python parity: recorded-probe (recorded real response latencies; parity-only replay) (1.3888ms)
+✔ Python parity: synthetic-regime-changes (TEST FIXTURE ONLY; never telemetry) (1170.3181ms)
+✔ Python parity: synthetic-zero-and-extreme (TEST FIXTURE ONLY; never telemetry) (112.0263ms)
+✔ Python parity: synthetic-stationary (TEST FIXTURE ONLY; never telemetry) (592.4317ms)
+✔ frozen forecasts precede request starts and numerical errors use actual outcome (106.2104ms)
+✔ transport timeout does not train detector or score an 8-second response (76.2384ms)
+✔ fresh epochs reject backfill and source state is independent (18.7143ms)
+✔ invalid numeric observations and duplicates are excluded, all output remains JSON finite (13.074ms)
+✔ long gap and overlapping request forecasts unscored; calibration gap is explicit (59.162ms)
+✔ received redirect HEAD latency enters first-hop baseline without a final-target claim (25.7115ms)
+✔ forecast uses actual browser computation clock, never backdated server response time (57.2013ms)
+✔ analysis is deterministic, evidence-linked and treats input content only as data (7.6899ms)
+✔ only attempted actual HEAD responses with explicit success enter calibration (14.1462ms)
+✔ redirect to non-redirect transition resets detector and prevents prior-mode forecast scoring (93.0326ms)
+✔ each collector identity change resets first-hop calibration even when response mode is unchanged (17.9891ms)
+✔ errors do not change calibration identity and target baselines remain independent (2.1594ms)
+✔ a collector change starts a fresh server clock sequence while preserving browser timing and dedupe (6.5163ms)
+✔ model context excludes all untrusted text, instructions, URLs and secrets (16.6504ms)
+✔ model only sees same-source earlier dated evidence, never future or unrelated streams (8.4952ms)
+✔ output can only rank distinct eligible catalogue codes (36.7387ms)
+✔ timeout candidate references only measured timeout observations (2.0619ms)
+✔ disabled model never claims inference or blocks evidence summary (2.3202ms)
+✔ sensor interpretation includes only safe scalars and catalogue-linked facts (3.5436ms)
+✔ connection model context includes volume and duration without addresses (1.8368ms)
+✔ native service requests stay operational telemetry rather than attack or enforcement findings (2.2297ms)
+✔ native known enforcement gets bounded control candidates and explicit intent uncertainty (2.1884ms)
+✔ unrecognized or mismatched native rule does not establish enforcement (2.7216ms)
+✔ native collector socket and TLS fields are measured scalars with no endpoint context (7.2153ms)
+✔ native collector preflight never implies an outbound request or upstream finding (5.0316ms)
+sentinel_collector_failure {"stage":"head_request","classifier":"transport_failure","exception_name":"Error","message":"[sensitive value redacted] [sensitive value redacted] [hostname redacted] private proxy","stack_functions":[]}
+✔ oversized and stalled request bodies stop before any outbound request (3147.2008ms)
+✔ normalizes domain, IDN, explicit standard ports, IPv4 and IPv6 without network (226.9002ms)
+✔ rejects SSRF special addresses including alternative IPv4 encodings and IPv6 tunnels (102.8231ms)
+✔ rejects credentials, control input, nonstandard ports, schemes, query, fragments and recursion (4.0044ms)
+✔ exactly one HEAD after public DNS validation, no forwarded secrets or body reads (97.9369ms)
+✔ all returned DNS addresses must be public; mixed records fail before HEAD (154.1346ms)
+✔ DNS empty/failed/oversized/malicious aliases fail closed (128.3514ms)
+✔ redirects are recorded once, never followed, unsafe destinations withheld (177.0136ms)
+✔ transport failures are unknown status without raw exceptions or site outage claims (66.7763ms)
+✔ body cancellation cleanup failure does not erase already observed response (40.9391ms)
+✔ pre-cancelled observation has no outbound requests (62.1197ms)
+✔ IP limitation is an actionable 422 error, never a synthetic observation (61.0215ms)
+✔ HTTP API enforces same origin, POST, exact small JSON and recursion denial (382.334ms)
+✔ canonical target rate limit reserves before work and forwards no client credentials (162.3848ms)
+✔ default global fetch retains the runtime receiver for DNS and HEAD (37.3125ms)
+✔ runtime failure codes and diagnostic logs are bounded and contain no raw messages (62.2981ms)
+✔ server-only diagnostics redact credentials, URLs, addresses and opaque strings (42.7732ms)
+✔ works with an older Worker runtime that rejects RequestInit.cache before network I/O (40.6157ms)
+✔ works with the deployed older edge runtime that rejects redirect error mode (49.6361ms)
+✔ DNS redirects are rejected in manual mode without following or sending target HEAD (22.7218ms)
+✔ 1.1.1.1 fallback identifies named service and never claims a direct pinned IP (35.5601ms)
+✔ relay configuration is server-only HTTPS Vercel exact route with bounded secrets (37.4275ms)
+✔ pinned IP relay sends one server POST and accepts only matching bounded evidence (67.9667ms)
+✔ private IPs and DNS names never dispatch to the direct IP relay (91.8677ms)
+✔ mismatched targets, unpinned transport, body capture and inconsistent times fail relay evidence validation (122.2164ms)
+✔ IP relay refuses redirects/protection errors and never forwards arbitrary remote messages (23.6717ms)
+✔ hosted API generic public IP routes to configured collector without visitor credentials (6.3723ms)
+✔ cancelled IP relay has no outbound request and preserves a clear cancellation result (1.7795ms)
+✔ IP socket metadata is allowlisted and public-only, unavailable metrics stay null (8.5323ms)
+✔ public IP collector cooldown includes retry interval on hosted API (10.5356ms)
+(node:35404) ExperimentalWarning: SQLite is an experimental feature and might change at any time
+(Use `node --trace-warnings ...` to show where the warning was created)
+✖ real fixture stages persist, explain and replay; negative controls remain unknown (1300.541ms)
+✖ real body prefix completion precedes socket abort; interrupted bodies retain received HTTP status (891.3287ms)
+✖ attempt contract rejects forged peer, selected response, family, option and chain status (765.8683ms)
+✖ production Node entry and Worker builder have no import path to the fixture adapter (92.4676ms)
+✔ HEAD coverage and cancellation wording do not manufacture an outage or an HTTP timeout response (108.0367ms)
+(node:35384) ExperimentalWarning: SQLite is an experimental feature and might change at any time
+(Use `node --trace-warnings ...` to show where the warning was created)
+✔ native source is disconnected unless the exact D1 storage binding exists (54.9555ms)
+✔ actual incoming and outbound response metadata persists without secrets or target paths (1149.3178ms)
+✔ explicit real policy enforcement is separate from the triggering request and tagged functional checks (15.9921ms)
+✔ TLS failures and HTTP errors stay operational, with unknown socket counters as null (153.4416ms)
+✔ feed polling, capabilities and static assets never manufacture observations (11.7073ms)
+✔ real SQLite retention keeps latest 1000 records and deletes records older than seven days (280.5625ms)
+✔ missing migrations fail visibly rather than returning a false zero-event verdict (6.0604ms)
+✔ a sensor read purges expired rows without creating new observations (4.4078ms)
+✔ an oversized response cannot be copied into sensor storage (27.6413ms)
+✔ an incomplete response stream cannot stall sensor ingestion beyond its evidence deadline (2576.0745ms)
+✔ authoritative resolution canonicalizes native IDs and original receipt aliases to one source row (202.0367ms)
+✔ client observations and imported-looking IDs never become authoritative model evidence (229.8163ms)
+✔ expired, wrong-source and future rows are unavailable to authoritative interpretation (50.1916ms)
+✔ retained metadata is resanitized and inconsistent source provenance fails closed (148.5192ms)
+✔ policy detection requires the actual expected enforcement HTTP status (63.0677ms)
+✔ current oversized-request enforcement uses413 while authentic retained legacy400 remains resolvable (103.6368ms)
+✔ additive model migration enforces deduplication, valid result JSON and durable reservation constraints (80.6689ms)
+(node:19444) ExperimentalWarning: SQLite is an experimental feature and might change at any time
+(Use `node --trace-warnings ...` to show where the warning was created)
+✔ path probes use a pinned public numeric destination and a fixed command without a shell (42.407ms)
+✔ missing ICMP tools and filtered replies remain explicit rather than healthy zero latency (12.7527ms)
+✔ traces bound hop counts and omit private router addresses (70.6201ms)
+✔ local companion serves probe UI and rejects remote-host or cross-origin collection (2479.6501ms)
+✔ a failed TCP check is not an HTTP timeout status and retains the actual 12-second wait (79.4858ms)
+✔ DNS, TLS and completed-connection HTTP failures give different review instructions (1.6998ms)
+✔ unknown connection detail stays unknown instead of inventing a failed handshake (1.3617ms)
+✔ stable observations cannot select explanations for a change that was never detected (1.7661ms)
+✔ HTTP failures are received responses with status-specific next checks (1.5944ms)
+✔ followed and incomplete redirects keep first-hop and destination evidence separate (1.2009ms)
+✔ calibration and context resets are stated before baseline numbers (1.6129ms)
+✔ sensor rule evidence has original timestamps and bounded safe metadata (43.9471ms)
+✔ JSON numeric 64-bit flow identifier remains lossless (2.2368ms)
+✔ distinct microsecond sensor rows do not collide after browser timestamp normalization (7.5366ms)
+✔ Zeek connection, notice, DNS and TLS preserve source time and exclude notice messages (12.6976ms)
+✔ duplicates and partial/malformed source records are excluded with visible gaps (6.4224ms)
+✔ invalid timezone, future source times and unrelated HTTP logs are rejected (6.456ms)
+✔ bounded imports stop beyond row caps and reject oversized input (37.8607ms)
+✔ network baseline has 12 warmup records and any deviation remains experimental (54.1376ms)
+✔ destination fanout is per origin and explicitly heuristic (56.9548ms)
+✔ alert-only exports do not invent network features, empty windows or forecasts (3.2362ms)
+✔ native edge records preserve actual receipt ids and enforce separate control semantics (7.6687ms)
+✔ native unknown or mismatched policy controls are rejected and raw URLs omitted (3.354ms)
+✔ native duration features separate direction and endpoints and exclude failed HEAD outcomes (52.9586ms)
+(node:15660) ExperimentalWarning: SQLite is an experimental feature and might change at any time
+(Use `node --trace-warnings ...` to show where the warning was created)
+✔ changed cached context explains its incompatibility and never dispatches another provider call (532.708ms)
+✔ provider authentication, throttling and service failure retain distinct bounded error codes (117.918ms)
+✔ missing server key is explicit and cannot trigger a provider call (17.0802ms)
+✔ provider call uses exact Sol Responses settings and only scalar authoritative metadata (93.3623ms)
+✔ deployed receiver-bound fetch and manual redirect compatibility are preserved (29.3673ms)
+✔ API redirects never forward the server key or trigger a follow-up call (36.2344ms)
+✔ a followed redirect reported by the runtime is rejected even with HTTP 200 (44.7788ms)
+✔ pre-aborted requests do not reserve budget or invoke a provider (43.21ms)
+✔ client observations, prompts, imported IDs, cross-origin and cross-site calls are rejected before inference (12.104ms)
+✔ unretained or expired evidence cannot charge or use client narrative (48.6081ms)
+✔ linked HTTP receipt and native ID share a durable cache without a second model call (77.586ms)
+✔ concurrent alias requests reserve one durable attempt and do not double charge (86.3071ms)
+✔ concurrent different evidence IDs atomically share the global cooldown and budget (63.6311ms)
+✔ global cooldown, reserved-dollar limit and request count each stop new provider attempts (94.1495ms)
+✔ timeouts retain reservation, expose uncertain execution and never retry the same evidence (198.3856ms)
+✔ malformed, refused, incomplete, mismatched-model, duplicate or fabricated output cannot create accepted claims (998.6553ms)
+✔ verified completed Sol execution is separate from rejected ranking acceptance (108.9452ms)
+✔ provider errors and oversized responses do not expose error text or credentials (321.0414ms)
+✔ missing cache migration fails closed before provider inference (131.9628ms)
+✔ native policy context excludes endpoint names and preserves known enforcement without intent claims (46.288ms)
+✔ HTTP 304 is a recorded response and never becomes a redirect explanation (23.3764ms)
+✔ old model metadata is bounded without erasing current-day budget reservations (114.5568ms)
+✔ cached facts and catalogue text are rebuilt instead of trusting stored prose (91.2193ms)
+(node:26576) ExperimentalWarning: SQLite is an experimental feature and might change at any time
+(Use `node --trace-warnings ...` to show where the warning was created)
+✔ domain probes pin every socket and preserve DNS, TCP, TLS and HTTP stages (85.4207ms)
+✔ literal IP has no invented DNS timing and HTTP has no invented TLS timing (4.5699ms)
+✔ mixed public/private DNS answers reject before any connection; failure stays evidence (4.2014ms)
+✔ optional page check hashes a bounded body without retaining its content (39.1688ms)
+✔ redirect following is opt-in and public validation applies to every hop (54.0504ms)
+✔ TLS validation failure preserves successful TCP timing without an insecure retry (59.6578ms)
+✔ relay contract rejects a mismatched destination, false probe options and unsafe redirect URLs (14.3811ms)
+✔ collector authenticates before parsing or probing and bounds its request schema (82.0484ms)
+✔ independent metric streams survive checkpoint restore; duplicates do not train twice (303.7964ms)
+✔ missing timing is excluded and failure has its own actual outcome stream (51.7432ms)
+✔ categorical DNS/certificate changes retain evidence and are not attack verdicts (51.4218ms)
+✔ quiet numerical streams do not become operational anomalies solely from reservoir dynamics (1467.9183ms)
+✔ v1 checkpoints migrate to the measured-deviation profile without discarding their samples (249.5025ms)
+✔ collector/settings changes rewarm; stale and out-of-order frames never contaminate calibration (692.2324ms)
+✔ SQLite persistence, server history and duplicate delivery preserve one learned sample per evidence ID (1253.3699ms)
+✔ concurrent observations use compare-and-swap without lost learning or duplicate rows (65.8889ms)
+✔ Sol receives retained metric comparisons and scores while raw endpoints, addresses and fingerprints stay excluded (1510.3983ms)
+ℹ tests 150
+ℹ suites 0
+ℹ pass 146
+ℹ fail 4
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 13981.8749
+
+✖ failing tests:
+
+test at apps\sentinel-observatory\live\fault-harness.test.mjs:11:1
+✖ real fixture stages persist, explain and replay; negative controls remain unknown (1300.541ms)
+  AssertionError [ERR_ASSERTION]: known failure stage
+  
+  'tcp' !== 'http'
+  
+      at executeCase (file:///C:/Users/bmpar/codex-worktrees/observatory-fault-harness-20261018/apps/sentinel-observatory/live/fault-harness/run.mjs:72:12)
+      at process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+      at async TestContext.<anonymous> (file:///C:/Users/bmpar/codex-worktrees/observatory-fault-harness-20261018/apps/sentinel-observatory/live/fault-harness.test.mjs:14:18)
+      at async Test.run (node:internal/test_runner/test:1125:7)
+      at async startSubtestAfterBootstrap (node:internal/test_runner/harness:358:3) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: 'tcp',
+    expected: 'http',
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at apps\sentinel-observatory\live\fault-harness.test.mjs:18:1
+✖ real body prefix completion precedes socket abort; interrupted bodies retain received HTTP status (891.3287ms)
+  AssertionError [ERR_ASSERTION]: known failure stage
+  + actual - expected
+  
+  + 'connection'
+  - 'http'
+  
+      at executeCase (file:///C:/Users/bmpar/codex-worktrees/observatory-fault-harness-20261018/apps/sentinel-observatory/live/fault-harness/run.mjs:72:12)
+      at process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+      at async TestContext.<anonymous> (file:///C:/Users/bmpar/codex-worktrees/observatory-fault-harness-20261018/apps/sentinel-observatory/live/fault-harness.test.mjs:21:20)
+      at async Test.run (node:internal/test_runner/test:1125:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:787:7) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: 'connection',
+    expected: 'http',
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at apps\sentinel-observatory\live\fault-harness.test.mjs:28:1
+✖ attempt contract rejects forged peer, selected response, family, option and chain status (765.8683ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+  
+  null !== 200
+  
+      at TestContext.<anonymous> (file:///C:/Users/bmpar/codex-worktrees/observatory-fault-harness-20261018/apps/sentinel-observatory/live/fault-harness.test.mjs:36:12)
+      at process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+      at async Test.run (node:internal/test_runner/test:1125:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:787:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: null,
+    expected: 200,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at apps\sentinel-observatory\live\fault-harness.test.mjs:40:1
+✖ production Node entry and Worker builder have no import path to the fixture adapter (92.4676ms)
+  Error: ENOENT: no such file or directory, open 'C:\Users\bmpar\codex-worktrees\observatory-fault-harness-20261018\apps\sentinel-observatory\sentinel-lab\app\api\observatory\target-observe\route.ts'
+      at readFileSync (node:fs:440:20)
+      at TestContext.<anonymous> (file:///C:/Users/bmpar/codex-worktrees/observatory-fault-harness-20261018/apps/sentinel-observatory/live/fault-harness.test.mjs:42:14)
+      at Test.runInAsyncScope (node:async_hooks:228:14)
+      at Test.run (node:internal/test_runner/test:1118:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:787:18)
+      at Test.postRun (node:internal/test_runner/test:1247:19)
+      at Test.run (node:internal/test_runner/test:1175:12)
+      at process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:787:7) {
+    errno: -4058,
+    code: 'ENOENT',
+    syscall: 'open',
+    path: 'C:\\Users\\bmpar\\codex-worktrees\\observatory-fault-harness-20261018\\apps\\sentinel-observatory\\sentinel-lab\\app\\api\\observatory\\target-observe\\route.ts'
+  }

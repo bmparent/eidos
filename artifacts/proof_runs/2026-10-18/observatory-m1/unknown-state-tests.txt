@@ -1,0 +1,42 @@
+(node:38420) ExperimentalWarning: SQLite is an experimental feature and might change at any time
+(Use `node --trace-warnings ...` to show where the warning was created)
+✔ real fixture stages persist, explain and replay; negative controls remain unknown (2854.9211ms)
+✔ real body prefix completion precedes socket abort; interrupted bodies retain received HTTP status (333.3278ms)
+✔ attempt contract rejects forged peer, selected response, family, option and chain status (86.5374ms)
+✔ production Node entry and Worker builder have no import path to the fixture adapter (8.6174ms)
+✔ HEAD coverage and cancellation wording do not manufacture an outage or an HTTP timeout response (2.8636ms)
+✔ unmeasured TLS validation and a missing peer remain unknown, rather than failed (1039.433ms)
+✔ a failed TCP check is not an HTTP timeout status and retains the actual 12-second wait (19.9236ms)
+✔ DNS, TLS and completed-connection HTTP failures give different review instructions (2.0381ms)
+✔ unknown connection detail stays unknown instead of inventing a failed handshake (3.5784ms)
+✔ stable observations cannot select explanations for a change that was never detected (3.6284ms)
+✔ HTTP failures are received responses with status-specific next checks (2.0602ms)
+✔ followed and incomplete redirects keep first-hop and destination evidence separate (1.2912ms)
+✔ calibration and context resets are stated before baseline numbers (1.9357ms)
+(node:28692) ExperimentalWarning: SQLite is an experimental feature and might change at any time
+(Use `node --trace-warnings ...` to show where the warning was created)
+✔ domain probes pin every socket and preserve DNS, TCP, TLS and HTTP stages (69.6091ms)
+✔ literal IP has no invented DNS timing and HTTP has no invented TLS timing (4.1195ms)
+✔ mixed public/private DNS answers reject before any connection; failure stays evidence (3.0442ms)
+✔ optional page check hashes a bounded body without retaining its content (22.123ms)
+✔ redirect following is opt-in and public validation applies to every hop (31.1703ms)
+✔ TLS validation failure preserves successful TCP timing without an insecure retry (5.2517ms)
+✔ relay contract rejects a mismatched destination, false probe options and unsafe redirect URLs (16.3009ms)
+✔ collector authenticates before parsing or probing and bounds its request schema (65.5041ms)
+✔ independent metric streams survive checkpoint restore; duplicates do not train twice (147.5743ms)
+✔ missing timing is excluded and failure has its own actual outcome stream (10.2815ms)
+✔ categorical DNS/certificate changes retain evidence and are not attack verdicts (33.66ms)
+✔ quiet numerical streams do not become operational anomalies solely from reservoir dynamics (651.537ms)
+✔ v1 checkpoints migrate to the measured-deviation profile without discarding their samples (12.4265ms)
+✔ collector/settings changes rewarm; stale and out-of-order frames never contaminate calibration (63.5606ms)
+✔ SQLite persistence, server history and duplicate delivery preserve one learned sample per evidence ID (250.6183ms)
+✔ concurrent observations use compare-and-swap without lost learning or duplicate rows (50.073ms)
+✔ Sol receives retained metric comparisons and scores while raw endpoints, addresses and fingerprints stay excluded (415.3138ms)
+ℹ tests 30
+ℹ suites 0
+ℹ pass 30
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 9463.3947

@@ -1,0 +1,215 @@
+{
+  "schema": "observatory-evidence-ledger-v1",
+  "rows": [
+    {
+      "requirement": "factual_integrity",
+      "status": "partial",
+      "observation": "Controlled status/stage/citation assertions pass; the original final cases were exposed by failures and are now regression cases.",
+      "environment": "local synthetic engineering; hosted acceptance separately identified",
+      "runtime_commit": "4a9bd8b9da652a1d6587412316e18d97d35d76f8",
+      "configuration": "scoring-lock.json and detector-protocol.json; hosted environment revision 8",
+      "observed_at": "2026-10-18T21:25:20.105Z",
+      "receipts": [
+        "acceptance_matrix.json",
+        "clean-corpus/run_manifest.json",
+        "detectors-final/manifest.json",
+        "browser-final/browser-receipts.json",
+        "hosted/receipt.json"
+      ]
+    },
+    {
+      "requirement": "known_failure_stages",
+      "status": "passed_local",
+      "observation": "72/72 synthetic controlled cases; real local sockets plus labeled DNS/blackhole simulations.",
+      "environment": "local synthetic engineering; hosted acceptance separately identified",
+      "runtime_commit": "4a9bd8b9da652a1d6587412316e18d97d35d76f8",
+      "configuration": "scoring-lock.json and detector-protocol.json; hosted environment revision 8",
+      "observed_at": "2026-10-18T21:25:20.105Z",
+      "receipts": [
+        "acceptance_matrix.json",
+        "clean-corpus/run_manifest.json",
+        "detectors-final/manifest.json",
+        "browser-final/browser-receipts.json",
+        "hosted/receipt.json"
+      ]
+    },
+    {
+      "requirement": "security_and_tenant_isolation",
+      "status": "partial",
+      "observation": "Public-boundary tests pass. Tenant-scoped records, model budgets, exports and notification authorization are not implemented; two real identities remain untested.",
+      "environment": "local synthetic engineering; hosted acceptance separately identified",
+      "runtime_commit": "4a9bd8b9da652a1d6587412316e18d97d35d76f8",
+      "configuration": "scoring-lock.json and detector-protocol.json; hosted environment revision 8",
+      "observed_at": "2026-10-18T21:25:20.105Z",
+      "receipts": [
+        "acceptance_matrix.json",
+        "clean-corpus/run_manifest.json",
+        "detectors-final/manifest.json",
+        "browser-final/browser-receipts.json",
+        "hosted/receipt.json"
+      ]
+    },
+    {
+      "requirement": "continuous_operation",
+      "status": "not_implemented",
+      "observation": "Foreground-only; no durable schedule, job leases, seven-day pilot or second independent observer.",
+      "environment": "local synthetic engineering; hosted acceptance separately identified",
+      "runtime_commit": "4a9bd8b9da652a1d6587412316e18d97d35d76f8",
+      "configuration": "scoring-lock.json and detector-protocol.json; hosted environment revision 8",
+      "observed_at": "2026-10-18T21:25:20.105Z",
+      "receipts": [
+        "acceptance_matrix.json",
+        "clean-corpus/run_manifest.json",
+        "detectors-final/manifest.json",
+        "browser-final/browser-receipts.json",
+        "hosted/receipt.json"
+      ]
+    },
+    {
+      "requirement": "scheduling_target",
+      "status": "not_tested",
+      "observation": "99.5% is a proposed qualification target; eligible slots and terminal receipts do not exist yet.",
+      "environment": "local synthetic engineering; hosted acceptance separately identified",
+      "runtime_commit": "4a9bd8b9da652a1d6587412316e18d97d35d76f8",
+      "configuration": "scoring-lock.json and detector-protocol.json; hosted environment revision 8",
+      "observed_at": "2026-10-18T21:25:20.105Z",
+      "receipts": [
+        "acceptance_matrix.json",
+        "clean-corpus/run_manifest.json",
+        "detectors-final/manifest.json",
+        "browser-final/browser-receipts.json",
+        "hosted/receipt.json"
+      ]
+    },
+    {
+      "requirement": "incident_behavior",
+      "status": "not_implemented",
+      "observation": "Existing change episodes are not a durable incident/recovery/maintenance state machine.",
+      "environment": "local synthetic engineering; hosted acceptance separately identified",
+      "runtime_commit": "4a9bd8b9da652a1d6587412316e18d97d35d76f8",
+      "configuration": "scoring-lock.json and detector-protocol.json; hosted environment revision 8",
+      "observed_at": "2026-10-18T21:25:20.105Z",
+      "receipts": [
+        "acceptance_matrix.json",
+        "clean-corpus/run_manifest.json",
+        "detectors-final/manifest.json",
+        "browser-final/browser-receipts.json",
+        "hosted/receipt.json"
+      ]
+    },
+    {
+      "requirement": "notifications",
+      "status": "not_implemented",
+      "observation": "No durable outbox, controlled sink or provider/inbox delivery receipt.",
+      "environment": "local synthetic engineering; hosted acceptance separately identified",
+      "runtime_commit": "4a9bd8b9da652a1d6587412316e18d97d35d76f8",
+      "configuration": "scoring-lock.json and detector-protocol.json; hosted environment revision 8",
+      "observed_at": "2026-10-18T21:25:20.105Z",
+      "receipts": [
+        "acceptance_matrix.json",
+        "clean-corpus/run_manifest.json",
+        "detectors-final/manifest.json",
+        "browser-final/browser-receipts.json",
+        "hosted/receipt.json"
+      ]
+    },
+    {
+      "requirement": "explanation_value",
+      "status": "blocked",
+      "observation": "Deterministic single-arm blinded packet supplied. Genuine corpus Sol-ranked arm and independent human scores are absent; no usefulness percentage.",
+      "environment": "local synthetic engineering; hosted acceptance separately identified",
+      "runtime_commit": "4a9bd8b9da652a1d6587412316e18d97d35d76f8",
+      "configuration": "scoring-lock.json and detector-protocol.json; hosted environment revision 8",
+      "observed_at": "2026-10-18T21:25:20.105Z",
+      "receipts": [
+        "acceptance_matrix.json",
+        "clean-corpus/run_manifest.json",
+        "detectors-final/manifest.json",
+        "browser-final/browser-receipts.json",
+        "hosted/receipt.json"
+      ]
+    },
+    {
+      "requirement": "detector_comparison",
+      "status": "passed_local",
+      "observation": "72 synthetic streams, 11520 frames, fixed thresholds, same-stream gate/EWMA/CUSUM comparisons and whole-stream bootstrap CIs; no superiority.",
+      "environment": "local synthetic engineering; hosted acceptance separately identified",
+      "runtime_commit": "4a9bd8b9da652a1d6587412316e18d97d35d76f8",
+      "configuration": "scoring-lock.json and detector-protocol.json; hosted environment revision 8",
+      "observed_at": "2026-10-18T21:25:20.105Z",
+      "receipts": [
+        "acceptance_matrix.json",
+        "clean-corpus/run_manifest.json",
+        "detectors-final/manifest.json",
+        "browser-final/browser-receipts.json",
+        "hosted/receipt.json"
+      ]
+    },
+    {
+      "requirement": "ux",
+      "status": "passed_local",
+      "observation": "Desktop 1440x1000 and mobile 390x844: connect, stage rendering, pause, export, reload/history, GET fallback, keyboard filter focus, reduced motion, no overflow or console errors. Physical device not tested.",
+      "environment": "local synthetic engineering; hosted acceptance separately identified",
+      "runtime_commit": "4a9bd8b9da652a1d6587412316e18d97d35d76f8",
+      "configuration": "scoring-lock.json and detector-protocol.json; hosted environment revision 8",
+      "observed_at": "2026-10-18T21:25:20.105Z",
+      "receipts": [
+        "acceptance_matrix.json",
+        "clean-corpus/run_manifest.json",
+        "detectors-final/manifest.json",
+        "browser-final/browser-receipts.json",
+        "hosted/receipt.json"
+      ]
+    },
+    {
+      "requirement": "operations",
+      "status": "partial",
+      "observation": "Build, production dependency separation and local persistence/replay verified. Capacity soak, migration/backup restore/rollback execution remain untested.",
+      "environment": "local synthetic engineering; hosted acceptance separately identified",
+      "runtime_commit": "4a9bd8b9da652a1d6587412316e18d97d35d76f8",
+      "configuration": "scoring-lock.json and detector-protocol.json; hosted environment revision 8",
+      "observed_at": "2026-10-18T21:25:20.105Z",
+      "receipts": [
+        "acceptance_matrix.json",
+        "clean-corpus/run_manifest.json",
+        "detectors-final/manifest.json",
+        "browser-final/browser-receipts.json",
+        "hosted/receipt.json"
+      ]
+    },
+    {
+      "requirement": "economics",
+      "status": "partial",
+      "observation": "Local adapter runtime/RSS captured with loaded-host caveats. Actual provider/storage/notification cost is NA; no pilot bill exists.",
+      "environment": "local synthetic engineering; hosted acceptance separately identified",
+      "runtime_commit": "4a9bd8b9da652a1d6587412316e18d97d35d76f8",
+      "configuration": "scoring-lock.json and detector-protocol.json; hosted environment revision 8",
+      "observed_at": "2026-10-18T21:25:20.105Z",
+      "receipts": [
+        "acceptance_matrix.json",
+        "clean-corpus/run_manifest.json",
+        "detectors-final/manifest.json",
+        "browser-final/browser-receipts.json",
+        "hosted/receipt.json"
+      ]
+    },
+    {
+      "requirement": "private_hosted_path",
+      "status": "passed",
+      "observation": "16 checks, HTTP 200/TLS1.3 retained; authenticated desktop and mobile empty-page QA",
+      "environment": "private Sites v17 + immutable Vercel iad1 observer",
+      "runtime_commit": "4a9bd8b9da652a1d6587412316e18d97d35d76f8",
+      "site_source_commit": "0295a79cfea528efa8295a766c64c5d2b3f4524c",
+      "site_deployment": "appgdep_6ad53916f11c81919e54399aa0dae088",
+      "collector_deployment": "dpl_7iTnN6c4qSwsHN5w4U9EtQ7ShyZP",
+      "configuration": "environment revision 8",
+      "observed_at": "2026-10-18T21:25:20.105Z",
+      "receipts": [
+        "release.json",
+        "hosted/receipt.json",
+        "hosted/public-test-observation.json"
+      ]
+    }
+  ],
+  "limits": "Row timestamps identify package audit time; precise individual run start/end times are in referenced manifests. No pilot or human review is inferred."
+}

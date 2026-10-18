@@ -1,0 +1,65 @@
+{
+  "schema": "eidos-proof-progress-v1",
+  "proof_score": null,
+  "reason": "This engineering milestone does not re-audit or accept global research gates; do not convert unknown gates into zero readiness.",
+  "math": "proof_score = sum(weight_i * accepted_gate_i) only after gate acceptance is reconciled",
+  "gates": [
+    {
+      "gate": "reproducible_baseline",
+      "weight": 15,
+      "status": "not_reconciled"
+    },
+    {
+      "gate": "labeled_domain_proof",
+      "weight": 15,
+      "status": "not_reconciled"
+    },
+    {
+      "gate": "precision_discipline",
+      "weight": 15,
+      "status": "not_reconciled"
+    },
+    {
+      "gate": "calibration_generalization",
+      "weight": 15,
+      "status": "not_reconciled"
+    },
+    {
+      "gate": "compression_anomaly_preservation",
+      "weight": 10,
+      "status": "not_reconciled"
+    },
+    {
+      "gate": "incident_explanation",
+      "weight": 10,
+      "status": "not_reconciled"
+    },
+    {
+      "gate": "domain_demos",
+      "weight": 10,
+      "status": "not_reconciled"
+    },
+    {
+      "gate": "one_command_final_report",
+      "weight": 10,
+      "status": "not_reconciled"
+    }
+  ],
+  "engineering_milestone": {
+    "name": "collector fault harness",
+    "passed": true,
+    "cases": 72
+  },
+  "remaining_gaps": [
+    "factual_integrity",
+    "security_and_tenant_isolation",
+    "continuous_operation",
+    "scheduling_target",
+    "incident_behavior",
+    "notifications",
+    "explanation_value",
+    "operations",
+    "economics"
+  ],
+  "north_star": "Self-monitoring streaming intelligence codec; this milestone strengthens reproducible evidence and explanations only."
+}
