@@ -3,6 +3,7 @@ import {createHash} from 'node:crypto';
 import {resolve,join} from 'node:path';
 import assert from 'node:assert/strict';
 import {fileURLToPath} from 'node:url';
+import {execFileSync} from 'node:child_process';
 import {TargetBrain} from '../target-brain.mjs';
 const configBytes=readFileSync(new URL('detector-protocol.json',import.meta.url)),config=JSON.parse(configBytes),sha=x=>createHash('sha256').update(x).digest('hex');
 const lock=JSON.parse(readFileSync(new URL('detector-lock.json',import.meta.url)));assert.equal(sha(configBytes),lock.sha256,'Detector protocol changed');
@@ -70,5 +71,5 @@ const evalRows=result.methods,gate=evalRows.gate.splits.locked_evaluation,sentin
 result.conclusion={sentinel_precision_minus_gate:sentinel.precision===null||gate.precision===null?null:sentinel.precision-gate.precision,sentinel_recall_minus_gate:sentinel.recall===null||gate.recall===null?null:sentinel.recall-gate.recall,superiority_established:false,production_default_changed:false};
 writeFileSync(join(out,'streams.jsonl'),streams.map(x=>JSON.stringify(x)).join('\n')+'\n');writeFileSync(join(out,'stream_scores.jsonl'),rows.map(x=>JSON.stringify(x)).join('\n')+'\n');
 writeFileSync(join(out,'comparison.json'),JSON.stringify(result,null,2)+'\n');writeFileSync(join(out,'config.json'),configBytes);
-writeFileSync(join(out,'manifest.json'),JSON.stringify({schema:'detector-run-manifest-v1',command:`node apps/sentinel-observatory/live/fault-harness/compare-detectors.mjs --out ${out}`,timestamp:new Date().toISOString(),config_sha256:sha(configBytes),input_sha256:sha(readFileSync(join(out,'streams.jsonl'))),runner_sha256:sha(readFileSync(fileURLToPath(import.meta.url))),engine_sha256:sha(readFileSync(new URL('../brain.mjs',import.meta.url))),peak_rss_bytes:process.resourceUsage().maxRSS*1024,node:process.version},null,2)+'\n');
+writeFileSync(join(out,'manifest.json'),JSON.stringify({schema:'detector-run-manifest-v1',source_commit:execFileSync('git',['rev-parse','HEAD'],{encoding:'utf8'}).trim(),command:`node apps/sentinel-observatory/live/fault-harness/compare-detectors.mjs --out ${out}`,timestamp:new Date().toISOString(),config_sha256:sha(configBytes),input_sha256:sha(readFileSync(join(out,'streams.jsonl'))),runner_sha256:sha(readFileSync(fileURLToPath(import.meta.url))),engine_sha256:sha(readFileSync(new URL('../brain.mjs',import.meta.url))),target_adapter_sha256:sha(readFileSync(new URL('../target-brain.mjs',import.meta.url))),peak_rss_bytes:process.resourceUsage().maxRSS*1024,node:process.version},null,2)+'\n');
 console.log(JSON.stringify(result.conclusion));
