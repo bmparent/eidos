@@ -42,7 +42,11 @@ use distinct logical destinations to respect the collector cooldown.
 stdin, never a command argument or file. By default it checks served hashes,
 anonymous denial, boundary/schema rejection and fabricated evidence denial.
 `--public-test example.com` adds exactly one bounded public-example observation
-and retained-history readback. Model calls remain zero. Its optional browser
+and retained-history readback. Model calls remain zero unless the operator
+explicitly supplies `--interpret-evidence` with an existing retained native ID.
+That mode makes one manual interpretation and checks its cached repeat within
+the existing server budget; it never supplies a key or browser-authored evidence.
+Its optional browser
 path sends authorization only to the exact Site origin and checks its empty
 authenticated page; it is separate from synthetic interactive QA.
 

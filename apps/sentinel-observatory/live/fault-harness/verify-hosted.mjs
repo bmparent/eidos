@@ -9,7 +9,7 @@ const origin='https://sentinel-evidence-observatory.bmparent.chatgpt.site',out=r
 process.stdin.setRawMode?.(true);process.stdin.resume();console.log('Ready for owner-private verification JSON on stdin (input is hidden).');
 const credentials=await new Promise((accept,reject)=>{let text='';const data=chunk=>{text+=chunk.toString();if(/[\r\n]/.test(text)){process.stdin.off('data',data);process.stdin.setRawMode?.(false);process.stdin.pause();try{accept(JSON.parse(text.trim()));}catch{reject(new Error('Invalid hidden input'));}}};process.stdin.on('data',data);});
 const hash=bytes=>createHash('sha256').update(bytes).digest('hex'),headers={'OAI-Sites-Authorization':`Bearer ${credentials.site_token}`,Origin:origin},receipts=[];
-async function call(path,body,extra={}){const response=await fetch(origin+path,{method:body===undefined?'GET':'POST',headers:{...headers,...(body?{'Content-Type':'application/json'}:{}),...extra},body:body===undefined?undefined:JSON.stringify(body),redirect:'manual',signal:AbortSignal.timeout(20000)});return {response,bytes:Buffer.from(await response.arrayBuffer())};}
+async function call(path,body,extra={}){const response=await fetch(origin+path,{method:body===undefined?'GET':'POST',headers:{...headers,...(body?{'Content-Type':'application/json'}:{}),...extra},body:body===undefined?undefined:JSON.stringify(body),redirect:'manual',signal:AbortSignal.timeout(path==='/api/interpret'?45000:20000)});return {response,bytes:Buffer.from(await response.arrayBuffer())};}
 const capability=await call('/api/capabilities');assert.equal(capability.response.status,200);const caps=JSON.parse(capability.bytes);
 writeFileSync(join(out,'capabilities.json'),JSON.stringify(caps,null,2)+'\n');
 for(const [url,file] of [['/probe-explanation.mjs','probe-explanation.mjs'],['/target-panel.mjs','web/target-panel.mjs'],['/app.js','web/app.js'],['/styles.css','web/styles.css']]){
@@ -29,6 +29,17 @@ if(arg('--public-test')==='example.com'){
   if(event){const history=await call('/api/target-history?target_id='+event.source_id),rows=JSON.parse(history.bytes);receipts.push({check:'hosted_retention',passed:rows.events?.some(x=>x.id===event.id)===true});}
 }
 const report={schema:'private-hosted-acceptance-v1',timestamp:new Date().toISOString(),origin,version:caps.version,receipts,passed:receipts.every(x=>x.passed),actual_model_calls:0,two_tenant_test:'not tested; owner-private service access is not tenant identity',continuous_pilot:'not started'};
+if(arg('--interpret-evidence')){
+  const id=arg('--interpret-evidence');assert.match(id,/^evt_[a-f0-9]{32}$/);
+  const first=await call('/api/interpret',{evidence_id:id}),data=JSON.parse(first.bytes);
+  const repeat=first.response.status===200?await call('/api/interpret',{evidence_id:id}):null,cached=repeat?JSON.parse(repeat.bytes):null;
+  const provenance=data.analysis?.provenance;
+  report.actual_model_calls=data.cached===false&&provenance?.execution_verified===true?1:0;
+  report.manual_model_verification={evidence_id:id,first_status:first.response.status,output_accepted:provenance?.output_accepted===true,provider_execution_verified:provenance?.execution_verified===true,provider_model:provenance?.provider_model ?? null,usage:provenance?.usage ?? null,cached_repeat:cached?.cached===true,same_provider_receipt:provenance?.provider_response_id===cached?.analysis?.provenance?.provider_response_id,quality_score:null,quality_reason:'Execution/cache check only; no independent human usefulness review'};
+  writeFileSync(join(out,'manual-sol-verification.json'),JSON.stringify({first:data,repeat:cached,verification:report.manual_model_verification},null,2)+'\n');
+  const passed=provenance?.output_accepted===true&&cached?.cached===true&&cached?.analysis?.provenance?.output_accepted===true&&report.manual_model_verification.same_provider_receipt;
+  receipts.push({check:'manual_sol_execution_and_cached_repeat',passed});report.passed=report.passed&&passed;
+}
 writeFileSync(join(out,'receipt.json'),JSON.stringify(report,null,2)+'\n');
 if(arg('--playwright-module')){
   const {chromium}=createRequire(import.meta.url)(arg('--playwright-module')),browser=await chromium.launch({headless:true,executablePath:arg('--browser')});
