@@ -1,0 +1,37 @@
+import {createRequire} from 'node:module';
+import {mkdirSync,writeFileSync} from 'node:fs';
+import {resolve,join} from 'node:path';
+import assert from 'node:assert/strict';
+const arg=name=>process.argv.includes(name)?process.argv[process.argv.indexOf(name)+1]:undefined;
+const {chromium}=createRequire(import.meta.url)(arg('--playwright-module') ?? 'playwright');
+const out=resolve(arg('--out') ?? 'artifacts/proof_runs/2026-10-18/observatory-m1/browser');mkdirSync(out,{recursive:true});
+const base=arg('--url') ?? 'http://127.0.0.1:8788',browser=await chromium.launch({headless:true,executablePath:arg('--browser'),timeout:60000}),receipts=[];
+try{for(const viewport of [{width:1440,height:1000},{width:390,height:844}]){
+  const context=await browser.newContext({viewport,reducedMotion:'reduce',acceptDownloads:true}),page=await context.newPage(),errors=[];
+  page.on('pageerror',error=>errors.push(error.message));page.on('console',msg=>{if(msg.type()==='error')errors.push(msg.text());});
+  await page.goto(base,{waitUntil:'networkidle',timeout:60000});assert.match(await page.title(),/Sentinel/);
+  assert.ok((await page.locator('main').innerText()).includes('SYNTHETIC LOCAL FAULT HARNESS'));
+  await page.locator('#connect-target').fill('https://example.com/tls_partial_headers');await page.locator('#connect-button').click();
+  await page.locator('#event-list .record-button').first().waitFor({timeout:15000});
+  await page.locator('#pause-all').click();
+  const text=await page.locator('#inspector-content').innerText();assert.match(text,/HTTP response headers timed out/);assert.match(text,/No response/);
+  assert.match(await page.locator('#target-probe-details').innerText(),/TLS: ok/);assert.match(await page.locator('#target-probe-details').innerText(),/Address attempts/);
+  await page.locator('[data-filter="incomplete"]').focus();await page.locator('[data-filter="incomplete"]').press('Enter');
+  assert.equal(await page.evaluate(()=>document.activeElement?.getAttribute('data-filter')),'incomplete');
+  await page.screenshot({path:join(out,`failure-${viewport.width}.png`),fullPage:true});
+  const downloadPromise=page.waitForEvent('download');await page.locator('#export-button').click();const download=await downloadPromise;await download.saveAs(join(out,`export-${viewport.width}.json`));
+  await page.reload({waitUntil:'networkidle'});assert.match(await page.locator('#target-list').innerText(),/paused/i);
+  await page.locator('[data-filter="all"]').click();
+  await page.locator('#probe-get').check();await page.locator('#connect-target').fill('https://example.com/get405_ok');await page.locator('#connect-button').click();
+  await page.waitForFunction(()=>document.querySelector('#inspector-content')?.textContent.includes('separate GET fallback returned HTTP 200'),{timeout:15000});
+  await page.locator('#pause-all').click();
+  assert.match(await page.locator('#inspector-content').innerText(),/method coverage/);
+  assert.match(await page.locator('#target-probe-details').innerText(),/GET.*200/s);
+  await page.screenshot({path:join(out,`method-${viewport.width}.png`),fullPage:true});
+  const layout=await page.evaluate(()=>({width:innerWidth,scroll:document.documentElement.scrollWidth,reduced:matchMedia('(prefers-reduced-motion: reduce)').matches}));
+  assert.ok(layout.scroll<=layout.width+1,`Horizontal overflow: ${JSON.stringify(layout)}`);assert.equal(layout.reduced,true);
+  assert.deepEqual(errors,[]);
+  receipts.push({viewport,environment:'local_synthetic_fixture',url:base,page_identity:'passed',content:'passed',console_errors:errors,interactions:['connect controlled TLS/header failure','inspect retained partial TLS','keyboard filter focus','pause','download export','reload paused history','explicit GET fallback retains HEAD 405 and separate GET 200'],layout,physical_device:'not tested',browser_plugin:'Browser skill not listed; CUA in-app tab call timed out; bundled Playwright fallback used'});
+  await context.close();
+}}finally{await browser.close();writeFileSync(join(out,'browser-receipts.json'),JSON.stringify(receipts,null,2)+'\n');}
+console.log(JSON.stringify({passed:receipts.length,viewports:receipts.map(x=>x.viewport)}));

@@ -1,0 +1,9 @@
+{
+  "schema": "observatory-scoring-lock-v1",
+  "frozen_at": "2026-10-18T20:54:03.583Z",
+  "hashes": {
+    "scenarios.json": "2ce872b282e9e7406c61348b1804a7af419a2d803b71e163e758d21f41d47cde",
+    "protocol.json": "196f879bc93cbe88db63d42feed97d5a71ac28e142c0a55a5c914f57f136e4a4",
+    "assertions.json": "fd804eca286b562ee44e31239865f4745d1c0db54479b9a72d8364515a80ef9a"
+  }
+}

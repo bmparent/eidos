@@ -1,0 +1,20 @@
+{
+  "schema": "observatory-detector-comparison-v1",
+  "evidence_class": "synthetic_engineering",
+  "seeds": [42,43,44,45,46,47],
+  "development_seeds": [42,43,44,45],
+  "evaluation_seeds": [46,47],
+  "frames": 160,
+  "warmup": 32,
+  "cadence_seconds": 300,
+  "families": ["stable","jitter","spike","step_up","step_down","ramp","drift","burst","seasonal","recovery","missing","reset"],
+  "fault_windows": [[60,75],[110,125]],
+  "labels": "Injected timing departures only; stable, jitter, seasonal, missing and observer-reset controls are benign. No attack or root-cause labels.",
+  "baseline": "EWMA/CUSUM mean and sample standard deviation are frozen from first 32 preceding frames, sigma floor 0.5 ms. Reset starts fresh warmup for all methods.",
+  "methods": ["gate","sentinel_plus_gate","ewma","cusum"],
+  "ewma": {"alpha":0.15,"z":3},
+  "cusum": {"k":0.5,"h":5,"reset_on_alarm":true,"two_sided":true},
+  "events": "Contiguous flagged measured frames form events. Missing frames are unknown and break a run. One-to-one earliest overlap matches; extra events are false/duplicate incidents. Recovery delay uses last flag within the fault plus any immediately contiguous flags after it; no flag means no recovery estimate.",
+  "confidence": {"method":"seeded stream cluster percentile bootstrap","resamples":2000,"level":0.95},
+  "success": "Publish all outcomes and uncertainty. Superiority requires independent corroboration; default engine policy remains unchanged in this milestone."
+}

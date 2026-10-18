@@ -14,7 +14,9 @@ export function prepareTargetInterpretation(event) {
     metrics,changes,stage:diagnosis.stage,stages:diagnosis.stages,elapsed_ms:diagnosis.elapsed_ms,
     analysis_state:['calibrating','observing','change_detected','late_excluded','unavailable'].includes(analysis.state)?analysis.state:'unavailable',
     baseline_generation:analysis.generation ?? null,page_complete:event.probes?.page?.complete===true,redirect_hops:event.redirect_count ?? 0,
-    final_status:Number.isInteger(event.probes?.http?.final_status)?event.probes.http.final_status:null,response_chain_complete:event.response_chain_complete===true};
+    final_status:Number.isInteger(event.probes?.http?.final_status)?event.probes.http.final_status:null,response_chain_complete:event.response_chain_complete===true,
+    method_coverage:event.probes?.http?.method_coverage==='head_rejected'?'head_rejected':null,
+    get_fallback_status:Number.isInteger(event.probes?.http?.get_fallback?.status)?event.probes.http.get_fallback.status:null};
   const add=(text,evidence=refs)=>facts.push({text,evidence_ids:[...new Set(evidence)].filter(x=>/^evt_[a-f0-9]{32}$/.test(x)).slice(-33)});
   const summary=diagnosis.summary;
   add(summary);
@@ -41,7 +43,7 @@ export function prepareTargetInterpretation(event) {
   if(changes.includes('certificate_expiring'))catalogue.certificate_expiring=item('certificate expiry window','The measured certificate expiry is within the configured 14-day review window.','Check subsequent certificate validity and renewal evidence.');
   if(changes.includes('page_changed'))catalogue.page_changed=item('page fingerprint change','Dynamic content, an ordinary deployment or another response change could explain the changed bounded page fingerprint.','Compare repeated fingerprints and whether the whole body fit within the limit.');
   if(event.error)catalogue.probe_failed=item('probe failure',diagnosis.summary,diagnosis.next_check);
-  if(!event.error&&event.status>=400)catalogue.http_response=item('HTTP error response',`The endpoint returned HTTP ${event.status}; the status is a received response, not a connection timeout.`,diagnosis.next_check);
+  if(!event.error&&event.status>=400)catalogue.http_response=item([405,501].includes(event.status)?'HTTP method coverage':'HTTP error response',diagnosis.summary,diagnosis.next_check);
   return {evidence_id:event.id,linked_evidence_id:null,observed_at:event.completed_at,safe,catalogue,summary,facts,next_checks:[{text:diagnosis.next_check,evidence_ids:refs}],
     input_evidence_ids:[...new Set(facts.flatMap(x=>x.evidence_ids))].slice(-65),
     unknowns:['Only this probe’s public endpoint behavior was measured.','A Sentinel score is experimental change evidence, not an attack probability.','Target internals, visitor traffic and root cause remain unobserved.']};

@@ -121,7 +121,7 @@ async function sampleTarget(target) {
   let retryDelay=Math.max(MIN_INTERVAL,state.capabilities?.interval_ms||0);
   renderCards();renderStatus();
   try {
-    const response=await fetch('/api/observe',{method:'POST',headers:{'Content-Type':'application/json'},credentials:'same-origin',cache:'no-store',body:JSON.stringify({target:target.url,...(state.capabilities?.target_probes?.connected?{page_check:$('probe-page').checked,follow_redirects:$('probe-redirects').checked}:{})}),signal:target.controller.signal});
+    const response=await fetch('/api/observe',{method:'POST',headers:{'Content-Type':'application/json'},credentials:'same-origin',cache:'no-store',body:JSON.stringify({target:target.url,...(state.capabilities?.target_probes?.connected?{page_check:$('probe-page').checked,follow_redirects:$('probe-redirects').checked,...($('probe-get').checked?{get_fallback:true}:{})}:{})}),signal:target.controller.signal});
     let payload;try{payload=await response.json();}catch{throw new Error('The collector returned an unreadable response. No observation was added.');}
     const clientReceived=new Date().toISOString();
     if(!connected(target)||target.run!==run)return;
