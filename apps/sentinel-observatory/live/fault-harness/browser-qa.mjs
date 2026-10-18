@@ -8,10 +8,11 @@ const out=resolve(arg('--out') ?? 'artifacts/proof_runs/2026-10-18/observatory-m
 const base=arg('--url') ?? 'http://127.0.0.1:8788',browser=await chromium.launch({headless:true,executablePath:arg('--browser'),timeout:60000}),receipts=[];
 try{for(const viewport of [{width:1440,height:1000},{width:390,height:844}]){
   const context=await browser.newContext({viewport,reducedMotion:'reduce',acceptDownloads:true}),page=await context.newPage(),errors=[];
+  const host=viewport.width<600?'example.org':'example.com';
   page.on('pageerror',error=>errors.push(error.message));page.on('console',msg=>{if(msg.type()==='error')errors.push(msg.text());});
   await page.goto(base,{waitUntil:'networkidle',timeout:60000});assert.match(await page.title(),/Sentinel/);
   assert.ok((await page.locator('main').innerText()).includes('SYNTHETIC LOCAL FAULT HARNESS'));
-  await page.locator('#connect-target').fill('https://example.com/tls_partial_headers');await page.locator('#connect-button').click();
+  await page.locator('#connect-target').fill(`https://${host}/tls_partial_headers`);await page.locator('#connect-button').click();
   await page.locator('#event-list .record-button').first().waitFor({timeout:15000});
   await page.locator('#pause-all').click();
   const text=await page.locator('#inspector-content').innerText();assert.match(text,/HTTP response headers timed out/);assert.match(text,/No response/);
@@ -22,7 +23,7 @@ try{for(const viewport of [{width:1440,height:1000},{width:390,height:844}]){
   const downloadPromise=page.waitForEvent('download');await page.locator('#export-button').click();const download=await downloadPromise;await download.saveAs(join(out,`export-${viewport.width}.json`));
   await page.reload({waitUntil:'networkidle'});assert.match(await page.locator('#target-list').innerText(),/paused/i);
   await page.locator('.record-section [data-filter="all"]').click();
-  await page.locator('#probe-get').check();await page.locator('#connect-target').fill('https://example.com/get405_ok');await page.locator('#connect-button').click();
+  await page.locator('#probe-get').check();await page.locator('#connect-target').fill(`https://${host}/get405_ok`);await page.locator('#connect-button').click();
   await page.waitForFunction(()=>document.querySelector('#inspector-content')?.textContent.includes('separate GET fallback returned HTTP 200'),{timeout:15000});
   await page.locator('#pause-all').click();
   assert.match(await page.locator('#inspector-content').innerText(),/method coverage/);

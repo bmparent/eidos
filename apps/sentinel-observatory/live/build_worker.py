@@ -68,7 +68,7 @@ def build(output: Path, recorded: Path | None = None) -> dict:
     entry = entry.replace(required_import, '').replace(required_sensor_import, '').replace(required_sol_import, '').replace(marker, json.dumps(assets, ensure_ascii=True))
     combined = collector + '\n\n' + sensor + '\n\n' + modules + '\n\n' + sol + '\n\n' + entry
     output.parent.mkdir(parents=True, exist_ok=True)
-    output.write_text(combined, encoding='utf-8')
+    output.write_text(combined, encoding='utf-8', newline='\n')
     return {'output': str(output.resolve()), 'bytes': output.stat().st_size,
             'sha256': hashlib.sha256(output.read_bytes()).hexdigest(),
             'sources': {key: hashlib.sha256(path.read_bytes()).hexdigest() for key, path in sources.items()}}
