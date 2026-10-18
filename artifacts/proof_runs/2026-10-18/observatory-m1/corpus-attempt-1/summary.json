@@ -1,0 +1,29 @@
+{
+  "schema": "observatory-fault-results-v1",
+  "evidence_class": "synthetic_controlled",
+  "started_at": "2026-10-18T20:54:57.643Z",
+  "completed_at": "2026-10-18T20:55:03.629Z",
+  "cases": 72,
+  "passed": 70,
+  "failed": 2,
+  "families": 12,
+  "splits": {
+    "development": {
+      "total": 48,
+      "passed": 47
+    },
+    "locked_evaluation": {
+      "total": 24,
+      "passed": 23
+    }
+  },
+  "external_endpoint_requests": 0,
+  "actual_openai_calls": 0,
+  "limitations": [
+    "Synthetic local faults; not real pilot observations.",
+    "DNS answers and TCP blackholes are explicit test simulations; HTTP/TLS/refusal cases use real local sockets.",
+    "Wall-clock timing and event UUIDs vary; assertions use frozen tolerances.",
+    "No independent human explanation scores.",
+    "No tenant isolation, hosted unattended scheduling or second observer acceptance inferred."
+  ]
+}

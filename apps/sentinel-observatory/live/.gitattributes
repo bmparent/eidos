@@ -1,0 +1,2 @@
+# Hash-locked test inputs must have identical bytes on Windows and Linux.
+fault-harness/** text eol=lf

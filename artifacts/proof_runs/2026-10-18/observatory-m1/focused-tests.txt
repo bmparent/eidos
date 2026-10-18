@@ -1,0 +1,34 @@
+✔ a failed TCP check is not an HTTP timeout status and retains the actual 12-second wait (17.5376ms)
+✔ DNS, TLS and completed-connection HTTP failures give different review instructions (1.7071ms)
+✔ unknown connection detail stays unknown instead of inventing a failed handshake (1.7995ms)
+✔ stable observations cannot select explanations for a change that was never detected (4.1707ms)
+✔ HTTP failures are received responses with status-specific next checks (6.0488ms)
+✔ followed and incomplete redirects keep first-hop and destination evidence separate (6.9389ms)
+✔ calibration and context resets are stated before baseline numbers (2.1536ms)
+(node:13956) ExperimentalWarning: SQLite is an experimental feature and might change at any time
+(Use `node --trace-warnings ...` to show where the warning was created)
+✔ domain probes pin every socket and preserve DNS, TCP, TLS and HTTP stages (95.0869ms)
+✔ literal IP has no invented DNS timing and HTTP has no invented TLS timing (4.7966ms)
+✔ mixed public/private DNS answers reject before any connection; failure stays evidence (13.4066ms)
+✔ optional page check hashes a bounded body without retaining its content (24.7172ms)
+✔ redirect following is opt-in and public validation applies to every hop (30.3871ms)
+✔ TLS validation failure preserves successful TCP timing without an insecure retry (7.6086ms)
+✔ relay contract rejects a mismatched destination, false probe options and unsafe redirect URLs (18.2672ms)
+✔ collector authenticates before parsing or probing and bounds its request schema (53.1239ms)
+✔ independent metric streams survive checkpoint restore; duplicates do not train twice (150.6375ms)
+✔ missing timing is excluded and failure has its own actual outcome stream (21.4687ms)
+✔ categorical DNS/certificate changes retain evidence and are not attack verdicts (12.9054ms)
+✔ quiet numerical streams do not become operational anomalies solely from reservoir dynamics (590.9866ms)
+✔ v1 checkpoints migrate to the measured-deviation profile without discarding their samples (18.9222ms)
+✔ collector/settings changes rewarm; stale and out-of-order frames never contaminate calibration (92.5051ms)
+✔ SQLite persistence, server history and duplicate delivery preserve one learned sample per evidence ID (550.6497ms)
+✔ concurrent observations use compare-and-swap without lost learning or duplicate rows (48.8024ms)
+✔ Sol receives retained metric comparisons and scores while raw endpoints, addresses and fingerprints stay excluded (662.1075ms)
+ℹ tests 24
+ℹ suites 0
+ℹ pass 24
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 3919.1749

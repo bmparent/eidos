@@ -1,0 +1,72 @@
+{
+  "schema": "observatory-commercial-acceptance-v1",
+  "frozen_protocol": "apps/sentinel-observatory/live/fault-harness/protocol.json",
+  "rows": [
+    {
+      "gate": "factual_integrity",
+      "status": "partial",
+      "evidence_or_gap": "Controlled status/stage/citation assertions pass; the original final cases were exposed by failures and are now regression cases."
+    },
+    {
+      "gate": "known_failure_stages",
+      "status": "passed_local",
+      "evidence_or_gap": "72/72 synthetic controlled cases; real local sockets plus labeled DNS/blackhole simulations."
+    },
+    {
+      "gate": "security_and_tenant_isolation",
+      "status": "partial",
+      "evidence_or_gap": "Public-boundary tests pass. Tenant-scoped records, model budgets, exports and notification authorization are not implemented; two real identities remain untested."
+    },
+    {
+      "gate": "continuous_operation",
+      "status": "not_implemented",
+      "evidence_or_gap": "Foreground-only; no durable schedule, job leases, seven-day pilot or second independent observer."
+    },
+    {
+      "gate": "scheduling_target",
+      "status": "not_tested",
+      "evidence_or_gap": "99.5% is a proposed qualification target; eligible slots and terminal receipts do not exist yet."
+    },
+    {
+      "gate": "incident_behavior",
+      "status": "not_implemented",
+      "evidence_or_gap": "Existing change episodes are not a durable incident/recovery/maintenance state machine."
+    },
+    {
+      "gate": "notifications",
+      "status": "not_implemented",
+      "evidence_or_gap": "No durable outbox, controlled sink or provider/inbox delivery receipt."
+    },
+    {
+      "gate": "explanation_value",
+      "status": "blocked",
+      "evidence_or_gap": "Deterministic single-arm blinded packet supplied. Genuine corpus Sol-ranked arm and independent human scores are absent; no usefulness percentage."
+    },
+    {
+      "gate": "detector_comparison",
+      "status": "passed_local",
+      "evidence_or_gap": "72 synthetic streams, 11520 frames, fixed thresholds, same-stream gate/EWMA/CUSUM comparisons and whole-stream bootstrap CIs; no superiority."
+    },
+    {
+      "gate": "ux",
+      "status": "passed_local",
+      "evidence_or_gap": "Desktop 1440x1000 and mobile 390x844: connect, stage rendering, pause, export, reload/history, GET fallback, keyboard filter focus, reduced motion, no overflow or console errors. Physical device not tested."
+    },
+    {
+      "gate": "operations",
+      "status": "partial",
+      "evidence_or_gap": "Build, production dependency separation and local persistence/replay verified. Capacity soak, migration/backup restore/rollback execution remain untested."
+    },
+    {
+      "gate": "economics",
+      "status": "partial",
+      "evidence_or_gap": "Local adapter runtime/RSS captured with loaded-host caveats. Actual provider/storage/notification cost is NA; no pilot bill exists."
+    }
+  ],
+  "readiness": {
+    "endpoint_monitoring": "private candidate only",
+    "ai_assistance": "usefulness unproven",
+    "security_logs": "no new acceptance",
+    "research_methods": "engineering only; Lab gates unchanged"
+  }
+}

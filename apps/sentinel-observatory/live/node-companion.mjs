@@ -12,7 +12,7 @@ import {handleInterpretation,hostedInterpretationCapability} from './sol-interpr
 import {runPathProbe} from './path-probes.mjs';
 import {CompanionDatabase} from './sqlite-store.mjs';
 
-export function createCompanion({database=new CompanionDatabase(),port=8767,pathProbe=runPathProbe,observer=observeTarget}={}) {
+export function createCompanion({database=new CompanionDatabase(),port=8767,pathProbe=runPathProbe,observer=observeTarget,decorateHtml=html=>html}={}) {
   const pending=new Map(),pathRates=new Map();let pathActive=false;
   const env={OBSERVATORY_DB:database,OBSERVATORY_TARGET_PROBES_ENABLED:'true',OPENAI_API_KEY:process.env.OPENAI_API_KEY};
   const json=(data,status=200)=>new Response(JSON.stringify(data),{status,headers:{'content-type':'application/json','cache-control':'no-store','x-content-type-options':'nosniff'}});
@@ -46,7 +46,7 @@ export function createCompanion({database=new CompanionDatabase(),port=8767,path
         if(url.pathname==='/api/capabilities')response=json({mode:'local',direct_ip:true,interval_ms:15000,max_targets:4,hosted_interpretation:hostedInterpretationCapability(env),model:hostedInterpretationCapability(env),target_probes:{connected:true,path:'local_commands',profile:'target-metrics-v2'},security_sensor:{connected:false,reason:'Use retained target evidence; no network log sensor attached'}});
         else if(url.pathname==='/api/target-history')response=json(await targetHistory(env,url.searchParams.get('target_id')));
         else if(url.pathname==='/api/model/status')response=json({available:false,connected:false,reason:'Optional Python/Qwen companion remains a separate launcher.'});
-        else if(assets[url.pathname]){const file=assets[url.pathname],type=file.endsWith('.css')?'text/css':file.endsWith('.html')?'text/html':'text/javascript';response=new Response(await readFile(new URL(file,import.meta.url)),{headers:{'content-type':type+'; charset=utf-8','cache-control':'no-store'}});}
+        else if(assets[url.pathname]){const file=assets[url.pathname],type=file.endsWith('.css')?'text/css':file.endsWith('.html')?'text/html':'text/javascript',bytes=await readFile(new URL(file,import.meta.url));response=new Response(file.endsWith('.html')?decorateHtml(bytes.toString('utf8')):bytes,{headers:{'content-type':type+'; charset=utf-8','cache-control':'no-store'}});}
         else response=json({error:'not_found'},404);
       }else response=json({error:'method_not_allowed'},405);
       outgoing.writeHead(response.status,Object.fromEntries(response.headers));outgoing.end(Buffer.from(await response.arrayBuffer()));

@@ -1,0 +1,499 @@
+[
+  {
+    "review_id": "review_a70b02fc8cc3",
+    "case": "stable-1",
+    "arm": "deterministic",
+    "expected_next_action": "compare_later",
+    "ground_truth": "normal"
+  },
+  {
+    "review_id": "review_fdc66ee9d30d",
+    "case": "stable-2",
+    "arm": "deterministic",
+    "expected_next_action": "compare_later",
+    "ground_truth": "jitter"
+  },
+  {
+    "review_id": "review_e5f45bfe94f3",
+    "case": "stable-3",
+    "arm": "deterministic",
+    "expected_next_action": "compare_later",
+    "ground_truth": "stable_repeat"
+  },
+  {
+    "review_id": "review_fd8d7fb50f31",
+    "case": "stable-4",
+    "arm": "deterministic",
+    "expected_next_action": "compare_later",
+    "ground_truth": "normal_ipv6"
+  },
+  {
+    "review_id": "review_6107da592d42",
+    "case": "stable-5",
+    "arm": "deterministic",
+    "expected_next_action": "compare_later",
+    "ground_truth": "zero_body"
+  },
+  {
+    "review_id": "review_450aa63d1704",
+    "case": "stable-6",
+    "arm": "deterministic",
+    "expected_next_action": "compare_later",
+    "ground_truth": "stable_restore"
+  },
+  {
+    "review_id": "review_f39c4912150f",
+    "case": "dns-1",
+    "arm": "deterministic",
+    "expected_next_action": "verify_dns",
+    "ground_truth": "dns_missing"
+  },
+  {
+    "review_id": "review_21232280d33d",
+    "case": "dns-2",
+    "arm": "deterministic",
+    "expected_next_action": "verify_dns",
+    "ground_truth": "dns_timeout"
+  },
+  {
+    "review_id": "review_05a8f3147424",
+    "case": "dns-3",
+    "arm": "deterministic",
+    "expected_next_action": "verify_dns",
+    "ground_truth": "dns_cancel"
+  },
+  {
+    "review_id": "review_62e1a892d08f",
+    "case": "dns-4",
+    "arm": "deterministic",
+    "expected_next_action": "verify_dns",
+    "ground_truth": "dns_rotation"
+  },
+  {
+    "review_id": "review_432b6153ea45",
+    "case": "dns-5",
+    "arm": "deterministic",
+    "expected_next_action": "verify_dns",
+    "ground_truth": "dns_delay"
+  },
+  {
+    "review_id": "review_4a02defacf87",
+    "case": "dns-6",
+    "arm": "deterministic",
+    "expected_next_action": "verify_dns",
+    "ground_truth": "dns_empty"
+  },
+  {
+    "review_id": "review_3646230d10a2",
+    "case": "boundary-1",
+    "arm": "deterministic",
+    "expected_next_action": "respect_public_boundary",
+    "ground_truth": "mixed_ipv4"
+  },
+  {
+    "review_id": "review_ab49259a2b0c",
+    "case": "boundary-2",
+    "arm": "deterministic",
+    "expected_next_action": "respect_public_boundary",
+    "ground_truth": "mixed_ipv6"
+  },
+  {
+    "review_id": "review_c2ee4909c88a",
+    "case": "boundary-3",
+    "arm": "deterministic",
+    "expected_next_action": "respect_public_boundary",
+    "ground_truth": "mapped_private"
+  },
+  {
+    "review_id": "review_09c6ec412588",
+    "case": "boundary-4",
+    "arm": "deterministic",
+    "expected_next_action": "respect_public_boundary",
+    "ground_truth": "redirect_private"
+  },
+  {
+    "review_id": "review_7e0542ccdf6b",
+    "case": "boundary-5",
+    "arm": "deterministic",
+    "expected_next_action": "respect_public_boundary",
+    "ground_truth": "redirect_metadata"
+  },
+  {
+    "review_id": "review_7ff51dd97189",
+    "case": "boundary-6",
+    "arm": "deterministic",
+    "expected_next_action": "respect_public_boundary",
+    "ground_truth": "redirect_recursive"
+  },
+  {
+    "review_id": "review_bcca33414ecc",
+    "case": "tcp-1",
+    "arm": "deterministic",
+    "expected_next_action": "verify_public_service_and_observer",
+    "ground_truth": "tcp_refused"
+  },
+  {
+    "review_id": "review_968da697be76",
+    "case": "tcp-2",
+    "arm": "deterministic",
+    "expected_next_action": "verify_public_service_and_observer",
+    "ground_truth": "tcp_timeout"
+  },
+  {
+    "review_id": "review_dd78bd7d4430",
+    "case": "tcp-3",
+    "arm": "deterministic",
+    "expected_next_action": "verify_public_service_and_observer",
+    "ground_truth": "alternate_refused"
+  },
+  {
+    "review_id": "review_e21cbf02fade",
+    "case": "tcp-4",
+    "arm": "deterministic",
+    "expected_next_action": "verify_public_service_and_observer",
+    "ground_truth": "alternate_timeout"
+  },
+  {
+    "review_id": "review_9fba274326f5",
+    "case": "tcp-5",
+    "arm": "deterministic",
+    "expected_next_action": "verify_public_service_and_observer",
+    "ground_truth": "all_refused"
+  },
+  {
+    "review_id": "review_92fa5c301c35",
+    "case": "tcp-6",
+    "arm": "deterministic",
+    "expected_next_action": "verify_public_service_and_observer",
+    "ground_truth": "bounded_answers"
+  },
+  {
+    "review_id": "review_5c01ea2a1199",
+    "case": "tls-1",
+    "arm": "deterministic",
+    "expected_next_action": "verify_certificate_keep_validation",
+    "ground_truth": "tls_valid"
+  },
+  {
+    "review_id": "review_d471f64b2636",
+    "case": "tls-2",
+    "arm": "deterministic",
+    "expected_next_action": "verify_certificate_keep_validation",
+    "ground_truth": "tls_untrusted"
+  },
+  {
+    "review_id": "review_adc7faba870f",
+    "case": "tls-3",
+    "arm": "deterministic",
+    "expected_next_action": "verify_certificate_keep_validation",
+    "ground_truth": "tls_hostname"
+  },
+  {
+    "review_id": "review_a41c2cecfeb3",
+    "case": "tls-4",
+    "arm": "deterministic",
+    "expected_next_action": "verify_certificate_keep_validation",
+    "ground_truth": "tls_timeout"
+  },
+  {
+    "review_id": "review_de7b800fa990",
+    "case": "tls-5",
+    "arm": "deterministic",
+    "expected_next_action": "verify_certificate_keep_validation",
+    "ground_truth": "tls_partial_headers"
+  },
+  {
+    "review_id": "review_cfdaf68977e2",
+    "case": "tls-6",
+    "arm": "deterministic",
+    "expected_next_action": "verify_certificate_keep_validation",
+    "ground_truth": "tls_cleanup"
+  },
+  {
+    "review_id": "review_545bd991ea7c",
+    "case": "headers-1",
+    "arm": "deterministic",
+    "expected_next_action": "compare_head_and_authorized_logs",
+    "ground_truth": "headers_timeout"
+  },
+  {
+    "review_id": "review_e8f061098a38",
+    "case": "headers-2",
+    "arm": "deterministic",
+    "expected_next_action": "compare_head_and_authorized_logs",
+    "ground_truth": "headers_delay"
+  },
+  {
+    "review_id": "review_cae96f6a624c",
+    "case": "headers-3",
+    "arm": "deterministic",
+    "expected_next_action": "compare_head_and_authorized_logs",
+    "ground_truth": "headers_disconnect"
+  },
+  {
+    "review_id": "review_9784e966a998",
+    "case": "headers-4",
+    "arm": "deterministic",
+    "expected_next_action": "compare_head_and_authorized_logs",
+    "ground_truth": "https_headers_timeout"
+  },
+  {
+    "review_id": "review_e6eab1b57c7c",
+    "case": "headers-5",
+    "arm": "deterministic",
+    "expected_next_action": "compare_head_and_authorized_logs",
+    "ground_truth": "http408"
+  },
+  {
+    "review_id": "review_489ebd77ced5",
+    "case": "headers-6",
+    "arm": "deterministic",
+    "expected_next_action": "compare_head_and_authorized_logs",
+    "ground_truth": "cancel_headers"
+  },
+  {
+    "review_id": "review_78bf7e2ae9c0",
+    "case": "method-1",
+    "arm": "deterministic",
+    "expected_next_action": "verify_supported_methods",
+    "ground_truth": "head405"
+  },
+  {
+    "review_id": "review_54899c6368ea",
+    "case": "method-2",
+    "arm": "deterministic",
+    "expected_next_action": "verify_supported_methods",
+    "ground_truth": "head501"
+  },
+  {
+    "review_id": "review_59a2e49f88b7",
+    "case": "method-3",
+    "arm": "deterministic",
+    "expected_next_action": "verify_supported_methods",
+    "ground_truth": "get405_ok"
+  },
+  {
+    "review_id": "review_883ef3b54ce1",
+    "case": "method-4",
+    "arm": "deterministic",
+    "expected_next_action": "verify_supported_methods",
+    "ground_truth": "get501_ok"
+  },
+  {
+    "review_id": "review_c45d1a1b9cfb",
+    "case": "method-5",
+    "arm": "deterministic",
+    "expected_next_action": "verify_supported_methods",
+    "ground_truth": "get405_fail"
+  },
+  {
+    "review_id": "review_e289ec0f68bc",
+    "case": "method-6",
+    "arm": "deterministic",
+    "expected_next_action": "verify_supported_methods",
+    "ground_truth": "get_redirect"
+  },
+  {
+    "review_id": "review_ee2ad9a904b9",
+    "case": "status-1",
+    "arm": "deterministic",
+    "expected_next_action": "compare_status_and_authorized_logs",
+    "ground_truth": "http400"
+  },
+  {
+    "review_id": "review_4850a7414e01",
+    "case": "status-2",
+    "arm": "deterministic",
+    "expected_next_action": "compare_status_and_authorized_logs",
+    "ground_truth": "http401"
+  },
+  {
+    "review_id": "review_1ed10d9e1d2b",
+    "case": "status-3",
+    "arm": "deterministic",
+    "expected_next_action": "compare_status_and_authorized_logs",
+    "ground_truth": "http403"
+  },
+  {
+    "review_id": "review_9da60405b04f",
+    "case": "status-4",
+    "arm": "deterministic",
+    "expected_next_action": "respect_retry_policy",
+    "ground_truth": "http429"
+  },
+  {
+    "review_id": "review_81cea4d87359",
+    "case": "status-5",
+    "arm": "deterministic",
+    "expected_next_action": "compare_status_and_authorized_logs",
+    "ground_truth": "http500"
+  },
+  {
+    "review_id": "review_1b3afa649485",
+    "case": "status-6",
+    "arm": "deterministic",
+    "expected_next_action": "compare_status_and_authorized_logs",
+    "ground_truth": "http503"
+  },
+  {
+    "review_id": "review_cf9771f0c174",
+    "case": "redirect-1",
+    "arm": "deterministic",
+    "expected_next_action": "inspect_redirect_coverage",
+    "ground_truth": "redirect_ok"
+  },
+  {
+    "review_id": "review_6b2c03d93e2b",
+    "case": "redirect-2",
+    "arm": "deterministic",
+    "expected_next_action": "inspect_redirect_coverage",
+    "ground_truth": "redirect_final503"
+  },
+  {
+    "review_id": "review_885ae126f883",
+    "case": "redirect-3",
+    "arm": "deterministic",
+    "expected_next_action": "inspect_redirect_coverage",
+    "ground_truth": "redirect_loop"
+  },
+  {
+    "review_id": "review_3d981d7d8ac8",
+    "case": "redirect-4",
+    "arm": "deterministic",
+    "expected_next_action": "inspect_redirect_coverage",
+    "ground_truth": "redirect_limit"
+  },
+  {
+    "review_id": "review_43e1b2677e11",
+    "case": "redirect-5",
+    "arm": "deterministic",
+    "expected_next_action": "inspect_redirect_coverage",
+    "ground_truth": "redirect_later_failure"
+  },
+  {
+    "review_id": "review_a40f37389a6f",
+    "case": "redirect-6",
+    "arm": "deterministic",
+    "expected_next_action": "inspect_redirect_coverage",
+    "ground_truth": "redirect_not_followed"
+  },
+  {
+    "review_id": "review_216dad171bbe",
+    "case": "page-1",
+    "arm": "deterministic",
+    "expected_next_action": "compare_fingerprint_coverage",
+    "ground_truth": "page_complete"
+  },
+  {
+    "review_id": "review_b8a3c53805c1",
+    "case": "page-2",
+    "arm": "deterministic",
+    "expected_next_action": "compare_fingerprint_coverage",
+    "ground_truth": "page_prefix"
+  },
+  {
+    "review_id": "review_e8c2b1f26a6c",
+    "case": "page-3",
+    "arm": "deterministic",
+    "expected_next_action": "compare_fingerprint_coverage",
+    "ground_truth": "page_dynamic"
+  },
+  {
+    "review_id": "review_cbc4b66438d1",
+    "case": "page-4",
+    "arm": "deterministic",
+    "expected_next_action": "compare_fingerprint_coverage",
+    "ground_truth": "page_unsupported"
+  },
+  {
+    "review_id": "review_4343b34430de",
+    "case": "page-5",
+    "arm": "deterministic",
+    "expected_next_action": "compare_fingerprint_coverage",
+    "ground_truth": "page_interrupted"
+  },
+  {
+    "review_id": "review_bc3a82c271e3",
+    "case": "page-6",
+    "arm": "deterministic",
+    "expected_next_action": "compare_fingerprint_coverage",
+    "ground_truth": "page_redirect"
+  },
+  {
+    "review_id": "review_1d1f38d6746f",
+    "case": "coverage-2",
+    "arm": "deterministic",
+    "expected_next_action": "restore_collection_without_inventing_health",
+    "ground_truth": "missing_evidence"
+  },
+  {
+    "review_id": "review_480a3071fe6f",
+    "case": "coverage-3",
+    "arm": "deterministic",
+    "expected_next_action": "restore_collection_without_inventing_health",
+    "ground_truth": "stale_evidence"
+  },
+  {
+    "review_id": "review_fe848a5cdbc2",
+    "case": "coverage-4",
+    "arm": "deterministic",
+    "expected_next_action": "restore_collection_without_inventing_health",
+    "ground_truth": "duplicate_delivery"
+  },
+  {
+    "review_id": "review_2595a522a499",
+    "case": "coverage-5",
+    "arm": "deterministic",
+    "expected_next_action": "restore_collection_without_inventing_health",
+    "ground_truth": "multi_target"
+  },
+  {
+    "review_id": "review_566a4fdfd690",
+    "case": "coverage-6",
+    "arm": "deterministic",
+    "expected_next_action": "restore_collection_without_inventing_health",
+    "ground_truth": "baseline_reset"
+  },
+  {
+    "review_id": "review_8559ba1bd643",
+    "case": "model-1",
+    "arm": "deterministic",
+    "expected_next_action": "use_retained_deterministic_facts",
+    "ground_truth": "model_unavailable"
+  },
+  {
+    "review_id": "review_cdd905bb2401",
+    "case": "model-2",
+    "arm": "deterministic",
+    "expected_next_action": "use_retained_deterministic_facts",
+    "ground_truth": "model_invalid"
+  },
+  {
+    "review_id": "review_71e01ac7158b",
+    "case": "model-3",
+    "arm": "deterministic",
+    "expected_next_action": "use_retained_deterministic_facts",
+    "ground_truth": "model_rate_limit"
+  },
+  {
+    "review_id": "review_48a5e21a25c5",
+    "case": "model-4",
+    "arm": "deterministic",
+    "expected_next_action": "use_retained_deterministic_facts",
+    "ground_truth": "model_budget"
+  },
+  {
+    "review_id": "review_c9703d7235ae",
+    "case": "model-5",
+    "arm": "deterministic",
+    "expected_next_action": "use_retained_deterministic_facts",
+    "ground_truth": "model_cache_context"
+  },
+  {
+    "review_id": "review_35a8b170f981",
+    "case": "model-6",
+    "arm": "deterministic",
+    "expected_next_action": "use_retained_deterministic_facts",
+    "ground_truth": "model_wrong_source"
+  }
+]

@@ -1,0 +1,653 @@
+{
+  "schema": "sentinel-fault-corpus-v1",
+  "cases": [
+    {
+      "id": "stable-1",
+      "family": "stable",
+      "fault": "normal",
+      "split": "development",
+      "evidence_class": "synthetic_controlled",
+      "seed": 42,
+      "expected_next_action": "compare_later"
+    },
+    {
+      "id": "stable-2",
+      "family": "stable",
+      "fault": "jitter",
+      "split": "development",
+      "evidence_class": "synthetic_controlled",
+      "seed": 43,
+      "expected_next_action": "compare_later"
+    },
+    {
+      "id": "stable-3",
+      "family": "stable",
+      "fault": "stable_repeat",
+      "split": "development",
+      "evidence_class": "synthetic_controlled",
+      "seed": 44,
+      "expected_next_action": "compare_later"
+    },
+    {
+      "id": "stable-4",
+      "family": "stable",
+      "fault": "normal_ipv6",
+      "split": "development",
+      "evidence_class": "synthetic_controlled",
+      "seed": 45,
+      "expected_next_action": "compare_later"
+    },
+    {
+      "id": "stable-5",
+      "family": "stable",
+      "fault": "zero_body",
+      "split": "locked_evaluation",
+      "evidence_class": "synthetic_controlled",
+      "seed": 46,
+      "expected_next_action": "compare_later"
+    },
+    {
+      "id": "stable-6",
+      "family": "stable",
+      "fault": "stable_restore",
+      "split": "locked_evaluation",
+      "evidence_class": "synthetic_controlled",
+      "seed": 47,
+      "expected_next_action": "compare_later"
+    },
+    {
+      "id": "dns-1",
+      "family": "dns",
+      "fault": "dns_missing",
+      "split": "development",
+      "evidence_class": "synthetic_controlled",
+      "seed": 42,
+      "expected_next_action": "verify_dns"
+    },
+    {
+      "id": "dns-2",
+      "family": "dns",
+      "fault": "dns_timeout",
+      "split": "development",
+      "evidence_class": "synthetic_controlled",
+      "seed": 43,
+      "expected_next_action": "verify_dns"
+    },
+    {
+      "id": "dns-3",
+      "family": "dns",
+      "fault": "dns_cancel",
+      "split": "development",
+      "evidence_class": "synthetic_controlled",
+      "seed": 44,
+      "expected_next_action": "verify_dns"
+    },
+    {
+      "id": "dns-4",
+      "family": "dns",
+      "fault": "dns_rotation",
+      "split": "development",
+      "evidence_class": "synthetic_controlled",
+      "seed": 45,
+      "expected_next_action": "verify_dns"
+    },
+    {
+      "id": "dns-5",
+      "family": "dns",
+      "fault": "dns_delay",
+      "split": "locked_evaluation",
+      "evidence_class": "synthetic_controlled",
+      "seed": 46,
+      "expected_next_action": "verify_dns"
+    },
+    {
+      "id": "dns-6",
+      "family": "dns",
+      "fault": "dns_empty",
+      "split": "locked_evaluation",
+      "evidence_class": "synthetic_controlled",
+      "seed": 47,
+      "expected_next_action": "verify_dns"
+    },
+    {
+      "id": "boundary-1",
+      "family": "boundary",
+      "fault": "mixed_ipv4",
+      "split": "development",
+      "evidence_class": "synthetic_controlled",
+      "seed": 42,
+      "expected_next_action": "respect_public_boundary"
+    },
+    {
+      "id": "boundary-2",
+      "family": "boundary",
+      "fault": "mixed_ipv6",
+      "split": "development",
+      "evidence_class": "synthetic_controlled",
+      "seed": 43,
+      "expected_next_action": "respect_public_boundary"
+    },
+    {
+      "id": "boundary-3",
+      "family": "boundary",
+      "fault": "mapped_private",
+      "split": "development",
+      "evidence_class": "synthetic_controlled",
+      "seed": 44,
+      "expected_next_action": "respect_public_boundary"
+    },
+    {
+      "id": "boundary-4",
+      "family": "boundary",
+      "fault": "redirect_private",
+      "split": "development",
+      "evidence_class": "synthetic_controlled",
+      "seed": 45,
+      "expected_next_action": "respect_public_boundary"
+    },
+    {
+      "id": "boundary-5",
+      "family": "boundary",
+      "fault": "redirect_metadata",
+      "split": "locked_evaluation",
+      "evidence_class": "synthetic_controlled",
+      "seed": 46,
+      "expected_next_action": "respect_public_boundary"
+    },
+    {
+      "id": "boundary-6",
+      "family": "boundary",
+      "fault": "redirect_recursive",
+      "split": "locked_evaluation",
+      "evidence_class": "synthetic_controlled",
+      "seed": 47,
+      "expected_next_action": "respect_public_boundary"
+    },
+    {
+      "id": "tcp-1",
+      "family": "tcp",
+      "fault": "tcp_refused",
+      "split": "development",
+      "evidence_class": "synthetic_controlled",
+      "seed": 42,
+      "expected_next_action": "verify_public_service_and_observer"
+    },
+    {
+      "id": "tcp-2",
+      "family": "tcp",
+      "fault": "tcp_timeout",
+      "split": "development",
+      "evidence_class": "synthetic_controlled",
+      "seed": 43,
+      "expected_next_action": "verify_public_service_and_observer"
+    },
+    {
+      "id": "tcp-3",
+      "family": "tcp",
+      "fault": "alternate_refused",
+      "split": "development",
+      "evidence_class": "synthetic_controlled",
+      "seed": 44,
+      "expected_next_action": "verify_public_service_and_observer"
+    },
+    {
+      "id": "tcp-4",
+      "family": "tcp",
+      "fault": "alternate_timeout",
+      "split": "development",
+      "evidence_class": "synthetic_controlled",
+      "seed": 45,
+      "expected_next_action": "verify_public_service_and_observer"
+    },
+    {
+      "id": "tcp-5",
+      "family": "tcp",
+      "fault": "all_refused",
+      "split": "locked_evaluation",
+      "evidence_class": "synthetic_controlled",
+      "seed": 46,
+      "expected_next_action": "verify_public_service_and_observer"
+    },
+    {
+      "id": "tcp-6",
+      "family": "tcp",
+      "fault": "bounded_answers",
+      "split": "locked_evaluation",
+      "evidence_class": "synthetic_controlled",
+      "seed": 47,
+      "expected_next_action": "verify_public_service_and_observer"
+    },
+    {
+      "id": "tls-1",
+      "family": "tls",
+      "fault": "tls_valid",
+      "split": "development",
+      "evidence_class": "synthetic_controlled",
+      "seed": 42,
+      "expected_next_action": "verify_certificate_keep_validation"
+    },
+    {
+      "id": "tls-2",
+      "family": "tls",
+      "fault": "tls_untrusted",
+      "split": "development",
+      "evidence_class": "synthetic_controlled",
+      "seed": 43,
+      "expected_next_action": "verify_certificate_keep_validation"
+    },
+    {
+      "id": "tls-3",
+      "family": "tls",
+      "fault": "tls_hostname",
+      "split": "development",
+      "evidence_class": "synthetic_controlled",
+      "seed": 44,
+      "expected_next_action": "verify_certificate_keep_validation"
+    },
+    {
+      "id": "tls-4",
+      "family": "tls",
+      "fault": "tls_timeout",
+      "split": "development",
+      "evidence_class": "synthetic_controlled",
+      "seed": 45,
+      "expected_next_action": "verify_certificate_keep_validation"
+    },
+    {
+      "id": "tls-5",
+      "family": "tls",
+      "fault": "tls_partial_headers",
+      "split": "locked_evaluation",
+      "evidence_class": "synthetic_controlled",
+      "seed": 46,
+      "expected_next_action": "verify_certificate_keep_validation"
+    },
+    {
+      "id": "tls-6",
+      "family": "tls",
+      "fault": "tls_cleanup",
+      "split": "locked_evaluation",
+      "evidence_class": "synthetic_controlled",
+      "seed": 47,
+      "expected_next_action": "verify_certificate_keep_validation"
+    },
+    {
+      "id": "headers-1",
+      "family": "headers",
+      "fault": "headers_timeout",
+      "split": "development",
+      "evidence_class": "synthetic_controlled",
+      "seed": 42,
+      "expected_next_action": "compare_head_and_authorized_logs"
+    },
+    {
+      "id": "headers-2",
+      "family": "headers",
+      "fault": "headers_delay",
+      "split": "development",
+      "evidence_class": "synthetic_controlled",
+      "seed": 43,
+      "expected_next_action": "compare_head_and_authorized_logs"
+    },
+    {
+      "id": "headers-3",
+      "family": "headers",
+      "fault": "headers_disconnect",
+      "split": "development",
+      "evidence_class": "synthetic_controlled",
+      "seed": 44,
+      "expected_next_action": "compare_head_and_authorized_logs"
+    },
+    {
+      "id": "headers-4",
+      "family": "headers",
+      "fault": "https_headers_timeout",
+      "split": "development",
+      "evidence_class": "synthetic_controlled",
+      "seed": 45,
+      "expected_next_action": "compare_head_and_authorized_logs"
+    },
+    {
+      "id": "headers-5",
+      "family": "headers",
+      "fault": "http408",
+      "split": "locked_evaluation",
+      "evidence_class": "synthetic_controlled",
+      "seed": 46,
+      "expected_next_action": "compare_head_and_authorized_logs"
+    },
+    {
+      "id": "headers-6",
+      "family": "headers",
+      "fault": "cancel_headers",
+      "split": "locked_evaluation",
+      "evidence_class": "synthetic_controlled",
+      "seed": 47,
+      "expected_next_action": "compare_head_and_authorized_logs"
+    },
+    {
+      "id": "method-1",
+      "family": "method",
+      "fault": "head405",
+      "split": "development",
+      "evidence_class": "synthetic_controlled",
+      "seed": 42,
+      "expected_next_action": "verify_supported_methods"
+    },
+    {
+      "id": "method-2",
+      "family": "method",
+      "fault": "head501",
+      "split": "development",
+      "evidence_class": "synthetic_controlled",
+      "seed": 43,
+      "expected_next_action": "verify_supported_methods"
+    },
+    {
+      "id": "method-3",
+      "family": "method",
+      "fault": "get405_ok",
+      "split": "development",
+      "evidence_class": "synthetic_controlled",
+      "seed": 44,
+      "expected_next_action": "verify_supported_methods"
+    },
+    {
+      "id": "method-4",
+      "family": "method",
+      "fault": "get501_ok",
+      "split": "development",
+      "evidence_class": "synthetic_controlled",
+      "seed": 45,
+      "expected_next_action": "verify_supported_methods"
+    },
+    {
+      "id": "method-5",
+      "family": "method",
+      "fault": "get405_fail",
+      "split": "locked_evaluation",
+      "evidence_class": "synthetic_controlled",
+      "seed": 46,
+      "expected_next_action": "verify_supported_methods"
+    },
+    {
+      "id": "method-6",
+      "family": "method",
+      "fault": "get_redirect",
+      "split": "locked_evaluation",
+      "evidence_class": "synthetic_controlled",
+      "seed": 47,
+      "expected_next_action": "verify_supported_methods"
+    },
+    {
+      "id": "status-1",
+      "family": "status",
+      "fault": "http400",
+      "split": "development",
+      "evidence_class": "synthetic_controlled",
+      "seed": 42,
+      "expected_next_action": "compare_status_and_authorized_logs"
+    },
+    {
+      "id": "status-2",
+      "family": "status",
+      "fault": "http401",
+      "split": "development",
+      "evidence_class": "synthetic_controlled",
+      "seed": 43,
+      "expected_next_action": "compare_status_and_authorized_logs"
+    },
+    {
+      "id": "status-3",
+      "family": "status",
+      "fault": "http403",
+      "split": "development",
+      "evidence_class": "synthetic_controlled",
+      "seed": 44,
+      "expected_next_action": "compare_status_and_authorized_logs"
+    },
+    {
+      "id": "status-4",
+      "family": "status",
+      "fault": "http429",
+      "split": "development",
+      "evidence_class": "synthetic_controlled",
+      "seed": 45,
+      "expected_next_action": "respect_retry_policy"
+    },
+    {
+      "id": "status-5",
+      "family": "status",
+      "fault": "http500",
+      "split": "locked_evaluation",
+      "evidence_class": "synthetic_controlled",
+      "seed": 46,
+      "expected_next_action": "compare_status_and_authorized_logs"
+    },
+    {
+      "id": "status-6",
+      "family": "status",
+      "fault": "http503",
+      "split": "locked_evaluation",
+      "evidence_class": "synthetic_controlled",
+      "seed": 47,
+      "expected_next_action": "compare_status_and_authorized_logs"
+    },
+    {
+      "id": "redirect-1",
+      "family": "redirect",
+      "fault": "redirect_ok",
+      "split": "development",
+      "evidence_class": "synthetic_controlled",
+      "seed": 42,
+      "expected_next_action": "inspect_redirect_coverage"
+    },
+    {
+      "id": "redirect-2",
+      "family": "redirect",
+      "fault": "redirect_final503",
+      "split": "development",
+      "evidence_class": "synthetic_controlled",
+      "seed": 43,
+      "expected_next_action": "inspect_redirect_coverage"
+    },
+    {
+      "id": "redirect-3",
+      "family": "redirect",
+      "fault": "redirect_loop",
+      "split": "development",
+      "evidence_class": "synthetic_controlled",
+      "seed": 44,
+      "expected_next_action": "inspect_redirect_coverage"
+    },
+    {
+      "id": "redirect-4",
+      "family": "redirect",
+      "fault": "redirect_limit",
+      "split": "development",
+      "evidence_class": "synthetic_controlled",
+      "seed": 45,
+      "expected_next_action": "inspect_redirect_coverage"
+    },
+    {
+      "id": "redirect-5",
+      "family": "redirect",
+      "fault": "redirect_later_failure",
+      "split": "locked_evaluation",
+      "evidence_class": "synthetic_controlled",
+      "seed": 46,
+      "expected_next_action": "inspect_redirect_coverage"
+    },
+    {
+      "id": "redirect-6",
+      "family": "redirect",
+      "fault": "redirect_not_followed",
+      "split": "locked_evaluation",
+      "evidence_class": "synthetic_controlled",
+      "seed": 47,
+      "expected_next_action": "inspect_redirect_coverage"
+    },
+    {
+      "id": "page-1",
+      "family": "page",
+      "fault": "page_complete",
+      "split": "development",
+      "evidence_class": "synthetic_controlled",
+      "seed": 42,
+      "expected_next_action": "compare_fingerprint_coverage"
+    },
+    {
+      "id": "page-2",
+      "family": "page",
+      "fault": "page_prefix",
+      "split": "development",
+      "evidence_class": "synthetic_controlled",
+      "seed": 43,
+      "expected_next_action": "compare_fingerprint_coverage"
+    },
+    {
+      "id": "page-3",
+      "family": "page",
+      "fault": "page_dynamic",
+      "split": "development",
+      "evidence_class": "synthetic_controlled",
+      "seed": 44,
+      "expected_next_action": "compare_fingerprint_coverage"
+    },
+    {
+      "id": "page-4",
+      "family": "page",
+      "fault": "page_unsupported",
+      "split": "development",
+      "evidence_class": "synthetic_controlled",
+      "seed": 45,
+      "expected_next_action": "compare_fingerprint_coverage"
+    },
+    {
+      "id": "page-5",
+      "family": "page",
+      "fault": "page_interrupted",
+      "split": "locked_evaluation",
+      "evidence_class": "synthetic_controlled",
+      "seed": 46,
+      "expected_next_action": "compare_fingerprint_coverage"
+    },
+    {
+      "id": "page-6",
+      "family": "page",
+      "fault": "page_redirect",
+      "split": "locked_evaluation",
+      "evidence_class": "synthetic_controlled",
+      "seed": 47,
+      "expected_next_action": "compare_fingerprint_coverage"
+    },
+    {
+      "id": "coverage-1",
+      "family": "coverage",
+      "fault": "collector_failure",
+      "split": "development",
+      "evidence_class": "synthetic_controlled",
+      "seed": 42,
+      "expected_next_action": "restore_collection_without_inventing_health"
+    },
+    {
+      "id": "coverage-2",
+      "family": "coverage",
+      "fault": "missing_evidence",
+      "split": "development",
+      "evidence_class": "synthetic_controlled",
+      "seed": 43,
+      "expected_next_action": "restore_collection_without_inventing_health"
+    },
+    {
+      "id": "coverage-3",
+      "family": "coverage",
+      "fault": "stale_evidence",
+      "split": "development",
+      "evidence_class": "synthetic_controlled",
+      "seed": 44,
+      "expected_next_action": "restore_collection_without_inventing_health"
+    },
+    {
+      "id": "coverage-4",
+      "family": "coverage",
+      "fault": "duplicate_delivery",
+      "split": "development",
+      "evidence_class": "synthetic_controlled",
+      "seed": 45,
+      "expected_next_action": "restore_collection_without_inventing_health"
+    },
+    {
+      "id": "coverage-5",
+      "family": "coverage",
+      "fault": "multi_target",
+      "split": "locked_evaluation",
+      "evidence_class": "synthetic_controlled",
+      "seed": 46,
+      "expected_next_action": "restore_collection_without_inventing_health"
+    },
+    {
+      "id": "coverage-6",
+      "family": "coverage",
+      "fault": "baseline_reset",
+      "split": "locked_evaluation",
+      "evidence_class": "synthetic_controlled",
+      "seed": 47,
+      "expected_next_action": "restore_collection_without_inventing_health"
+    },
+    {
+      "id": "model-1",
+      "family": "model",
+      "fault": "model_unavailable",
+      "split": "development",
+      "evidence_class": "synthetic_controlled",
+      "seed": 42,
+      "expected_next_action": "use_retained_deterministic_facts"
+    },
+    {
+      "id": "model-2",
+      "family": "model",
+      "fault": "model_invalid",
+      "split": "development",
+      "evidence_class": "synthetic_controlled",
+      "seed": 43,
+      "expected_next_action": "use_retained_deterministic_facts"
+    },
+    {
+      "id": "model-3",
+      "family": "model",
+      "fault": "model_rate_limit",
+      "split": "development",
+      "evidence_class": "synthetic_controlled",
+      "seed": 44,
+      "expected_next_action": "use_retained_deterministic_facts"
+    },
+    {
+      "id": "model-4",
+      "family": "model",
+      "fault": "model_budget",
+      "split": "development",
+      "evidence_class": "synthetic_controlled",
+      "seed": 45,
+      "expected_next_action": "use_retained_deterministic_facts"
+    },
+    {
+      "id": "model-5",
+      "family": "model",
+      "fault": "model_cache_context",
+      "split": "locked_evaluation",
+      "evidence_class": "synthetic_controlled",
+      "seed": 46,
+      "expected_next_action": "use_retained_deterministic_facts"
+    },
+    {
+      "id": "model-6",
+      "family": "model",
+      "fault": "model_wrong_source",
+      "split": "locked_evaluation",
+      "evidence_class": "synthetic_controlled",
+      "seed": 47,
+      "expected_next_action": "use_retained_deterministic_facts"
+    }
+  ]
+}

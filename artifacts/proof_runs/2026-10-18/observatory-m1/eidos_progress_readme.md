@@ -1,0 +1,1 @@
+Open eidos_progress_dashboard.html locally or read eidos_progress_meter.md. SVG needs no JavaScript. Global score is null because no global research-gate acceptance audit was performed. All numbers come from the named receipts.

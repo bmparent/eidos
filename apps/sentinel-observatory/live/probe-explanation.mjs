@@ -8,7 +8,10 @@ export function probeExplanation(event={}) {
   const stages=Object.fromEntries(['dns','tcp','tls','http'].map(key=>[key,stageState(p[key]?.state)]));
   const duration=elapsed===null?'':` after ${(elapsed/1000).toFixed(2)} seconds`;
   let stage='unavailable',summary,next;
-  if(event.error){
+  if(event.error?.code==='cancelled'){
+    stage='cancelled';summary=`Collection was cancelled${duration}; this observation does not establish endpoint failure or recovery.`;
+    next='Resume an authorized check and inspect the completed stages; do not count cancellation as an outage.';
+  }else if(event.error){
     const timeout=event.error.code==='timeout';
     if(event.error.scope==='dns'||stages.dns==='failed'){
       stage='dns';summary=`${timeout?'Timed out during DNS lookup':'DNS lookup or public-address validation failed'}${duration}; no first-hop HTTP response was received.`;
@@ -32,10 +35,19 @@ export function probeExplanation(event={}) {
     if(event.coverage?.redirect_followed&&final!==null)summary+=` The followed redirect chain ended with HTTP ${final}${event.response_chain_complete===false?' before collection stopped':''}.`;
     else if([301,302,303,307,308].includes(http))summary+=' The redirect destination was not verified by this first-hop response.';
     next=http>=500?'Compare subsequent responses and authorized origin or edge logs; this status alone does not identify the failing component.':http===429?'Review the endpoint’s retry policy and compare a later request without increasing the sampling rate.':[401,403].includes(http)?'Check whether this endpoint permits unauthenticated HEAD requests; the probe does not send login credentials.':'Compare subsequent observations; this response alone does not verify application functionality or security.';
+    if([405,501].includes(http)){
+      summary+=' HEAD method coverage is unavailable; this response alone does not establish an endpoint outage.';
+      const get=p.http?.get_fallback;
+      if(get?.attempted&&status(get.status)!==null)summary+=` The explicitly enabled, separate GET fallback returned HTTP ${get.status}.`;
+      else if(get?.attempted)summary+=' The explicitly enabled GET fallback did not obtain a usable response.';
+      next='Confirm the endpoint’s supported HTTP methods; enable the bounded GET fallback only when an authorized GET check is appropriate.';
+    }
   }else{
     summary='No first-hop HTTP status was measured.';
     next='Inspect the collection record and retry when the collector is available.';
   }
+  const attempts=Array.isArray(event.attempts)?event.attempts.filter(x=>x.hop===0&&x.method==='HEAD'):[];
+  if(attempts.length>1)summary+=` ${attempts.length} validated addresses were attempted from this observer; ${attempts.filter(x=>x.outcome==='response').length} returned a response. Untried addresses and other observers remain unknown.`;
   return {stage,stages,elapsed_ms:elapsed,http_status:http,summary,next_check:next};
 }
 

@@ -121,7 +121,7 @@ async function sampleTarget(target) {
   let retryDelay=Math.max(MIN_INTERVAL,state.capabilities?.interval_ms||0);
   renderCards();renderStatus();
   try {
-    const response=await fetch('/api/observe',{method:'POST',headers:{'Content-Type':'application/json'},credentials:'same-origin',cache:'no-store',body:JSON.stringify({target:target.url,...(state.capabilities?.target_probes?.connected?{page_check:$('probe-page').checked,follow_redirects:$('probe-redirects').checked}:{})}),signal:target.controller.signal});
+    const response=await fetch('/api/observe',{method:'POST',headers:{'Content-Type':'application/json'},credentials:'same-origin',cache:'no-store',body:JSON.stringify({target:target.url,...(state.capabilities?.target_probes?.connected?{page_check:$('probe-page').checked,follow_redirects:$('probe-redirects').checked,...($('probe-get').checked?{get_fallback:true}:{})}:{})}),signal:target.controller.signal});
     let payload;try{payload=await response.json();}catch{throw new Error('The collector returned an unreadable response. No observation was added.');}
     const clientReceived=new Date().toISOString();
     if(!connected(target)||target.run!==run)return;
@@ -347,6 +347,7 @@ function observedText(event) {
 }
 function hypothesesFor(event) {
   const next='Compare subsequent checks and an independent authorized vantage before attributing a cause.';
+  if(event.probe_version==='target-probes-v1'&&(event.error||[405,501].includes(event.status))){const diagnosis=probeExplanation(event);return [{text:diagnosis.summary,next:diagnosis.next_check}];}
   if(isIncomplete(event))return [{text:'Collector connectivity, DNS, destination delay, and filtering are competing possibilities. This measurement does not distinguish them.',next}];
   if(event.status===429)return [{text:'The endpoint may be applying a request limit. Its scope and reason are not established by this response alone.',next:'Review the endpoint’s authorized server logs and retry policy before increasing any sampling.'}];
   if([401,403].includes(event.status))return [{text:'An access policy may be rejecting this unauthenticated HEAD request. That does not establish whether a signed-in browser is affected.',next:'Compare authorized application access and server logs. This collector does not send credentials.'}];

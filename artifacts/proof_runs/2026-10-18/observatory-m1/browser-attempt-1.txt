@@ -1,0 +1,216 @@
+node:internal/modules/run_main:107
+    triggerUncaughtException(
+    ^
+
+AssertionError [ERR_ASSERTION]: The input did not match the regular expression /HTTP response headers timed out/. Input:
+
+'example.com/tls_partial_headers\n' +
+  '\n' +
+  'https://example.com/tls_partial_headers\n' +
+  '\n' +
+  'HTTP status\n' +
+  'No response\n' +
+  'Probe elapsed\n' +
+  '221ms\n' +
+  '\n' +
+  'Oct 18, 17:02:52 · collector clock\n' +
+  'Received Oct 18, 17:02:52 · browser clock\n' +
+  '\n' +
+  'What was observed\n' +
+  '\n' +
+  'Timed out before a TCP connection was established after 0.22 seconds; no first-hop HTTP response was received. Next check: Confirm that this address is intended to serve public HTTP/S on the selected port. A public IP alone need not host a website; compare another authorized observation point.\n' +
+  '\n' +
+  'Elapsed time includes this collector’s network path. It is not page-load time or origin processing time.\n' +
+  '\n' +
+  'Original evidence · evt_64a5ff31114d…\n' +
+  'Observed connection path\n' +
+  '\n' +
+  'Public endpoint · address pinned\n' +
+  '\n' +
+  'Measured: https://example.com/tls_partial_headers\n' +
+  '\n' +
+  'This collector connection\n' +
+  'Destination\n' +
+  '1.1.1.1:443\n' +
+  'Transport\n' +
+  'TCP\n' +
+  'Application protocol\n' +
+  'HTTPS\n' +
+  'Public peer\n' +
+  'not measured\n' +
+  'Socket connected\n' +
+  'no\n' +
+  'Peer matched destination\n' +
+  'no\n' +
+  'TLS identity verified\n' +
+  'verification failed\n' +
+  'TLS protocol\n' +
+  'not measured\n' +
+  'Socket bytes written\n' +
+  '217\n' +
+  'Socket bytes read\n' +
+  '0\n' +
+  '\n' +
+  'This HEAD connection only; application socket counters\n' +
+  '\n' +
+  'Only this Observatory connection is visible. Target visitor traffic and internal networks remain outside this collector.\n' +
+  '\n' +
+  'Observed response controls\n' +
+  'HSTS\n' +
+  'not captured\n' +
+  'CSP\n' +
+  'not captured\n' +
+  'Content type\n' +
+  'not captured\n' +
+  'Frame policy\n' +
+  'not captured\n' +
+  'Referrer policy\n' +
+  'not captured\n' +
+  'Private cache\n' +
+  'not captured\n' +
+  'No-store cache\n' +
+  'not captured\n' +
+  '\n' +
+  'Header presence is not a vulnerability grade. Absent does not mean exploited.\n' +
+  '\n' +
+  'Brain / Sentinel · experimental\n' +
+  'change detected\n' +
+  'DNS lookup\n' +
+  '11.32\n' +
+  'Operational flag requires both Sentinel change and a measured departure beyond the prior median/MAD gate; not an attack probability\n' +
+  'Failed probes · last 20\n' +
+  '1.00\n' +
+  'Operational flag requires both Sentinel change and a measured departure beyond the prior median/MAD gate; not an attack probability\n' +
+  '\n' +
+  'Baseline scope: Separate metric, target, probe settings and collector identity\n' +
+  '\n' +
+  'Separate retained metric streams; current-frame change detection.\n' +
+  '\n' +
+  'Portable numerical analysis. Scores are not attack probabilities.\n' +
+  '\n' +
+  'Possible explanations\n' +
+  '\n' +
+  'Deterministic, conditional notes · no model invoked\n' +
+  '\n' +
+  'Possibility · cause unverified\n' +
+  '\n' +
+  'Collector connectivity, DNS, destination delay, and filtering are competing possibilities. This measurement does not distinguish them.\n' +
+  '\n' +
+  'Next observation: Compare subsequent checks and an independent authorized vantage before attributing a cause.\n' +
+  '\n' +
+  'Supporting measurement · evt_64a5ff31114d…\n' +
+  'Still unknown\n' +
+  '\n' +
+  'Visitor impact, internal behavior, origin processing, authenticated application state, and the cause of any change remain outside this view.\n' +
+  '\n' +
+  'Original measurement & provenance'
+
+    at file:///C:/Users/bmpar/codex-worktrees/observatory-fault-harness-20261018/apps/sentinel-observatory/live/fault-harness/browser-qa.mjs:17:74 {
+  generatedMessage: true,
+  code: 'ERR_ASSERTION',
+  actual: 'example.com/tls_partial_headers\n' +
+    '\n' +
+    'https://example.com/tls_partial_headers\n' +
+    '\n' +
+    'HTTP status\n' +
+    'No response\n' +
+    'Probe elapsed\n' +
+    '221ms\n' +
+    '\n' +
+    'Oct 18, 17:02:52 · collector clock\n' +
+    'Received Oct 18, 17:02:52 · browser clock\n' +
+    '\n' +
+    'What was observed\n' +
+    '\n' +
+    'Timed out before a TCP connection was established after 0.22 seconds; no first-hop HTTP response was received. Next check: Confirm that this address is intended to serve public HTTP/S on the selected port. A public IP alone need not host a website; compare another authorized observation point.\n' +
+    '\n' +
+    'Elapsed time includes this collector’s network path. It is not page-load time or origin processing time.\n' +
+    '\n' +
+    'Original evidence · evt_64a5ff31114d…\n' +
+    'Observed connection path\n' +
+    '\n' +
+    'Public endpoint · address pinned\n' +
+    '\n' +
+    'Measured: https://example.com/tls_partial_headers\n' +
+    '\n' +
+    'This collector connection\n' +
+    'Destination\n' +
+    '1.1.1.1:443\n' +
+    'Transport\n' +
+    'TCP\n' +
+    'Application protocol\n' +
+    'HTTPS\n' +
+    'Public peer\n' +
+    'not measured\n' +
+    'Socket connected\n' +
+    'no\n' +
+    'Peer matched destination\n' +
+    'no\n' +
+    'TLS identity verified\n' +
+    'verification failed\n' +
+    'TLS protocol\n' +
+    'not measured\n' +
+    'Socket bytes written\n' +
+    '217\n' +
+    'Socket bytes read\n' +
+    '0\n' +
+    '\n' +
+    'This HEAD connection only; application socket counters\n' +
+    '\n' +
+    'Only this Observatory connection is visible. Target visitor traffic and internal networks remain outside this collector.\n' +
+    '\n' +
+    'Observed response controls\n' +
+    'HSTS\n' +
+    'not captured\n' +
+    'CSP\n' +
+    'not captured\n' +
+    'Content type\n' +
+    'not captured\n' +
+    'Frame policy\n' +
+    'not captured\n' +
+    'Referrer policy\n' +
+    'not captured\n' +
+    'Private cache\n' +
+    'not captured\n' +
+    'No-store cache\n' +
+    'not captured\n' +
+    '\n' +
+    'Header presence is not a vulnerability grade. Absent does not mean exploited.\n' +
+    '\n' +
+    'Brain / Sentinel · experimental\n' +
+    'change detected\n' +
+    'DNS lookup\n' +
+    '11.32\n' +
+    'Operational flag requires both Sentinel change and a measured departure beyond the prior median/MAD gate; not an attack probability\n' +
+    'Failed probes · last 20\n' +
+    '1.00\n' +
+    'Operational flag requires both Sentinel change and a measured departure beyond the prior median/MAD gate; not an attack probability\n' +
+    '\n' +
+    'Baseline scope: Separate metric, target, probe settings and collector identity\n' +
+    '\n' +
+    'Separate retained metric streams; current-frame change detection.\n' +
+    '\n' +
+    'Portable numerical analysis. Scores are not attack probabilities.\n' +
+    '\n' +
+    'Possible explanations\n' +
+    '\n' +
+    'Deterministic, conditional notes · no model invoked\n' +
+    '\n' +
+    'Possibility · cause unverified\n' +
+    '\n' +
+    'Collector connectivity, DNS, destination delay, and filtering are competing possibilities. This measurement does not distinguish them.\n' +
+    '\n' +
+    'Next observation: Compare subsequent checks and an independent authorized vantage before attributing a cause.\n' +
+    '\n' +
+    'Supporting measurement · evt_64a5ff31114d…\n' +
+    'Still unknown\n' +
+    '\n' +
+    'Visitor impact, internal behavior, origin processing, authenticated application state, and the cause of any change remain outside this view.\n' +
+    '\n' +
+    'Original measurement & provenance',
+  expected: /HTTP response headers timed out/,
+  operator: 'match',
+  diff: 'simple'
+}
+
+Node.js v24.14.0

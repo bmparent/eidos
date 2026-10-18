@@ -1,0 +1,7 @@
+<!doctype html><meta charset="utf-8"><meta name="viewport" content="width=device-width"><title>Sentinel proof progress</title><style>body{max-width:1100px;margin:40px auto;padding:20px;font:16px system-ui;background:#080f19;color:#d2e3e6}table{border-collapse:collapse;width:100%}td,th{padding:12px;border-bottom:1px solid #304552;text-align:left}a{color:#b4eedc}</style><h1>Sentinel evidence progress</h1><p>Global research readiness: unknown. Collector milestone passed locally. Commercial qualification remains open.</p><img alt="Evidence progress" src="eidos_progress_meter.svg" style="width:100%"><p><a href="benchmark_summary.md">Measured report</a> · <a href="acceptance_matrix.md">Acceptance gates</a> · <a href="drive_manifest.json">Archive receipt</a></p><pre style="white-space:pre-wrap">| Method | TP / FP / FN | Precision | Recall | False incidents / benign target-day | Mean delay s |
+|---|---:|---:|---:|---:|---:|
+| gate | 24 / 12 / 2 | 0.667 | 0.923 | 1.414 | 0.0 |
+| sentinel_plus_gate | 24 / 12 / 2 | 0.667 | 0.923 | 1.414 | 0.0 |
+| ewma | 26 / 12 / 0 | 0.684 | 1.000 | 1.414 | 69.2 |
+| cusum | 26 / 14 / 0 | 0.650 | 1.000 | 1.650 | 69.2 |
+</pre><p>No live data, model calls or scheduling run in this dashboard.</p>

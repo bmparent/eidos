@@ -1,0 +1,43 @@
+{
+  "schema": "observatory-milestone-package-v1",
+  "assembled_at": "2026-10-18T21:40:42.474612+00:00",
+  "assembly_commit": "e7b15cff2a951e9366777f9885fd6dbd8c586bf2",
+  "runtime_code_commit": "4a9bd8b9da652a1d6587412316e18d97d35d76f8",
+  "core_behavior_changed": false,
+  "corpus_manifest": "artifacts\\proof_runs\\2026-10-18\\observatory-m1\\clean-corpus\\run_manifest.json",
+  "detector_manifest": "artifacts\\proof_runs\\2026-10-18\\observatory-m1\\detectors-final\\manifest.json",
+  "browser_receipts": "artifacts\\proof_runs\\2026-10-18\\observatory-m1\\browser-final\\browser-receipts.json",
+  "release": {
+    "id": "appgdep_6ad53916f11c81919e54399aa0dae088",
+    "project_id": "appgprj_6ace6f7f4a5481918adb34a5cb366de3",
+    "title": "Sentinel Observatory \u00b7 Live Connections",
+    "version_id": "appgprj_6ace6f7f4a5481918adb34a5cb366de3~appgver_85708a62523c8191b1a257ca010cb19e",
+    "type": "publish",
+    "status": "succeeded",
+    "url": "https://sentinel-evidence-observatory.bmparent.chatgpt.site",
+    "has_mcp": false,
+    "screenshot_asset_pointer": null,
+    "provider_deployment_id": "site---6ace6f7f4a5481918adb34a5cb366de3",
+    "failure_message": null,
+    "env_set_revision": 8,
+    "updated_at": "2026-10-18T21:24:43.746401+00:00",
+    "site_source_commit": "0295a79cfea528efa8295a766c64c5d2b3f4524c",
+    "runtime_commit": "4a9bd8b9da652a1d6587412316e18d97d35d76f8",
+    "collector_deployment": "dpl_7iTnN6c4qSwsHN5w4U9EtQ7ShyZP",
+    "collector_url": "https://eidos-sentinel-qam5wbiqu-1brentbm-1876s-projects.vercel.app",
+    "version_number": 17,
+    "owner_private": true,
+    "configuration_repair": {
+      "existing_collector_credential_reused": true,
+      "new_secret_created": false,
+      "scope": "Only codex/observatory-fault-harness-20261018 preview branch; other branches and production unchanged"
+    },
+    "rollback": {
+      "version_number": 16,
+      "version_id": "appgprj_6ace6f7f4a5481918adb34a5cb366de3~appgver_4671520c5d888191ae59e2dc26d5315d",
+      "target_collector_url": "https://eidos-sentinel-23vpq50ej-1brentbm-1876s-projects.vercel.app/api/observatory/ip-observe"
+    }
+  },
+  "commercial_qualified": false,
+  "drive_receipt": "drive_manifest.json"
+}

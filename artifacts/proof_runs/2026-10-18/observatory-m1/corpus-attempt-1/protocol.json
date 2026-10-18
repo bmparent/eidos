@@ -1,0 +1,46 @@
+{
+  "schema": "observatory-qualification-v1",
+  "frozen_before_execution": "2026-10-18",
+  "seed": 42,
+  "cases": 72,
+  "families": 12,
+  "development_cases": 48,
+  "evaluation_cases": 24,
+  "scope": "Controlled engineering qualification; not Lab sealed research heldout",
+  "transport": "Test-only loopback mapping of validated logical public destinations; no production private-address allowance",
+  "acceptance": {
+    "invented_status_timing_cause": 0,
+    "wrong_source_citations": 0,
+    "provable_stage_misclassification": 0,
+    "boundary_escape": 0,
+    "shared_deadline_tolerance_ms": 250,
+    "human_action_target": 0.9,
+    "human_review_required": true
+  },
+  "detector": {
+    "frames_per_stream": 160,
+    "cadence_ms": 300000,
+    "warmup_frames": 32,
+    "thresholds": {
+      "ewma_alpha": 0.15,
+      "ewma_z": 3,
+      "cusum_k": 0.5,
+      "cusum_h": 5
+    },
+    "training": "preceding values only; no labels in inference",
+    "scoring": "event overlap with one-to-one matches; recovery is first subsequent unflagged frame; missing frames remain unknown",
+    "confidence": "2000 seeded stream-cluster bootstrap resamples; frames are never independent trials"
+  },
+  "explanations": {
+    "blind": true,
+    "presentation_seed": 42,
+    "reviewers": "independent human; no model self-grading",
+    "scores": [
+      "factual_support",
+      "appropriate_uncertainty",
+      "next_action_correct",
+      "usefulness_1_to_5"
+    ],
+    "not_run_reason": "No independent human reviewers or scores supplied"
+  }
+}

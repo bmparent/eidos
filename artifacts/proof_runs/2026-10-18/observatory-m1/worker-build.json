@@ -1,0 +1,18 @@
+{
+  "output": "C:\\Users\\bmpar\\codex-worktrees\\observatory-site-20261018\\worker\\index.js",
+  "bytes": 1117624,
+  "sha256": "9b8bc5db9101f9ab37046a439b268be1e02305ce714599b967414460a8432ecb",
+  "sources": {
+    "html": "fd6262e4cc0cc87516f03173645cb769884fffdd28b05683674327d5d7403b29",
+    "app": "1fc8a48c208e1192d6cf5799b39ae3d9c15bab67ebb3b2fc6bd4e52c0828fe80",
+    "css": "d80fe8c0713876cf70afaae0510a05ea4a53fb92c7d0f83e5133ace5f8ea6529",
+    "brain": "c6389999043e81288154f9b034dd97ef1b32661b8b2707977ebee2f00b427bd2",
+    "interpreter": "b7499f5ca7e50987c5a0b476b32678fadb31c5a5f208093afc91be49f09d941b",
+    "model_worker": "604cf1d38ab52875ad4e503d971c44b2b3e96267a0218858741712ece11c3144",
+    "security": "5cba4df2e042e3f04d9e3d46eb88e651ea4f1f29532a50b72355d14e41ba76f0",
+    "network_panel": "991203d1cff793a3e5282ade078de87fdc452c1f32c9241af60e0d949617ea16",
+    "target_panel": "9d8184bafc29106d04a4dbedddda92f519d8670e75b49d4ba7ffee83b7904c1e",
+    "probe_explanation": "cd96928638a5a91ee7025ce74b971fe4a74a70f2cb6432a532ce257064203186",
+    "recorded": "1cbdc8d477763928e6180c0f6d8c7261cd0894bba50241323eaaade6b89fbb24"
+  }
+}

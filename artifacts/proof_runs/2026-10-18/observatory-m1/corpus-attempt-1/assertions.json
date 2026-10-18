@@ -1,0 +1,306 @@
+{
+  "schema": "observatory-factual-scoring-v1",
+  "frozen_before_first_execution": true,
+  "cases": {
+    "normal": {
+      "stage": "http",
+      "status": 200
+    },
+    "jitter": {
+      "stage": "http",
+      "status": 200
+    },
+    "stable_repeat": {
+      "stage": "http",
+      "status": 200
+    },
+    "normal_ipv6": {
+      "stage": "http",
+      "status": 200
+    },
+    "zero_body": {
+      "stage": "http",
+      "status": 200
+    },
+    "stable_restore": {
+      "stage": "http",
+      "status": 200
+    },
+    "dns_missing": {
+      "stage": "dns",
+      "status": null
+    },
+    "dns_timeout": {
+      "stage": "dns",
+      "status": null
+    },
+    "dns_cancel": {
+      "stage": "cancelled",
+      "status": null
+    },
+    "dns_rotation": {
+      "stage": "http",
+      "status": 200
+    },
+    "dns_delay": {
+      "stage": "http",
+      "status": 200
+    },
+    "dns_empty": {
+      "stage": "dns",
+      "status": null
+    },
+    "mixed_ipv4": {
+      "stage": "dns",
+      "status": null
+    },
+    "mixed_ipv6": {
+      "stage": "dns",
+      "status": null
+    },
+    "mapped_private": {
+      "stage": "dns",
+      "status": null
+    },
+    "redirect_private": {
+      "stage": "http",
+      "status": 302
+    },
+    "redirect_metadata": {
+      "stage": "http",
+      "status": 302
+    },
+    "redirect_recursive": {
+      "stage": "http",
+      "status": 302
+    },
+    "tcp_refused": {
+      "stage": "tcp",
+      "status": null
+    },
+    "tcp_timeout": {
+      "stage": "tcp",
+      "status": null
+    },
+    "alternate_refused": {
+      "stage": "http",
+      "status": 200
+    },
+    "alternate_timeout": {
+      "stage": "http",
+      "status": 200
+    },
+    "all_refused": {
+      "stage": "tcp",
+      "status": null
+    },
+    "bounded_answers": {
+      "stage": "tcp",
+      "status": null
+    },
+    "tls_valid": {
+      "stage": "http",
+      "status": 200
+    },
+    "tls_untrusted": {
+      "stage": "tls",
+      "status": null
+    },
+    "tls_hostname": {
+      "stage": "tls",
+      "status": null
+    },
+    "tls_timeout": {
+      "stage": "connection",
+      "status": null
+    },
+    "tls_partial_headers": {
+      "stage": "http",
+      "status": null
+    },
+    "tls_cleanup": {
+      "stage": "http",
+      "status": 200
+    },
+    "headers_timeout": {
+      "stage": "http",
+      "status": null
+    },
+    "headers_delay": {
+      "stage": "http",
+      "status": 200
+    },
+    "headers_disconnect": {
+      "stage": "http",
+      "status": null
+    },
+    "https_headers_timeout": {
+      "stage": "http",
+      "status": null
+    },
+    "http408": {
+      "stage": "http",
+      "status": 408
+    },
+    "cancel_headers": {
+      "stage": "cancelled",
+      "status": null
+    },
+    "head405": {
+      "stage": "http",
+      "status": 405,
+      "method_coverage": "head_rejected"
+    },
+    "head501": {
+      "stage": "http",
+      "status": 501,
+      "method_coverage": "head_rejected"
+    },
+    "get405_ok": {
+      "stage": "http",
+      "status": 405,
+      "final_status": 200,
+      "method_coverage": "head_rejected"
+    },
+    "get501_ok": {
+      "stage": "http",
+      "status": 501,
+      "final_status": 200,
+      "method_coverage": "head_rejected"
+    },
+    "get405_fail": {
+      "stage": "http",
+      "status": 405,
+      "method_coverage": "head_rejected"
+    },
+    "get_redirect": {
+      "stage": "http",
+      "status": 405,
+      "final_status": 200,
+      "method_coverage": "head_rejected"
+    },
+    "http400": {
+      "stage": "http",
+      "status": 400
+    },
+    "http401": {
+      "stage": "http",
+      "status": 401
+    },
+    "http403": {
+      "stage": "http",
+      "status": 403
+    },
+    "http429": {
+      "stage": "http",
+      "status": 429
+    },
+    "http500": {
+      "stage": "http",
+      "status": 500
+    },
+    "http503": {
+      "stage": "http",
+      "status": 503
+    },
+    "redirect_ok": {
+      "stage": "http",
+      "status": 302,
+      "final_status": 200
+    },
+    "redirect_final503": {
+      "stage": "http",
+      "status": 302,
+      "final_status": 503
+    },
+    "redirect_loop": {
+      "stage": "http",
+      "status": 302
+    },
+    "redirect_limit": {
+      "stage": "http",
+      "status": 302
+    },
+    "redirect_later_failure": {
+      "stage": "http",
+      "status": 302
+    },
+    "redirect_not_followed": {
+      "stage": "http",
+      "status": 302
+    },
+    "page_complete": {
+      "stage": "http",
+      "status": 200
+    },
+    "page_prefix": {
+      "stage": "http",
+      "status": 200
+    },
+    "page_dynamic": {
+      "stage": "http",
+      "status": 200
+    },
+    "page_unsupported": {
+      "stage": "http",
+      "status": 200
+    },
+    "page_interrupted": {
+      "stage": "http",
+      "status": 200
+    },
+    "page_redirect": {
+      "stage": "http",
+      "status": 302,
+      "final_status": 200
+    },
+    "collector_failure": {
+      "stage": "collector",
+      "status": null
+    },
+    "missing_evidence": {
+      "stage": "http",
+      "status": 200
+    },
+    "stale_evidence": {
+      "stage": "http",
+      "status": 200
+    },
+    "duplicate_delivery": {
+      "stage": "http",
+      "status": 200
+    },
+    "multi_target": {
+      "stage": "http",
+      "status": 200
+    },
+    "baseline_reset": {
+      "stage": "http",
+      "status": 200
+    },
+    "model_unavailable": {
+      "stage": "http",
+      "status": 200
+    },
+    "model_invalid": {
+      "stage": "http",
+      "status": 200
+    },
+    "model_rate_limit": {
+      "stage": "http",
+      "status": 200
+    },
+    "model_budget": {
+      "stage": "http",
+      "status": 200
+    },
+    "model_cache_context": {
+      "stage": "http",
+      "status": 200
+    },
+    "model_wrong_source": {
+      "stage": "http",
+      "status": 200
+    }
+  }
+}

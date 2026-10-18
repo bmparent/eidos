@@ -6,7 +6,7 @@ import {retainTargetObservation, targetHistory} from './target-store.mjs';
 
 // build_worker.py embeds the exact inspected web sources here. No runtime CDN.
 const ASSETS = /* OBSERVATORY_ASSETS */ Object.freeze({});
-const VERSION = 'sentinel-live-v8-evidence-explanations';
+const VERSION = 'sentinel-live-v9-bounded-attempt-evidence';
 const SECURITY = {
   'cache-control': 'no-store',
   'x-content-type-options': 'nosniff',
