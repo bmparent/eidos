@@ -7,7 +7,7 @@ import {createRequire} from 'node:module';
 const arg=name=>process.argv.includes(name)?process.argv[process.argv.indexOf(name)+1]:undefined;
 const origin='https://sentinel-evidence-observatory.bmparent.chatgpt.site',out=resolve(arg('--out') ?? 'artifacts/proof_runs/2026-10-18/observatory-m1/hosted');mkdirSync(out,{recursive:true});
 process.stdin.setRawMode?.(true);process.stdin.resume();console.log('Ready for owner-private verification JSON on stdin (input is hidden).');
-const credentials=await new Promise((accept,reject)=>{let text='';const data=chunk=>{text+=chunk.toString();if(text.includes('\n')){process.stdin.off('data',data);process.stdin.setRawMode?.(false);process.stdin.pause();try{accept(JSON.parse(text.trim()));}catch{reject(new Error('Invalid hidden input'));}}};process.stdin.on('data',data);});
+const credentials=await new Promise((accept,reject)=>{let text='';const data=chunk=>{text+=chunk.toString();if(/[\r\n]/.test(text)){process.stdin.off('data',data);process.stdin.setRawMode?.(false);process.stdin.pause();try{accept(JSON.parse(text.trim()));}catch{reject(new Error('Invalid hidden input'));}}};process.stdin.on('data',data);});
 const hash=bytes=>createHash('sha256').update(bytes).digest('hex'),headers={'OAI-Sites-Authorization':`Bearer ${credentials.site_token}`,Origin:origin},receipts=[];
 async function call(path,body,extra={}){const response=await fetch(origin+path,{method:body===undefined?'GET':'POST',headers:{...headers,...(body?{'Content-Type':'application/json'}:{}),...extra},body:body===undefined?undefined:JSON.stringify(body),redirect:'manual',signal:AbortSignal.timeout(20000)});return {response,bytes:Buffer.from(await response.arrayBuffer())};}
 const capability=await call('/api/capabilities');assert.equal(capability.response.status,200);const caps=JSON.parse(capability.bytes);
@@ -29,6 +29,7 @@ if(arg('--public-test')==='example.com'){
   if(event){const history=await call('/api/target-history?target_id='+event.source_id),rows=JSON.parse(history.bytes);receipts.push({check:'hosted_retention',passed:rows.events?.some(x=>x.id===event.id)===true});}
 }
 const report={schema:'private-hosted-acceptance-v1',timestamp:new Date().toISOString(),origin,version:caps.version,receipts,passed:receipts.every(x=>x.passed),actual_model_calls:0,two_tenant_test:'not tested; owner-private service access is not tenant identity',continuous_pilot:'not started'};
+writeFileSync(join(out,'receipt.json'),JSON.stringify(report,null,2)+'\n');
 if(arg('--playwright-module')){
   const {chromium}=createRequire(import.meta.url)(arg('--playwright-module')),browser=await chromium.launch({headless:true,executablePath:arg('--browser')});
   report.browser=[];
@@ -38,7 +39,7 @@ if(arg('--playwright-module')){
     page.on('pageerror',error=>errors.push(error.message));page.on('console',msg=>{if(msg.type()==='error')errors.push(msg.text());});
     await page.goto(origin,{waitUntil:'networkidle'});assert.match(await page.title(),/Sentinel/);
     await page.locator('#connect-target').focus();assert.equal(await page.evaluate(()=>document.activeElement?.id),'connect-target');
-    await page.locator('#coverage-open').click();assert.equal(await page.locator('#coverage-dialog').evaluate(el=>el.open),true);await page.keyboard.press('Escape');
+    await page.locator(viewport.width<600?'#coverage-inline':'#coverage-open').click();assert.equal(await page.locator('#coverage-dialog').evaluate(el=>el.open),true);await page.keyboard.press('Escape');
     assert.equal(await page.locator('#coverage-dialog').evaluate(el=>el.open),false);
     await page.screenshot({path:join(out,`private-${viewport.width}.png`),fullPage:true});
     const layout=await page.evaluate(()=>({width:innerWidth,scroll:document.documentElement.scrollWidth}));assert.ok(layout.scroll<=layout.width+1);assert.deepEqual(errors,[]);

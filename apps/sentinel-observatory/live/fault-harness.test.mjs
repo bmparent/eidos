@@ -1,7 +1,7 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import {readFileSync} from 'node:fs';
-import {observeTarget} from './node-probes.mjs';
+import {observeTarget,createTargetObservationHandler} from './node-probes.mjs';
 import {normalizeTarget} from './collector.mjs';
 import {normalizeTargetProbe} from './target-relay.mjs';
 import {probeExplanation} from './probe-explanation.mjs';
@@ -54,4 +54,13 @@ test('unmeasured TLS validation and a missing peer remain unknown, rather than f
     const event=normalizeTargetProbe(raw,normalizeTarget('https://example.com/tcp_timeout'));
     assert.equal(event.coverage.network.tls_verified,null);assert.equal(event.coverage.network.peer_matches_destination,null);
   }finally{await transport.close();}
+});
+
+test('collector admits at most four simultaneous jobs and releases capacity after completion',async()=>{
+  const releases=[],secret='a'.repeat(64),handler=createTargetObservationHandler({getSecret:()=>secret,collector:()=>new Promise(resolve=>releases.push(resolve))});
+  const request=i=>new Request('https://collector.example/api/observatory/target-observe',{method:'POST',headers:{Authorization:`Bearer ${secret}`,'Content-Type':'application/json'},body:JSON.stringify({target:`https://endpoint-${i}.example.com/`})});
+  const pending=[0,1,2,3].map(i=>handler(request(i)));await new Promise(resolve=>setImmediate(resolve));
+  assert.equal(releases.length,4);assert.equal((await handler(request(4))).status,429);
+  for(const release of releases)release({fixture:true});assert.ok((await Promise.all(pending)).every(response=>response.status===200));
+  const next=handler(request(5));await new Promise(resolve=>setImmediate(resolve));assert.equal(releases.length,5);releases[4]({fixture:true});assert.equal((await next).status,200);
 });

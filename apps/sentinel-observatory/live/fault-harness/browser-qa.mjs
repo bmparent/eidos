@@ -29,10 +29,13 @@ try{for(const viewport of [{width:1440,height:1000},{width:390,height:844}]){
   assert.match(await page.locator('#inspector-content').innerText(),/method coverage/);
   assert.match(await page.locator('#target-probe-details').innerText(),/GET.*200/s);
   await page.screenshot({path:join(out,`method-${viewport.width}.png`),fullPage:true});
+  const targetsBefore=await page.locator('.target-card').count(),recordsBefore=await page.locator('#metric-count').innerText();
+  await page.locator('.target-card [data-action="remove"]').first().click();
+  assert.equal(await page.locator('.target-card').count(),targetsBefore-1);assert.equal(await page.locator('#metric-count').innerText(),recordsBefore);
   const layout=await page.evaluate(()=>({width:innerWidth,scroll:document.documentElement.scrollWidth,reduced:matchMedia('(prefers-reduced-motion: reduce)').matches}));
   assert.ok(layout.scroll<=layout.width+1,`Horizontal overflow: ${JSON.stringify(layout)}`);assert.equal(layout.reduced,true);
   assert.deepEqual(errors,[]);
-  receipts.push({viewport,environment:'local_synthetic_fixture',url:base,page_identity:'passed',content:'passed',console_errors:errors,interactions:['connect controlled TLS/header failure','inspect retained partial TLS','keyboard filter focus','pause','download export','reload paused history','explicit GET fallback retains HEAD 405 and separate GET 200'],layout,physical_device:'not tested',browser_plugin:'Browser skill not listed; CUA in-app tab call timed out; bundled Playwright fallback used'});
+  receipts.push({viewport,environment:'local_synthetic_fixture',url:base,page_identity:'passed',content:'passed',console_errors:errors,interactions:['connect controlled TLS/header failure','inspect retained partial TLS','keyboard filter focus','pause','download export','reload paused history','explicit GET fallback retains HEAD 405 and separate GET 200','remove target preserves measured evidence'],layout,physical_device:'not tested',browser_plugin:'Browser skill not listed; CUA in-app tab call timed out; bundled Playwright fallback used'});
   await context.close();
 }}finally{await browser.close();writeFileSync(join(out,'browser-receipts.json'),JSON.stringify(receipts,null,2)+'\n');}
 console.log(JSON.stringify({passed:receipts.length,viewports:receipts.map(x=>x.viewport)}));
