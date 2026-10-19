@@ -1,0 +1,227 @@
+{
+  "schemaVersion": 1,
+  "task": "Playground hard-cap accounting continuation",
+  "createdAtUtc": "2026-10-14T20:02:25.5365423Z",
+  "evidenceKind": "controlled local fixtures",
+  "backendBaseRevision": "c37870bd2c7453fca4dbc8d65275902e4473be95",
+  "uncommittedChanges": true,
+  "sourceHashEncoding": "Raw filesystem bytes; frontend and backend modules are byte-identical",
+  "sources": [
+    {
+      "path": "functions/_shared/platform/playgroundAi.ts",
+      "sha256": "c70ecce10eda452741e037e2af5f2315df462e8f2f25923fadde6c76a5ce335e",
+      "repository": "frontend"
+    },
+    {
+      "path": "apps/sentinel-lab/lib/works/vendor/functions/_shared/platform/playgroundAi.ts",
+      "sha256": "c70ecce10eda452741e037e2af5f2315df462e8f2f25923fadde6c76a5ce335e",
+      "repository": "backend"
+    },
+    {
+      "path": "apps/sentinel-lab/tests/works-playground-ai.test.ts",
+      "sha256": "0d64d751bce1f29e0cb271534f1a4bb9b5b3aa78855fe39a2d6d0b0b5b63bf4d",
+      "repository": "backend"
+    }
+  ],
+  "mirrorIdentical": true,
+  "finalValidation": [
+    {
+      "log": "final-result-focused-tests.log",
+      "command": "node --import ./apps/sentinel-lab/node_modules/tsx/dist/loader.mjs --test apps/sentinel-lab/tests/works-playground-ai.test.ts",
+      "skipped": 0,
+      "passed": 23,
+      "failed": 0,
+      "exitCode": 0
+    },
+    {
+      "runnerGroups": [
+        {
+          "skipped": 1,
+          "passed": 19
+        },
+        {
+          "skipped": 0,
+          "passed": 89
+        }
+      ],
+      "skipReason": "Windows file symlinks require Developer Mode or privilege; no privilege change attempted.",
+      "log": "final-result-full-tests.log",
+      "passed": 108,
+      "skipped": 1,
+      "command": "npm --prefix apps/sentinel-lab test",
+      "failed": 0,
+      "exitCode": 0
+    },
+    {
+      "scope": "backend TypeScript --noEmit",
+      "exitCode": 0,
+      "command": "npm --prefix apps/sentinel-lab run lint",
+      "log": "final-result-typecheck.log"
+    },
+    {
+      "scope": "Scoped frontend accounting module; successful command emitted no output.",
+      "exitCode": 0,
+      "log": null,
+      "command": "npx eslint functions/_shared/platform/playgroundAi.ts",
+      "repository": "frontend"
+    },
+    {
+      "scope": "Owned backend code; CRLF conversion notices only.",
+      "exitCode": 0,
+      "command": "git diff --check -- apps/sentinel-lab/lib/works/vendor/functions/_shared/platform/playgroundAi.ts apps/sentinel-lab/tests/works-playground-ai.test.ts"
+    }
+  ],
+  "negativeControls": [
+    {
+      "failed": 2,
+      "scope": "Original conflicting provider identity acceptance, sequential and independent clients.",
+      "log": "before-tests.log"
+    },
+    {
+      "failed": 1,
+      "scope": "Original route remained enabled after unsupported usage.",
+      "log": "before-unmeterable-tests.log"
+    },
+    {
+      "failed": 1,
+      "scope": "Retail multiplication threw before cap/settlement/pause.",
+      "log": "before-retail-overflow-tests.log"
+    },
+    {
+      "failed": 1,
+      "scope": "Oversized result threw before settlement and overrun pause.",
+      "log": "before-invalid-result-tests.log"
+    }
+  ],
+  "intermediateEvidence": [
+    {
+      "logs": [
+        "after-focused-tests.log",
+        "after-full-tests.log",
+        "typecheck.log"
+      ],
+      "scope": "First identity fix only: 17 focused passed, 102 full passed and 1 Windows skip."
+    },
+    {
+      "logs": [
+        "final-focused-tests.log",
+        "final-full-tests.log",
+        "final-typecheck.log"
+      ],
+      "scope": "Identity, unmeterable usage and retail overflow fixes: 19 focused passed, 104 full passed and 1 Windows skip."
+    },
+    {
+      "logs": [
+        "final-expanded-focused-tests.log",
+        "final-expanded-typecheck.log"
+      ],
+      "scope": "Same first three fixes plus three test-only coverage additions: 22 focused passed; before final result-storage repair."
+    }
+  ],
+  "auditedRequiredScenarios": 14,
+  "audit": "cap-acceptance-audit.md",
+  "providerTransportAdded": false,
+  "liveFundingEnabled": false,
+  "providerRequestsMade": false,
+  "paymentRequestsMade": false,
+  "emailRequestsMade": false,
+  "deploymentPerformed": false,
+  "commitPerformed": false,
+  "driveCopyAttempted": false,
+  "driveReason": "Parent task owns final consolidated archive.",
+  "externalGates": [
+    "Provider key choice",
+    "Explicit total USD provider budget",
+    "Accepted current provider pricing and bounded adapter",
+    "Authorized real hosted proposal with durable usage",
+    "Hosted maintenance cadence",
+    "Separate payment/inbox/physical-device acceptance"
+  ],
+  "artifacts": [
+    {
+      "path": "after-focused-tests.log",
+      "sha256": "6e20383e60ce6dfced37208ab0dc405abb83b9a126dd2f9ab632a0edfcdfd19c",
+      "bytes": 2532
+    },
+    {
+      "path": "after-full-tests.log",
+      "sha256": "c6c2a9694b04649ff4c2d2f3ac300d9e058a387171c7103928523059e06aa292",
+      "bytes": 12456
+    },
+    {
+      "path": "before-invalid-result-tests.log",
+      "sha256": "6eb2d409a474cd89f87b70d0acf5442d546b11b903f8067bbb12e794cc871641",
+      "bytes": 1038
+    },
+    {
+      "path": "before-retail-overflow-tests.log",
+      "sha256": "d5042e5a5ac1a7e18487bf4b93b4dd0d476347104eafa93d362190d1f20aa3d7",
+      "bytes": 1340
+    },
+    {
+      "path": "before-tests.log",
+      "sha256": "3ee19ea29eacc0e589d35504a42cf3e8b3ce576e5a0afa37244fcaa7fae77d32",
+      "bytes": 2024
+    },
+    {
+      "path": "before-unmeterable-tests.log",
+      "sha256": "5b1b7bfdcac07029a9c9619195d05cd2281ec11a255c9befa1ec99cdbc2adf02",
+      "bytes": 1000
+    },
+    {
+      "path": "cap-acceptance-audit.md",
+      "sha256": "7fd1b96723603c37b6f6f32672b3ec1b69dd2a2156ce1a2c1a5cfb42eefcb1ab",
+      "bytes": 12779
+    },
+    {
+      "path": "extreme-usage-audit-probe.json",
+      "sha256": "2b99f7ad52ff16cf323522acd88a6bb060751d380241ba590f285ce101bc1522",
+      "bytes": 266
+    },
+    {
+      "path": "final-expanded-focused-tests.log",
+      "sha256": "b6b93befc61c5e737eb44962ef0baabc02ac50cb5fe648b97370202fdba8e3d8",
+      "bytes": 3302
+    },
+    {
+      "path": "final-expanded-typecheck.log",
+      "sha256": "9a216ee216ffece65f8c7311a6df581a1485d1725ca017f4227f18213940a6eb",
+      "bytes": 53
+    },
+    {
+      "path": "final-focused-tests.log",
+      "sha256": "fc1aacf7d3bc720b4a3f78fb02e3cc7a9cdd47d37697a42e25dc52dc231aa8a4",
+      "bytes": 2772
+    },
+    {
+      "path": "final-full-tests.log",
+      "sha256": "854eac16cdb2e23fbbdf07867060d9eb5aca1d85387b903ce3ad322c815603ce",
+      "bytes": 12717
+    },
+    {
+      "path": "final-result-focused-tests.log",
+      "sha256": "c775b89fbc52c949cdf44aa030f35416c0c7cee17d7198ec9ca63cd4659c9292",
+      "bytes": 3423
+    },
+    {
+      "path": "final-result-full-tests.log",
+      "sha256": "a5ba6e7e78452f734357d7072be6b838ae579248db850b1cd7f14e781063f722",
+      "bytes": 13353
+    },
+    {
+      "path": "final-result-typecheck.log",
+      "sha256": "9a216ee216ffece65f8c7311a6df581a1485d1725ca017f4227f18213940a6eb",
+      "bytes": 53
+    },
+    {
+      "path": "final-typecheck.log",
+      "sha256": "9a216ee216ffece65f8c7311a6df581a1485d1725ca017f4227f18213940a6eb",
+      "bytes": 53
+    },
+    {
+      "path": "typecheck.log",
+      "sha256": "9a216ee216ffece65f8c7311a6df581a1485d1725ca017f4227f18213940a6eb",
+      "bytes": 53
+    }
+  ]
+}

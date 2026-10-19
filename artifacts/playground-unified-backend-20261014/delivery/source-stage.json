@@ -1,0 +1,19 @@
+{
+  "timestampUtc": "2026-10-14T18:31:23.2750443Z",
+  "scope": "Local backend schema-5 delivery graph and authenticated relay; order integration pending",
+  "backendBase": "18b07a662b1fc67b852a571475f99704c0cbdbc1",
+  "deployedSourceUnchanged": "0e0aabc48f0ca7894b917495b661ef44cd337dce",
+  "sourceEncoding": "utf8-lf",
+  "graphFiles": 19,
+  "graphSha256": "82b2364c2bc4c3f500379df3eb8cfb648aed75edb6d9499133c3ac3e9829be47",
+  "focusedTestsPassed": 3,
+  "fullSuitePassed": 99,
+  "fullSuiteSkipped": 1,
+  "typecheck": "passed",
+  "build": "passed; commerce disabled",
+  "legacyRenderer": "unchanged",
+  "hostedDeployment": "not run",
+  "hostedMigration": "not run",
+  "providerCalls": "none",
+  "orderAttachment": "awaiting coordinated frontend source"
+}

@@ -1,0 +1,21 @@
+✖ 06/07: invalid result storage waives the customer, settles known provider cost and still pauses overruns (229.3044ms)
+ℹ tests 1
+ℹ suites 0
+ℹ pass 0
+ℹ fail 1
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 2388.0505
+
+✖ failing tests:
+
+test at apps\sentinel-lab\tests\works-playground-ai.test.ts:1:10902
+✖ 06/07: invalid result storage waives the customer, settles known provider cost and still pauses overruns (229.3044ms)
+  Error: The proposal exceeds the bounded result size.
+      at settleAiAction (C:\Users\bmpar\codex-worktrees\playground-unified-backend-20261014\apps\sentinel-lab\lib\works\vendor\functions\_shared\platform\playgroundAi.ts:289:49)
+      at async TestContext.<anonymous> (C:\Users\bmpar\codex-worktrees\playground-unified-backend-20261014\apps\sentinel-lab\tests\works-playground-ai.test.ts:168:25)
+      at async Test.run (node:internal/test_runner/test:1125:7)
+      at async startSubtestAfterBootstrap (node:internal/test_runner/harness:358:3) {
+    status: 413
+  }

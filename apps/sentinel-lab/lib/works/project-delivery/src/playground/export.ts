@@ -1,0 +1,154 @@
+import {
+  validateProject, mediaSlots, safeHref, onColor,
+  RENDERER,
+  projectWarnings,
+  type Project,
+} from "./model";
+import { escapeHtml, pageDocument, pageMarkup, runtimeScript, tokensCss, renderedStyles } from "./renderer";
+import { glassScript } from './glassBundle';
+import approved from "./approved-glass-preset.json";
+export type ExportFile = { name: string; data: Uint8Array };
+const encode = (value: string) => new TextEncoder().encode(value);
+export function headerFiles(input: Project): ExportFile[] {
+  const p=validateProject(input);
+  if (p.rendererVersion!==RENDERER) throw new Error('Upgrade to original glass in the header controls before exporting a header component.');
+  if (!p.sections[0].visible) throw new Error('Show the header before exporting it.');
+  const fullMarkup=pageMarkup(p);
+  const markup=fullMarkup.match(/<header\b[\s\S]*?<\/header>/)?.[0];
+  if(!markup) throw new Error('Header is unavailable.');
+  const css=tokensCss(p).replace(':root',':host')+renderedStyles(p)+':host{display:block;position:sticky;top:16px;z-index:50;color:var(--header-text);font:16px/1.6 Arial,sans-serif}.pg-header{margin:0;top:0;width:100%;max-width:none}';
+  const script=glassScript+`;if(!customElements.get('eidos-glass-header'))customElements.define('eidos-glass-header',class extends HTMLElement{connectedCallback(){if(this.cleanup)return;const root=this.shadowRoot||this.attachShadow({mode:'open'});root.innerHTML=${JSON.stringify('<style>'+css+'</style>'+markup)};const stop=EidosGlass.mount(${JSON.stringify(p.glass)},root);const menu=root.querySelector('.pg-menu'),nav=root.querySelector('.pg-nav');const abort=new AbortController();const close=()=>{nav?.classList.remove('open','is-open');menu?.setAttribute('aria-expanded','false')};menu?.addEventListener('click',()=>{const open=nav.classList.toggle('open');nav.classList.toggle('is-open',open);menu.setAttribute('aria-expanded',String(open))},{signal:abort.signal});document.addEventListener('keydown',e=>{if(e.key==='Escape'&&menu?.getAttribute('aria-expanded')==='true'){close();menu?.focus()}},{signal:abort.signal});root.addEventListener('click',e=>{const a=e.target.closest('a');if(!a)return;close();if(a.hash&&a.origin===location.origin&&a.pathname===location.pathname){const target=document.getElementById(decodeURIComponent(a.hash.slice(1)));if(target){e.preventDefault();target.scrollIntoView({behavior:matchMedia('(prefers-reduced-motion: reduce)').matches?'instant':'smooth'});if(!target.hasAttribute('tabindex'))target.setAttribute('tabindex','-1');target.focus({preventScroll:true})}}},{signal:abort.signal});this.cleanup=()=>{stop();abort.abort()}}disconnectedCallback(){this.cleanup?.();this.cleanup=null}});`;
+  const h=p.sections[0],esc=escapeHtml;
+  const nav=h.navigation||h.description.split('|').slice(0,2).map((label,i)=>({label:label.trim(),href:i?'#services':'#work'})).filter(link=>p.sections.some(s=>s.visible&&s.id===link.href.slice(1)));
+  const fallback=`<nav class="eidos-header-fallback" aria-label="Page navigation"><a href="#page-main">${esc(h.title)}</a>${nav.map(n=>`<a href="${esc(safeHref(n.href))}">${esc(n.label)}</a>`).join('')}${h.cta?`<a href="${esc(safeHref(h.href))}">${esc(h.cta)}</a>`:''}</nav>`;
+  const snippet=`<link rel="stylesheet" href="eidos-header.css"><eidos-glass-header id="${h.id}" tabindex="-1">${fallback}</eidos-glass-header><script src="eidos-header.js" defer></script>`;
+  // The installation example keeps the source's real section/card/block IDs,
+  // rather than pretending every header points to a fixed three-section page.
+  let exampleMarkup=fullMarkup.replace(markup,()=>snippet);
+  const ids=new Set(['page-root',...Array.from(exampleMarkup.matchAll(/\bid="([^"]+)"/g),match=>match[1])]);
+  const missing=[...new Set(Array.from(markup.matchAll(/\bhref="#([a-z0-9_-]+)"/gi),match=>match[1]).filter(id=>!ids.has(id)))];
+  const placeholders=missing.map(id=>`<section class="eidos-header-unconfigured" id="${esc(id)}" tabindex="-1"><h2>Unconfigured destination: ${esc(id)}</h2><p>This navigation target has no visible destination in the saved source. This installation-only placeholder makes the link inspectable. Add the real destination on your site or update the header link before publishing.</p></section>`).join('');
+  exampleMarkup=exampleMarkup.replace('</main>',()=>placeholders+'</main>');
+  const example=`<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Header installation example · ${esc(p.name)}</title><style>${tokensCss(p)}${renderedStyles(p)}#page-main{min-height:160vh}.eidos-header-unconfigured{margin:24px;padding:32px;border:2px dashed currentColor;scroll-margin-top:120px}eidos-glass-header{margin:24px 28px 0}section,article,[id]{scroll-margin-top:120px}@media(max-width:640px){eidos-glass-header{margin:14px 14px 0}}@media(prefers-reduced-motion:reduce){html{scroll-behavior:auto}}</style></head><body data-reduced="${p.glass.reducedMotion}"><div id="page-root">${exampleMarkup}</div></body></html>`;
+  return Object.entries({
+    'eidos-header.js':script,
+    'header.html':snippet,
+    'eidos-header.css':`eidos-glass-header{display:block;position:sticky;top:16px;z-index:50}eidos-glass-header>.eidos-header-fallback{display:flex;flex-wrap:wrap;align-items:center;gap:20px;padding:18px;background:${p.glass.solid};color:${onColor(p.glass.solid)};border-radius:${p.glass.radius}px}eidos-glass-header>.eidos-header-fallback a{color:inherit;min-height:44px;display:inline-flex;align-items:center}`, 
+    'index.html':example,
+    'project.json':JSON.stringify(p,null,2),
+    'README.md':`# Eidos header component\n\nExtract the ZIP and open index.html independently. The example uses your saved page content and actual section/card/block identities, with the exported header mounted in a Shadow DOM. No API, build, CDN or network is required. Header appearance/settings use the same renderer as Playground. The source and uploaded media remain in project.json.\n\n${missing.length ? `Unconfigured fragment destinations: ${missing.join(', ')}. The installation example includes clearly labeled placeholders for these targets; they are not real source sections or a completed page. Replace them with meaningful destinations or update the header links before publishing.\n\n` : 'Every nonempty header fragment target has a destination in the installation example.\n\n'}Copy eidos-header.js and eidos-header.css to your site and paste header.html where the header belongs. Keep the included light-DOM navigation: it provides a solid, keyboard-accessible fallback before JavaScript runs or when scripts are blocked. Keep its host ID unique. Supply your own matching destination elements (including page-main) or use full-page links. index.html is an installation/example page, not an extra component dependency.\n\nStyles are isolated in a Shadow DOM. The host is sticky; avoid overflow containers that prevent sticky positioning. Its scroll transition follows the window. Fragment navigation scrolls to the destination and makes it keyboard-focusable. Mobile navigation supports Menu and Escape. Full external links and contact mailto links keep their saved destinations; this package supplies no form backend or email delivery.\n\nUse project.json to edit and re-export. Include one header per page. Review your CSP for scripts, inline component styles, SVG filters and embedded data images. Test in your actual host page and target browsers. Component styles require your CSP to allow inline styles or the exact generated style hash; if scripts are blocked, fallback navigation stays visible. The example's sample content and destinations are your responsibility to review.\n\nThis is a vanilla HTML component, not a validated InkSoft or CMS integration. Those require separate platform validation.\n`,
+  }).map(([name,value])=>({name,data:encode(value)}));
+}
+export function exportFiles(input: Project): ExportFile[] {
+  const p = validateProject(input),
+    project = structuredClone(p),
+    assets: ExportFile[] = [];
+  for (const s of mediaSlots(project))
+    if (s.image) {
+      const match = /^data:image\/(png|jpeg|webp);base64,(.+)$/.exec(s.image)!;
+      const name = `assets/${s.id}.${match[1] === "jpeg" ? "jpg" : match[1]}`;
+      assets.push({
+        name,
+        data: Uint8Array.from(atob(match[2]), (c) => c.charCodeAt(0)),
+      });
+      s.image = name;
+    }
+  const warnings = projectWarnings(p);
+  const readme = `# ${p.name}\n\nOpen index.html in a browser. No build step, API key, CDN, or subscription is required. Upload all files together to a static host.\n\n## Included\n- index.html, styles.css, tokens.css, script.js: the same page renderer used by the preview.\n- project.json: editable source, including embedded images; import into Eidos Playground.\n- approved-glass-preset.json: unchanged source reference.\n- assets/: locally packaged uploaded images. No remote image dependencies.\n- AI-HANDOFF.md: design-specific extension instructions.\n- NEXT-STEPS.md: how to continue or share your design.\n\n## Before publishing\n${warnings.length ? warnings.map((v) => "- " + v).join("\n") : "- Review your content and destinations."}\n- Review links, keyboard navigation, and actual mobile devices.\n- Contact links open the visitor’s email app; this package does not include a form backend.\n- Fonts are system Arial/Helvetica and Georgia; no font license files are required.\n- Built-in abstract SVG studies are included. You must have rights to uploaded images and supplied brand content.\n\n## Glass\nRenderer: ${p.rendererVersion}. New projects use the original Eidos SVG optics and edge lighting shared with the site. Legacy projects retain their portable renderer until explicitly upgraded in Playground. Browser rendering varies. Reduced motion and forced colors have fallbacks; no JavaScript leaves a solid header.\n\n## Integration\nThis is a complete standalone page, not a platform-specific embed. Existing site CSS and script policies require separate integration. Do not paste the whole document into a CMS content field.\n`;
+  const handoff = `# Extend this design\n\nUse index.html as the working visual reference and project.json / tokens.css as the source of truth.\n\nProject: ${p.name}\nTemplate: ${p.template}\nSchema: ${p.schemaVersion}\nRenderer: ${p.rendererVersion}\n\nPreserve section order: ${p.sections
+    .filter((s) => s.visible)
+    .map((s) => s.id)
+    .join(
+      " → ",
+    )}.\nPreserve the palette (${p.tokens.background}, ${p.tokens.foreground}, ${p.tokens.accent}), ${p.tokens.font} typography, ${p.tokens.spacing}px section spacing, ${p.tokens.radius}px corners, and responsive single-column mobile layouts.\n\nHeader: ${p.glass.enabled ? `solid through ${p.glass.start}px, fully glass at ${p.glass.end}px` : "solid at every scroll position"}. Frost ${p.glass.frost}px; edge intensity ${p.glass.edge}; prism ${p.glass.prism}; press response ${p.glass.touch}; spring frequency ${p.glass.response}. Keep navigation stationary and edge effects behind links. Respect system reduced motion${p.glass.reducedMotion ? " and the project’s explicit reduced motion preference" : ""}.\n\nUse the supplied working renderer; do not replace it with an unrelated effect. Preserve the original project for reimport. Do not invent client quotes, performance claims, or working backend services. Contact handling, analytics, and payments need explicit implementation if requested. Verify any added pages on keyboard, touch, narrow screens, and at increased text size.\n`;
+  return [
+    ...Object.entries({
+      "index.html": pageDocument(project, { external: true }),
+      "styles.css": renderedStyles(p),
+      "tokens.css": tokensCss(p),
+      "script.js": runtimeScript(p),
+      "project.json": JSON.stringify(p, null, 2),
+      "approved-glass-preset.json": JSON.stringify(approved, null, 2),
+      "README.md": readme,
+      "AI-HANDOFF.md": handoff,
+      "NEXT-STEPS.md": `# Where to take ${p.name} next\n\n## Keep designing\nImport project.json at https://eidos-works.com/playground/ to resume editing. Keep a private backup of this ZIP; local browser saving is tied to one device.\n\n## Hand it to an AI assistant or development team\nGive them this ZIP and start with AI-HANDOFF.md, index.html and project.json. Ask them to retain the look and responsive behavior while replacing sample content, testing links, and connecting any real forms, payments or analytics that you need. The package is a standalone page, not a WordPress, Squarespace or InkSoft plugin. Integration with an existing site takes additional work.\n\n## Work with Eidos Works\nTell Eidos Works what you want to improve at https://eidos-works.com/contact/?from=playground . You decide if and when to share this ZIP. Custom implementation is scoped and quoted separately; exporting this design does not purchase a service.\n`,
+    }).map(([name, value]) => ({ name, data: encode(value) })),
+    ...assets,
+  ];
+}
+// ZIP STORE format: no dependency or server, with CRC-32 and central directory.
+export function zipFiles(files: ExportFile[]): Uint8Array {
+  const parts: Uint8Array[] = [],
+    central: Uint8Array[] = [];
+  let offset = 0;
+  const crc32 = (bytes: Uint8Array) => {
+    let crc = -1;
+    for (const b of bytes) {
+      crc ^= b;
+      for (let k = 0; k < 8; k++)
+        crc = (crc >>> 1) ^ (crc & 1 ? 0xedb88320 : 0);
+    }
+    return (crc ^ -1) >>> 0;
+  };
+  for (const file of files) {
+    const name = encode(file.name),
+      crc = crc32(file.data);
+    const local = new Uint8Array(30 + name.length),
+      l = new DataView(local.buffer);
+    l.setUint32(0, 0x04034b50, true);
+    l.setUint16(4, 20, true);
+    l.setUint16(6, 0x800, true);
+    l.setUint16(12, 33, true);
+    l.setUint32(14, crc, true);
+    l.setUint32(18, file.data.length, true);
+    l.setUint32(22, file.data.length, true);
+    l.setUint16(26, name.length, true);
+    local.set(name, 30);
+    const entry = new Uint8Array(46 + name.length),
+      c = new DataView(entry.buffer);
+    c.setUint32(0, 0x02014b50, true);
+    c.setUint16(4, 20, true);
+    c.setUint16(6, 20, true);
+    c.setUint16(8, 0x800, true);
+    c.setUint16(14, 33, true);
+    c.setUint32(16, crc, true);
+    c.setUint32(20, file.data.length, true);
+    c.setUint32(24, file.data.length, true);
+    c.setUint16(28, name.length, true);
+    c.setUint32(42, offset, true);
+    entry.set(name, 46);
+    parts.push(local, file.data);
+    central.push(entry);
+    offset += local.length + file.data.length;
+  }
+  const size = central.reduce((n, p) => n + p.length, 0),
+    end = new Uint8Array(22),
+    e = new DataView(end.buffer);
+  e.setUint32(0, 0x06054b50, true);
+  e.setUint16(8, files.length, true);
+  e.setUint16(10, files.length, true);
+  e.setUint32(12, size, true);
+  e.setUint32(16, offset, true);
+  const result = new Uint8Array(offset + size + end.length);
+  let index = 0;
+  for (const part of [...parts, ...central, end]) {
+    result.set(part, index);
+    index += part.length;
+  }
+  return result;
+}
+export function download(
+  data: Uint8Array | string,
+  name: string,
+  type: string,
+) {
+  const bytes = typeof data === "string" ? encode(data) : data;
+  const url = URL.createObjectURL(
+    new Blob([new Uint8Array(bytes).buffer], { type }),
+  );
+  const a = document.createElement("a");
+  a.href = url;
+  a.download = name;
+  a.click();
+  setTimeout(() => URL.revokeObjectURL(url), 30_000);
+}

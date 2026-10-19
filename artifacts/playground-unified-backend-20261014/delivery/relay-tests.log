@@ -1,0 +1,17 @@
+
+> eidos-sentinel-lab@0.2.0 test:project-delivery
+> node --import tsx --test tests/works-project-delivery.test.ts
+
+✔ isolated renderer graph matches its portable LF manifest and leaves legacy renderer separate (48.6681ms)
+✔ authenticated backend relay freezes exact schema-5 bytes on real libSQL without provider calls (355.7191ms)
+✔ delivery mode is opt-in and backend body allowance exceeds legacy ceiling but remains bounded (39.8718ms)
+✔ real libSQL chunk faults roll back and separate worker connections cannot exceed owner quota (972.1415ms)
+ℹ Windows libSQL retains the synthetic temp database handle until process exit: C:\Users\bmpar\AppData\Local\Temp\eidos-delivery-fixture-f7117f9e-f88f-49fc-9ab3-03cce1db48a0.db
+ℹ tests 4
+ℹ suites 0
+ℹ pass 4
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 4178.4162

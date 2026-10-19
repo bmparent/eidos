@@ -1,0 +1,52 @@
+{
+  "url": "https://eidos-sentinel-rkhg0orv8-1brentbm-1876s-projects.vercel.app",
+  "origin": "https://eidosworks-showcase-20261013.pages.dev",
+  "sourceCommit": "3ebbc4d0e4cfd9b72947b097366e8b1b6fe8b573",
+  "checks": [
+    {
+      "name": "local-only format rejected",
+      "schemaVersion": 5,
+      "status": 409,
+      "message": "Studio projects are saved on this device. Export a project JSON backup; account saving for this format awaits paired hosted ownership and reopen acceptance."
+    },
+    {
+      "name": "local-only format rejected",
+      "schemaVersion": 1,
+      "status": 409,
+      "message": "Studio projects are saved on this device. Export a project JSON backup; account saving for this format awaits paired hosted ownership and reopen acceptance."
+    },
+    {
+      "name": "local-only format rejected",
+      "schemaVersion": 6,
+      "status": 409,
+      "message": "Studio projects are saved on this device. Export a project JSON backup; account saving for this format awaits paired hosted ownership and reopen acceptance."
+    },
+    {
+      "name": "account AI and commerce gates held",
+      "status": 200
+    },
+    {
+      "name": "invalid relay denied",
+      "status": 401
+    },
+    {
+      "name": "unrelated exact origin denied",
+      "status": 403
+    },
+    {
+      "name": "provider access protection retained",
+      "status": 302,
+      "redirectHost": "vercel.com"
+    }
+  ],
+  "timestampUtc": "2026-10-14T00:27:38.936Z",
+  "mode": "isolated protected Preview; all commerce/account/AI features held",
+  "publicConfig": {
+    "accountsReady": false,
+    "aiReady": false,
+    "shopReady": false
+  },
+  "unauthenticatedProviderStatus": 302,
+  "unauthenticatedRedirectHost": "vercel.com",
+  "status": "passed"
+}

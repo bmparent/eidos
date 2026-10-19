@@ -1,0 +1,14 @@
+{
+  "id": "dpl_HJnTcwVPPwj77qebkGZiCoXM9z5L",
+  "url": "https://eidos-sentinel-rkhg0orv8-1brentbm-1876s-projects.vercel.app",
+  "source_commit": "3ebbc4d0e4cfd9b72947b097366e8b1b6fe8b573",
+  "source_branch": "codex/showcase-studio-boundary-20261013",
+  "ready_state": "READY",
+  "environment": "preview",
+  "project": "prj_5aL0COF1DONfPKI4fv25NitAdkOE",
+  "team": "team_TEsnMvKU6SdbYjVhws6Ttp8H",
+  "same_existing_scoped_relay_and_bypass": true,
+  "origin": "https://eidosworks-showcase-20261013.pages.dev",
+  "production_mutated": false,
+  "github_secrets_mutated": false
+}

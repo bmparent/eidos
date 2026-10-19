@@ -1,0 +1,24 @@
+{
+  "status": "blocking exact-byte mismatch confirmed",
+  "snapshotSame": true,
+  "differences": [
+    {
+      "name": "script.js",
+      "inputBytes": 23059,
+      "compiledBytes": 20240,
+      "inputSha256": "870bde01fa4f5f8e1dd7b27b089f56cc3a2e87a19c5ece945ab5d7648466ff04",
+      "compiledSha256": "9e09214e1962447e760db507492fcc9f92db8fb9f0de84edfa0539e38841b30b"
+    },
+    {
+      "name": "PACKAGE_MANIFEST.json",
+      "inputBytes": 2520,
+      "compiledBytes": 2520,
+      "inputSha256": "72c290e185e837eee4a9bcb0d397d4676483558538a412eb64f3efb104ea907f",
+      "compiledSha256": "9ccb477f47ee35cf8cde11d14b12cfc41ad2f6cd143992ee7657381e497658b0"
+    }
+  ],
+  "limitation": "Input is controlled esbuild fixture ZIP; browser-vs-server mismatch separately observed by browser agent",
+  "actualCompiledModule": "Next16.3.8 production route/module11160, no tsx loader",
+  "publicDeliveryMode": "disabled",
+  "deploymentChanged": false
+}

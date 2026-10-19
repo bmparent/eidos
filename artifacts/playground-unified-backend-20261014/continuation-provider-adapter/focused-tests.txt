@@ -1,0 +1,55 @@
+
+> eidos-sentinel-lab@0.2.0 test:playground-ai
+> node --import tsx --test tests/works-playground-ai.test.ts tests/works-playground-provider.test.ts
+
+✔ provider categories: cache-write reservation, exact category prices and reasoning included once preserve historical cards (4.53ms)
+✔ provider receipt identity persists before complete parsing and cannot be replaced during reconciliation (111.9757ms)
+✔ 01: concurrent $0.60 actions with $1 remaining admit exactly one and only one dispatch (78.4648ms)
+✔ 02: concurrent action replay yields one reservation, dispatch and settlement; conflicting key fails (179.8224ms)
+✔ 03: $50 balance/$10 cap, included consumption and top-ups never lift the cap (633.1877ms)
+✔ 04: projects/devices share owner cap and authenticated endpoints reject cross-account IDs/forged owners (459.8424ms)
+✔ 05: unknown pricing, forged totals/model/owner, large context and unbounded tools/retries fail closed (132.5477ms)
+✔ 06: actual usage releases difference; above-bound usage never overcharges and disables route (174.2572ms)
+✔ 06: extreme retail markup cannot prevent above-bound settlement and the route pause (105.4064ms)
+✔ 07: unusable technical output restores allowance while real provider expense remains counted (149.9182ms)
+✔ 06/07: invalid result storage waives the customer, settles known provider cost and still pauses overruns (686.4469ms)
+✔ 06/08: unmeterable usage pauses dispatch, retains unknown liability and never revives a waived charge (483.5013ms)
+✔ 08: submitted timeout/crash/lease expiry retain provider cost; 24h waiver never retroactively debits (132.1989ms)
+✔ 08: pessimistic reconciliation retains provider identity; matching late evidence preserves the waiver (120.7109ms)
+✔ 09/13: duplicate/unpaid/out-of-order grants, refunds, owner mismatch and TEST/LIVE isolation (164.4179ms)
+✔ 09/13: mixed consumed and held grants stay frozen through refunds, cancellation and late evidence (629.825ms)
+✔ 10: cap edits racing dispatch/settlement preserve the commitment floor and block new work (481.7186ms)
+✔ 11: monthly period is server UTC; pending budget survives, and late settlement stays original month (222.6019ms)
+✔ 11: ample provider budget does not duplicate prepaid balance when old and new month work coexist (179.187ms)
+✔ 12/14: owner aggregate budget admits only one customer; paused route has no provider fallback (336.3316ms)
+✔ migration/schema parity and conservative integer rounding cover sub-cent rates (46.8469ms)
+✔ independent database connections serialize shared provider/customer admission (1127.5793ms)
+ℹ Windows libSQL retains the synthetic temp database handle until process exit: C:\Users\bmpar\AppData\Local\Temp\eidos-ai-fixture-ea06f4e7-0243-4433-8bfc-38e00ba2de4d.db
+✔ owner budget reductions block reserved dispatch atomically across independent database connections (690.5861ms)
+ℹ Windows libSQL retains the synthetic temp database handle until process exit: C:\Users\bmpar\AppData\Local\Temp\eidos-ai-budget-fixture-c223de59-a484-4143-b083-b7a49194418a.db
+✔ 10: independent clients serialize customer cap reductions against admission, dispatch and settlement (562.8013ms)
+ℹ Windows libSQL retains the synthetic temp database handle until process exit: C:\Users\bmpar\AppData\Local\Temp\eidos-ai-customer-cap-73c5f6e9-6f49-4ae7-a1c1-b76cb1c40cfb.db
+✔ concurrent conflicting reconciliation cannot replace the first recorded provider identity (481.3595ms)
+ℹ Windows libSQL retains the synthetic temp database handle until process exit: C:\Users\bmpar\AppData\Local\Temp\eidos-ai-identity-fixture-4b92087c-9a55-4b27-9d8f-89f0b3b44160.db
+✔ provider request has explicit scope, typed schema, fixed standard tier, total output cap, no cache writes/tools/subagents (9.5113ms)
+✔ exact full input count and payload hash are durable; idempotent quote does not recount (149.7664ms)
+✔ unsupported, oversized and failed full-input counting never submit generation or create a quote (98.6765ms)
+✔ dedicated key, explicit enablement, verified preflight pricing and $5 aggregate budget all fail closed (46.716ms)
+✔ exact maximum approval and atomic duplicate admission yield one generation, using the identical counted payload (135.3871ms)
+✔ malformed response retains header identity and provider hold without inventing response ID; replay never retries (78.5932ms)
+✔ invalid typed, unsafe, incomplete and no-change proposals waive the customer while counting actual provider expense (566.713ms)
+✔ missing usage categories and changed service/model pause the route and preserve unresolved liability (756.702ms)
+✔ unexpected tools and subagents retain pessimistic provider liability, waive customer and stop new dispatch (264.5528ms)
+✔ tampered or absent frozen full-input proof fails before reservation and dispatch (205.2496ms)
+✔ network timeout is unknown provider liability with one dispatch and no automatic retry (1105.3243ms)
+✔ different models share the same lifetime budget and unresolved commitments survive operator reconfiguration (123.5175ms)
+✔ reported provider overrun remains visible, caps customer charge and pauses the route (144.4696ms)
+✔ authenticated API derives billing owner, rejects forged routing/caps, and returns direct proposal plus refreshed balance (242.8213ms)
+ℹ tests 39
+ℹ suites 0
+ℹ pass 39
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 9818.2787

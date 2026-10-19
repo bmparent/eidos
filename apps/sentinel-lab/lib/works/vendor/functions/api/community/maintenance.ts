@@ -15,6 +15,11 @@ export const onRequestPost = guarded(async ({ request, env }) => {
   if (serviceAuthenticated) await recordOwnerAudit(request, env, 'maintenance');
   else await admin(request, env);
   const database = db(env);
+  if (env.EIDOS_PLAYGROUND_AI_MODE === 'test') {
+    const { reconcileAiDeadlines, reconcileAiReversals } = await import('../../_shared/platform/playgroundAi');
+    await reconcileAiDeadlines(env);
+    await reconcileAiReversals(env);
+  }
   const studio = await runStudioDiscussion(env);
   let suggestions = 0;
   if (env.EIDOS_PROACTIVE_ENABLED === 'true') {

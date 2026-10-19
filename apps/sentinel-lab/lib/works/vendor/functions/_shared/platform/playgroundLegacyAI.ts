@@ -1,7 +1,7 @@
 import {db,hash,HttpError,reserve,type PlatformEnv} from './core';
 import {ensurePlayground,projectRevision} from './playground';
 import {aiSchema} from './playgroundSchema';
-import {aiContext,aiTarget,applyProposal,operationSchema,validateProposal,type Proposal} from '../../../src/playground/aiOperations';
+import {aiContext,aiTarget,applyProposal,operationSchema,validateProposal,type Proposal} from '../../../src/playground/legacyAiOperations';
 import {validateProject,type Project} from '../../../src/playground/model';
 export type Usage={input:number;cachedInput:number;cacheWrite:number;output:number;reasoning:number;imageInput:number;imageOutput:number;cachedImageInput:number};
 export type ProviderResult={status:'completed'|'refused'|'incomplete';proposal?:unknown;image?:string;usage?:Usage;requestId:string;model:string};

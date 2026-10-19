@@ -13,6 +13,7 @@ import {
 import { KIT_PRICE, type Order } from '../../_shared/platform/shop';
 import { ensureKitDelivery } from '../../_shared/platform/kitDelivery';
 import { hash } from '../../_shared/platform/core';
+import { assertTemplatePaymentMode, templatePayment } from '../../_shared/platform/templateShop';
 export const onRequestPost = guarded(async ({ request, env }) => {
   if (!env.EIDOS_KIT_WEBHOOK_SECRET)
     throw new HttpError(503, 'Webhook unavailable.');
@@ -34,14 +35,28 @@ export const onRequestPost = guarded(async ({ request, env }) => {
   const event = parseStripeEvent(parsed);
   if (!event) throw new HttpError(400, 'Invalid event.');
   const database = db(env);
+  const object = event.data.object;
+  const templateSchema = await database.prepare("SELECT name FROM sqlite_master WHERE type='table' AND name='eidos_template_orders'").first();
+  const templateRevocation =
+    templateSchema &&
+    ['charge.refunded', 'charge.dispute.created'].includes(event.type) &&
+    typeof object.payment_intent === 'string' &&
+    await database.prepare(
+      'SELECT o.session_id FROM eidos_orders o JOIN eidos_template_orders t ON t.order_id=o.id WHERE o.payment_intent=?',
+    ).bind(object.payment_intent).first<{ session_id: string | null }>();
+  if (templateRevocation) assertTemplatePaymentMode(env, record(parsed) ? parsed.livemode : undefined, templateRevocation.session_id);
   if (
+    !templateRevocation &&
+    env.EIDOS_PLAYGROUND_AI_MODE !== 'test' &&
     await database
       .prepare('SELECT id FROM eidos_stripe_events WHERE id=?')
       .bind(event.id)
       .first()
   )
     return json({ received: true });
-  const object = event.data.object;
+  // Older paired hooks share the event ledger but do not know template side
+  // tables. Reconcile a known TEST payment's revocation even if one got here first.
+  if (await templatePayment(env, { ...event, account: record(parsed) ? parsed.account : undefined }, record(parsed) ? parsed.livemode : undefined)) return json({ received: true });
   if (
     [
       'checkout.session.completed',
@@ -112,6 +127,7 @@ export const onRequestPost = guarded(async ({ request, env }) => {
           "UPDATE eidos_orders SET status='refunded' WHERE payment_intent=?",
         )
         .bind(object.payment_intent),
+      ...(templateSchema ? [database.prepare("UPDATE eidos_template_orders SET fulfillment_status='revoked' WHERE order_id IN (SELECT id FROM eidos_orders WHERE payment_intent=?)").bind(object.payment_intent)] : []),
       database
         .prepare(
           'INSERT OR IGNORE INTO eidos_stripe_events(id,received_at) VALUES(?,?)',

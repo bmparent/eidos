@@ -1,0 +1,12 @@
+{
+  "timestampUtc": "2026-10-14T23:51:01.292Z",
+  "source": "Current authoritative frontend purchaseSnapshot/starters/common renderer",
+  "fixture": "Fresh public Matter starter, deterministic IDs, synthetic one-pixel PNG, block Motion and mobile image sizing",
+  "snapshotHash": "e414edefb2ce2f6a0850402b9b3abc8ba575f540c7cd946be54510a7fc0dc54f",
+  "archiveSha256": "7036f418606de0f87fab460a13b632237bad849e14c48e7b0881ab081ec672e4",
+  "archiveBytes": 68025,
+  "build": "esbuild node ESM keepNames=true minify=false; reference only",
+  "actualNextExecution": "Separate plain Node compiled probe required",
+  "browserAcceptance": "not asserted",
+  "providerCalls": 0
+}
