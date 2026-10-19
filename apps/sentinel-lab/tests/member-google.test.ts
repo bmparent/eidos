@@ -9,6 +9,7 @@ import { adaptDatabase } from '../lib/works/database';
 import { onRequestPost as start, onRequestGet as callback } from '../lib/works/vendor/functions/api/members/google';
 import { onRequestPost as credentials } from '../lib/works/vendor/functions/api/members/credentials';
 import { onRequestGet as account } from '../lib/works/vendor/functions/api/members/account';
+import { onRequestPost as maintenance } from '../lib/works/vendor/functions/api/community/maintenance';
 import type { Context, PlatformEnv } from '../lib/works/vendor/functions/_shared/platform/core';
 
 await test('OIDC cryptographic verification rejects wrong issuer/audience/nonce, expiry, unverified email and bad signatures', async () => {
@@ -43,23 +44,36 @@ async function begin(env: PlatformEnv, cookie = '', action = 'start', currentPas
   const url = new URL((await response.json()).authorizeUrl);
   assert.equal(url.origin, 'https://accounts.google.com'); assert.equal(url.searchParams.get('code_challenge_method'), 'S256');
   assert.equal(url.searchParams.get('client_secret'), null);
+  assert.equal(url.searchParams.get('scope'), 'openid email');
   return { state: url.searchParams.get('state')!, cookie: response.headers.get('set-cookie')!.split(';')[0] };
 }
 const sessionCookie = (r: Response) => r.headers.getSetCookie().find(c => c.startsWith('eidos_session_local='))?.split(';')[0] || '';
 
-await test('Google state is bound to browser, single use and PKCE; new member deliberately chooses username', async () => {
+await test('Google state, callback and username ticket survive maintenance; browser binding, PKCE and single use remain enforced', async () => {
   const { client, env } = await setup(); const original = globalThis.fetch; let exchanges = 0;
   globalThis.fetch = async (url, init) => { assert.equal(String(url), 'https://oauth2.googleapis.com/token'); exchanges++; assert.match(String(init?.body), /code_verifier=/); return Response.json({ id_token: 'verified-test-token' }); };
   try {
+    const clean = async () => {
+      const token = 'test-only-maintenance-at-least-32-characters';
+      const response = await maintenance({ env: { ...env, EIDOS_MAINTENANCE_TOKEN: token }, request: new Request('http://localhost:8788/api/community/maintenance', { method: 'POST', headers: { authorization: 'Bearer ' + token } }) });
+      assert.equal(response.status, 200, await response.clone().text());
+    };
     const flow = await begin(env);
     assert.match((await callback(context(env, undefined, '', '?state=' + flow.state + '&code=test'))).headers.get('location')!, /oauth=error$/); assert.equal(exchanges, 0);
+    await clean();
     const response = await callback(context(env, undefined, flow.cookie, '?state=' + flow.state + '&code=test'));
     assert.match(response.headers.get('location')!, /oauth=choose-username$/); assert.equal(exchanges, 1);
     assert.equal((await client.execute('SELECT COUNT(*) n FROM eidos_email_members')).rows[0].n, 0);
     const ticket = response.headers.getSetCookie().find(c => c.startsWith('eidos_onboard_local='))!.split(';')[0];
+    await clean();
     const completed = await start(context(env, { action: 'complete-signup', username: 'google_owner' }, ticket));
     assert.equal(completed.status, 200, await completed.clone().text()); assert.ok(sessionCookie(completed));
     assert.equal((await start(context(env, { action: 'complete-signup', username: 'duplicate_owner' }, ticket))).status, 401);
+    await clean();
+    const retainedAccount = await account(context(env, undefined, sessionCookie(completed)));
+    assert.equal(retainedAccount.status, 200);
+    assert.equal((await retainedAccount.json()).member.username, 'google_owner');
+    assert.equal((await client.execute('SELECT subject FROM eidos_member_google')).rows[0].subject, 'google-owner');
     assert.match((await callback(context(env, undefined, flow.cookie, '?state=' + flow.state + '&code=test'))).headers.get('location')!, /oauth=error$/); assert.equal(exchanges, 1);
     assert.equal((await client.execute('SELECT COUNT(*) n FROM eidos_email_members')).rows[0].n, 1);
   } finally { globalThis.fetch = original; client.close(); }

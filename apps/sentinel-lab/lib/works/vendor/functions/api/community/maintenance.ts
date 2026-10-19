@@ -54,6 +54,14 @@ export const onRequestPost = guarded(async ({ request, env }) => {
   if (env.EIDOS_ACCOUNTS_ENABLED === 'true' || env.EIDOS_LOCAL_TEST === 'true') await database.batch([
     database.prepare('DELETE FROM eidos_signin_links WHERE expires<?').bind(cutoff),
     database.prepare('DELETE FROM eidos_member_sessions WHERE expires<?').bind(cutoff),
+    // Credential handlers require expires > now. Include the expiry boundary,
+    // but never delete a live claim solely because consumed is set: callbacks
+    // and signup/reset transactions still reference those rows while finishing.
+    // These are transient proofs only; linked identities and account/payment
+    // records have independent lifecycles and must not be pruned here.
+    database.prepare('DELETE FROM eidos_member_auth_tokens WHERE expires<=?').bind(cutoff),
+    database.prepare('DELETE FROM eidos_member_oauth_flows WHERE expires<=?').bind(cutoff),
+    database.prepare('DELETE FROM eidos_member_google_signup WHERE expires<=?').bind(cutoff),
   ]);
   const newsletter = await deliverNewsletters(env);
   return json({ ok: true, suggestions, newsletter, studio });
