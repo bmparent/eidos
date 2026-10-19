@@ -1,0 +1,78 @@
+{
+  "timestampUtc": "2026-10-14T18:42:59.397Z",
+  "source": "frontend authoritative",
+  "encoding": "utf8-lf",
+  "files": [
+    {
+      "path": "functions/_shared/platform/core.ts",
+      "normalizedBytes": 10456,
+      "sha256": "ec25117dc746e83c598f2b4242b7409ea0985499e0d14c984ba2fb36d2e7d8fd"
+    },
+    {
+      "path": "functions/_shared/platform/templateShop.ts",
+      "normalizedBytes": 33513,
+      "sha256": "b8dbcbf4c17014aec56575901a0799580d5c058e0eaadf6f00e785ea4edb3141"
+    },
+    {
+      "path": "functions/_shared/platform/playgroundAi.ts",
+      "normalizedBytes": 30804,
+      "sha256": "fd2adadc434c8f6438f67968bb853c0b9dddc9a4a9c678d638a4faa58bb6aee2"
+    },
+    {
+      "path": "functions/_shared/platform/playgroundAiSchema.ts",
+      "normalizedBytes": 5831,
+      "sha256": "ae4205b6ad281ab5ff32a4befba4ada1e8c83b3612053a2b2fb037cd74b97d06"
+    },
+    {
+      "path": "functions/_shared/platform/projectDelivery.ts",
+      "normalizedBytes": 9817,
+      "sha256": "b17d270cd7b5f40a711cb3ac67553cd5d927b2def25ab045ba7befab467f8614"
+    },
+    {
+      "path": "functions/_shared/platform/projectDeliverySchema.ts",
+      "normalizedBytes": 1342,
+      "sha256": "9ff3edfd777b43410d7499e6a2abb66625187b6b15f6bc889324c2b917913c4b"
+    },
+    {
+      "path": "functions/_shared/platform/projectDeliveryOrders.ts",
+      "normalizedBytes": 8541,
+      "sha256": "90d8218230a1b5e56a6cd4d1a30822a39e1587bc5fc141069d5d836488eb615a"
+    },
+    {
+      "path": "functions/_shared/platform/projectDeliveryOrdersSchema.ts",
+      "normalizedBytes": 1331,
+      "sha256": "99f909e2ef9d0e3e7327557239d2ee7a97815e689ebb4f274d53d8af77156209"
+    },
+    {
+      "path": "functions/api/playground/ai.ts",
+      "normalizedBytes": 2318,
+      "sha256": "f732b515a21847957876af5d9c583834477c4ca4aa0f1025e3947099231a8210"
+    },
+    {
+      "path": "functions/api/playground/delivery.ts",
+      "normalizedBytes": 1309,
+      "sha256": "0a8f465d54abfa9221b9be25d9b9eb2b55850a408b47e9ec2adc1110c1cc0fb2"
+    },
+    {
+      "path": "functions/api/shop/download.ts",
+      "normalizedBytes": 1369,
+      "sha256": "a5923916f39e9907e5df8a8b07a468cd90a51938a25044a934859c15c3485618"
+    },
+    {
+      "path": "migrations/0005_playground_ai.sql",
+      "normalizedBytes": 5751,
+      "sha256": "531525eb781671d6ffb887de783c773d3023383bd1110ad97e53d0e7ae2fd8b8"
+    },
+    {
+      "path": "migrations/0006_project_delivery.sql",
+      "normalizedBytes": 1307,
+      "sha256": "711faa1efc31c66ae37056c1eec51aca3f8ffeba975a4d9873b0282fc8c9ba43"
+    },
+    {
+      "path": "migrations/0007_project_delivery_orders.sql",
+      "normalizedBytes": 1299,
+      "sha256": "34fb25d8792c96cb0d26206bd4ca40ecc1bcace4865f47fc5d8a5b7278b7d41f"
+    }
+  ],
+  "adapter": "Intentionally separate isolated graph adapter; not copied from frontend"
+}

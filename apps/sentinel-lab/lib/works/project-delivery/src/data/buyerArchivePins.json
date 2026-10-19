@@ -1,0 +1,38 @@
+[
+  {
+    "family": "switchboard",
+    "editionId": "switchboard-developer-v1",
+    "version": "1.0.3",
+    "sha256": "e956fc2aad4f76ed0ff2c9aff71cdd6cfc202b0701da71c9bf9604e5264b00d5",
+    "bytes": 28560,
+    "catalogVersion": "2026-10-10.1",
+    "status": "candidate; sales unavailable"
+  },
+  {
+    "family": "tideglass",
+    "editionId": "tideglass-developer-v1",
+    "version": "1.0.2",
+    "sha256": "fbc3cda145707d08b3bb51751bb0265144b23c82e0b0170d899af9ea6b8918b0",
+    "bytes": 28351,
+    "catalogVersion": "2026-10-10.1",
+    "status": "candidate; sales unavailable"
+  },
+  {
+    "family": "matter",
+    "editionId": "matter-developer-v1",
+    "version": "1.0.2",
+    "sha256": "8bd61d302b173b6143dcb2cbf1d111f8b5b283c6e19880f8792e20879297678d",
+    "bytes": 29047,
+    "catalogVersion": "2026-10-10.1",
+    "status": "candidate; sales unavailable"
+  },
+  {
+    "family": "nightjar",
+    "editionId": "nightjar-developer-v1",
+    "version": "1.0.5",
+    "sha256": "9ea6419f5b0398e517e0195205464c44fcd7521071f7ee420c8472a4dc85f870",
+    "bytes": 31207,
+    "catalogVersion": "2026-10-10.1",
+    "status": "candidate; sales unavailable"
+  }
+]

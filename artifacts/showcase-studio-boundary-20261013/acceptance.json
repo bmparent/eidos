@@ -1,0 +1,23 @@
+{
+  "timestamp_utc": "2026-10-14T00:06:46.154807+00:00",
+  "base_commit": "952e68ff75da6857e25f249bebd96ea65116e294",
+  "branch": "codex/showcase-studio-boundary-20261013",
+  "app_tests": {
+    "mjs_passed": 16,
+    "typescript_passed": 60,
+    "new_negative_cases": 3
+  },
+  "typecheck": "passed",
+  "core_behavior_changed": false,
+  "schema5_cloud_enabled": false,
+  "studioBoundary_sha256": "5af285245ece42499a9f05cb5bbbf9a2ef7452ed526523a409ddb06271843e0e",
+  "production": "unchanged",
+  "hosted": {
+    "status": "passed",
+    "checks": 7,
+    "scope": "format rejection, exact origin/relay denial and held feature flags",
+    "deployment_id": "dpl_HJnTcwVPPwj77qebkGZiCoXM9z5L",
+    "product_source_commit": "3ebbc4d0e4cfd9b72947b097366e8b1b6fe8b573"
+  },
+  "actual_provider_acceptance": "not_tested"
+}

@@ -1,7 +1,7 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import {playgroundProvider} from '../lib/works/playgroundProvider';
-import {operationSchema} from '../lib/works/vendor/src/playground/aiOperations';
+import {operationSchema} from '../lib/works/vendor/src/playground/legacyAiOperations';
 
 test('Playground adapter sends one bounded strict-schema request and preserves refusal/usage',async()=>{
  assert.equal(playgroundProvider(undefined),undefined);

@@ -9,6 +9,9 @@ const nextConfig: NextConfig = {
       { key: "Referrer-Policy", value: "strict-origin-when-cross-origin" },
     ] }];
   },
+  outputFileTracingIncludes: {
+    '/api/works/v1/[...path]': ['./private/templates/**/*.zip'],
+  },
 };
 
 export default nextConfig;

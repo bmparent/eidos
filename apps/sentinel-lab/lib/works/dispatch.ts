@@ -1,12 +1,13 @@
 import { validatePlaygroundImage } from './playgroundImage';
 import { playgroundProvider } from './playgroundProvider';
-import * as playgroundAI from './vendor/functions/api/playground/ai';
 import * as memberAuth from './vendor/functions/api/members/auth';
 import * as memberCredentials from './vendor/functions/api/members/credentials';
 import * as memberGoogle from './vendor/functions/api/members/google';
 import { passwordService } from './passwords';
 import { googleVerifier } from './googleIdentity';
 import * as playgroundProjects from './vendor/functions/api/playground/projects';
+import * as playgroundAi from './vendor/functions/api/playground/ai';
+import * as playgroundDelivery from './vendor/functions/api/playground/delivery';
 import * as playgroundCheckout from './vendor/functions/api/playground/checkout';
 import * as playgroundPurchases from './vendor/functions/api/playground/purchases';
 import * as playgroundWebhook from './vendor/functions/api/playground/webhook';
@@ -16,6 +17,8 @@ import * as memberUnsubscribe from './vendor/functions/api/members/unsubscribe';
 import { timingSafeEqual } from 'node:crypto';
 import { platformDatabase } from './database';
 import { operations } from './operations';
+import { templateArchives } from './templateArchives';
+import { worksMailKey } from './mail-key';
 import { json, readText, type Context, type PlatformEnv } from './vendor/functions/_shared/platform/core';
 import * as assistant from './vendor/functions/api/assistant';
 import * as readiness from './vendor/functions/api/operations/readiness';
@@ -31,6 +34,9 @@ import * as kitPurchases from './vendor/functions/api/shop/purchases';
 import * as status from './vendor/functions/api/shop/status';
 import * as download from './vendor/functions/api/shop/download';
 import * as webhook from './vendor/functions/api/shop/webhook';
+import * as templateCatalog from './vendor/functions/api/shop/catalog';
+import * as templateRecover from './vendor/functions/api/shop/recover';
+import * as templateRedeem from './vendor/functions/api/shop/redeem';
 import * as feed from './vendor/functions/community/feed';
 import * as sitemap from './vendor/functions/community/sitemap.xml';
 import * as thread from './vendor/functions/community/thread/[id]';
@@ -38,8 +44,9 @@ import * as thread from './vendor/functions/community/thread/[id]';
 type Handler = (context: Context) => Promise<Response>;
 type Module = { onRequestGet?: Handler; onRequestPost?: Handler };
 const routes: Record<string, Module> = {
-  '/api/playground/ai': playgroundAI,
   '/api/playground/projects': playgroundProjects,
+  '/api/playground/ai': playgroundAi,
+  '/api/playground/delivery': playgroundDelivery,
   '/api/playground/checkout': playgroundCheckout, '/api/playground/purchases': playgroundPurchases, '/api/playground/webhook': playgroundWebhook,
   '/api/members/auth': memberAuth, '/api/members/account': memberAccount,
   '/api/members/credentials': memberCredentials, '/api/members/google': memberGoogle,
@@ -51,6 +58,7 @@ const routes: Record<string, Module> = {
   '/api/community/maintenance': maintenance,
   '/api/shop/checkout': checkout, '/api/shop/status': status, '/api/shop/purchases': kitPurchases,
   '/api/shop/download': download, '/api/shop/webhook': webhook,
+  '/api/shop/catalog': templateCatalog, '/api/shop/recover': templateRecover, '/api/shop/redeem': templateRedeem,
   '/community/feed': feed, '/community/sitemap.xml': sitemap,
 };
 const names = [
@@ -65,11 +73,14 @@ const names = [
   'EIDOS_PUBLICATION_FEED_URL',
   'EIDOS_PLAYGROUND_AUTHORING_ENABLED', 'EIDOS_PASSWORD_AUTH_ENABLED', 'EIDOS_GOOGLE_CLIENT_ID', 'EIDOS_GOOGLE_CLIENT_SECRET', 'EIDOS_GOOGLE_REDIRECT_URI',
   'STRIPE_SECRET_KEY', 'EIDOS_KIT_WEBHOOK_SECRET', 'EIDOS_SHOP_ENABLED',
+  'EIDOS_TEMPLATE_TEST_ENABLED', 'EIDOS_TEMPLATE_TEST_CHALLENGE', 'EIDOS_TEMPLATE_VERIFIED_EDITIONS', 'EIDOS_TEMPLATE_SOURCE_REVISION',
+  'EIDOS_TEMPLATE_LIVE_ENABLED', 'EIDOS_TEMPLATE_STRIPE_ACCOUNT_ID',
   'EIDOS_PLAYGROUND_STRIPE_KEY', 'EIDOS_PLAYGROUND_WEBHOOK_SECRET', 'EIDOS_PLAYGROUND_TEST_PRICE_CENTS',
+  'EIDOS_PLAYGROUND_AI_MODE', 'EIDOS_PLAYGROUND_AI_ENABLED', 'EIDOS_PLAYGROUND_INPUT_COUNT_PRICING', 'EIDOS_PLAYGROUND_OPENAI_API_KEY', 'EIDOS_PLAYGROUND_DELIVERY_MODE', 'EIDOS_PLAYGROUND_DELIVERY_LIVE_ENABLED',
 ] as const;
 export function platformEnvironment(source: Record<string, string | undefined> = process.env): PlatformEnv {
   const selected = Object.fromEntries(names.map(name => [name, source[name]]));
-  return { ...selected, EIDOS_RUNTIME: 'sentinel', EIDOS_PLAYGROUND_AI_PROVIDER: playgroundProvider(source.OPENAI_API_KEY), EIDOS_PASSWORD_SERVICE: passwordService, EIDOS_GOOGLE_VERIFY: googleVerifier(source.EIDOS_GOOGLE_CLIENT_ID), EIDOS_VALIDATE_PLAYGROUND_IMAGE: validatePlaygroundImage, EIDOS_DB: platformDatabase(source) };
+  return { ...selected, RESEND_API_KEY: worksMailKey(source), EIDOS_RUNTIME: 'sentinel', EIDOS_PLAYGROUND_AI_PROVIDER: playgroundProvider(source.OPENAI_API_KEY), EIDOS_PASSWORD_SERVICE: passwordService, EIDOS_GOOGLE_VERIFY: googleVerifier(source.EIDOS_GOOGLE_CLIENT_ID), EIDOS_VALIDATE_PLAYGROUND_IMAGE: validatePlaygroundImage, EIDOS_DB: platformDatabase(source), EIDOS_TEMPLATE_ARCHIVES: templateArchives };
 }
 function authenticated(request: Request, expected?: string) {
   const actual = request.headers.get('x-eidos-platform-token') || '';
@@ -82,8 +93,10 @@ export async function dispatchWorks(request: Request, source: Record<string, str
   try {
     const inputUrl = new URL(request.url);
     const path = inputUrl.pathname.replace(/^\/api\/works\/v1/, '').replace(/\/$/, '') || '/';
+    const runtimeSourceRevision = /^[a-f0-9]{40}$/.test(source.EIDOS_SOURCE_COMMIT || source.VERCEL_GIT_COMMIT_SHA || '') ? (source.EIDOS_SOURCE_COMMIT || source.VERCEL_GIT_COMMIT_SHA) : null;
+    const runtimeBundleHash = /^[a-f0-9]{64}$/.test(source.EIDOS_SOURCE_BUNDLE_HASH || '') ? source.EIDOS_SOURCE_BUNDLE_HASH : null;
     if (path === '/health' && request.method === 'GET')
-      return json({ service: 'eidos-works-platform', version: 1 });
+      return json({ service: 'eidos-works-platform', version: 1, runtimeSourceRevision, runtimeBundleHash });
     if (!authenticated(request, source.EIDOS_PLATFORM_TOKEN)) return json({ error: 'Studio relay authentication required.' }, 401);
     const expectedSite = new URL(source.PUBLIC_SITE_URL || 'https://eidos-works.com').origin;
     const actualSite = request.headers.get('x-eidos-site-origin');
@@ -118,13 +131,15 @@ export async function dispatchWorks(request: Request, source: Record<string, str
     const cookies = (request.headers.get('cookie') || '').split(';').map(s=>s.trim()).filter(s=>/^__Host-eidos_(session|oauth|onboard)=[a-f0-9]{64}$/.test(s));
     if (cookies.length) headers.set('cookie', cookies.join('; '));
     headers.set('CF-Connecting-IP', request.headers.get('x-eidos-client-ip') || 'unknown');
-    const payload = request.method === 'POST' ? await readText(request, path === '/api/playground/projects' ? 2_020_000 : path === '/api/playground/ai' ? 16000 : ['/api/shop/webhook','/api/playground/webhook'].includes(path) ? 64000 : 12000) : undefined;
+    const payload = request.method === 'POST' ? await readText(request, path === '/api/playground/projects' ? 2_020_000 : path === '/api/playground/delivery' ? 1_520_000 : path === '/api/playground/ai' ? 110000 : ['/api/shop/webhook','/api/playground/webhook'].includes(path) ? 64000 : 12000) : undefined;
     const forwarded = new Request(actualSite + path + inputUrl.search, {
       method: request.method, headers, body: payload,
     });
     const env = suppliedEnv || platformEnvironment(source);
     // Build/test callers may inject local fixtures; production environment never enables bypasses.
-    return handler({ request: forwarded, env, params: match ? { id: match[1] } : undefined });
+    const response = await handler({ request: forwarded, env, params: match ? { id: match[1] } : undefined });
+    if (path === '/api/public-config' && response.ok) return json({ ...await response.json(), runtimeSourceRevision, runtimeBundleHash });
+    return response;
   } catch {
     return json({ error: 'The studio service is temporarily unavailable.' }, 503);
   }

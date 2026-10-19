@@ -1,0 +1,21 @@
+{
+  "branch": "codex/playground-unified-20261014",
+  "backendSha": "19428375a54c2d8b4abc0aeb39858e3161ec0773",
+  "bundleHash": "a6271f66087b974d51fc09faa9a3b7b70b539aa2499adb6c97b68ef2fe9b57c9",
+  "manualOnly": true,
+  "database": "none",
+  "privateArchiveCount": 0,
+  "privateArchiveState": "Intentionally omitted for disabled manual editor preview. Original complete TEST archive bundle retained unchanged.",
+  "features": "Accounts, AI, commerce, mail, community and proactive disabled",
+  "perDeploymentOverrides": true,
+  "createdAt": "2026-10-14T19:05:16.010Z",
+  "deployed": true,
+  "deployment": {
+    "id": "dpl_7M9ufsHoRdKjZUmvXrJ3Ub6ut722",
+    "url": "https://eidos-sentinel-qleksybfu-1brentbm-1876s-projects.vercel.app",
+    "state": "READY",
+    "target": "preview"
+  },
+  "sourceMetadataVerified": true,
+  "inspectedAt": "2026-10-14T19:07:43.270Z"
+}

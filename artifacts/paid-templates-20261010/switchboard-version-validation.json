@@ -1,0 +1,65 @@
+{
+  "timestampUtc": "2026-10-11T02:16:04.950Z",
+  "scope": "narrow Switchboard developer typography version transition",
+  "fromVersion": "1.0.0",
+  "toVersion": "1.0.1",
+  "tests": {
+    "passed": 65,
+    "failed": 0,
+    "skipped": 0,
+    "log": "switchboard-version-tests.log"
+  },
+  "focused": {
+    "passed": 11,
+    "failed": 0,
+    "log": "switchboard-retention-tests.log"
+  },
+  "typecheck": {
+    "status": "passed",
+    "log": "switchboard-version-typecheck.log"
+  },
+  "archives": {
+    "current": 8,
+    "retained": 8,
+    "total": 16,
+    "previousFifteenHashesPreserved": true,
+    "currentSwitchboard": {
+      "productId": "switchboard-developer-v1",
+      "archiveKey": "templates/switchboard/1.0.1/developer.zip",
+      "sha256": "5ceb3e123ebd531d8b3d1bd113f3f135296c0a8dd7d320959afb0285cef70678",
+      "bytes": 27055,
+      "alreadyPresent": false
+    },
+    "actualPurchasedSwitchboard100Retained": {
+      "archiveKey": "templates/switchboard/1.0.0/developer.zip",
+      "sha256": "e56450de9adbac6320d9e2315601e1804d281fcf1b87dc0f95cef5ef8ae45e2a",
+      "bytes": 26816
+    }
+  },
+  "priorBackendSource": "823b61bb9e7ee74aa89b0a5b2fd5e93e4a9c19e6",
+  "actualPurchaseEvidence": {
+    "version": "1.0.0",
+    "source": "e20b6207ad2f80e1497b83ece56e66c316dc5124",
+    "unchanged": true
+  },
+  "runtimeScope": "catalog version and importer expectation only; existing webhook reconciliation unchanged",
+  "limits": [
+    "New Switchboard1.0.1 is not the archive used by the historical actual1.0.0 TEST purchase.",
+    "Mail and genuine refund-reconciliation replay remain blocked/unperformed as previously recorded.",
+    "New protected source build and Linux three-engine frontend CI remain separate gates."
+  ],
+  "installation": {
+    "status": "passed",
+    "version": "1.0.1",
+    "archiveSha256": "5ceb3e123ebd531d8b3d1bd113f3f135296c0a8dd7d320959afb0285cef70678",
+    "editedBusiness": "passed",
+    "editedImage": "passed",
+    "publishedTestPage": "local HTTP passed",
+    "mainAction": "email draft prepared to configured recipient; not sent",
+    "archiveUnchanged": true
+  },
+  "triggeringGate": {
+    "githubRunId": "38104163542",
+    "outcome": "failed actual desktop word-fit assertion; configure/upload skipped; failure retained by site candidate"
+  }
+}

@@ -1,0 +1,33 @@
+{
+  "timestampUtc": "2026-10-14T18:58:31.548Z",
+  "build": "Next 16.3.8 optimized production build, actual route module 11160",
+  "moduleChunk": ".next/server/chunks/_0jgqhb0._.js",
+  "transpilerHarness": "Plain Node; no tsx/esbuild loader",
+  "routeSha256": "88253dd361a008623bb0b0fbc16b2d0811d071e57110758c0a876f7a980afb11",
+  "chunkSha256": "dbeabcb1dad691d652f5148aea6146f07bdb142e4c4a6128a7bcb414e559a02f",
+  "inputZipSha256": "0bbf80316608935e2f59978c57a39b86290a41dfb46be611bb436005b46e59df",
+  "snapshotHash": "9317833e9b40e787b684f42afe466856aaa37dbe2640e97e10f793ef2861f0b9",
+  "archiveSha256": "ac045ed1b6c533ee6a557a3b419bb330482f7282243d518d0f8022f1f6141f3b",
+  "archiveBytes": 65628,
+  "byteIdenticalToInput": false,
+  "scriptSha256": "9e09214e1962447e760db507492fcc9f92db8fb9f0de84edfa0539e38841b30b",
+  "scriptBytes": 20240,
+  "nameHelperLeak": false,
+  "scriptParse": "passed",
+  "storageRoundTrip": "Actual compiled freeze/read functions with real in-memory SQLite",
+  "browserExecution": "pending independent archive opening",
+  "network": "fetch forbidden",
+  "files": [
+    "index.html",
+    "styles.css",
+    "tokens.css",
+    "script.js",
+    "project.json",
+    "approved-glass-preset.json",
+    "README.md",
+    "AI-HANDOFF.md",
+    "SNAPSHOT.json",
+    "PROVENANCE.md",
+    "PACKAGE_MANIFEST.json"
+  ]
+}

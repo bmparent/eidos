@@ -1,0 +1,8 @@
+{
+  "timestampUtc": "2026-10-14T19:09:22.150Z",
+  "url": "https://eidos-sentinel-qleksybfu-1brentbm-1876s-projects.vercel.app/api/health",
+  "status": 302,
+  "result": "Unauthenticated deployment protection; authenticated runtime acceptance belongs to paired frontend CI",
+  "source": "19428375a54c2d8b4abc0aeb39858e3161ec0773",
+  "bundle": "a6271f66087b974d51fc09faa9a3b7b70b539aa2499adb6c97b68ef2fe9b57c9"
+}

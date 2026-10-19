@@ -1,0 +1,749 @@
+{
+  "drive_copy_attempted": true,
+  "drive_copy_success": true,
+  "drive_root": "G:/My Drive",
+  "drive_run_dir": "G:/My Drive/Eidos_Works_Playground/2026-10-14/backend-final-20261014T192106Z",
+  "reason": "Every sanitized artifact and manifest copied to mounted Drive and SHA256 verified; remote cloud synchronization not independently verified",
+  "files_considered": [
+    "acceptance.json",
+    "ai-tests-first.log",
+    "ai-tests.log",
+    "app-tests-mail-fixture-assertion-failed.log",
+    "app-tests.log",
+    "backend-preview-first.json",
+    "backend-preview-second.json",
+    "backend-preview-third.json",
+    "backend-preview.json",
+    "build.log",
+    "codex_journal.md",
+    "delivery/app-tests.log",
+    "delivery/build.log",
+    "delivery/canonical-app-tests.log",
+    "delivery/canonical-build.log",
+    "delivery/canonical-exporter-negative.json",
+    "delivery/canonical-hosted-protection.json",
+    "delivery/canonical-source-bundle-inventory.json",
+    "delivery/canonical-source.json",
+    "delivery/canonical-typecheck.log",
+    "delivery/compiled-browser-parity/README.md",
+    "delivery/compiled-browser-parity/browser-approved.zip",
+    "delivery/compiled-browser-parity/browser-snapshot.json",
+    "delivery/compiled-browser-parity/compiled-server-approved.zip",
+    "delivery/compiled-browser-parity/probe.cjs",
+    "delivery/compiled-browser-parity/receipt.json",
+    "delivery/compiled-runtime-after/browser/chromium-1440.png",
+    "delivery/compiled-runtime-after/browser/chromium-390.png",
+    "delivery/compiled-runtime-after/browser/compiled-receipt.json",
+    "delivery/compiled-runtime-after/browser/firefox-1440.png",
+    "delivery/compiled-runtime-after/browser/firefox-390.png",
+    "delivery/compiled-runtime-after/browser/receipt.json",
+    "delivery/compiled-runtime-after/browser/verify.mjs",
+    "delivery/compiled-runtime-after/browser/webkit-1440.png",
+    "delivery/compiled-runtime-after/browser/webkit-390.png",
+    "delivery/compiled-runtime-after/canonical-reference.zip",
+    "delivery/compiled-runtime-after/compiled-server-approved.zip",
+    "delivery/compiled-runtime-after/probe.cjs",
+    "delivery/compiled-runtime-after/receipt.json",
+    "delivery/compiled-runtime-after/reference.cjs",
+    "delivery/compiled-runtime-before/analysis.md",
+    "delivery/compiled-runtime-before/browser-receipt.json",
+    "delivery/compiled-runtime-before/compiled-server-approved.zip",
+    "delivery/compiled-runtime-before/fixture-input.zip",
+    "delivery/compiled-runtime-before/mismatch.json",
+    "delivery/compiled-runtime-before/probe.cjs",
+    "delivery/compiled-runtime-before/receipt.json",
+    "delivery/final-app-tests.log",
+    "delivery/final-build.log",
+    "delivery/final-delivery-tests.log",
+    "delivery/final-source.json",
+    "delivery/final-typecheck.log",
+    "delivery/frontend-order-review-receipt.json",
+    "delivery/frontend-order-tests.log",
+    "delivery/hosted-protection.json",
+    "delivery/mobile-final-app-tests.log",
+    "delivery/mobile-final-browser-parity/README.md",
+    "delivery/mobile-final-browser-parity/browser-approved.zip",
+    "delivery/mobile-final-browser-parity/browser-snapshot.json",
+    "delivery/mobile-final-browser-parity/compiled-server-approved.zip",
+    "delivery/mobile-final-browser-parity/probe.cjs",
+    "delivery/mobile-final-browser-parity/receipt.json",
+    "delivery/mobile-final-build.log",
+    "delivery/mobile-final-bundle-inventory.json",
+    "delivery/mobile-final-compiled/compiled-server-approved.zip",
+    "delivery/mobile-final-compiled/probe.cjs",
+    "delivery/mobile-final-compiled/receipt.json",
+    "delivery/mobile-final-compiled/reference.cjs",
+    "delivery/mobile-final-compiled/reference.zip",
+    "delivery/mobile-final-hosted-protection.json",
+    "delivery/mobile-final-source.json",
+    "delivery/mobile-final-typecheck.log",
+    "delivery/mobile-number-layout/chromium-320-after.png",
+    "delivery/mobile-number-layout/chromium-320-before.png",
+    "delivery/mobile-number-layout/chromium-390-after.png",
+    "delivery/mobile-number-layout/chromium-390-before.png",
+    "delivery/mobile-number-layout/firefox-320-after.png",
+    "delivery/mobile-number-layout/firefox-320-before.png",
+    "delivery/mobile-number-layout/firefox-390-after.png",
+    "delivery/mobile-number-layout/firefox-390-before.png",
+    "delivery/mobile-number-layout/receipt.json",
+    "delivery/mobile-number-layout/webkit-320-after.png",
+    "delivery/mobile-number-layout/webkit-320-before.png",
+    "delivery/mobile-number-layout/webkit-390-after.png",
+    "delivery/mobile-number-layout/webkit-390-before.png",
+    "delivery/order-hook-review.md",
+    "delivery/plain-language-analysis.md",
+    "delivery/relay-tests-fixture-failed.log",
+    "delivery/relay-tests.log",
+    "delivery/retained-archives-final.json",
+    "delivery/shared-source-parity.json",
+    "delivery/source-bundle-inventory.json",
+    "delivery/source-stage.json",
+    "delivery/typecheck.log",
+    "dependency-audit-after.json",
+    "dependency-audit.json",
+    "hosted-protection.json",
+    "implementation-report.md",
+    "plain_language_test_analysis.md",
+    "preview-environment-first.json",
+    "preview-environment.json",
+    "retained-archives.json",
+    "source-bundle-inventory.json",
+    "typecheck.log",
+    "artifact_manifest.json"
+  ],
+  "files_copied": [
+    "acceptance.json",
+    "ai-tests-first.log",
+    "ai-tests.log",
+    "app-tests-mail-fixture-assertion-failed.log",
+    "app-tests.log",
+    "backend-preview-first.json",
+    "backend-preview-second.json",
+    "backend-preview-third.json",
+    "backend-preview.json",
+    "build.log",
+    "codex_journal.md",
+    "delivery/app-tests.log",
+    "delivery/build.log",
+    "delivery/canonical-app-tests.log",
+    "delivery/canonical-build.log",
+    "delivery/canonical-exporter-negative.json",
+    "delivery/canonical-hosted-protection.json",
+    "delivery/canonical-source-bundle-inventory.json",
+    "delivery/canonical-source.json",
+    "delivery/canonical-typecheck.log",
+    "delivery/compiled-browser-parity/README.md",
+    "delivery/compiled-browser-parity/browser-approved.zip",
+    "delivery/compiled-browser-parity/browser-snapshot.json",
+    "delivery/compiled-browser-parity/compiled-server-approved.zip",
+    "delivery/compiled-browser-parity/probe.cjs",
+    "delivery/compiled-browser-parity/receipt.json",
+    "delivery/compiled-runtime-after/browser/chromium-1440.png",
+    "delivery/compiled-runtime-after/browser/chromium-390.png",
+    "delivery/compiled-runtime-after/browser/compiled-receipt.json",
+    "delivery/compiled-runtime-after/browser/firefox-1440.png",
+    "delivery/compiled-runtime-after/browser/firefox-390.png",
+    "delivery/compiled-runtime-after/browser/receipt.json",
+    "delivery/compiled-runtime-after/browser/verify.mjs",
+    "delivery/compiled-runtime-after/browser/webkit-1440.png",
+    "delivery/compiled-runtime-after/browser/webkit-390.png",
+    "delivery/compiled-runtime-after/canonical-reference.zip",
+    "delivery/compiled-runtime-after/compiled-server-approved.zip",
+    "delivery/compiled-runtime-after/probe.cjs",
+    "delivery/compiled-runtime-after/receipt.json",
+    "delivery/compiled-runtime-after/reference.cjs",
+    "delivery/compiled-runtime-before/analysis.md",
+    "delivery/compiled-runtime-before/browser-receipt.json",
+    "delivery/compiled-runtime-before/compiled-server-approved.zip",
+    "delivery/compiled-runtime-before/fixture-input.zip",
+    "delivery/compiled-runtime-before/mismatch.json",
+    "delivery/compiled-runtime-before/probe.cjs",
+    "delivery/compiled-runtime-before/receipt.json",
+    "delivery/final-app-tests.log",
+    "delivery/final-build.log",
+    "delivery/final-delivery-tests.log",
+    "delivery/final-source.json",
+    "delivery/final-typecheck.log",
+    "delivery/frontend-order-review-receipt.json",
+    "delivery/frontend-order-tests.log",
+    "delivery/hosted-protection.json",
+    "delivery/mobile-final-app-tests.log",
+    "delivery/mobile-final-browser-parity/README.md",
+    "delivery/mobile-final-browser-parity/browser-approved.zip",
+    "delivery/mobile-final-browser-parity/browser-snapshot.json",
+    "delivery/mobile-final-browser-parity/compiled-server-approved.zip",
+    "delivery/mobile-final-browser-parity/probe.cjs",
+    "delivery/mobile-final-browser-parity/receipt.json",
+    "delivery/mobile-final-build.log",
+    "delivery/mobile-final-bundle-inventory.json",
+    "delivery/mobile-final-compiled/compiled-server-approved.zip",
+    "delivery/mobile-final-compiled/probe.cjs",
+    "delivery/mobile-final-compiled/receipt.json",
+    "delivery/mobile-final-compiled/reference.cjs",
+    "delivery/mobile-final-compiled/reference.zip",
+    "delivery/mobile-final-hosted-protection.json",
+    "delivery/mobile-final-source.json",
+    "delivery/mobile-final-typecheck.log",
+    "delivery/mobile-number-layout/chromium-320-after.png",
+    "delivery/mobile-number-layout/chromium-320-before.png",
+    "delivery/mobile-number-layout/chromium-390-after.png",
+    "delivery/mobile-number-layout/chromium-390-before.png",
+    "delivery/mobile-number-layout/firefox-320-after.png",
+    "delivery/mobile-number-layout/firefox-320-before.png",
+    "delivery/mobile-number-layout/firefox-390-after.png",
+    "delivery/mobile-number-layout/firefox-390-before.png",
+    "delivery/mobile-number-layout/receipt.json",
+    "delivery/mobile-number-layout/webkit-320-after.png",
+    "delivery/mobile-number-layout/webkit-320-before.png",
+    "delivery/mobile-number-layout/webkit-390-after.png",
+    "delivery/mobile-number-layout/webkit-390-before.png",
+    "delivery/order-hook-review.md",
+    "delivery/plain-language-analysis.md",
+    "delivery/relay-tests-fixture-failed.log",
+    "delivery/relay-tests.log",
+    "delivery/retained-archives-final.json",
+    "delivery/shared-source-parity.json",
+    "delivery/source-bundle-inventory.json",
+    "delivery/source-stage.json",
+    "delivery/typecheck.log",
+    "dependency-audit-after.json",
+    "dependency-audit.json",
+    "hosted-protection.json",
+    "implementation-report.md",
+    "plain_language_test_analysis.md",
+    "preview-environment-first.json",
+    "preview-environment.json",
+    "retained-archives.json",
+    "source-bundle-inventory.json",
+    "typecheck.log",
+    "artifact_manifest.json"
+  ],
+  "files_skipped": [],
+  "timestamp_utc": "2026-10-14T19:21:06.022Z",
+  "prior_mirrors_retained": [
+    "G:/My Drive/Eidos_Works_Playground/2026-10-14/backend-unified-20261014T182356Z",
+    "G:/My Drive/Eidos_Works_Playground/2026-10-14/backend-delivery-20261014T185134Z"
+  ],
+  "checksums": [
+    {
+      "path": "acceptance.json",
+      "bytes": 6354,
+      "sha256": "2d83553ea96c9cedd6403cfa803623334b20e718577eb976f84630f83fd75695"
+    },
+    {
+      "path": "ai-tests-first.log",
+      "bytes": 1673,
+      "sha256": "9bcfeeb2ff2eb1e3e3753aec4c74102e1fdee2c14d5ed4f70388f3d18d5aaeb3"
+    },
+    {
+      "path": "ai-tests.log",
+      "bytes": 2241,
+      "sha256": "6e937830b60fe7ab7d4762f11fa22ad2cc1fe715f89280117a97586de76244bf"
+    },
+    {
+      "path": "app-tests-mail-fixture-assertion-failed.log",
+      "bytes": 12164,
+      "sha256": "3ce32177c677fd00d4bbe1119e9a2e152541bdc625411b2d1d8d668f52a38592"
+    },
+    {
+      "path": "app-tests.log",
+      "bytes": 11435,
+      "sha256": "e337b15ed22477c1f229e603e59959de8381ed00d0db5abd46fd66776fc5c2cf"
+    },
+    {
+      "path": "backend-preview-first.json",
+      "bytes": 865,
+      "sha256": "9cd26482b73dcf7576f89eab71177efa663c6e3574b01f875af4ce05e66c0169"
+    },
+    {
+      "path": "backend-preview-second.json",
+      "bytes": 865,
+      "sha256": "5c94a948e477c6b81c4e26685396c758e234ad75a32d252cda4e437cc4eb1933"
+    },
+    {
+      "path": "backend-preview-third.json",
+      "bytes": 865,
+      "sha256": "1b1c0e6df888c79f7313b02d4ba055f42d9f28abc649f2966c65aeb28efc737c"
+    },
+    {
+      "path": "backend-preview.json",
+      "bytes": 865,
+      "sha256": "53d548703c30cd78fa2e023ba95d60cbba151e21386813823c7cb01c2262a95f"
+    },
+    {
+      "path": "build.log",
+      "bytes": 1123,
+      "sha256": "4fba8530a51d88cb4945c48d26bf956247f3bdcda9cb92c7c702d4d6255f771e"
+    },
+    {
+      "path": "codex_journal.md",
+      "bytes": 12393,
+      "sha256": "6533081a09fd1206a9f68ec15102e1e5443460ecfd02fa37e0ed5a264ead7003"
+    },
+    {
+      "path": "delivery/app-tests.log",
+      "bytes": 11737,
+      "sha256": "fdda6a4edd3ac6b688b6df3ba9a8901721c877d09e83f2c5b55ad80b21110509"
+    },
+    {
+      "path": "delivery/build.log",
+      "bytes": 1127,
+      "sha256": "3a8f15d1cc245fba1e50203f2712b935a975f4cea298ef97a7b7ed31b42c4f1b"
+    },
+    {
+      "path": "delivery/canonical-app-tests.log",
+      "bytes": 12060,
+      "sha256": "964e1521665a626a5e3c6b89aa659ae9bb3ce53a79bd2e52e1c120c9129efadf"
+    },
+    {
+      "path": "delivery/canonical-build.log",
+      "bytes": 1129,
+      "sha256": "3eaa67dfdf01ff00b48f3e124bed7705288fa5504dcd44ebd9e5e35a394d1035"
+    },
+    {
+      "path": "delivery/canonical-exporter-negative.json",
+      "bytes": 194,
+      "sha256": "873ff334b3917e9b8f5d4f5146fdf4d73bc516fe86ee78598f19ece5c2e7ea65"
+    },
+    {
+      "path": "delivery/canonical-hosted-protection.json",
+      "bytes": 410,
+      "sha256": "3d218040a141bc603c1965a54681b53b11c96cba90c4d33068cbc3919b4b764f"
+    },
+    {
+      "path": "delivery/canonical-source-bundle-inventory.json",
+      "bytes": 30722,
+      "sha256": "1a96a9dbc79191edc4e38e606d68e7586842657e3a48b1af7b8b188070a4efe3"
+    },
+    {
+      "path": "delivery/canonical-source.json",
+      "bytes": 2002,
+      "sha256": "63cdc0171505b01df3c81a3379da78f470a0770a1a468181ff0d08342ddad6b0"
+    },
+    {
+      "path": "delivery/canonical-typecheck.log",
+      "bytes": 53,
+      "sha256": "9a216ee216ffece65f8c7311a6df581a1485d1725ca017f4227f18213940a6eb"
+    },
+    {
+      "path": "delivery/compiled-browser-parity/README.md",
+      "bytes": 1707,
+      "sha256": "8394bef01f2fe0bb3a62a68cedd43ebf6e69310fca26d6a6ad0d159bf93be540"
+    },
+    {
+      "path": "delivery/compiled-browser-parity/browser-approved.zip",
+      "bytes": 128347,
+      "sha256": "3f1b0c20f676a51126af4faa6207a6f90c8f0dda2af5d2b09d1f18699846fe71"
+    },
+    {
+      "path": "delivery/compiled-browser-parity/browser-snapshot.json",
+      "bytes": 29673,
+      "sha256": "a6d392b0fc1ed9713a4ef5e4b6f1c32ccbf290b242ba40a6d9a9f30f3b2d1b40"
+    },
+    {
+      "path": "delivery/compiled-browser-parity/compiled-server-approved.zip",
+      "bytes": 128347,
+      "sha256": "3f1b0c20f676a51126af4faa6207a6f90c8f0dda2af5d2b09d1f18699846fe71"
+    },
+    {
+      "path": "delivery/compiled-browser-parity/probe.cjs",
+      "bytes": 6171,
+      "sha256": "9033c965efaa6b2ebcef21f81deda114a702306cfb43f500ff3e6d16bef03832"
+    },
+    {
+      "path": "delivery/compiled-browser-parity/receipt.json",
+      "bytes": 1391,
+      "sha256": "2fed3b09074d332dbe51dfa3914ad6998354be0db34a827ec822b108c1f19e29"
+    },
+    {
+      "path": "delivery/compiled-runtime-after/browser/chromium-1440.png",
+      "bytes": 125140,
+      "sha256": "a02aacb9c3f3341304d30f2348defce195ebc6ec3fa4b13541060d2345f06969"
+    },
+    {
+      "path": "delivery/compiled-runtime-after/browser/chromium-390.png",
+      "bytes": 90524,
+      "sha256": "7407208791fc0a74933a47682231a0ba079e12c6f479f3a5deae29b1e8851f84"
+    },
+    {
+      "path": "delivery/compiled-runtime-after/browser/compiled-receipt.json",
+      "bytes": 1329,
+      "sha256": "c640df70d78431a45dc8d13931f386f7722df7e41291336f4dc873ecb9dfb252"
+    },
+    {
+      "path": "delivery/compiled-runtime-after/browser/firefox-1440.png",
+      "bytes": 129794,
+      "sha256": "50c121bc9d35cdef85762e00fe9c432943f274d2f6f16ccbff07bce198c32fb7"
+    },
+    {
+      "path": "delivery/compiled-runtime-after/browser/firefox-390.png",
+      "bytes": 72559,
+      "sha256": "c4bd129b2135cb0e69280344126475d8587f6eb658c15423924d6b410c6acdf5"
+    },
+    {
+      "path": "delivery/compiled-runtime-after/browser/receipt.json",
+      "bytes": 1877,
+      "sha256": "5c665e8f700750836ed68b52cb40e852f5349f966cf82910d15a9e2fd8c8c557"
+    },
+    {
+      "path": "delivery/compiled-runtime-after/browser/verify.mjs",
+      "bytes": 3437,
+      "sha256": "f729ecdb4e59b173c2904ccf5a1e1437c472314493874a1e2be445877c964035"
+    },
+    {
+      "path": "delivery/compiled-runtime-after/browser/webkit-1440.png",
+      "bytes": 93444,
+      "sha256": "14eb3474f348d5d4810dbf2839824d5ef64f7907e4dd3d57899080abea0024bf"
+    },
+    {
+      "path": "delivery/compiled-runtime-after/browser/webkit-390.png",
+      "bytes": 65676,
+      "sha256": "9628d5d3308de886df7e86a0e4fb2d2f0842fde22adfe68f4bca13741d23eabf"
+    },
+    {
+      "path": "delivery/compiled-runtime-after/canonical-reference.zip",
+      "bytes": 66201,
+      "sha256": "b26d51c04ddee2f6ff2cb421d13edaaeb668e64c8e25ba3cc4209ccceb5956a3"
+    },
+    {
+      "path": "delivery/compiled-runtime-after/compiled-server-approved.zip",
+      "bytes": 66201,
+      "sha256": "b26d51c04ddee2f6ff2cb421d13edaaeb668e64c8e25ba3cc4209ccceb5956a3"
+    },
+    {
+      "path": "delivery/compiled-runtime-after/probe.cjs",
+      "bytes": 6171,
+      "sha256": "9033c965efaa6b2ebcef21f81deda114a702306cfb43f500ff3e6d16bef03832"
+    },
+    {
+      "path": "delivery/compiled-runtime-after/receipt.json",
+      "bytes": 1329,
+      "sha256": "c640df70d78431a45dc8d13931f386f7722df7e41291336f4dc873ecb9dfb252"
+    },
+    {
+      "path": "delivery/compiled-runtime-after/reference.cjs",
+      "bytes": 1763,
+      "sha256": "0041361771b8d057743b790b4a3f8fb601f240d61dd93ebaaf68f47b0a9c3c27"
+    },
+    {
+      "path": "delivery/compiled-runtime-before/analysis.md",
+      "bytes": 1718,
+      "sha256": "4b2fd5d021941e9228696d587a12c3ca639c2d313d64f94300dd8e6196605df8"
+    },
+    {
+      "path": "delivery/compiled-runtime-before/browser-receipt.json",
+      "bytes": 787,
+      "sha256": "aef204ebaa4248c6e3a5c2cc00fd955e4ab5ba38ba33b743152ff44de5b4eaa1"
+    },
+    {
+      "path": "delivery/compiled-runtime-before/compiled-server-approved.zip",
+      "bytes": 65628,
+      "sha256": "ac045ed1b6c533ee6a557a3b419bb330482f7282243d518d0f8022f1f6141f3b"
+    },
+    {
+      "path": "delivery/compiled-runtime-before/fixture-input.zip",
+      "bytes": 68447,
+      "sha256": "0bbf80316608935e2f59978c57a39b86290a41dfb46be611bb436005b46e59df"
+    },
+    {
+      "path": "delivery/compiled-runtime-before/mismatch.json",
+      "bytes": 942,
+      "sha256": "fa00fef8ce767e94eab8d05925b14bb9aa8d55ec2f296db31ce2907d7e0edab7"
+    },
+    {
+      "path": "delivery/compiled-runtime-before/probe.cjs",
+      "bytes": 6006,
+      "sha256": "520089079aee1a995265a849f09cc430cf9cc7a846d452b604005b77599ccc5d"
+    },
+    {
+      "path": "delivery/compiled-runtime-before/receipt.json",
+      "bytes": 1330,
+      "sha256": "16b3e0892192d7d72fb76e1d0a322fdeb83f05e598d6a7d3b08de4cdf9d269e0"
+    },
+    {
+      "path": "delivery/final-app-tests.log",
+      "bytes": 12064,
+      "sha256": "e06f1fcd169b217dd7dad4bb8c155a4fe8f9f453b2c5b5569416273ceca01d9d"
+    },
+    {
+      "path": "delivery/final-build.log",
+      "bytes": 1130,
+      "sha256": "e97dd3ae2eb2dc6e50ceadbc0e27b91f8481c3a8e7126617eede5d1efbd892ec"
+    },
+    {
+      "path": "delivery/final-delivery-tests.log",
+      "bytes": 867,
+      "sha256": "cfa961653300d5c47d28d6ff9366892dafce2831b0e3d53ac6a999cbda8f790b"
+    },
+    {
+      "path": "delivery/final-source.json",
+      "bytes": 1164,
+      "sha256": "eae4c664f89873e5b83550cfda5fe2244698b1565c21ca5052061577dec8cbad"
+    },
+    {
+      "path": "delivery/final-typecheck.log",
+      "bytes": 53,
+      "sha256": "9a216ee216ffece65f8c7311a6df581a1485d1725ca017f4227f18213940a6eb"
+    },
+    {
+      "path": "delivery/frontend-order-review-receipt.json",
+      "bytes": 4063,
+      "sha256": "6c0f35e3b58039938125393128e2423ca193fa013743d3db707f7b736a70fcb8"
+    },
+    {
+      "path": "delivery/frontend-order-tests.log",
+      "bytes": 4477,
+      "sha256": "fcf0def1405ae622244935ef23d936b8e3a5e1b1220984d20bfa7c88022dd397"
+    },
+    {
+      "path": "delivery/hosted-protection.json",
+      "bytes": 315,
+      "sha256": "4e33288dbfaa0f94fdfd0ec080ee09cdc519aaf9d51200bb067567645ab52340"
+    },
+    {
+      "path": "delivery/mobile-final-app-tests.log",
+      "bytes": 12077,
+      "sha256": "20a626ac1a0f537209cdab530a7975c78ea64a1584a45d2047fbf065f9a92ebc"
+    },
+    {
+      "path": "delivery/mobile-final-browser-parity/README.md",
+      "bytes": 1219,
+      "sha256": "1e606debb85430da67ac51cd4743fe3186b88fb7a585aa5a1c22bd677e3ea9db"
+    },
+    {
+      "path": "delivery/mobile-final-browser-parity/browser-approved.zip",
+      "bytes": 128380,
+      "sha256": "9def4cc49c1f79a061af9470c46fb96d6aa3550ba490304770ea1550364f29ed"
+    },
+    {
+      "path": "delivery/mobile-final-browser-parity/browser-snapshot.json",
+      "bytes": 29673,
+      "sha256": "9f6c83128b6f92227e56e5be824502de1643cf4b9482fd14e6f301148c8260a0"
+    },
+    {
+      "path": "delivery/mobile-final-browser-parity/compiled-server-approved.zip",
+      "bytes": 128380,
+      "sha256": "9def4cc49c1f79a061af9470c46fb96d6aa3550ba490304770ea1550364f29ed"
+    },
+    {
+      "path": "delivery/mobile-final-browser-parity/probe.cjs",
+      "bytes": 6171,
+      "sha256": "9033c965efaa6b2ebcef21f81deda114a702306cfb43f500ff3e6d16bef03832"
+    },
+    {
+      "path": "delivery/mobile-final-browser-parity/receipt.json",
+      "bytes": 1391,
+      "sha256": "28cec7f7207af3d07d4fb02ad404d2a095ab13498aee87c55a0f7d8bdd278797"
+    },
+    {
+      "path": "delivery/mobile-final-build.log",
+      "bytes": 1129,
+      "sha256": "b36b56a3f275809348512bd5ce6ff48e33ad490b28bf926ebfb22cdd786e567b"
+    },
+    {
+      "path": "delivery/mobile-final-bundle-inventory.json",
+      "bytes": 30722,
+      "sha256": "c4009304a03fa65d404796f3b655805fcc6e59cea77c98fab5e5f3df0f5e09e2"
+    },
+    {
+      "path": "delivery/mobile-final-compiled/compiled-server-approved.zip",
+      "bytes": 66234,
+      "sha256": "f3e34c10ab71b52c6750b458b16d57ea0da4a27c444bbc25e6a66579bbb649d8"
+    },
+    {
+      "path": "delivery/mobile-final-compiled/probe.cjs",
+      "bytes": 6171,
+      "sha256": "9033c965efaa6b2ebcef21f81deda114a702306cfb43f500ff3e6d16bef03832"
+    },
+    {
+      "path": "delivery/mobile-final-compiled/receipt.json",
+      "bytes": 1329,
+      "sha256": "6ea095422bb1eff3a3b0189b162d354790c8b740d5735e2879d1aaaace3e2781"
+    },
+    {
+      "path": "delivery/mobile-final-compiled/reference.cjs",
+      "bytes": 1763,
+      "sha256": "0041361771b8d057743b790b4a3f8fb601f240d61dd93ebaaf68f47b0a9c3c27"
+    },
+    {
+      "path": "delivery/mobile-final-compiled/reference.zip",
+      "bytes": 66234,
+      "sha256": "f3e34c10ab71b52c6750b458b16d57ea0da4a27c444bbc25e6a66579bbb649d8"
+    },
+    {
+      "path": "delivery/mobile-final-hosted-protection.json",
+      "bytes": 410,
+      "sha256": "e6cd528614b80db23bcf37bd796c6cc2b5551f3e552538d16a1171e956a47d1c"
+    },
+    {
+      "path": "delivery/mobile-final-source.json",
+      "bytes": 2368,
+      "sha256": "1f138c545f7f02c7b42d388cb61a2f9fc30b3a83dd0271b21bcd847f315fe44d"
+    },
+    {
+      "path": "delivery/mobile-final-typecheck.log",
+      "bytes": 53,
+      "sha256": "9a216ee216ffece65f8c7311a6df581a1485d1725ca017f4227f18213940a6eb"
+    },
+    {
+      "path": "delivery/mobile-number-layout/chromium-320-after.png",
+      "bytes": 18885,
+      "sha256": "41d437bef01ed9fbc8c10c8ec06e9d973243f9a07b1e70f1b32891eff1eebaef"
+    },
+    {
+      "path": "delivery/mobile-number-layout/chromium-320-before.png",
+      "bytes": 19278,
+      "sha256": "800d3fe1aff1255043aab95698af2782a4f83b27423e0f0f73c2191e335ad9d2"
+    },
+    {
+      "path": "delivery/mobile-number-layout/chromium-390-after.png",
+      "bytes": 18529,
+      "sha256": "ed9202d47ff1d1e19e70eb48d92f37eee6eb35e334b1d28037ba0e9627766f05"
+    },
+    {
+      "path": "delivery/mobile-number-layout/chromium-390-before.png",
+      "bytes": 18730,
+      "sha256": "97db659944bd00ef4a3a8595703ebec0c674c0161e1a9e50a4d38c888fb05f60"
+    },
+    {
+      "path": "delivery/mobile-number-layout/firefox-320-after.png",
+      "bytes": 14559,
+      "sha256": "2a5a0477f27130393ad0457e4b0c0d73c611c4a9582878ad9708298a48fd53f1"
+    },
+    {
+      "path": "delivery/mobile-number-layout/firefox-320-before.png",
+      "bytes": 15480,
+      "sha256": "2ac2bd7044c98b0bc728aca104e71bf8c73b7f52a1af900ab78d89435d5ff6f2"
+    },
+    {
+      "path": "delivery/mobile-number-layout/firefox-390-after.png",
+      "bytes": 14807,
+      "sha256": "ea1c38713295ce6f8ef474b0b06c32493501fce6092a7d1d436e5c2abff52b4a"
+    },
+    {
+      "path": "delivery/mobile-number-layout/firefox-390-before.png",
+      "bytes": 15504,
+      "sha256": "aea904b8675e5344f9165098f4b24c4ea169b46b5862394424b4a5e190ca986c"
+    },
+    {
+      "path": "delivery/mobile-number-layout/receipt.json",
+      "bytes": 8109,
+      "sha256": "c8ce5bbe3779982b835d1030058e76fb00301617f8948fbe8bec10f161783e1b"
+    },
+    {
+      "path": "delivery/mobile-number-layout/webkit-320-after.png",
+      "bytes": 14327,
+      "sha256": "7db437adbcb3558dca60b8aaf020263aacc51e2f34773735b21aaca40c5318ea"
+    },
+    {
+      "path": "delivery/mobile-number-layout/webkit-320-before.png",
+      "bytes": 14835,
+      "sha256": "c99d7fc9de5c84738f1375000b160af819f1c2aa19db76089b1fce60617f5e34"
+    },
+    {
+      "path": "delivery/mobile-number-layout/webkit-390-after.png",
+      "bytes": 14063,
+      "sha256": "d823a821b9e1eb548747cd34149e79e385be7cfd4cff6ba91acbb3a3e445ea75"
+    },
+    {
+      "path": "delivery/mobile-number-layout/webkit-390-before.png",
+      "bytes": 14308,
+      "sha256": "540c13ee02f107fbd709e4f5e34a3849b10eda130afa2612e529ba025875c1ff"
+    },
+    {
+      "path": "delivery/order-hook-review.md",
+      "bytes": 2647,
+      "sha256": "007a05fc4f8c0874388c7830ad78cb5ad5f37a77010ef3d21a42ee79d4036209"
+    },
+    {
+      "path": "delivery/plain-language-analysis.md",
+      "bytes": 4051,
+      "sha256": "5cd25968a97838fd921032c59aeaf4efc638d46b0f2e113fe22abc059a58beca"
+    },
+    {
+      "path": "delivery/relay-tests-fixture-failed.log",
+      "bytes": 3735,
+      "sha256": "34a2e067509aeeb37e14779e36f9cd7789c481e4e04424259d7e56c42fed1288"
+    },
+    {
+      "path": "delivery/relay-tests.log",
+      "bytes": 866,
+      "sha256": "8c4cb824a8ac2603d25c34d4a0e1843fe67d66d4f80f28ac58239cd29949a8c3"
+    },
+    {
+      "path": "delivery/retained-archives-final.json",
+      "bytes": 327,
+      "sha256": "01f25d81df0fa3cb0760aefd68e228f40f8195e8a60246032a789f6b4018e933"
+    },
+    {
+      "path": "delivery/shared-source-parity.json",
+      "bytes": 2828,
+      "sha256": "12d3ae58a5e0798ee70af4dd141768030f1ea910c5b352d31519d547f4cbe0f7"
+    },
+    {
+      "path": "delivery/source-bundle-inventory.json",
+      "bytes": 31148,
+      "sha256": "17cecdf99275fd232b4d2b12508bff41a52bae74dadcdf616d14632622ad2a8b"
+    },
+    {
+      "path": "delivery/source-stage.json",
+      "bytes": 773,
+      "sha256": "2052d1f29d74c2ede3db3d6fbbad11c8e6762f172d9799443bf2cf9ec721031e"
+    },
+    {
+      "path": "delivery/typecheck.log",
+      "bytes": 53,
+      "sha256": "9a216ee216ffece65f8c7311a6df581a1485d1725ca017f4227f18213940a6eb"
+    },
+    {
+      "path": "dependency-audit-after.json",
+      "bytes": 385,
+      "sha256": "923e6a5838dfbb0d9c72bfddb6d85a6f9561501f04a601383cbfddacceb4f363"
+    },
+    {
+      "path": "dependency-audit.json",
+      "bytes": 12277,
+      "sha256": "affd56e6ea0441a20fb073ff5d0c2b49d097bb5d7ba22e98c80c7836444e470c"
+    },
+    {
+      "path": "hosted-protection.json",
+      "bytes": 307,
+      "sha256": "7a3f65871e579bd06990d9ff8b8a874f12c38f6c7ccd0a54c0685c200b7ee58d"
+    },
+    {
+      "path": "implementation-report.md",
+      "bytes": 23294,
+      "sha256": "4f8b56555637e9fd6a05eae72e9f95874be76a598711c37b3d08616ce95427de"
+    },
+    {
+      "path": "plain_language_test_analysis.md",
+      "bytes": 2678,
+      "sha256": "37a600e7d20ff254d568bc7e5c9b1cb29dd376fb82798bf11e7b1102f11860f6"
+    },
+    {
+      "path": "preview-environment-first.json",
+      "bytes": 4055,
+      "sha256": "05571fce1d847e513478c4180933c8aeb7a2ac94de78210fddffece4e47009cf"
+    },
+    {
+      "path": "preview-environment.json",
+      "bytes": 4131,
+      "sha256": "4780bb54dcdb8156afa807731cec17489fdfb5dbb33ba6a16a9535fbab67df04"
+    },
+    {
+      "path": "retained-archives.json",
+      "bytes": 327,
+      "sha256": "d8c0dde983f9195717dc31e03d5a25012d60f82eed35b64f5f18f3cb69993024"
+    },
+    {
+      "path": "source-bundle-inventory.json",
+      "bytes": 25204,
+      "sha256": "50ffdbc2a274a86c4bc712505f100865051bc1aa2cb7dd9943d2349e44769354"
+    },
+    {
+      "path": "typecheck.log",
+      "bytes": 51,
+      "sha256": "7b59a4947fcf6b1a7e8133a5082462cb9213c7c9bc79b65c8adbb9a347af7486"
+    }
+  ]
+}

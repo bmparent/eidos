@@ -1,0 +1,140 @@
+
+> eidos-sentinel-lab@0.2.0 test
+> node --test tests/*.test.mjs && node --import tsx --test tests/*.test.ts
+
+✔ default real-data spec produces a stable canonical lock (11.1507ms)
+✔ real-data spec requires version and rejects path traversal (30.406ms)
+✔ proof and label-isolation locks cannot be relaxed (8.9876ms)
+✔ preflight blocks dispatch without changing scientific readiness (406.0253ms)
+✔ backend-specific blockers remain explicit and fail closed (1.4175ms)
+✔ stale launcher receipts fail closed without advancing proof gates (26.4141ms)
+✔ launcher command inspection is rate limited (0.9073ms)
+✔ sandbox allocation errors return a stable diagnostic response instead of a generic 400 (2.2723ms)
+✔ dispatch diagnostics preserve useful provider context while redacting credentials (15.9434ms)
+✔ known capacity and configuration failures retain their public contracts (1.2308ms)
+✔ request parse failures and stage wrappers remain explicit (5.6958ms)
+✔ engineering smoke is deterministic for a locked request (231.8399ms)
+✔ held-out seeds are inaccessible (1.8325ms)
+✔ smoke output cannot advance proof gates (32.8919ms)
+✔ incident language remains calibrated (28.299ms)
+✔ all registered engineering scenarios return finite traces (271.8637ms)
+▶ paid deployment refuses missing or changed archives and duplicate inventory paths
+  ﹣ symbolic links cannot stand in for private archives (22.2527ms) # Windows denies file symlinks without Developer Mode/privilege; rerun on Linux or an authorized symlink-capable host.
+✔ paid deployment refuses missing or changed archives and duplicate inventory paths (1567.4245ms)
+✔ Vercel JSON writes declare the content type and keep payloads on stdin (1936.3183ms)
+✔ Vercel request failures report a code without printing response secrets (487.2255ms)
+ℹ tests 20
+ℹ suites 0
+ℹ pass 19
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 1
+ℹ todo 0
+ℹ duration_ms 3283.5002
+✔ independent clients cannot exceed capacity and retries return the same job (887.7168ms)
+✔ abandoned reservations recover, stale allocators are fenced and old retry keys never relaunch (26.35ms)
+✔ allocation uncertainty retains its slot beyond expiry until provider reconciliation (17.9664ms)
+✔ admission fails closed without remote storage or a valid retry key (9.3269ms)
+✔ immutable verifier checks bytes, missing and forbidden paths without opening raw inputs (3861.0185ms)
+{"level":"info","event":"experiment_dispatch_started","route":"/api/experiments","diagnosticId":"5d0c091e-3917-4885-98b2-36d732c8a4e2","requestId":null}
+{"level":"error","event":"experiment_dispatch_failed","route":"/api/experiments","diagnosticId":"5d0c091e-3917-4885-98b2-36d732c8a4e2","requestId":null,"stage":"operator_auth","code":"OPERATOR_AUTH_REQUIRED","status":401,"retryable":false,"durationMs":2,"diagnostic":{"type":"Error","message":"OPERATOR_AUTH_REQUIRED"}}
+✔ changing a dataset source invalidates inherited hashes, filenames and unknown versions (6.0942ms)
+✔ only explicit numeric values and allowlisted engine profiles can be locked (13.1401ms)
+✔ operator and full-capacity gates stay closed before any dispatch (210.9268ms)
+✔ bounded JSON handling rejects malformed and chunked oversized requests (161.0577ms)
+{"event":"experiment_artifact_failed","diagnosticId":"49bef9b0-4ffc-4dcd-8f3f-b9f6e79effbb","code":"OPERATOR_AUTH_REQUIRED","status":401,"diagnostic":{"type":"Error","message":"OPERATOR_AUTH_REQUIRED"}}
+{"event":"experiment_artifact_failed","diagnosticId":"ad0f010a-b6e1-45cf-ac3e-ac017b593c91","code":"Artifact not found.","status":404,"diagnostic":{"type":"Error","message":"Artifact not found."}}
+{"event":"experiment_status_failed","diagnosticId":"50788467-4d1e-425d-a4e8-d27488a41555","code":"EXPERIMENT_STATUS_UNAVAILABLE","status":502,"diagnostic":{"type":"Error","message":"503 token=[REDACTED]"}}
+✔ full immutable verification resumes only a completed snapshot and reports provider cleanup (28.621ms)
+✔ immutable verification is unavailable for active jobs and does not stop them (4.4827ms)
+✔ dispatch uses the verified checkout and commits its source and command receipts (86.904ms)
+✔ reading or missing an artifact never stops a running experiment (3.2109ms)
+✔ stopped snapshot retrieval cleans up after runner.log (2.5634ms)
+✔ stopped snapshot retrieval cleans up after metrics.json (1.7965ms)
+✔ expired active receipts are persisted once and survive later retrieval (5.0851ms)
+✔ transient monitoring and snapshot read failures do not fabricate engine failure or expiry (5.428ms)
+✔ confirmed launcher exit commits a failure and releases compute (3.6049ms)
+✔ completed receipts retain results and stop compute (10.9015ms)
+✔ artifact and status routes enforce authentication, byte delivery, allowlists and retryable errors (176.2493ms)
+✔ source probe verifies a real Git checkout in the provider cwd (9840.8407ms)
+✔ source probe verifies a real Git checkout in a child directory (8111.1743ms)
+✔ source verification blocks wrong commit (5390.2938ms)
+✔ source verification blocks changed source (8875.4357ms)
+✔ source verification blocks missing launcher (5796.0659ms)
+✔ source verification blocks ambiguous checkout (40625.3207ms)
+✔ Authenticated relay publishes human and agent conversations immediately on real libSQL, with removal and revocation (740.4915ms)
+✔ Missing isolated bindings cannot fall back to the production database (11.8809ms)
+✔ Backend forwards both explicit activation settings and keeps publication disabled by default (1.2433ms)
+✔ Production-shaped maintenance requires both relay and operator credentials before creating studio agents (697.3305ms)
+✔ Real libSQL overlapping studio runs publish exactly one labeled feed entry without external calls (698.4062ms)
+✔ Studio registration preserves a revoked identity on the real libSQL adapter (128.3504ms)
+✔ Playground initializes only its tables and libSQL concurrent saves have one winner (494.047ms)
+✔ Relay authentication, exact origins, routes and method gates (9.1466ms)
+✔ Member sign-in survives the authenticated relay and libSQL consumes links exactly once (335.9429ms)
+✔ Published answers work with no database, model key or outbound fetch (25.5202ms)
+✔ Real libSQL adapter reserves atomically and rolls back failed batches (184.8747ms)
+✔ Sentinel quota and idempotency prevent repeated model calls (402.0421ms)
+✔ 01: concurrent $0.60 actions with $1 remaining admit exactly one and only one dispatch (361.8975ms)
+✔ 02: concurrent action replay yields one reservation, dispatch and settlement; conflicting key fails (520.4388ms)
+✔ 03: $50 balance/$10 cap, included consumption and top-ups never lift the cap (1405.3062ms)
+✔ 04: projects/devices share owner cap and authenticated endpoints reject cross-account IDs/forged owners (507.3046ms)
+✔ 05: unknown pricing, forged totals/model/owner, large context and unbounded tools/retries fail closed (235.6492ms)
+✔ 06: actual usage releases difference; above-bound usage never overcharges and disables route (406.2487ms)
+✔ 06: extreme retail markup cannot prevent above-bound settlement and the route pause (322.0165ms)
+✔ 07: unusable technical output restores allowance while real provider expense remains counted (137.98ms)
+✔ 06/07: invalid result storage waives the customer, settles known provider cost and still pauses overruns (1515.7591ms)
+✔ 06/08: unmeterable usage pauses dispatch, retains unknown liability and never revives a waived charge (960.8065ms)
+✔ 08: submitted timeout/crash/lease expiry retain provider cost; 24h waiver never retroactively debits (257.268ms)
+✔ 08: pessimistic reconciliation retains provider identity; matching late evidence preserves the waiver (193.5029ms)
+✔ 09/13: duplicate/unpaid/out-of-order grants, refunds, owner mismatch and TEST/LIVE isolation (193.388ms)
+✔ 09/13: mixed consumed and held grants stay frozen through refunds, cancellation and late evidence (321.3633ms)
+✔ 10: cap edits racing dispatch/settlement preserve the commitment floor and block new work (162.8441ms)
+✔ 11: monthly period is server UTC; pending budget survives, and late settlement stays original month (164.6476ms)
+✔ 11: ample provider budget does not duplicate prepaid balance when old and new month work coexist (210.6474ms)
+✔ 12/14: owner aggregate budget admits only one customer; paused route has no provider fallback (138.7658ms)
+✔ migration/schema parity and conservative integer rounding cover sub-cent rates (23.2781ms)
+✔ independent database connections serialize shared provider/customer admission (1080.8305ms)
+ℹ Windows libSQL retains the synthetic temp database handle until process exit: C:\Users\bmpar\AppData\Local\Temp\eidos-ai-fixture-4792014d-12a1-4e2e-ace7-78a47f432e3f.db
+✔ owner budget reductions block reserved dispatch atomically across independent database connections (1047.9129ms)
+ℹ Windows libSQL retains the synthetic temp database handle until process exit: C:\Users\bmpar\AppData\Local\Temp\eidos-ai-budget-fixture-cf7a1841-f174-41e0-acc3-352af3c8523c.db
+✔ 10: independent clients serialize customer cap reductions against admission, dispatch and settlement (1324.3851ms)
+ℹ Windows libSQL retains the synthetic temp database handle until process exit: C:\Users\bmpar\AppData\Local\Temp\eidos-ai-customer-cap-38dc219b-0566-459c-af36-77132aeae18d.db
+✔ concurrent conflicting reconciliation cannot replace the first recorded provider identity (1400.9305ms)
+ℹ Windows libSQL retains the synthetic temp database handle until process exit: C:\Users\bmpar\AppData\Local\Temp\eidos-ai-identity-fixture-ee287283-8d40-4f9f-91c0-93af5c849678.db
+✔ isolated renderer graph matches its portable LF manifest and leaves legacy renderer separate (398.9471ms)
+✔ authenticated backend relay freezes exact schema-5 bytes on real libSQL without provider calls (1167.7107ms)
+✔ delivery mode is opt-in and backend body allowance exceeds legacy ceiling but remains bounded (136.4761ms)
+✔ real libSQL chunk faults roll back and separate worker connections cannot exceed owner quota (3512.909ms)
+ℹ Windows libSQL retains the synthetic temp database handle until process exit: C:\Users\bmpar\AppData\Local\Temp\eidos-delivery-fixture-acbe9af2-291c-4a80-9279-abe97d1f93bc.db
+✔ studio documents and disguised studio fields cannot be downgraded through the schema-1 cloud contract (19.5318ms)
+✔ HTTP studio rejection precedes auth/schema database access and explains the local backup path (201.6147ms)
+✔ legacy schema-1 acceptance and malformed-input validation remain delegated to their existing contracts (50.3362ms)
+✔ signed matching TEST payment journals AI merchant evidence once and refund prevents reusable credit (865.2636ms)
+✔ enabling allowance accounting preserves historical guest receipts without inventing merchant evidence (304.6385ms)
+✔ template TEST gate rejects LIVE, production host, missing archives and unverified CMS; server prices cannot be overridden (39.0834ms)
+✔ LIVE readiness requires an exclusive canonical configuration, merchant, mail and real verification keys (84.5422ms)
+✔ LIVE checkout refuses a wrong or incomplete merchant before creating a purchase (125.341ms)
+✔ LIVE checkout rejects a TEST session from the provider and cannot grant a download (202.5846ms)
+✔ controlled LIVE guest checkout, signed fulfillment, mail retry, download and single-use recovery survive sales closure (471.8473ms)
+✔ LIVE refund/dispute rejects TEST events and revokes downloads after new sales are disabled (538.7839ms)
+✔ retained TEST and LIVE receipts cannot grant status, downloads or recovery in the opposite environment (326.7258ms)
+✔ catalog updates all eight edition versions while all twenty-four prior purchase snapshots retain their original archive (4242.0771ms)
+✔ official public TEST challenge still calls siteverify and is confined to exact candidate commerce actions (40.4552ms)
+✔ checkout attempt retry preserves one ledger order and same server-owned TEST price (203.218ms)
+✔ signed paid fulfillment, delayed state, duplicate webhook, snapshot integrity and expiring download links (476.7539ms)
+✔ failed delayed payment and expired checkout are terminal without entitlement or mail (609.6047ms)
+✔ receipt email retries keep provider idempotency body stable and paid access survives mail failure (301.863ms)
+✔ receipt email retry after thirty minutes renews an unused link without changing provider payload (797.8463ms)
+✔ receipt email retry after thirty minutes never revives a consumed one-time link (506.535ms)
+✔ recovery is enumeration safe, single use and receipt expiry is recoverable; cross-order token fails (568.6233ms)
+✔ two signed-in buyers remain isolated and refund/dispute revokes future access without deleting receipts (594.8824ms)
+✔ signed TEST revocations reconcile template side tables after a legacy hook consumes the shared event ID (813.5462ms)
+✔ existing Cinematic Starter paid receipt still downloads the exact original archive (152.5746ms)
+ℹ tests 89
+ℹ suites 0
+ℹ pass 89
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 83520.5422

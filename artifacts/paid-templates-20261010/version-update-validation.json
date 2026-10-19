@@ -1,0 +1,75 @@
+{
+  "timestampUtc": "2026-10-11T01:27:16.861Z",
+  "scope": "TEST candidate only",
+  "previousSource": "58e4a60859c6bc590bc3c4ea5b2689256330066d",
+  "currentPackages": 8,
+  "retainedVersions": 5,
+  "privateBundleArchives": 13,
+  "allEightOriginalHashesPreserved": true,
+  "versions": [
+    {
+      "productId": "switchboard-developer-v1",
+      "archiveKey": "templates/switchboard/1.0.0/developer.zip",
+      "sha256": "e56450de9adbac6320d9e2315601e1804d281fcf1b87dc0f95cef5ef8ae45e2a",
+      "bytes": 26816
+    },
+    {
+      "productId": "switchboard-wordpress-v1",
+      "archiveKey": "templates/switchboard/1.0.1/wordpress.zip",
+      "sha256": "da30119d1d3e65f44c75dc24cb677b8dcb5a5517c6f68aea0bbcc78590a43abb",
+      "bytes": 29399
+    },
+    {
+      "productId": "tideglass-developer-v1",
+      "archiveKey": "templates/tideglass/1.0.0/developer.zip",
+      "sha256": "34130b106526fa76a380efcdb2e2a1126bf3e05524c036246a227ce5d85f16a7",
+      "bytes": 26836
+    },
+    {
+      "productId": "tideglass-wordpress-v1",
+      "archiveKey": "templates/tideglass/1.0.1/wordpress.zip",
+      "sha256": "4881c5d5ad34258454c8f542819f5ef0b469b80e72abd61a785f69d77b6ae785",
+      "bytes": 30027
+    },
+    {
+      "productId": "matter-developer-v1",
+      "archiveKey": "templates/matter/1.0.0/developer.zip",
+      "sha256": "f5083b4ffad9d99d9ffaf04f1d887f9feada6a4f4732f38aca19432b7ac515d6",
+      "bytes": 27533
+    },
+    {
+      "productId": "matter-wordpress-v1",
+      "archiveKey": "templates/matter/1.0.1/wordpress.zip",
+      "sha256": "3fa8fe6902085b3bf2f06a9bdc51e14b861d9e1764a26d0c95d7f856beb415fe",
+      "bytes": 30748
+    },
+    {
+      "productId": "nightjar-developer-v1",
+      "archiveKey": "templates/nightjar/1.0.1/developer.zip",
+      "sha256": "f8a07e7fe22e3ecf1eeb3dbbd3783a81c940fa39191f56230c64a7ad4faa0a39",
+      "bytes": 26978
+    },
+    {
+      "productId": "nightjar-wordpress-v1",
+      "archiveKey": "templates/nightjar/1.0.1/wordpress.zip",
+      "sha256": "558a42d695338fc94df90968fcf643d155e84767a33ff150c41c9534a7e49739",
+      "bytes": 29742
+    }
+  ],
+  "tests": {
+    "focused": 10,
+    "failed": 0,
+    "typecheck": "passed",
+    "oldNightjarAndWordpressSnapshots": "original 1.0.0 archive path, bytes and SHA256 preserved; missing original fails closed",
+    "fullSuite": {
+      "passed": 64,
+      "failed": 0,
+      "skipped": 0,
+      "mjs": 16,
+      "typescript": 48
+    }
+  },
+  "wordpressAvailable": false,
+  "productionChanged": false,
+  "mail": "blocked; usable Resend key unavailable"
+}

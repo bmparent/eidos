@@ -1,5 +1,5 @@
 import {readText} from './vendor/functions/_shared/platform/core';
-import type {AIProvider,ProviderResult,Usage} from './vendor/functions/_shared/platform/playgroundAI';
+import type {AIProvider,ProviderResult,Usage} from './vendor/functions/_shared/platform/playgroundLegacyAI';
 // Constructing the adapter performs no network activity. Only the admitted request calls it.
 export function playgroundProvider(key:string|undefined):AIProvider|undefined {
  if(!key)return undefined;

@@ -1,0 +1,14 @@
+
+> eidos-sentinel-lab@0.2.0 build
+> next build --webpack
+
+▲ Next.js 16.3.4 (webpack)
+✓ Running next.config.ts took 3.3s
+
+  Creating an optimized production build ...
+uncaughtException [Error: EBUSY: resource busy or locked, open 'C:\Users\bmpar\codex-worktrees\paid-templates-backend-20261010\apps\sentinel-lab\.next\trace'] {
+  errno: -4082,
+  code: 'EBUSY',
+  syscall: 'open',
+  path: 'C:\\Users\\bmpar\\codex-worktrees\\paid-templates-backend-20261010\\apps\\sentinel-lab\\.next\\trace'
+}

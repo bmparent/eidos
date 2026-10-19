@@ -15,7 +15,7 @@ export interface PlatformEnv {
   EIDOS_PLAYGROUND_AI_KILL?: string;
   EIDOS_PLAYGROUND_AI_CONFIG?: string;
   EIDOS_PLAYGROUND_IMAGE_ENABLED?: string;
-  EIDOS_PLAYGROUND_AI_PROVIDER?: import('./playgroundAI').AIProvider;
+  EIDOS_PLAYGROUND_AI_PROVIDER?: import('./playgroundLegacyAI').AIProvider;
   EIDOS_SOURCE_REVISION?: string;
   EIDOS_PLAYGROUND_AUTHORING_ENABLED?: string;
   EIDOS_PASSWORD_AUTH_ENABLED?: string;
@@ -57,8 +57,21 @@ export interface PlatformEnv {
   EIDOS_PLAYGROUND_STRIPE_KEY?: string;
   EIDOS_PLAYGROUND_WEBHOOK_SECRET?: string;
   EIDOS_PLAYGROUND_TEST_PRICE_CENTS?: string;
+  EIDOS_PLAYGROUND_AI_MODE?: string;
+
+  EIDOS_PLAYGROUND_INPUT_COUNT_PRICING?: string;
+  EIDOS_PLAYGROUND_OPENAI_API_KEY?: string;
   EIDOS_KIT_WEBHOOK_SECRET?: string;
   EIDOS_SHOP_ENABLED?: string;
+  EIDOS_TEMPLATE_TEST_ENABLED?: string;
+  EIDOS_TEMPLATE_LIVE_ENABLED?: string;
+  EIDOS_TEMPLATE_STRIPE_ACCOUNT_ID?: string;
+  EIDOS_TEMPLATE_TEST_CHALLENGE?: string;
+  EIDOS_TEMPLATE_SOURCE_REVISION?: string;
+  EIDOS_TEMPLATE_VERIFIED_EDITIONS?: string;
+  EIDOS_TEMPLATE_ARCHIVES?: {
+    get(key: string): Promise<{ bytes: Uint8Array; sha256: string } | null>;
+  };
   EIDOS_ACCOUNTS_ENABLED?: string;
   EIDOS_NEWSLETTER_ENABLED?: string;
   EIDOS_MAIL_DAILY_LIMIT?: string;
@@ -314,12 +327,27 @@ export async function challenge(
     success?: boolean;
     hostname?: string;
     action?: string;
+    metadata?: { result_with_testing_key?: boolean };
   };
+  // Cloudflare's public TEST keys deliberately return example.com and no action.
+  // Keep that documented behavior confined to explicitly named TEST candidates.
+  const testOrigin = siteOrigin(env);
+  const candidateAction = testOrigin === 'https://eidosworks-templates-test-20261010.pages.dev'
+    ? ['checkout','recovery'].includes(action)
+    : testOrigin === 'https://eidosworks-playground-test-20261015.pages.dev' &&
+      ['checkout','recovery','member'].includes(action);
+  const isolatedTestChallenge = env.EIDOS_TEMPLATE_TEST_CHALLENGE === 'true' &&
+    env.EIDOS_TEMPLATE_TEST_ENABLED === 'true' && /^[sr]k_test_/.test(env.STRIPE_SECRET_KEY || '') &&
+    env.TURNSTILE_SITE_KEY === '1x00000000000000000000AA' &&
+    env.TURNSTILE_SECRET_KEY === '1x0000000000000000000000000000000AA' &&
+    new URL(request.url).origin === testOrigin && candidateAction &&
+    (action !== 'member' || env.EIDOS_ACCOUNTS_ENABLED === 'true') &&
+    result.metadata?.result_with_testing_key === true &&
+    result.hostname === 'example.com';
   if (
     !response.ok ||
     !result.success ||
-    result.hostname !== new URL(request.url).hostname ||
-    result.action !== action
+    (!isolatedTestChallenge && (result.hostname !== new URL(request.url).hostname || result.action !== action))
   )
     throw new HttpError(
       400,
