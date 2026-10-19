@@ -1,8 +1,9 @@
+import { validateStudios, type Studios } from './studioSchema';
 import { validateMedia, validateBrand, type MediaSettings, type BrandKit } from "./media";
 import approved from "./approved-glass-preset.json";
 import { validateComposition, type Composition } from './compositionSchema';
 import { validateAuthoring, flattenNodes, BLOCK_LIMITS, type Authoring, type BlockNode } from './authoringSchema';
-export const VERSION = 4;
+export const VERSION = 5;
 export const LEGACY_RENDERER = "eidos-portable-glass-1.0.0";
 export const RENDERER = "eidos-original-glass-2.0.0";
 export const sectionTypes = [
@@ -48,7 +49,8 @@ export type Section = {
 };
 export type Project = {
   brand?: BrandKit;
-  schemaVersion: 1 | 2 | 3 | 4;
+  schemaVersion: 1 | 2 | 3 | 4 | 5;
+  studios?: Studios;
   rendererVersion: string;
   template: "landing" | "homepage" | "portfolio" | "about" | "contact";
   name: string;
@@ -223,14 +225,15 @@ export function safeHref(value: string): string {
 }
 export function validateProject(input: unknown): Project {
   const p = record(input);
-  if (![1, 2, 3, VERSION].includes(p.schemaVersion as number) || ![RENDERER, LEGACY_RENDERER].includes(String(p.rendererVersion)))
+  if (![1, 2, 3, 4, VERSION].includes(p.schemaVersion as number) || ![RENDERER, LEGACY_RENDERER].includes(String(p.rendererVersion)))
     throw new Error(
       "This project needs a different Playground version. Your current design is unchanged.",
     );
-  if (p.schemaVersion === 4) {
+  if (p.schemaVersion === 4 || p.schemaVersion === 5) {
     if (new TextEncoder().encode(JSON.stringify(p)).length > BLOCK_LIMITS.documentBytes) throw Error('This design exceeds the 16 MB local authoring limit. Your current design is unchanged.');
-    if (Object.keys(p).some(k=>!['schemaVersion','rendererVersion','template','name','tokens','glass','sections','brand'].includes(k))) throw Error('Unsupported project field.');
+    if (Object.keys(p).some(k=>!['schemaVersion','rendererVersion','template','name','tokens','glass','sections','brand',...(p.schemaVersion === 5 ? ['studios'] : [])].includes(k))) throw Error('Unsupported project field.');
   }
+  if (p.studios !== undefined && p.schemaVersion !== 5) throw Error('Studios require an explicit schema 5 upgrade.');
   const t = record(p.tokens),
     g = record(p.glass);
   if (!Array.isArray(p.sections) || (p.schemaVersion===1 ? p.sections.length!==6 : p.sections.length<3 || p.sections.length>16))
@@ -241,12 +244,12 @@ export function validateProject(input: unknown): Project {
       id = p.schemaVersion===1 ? choice(s.id, sectionTypes.slice(0,6)) : string(s.id,80);
     if(!/^[a-z][a-z0-9-]*$/.test(id)||["page-main","page-nav","page-root"].includes(id))throw Error("Invalid or reserved section identity.");
     const type = p.schemaVersion===1 ? id as SectionType : choice(s.type,sectionTypes);
-    if (s.composition !== undefined && (![3,4].includes(p.schemaVersion as number) || type !== 'hero')) throw Error('Spatial composition requires a version 3 hero.');
+    if (s.composition !== undefined && (![3,4,5].includes(p.schemaVersion as number) || type !== 'hero')) throw Error('Spatial composition requires a version 3 hero.');
     if (p.schemaVersion === 3 && type === 'hero' && s.composition === undefined) throw Error('Version 3 heroes require composition settings.');
-    if (s.authoring !== undefined && (p.schemaVersion !== 4 || !['hero','content'].includes(type))) throw Error('Responsive blocks require a version 4 hero or content section.');
+    if (s.authoring !== undefined && (![4,5].includes(p.schemaVersion as number) || !['hero','content'].includes(type))) throw Error('Responsive blocks require a version 4 hero or content section.');
     if (p.schemaVersion === 4 && type === 'hero' && s.authoring === undefined) throw Error('Version 4 heroes require responsive blocks.');
-    if (type === 'content' && (p.schemaVersion !== 4 || s.authoring === undefined)) throw Error('A content section requires responsive blocks.');
-    if (p.schemaVersion === 4 && Object.keys(s).some(k=>!['id','type','visible','title','description','cta','href','layout','image','alt','style','cards','navigation','media','composition','authoring'].includes(k))) throw Error('Unsupported section field.');
+    if (type === 'content' && (![4,5].includes(p.schemaVersion as number) || s.authoring === undefined)) throw Error('A content section requires responsive blocks.');
+    if ([4,5].includes(p.schemaVersion as number) && Object.keys(s).some(k=>!['id','type','visible','title','description','cta','href','layout','image','alt','style','cards','navigation','media','composition','authoring'].includes(k))) throw Error('Unsupported section field.');
     if (seen.has(id)) throw new Error("Duplicate section.");
     seen.add(id);
     const image = string(s.image, 4_500_000);
@@ -273,7 +276,7 @@ export function validateProject(input: unknown): Project {
       id,
       ...(p.schemaVersion!==1 ? {type,...validateStructure(s)} : {}),
       ...(s.composition === undefined ? {} : {composition:validateComposition(s.composition)}),
-      ...(s.authoring === undefined ? {} : {authoring:validateAuthoring(s.authoring)}),
+      ...(s.authoring === undefined ? {} : {authoring:validateAuthoring(s.authoring,p.schemaVersion===5)}),
       visible: bool(s.visible),
       title: string(s.title, 240),
       description: string(s.description),
@@ -292,7 +295,8 @@ export function validateProject(input: unknown): Project {
   const identities=sections.flatMap(s=>[s.id,...(s.cards||[]).map(c=>c.id),...(s.authoring?flattenNodes(s.authoring.root).map(n=>n.id):[])]);
   if(new Set(identities).size!==identities.length)throw Error("Duplicate page identity.");
   return {
-    schemaVersion: p.schemaVersion as 1|2|3|4,
+    schemaVersion: p.schemaVersion as 1|2|3|4|5,
+    ...(p.studios === undefined ? {} : {studios: validateStudios(p.studios)}),
     ...(p.brand === undefined ? {} : {brand:validateBrand(p.brand)}),
     rendererVersion: String(p.rendererVersion),
     template: choice(p.template, ["landing", "homepage", "portfolio", "about", "contact"] as const),

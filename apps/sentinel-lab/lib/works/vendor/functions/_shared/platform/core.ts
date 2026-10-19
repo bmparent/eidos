@@ -111,9 +111,11 @@ export function guarded(handler: (context: Context) => Promise<Response>) {
       );
     }
     const path=new URL(context.request.url).pathname;
-    if(context.env.EIDOS_DB && /^\/api\/(assistant|members\/(auth|credentials|google)|shop\/(checkout|webhook|download|purchases)|playground\/(ai|checkout|webhook|purchases))$/.test(path)) {
+    if(/^\/api\/(assistant|members\/(auth|credentials|google)|shop\/(checkout|webhook|download|purchases)|playground\/(ai|checkout|webhook|purchases))$/.test(path)) {
       try {
-        const database=context.env.EIDOS_DB,day=new Date().toISOString().slice(0,10);
+        const database=context.env.EIDOS_DB;
+        if (!database) return response;
+        const day=new Date().toISOString().slice(0,10);
         let outcome=response.ok?'accepted':'http_'+response.status;
         if(path==='/api/assistant' && response.ok){const result=await response.clone().json() as {mode?:string;note?:string};outcome=result.mode==='ai'?'ai_completed':result.note?'source_fallback':'source_answer';}
         await database.prepare('CREATE TABLE IF NOT EXISTS eidos_outcomes(day TEXT,feature TEXT,outcome TEXT,count INTEGER,latency_ms INTEGER,updated TEXT,PRIMARY KEY(day,feature,outcome))').run();

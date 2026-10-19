@@ -1,5 +1,5 @@
 import { validateProject, sectionKind, newBlock, type Project } from './model';
-import { newNode, flattenNodes, isContainer, type BlockNode, type NodeType } from './authoringSchema';
+import { newNode, flattenNodes, isContainer, type BlockNode, type BlockMotion, type NodeType } from './authoringSchema';
 export type BlockOperation = {
     type: 'section-step';
     id: string;
@@ -31,9 +31,9 @@ export type BlockOperation = {
     type: 'add-section';
 };
 export function enableBlocks(p: Project): Project {
-    if (p.schemaVersion === 4)
+    if (p.schemaVersion >= 4 && p.sections.some(s => s.authoring))
         return p;
-    return validateProject({ ...p, schemaVersion: 4, sections: p.sections.map(s => {
+    return validateProject({ ...p, schemaVersion: p.schemaVersion === 5 ? 5 : 4, sections: p.sections.map(s => {
             if (sectionKind(s) !== 'hero')
                 return { ...s, type: sectionKind(s) };
             const root = newNode('stack');
@@ -46,8 +46,14 @@ export function enableBlocks(p: Project): Project {
             return { ...s, type: sectionKind(s), authoring: { version: 1, root } };
         }) });
 }
+/** Explicitly applying motion is one edit, including the schema-5 upgrade for a legacy block project. */
+export function setBlockMotion(p: Project, id: string, motion?: BlockMotion): Project {
+    if (!motion && p.schemaVersion < 5) return p;
+    const source = motion && p.schemaVersion === 4 ? validateProject({ ...p, schemaVersion: 5 }) : p;
+    return applyBlockOperation(source, { type: 'patch', id, patch: { motion } });
+}
 export function applyBlockOperation(p: Project, op: BlockOperation): Project {
-    if (p.schemaVersion !== 4)
+    if (p.schemaVersion < 4)
         throw Error('Enable responsive blocks first.');
     const next = structuredClone(p);
     if (op.type === 'section-step' || op.type === 'card-step') {

@@ -1,19 +1,31 @@
 import type { Project } from './model';
+import { flattenNodes } from './authoringSchema';
 
 export type SaveTarget = { id: string; head: string; owner: string; name: string; saved: string };
-export type Frame = { project: Project; documentId: string; target: SaveTarget | null };
+export type EditorSelection = { pageId: 'page-main'; sectionId: string; nodeId?: string };
+export function editorSelection(project: Project, value?: Partial<EditorSelection>): EditorSelection {
+  const section = project.sections.find(s => s.id === value?.sectionId) || project.sections.find(s => s.type === 'hero' || s.id === 'hero') || project.sections[0];
+  const nodeId = value?.nodeId && section.authoring && flattenNodes(section.authoring.root).some(n => n.id === value.nodeId) ? value.nodeId : undefined;
+  return { pageId: 'page-main', sectionId: section.id, ...(nodeId ? { nodeId } : {}) };
+}
+export type Frame = { project: Project; documentId: string; target: SaveTarget | null; editor: EditorSelection };
 export type Workspace = { current: Frame; past: Frame[]; future: Frame[]; group: string; time: number };
 export type Action =
   | { type: 'edit'; project: Project | ((p: Project) => Project); group?: string; time: number }
   | { type: 'replace'; project: Project; documentId: string; target?: SaveTarget | null }
-  | { type: 'load'; project: Project; documentId: string }
+  | { type: 'load'; project: Project; documentId: string; editor?: EditorSelection }
+  | { type: 'select'; editor: Partial<EditorSelection> }
   | { type: 'saved'; documentId: string; target: SaveTarget }
   | { type: 'undo' } | { type: 'redo' };
-export function workspace(project: Project, documentId: string): Workspace {
-  return { current: { project, documentId, target: null }, past: [], future: [], group: '', time: 0 };
+export function workspace(project: Project, documentId: string, editor?: EditorSelection): Workspace {
+  return { current: { project, documentId, target: null, editor: editorSelection(project, editor) }, past: [], future: [], group: '', time: 0 };
 }
 export function workspaceReducer(s: Workspace, a: Action): Workspace {
-  if (a.type === 'load') return workspace(a.project, a.documentId);
+  if (a.type === 'load') return workspace(a.project, a.documentId, a.editor);
+  if (a.type === 'select') {
+    const editor = editorSelection(s.current.project, a.editor);
+    return JSON.stringify(editor) === JSON.stringify(s.current.editor) ? s : {...s,current:{...s.current,editor}};
+  }
   if (a.type === 'undo') return s.past.length ? { current: s.past.at(-1)!, past: s.past.slice(0,-1), future: [s.current,...s.future], group: '', time: 0 } : s;
   if (a.type === 'redo') return s.future.length ? { current: s.future[0], past: [...s.past,s.current], future: s.future.slice(1), group: '', time: 0 } : s;
   if (a.type === 'saved') {
@@ -22,7 +34,8 @@ export function workspaceReducer(s: Workspace, a: Action): Workspace {
     return {...s,current:update(s.current),past:s.past.map(update),future:s.future.map(update)};
   }
   const current: Frame = a.type === 'replace'
-    ? {project:a.project,documentId:a.documentId,target:a.target || null}
+    ? {project:a.project,documentId:a.documentId,target:a.target || null,editor:editorSelection(a.project)}
     : {...s.current,project:typeof a.project === 'function' ? a.project(s.current.project) : a.project};
-  return {current,past:a.type === 'edit' && a.group && a.group === s.group && a.time-s.time < 900 ? s.past : [...s.past,s.current].slice(-30),future:[],group:a.type === 'edit' ? a.group || '' : '',time:a.type === 'edit' ? a.time : 0};
+  current.editor = editorSelection(current.project, current.editor);
+  return {current,past:a.type === 'edit' && a.group && a.group === s.group && (a.group.startsWith('gesture:') || a.time-s.time < 900) ? s.past : [...s.past,s.current].slice(-30),future:[],group:a.type === 'edit' ? a.group || '' : '',time:a.type === 'edit' ? a.time : 0};
 }

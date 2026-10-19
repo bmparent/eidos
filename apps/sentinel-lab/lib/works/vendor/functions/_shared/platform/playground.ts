@@ -1,3 +1,4 @@
+import { assertCloudStudioBoundary } from './studioBoundary';
 import {supportsProductionCloud,CLOUD_FORMAT_NOTICE} from '../../../src/playground/releaseBoundary';
 import { clean, db, hash, HttpError, type PlatformEnv } from './core';
 import { validateProject, mediaSlots, type Project } from '../../../src/playground/model';
@@ -38,6 +39,7 @@ export async function projectRevision(env: PlatformEnv, owner: string, projectId
   return { project, revision, document: validateProject(document) };
 }
 export async function saveProject(env: PlatformEnv, owner: string, input: Record<string, unknown>) {
+  assertCloudStudioBoundary(input.document);
   let document: Project;
   try { document = validateProject(input.document); } catch (error) { throw new HttpError(400, (error as Error).message); }
   if(!supportsProductionCloud(document) && env.EIDOS_PLAYGROUND_AUTHORING_ENABLED!=='true')throw new HttpError(409,CLOUD_FORMAT_NOTICE);

@@ -13,7 +13,7 @@ export function enableComposition(project: Project): Project {
 }
 /** Applies layout intent through the same validator as import, storage and cloud save. */
 export function applyCompositionOperation(project: Project, operation: CompositionOperation): Project {
-  if (![3,4].includes(project.schemaVersion)) throw Error('Enable spatial composition before moving elements.');
+  if (![3,4,5].includes(project.schemaVersion)) throw Error('Enable spatial composition before moving elements.');
   const section = project.sections.find(value => value.id === operation.sectionId && sectionKind(value) === 'hero');
   if (!section?.composition) throw Error('This destination is not an editable hero.');
   let c = section.composition;

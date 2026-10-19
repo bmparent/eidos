@@ -2,6 +2,8 @@ import { validateMedia, type MediaSettings } from './media';
 export const BLOCK_LIMITS = { nodes: 96, sectionNodes: 48, depth: 3, documentBytes: 16000000 } as const;
 export const nodeTypes = ['heading', 'text', 'image', 'button', 'stack', 'row', 'columns'] as const;
 export type NodeType = typeof nodeTypes[number];
+export const blockMotionPresets = ['fade', 'rise', 'settle'] as const;
+export type BlockMotion = { preset: typeof blockMotionPresets[number]; duration: number; delay: number };
 export type MobileLayout = {
     width?: number;
     height?: number;
@@ -26,6 +28,7 @@ export type BlockNode = {
     lockAspect: boolean;
     media?: MediaSettings;
     mobile?: MobileLayout;
+    motion?: BlockMotion;
     children?: BlockNode[];
 };
 export type Authoring = {
@@ -65,7 +68,7 @@ export function validateBlockImage(v: unknown): string {
         throw Error('Image signature does not match its type.');
     return image;
 }
-export function validateAuthoring(input: unknown): Authoring {
+export function validateAuthoring(input: unknown, allowMotion = false): Authoring {
     const a = object(input);
     keys(a, ['version', 'root']);
     if (a.version !== 1)
@@ -76,7 +79,7 @@ export function validateAuthoring(input: unknown): Authoring {
         if (depth > BLOCK_LIMITS.depth || ++count > BLOCK_LIMITS.sectionNodes)
             throw Error('Responsive block nesting/count limit exceeded.');
         const n = object(input);
-        keys(n, ['id', 'type', 'name', 'text', 'href', 'image', 'alt', 'width', 'height', 'gap', 'align', 'split', 'lockAspect', 'media', 'mobile', 'children']);
+        keys(n, ['id', 'type', 'name', 'text', 'href', 'image', 'alt', 'width', 'height', 'gap', 'align', 'split', 'lockAspect', 'media', 'mobile', 'children', ...(allowMotion ? ['motion'] : [])]);
         const id = text(n.id, 80);
         if (!/^node-[a-z0-9-]+$/.test(id) || seen.has(id))
             throw Error('Invalid or duplicate block identity.');
@@ -101,7 +104,13 @@ export function validateAuthoring(input: unknown): Authoring {
             if (!container && m.layout !== undefined)
                 throw Error('Only containers have mobile layout.');
         }
-        return { id, type, name: text(n.name, 60), text: text(n.text, type === 'heading' ? 240 : type === 'button' ? 100 : 8000), href, image, alt: text(n.alt, 300), width: number(n.width, 10, 100), height: number(n.height, 64, 960), gap: number(n.gap, 0, 96), align: choice(n.align, ['left', 'center', 'right'] as const), split: number(n.split, 20, 80), lockAspect: n.lockAspect, ...(n.media === undefined ? {} : { media: validateMedia(n.media) }), ...(mobile ? { mobile } : {}), ...(container ? { children: (n.children as unknown[]).map(v => node(v, depth + 1)) } : {}) };
+        let motion: BlockMotion | undefined;
+        if (n.motion !== undefined) {
+            const m = object(n.motion);
+            keys(m, ['preset', 'duration', 'delay']);
+            motion = { preset: choice(m.preset, blockMotionPresets), duration: number(m.duration, 200, 1600), delay: number(m.delay, 0, 1200) };
+        }
+        return { id, type, name: text(n.name, 60), text: text(n.text, type === 'heading' ? 240 : type === 'button' ? 100 : 8000), href, image, alt: text(n.alt, 300), width: number(n.width, 10, 100), height: number(n.height, 64, 960), gap: number(n.gap, 0, 96), align: choice(n.align, ['left', 'center', 'right'] as const), split: number(n.split, 20, 80), lockAspect: n.lockAspect, ...(n.media === undefined ? {} : { media: validateMedia(n.media) }), ...(mobile ? { mobile } : {}), ...(motion ? { motion } : {}), ...(container ? { children: (n.children as unknown[]).map(v => node(v, depth + 1)) } : {}) };
     }
     const root = node(a.root, 0);
     if (!isContainer(root))

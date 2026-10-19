@@ -9,7 +9,7 @@ export function authoringRuntime(initial: {
     if (!initial.bridge)
         return;
     let config = initial, cleanup = () => { };
-    let selected = '';
+    let selected = '', guidesEnabled = false;
     window.addEventListener('message', e => {
         if(e.source===parent && e.data?.channel===initial.channel && e.data.type==='playground-cancel' && typeof e.data.scale==='number' && e.data.scale>0 && e.data.scale<=1)
             document.documentElement.style.setProperty('--pg-chrome-unit', (1/e.data.scale)+'px');
@@ -24,9 +24,12 @@ export function authoringRuntime(initial: {
             return;
         const all = roots.flatMap(root => Array.from(root.querySelectorAll<HTMLElement>('[data-node]')));
         const style = document.createElement('style');
-        style.textContent = `.pg-node-selected{outline:2px solid #bce886;outline-offset:3px}.pg-node-toolbar{position:fixed;z-index:11000;display:flex;gap:3px;flex-wrap:wrap;max-width:calc(100vw - 12px);padding:4px;background:#15242c;color:white;border:1px solid #bce886;border-radius:8px;box-shadow:0 3px 16px #0004}.pg-node-toolbar button,.pg-node-resize{font:600 calc(12 * var(--pg-chrome-unit,1px)) Arial,sans-serif;min-height:calc(44 * var(--pg-chrome-unit,1px));min-width:calc(44 * var(--pg-chrome-unit,1px));border:0;border-radius:5px;background:#243c47;color:white;cursor:pointer}.pg-node-toolbar [data-drag],.pg-node-resize{touch-action:none;cursor:grab}.pg-node-resize{position:absolute;right:0;bottom:0;z-index:10;cursor:nwse-resize}.pg-node-ghost{position:fixed!important;left:0!important;top:0!important;inset:auto!important;z-index:10998!important;pointer-events:none!important;opacity:.8!important;margin:0!important;outline:2px solid #bce886;overflow:hidden}.pg-node-ghost *{pointer-events:none!important}.pg-node-placeholder{opacity:.25!important}.pg-node-destination{position:fixed;z-index:10999;pointer-events:none;border:2px dashed #bce886;background:#142b38dc;color:white;font:600 12px Arial;padding:6px;border-radius:5px;box-sizing:border-box}.pg-node [contenteditable]{outline:2px solid #bce886;user-select:text;cursor:text}.pg-node-resize[data-split]{right:calc(50% - 22px);top:0;bottom:auto;cursor:col-resize}`;
+        style.textContent = `.pg-node-selected{outline:2px solid #bce886;outline-offset:3px}.pg-node-toolbar{position:fixed;z-index:11000;display:flex;gap:3px;flex-wrap:nowrap;width:max-content;max-width:calc(100vw - 12px);box-sizing:border-box;overflow-x:auto;padding:4px;background:#15242c;color:white;border:1px solid #bce886;border-radius:8px;box-shadow:0 3px 16px #0004}.pg-node-toolbar>*{flex-shrink:0}.pg-node-toolbar button{white-space:nowrap}.pg-node-toolbar button,.pg-node-resize{font:600 calc(12 * var(--pg-chrome-unit,1px)) Arial,sans-serif;min-height:calc(44 * var(--pg-chrome-unit,1px));min-width:calc(44 * var(--pg-chrome-unit,1px));border:0;border-radius:5px;background:#243c47;color:white;cursor:pointer}.pg-node-toolbar [data-drag],.pg-node-resize{touch-action:none;cursor:grab}.pg-node-resize{position:absolute;right:0;bottom:0;z-index:10;cursor:nwse-resize}.pg-node-ghost{position:fixed!important;inset:0 auto auto 0!important;z-index:10998!important;pointer-events:none!important;opacity:.8!important;margin:0!important;outline:2px solid #bce886;overflow:hidden}.pg-node-ghost *{pointer-events:none!important}.pg-node-placeholder{opacity:.25!important}.pg-node-destination{position:fixed;z-index:10999;pointer-events:none;border:2px dashed #bce886;background:#142b38dc;color:white;font:600 12px Arial;padding:6px;border-radius:5px;box-sizing:border-box}.pg-node [contenteditable]{outline:2px solid #bce886;user-select:text;cursor:text}.pg-node-resize[data-split]{right:calc(50% - 22px);top:0;bottom:auto;cursor:col-resize}`;
         document.head.append(style);
+        style.textContent += '.pg-node-hover:not(.pg-node-selected){outline:1px dashed #719b58;outline-offset:3px}.pg-node-drop-container{outline:2px dashed #bce886;outline-offset:5px}.pg-node-label{align-self:center;padding:0 8px;font:600 12px Arial;max-width:150px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}';
+        style.textContent += '.pg-layout-guides{position:fixed;inset:0;width:100%;height:100%;z-index:10997;overflow:hidden;pointer-events:none}.pg-layout-guides text{font:600 calc(12 * var(--pg-chrome-unit,1px)) Arial,sans-serif;fill:#fff;stroke:#15242c;stroke-width:4px;paint-order:stroke}.pg-node-toolbar [aria-pressed="true"]{background:#bce886;color:#15242c}';
         let toolbar: HTMLElement | null = null, resize: HTMLButtonElement | null = null, split: HTMLButtonElement | null = null, marker: HTMLElement | null = null, frame = 0, mode: 'move' | 'crop' = 'move';
+        let guides: SVGSVGElement | null = null, guideSignature = '';
         type Target = {
             parent: HTMLElement;
             before: HTMLElement | null;
@@ -67,8 +70,9 @@ export function authoringRuntime(initial: {
             stamp: string;
         } | null = null;
         function send(action: Record<string, unknown>, stamp = config.compositionStamp) { parent.postMessage({ type: 'playground-block', channel: config.channel, stamp, ...action }, '*'); }
-        function clearChrome() { toolbar?.remove(); resize?.remove(); split?.remove(); toolbar = null; resize = null; split = null; }
-        function cancel() { const old = gesture; gesture = null; cancelAnimationFrame(frame); frame = 0; marker?.remove(); marker = null; delete document.body.dataset.gesture; if (old) {
+        function clearGuides() { guides?.remove(); guides = null; guideSignature = ''; }
+        function clearChrome() { clearGuides(); toolbar?.remove(); resize?.remove(); split?.remove(); toolbar = null; resize = null; split = null; }
+        function cancel() { clearGuides(); const old = gesture; gesture = null; cancelAnimationFrame(frame); frame = 0; marker?.remove(); marker = null; all.forEach(n=>n.classList.remove('pg-node-drop-container')); delete document.body.dataset.gesture; if (old) {
             old.ghost?.remove();
             old.node.classList.remove('pg-node-placeholder');
             if (old.originalStyle === null)
@@ -87,8 +91,58 @@ export function authoringRuntime(initial: {
         function finishText(commit: boolean) { const old = textEdit; if (!old)
             return; textEdit = null; const text = old.el.textContent || ''; old.el.removeAttribute('contenteditable'); old.el.textContent = old.original; if (commit && text !== old.original)
             send({ action: 'command', operation: { type: 'patch', id: old.node.id, patch: { text } } }, old.stamp); }
-        function position() { const el = document.getElementById(selected); if (!el || !toolbar)
-            return; const r = el.getBoundingClientRect(); toolbar.style.left = Math.max(6, Math.min(innerWidth - toolbar.offsetWidth - 6, r.left)) + 'px'; toolbar.style.top = Math.max(6, Math.min(innerHeight - toolbar.offsetHeight - 6, r.top - toolbar.offsetHeight - 5)) + 'px'; }
+        function position() {
+            const el = document.getElementById(selected);
+            if (!el || !toolbar) return;
+            const r = el.getBoundingClientRect(), height = toolbar.offsetHeight;
+            const above = r.top - height - 5, below = r.bottom + 5;
+            // Never clamp an above-block toolbar onto the block's first line.
+            // Large containers get a bottom dock, leaving their top content usable.
+            const top = above >= 6 ? above : below + height <= innerHeight - 6 ? below : innerHeight - height - 6;
+            toolbar.style.left = Math.max(6, Math.min(innerWidth - toolbar.offsetWidth - 6, r.left)) + 'px';
+            toolbar.style.top = Math.max(6, Math.min(innerHeight - height - 6, top)) + 'px';
+            drawGuides(el);
+        }
+        function drawGuides(selectedNode: HTMLElement) {
+            const moving = gesture?.active && gesture.kind === 'move';
+            const automatic = gesture?.active && gesture.kind !== 'crop';
+            if ((!guidesEnabled && !automatic) || (moving && !gesture?.target)) { clearGuides(); return; }
+            const node = moving ? gesture!.target!.parent : selectedNode;
+            if (!node.matches('[data-node]')) { clearGuides(); return; }
+            const r = node.getBoundingClientRect(), parentNode = node.parentElement?.closest<HTMLElement>('[data-node-container]');
+            const p = parentNode?.getBoundingClientRect();
+            const unit = parseFloat(getComputedStyle(document.documentElement).getPropertyValue('--pg-chrome-unit')) || 1;
+            if (!r.width || !r.height || r.bottom < 0 || r.top > innerHeight || r.right < 0 || r.left > innerWidth) { clearGuides(); return; }
+            const lines: { x1: number; y1: number; x2: number; y2: number; label?: string }[] = [];
+            if (p && !moving) {
+                const candidates = [
+                    { a: r.left, b: p.left, label: 'Aligned left' },
+                    { a: r.left + r.width / 2, b: p.left + p.width / 2, label: 'Aligned center' },
+                    { a: r.right, b: p.right, label: 'Aligned right' },
+                ];
+                const alignment = candidates.find(v => Math.abs(v.a - v.b) < 1);
+                if (alignment) lines.push({ x1: alignment.a, x2: alignment.a, y1: p.top, y2: p.bottom, label: alignment.label });
+                const siblings = Array.from(parentNode!.querySelectorAll<HTMLElement>(':scope > [data-node]'));
+                const index = siblings.indexOf(node), sibling = siblings[index - 1] || siblings[index + 1];
+                if (sibling) {
+                    const s = sibling.getBoundingClientRect(), horizontal = getComputedStyle(parentNode!).flexDirection === 'row';
+                    const from = horizontal ? (s.left < r.left ? s.right : r.right) : (s.top < r.top ? s.bottom : r.bottom);
+                    const to = horizontal ? (s.left < r.left ? r.left : s.left) : (s.top < r.top ? r.top : s.top);
+                    if (to >= from) lines.push(horizontal ? { x1: from, x2: to, y1: r.top + Math.min(24, r.height / 2), y2: r.top + Math.min(24, r.height / 2), label: `Gap ${Math.round(to - from)} px` } : { x1: Math.max(r.left, r.right - 135 * unit), x2: Math.max(r.left, r.right - 135 * unit), y1: from, y2: to, label: `Gap ${Math.round(to - from)} px` });
+                }
+            }
+            const gap = moving ? getComputedStyle(node).gap : '';
+            const caption = `${moving ? 'Container ' : ''}${Math.round(r.width)} × ${Math.round(r.height)} px${gap && gap !== 'normal' ? ` · gap ${gap}` : ''}`;
+            const signature = JSON.stringify([r.x, r.y, r.width, r.height, lines, caption, innerWidth, innerHeight, unit]);
+            if (guides && signature === guideSignature) return;
+            if (!guides) { guides = document.createElementNS('http://www.w3.org/2000/svg', 'svg'); guides.classList.add('pg-layout-guides'); guides.setAttribute('aria-hidden', 'true'); document.body.append(guides); }
+            guideSignature = signature; guides.replaceChildren();
+            const svg = (name: 'line' | 'rect' | 'text', attrs: Record<string, string | number>, text?: string) => { const el = document.createElementNS('http://www.w3.org/2000/svg', name); for (const [key, value] of Object.entries(attrs)) el.setAttribute(key, String(value)); if (text) el.textContent = text; guides!.append(el); };
+            const label = (text: string, x: number, y: number) => svg('text', { x: Math.max(8, Math.min(innerWidth - Math.min(innerWidth - 16, text.length * 7 * unit), x)), y: Math.max(16 * unit, Math.min(innerHeight - 8, y)) }, text);
+            svg('rect', { x: r.left, y: r.top, width: r.width, height: r.height, fill: 'none', stroke: '#bce886', 'stroke-width': 1, 'stroke-dasharray': '4 3' });
+            for (const line of lines) { svg('line', { x1: line.x1, y1: line.y1, x2: line.x2, y2: line.y2, stroke: '#bce886', 'stroke-width': 1, 'stroke-dasharray': '3 3' }); if (line.label) { const aligned = line.label.startsWith('Aligned'); label(line.label, aligned ? r.left + 6 : (line.x1 + line.x2) / 2 + 6, aligned ? r.bottom + 36 * unit : (line.y1 + line.y2) / 2 - 5); } }
+            label(caption, r.left + 6, r.bottom + 17 * unit);
+        }
         function button(text: string, fn: () => void) { const b = document.createElement('button'); b.type = 'button'; b.textContent = text; b.addEventListener('click', e => { e.preventDefault(); e.stopPropagation(); fn(); }, options); toolbar!.append(b); return b; }
         function structureButtons(node: HTMLElement) {
             const section=node.closest<HTMLElement>('[data-section]');
@@ -116,6 +170,7 @@ export function authoringRuntime(initial: {
             toolbar.setAttribute('role', 'toolbar');
             toolbar.setAttribute('aria-label', node.dataset.nodeName || 'Selected block');
             document.body.append(toolbar);
+            const label=document.createElement('span');label.className='pg-node-label';label.textContent=node.dataset.nodeName || 'Selected element';toolbar.append(label);
             const parent = node.parentElement?.closest<HTMLElement>('[data-node-container]');
             if(!parent)structureButtons(node);
             if (parent) {
@@ -126,17 +181,21 @@ export function authoringRuntime(initial: {
                 button('Duplicate', () => send({ action: 'command', operation: { type: 'duplicate', id: node.id } }));
                 button('Remove', () => send({ action: 'command', operation: { type: 'remove', id: node.id } }));
             }
-            if (node.dataset.nodeType === 'image')
+            if (node.dataset.nodeType === 'image') {
+                button('Replace image',()=>send({action:'inspect',id:node.id,sectionId:node.closest('[data-authoring]')!.id}));
                 button('Crop', () => { mode = mode === 'crop' ? 'move' : 'crop'; node.style.touchAction = mode === 'crop' ? 'none' : ''; toolbar!.dataset.mode = mode; const hint = toolbar!.querySelector('[data-crop-hint]'); hint?.remove(); if (mode === 'crop') {
                     const h = document.createElement('span');
                     h.dataset.cropHint = 'true';
                     h.textContent = 'Drag photo to reposition';
                     toolbar!.append(h);
                 } });
+            }
             const editable = node.querySelector<HTMLElement>(':scope > [data-node-text]');
             if (editable)
                 button('Edit text', () => { finishText(true); textEdit = { el: editable, original: editable.textContent || '', node, stamp: config.compositionStamp! }; editable.contentEditable = 'true'; editable.focus(); const range = document.createRange(); range.selectNodeContents(editable); const selection = getSelection(); selection?.removeAllRanges(); selection?.addRange(range); });
             button('Controls', () => send({ action: 'inspect', id: node.id, sectionId: node.closest('[data-authoring]')!.id }));
+            const guideToggle = button(guidesEnabled ? 'Hide layout guides' : 'Show layout guides', () => { guidesEnabled = !guidesEnabled; guideToggle.textContent = guidesEnabled ? 'Hide layout guides' : 'Show layout guides'; guideToggle.setAttribute('aria-pressed', String(guidesEnabled)); position(); });
+            guideToggle.setAttribute('aria-pressed', String(guidesEnabled));
             resize = document.createElement('button');
             resize.type = 'button';
             resize.className = 'pg-node-resize';
@@ -159,7 +218,15 @@ export function authoringRuntime(initial: {
                 send({ action: 'select', id: node.id, sectionId: node.closest('[data-authoring]')!.id });
         }
         function start(event: PointerEvent, node: HTMLElement, kind: Gesture['kind']) { if (!event.isPrimary || event.button !== 0)
-            return; event.preventDefault(); event.stopPropagation(); cancel(); finishText(true); const rect = node.getBoundingClientRect(); gesture = { kind, node, handle: event.currentTarget as HTMLButtonElement, pointer: event.pointerId, x: event.clientX, y: event.clientY, sx: event.clientX, sy: event.clientY, rect, parentRect: node.parentElement!.getBoundingClientRect(), originalStyle: node.getAttribute('style'), ghost: null, stamp: config.compositionStamp!, active: false, patch: {}, target: null, time: 0, lastSample: performance.now(), sample: 0, dirty: true, geometry: new Map(), extra: [] }; gesture.handle.setPointerCapture(event.pointerId); }
+            return;
+            event.preventDefault(); event.stopPropagation(); cancel(); finishText(true);
+            // Preventing pointerdown also suppresses native focus in Firefox/WebKit.
+            // Own keyboard focus before capture so Escape reaches this document even
+            // when the last action was a parent-editor control such as Save.
+            const handle = event.currentTarget as HTMLButtonElement;
+            const focusTarget = kind === 'crop' ? toolbar?.querySelector('button') : handle;
+            focusTarget?.focus({ preventScroll: true });
+            const rect = node.getBoundingClientRect(); gesture = { kind, node, handle: event.currentTarget as HTMLButtonElement, pointer: event.pointerId, x: event.clientX, y: event.clientY, sx: event.clientX, sy: event.clientY, rect, parentRect: node.parentElement!.getBoundingClientRect(), originalStyle: node.getAttribute('style'), ghost: null, stamp: config.compositionStamp!, active: false, patch: {}, target: null, time: 0, lastSample: performance.now(), sample: 0, dirty: true, geometry: new Map(), extra: [] }; gesture.handle.setPointerCapture(event.pointerId); }
         function destination(g: Gesture): Target | null {
             if (g.dirty) {
                 g.geometry = new Map(all.map(el => [el, el.getBoundingClientRect()]));
@@ -193,6 +260,7 @@ export function authoringRuntime(initial: {
                     document.body.append(marker);
                 }
                 const t = g.target;
+                all.forEach(n=>n.classList.toggle('pg-node-drop-container',n===t?.parent));
                 marker.hidden = !t;
                 if (t) {
                     Object.assign(marker.style, { left: t.rect.x + 'px', top: t.rect.y + 'px', width: Math.max(40, t.rect.width) + 'px', minHeight: '24px' });
@@ -264,6 +332,15 @@ export function authoringRuntime(initial: {
             if(node && node.id!=='header' && node.id!=='footer')selectStructure(node);
         },options);
         for (const node of all) {
+            node.addEventListener('pointerover',event=>{event.stopPropagation();all.forEach(n=>n.classList.toggle('pg-node-hover',n===node));},options);
+            node.addEventListener('pointerleave',()=>node.classList.remove('pg-node-hover'),options);
+            node.addEventListener('dblclick',event=>{
+                const editable=node.querySelector<HTMLElement>(':scope > [data-node-text]');
+                if(!editable)return;
+                event.preventDefault();event.stopPropagation();select(node);finishText(true);
+                textEdit={el:editable,original:editable.textContent||'',node,stamp:config.compositionStamp!};editable.contentEditable='true';editable.focus();
+                const range=document.createRange();range.selectNodeContents(editable);const selection=getSelection();selection?.removeAllRanges();selection?.addRange(range);
+            },options);
             node.addEventListener('click', event => { event.preventDefault(); event.stopPropagation(); if (textEdit?.node === node)
                 return; select(node); }, options);
             node.addEventListener('pointerdown', event => { if (selected === node.id && mode === 'crop' && node.dataset.nodeType === 'image' && !((event.target as Element).closest('button'))) {
@@ -321,6 +398,7 @@ export function authoringRuntime(initial: {
         document.addEventListener('lostpointercapture', () => { if (gesture)
             cancel(); }, options);
         window.addEventListener('blur', () => { cancel(); finishText(false); }, options);
+        window.addEventListener('focus', position, options);
         window.addEventListener('resize', () => { cancel(); finishText(false); position(); }, options);
         document.addEventListener('visibilitychange', () => { if (document.hidden) {
             cancel();

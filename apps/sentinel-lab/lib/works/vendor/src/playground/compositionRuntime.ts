@@ -144,7 +144,7 @@ export function compositionRuntime(initial: { editing: boolean; bridge: boolean;
     document.addEventListener('dragover',event=>{if(!event.dataTransfer?.types.includes('Files'))return;const image=event.target instanceof Element?event.target.closest('[data-composition-part="image"]'):null;if(image){event.preventDefault();event.dataTransfer.dropEffect='copy';hint('Replace this image · use Media / Brand for a background');}},options);
     document.addEventListener('drop',event=>{
       if(!event.dataTransfer?.types.includes('Files'))return;event.preventDefault();const image=event.target instanceof Element?event.target.closest('[data-composition-part="image"]'):null;const root=image?.closest<HTMLElement>('[data-composition="true"]');
-      const files=event.dataTransfer.files;if(root&&files.length===1&&['image/png','image/jpeg','image/webp'].includes(files[0].type)&&files[0].size<=8_000_000)send({action:'file',sectionId:root.id,destination:{placement:root.dataset.placement||'inline'},mobile:innerWidth<=640,file:files[0]});else if(root)send({action:'error'});reset();
+      const files=event.dataTransfer.files;if(root&&files.length===1&&['image/png','image/jpeg','image/webp'].includes(files[0].type)&&files[0].size<=32_000_000)send({action:'file',sectionId:root.id,destination:{placement:root.dataset.placement||'inline'},mobile:innerWidth<=640,file:files[0]});else if(root)send({action:'error'});reset();
     },options);
     document.addEventListener('dragend',reset,options);document.addEventListener('dragleave',event=>{if(!event.relatedTarget)reset();},options);
     window.addEventListener('message',e=>{if(e.source===parent&&e.data?.channel===initial.channel&&e.data.type==='playground-cancel')reset();},options);

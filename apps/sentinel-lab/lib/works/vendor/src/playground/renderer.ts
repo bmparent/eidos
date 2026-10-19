@@ -1,11 +1,9 @@
-import { authoringRuntime } from './authoringRuntime';
+import { pageRuntimeSource, compositionRuntimeSource, authoringRuntimeSource } from './runtimeBundle';
 import { authoringMarkup, authoringStyles } from './authoringRenderer';
 import { type Project, type Card, sectionKind, mediaSlots, onColor, safeHref, RENDERER } from "./model";
 import { pageStyles } from "./pageStyles";
-import { pageRuntime } from "./runtime";
 import { glassScript, glassStyles, glassMarkup } from './glassBundle';
 import { compositionMarkup, compositionStyles } from './compositionRenderer';
-import { compositionRuntime } from './compositionRuntime';
 export const escapeHtml = (v: string) =>
   v.replace(
     /[&<>"']/g,
@@ -98,7 +96,9 @@ export function runtimeScript(
   bridge = false,
   channel?: string,
 ): string {
-  return `${glassScript}\n(${pageRuntime.toString()})(${JSON.stringify({...runtimeConfig(p, editing, selected, bridge), channel}).replace(/</g, "\\u003c")});${bridge ? `\n(${compositionRuntime.toString()})(${JSON.stringify({editing,bridge,channel})});\n(${authoringRuntime.toString()})(${JSON.stringify({editing,bridge,channel})});` : ''}`;
+  const config = JSON.stringify({...runtimeConfig(p, editing, selected, bridge), channel}).replace(/</g, "\\u003c");
+  const editorConfig = JSON.stringify({editing,bridge,channel}).replace(/</g, "\\u003c");
+  return `${glassScript}\n${pageRuntimeSource}\nEidosPageRuntime.run(${config});${bridge ? `\n${compositionRuntimeSource}\nEidosCompositionRuntime.run(${editorConfig});\n${authoringRuntimeSource}\nEidosAuthoringRuntime.run(${editorConfig});` : ''}`;
 }
 function mediaStyles(p: Project) {
   const settings=mediaSlots(p).filter(s=>s.media&&s.image);if(!settings.length)return '';
