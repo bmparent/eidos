@@ -39,6 +39,17 @@ export function headerFiles(input: Project): ExportFile[] {
     'README.md':`# Eidos header component\n\nExtract the ZIP and open index.html independently. The example uses your saved page content and actual section/card/block identities, with the exported header mounted in a Shadow DOM. No API, build, CDN or network is required. Header appearance/settings use the same renderer as Playground. The source and uploaded media remain in project.json.\n\n${missing.length ? `Unconfigured fragment destinations: ${missing.join(', ')}. The installation example includes clearly labeled placeholders for these targets; they are not real source sections or a completed page. Replace them with meaningful destinations or update the header links before publishing.\n\n` : 'Every nonempty header fragment target has a destination in the installation example.\n\n'}Copy eidos-header.js and eidos-header.css to your site and paste header.html where the header belongs. Keep the included light-DOM navigation: it provides a solid, keyboard-accessible fallback before JavaScript runs or when scripts are blocked. Keep its host ID unique. Supply your own matching destination elements (including page-main) or use full-page links. index.html is an installation/example page, not an extra component dependency.\n\nStyles are isolated in a Shadow DOM. The host is sticky; avoid overflow containers that prevent sticky positioning. Its scroll transition follows the window. Fragment navigation scrolls to the destination and makes it keyboard-focusable. Mobile navigation supports Menu and Escape. Full external links and contact mailto links keep their saved destinations; this package supplies no form backend or email delivery.\n\nUse project.json to edit and re-export. Include one header per page. Review your CSP for scripts, inline component styles, SVG filters and embedded data images. Test in your actual host page and target browsers. Component styles require your CSP to allow inline styles or the exact generated style hash; if scripts are blocked, fallback navigation stays visible. The example's sample content and destinations are your responsibility to review.\n\nThis is a vanilla HTML component, not a validated InkSoft or CMS integration. Those require separate platform validation.\n`,
   }).map(([name,value])=>({name,data:encode(value)}));
 }
+export function assetFiles(input: Project): ExportFile[] {
+  const seen = new Set<string>(), files: ExportFile[] = [];
+  for (const slot of mediaSlots(validateProject(input))) {
+    if (!slot.image || seen.has(slot.image)) continue;
+    const match = /^data:image\/(png|jpeg|webp);base64,(.+)$/.exec(slot.image);
+    if (!match) throw Error('An image could not be downloaded. Download a project backup to keep its source.');
+    seen.add(slot.image);
+    files.push({name:`assets/image-${files.length + 1}.${match[1] === 'jpeg' ? 'jpg' : match[1]}`,data:Uint8Array.from(atob(match[2]),c => c.charCodeAt(0))});
+  }
+  return files;
+}
 export function exportFiles(input: Project): ExportFile[] {
   const p = validateProject(input),
     project = structuredClone(p),

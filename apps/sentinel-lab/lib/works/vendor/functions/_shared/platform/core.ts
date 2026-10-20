@@ -18,6 +18,7 @@ export interface PlatformEnv {
   EIDOS_PLAYGROUND_AI_PROVIDER?: import('./playgroundLegacyAI').AIProvider;
   EIDOS_SOURCE_REVISION?: string;
   EIDOS_PLAYGROUND_AUTHORING_ENABLED?: string;
+  EIDOS_PLAYGROUND_RESUME_ENABLED?: string;
   EIDOS_PASSWORD_AUTH_ENABLED?: string;
   EIDOS_PASSWORD_SERVICE?: {
     hash(password: string): Promise<string>;

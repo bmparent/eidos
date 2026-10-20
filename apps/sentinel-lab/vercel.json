@@ -2,6 +2,7 @@
   "$schema": "https://openapi.vercel.sh/vercel.json",
   "git": {
     "deploymentEnabled": {
+      "fix/playground-resume-quota-20261020": false,
       "release/works-playground-20261019": false,
       "codex/playground-unified-20261014": false,
       "fix/playground-live-delivery-20261017": false,

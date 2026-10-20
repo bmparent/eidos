@@ -6,7 +6,7 @@
   ],
   "encoding": "utf8-lf",
   "scope": "Exact source graph after LF normalization for gated project delivery and scoped proposals; legacy cloud renderer is untouched.",
-  "inventorySha256": "a173de046f9184dce51821b8c12682496196e1cca341f75f037fc8b2ec97646d",
+  "inventorySha256": "818e8d855eecccecad4d5b7a15ef14c0c2226a5d2509298354d69d866325bfb5",
   "files": [
     {
       "path": "src/data/buyerArchivePins.json",
@@ -50,8 +50,8 @@
     },
     {
       "path": "src/playground/export.ts",
-      "bytes": 15466,
-      "sha256": "2a25cb98667fa279ccf505392b8bd0100518f7da9e75c77e6100fd895555b984"
+      "bytes": 16098,
+      "sha256": "97d4dfebffc94df8c6ebdf017f5c4f66b928401ddb06eb5b1d658827b48b9299"
     },
     {
       "path": "src/playground/glassBundle.ts",

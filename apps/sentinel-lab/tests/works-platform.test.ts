@@ -5,7 +5,7 @@ import { readFileSync } from 'node:fs';
 import { adaptDatabase } from '../lib/works/database';
 import { dispatchWorks } from '../lib/works/dispatch';
 import { hash, reserve, type PlatformEnv } from '../lib/works/vendor/functions/_shared/platform/core';
-import { createProject } from '../lib/works/vendor/src/playground/model';
+import { createProject, validateProject, sectionKind } from '../lib/works/vendor/src/playground/model';
 
 const secret = 'local-test-relay-key-at-least-32-characters';
 const source = { EIDOS_PLATFORM_TOKEN: secret, PUBLIC_SITE_URL: 'https://eidos-works.com' };
@@ -31,6 +31,37 @@ test('Playground initializes only its tables and libSQL concurrent saves have on
     assert.equal((await client.execute('SELECT COUNT(*) n FROM eidos_pg_revisions')).rows[0].n,3);
     assert.equal((await client.execute('SELECT display_name FROM eidos_members')).rows[0].display_name,'Existing member');
   }finally{client.close();}
+});
+test('libSQL resume preserves current-format documents and rolls back a full owner history',async()=>{
+ const {client,db}=await setup();
+ const env:PlatformEnv={EIDOS_RUNTIME:'sentinel',EIDOS_DB:db,EIDOS_ACCOUNTS_ENABLED:'true',EIDOS_PLAYGROUND_RESUME_ENABLED:'true',EIDOS_VALIDATE_PLAYGROUND_IMAGE:async()=>{},EIDOS_RATE_SECRET:'test-only-rate-secret-longer-than-32-characters',RESEND_API_KEY:'test-only',EIDOS_MAIL_FROM:'Eidos <papers@example.test>',TURNSTILE_SITE_KEY:'test',TURNSTILE_SECRET_KEY:'test',PUBLIC_SITE_URL:source.PUBLIC_SITE_URL};
+ const token='c'.repeat(64),otherToken='d'.repeat(64);
+ try {
+  for(const [id,value] of [['resume-owner',token],['resume-other',otherToken]]) {
+   await db.prepare('INSERT INTO eidos_email_members(id,email,username,kind,created_at,newsletter_after) VALUES(?,?,?,?,?,?)').bind(id,id+'@example.test',id.replaceAll('-','_'),'person','2026-10-20','2026-10-20').run();
+   await db.prepare('INSERT INTO eidos_member_sessions(token_hash,member_id,expires) VALUES(?,?,?)').bind(await hash(value),id,Math.floor(Date.now()/1000)+3600).run();
+  }
+  const headers={cookie:'__Host-eidos_session='+token},other={cookie:'__Host-eidos_session='+otherToken};
+  const base=createProject(),document=validateProject({...base,schemaVersion:5,sections:base.sections.map(s=>({...s,type:sectionKind(s)})),studios:{version:1,active:'page'}});
+  const call=(input:unknown)=>dispatchWorks(request('/api/playground/projects',input,headers),source,env);
+  const denied=await call({document});assert.equal(denied.status,409);
+  const response=await call({document,intent:'resume',expectedOwner:'resume-owner'});assert.equal(response.status,200,await response.clone().text());const saved=await response.json();
+  const reopened=await dispatchWorks(request('/api/playground/projects?id='+saved.id,undefined,headers),source,env);assert.deepEqual((await reopened.json()).document,document);
+  assert.equal((await dispatchWorks(request('/api/playground/projects?id='+saved.id,undefined,other),source,env)).status,404);
+  const usage=Number((await db.prepare('SELECT SUM(length(CAST(document AS BLOB))) bytes FROM eidos_pg_revisions WHERE project_id=?').bind(saved.id).first<{bytes:number}>())!.bytes);
+  await db.prepare('INSERT INTO eidos_pg_revisions(id,project_id,parent,document,created_at) VALUES(?,?,NULL,zeroblob(?),?)').bind(crypto.randomUUID(),saved.id,20_000_000-usage,'2026-10-20').run();
+  const failed=await call({document:{...document,name:'Unsaved next revision'},intent:'resume',expectedOwner:'resume-owner',id:saved.id,expectedRevision:saved.revision});assert.equal(failed.status,413,await failed.clone().text());
+  assert.equal((await db.prepare('SELECT head FROM eidos_pg_projects WHERE id=?').bind(saved.id).first<{head:string}>())!.head,saved.revision);
+  assert.equal((await db.prepare('SELECT COUNT(*) n FROM eidos_pg_revisions WHERE project_id=?').bind(saved.id).first<{n:number}>())!.n,2);
+  const otherSave=await dispatchWorks(request('/api/playground/projects',{document,intent:'resume',expectedOwner:'resume-other'},other),source,env);assert.equal(otherSave.status,200);const otherSaved=await otherSave.json();
+  const racing={...document,name:'Race A'},incoming=Buffer.byteLength(JSON.stringify(racing),'utf8');
+  const otherUsage=Number((await db.prepare('SELECT SUM(length(CAST(document AS BLOB))) bytes FROM eidos_pg_revisions WHERE project_id=?').bind(otherSaved.id).first<{bytes:number}>())!.bytes);
+  await db.prepare('INSERT INTO eidos_pg_revisions(id,project_id,parent,document,created_at) VALUES(?,?,NULL,zeroblob(?),?)').bind(crypto.randomUUID(),otherSaved.id,20_000_000-otherUsage-incoming,'2026-10-20').run();
+  const races=await Promise.all(['Race A','Race B'].map(name=>dispatchWorks(request('/api/playground/projects',{document:{...document,name},intent:'resume',expectedOwner:'resume-other'},other),source,env)));
+  assert.deepEqual(races.map(r=>r.status).sort(),[200,413],'only one request can consume the last account bytes');
+  assert.equal((await db.prepare('SELECT COUNT(*) n FROM eidos_pg_projects WHERE owner_id=?').bind('resume-other').first<{n:number}>())!.n,2,'the rejected request creates no orphan project');
+  assert.equal(Number((await db.prepare('SELECT SUM(length(CAST(r.document AS BLOB))) bytes FROM eidos_pg_revisions r JOIN eidos_pg_projects p ON p.id=r.project_id WHERE p.owner_id=?').bind('resume-other').first<{bytes:number}>())!.bytes),20_000_000);
+ } finally {client.close();}
 });
 function request(path: string, input?: unknown, extra: Record<string,string> = {}) {
   return new Request('https://eidos-sentinel-lab.vercel.app/api/works/v1' + path, {

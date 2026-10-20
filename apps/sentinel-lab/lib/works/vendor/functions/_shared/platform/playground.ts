@@ -1,8 +1,8 @@
-import { assertCloudStudioBoundary } from './studioBoundary';
+import { assertProjectSaveBoundary } from './studioBoundary';
 import {supportsProductionCloud,CLOUD_FORMAT_NOTICE} from '../../../src/playground/releaseBoundary';
 import { clean, db, hash, HttpError, type PlatformEnv } from './core';
 import { validateProject, mediaSlots, type Project } from '../../../src/playground/model';
-import schema, { assetQuota } from './playgroundSchema';
+import schema, { assetQuota, documentQuota } from './playgroundSchema';
 import { cloudPreflight } from '../../../src/playground/limits';
 import type { Database } from './core';
 const initialized = new WeakMap<Database,Promise<unknown>>();
@@ -10,7 +10,7 @@ const initialized = new WeakMap<Database,Promise<unknown>>();
 export async function ensurePlayground(env: PlatformEnv) {
   const database=db(env);
   let ready=initialized.get(database);
-  if(!ready) {ready=database.batch([...schema.split(';').map(s=>s.trim()).filter(Boolean),assetQuota].map(s=>database.prepare(s)));initialized.set(database,ready);}
+  if(!ready) {ready=database.batch([...schema.split(';').map(s=>s.trim()).filter(Boolean),assetQuota,documentQuota].map(s=>database.prepare(s)));initialized.set(database,ready);}
   try{await ready;}catch(error){initialized.delete(database);throw error;}
 }
 
@@ -39,10 +39,10 @@ export async function projectRevision(env: PlatformEnv, owner: string, projectId
   return { project, revision, document: validateProject(document) };
 }
 export async function saveProject(env: PlatformEnv, owner: string, input: Record<string, unknown>) {
-  assertCloudStudioBoundary(input.document);
+  assertProjectSaveBoundary(env,input);
   let document: Project;
   try { document = validateProject(input.document); } catch (error) { throw new HttpError(400, (error as Error).message); }
-  if(!supportsProductionCloud(document) && env.EIDOS_PLAYGROUND_AUTHORING_ENABLED!=='true')throw new HttpError(409,CLOUD_FORMAT_NOTICE);
+  if(input.intent !== 'resume' && !supportsProductionCloud(document) && env.EIDOS_PLAYGROUND_AUTHORING_ENABLED!=='true')throw new HttpError(409,CLOUD_FORMAT_NOTICE);
   const database=db(env);
   const preflight = cloudPreflight(document);
   if (!preflight.allowed) throw new HttpError(413, preflight.message);
@@ -79,7 +79,11 @@ export async function saveProject(env: PlatformEnv, owner: string, input: Record
   }
   statements.push(database.prepare('INSERT INTO eidos_pg_revisions(id,project_id,parent,document,created_at) SELECT ?,id,?,?,? FROM eidos_pg_projects WHERE id=? AND owner_id=? AND head=?').bind(revisionId,project?.head || null,JSON.stringify(stored),now,id,owner,project?.head || revisionId));
   statements.push(database.prepare('UPDATE eidos_pg_projects SET name=?,head=?,updated_at=? WHERE id=? AND owner_id=? AND head=? AND EXISTS(SELECT 1 FROM eidos_pg_revisions WHERE id=?)').bind(document.name,revisionId,now,id,owner,project?.head || revisionId,revisionId));
-  try { await database.batch(statements); } catch(error) { if(String(error).includes('Playground owner image quota')) throw new HttpError(413,'Your account has reached its 40 MB image storage limit. Your local work and earlier revisions are preserved.'); throw error; }
+  try { await database.batch(statements); } catch(error) {
+    if(String(error).includes('Playground owner image quota')) throw new HttpError(413,'Your account has reached its 40 MB image storage limit. Your local work and earlier revisions are preserved.');
+    if(String(error).includes('Playground owner document quota')) throw new HttpError(413,'Account project history is full (20 MB total or 100 revisions per project). Download a backup to continue safely. Earlier work is kept.');
+    throw error;
+  }
   const saved = await database.prepare('SELECT id FROM eidos_pg_revisions WHERE id=?').bind(revisionId).first();
   if (!saved && !project) throw new HttpError(409, 'This account has reached its 20-project limit.');
   if (!saved) throw new HttpError(409, 'Another tab saved first. Your edits are still on this device. Save them as a new project or reopen the latest revision.');
