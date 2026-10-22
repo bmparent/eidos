@@ -44,3 +44,26 @@ are outside this review. A clean registry scan cannot rule out unknown bugs.
 The prior production SHA above is the rollback identity; prefer a forward
 correction to returning to affected dependencies. Existing held account and
 payment acceptance gates are not accepted by this dependency-only change.
+
+## Same-day advisory follow-up
+
+A fresh registry audit after the morning release flagged Next.js 16.3.8 for
+GHSA-2464-fhr4-w9xw (image optimization) and GHSA-p3m5-59mp-jv5r (Server
+Actions denial of service), published October 22 at 15:52 and 15:50 UTC.
+The official GitHub advisory records identify 16.4.1 as patched; this follow-up
+pins the available 16.4.2 release and retains sharp 0.35.5. The already-patched
+sharp version satisfies the image advisory's documented workaround; an
+exploitable application path has not been established by the package scan.
+
+Baseline for this follow-up is production main
+`a69daf7afdc3f8856dd2a1b03e76d9d755aee3b2`. Only the Next.js manifest/lockfile
+and this record change. No held Playground/account code, provider setting,
+feature flag, credential or database migration is included.
+
+Fresh install, TypeScript check, all 16 JavaScript and 41 TypeScript tests,
+and the Next production build pass. The lockfile audit now returns zero known
+advisories. Exact-head CI, deployment and production readback remain separate
+requirements recorded on the follow-up PR.
+
+- https://github.com/vercel/next.js/security/advisories/GHSA-2464-fhr4-w9xw
+- https://github.com/vercel/next.js/security/advisories/GHSA-p3m5-59mp-jv5r
