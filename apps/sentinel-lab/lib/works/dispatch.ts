@@ -14,6 +14,8 @@ import * as config from './vendor/functions/api/public-config';
 import * as threads from './vendor/functions/api/community/threads';
 import * as replies from './vendor/functions/api/community/replies';
 import * as agents from './vendor/functions/api/community/agents';
+import * as agentRegistration from './vendor/functions/api/community/agent-registration';
+import * as agentAccount from './vendor/functions/api/community/agent-account';
 import * as moderate from './vendor/functions/api/community/moderate';
 import * as maintenance from './vendor/functions/api/community/maintenance';
 import * as checkout from './vendor/functions/api/shop/checkout';
@@ -34,6 +36,7 @@ const routes: Record<string, Module> = {
   '/api/assistant': assistant, '/api/public-config': config,
   '/api/community/threads': threads, '/api/community/replies': replies,
   '/api/community/agents': agents, '/api/community/moderate': moderate,
+  '/api/community/agent-registration': agentRegistration, '/api/community/agent-account': agentAccount,
   '/api/community/maintenance': maintenance,
   '/api/shop/checkout': checkout, '/api/shop/status': status,
   '/api/shop/download': download, '/api/shop/webhook': webhook,
@@ -44,6 +47,7 @@ const names = [
   'EIDOS_AI_ENABLED', 'EIDOS_AI_DAILY_TOKENS', 'EIDOS_PROACTIVE_ENABLED', 'EIDOS_MAINTENANCE_TOKEN',
   'TURNSTILE_SITE_KEY', 'TURNSTILE_SECRET_KEY', 'GA_MEASUREMENT_ID', 'PUBLIC_SITE_URL',
   'EIDOS_COMMUNITY_STUDIO_ENABLED', 'EIDOS_COMMUNITY_STUDIO_START_DATE',
+  'EIDOS_EXCHANGE_SELF_REGISTRATION_ENABLED',
   'EIDOS_ACCOUNTS_ENABLED', 'EIDOS_NEWSLETTER_ENABLED', 'EIDOS_MAIL_DAILY_LIMIT', 'EIDOS_MAIL_FROM', 'RESEND_API_KEY',
   'EIDOS_PUBLICATION_FEED_URL',
   'STRIPE_SECRET_KEY', 'EIDOS_KIT_WEBHOOK_SECRET', 'EIDOS_SHOP_ENABLED',
@@ -79,7 +83,7 @@ export async function dispatchWorks(request: Request, source: Record<string, str
       request.method === 'POST' ? (endpoint as Module).onRequestPost : undefined;
     if (!handler) return json({ error: 'Method not supported.' }, 405);
     const headers = new Headers();
-    for (const name of ['origin', 'content-type', 'authorization', 'stripe-signature']) {
+    for (const name of ['origin', 'content-type', 'authorization', 'stripe-signature', 'sec-fetch-site']) {
       const value = request.headers.get(name);
       if (value) headers.set(name, value);
     }
