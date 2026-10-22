@@ -12,6 +12,12 @@ import { providerTestRateCard } from '../lib/works/vendor/functions/_shared/plat
 const source={VERCEL_ENV:'preview',EIDOS_PLAYGROUND_PROVIDER_DIAGNOSTICS:'test-generation-one',EIDOS_PLATFORM_TOKEN:'operator-fixture-token-with-at-least-32-characters',EIDOS_PLAYGROUND_OPENAI_API_KEY:'private-provider-fixture-never-exposed'};
 const req=()=>new Request('https://preview.test/api/playground-provider-generation',{method:'POST',headers:{'x-eidos-platform-token':source.EIDOS_PLATFORM_TOKEN,'x-eidos-site-origin':'https://eidosworks-playground-20261014.pages.dev'}});
 const evidence={sourceUrl:'https://developers.openai.com/api/docs/pricing' as const,countGuideUrl:'https://developers.openai.com/api/docs/guides/token-counting' as const,documentSha256:'a'.repeat(64),reviewedAt:'2026-10-15T22:00:00Z'};
+// Exercise the immutable reviewed fixture within its original validity window.
+// Production pricing expiry remains unchanged and is checked separately below.
+test.beforeEach(t => {
+  assert.ok('mock' in t, 'The fixture clock requires an individual test context.');
+  t.mock.timers.enable({apis:['Date'],now:new Date(evidence.reviewedAt)});
+});
 async function fixture() {
   const client=createClient({url:':memory:'}),database=adaptDatabase(client),env={EIDOS_DB:database};
   for(const f of ['0001_eidos_platform.sql','0002_members.sql','0004_paid_templates.sql'])await client.executeMultiple(readFileSync(new URL('../lib/works/vendor/migrations/'+f,import.meta.url),'utf8'));
@@ -37,6 +43,19 @@ test('count bound is append-only and pessimistic; original receipt survives, cus
     await assert.rejects(boundOwnerCountExpense(f.env,{...evidence,documentSha256:'b'.repeat(64)}),/different/);
     assert.deepEqual(await f.database.prepare('SELECT detail_json FROM eidos_pg_ai_journal WHERE id=?').bind(ownerCountClaimId).first(),before);
     assert.equal((await f.database.prepare('SELECT COUNT(*) n FROM eidos_pg_ai_diagnostic_costs').first<{n:number}>())!.n,1);
+  }finally{f.close();}
+});
+
+test('expired reviewed pricing refuses generation before transport or a generation hold',async t=>{
+  const f=await fixture();let calls=0;
+  try{
+    await boundOwnerCountExpense(f.env,evidence);
+    t.mock.timers.setTime(Date.parse(providerTestRateCard('gpt-6.1-sol').validUntil));
+    const response=await probePlaygroundGeneration(req(),source,async()=>{calls++;return generated();},f.database);
+    assert.equal(response.status,503);
+    assert.equal((await response.json()).error,'reviewed_rate_card_expired');
+    assert.equal(calls,0);
+    assert.equal(await f.database.prepare('SELECT id FROM eidos_pg_ai_journal WHERE id=?').bind(ownerGenerationClaimId).first(),null);
   }finally{f.close();}
 });
 

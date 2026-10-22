@@ -322,7 +322,10 @@ test('reported provider overrun remains visible, caps customer charge and pauses
     const status=await aiPolicyStatus(f.env,'test');assert.equal(status.dispatchBlocked,true);assert.equal(status.committed,201910);
   }finally{f.close();}
 });
-test('authenticated API derives billing owner, rejects forged routing/caps, and returns direct proposal plus refreshed balance',async()=>{
+test('authenticated API derives billing owner, rejects forged routing/caps, and returns direct proposal plus refreshed balance',async t=>{
+  // The HTTP path uses wall-clock admission; keep this controlled historical
+  // fixture within its reviewed rate-card window without extending that card.
+  t.mock.timers.enable({apis:['Date'],now:at});
   const f=await fixture(), originalFetch=globalThis.fetch;
   try{
     // Isolated synthetic transport. The reviewed public-rate card is used only
