@@ -96,9 +96,11 @@ export function authoringRuntime(initial: {
             if (!el || !toolbar) return;
             const r = el.getBoundingClientRect(), height = toolbar.offsetHeight;
             const above = r.top - height - 5, below = r.bottom + 5;
+            const headerBottom = document.querySelector('.pg-header')?.getBoundingClientRect().bottom || 0;
             // Never clamp an above-block toolbar onto the block's first line.
+            // Keep the sticky page header and its mobile menu usable as well.
             // Large containers get a bottom dock, leaving their top content usable.
-            const top = above >= 6 ? above : below + height <= innerHeight - 6 ? below : innerHeight - height - 6;
+            const top = above >= Math.max(6, headerBottom + 5) ? above : below + height <= innerHeight - 6 ? below : innerHeight - height - 6;
             toolbar.style.left = Math.max(6, Math.min(innerWidth - toolbar.offsetWidth - 6, r.left)) + 'px';
             toolbar.style.top = Math.max(6, Math.min(innerHeight - height - 6, top)) + 'px';
             drawGuides(el);
