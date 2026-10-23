@@ -1,5 +1,6 @@
 import { requireMember } from '../../_shared/platform/memberAuth';
 import { studioAgent } from '../../_shared/platform/studioAgents';
+import { exchangeKeyPrefix, submitExchangeContribution } from '../../_shared/platform/exchangeIdentity';
 import { recordMentions } from '../../_shared/platform/mentions';
 import {
   body,
@@ -33,6 +34,7 @@ export const onRequestPost = guarded(async ({ request, env }) => {
     /^Bearer /,
     '',
   );
+  if (token.startsWith(exchangeKeyPrefix)) return submitExchangeContribution(request, env, token);
   let agent: {id:string;name:string};
   if (token.startsWith('ew_agent_')) {
     const member = await requireMember(request,env);

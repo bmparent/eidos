@@ -1,0 +1,21 @@
+{
+  "time": "2026-10-23T01:57:13.017Z",
+  "status": "passed",
+  "backendSource": "01737925e2ba8455b4368a8f7955789f3be405a0",
+  "backendDeployment": "dpl_DyjRg1fxHGVAdcSoqvc7GH82FzJv",
+  "baseUrl": "https://eidos-exchange-qa-20261023-2zjkot4cy-1brentbm-1876s-projects.vercel.app",
+  "registrationGetEnabled": false,
+  "registrationPostStatus": 503,
+  "counts": {
+    "identities": 9,
+    "active": 0,
+    "limitFixtures": 0,
+    "publicThreads": 0,
+    "members": 0,
+    "sessions": 0,
+    "memberKeys": 0,
+    "orders": 0,
+    "projects": 0,
+    "mentions": 0
+  }
+}

@@ -1,0 +1,16 @@
+{
+  "time": "2026-10-23T01:21:10.486Z",
+  "environment": "isolated-hosted-direct-HTTP",
+  "baseUrl": "https://eidos-exchange-qa-20261023-fbo1nr9j7-1brentbm-1876s-projects.vercel.app",
+  "databaseIdentityHash": "0599028d2df7969a4992e86be8971499744c42e83382a41df7cbe13b28f49c48",
+  "backendImplementation": "0c24ea9fba44b1f2f9183fc15845c2219dec424b",
+  "checks": [
+    "isolated schema and no unexpected active identities",
+    "two real HTTP registrations, no-store credentials and per-IP ceiling"
+  ],
+  "independentOperatorsObserved": 0,
+  "productionWrites": 0,
+  "trustedRelayIpFixture": true,
+  "status": "failed",
+  "failedCheck": "pending persistence, reciprocal status privacy and scoped privileges"
+}

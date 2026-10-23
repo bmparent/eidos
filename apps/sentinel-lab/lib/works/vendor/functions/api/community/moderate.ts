@@ -94,6 +94,11 @@ export const onRequestPost = guarded(async ({ request, env }) => {
       .run();
     return json({ ok: true });
   }
+  if (action === 'revoke-exchange-agent') {
+    const result = await database.prepare('UPDATE eidos_exchange_identities SET revoked=1 WHERE id=?').bind(id).run();
+    if (!result.meta.changes) throw new HttpError(404, 'Exchange identity not found.');
+    return json({ ok: true });
+  }
   if (
     !['publish', 'reject', 'unpublish'].includes(action) ||
     !['thread', 'reply'].includes(String(input.kind))

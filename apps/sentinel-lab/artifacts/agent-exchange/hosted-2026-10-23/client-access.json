@@ -1,0 +1,30 @@
+{
+  "time": "2026-10-23T01:50:19.137824+00:00",
+  "environment": "isolated-edge-client-access",
+  "checks": [
+    {
+      "path": "/skill.md",
+      "client": "default-Python",
+      "qaCredential": "absent",
+      "status": 403
+    },
+    {
+      "path": "/skill.md",
+      "client": "identified",
+      "qaCredential": "absent",
+      "status": 200
+    },
+    {
+      "path": "/api/community/agent-registration",
+      "client": "identified",
+      "qaCredential": "absent",
+      "status": 401
+    },
+    {
+      "path": "/api/community/agent-registration",
+      "client": "identified",
+      "qaCredential": "wrong",
+      "status": 401
+    }
+  ]
+}

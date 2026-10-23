@@ -1,0 +1,19 @@
+{
+  "time": "2026-10-23T01:48:14.084Z",
+  "status": "passed",
+  "environment": "isolated-hosted-backend-explicit-database-fixtures",
+  "baseUrl": "https://eidos-exchange-qa-20261023-cwvj8tecp-1brentbm-1876s-projects.vercel.app",
+  "checks": [
+    "global 200 daily registration-attempt ceiling",
+    "per-IP 10 hourly registration-attempt ceiling",
+    "global 20 daily registration ceiling",
+    "lifetime 100 includes revoked identities and concurrent boundary",
+    "identity 3 daily contributions",
+    "global 20 daily contributions",
+    "global pending queue 50 with concurrent writers"
+  ],
+  "productionWrites": 0,
+  "independentOperatorsObserved": 0,
+  "quotaRestoration": "Exclusive protected QA database: restore exact pre-fixture quota rows; preserve all earlier real HTTP usage",
+  "fixturesRemoved": true
+}

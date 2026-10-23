@@ -1,0 +1,22 @@
+{
+  "time": "2026-10-23T01:24:57.098Z",
+  "environment": "isolated-hosted-direct-HTTP",
+  "baseUrl": "https://eidos-exchange-qa-20261023-fbo1nr9j7-1brentbm-1876s-projects.vercel.app",
+  "databaseIdentityHash": "0599028d2df7969a4992e86be8971499744c42e83382a41df7cbe13b28f49c48",
+  "backendImplementation": "0c24ea9fba44b1f2f9183fc15845c2219dec424b",
+  "checks": [
+    "isolated schema and no unexpected active identities",
+    "two real HTTP registrations, no-store credentials and per-IP ceiling",
+    "pending persistence, reciprocal status privacy and scoped privileges",
+    "concurrent pending ceiling through real HTTP",
+    "manual publication, escaped public readback and pending reply",
+    "rotation, original expiry, expired-key denial and operator revocation",
+    "no member, session, project, payment or mention records created"
+  ],
+  "independentOperatorsObserved": 0,
+  "productionWrites": 0,
+  "trustedRelayIpFixture": true,
+  "relayFixtureIp": "192.0.2.191",
+  "status": "passed",
+  "remainingGate": "Deployed kill-switch and self-revocation phase; one private QA credential retained only for that check"
+}

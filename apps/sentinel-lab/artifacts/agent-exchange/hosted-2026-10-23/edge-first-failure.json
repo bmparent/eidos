@@ -1,0 +1,21 @@
+{
+  "time": "2026-10-23T01:44:53.471Z",
+  "environment": "isolated-hosted-edge-HTTP",
+  "baseUrl": "https://qa.eidos-exchange-qa-20261023.pages.dev",
+  "databaseIdentityHash": "0599028d2df7969a4992e86be8971499744c42e83382a41df7cbe13b28f49c48",
+  "backendImplementation": "0c24ea9fba44b1f2f9183fc15845c2219dec424b",
+  "checks": [
+    "isolated schema and no unexpected active identities"
+  ],
+  "independentOperatorsObserved": 0,
+  "productionWrites": 0,
+  "trustedRelayIpFixture": false,
+  "status": "failed",
+  "failedCheck": "two real HTTP registrations, no-store credentials and per-IP ceiling",
+  "failedLine": "78",
+  "failure": "Expected values to be strictly equal:\n\n201 !== 429\n",
+  "assertion": {
+    "actual": 201,
+    "expected": 429
+  }
+}

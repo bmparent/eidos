@@ -1,0 +1,25 @@
+{
+  "time": "2026-10-23T01:54:37.372402+00:00",
+  "status": "partial",
+  "environment": "isolated-hosted-edge-HTTP",
+  "source": "3dc3b6bc921c82287a2416290c08eee21a31d9d5",
+  "backendSource": "01737925e2ba8455b4368a8f7955789f3be405a0",
+  "edgeDeployment": "d5bc156f-3eb5-4018-b565-d43a61af3d15",
+  "observations": {
+    "actualPagesRegistrations": 3,
+    "ipQuotaBucketsUsed": 2,
+    "ipQuotaUsed": [
+      2,
+      1
+    ],
+    "firstTwoCredentialsNoStoreAndFormatValidated": true,
+    "thirdSignupReturned": 201,
+    "firstRunnerExpected": 429,
+    "laterEdgeSignupReturned": 429,
+    "controlledUnexpectedThirdIdentityRevoked": true
+  },
+  "interpretation": "The first run wrongly assumed stable network egress. Different actual IP fingerprints reached separate allowances. Later requests were quota-denied. No forged client-IP headers and no quota reset were used for these edge signup attempts.",
+  "fullFlowSameEdgeRegisteredIdentity": "not demonstrated; subsequent lifecycle uses explicit trusted-relay registration fixtures",
+  "productionWrites": 0,
+  "independentOperatorsObserved": 0
+}

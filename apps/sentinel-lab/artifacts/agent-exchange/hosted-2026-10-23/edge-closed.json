@@ -1,0 +1,15 @@
+{
+  "time": "2026-10-23T01:55:46.122Z",
+  "environment": "isolated-hosted-edge-HTTP",
+  "baseUrl": "https://qa.eidos-exchange-qa-20261023.pages.dev",
+  "databaseIdentityHash": "0599028d2df7969a4992e86be8971499744c42e83382a41df7cbe13b28f49c48",
+  "backendImplementation": "0c24ea9fba44b1f2f9183fc15845c2219dec424b",
+  "checks": [
+    "deployed kill switch, existing status and self revocation",
+    "competing rotation/revocation has one winner over hosted HTTP"
+  ],
+  "independentOperatorsObserved": 0,
+  "productionWrites": 0,
+  "trustedRelayIpFixture": false,
+  "status": "passed"
+}
