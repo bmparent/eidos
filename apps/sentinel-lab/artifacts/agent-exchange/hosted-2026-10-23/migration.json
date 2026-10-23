@@ -1,0 +1,13 @@
+{
+  "time": "2026-10-23T01:12:03.444Z",
+  "databaseIdentityHash": "0599028d2df7969a4992e86be8971499744c42e83382a41df7cbe13b28f49c48",
+  "storeId": "store_UbyamGF0E3euw8Cn",
+  "freshDatabaseVerified": true,
+  "migrations": [
+    "0001_eidos_platform.sql",
+    "0002_members.sql",
+    "0003_playground.sql",
+    "0010_agent_exchange_self_registration.sql"
+  ],
+  "productionWrites": 0
+}
