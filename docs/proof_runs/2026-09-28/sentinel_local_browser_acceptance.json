@@ -1,0 +1,140 @@
+{
+  "kind": "LOCAL_SENTINEL_BROWSER_ACCEPTANCE",
+  "date": "2026-09-28",
+  "gitTree": "c59812881a2c2d0af10b30d6a1efa8d45f667226",
+  "remoteHead": "99193cf91c3e32c4eb7ec45ffdd021a3daf5388c",
+  "runtime": {
+    "node": "24.19.0",
+    "python": "3.12.14",
+    "torch": "2.14.0+cpu",
+    "browser": "Chromium 153.0.8010.0"
+  },
+  "fixtureSha256": "d2ff1d2ad06b7f197fe3b6f3d147b1a88687ceb22b82a4337cdbc16d171687bd",
+  "runs": {
+    "easy": {
+      "status": "passed",
+      "script": "apps/sentinel-lab/scripts/guided-easy-qa.mjs",
+      "scriptGitBlob": "5c1fdff5e7f01a52d459706afb65aaabc6d5cc57",
+      "checks": [
+        {
+          "name": "private sign-in and real CSV upload",
+          "status": "passed"
+        },
+        {
+          "name": "Easy/Advanced retains data interpretation and excludes labels",
+          "status": "passed"
+        },
+        {
+          "name": "forecast contract survives setup switch",
+          "status": "passed"
+        },
+        {
+          "name": "actual Torch run, durable result and original input hash",
+          "status": "passed"
+        },
+        {
+          "name": "narrow viewport, keyboard and reduced motion",
+          "status": "passed"
+        },
+        {
+          "name": "saved result reopens after reload",
+          "status": "passed"
+        },
+        {
+          "name": "second owner cannot read saved dataset or run",
+          "status": "passed"
+        },
+        {
+          "name": "sign-out clears private result",
+          "status": "passed"
+        }
+      ],
+      "runId": "gj-f3cd06a2cdeec2c26b791ecf3d873881",
+      "datasetId": "ds-72f7b9ae593dcb7f4a1f1596d2c49ba5",
+      "inputSha256": "d2ff1d2ad06b7f197fe3b6f3d147b1a88687ceb22b82a4337cdbc16d171687bd",
+      "engineClass": "RLS_Reservoir",
+      "engineCodeSha256": "d1d8db7b5f8e70c0ae6abc96575295620a27ea2943fa50209317d264da50ef50",
+      "forecasts": 97,
+      "metrics": {
+        "forecastMAE": 2.8253720480283566,
+        "persistenceMAE": 2.2657600220534615,
+        "precision": null,
+        "recall": null,
+        "evaluatedForecasts": 96
+      }
+    },
+    "detailed": {
+      "status": "passed",
+      "script": "apps/sentinel-lab/scripts/guided-browser-qa.mjs",
+      "scriptGitBlob": "9737eaee1a9dc2bc4c61fecea5a5cba17202ab01",
+      "checks": [
+        {
+          "name": "approved pilot login",
+          "status": "passed"
+        },
+        {
+          "name": "real browser CSV upload and parser completion",
+          "status": "passed"
+        },
+        {
+          "name": "confirmed chronology, entity, units and interpretation",
+          "status": "passed"
+        },
+        {
+          "name": "actual Torch analysis through persisted result",
+          "status": "passed"
+        },
+        {
+          "name": "original record drill-down",
+          "status": "passed"
+        },
+        {
+          "name": "grounded result question",
+          "status": "passed"
+        },
+        {
+          "name": "review saved separately from frozen output",
+          "status": "passed"
+        },
+        {
+          "name": "download authenticated result",
+          "status": "passed"
+        },
+        {
+          "name": "mobile layout has no document overflow",
+          "status": "passed"
+        },
+        {
+          "name": "keyboard navigation and reduced motion",
+          "status": "passed"
+        },
+        {
+          "name": "refresh and saved-run recovery",
+          "status": "passed"
+        },
+        {
+          "name": "second user cannot access every first-user resource",
+          "status": "passed"
+        }
+      ],
+      "runId": "gj-0381d3dacddc0b147e8ee02eb0ed0004",
+      "datasetId": "ds-c066ebc9eb7a4e1e6b3fc7fb6599cc2e",
+      "inputSha256": "d2ff1d2ad06b7f197fe3b6f3d147b1a88687ceb22b82a4337cdbc16d171687bd",
+      "engineClass": "RLS_Reservoir",
+      "engineCodeSha256": "d1d8db7b5f8e70c0ae6abc96575295620a27ea2943fa50209317d264da50ef50",
+      "forecasts": 97,
+      "metrics": {
+        "forecastMAE": 2.8253720480283566,
+        "persistenceMAE": 2.2657600220534615,
+        "precision": null,
+        "recall": null,
+        "evaluatedForecasts": 96
+      }
+    }
+  },
+  "limits": [
+    "Local synthetic fixture and temporary QA accounts only.",
+    "No hosted Sandbox allocation or final-SHA authenticated hosted acceptance.",
+    "No new operational qualification; persistence still wins on the service fixture."
+  ]
+}

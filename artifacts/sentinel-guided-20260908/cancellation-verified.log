@@ -1,0 +1,41 @@
+{
+  "startedAt": "2026-09-09T00:55:20.585Z",
+  "checks": [
+    {
+      "name": "job accepted before cancellation",
+      "status": "passed"
+    },
+    {
+      "name": "same intent returns same worker identity",
+      "status": "passed"
+    },
+    {
+      "name": "same intent with changed input fails",
+      "status": "passed"
+    },
+    {
+      "name": "active job cancelled",
+      "status": "passed"
+    },
+    {
+      "name": "late worker cannot publish completed",
+      "status": "passed"
+    },
+    {
+      "name": "cancelled job has no visible result",
+      "status": "passed"
+    },
+    {
+      "name": "subsequent job accepted",
+      "status": "passed"
+    },
+    {
+      "name": "capacity reclaimed and genuine next job completes",
+      "status": "passed"
+    }
+  ],
+  "cancelledJobId": "gj-01051b5114fffce23cf1a69b3bb09234",
+  "recoveryJobId": "gj-3065a0364bea2033a302459328ab1747",
+  "status": "passed",
+  "finishedAt": "2026-09-09T00:55:52.068Z"
+}

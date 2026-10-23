@@ -1,0 +1,53 @@
+{
+  "base": "http://127.0.0.1:3210",
+  "startedAt": "2026-09-09T00:48:12.128Z",
+  "checks": [
+    {
+      "name": "oversize browser rejection",
+      "status": "passed"
+    },
+    {
+      "name": "malformed parser failure visible in browser",
+      "status": "passed"
+    },
+    {
+      "name": "URL rejection 127.0.0.1",
+      "status": "passed",
+      "http": 400,
+      "message": "A public IPv4 destination is required; private, local and special-use addresses are blocked."
+    },
+    {
+      "name": "URL rejection 169.254.169.254",
+      "status": "passed",
+      "http": 400,
+      "message": "A public IPv4 destination is required; private, local and special-use addresses are blocked."
+    },
+    {
+      "name": "URL rejection httpbin.org",
+      "status": "passed",
+      "http": 400,
+      "message": "A public IPv4 destination is required; private, local and special-use addresses are blocked."
+    },
+    {
+      "name": "https://raw.githubusercontent.com/vega/vega-datasets/main/data/seattle-weather.csv",
+      "status": "passed",
+      "runId": "gj-8d5cbf1441c46d556e5a2e54279dcc43",
+      "datasetId": "ds-61c9f49b96e1e1fbfe74963183d95bad",
+      "method": "Isolation Forest (identified baseline), with robust median/MAD comparison",
+      "inputSha256": "0845078a290b48e3149ab8639966824110a251db4e06fc144c06ebb534af23be",
+      "records": 1461
+    },
+    {
+      "name": "https://example.com/",
+      "status": "passed",
+      "runId": "gj-a0ad1c058d8776c1f99f139fddfab0f0",
+      "datasetId": "ds-2852dc4901daa34bbc3f45a259d922c3",
+      "method": "Sentence Transformer semantic embedding and cosine passage retrieval",
+      "inputSha256": "ff67a9d764d6a2367a187734e697f6a53217db9a21c101d410a113ca871a299d",
+      "records": 3
+    }
+  ],
+  "errors": [],
+  "status": "passed",
+  "finishedAt": "2026-09-09T00:53:33.740Z"
+}

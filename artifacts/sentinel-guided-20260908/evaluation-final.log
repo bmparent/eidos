@@ -1,0 +1,966 @@
+>>> GPU CHECK:
+    device      = cpu (CPU)
+    dtype       = torch.float32
+    TF32        = True
+    deterministic= False
+>>> Hardware: cpu | Precision: Float32
+>>> Mode: EIDOS BRAIN UNIFIED v0.4.7.02 + Hippocampus (HDC/VSA)
+>>> ENGINE HASH: d1d8db7b5f8e70c0ae6abc96575295620a27ea2943fa50209317d264da50ef50
+>>> HIVE BACKEND: LOCAL
+>>> GPU CHECK:
+    device      = cpu (CPU)
+    dtype       = torch.float32
+    TF32        = True
+    deterministic= False
+>>> Hardware: cpu | Precision: Float32
+>>> Mode: EIDOS BRAIN UNIFIED v0.4.7.02 + Hippocampus (HDC/VSA)
+>>> ENGINE HASH: d1d8db7b5f8e70c0ae6abc96575295620a27ea2943fa50209317d264da50ef50
+>>> HIVE BACKEND: LOCAL
+>>> GPU CHECK:
+    device      = cpu (CPU)
+    dtype       = torch.float32
+    TF32        = True
+    deterministic= False
+>>> Hardware: cpu | Precision: Float32
+>>> Mode: EIDOS BRAIN UNIFIED v0.4.7.02 + Hippocampus (HDC/VSA)
+>>> ENGINE HASH: d1d8db7b5f8e70c0ae6abc96575295620a27ea2943fa50209317d264da50ef50
+>>> HIVE BACKEND: LOCAL
+>>> GPU CHECK:
+    device      = cpu (CPU)
+    dtype       = torch.float32
+    TF32        = True
+    deterministic= False
+>>> Hardware: cpu | Precision: Float32
+>>> Mode: EIDOS BRAIN UNIFIED v0.4.7.02 + Hippocampus (HDC/VSA)
+>>> ENGINE HASH: d1d8db7b5f8e70c0ae6abc96575295620a27ea2943fa50209317d264da50ef50
+>>> HIVE BACKEND: LOCAL
+>>> GPU CHECK:
+    device      = cpu (CPU)
+    dtype       = torch.float32
+    TF32        = True
+    deterministic= False
+>>> Hardware: cpu | Precision: Float32
+>>> Mode: EIDOS BRAIN UNIFIED v0.4.7.02 + Hippocampus (HDC/VSA)
+>>> ENGINE HASH: d1d8db7b5f8e70c0ae6abc96575295620a27ea2943fa50209317d264da50ef50
+>>> HIVE BACKEND: LOCAL
+final seed=211 scenario=benign_repetition complete
+>>> GPU CHECK:
+    device      = cpu (CPU)
+    dtype       = torch.float32
+    TF32        = True
+    deterministic= False
+>>> Hardware: cpu | Precision: Float32
+>>> Mode: EIDOS BRAIN UNIFIED v0.4.7.02 + Hippocampus (HDC/VSA)
+>>> ENGINE HASH: d1d8db7b5f8e70c0ae6abc96575295620a27ea2943fa50209317d264da50ef50
+>>> HIVE BACKEND: LOCAL
+>>> GPU CHECK:
+    device      = cpu (CPU)
+    dtype       = torch.float32
+    TF32        = True
+    deterministic= False
+>>> Hardware: cpu | Precision: Float32
+>>> Mode: EIDOS BRAIN UNIFIED v0.4.7.02 + Hippocampus (HDC/VSA)
+>>> ENGINE HASH: d1d8db7b5f8e70c0ae6abc96575295620a27ea2943fa50209317d264da50ef50
+>>> HIVE BACKEND: LOCAL
+>>> GPU CHECK:
+    device      = cpu (CPU)
+    dtype       = torch.float32
+    TF32        = True
+    deterministic= False
+>>> Hardware: cpu | Precision: Float32
+>>> Mode: EIDOS BRAIN UNIFIED v0.4.7.02 + Hippocampus (HDC/VSA)
+>>> ENGINE HASH: d1d8db7b5f8e70c0ae6abc96575295620a27ea2943fa50209317d264da50ef50
+>>> HIVE BACKEND: LOCAL
+>>> GPU CHECK:
+    device      = cpu (CPU)
+    dtype       = torch.float32
+    TF32        = True
+    deterministic= False
+>>> Hardware: cpu | Precision: Float32
+>>> Mode: EIDOS BRAIN UNIFIED v0.4.7.02 + Hippocampus (HDC/VSA)
+>>> ENGINE HASH: d1d8db7b5f8e70c0ae6abc96575295620a27ea2943fa50209317d264da50ef50
+>>> HIVE BACKEND: LOCAL
+>>> GPU CHECK:
+    device      = cpu (CPU)
+    dtype       = torch.float32
+    TF32        = True
+    deterministic= False
+>>> Hardware: cpu | Precision: Float32
+>>> Mode: EIDOS BRAIN UNIFIED v0.4.7.02 + Hippocampus (HDC/VSA)
+>>> ENGINE HASH: d1d8db7b5f8e70c0ae6abc96575295620a27ea2943fa50209317d264da50ef50
+>>> HIVE BACKEND: LOCAL
+final seed=211 scenario=harmful_repetition complete
+>>> GPU CHECK:
+    device      = cpu (CPU)
+    dtype       = torch.float32
+    TF32        = True
+    deterministic= False
+>>> Hardware: cpu | Precision: Float32
+>>> Mode: EIDOS BRAIN UNIFIED v0.4.7.02 + Hippocampus (HDC/VSA)
+>>> ENGINE HASH: d1d8db7b5f8e70c0ae6abc96575295620a27ea2943fa50209317d264da50ef50
+>>> HIVE BACKEND: LOCAL
+>>> GPU CHECK:
+    device      = cpu (CPU)
+    dtype       = torch.float32
+    TF32        = True
+    deterministic= False
+>>> Hardware: cpu | Precision: Float32
+>>> Mode: EIDOS BRAIN UNIFIED v0.4.7.02 + Hippocampus (HDC/VSA)
+>>> ENGINE HASH: d1d8db7b5f8e70c0ae6abc96575295620a27ea2943fa50209317d264da50ef50
+>>> HIVE BACKEND: LOCAL
+>>> GPU CHECK:
+    device      = cpu (CPU)
+    dtype       = torch.float32
+    TF32        = True
+    deterministic= False
+>>> Hardware: cpu | Precision: Float32
+>>> Mode: EIDOS BRAIN UNIFIED v0.4.7.02 + Hippocampus (HDC/VSA)
+>>> ENGINE HASH: d1d8db7b5f8e70c0ae6abc96575295620a27ea2943fa50209317d264da50ef50
+>>> HIVE BACKEND: LOCAL
+>>> GPU CHECK:
+    device      = cpu (CPU)
+    dtype       = torch.float32
+    TF32        = True
+    deterministic= False
+>>> Hardware: cpu | Precision: Float32
+>>> Mode: EIDOS BRAIN UNIFIED v0.4.7.02 + Hippocampus (HDC/VSA)
+>>> ENGINE HASH: d1d8db7b5f8e70c0ae6abc96575295620a27ea2943fa50209317d264da50ef50
+>>> HIVE BACKEND: LOCAL
+>>> GPU CHECK:
+    device      = cpu (CPU)
+    dtype       = torch.float32
+    TF32        = True
+    deterministic= False
+>>> Hardware: cpu | Precision: Float32
+>>> Mode: EIDOS BRAIN UNIFIED v0.4.7.02 + Hippocampus (HDC/VSA)
+>>> ENGINE HASH: d1d8db7b5f8e70c0ae6abc96575295620a27ea2943fa50209317d264da50ef50
+>>> HIVE BACKEND: LOCAL
+final seed=211 scenario=isolated_spike complete
+>>> GPU CHECK:
+    device      = cpu (CPU)
+    dtype       = torch.float32
+    TF32        = True
+    deterministic= False
+>>> Hardware: cpu | Precision: Float32
+>>> Mode: EIDOS BRAIN UNIFIED v0.4.7.02 + Hippocampus (HDC/VSA)
+>>> ENGINE HASH: d1d8db7b5f8e70c0ae6abc96575295620a27ea2943fa50209317d264da50ef50
+>>> HIVE BACKEND: LOCAL
+>>> GPU CHECK:
+    device      = cpu (CPU)
+    dtype       = torch.float32
+    TF32        = True
+    deterministic= False
+>>> Hardware: cpu | Precision: Float32
+>>> Mode: EIDOS BRAIN UNIFIED v0.4.7.02 + Hippocampus (HDC/VSA)
+>>> ENGINE HASH: d1d8db7b5f8e70c0ae6abc96575295620a27ea2943fa50209317d264da50ef50
+>>> HIVE BACKEND: LOCAL
+>>> GPU CHECK:
+    device      = cpu (CPU)
+    dtype       = torch.float32
+    TF32        = True
+    deterministic= False
+>>> Hardware: cpu | Precision: Float32
+>>> Mode: EIDOS BRAIN UNIFIED v0.4.7.02 + Hippocampus (HDC/VSA)
+>>> ENGINE HASH: d1d8db7b5f8e70c0ae6abc96575295620a27ea2943fa50209317d264da50ef50
+>>> HIVE BACKEND: LOCAL
+>>> GPU CHECK:
+    device      = cpu (CPU)
+    dtype       = torch.float32
+    TF32        = True
+    deterministic= False
+>>> Hardware: cpu | Precision: Float32
+>>> Mode: EIDOS BRAIN UNIFIED v0.4.7.02 + Hippocampus (HDC/VSA)
+>>> ENGINE HASH: d1d8db7b5f8e70c0ae6abc96575295620a27ea2943fa50209317d264da50ef50
+>>> HIVE BACKEND: LOCAL
+>>> GPU CHECK:
+    device      = cpu (CPU)
+    dtype       = torch.float32
+    TF32        = True
+    deterministic= False
+>>> Hardware: cpu | Precision: Float32
+>>> Mode: EIDOS BRAIN UNIFIED v0.4.7.02 + Hippocampus (HDC/VSA)
+>>> ENGINE HASH: d1d8db7b5f8e70c0ae6abc96575295620a27ea2943fa50209317d264da50ef50
+>>> HIVE BACKEND: LOCAL
+final seed=211 scenario=slow_drift complete
+>>> GPU CHECK:
+    device      = cpu (CPU)
+    dtype       = torch.float32
+    TF32        = True
+    deterministic= False
+>>> Hardware: cpu | Precision: Float32
+>>> Mode: EIDOS BRAIN UNIFIED v0.4.7.02 + Hippocampus (HDC/VSA)
+>>> ENGINE HASH: d1d8db7b5f8e70c0ae6abc96575295620a27ea2943fa50209317d264da50ef50
+>>> HIVE BACKEND: LOCAL
+>>> GPU CHECK:
+    device      = cpu (CPU)
+    dtype       = torch.float32
+    TF32        = True
+    deterministic= False
+>>> Hardware: cpu | Precision: Float32
+>>> Mode: EIDOS BRAIN UNIFIED v0.4.7.02 + Hippocampus (HDC/VSA)
+>>> ENGINE HASH: d1d8db7b5f8e70c0ae6abc96575295620a27ea2943fa50209317d264da50ef50
+>>> HIVE BACKEND: LOCAL
+>>> GPU CHECK:
+    device      = cpu (CPU)
+    dtype       = torch.float32
+    TF32        = True
+    deterministic= False
+>>> Hardware: cpu | Precision: Float32
+>>> Mode: EIDOS BRAIN UNIFIED v0.4.7.02 + Hippocampus (HDC/VSA)
+>>> ENGINE HASH: d1d8db7b5f8e70c0ae6abc96575295620a27ea2943fa50209317d264da50ef50
+>>> HIVE BACKEND: LOCAL
+>>> GPU CHECK:
+    device      = cpu (CPU)
+    dtype       = torch.float32
+    TF32        = True
+    deterministic= False
+>>> Hardware: cpu | Precision: Float32
+>>> Mode: EIDOS BRAIN UNIFIED v0.4.7.02 + Hippocampus (HDC/VSA)
+>>> ENGINE HASH: d1d8db7b5f8e70c0ae6abc96575295620a27ea2943fa50209317d264da50ef50
+>>> HIVE BACKEND: LOCAL
+>>> GPU CHECK:
+    device      = cpu (CPU)
+    dtype       = torch.float32
+    TF32        = True
+    deterministic= False
+>>> Hardware: cpu | Precision: Float32
+>>> Mode: EIDOS BRAIN UNIFIED v0.4.7.02 + Hippocampus (HDC/VSA)
+>>> ENGINE HASH: d1d8db7b5f8e70c0ae6abc96575295620a27ea2943fa50209317d264da50ef50
+>>> HIVE BACKEND: LOCAL
+final seed=211 scenario=regime_shift complete
+>>> GPU CHECK:
+    device      = cpu (CPU)
+    dtype       = torch.float32
+    TF32        = True
+    deterministic= False
+>>> Hardware: cpu | Precision: Float32
+>>> Mode: EIDOS BRAIN UNIFIED v0.4.7.02 + Hippocampus (HDC/VSA)
+>>> ENGINE HASH: d1d8db7b5f8e70c0ae6abc96575295620a27ea2943fa50209317d264da50ef50
+>>> HIVE BACKEND: LOCAL
+>>> GPU CHECK:
+    device      = cpu (CPU)
+    dtype       = torch.float32
+    TF32        = True
+    deterministic= False
+>>> Hardware: cpu | Precision: Float32
+>>> Mode: EIDOS BRAIN UNIFIED v0.4.7.02 + Hippocampus (HDC/VSA)
+>>> ENGINE HASH: d1d8db7b5f8e70c0ae6abc96575295620a27ea2943fa50209317d264da50ef50
+>>> HIVE BACKEND: LOCAL
+>>> GPU CHECK:
+    device      = cpu (CPU)
+    dtype       = torch.float32
+    TF32        = True
+    deterministic= False
+>>> Hardware: cpu | Precision: Float32
+>>> Mode: EIDOS BRAIN UNIFIED v0.4.7.02 + Hippocampus (HDC/VSA)
+>>> ENGINE HASH: d1d8db7b5f8e70c0ae6abc96575295620a27ea2943fa50209317d264da50ef50
+>>> HIVE BACKEND: LOCAL
+>>> GPU CHECK:
+    device      = cpu (CPU)
+    dtype       = torch.float32
+    TF32        = True
+    deterministic= False
+>>> Hardware: cpu | Precision: Float32
+>>> Mode: EIDOS BRAIN UNIFIED v0.4.7.02 + Hippocampus (HDC/VSA)
+>>> ENGINE HASH: d1d8db7b5f8e70c0ae6abc96575295620a27ea2943fa50209317d264da50ef50
+>>> HIVE BACKEND: LOCAL
+>>> GPU CHECK:
+    device      = cpu (CPU)
+    dtype       = torch.float32
+    TF32        = True
+    deterministic= False
+>>> Hardware: cpu | Precision: Float32
+>>> Mode: EIDOS BRAIN UNIFIED v0.4.7.02 + Hippocampus (HDC/VSA)
+>>> ENGINE HASH: d1d8db7b5f8e70c0ae6abc96575295620a27ea2943fa50209317d264da50ef50
+>>> HIVE BACKEND: LOCAL
+final seed=211 scenario=noisy_interval complete
+>>> GPU CHECK:
+    device      = cpu (CPU)
+    dtype       = torch.float32
+    TF32        = True
+    deterministic= False
+>>> Hardware: cpu | Precision: Float32
+>>> Mode: EIDOS BRAIN UNIFIED v0.4.7.02 + Hippocampus (HDC/VSA)
+>>> ENGINE HASH: d1d8db7b5f8e70c0ae6abc96575295620a27ea2943fa50209317d264da50ef50
+>>> HIVE BACKEND: LOCAL
+>>> GPU CHECK:
+    device      = cpu (CPU)
+    dtype       = torch.float32
+    TF32        = True
+    deterministic= False
+>>> Hardware: cpu | Precision: Float32
+>>> Mode: EIDOS BRAIN UNIFIED v0.4.7.02 + Hippocampus (HDC/VSA)
+>>> ENGINE HASH: d1d8db7b5f8e70c0ae6abc96575295620a27ea2943fa50209317d264da50ef50
+>>> HIVE BACKEND: LOCAL
+>>> GPU CHECK:
+    device      = cpu (CPU)
+    dtype       = torch.float32
+    TF32        = True
+    deterministic= False
+>>> Hardware: cpu | Precision: Float32
+>>> Mode: EIDOS BRAIN UNIFIED v0.4.7.02 + Hippocampus (HDC/VSA)
+>>> ENGINE HASH: d1d8db7b5f8e70c0ae6abc96575295620a27ea2943fa50209317d264da50ef50
+>>> HIVE BACKEND: LOCAL
+>>> GPU CHECK:
+    device      = cpu (CPU)
+    dtype       = torch.float32
+    TF32        = True
+    deterministic= False
+>>> Hardware: cpu | Precision: Float32
+>>> Mode: EIDOS BRAIN UNIFIED v0.4.7.02 + Hippocampus (HDC/VSA)
+>>> ENGINE HASH: d1d8db7b5f8e70c0ae6abc96575295620a27ea2943fa50209317d264da50ef50
+>>> HIVE BACKEND: LOCAL
+>>> GPU CHECK:
+    device      = cpu (CPU)
+    dtype       = torch.float32
+    TF32        = True
+    deterministic= False
+>>> Hardware: cpu | Precision: Float32
+>>> Mode: EIDOS BRAIN UNIFIED v0.4.7.02 + Hippocampus (HDC/VSA)
+>>> ENGINE HASH: d1d8db7b5f8e70c0ae6abc96575295620a27ea2943fa50209317d264da50ef50
+>>> HIVE BACKEND: LOCAL
+final seed=211 scenario=contaminated_calibration complete
+>>> GPU CHECK:
+    device      = cpu (CPU)
+    dtype       = torch.float32
+    TF32        = True
+    deterministic= False
+>>> Hardware: cpu | Precision: Float32
+>>> Mode: EIDOS BRAIN UNIFIED v0.4.7.02 + Hippocampus (HDC/VSA)
+>>> ENGINE HASH: d1d8db7b5f8e70c0ae6abc96575295620a27ea2943fa50209317d264da50ef50
+>>> HIVE BACKEND: LOCAL
+>>> GPU CHECK:
+    device      = cpu (CPU)
+    dtype       = torch.float32
+    TF32        = True
+    deterministic= False
+>>> Hardware: cpu | Precision: Float32
+>>> Mode: EIDOS BRAIN UNIFIED v0.4.7.02 + Hippocampus (HDC/VSA)
+>>> ENGINE HASH: d1d8db7b5f8e70c0ae6abc96575295620a27ea2943fa50209317d264da50ef50
+>>> HIVE BACKEND: LOCAL
+>>> GPU CHECK:
+    device      = cpu (CPU)
+    dtype       = torch.float32
+    TF32        = True
+    deterministic= False
+>>> Hardware: cpu | Precision: Float32
+>>> Mode: EIDOS BRAIN UNIFIED v0.4.7.02 + Hippocampus (HDC/VSA)
+>>> ENGINE HASH: d1d8db7b5f8e70c0ae6abc96575295620a27ea2943fa50209317d264da50ef50
+>>> HIVE BACKEND: LOCAL
+>>> GPU CHECK:
+    device      = cpu (CPU)
+    dtype       = torch.float32
+    TF32        = True
+    deterministic= False
+>>> Hardware: cpu | Precision: Float32
+>>> Mode: EIDOS BRAIN UNIFIED v0.4.7.02 + Hippocampus (HDC/VSA)
+>>> ENGINE HASH: d1d8db7b5f8e70c0ae6abc96575295620a27ea2943fa50209317d264da50ef50
+>>> HIVE BACKEND: LOCAL
+>>> GPU CHECK:
+    device      = cpu (CPU)
+    dtype       = torch.float32
+    TF32        = True
+    deterministic= False
+>>> Hardware: cpu | Precision: Float32
+>>> Mode: EIDOS BRAIN UNIFIED v0.4.7.02 + Hippocampus (HDC/VSA)
+>>> ENGINE HASH: d1d8db7b5f8e70c0ae6abc96575295620a27ea2943fa50209317d264da50ef50
+>>> HIVE BACKEND: LOCAL
+final seed=223 scenario=benign_repetition complete
+>>> GPU CHECK:
+    device      = cpu (CPU)
+    dtype       = torch.float32
+    TF32        = True
+    deterministic= False
+>>> Hardware: cpu | Precision: Float32
+>>> Mode: EIDOS BRAIN UNIFIED v0.4.7.02 + Hippocampus (HDC/VSA)
+>>> ENGINE HASH: d1d8db7b5f8e70c0ae6abc96575295620a27ea2943fa50209317d264da50ef50
+>>> HIVE BACKEND: LOCAL
+>>> GPU CHECK:
+    device      = cpu (CPU)
+    dtype       = torch.float32
+    TF32        = True
+    deterministic= False
+>>> Hardware: cpu | Precision: Float32
+>>> Mode: EIDOS BRAIN UNIFIED v0.4.7.02 + Hippocampus (HDC/VSA)
+>>> ENGINE HASH: d1d8db7b5f8e70c0ae6abc96575295620a27ea2943fa50209317d264da50ef50
+>>> HIVE BACKEND: LOCAL
+>>> GPU CHECK:
+    device      = cpu (CPU)
+    dtype       = torch.float32
+    TF32        = True
+    deterministic= False
+>>> Hardware: cpu | Precision: Float32
+>>> Mode: EIDOS BRAIN UNIFIED v0.4.7.02 + Hippocampus (HDC/VSA)
+>>> ENGINE HASH: d1d8db7b5f8e70c0ae6abc96575295620a27ea2943fa50209317d264da50ef50
+>>> HIVE BACKEND: LOCAL
+>>> GPU CHECK:
+    device      = cpu (CPU)
+    dtype       = torch.float32
+    TF32        = True
+    deterministic= False
+>>> Hardware: cpu | Precision: Float32
+>>> Mode: EIDOS BRAIN UNIFIED v0.4.7.02 + Hippocampus (HDC/VSA)
+>>> ENGINE HASH: d1d8db7b5f8e70c0ae6abc96575295620a27ea2943fa50209317d264da50ef50
+>>> HIVE BACKEND: LOCAL
+>>> GPU CHECK:
+    device      = cpu (CPU)
+    dtype       = torch.float32
+    TF32        = True
+    deterministic= False
+>>> Hardware: cpu | Precision: Float32
+>>> Mode: EIDOS BRAIN UNIFIED v0.4.7.02 + Hippocampus (HDC/VSA)
+>>> ENGINE HASH: d1d8db7b5f8e70c0ae6abc96575295620a27ea2943fa50209317d264da50ef50
+>>> HIVE BACKEND: LOCAL
+final seed=223 scenario=harmful_repetition complete
+>>> GPU CHECK:
+    device      = cpu (CPU)
+    dtype       = torch.float32
+    TF32        = True
+    deterministic= False
+>>> Hardware: cpu | Precision: Float32
+>>> Mode: EIDOS BRAIN UNIFIED v0.4.7.02 + Hippocampus (HDC/VSA)
+>>> ENGINE HASH: d1d8db7b5f8e70c0ae6abc96575295620a27ea2943fa50209317d264da50ef50
+>>> HIVE BACKEND: LOCAL
+>>> GPU CHECK:
+    device      = cpu (CPU)
+    dtype       = torch.float32
+    TF32        = True
+    deterministic= False
+>>> Hardware: cpu | Precision: Float32
+>>> Mode: EIDOS BRAIN UNIFIED v0.4.7.02 + Hippocampus (HDC/VSA)
+>>> ENGINE HASH: d1d8db7b5f8e70c0ae6abc96575295620a27ea2943fa50209317d264da50ef50
+>>> HIVE BACKEND: LOCAL
+>>> GPU CHECK:
+    device      = cpu (CPU)
+    dtype       = torch.float32
+    TF32        = True
+    deterministic= False
+>>> Hardware: cpu | Precision: Float32
+>>> Mode: EIDOS BRAIN UNIFIED v0.4.7.02 + Hippocampus (HDC/VSA)
+>>> ENGINE HASH: d1d8db7b5f8e70c0ae6abc96575295620a27ea2943fa50209317d264da50ef50
+>>> HIVE BACKEND: LOCAL
+>>> GPU CHECK:
+    device      = cpu (CPU)
+    dtype       = torch.float32
+    TF32        = True
+    deterministic= False
+>>> Hardware: cpu | Precision: Float32
+>>> Mode: EIDOS BRAIN UNIFIED v0.4.7.02 + Hippocampus (HDC/VSA)
+>>> ENGINE HASH: d1d8db7b5f8e70c0ae6abc96575295620a27ea2943fa50209317d264da50ef50
+>>> HIVE BACKEND: LOCAL
+>>> GPU CHECK:
+    device      = cpu (CPU)
+    dtype       = torch.float32
+    TF32        = True
+    deterministic= False
+>>> Hardware: cpu | Precision: Float32
+>>> Mode: EIDOS BRAIN UNIFIED v0.4.7.02 + Hippocampus (HDC/VSA)
+>>> ENGINE HASH: d1d8db7b5f8e70c0ae6abc96575295620a27ea2943fa50209317d264da50ef50
+>>> HIVE BACKEND: LOCAL
+final seed=223 scenario=isolated_spike complete
+>>> GPU CHECK:
+    device      = cpu (CPU)
+    dtype       = torch.float32
+    TF32        = True
+    deterministic= False
+>>> Hardware: cpu | Precision: Float32
+>>> Mode: EIDOS BRAIN UNIFIED v0.4.7.02 + Hippocampus (HDC/VSA)
+>>> ENGINE HASH: d1d8db7b5f8e70c0ae6abc96575295620a27ea2943fa50209317d264da50ef50
+>>> HIVE BACKEND: LOCAL
+>>> GPU CHECK:
+    device      = cpu (CPU)
+    dtype       = torch.float32
+    TF32        = True
+    deterministic= False
+>>> Hardware: cpu | Precision: Float32
+>>> Mode: EIDOS BRAIN UNIFIED v0.4.7.02 + Hippocampus (HDC/VSA)
+>>> ENGINE HASH: d1d8db7b5f8e70c0ae6abc96575295620a27ea2943fa50209317d264da50ef50
+>>> HIVE BACKEND: LOCAL
+>>> GPU CHECK:
+    device      = cpu (CPU)
+    dtype       = torch.float32
+    TF32        = True
+    deterministic= False
+>>> Hardware: cpu | Precision: Float32
+>>> Mode: EIDOS BRAIN UNIFIED v0.4.7.02 + Hippocampus (HDC/VSA)
+>>> ENGINE HASH: d1d8db7b5f8e70c0ae6abc96575295620a27ea2943fa50209317d264da50ef50
+>>> HIVE BACKEND: LOCAL
+>>> GPU CHECK:
+    device      = cpu (CPU)
+    dtype       = torch.float32
+    TF32        = True
+    deterministic= False
+>>> Hardware: cpu | Precision: Float32
+>>> Mode: EIDOS BRAIN UNIFIED v0.4.7.02 + Hippocampus (HDC/VSA)
+>>> ENGINE HASH: d1d8db7b5f8e70c0ae6abc96575295620a27ea2943fa50209317d264da50ef50
+>>> HIVE BACKEND: LOCAL
+>>> GPU CHECK:
+    device      = cpu (CPU)
+    dtype       = torch.float32
+    TF32        = True
+    deterministic= False
+>>> Hardware: cpu | Precision: Float32
+>>> Mode: EIDOS BRAIN UNIFIED v0.4.7.02 + Hippocampus (HDC/VSA)
+>>> ENGINE HASH: d1d8db7b5f8e70c0ae6abc96575295620a27ea2943fa50209317d264da50ef50
+>>> HIVE BACKEND: LOCAL
+final seed=223 scenario=slow_drift complete
+>>> GPU CHECK:
+    device      = cpu (CPU)
+    dtype       = torch.float32
+    TF32        = True
+    deterministic= False
+>>> Hardware: cpu | Precision: Float32
+>>> Mode: EIDOS BRAIN UNIFIED v0.4.7.02 + Hippocampus (HDC/VSA)
+>>> ENGINE HASH: d1d8db7b5f8e70c0ae6abc96575295620a27ea2943fa50209317d264da50ef50
+>>> HIVE BACKEND: LOCAL
+>>> GPU CHECK:
+    device      = cpu (CPU)
+    dtype       = torch.float32
+    TF32        = True
+    deterministic= False
+>>> Hardware: cpu | Precision: Float32
+>>> Mode: EIDOS BRAIN UNIFIED v0.4.7.02 + Hippocampus (HDC/VSA)
+>>> ENGINE HASH: d1d8db7b5f8e70c0ae6abc96575295620a27ea2943fa50209317d264da50ef50
+>>> HIVE BACKEND: LOCAL
+>>> GPU CHECK:
+    device      = cpu (CPU)
+    dtype       = torch.float32
+    TF32        = True
+    deterministic= False
+>>> Hardware: cpu | Precision: Float32
+>>> Mode: EIDOS BRAIN UNIFIED v0.4.7.02 + Hippocampus (HDC/VSA)
+>>> ENGINE HASH: d1d8db7b5f8e70c0ae6abc96575295620a27ea2943fa50209317d264da50ef50
+>>> HIVE BACKEND: LOCAL
+>>> GPU CHECK:
+    device      = cpu (CPU)
+    dtype       = torch.float32
+    TF32        = True
+    deterministic= False
+>>> Hardware: cpu | Precision: Float32
+>>> Mode: EIDOS BRAIN UNIFIED v0.4.7.02 + Hippocampus (HDC/VSA)
+>>> ENGINE HASH: d1d8db7b5f8e70c0ae6abc96575295620a27ea2943fa50209317d264da50ef50
+>>> HIVE BACKEND: LOCAL
+>>> GPU CHECK:
+    device      = cpu (CPU)
+    dtype       = torch.float32
+    TF32        = True
+    deterministic= False
+>>> Hardware: cpu | Precision: Float32
+>>> Mode: EIDOS BRAIN UNIFIED v0.4.7.02 + Hippocampus (HDC/VSA)
+>>> ENGINE HASH: d1d8db7b5f8e70c0ae6abc96575295620a27ea2943fa50209317d264da50ef50
+>>> HIVE BACKEND: LOCAL
+final seed=223 scenario=regime_shift complete
+>>> GPU CHECK:
+    device      = cpu (CPU)
+    dtype       = torch.float32
+    TF32        = True
+    deterministic= False
+>>> Hardware: cpu | Precision: Float32
+>>> Mode: EIDOS BRAIN UNIFIED v0.4.7.02 + Hippocampus (HDC/VSA)
+>>> ENGINE HASH: d1d8db7b5f8e70c0ae6abc96575295620a27ea2943fa50209317d264da50ef50
+>>> HIVE BACKEND: LOCAL
+>>> GPU CHECK:
+    device      = cpu (CPU)
+    dtype       = torch.float32
+    TF32        = True
+    deterministic= False
+>>> Hardware: cpu | Precision: Float32
+>>> Mode: EIDOS BRAIN UNIFIED v0.4.7.02 + Hippocampus (HDC/VSA)
+>>> ENGINE HASH: d1d8db7b5f8e70c0ae6abc96575295620a27ea2943fa50209317d264da50ef50
+>>> HIVE BACKEND: LOCAL
+>>> GPU CHECK:
+    device      = cpu (CPU)
+    dtype       = torch.float32
+    TF32        = True
+    deterministic= False
+>>> Hardware: cpu | Precision: Float32
+>>> Mode: EIDOS BRAIN UNIFIED v0.4.7.02 + Hippocampus (HDC/VSA)
+>>> ENGINE HASH: d1d8db7b5f8e70c0ae6abc96575295620a27ea2943fa50209317d264da50ef50
+>>> HIVE BACKEND: LOCAL
+>>> GPU CHECK:
+    device      = cpu (CPU)
+    dtype       = torch.float32
+    TF32        = True
+    deterministic= False
+>>> Hardware: cpu | Precision: Float32
+>>> Mode: EIDOS BRAIN UNIFIED v0.4.7.02 + Hippocampus (HDC/VSA)
+>>> ENGINE HASH: d1d8db7b5f8e70c0ae6abc96575295620a27ea2943fa50209317d264da50ef50
+>>> HIVE BACKEND: LOCAL
+>>> GPU CHECK:
+    device      = cpu (CPU)
+    dtype       = torch.float32
+    TF32        = True
+    deterministic= False
+>>> Hardware: cpu | Precision: Float32
+>>> Mode: EIDOS BRAIN UNIFIED v0.4.7.02 + Hippocampus (HDC/VSA)
+>>> ENGINE HASH: d1d8db7b5f8e70c0ae6abc96575295620a27ea2943fa50209317d264da50ef50
+>>> HIVE BACKEND: LOCAL
+final seed=223 scenario=noisy_interval complete
+>>> GPU CHECK:
+    device      = cpu (CPU)
+    dtype       = torch.float32
+    TF32        = True
+    deterministic= False
+>>> Hardware: cpu | Precision: Float32
+>>> Mode: EIDOS BRAIN UNIFIED v0.4.7.02 + Hippocampus (HDC/VSA)
+>>> ENGINE HASH: d1d8db7b5f8e70c0ae6abc96575295620a27ea2943fa50209317d264da50ef50
+>>> HIVE BACKEND: LOCAL
+>>> GPU CHECK:
+    device      = cpu (CPU)
+    dtype       = torch.float32
+    TF32        = True
+    deterministic= False
+>>> Hardware: cpu | Precision: Float32
+>>> Mode: EIDOS BRAIN UNIFIED v0.4.7.02 + Hippocampus (HDC/VSA)
+>>> ENGINE HASH: d1d8db7b5f8e70c0ae6abc96575295620a27ea2943fa50209317d264da50ef50
+>>> HIVE BACKEND: LOCAL
+>>> GPU CHECK:
+    device      = cpu (CPU)
+    dtype       = torch.float32
+    TF32        = True
+    deterministic= False
+>>> Hardware: cpu | Precision: Float32
+>>> Mode: EIDOS BRAIN UNIFIED v0.4.7.02 + Hippocampus (HDC/VSA)
+>>> ENGINE HASH: d1d8db7b5f8e70c0ae6abc96575295620a27ea2943fa50209317d264da50ef50
+>>> HIVE BACKEND: LOCAL
+>>> GPU CHECK:
+    device      = cpu (CPU)
+    dtype       = torch.float32
+    TF32        = True
+    deterministic= False
+>>> Hardware: cpu | Precision: Float32
+>>> Mode: EIDOS BRAIN UNIFIED v0.4.7.02 + Hippocampus (HDC/VSA)
+>>> ENGINE HASH: d1d8db7b5f8e70c0ae6abc96575295620a27ea2943fa50209317d264da50ef50
+>>> HIVE BACKEND: LOCAL
+>>> GPU CHECK:
+    device      = cpu (CPU)
+    dtype       = torch.float32
+    TF32        = True
+    deterministic= False
+>>> Hardware: cpu | Precision: Float32
+>>> Mode: EIDOS BRAIN UNIFIED v0.4.7.02 + Hippocampus (HDC/VSA)
+>>> ENGINE HASH: d1d8db7b5f8e70c0ae6abc96575295620a27ea2943fa50209317d264da50ef50
+>>> HIVE BACKEND: LOCAL
+final seed=223 scenario=contaminated_calibration complete
+>>> GPU CHECK:
+    device      = cpu (CPU)
+    dtype       = torch.float32
+    TF32        = True
+    deterministic= False
+>>> Hardware: cpu | Precision: Float32
+>>> Mode: EIDOS BRAIN UNIFIED v0.4.7.02 + Hippocampus (HDC/VSA)
+>>> ENGINE HASH: d1d8db7b5f8e70c0ae6abc96575295620a27ea2943fa50209317d264da50ef50
+>>> HIVE BACKEND: LOCAL
+>>> GPU CHECK:
+    device      = cpu (CPU)
+    dtype       = torch.float32
+    TF32        = True
+    deterministic= False
+>>> Hardware: cpu | Precision: Float32
+>>> Mode: EIDOS BRAIN UNIFIED v0.4.7.02 + Hippocampus (HDC/VSA)
+>>> ENGINE HASH: d1d8db7b5f8e70c0ae6abc96575295620a27ea2943fa50209317d264da50ef50
+>>> HIVE BACKEND: LOCAL
+>>> GPU CHECK:
+    device      = cpu (CPU)
+    dtype       = torch.float32
+    TF32        = True
+    deterministic= False
+>>> Hardware: cpu | Precision: Float32
+>>> Mode: EIDOS BRAIN UNIFIED v0.4.7.02 + Hippocampus (HDC/VSA)
+>>> ENGINE HASH: d1d8db7b5f8e70c0ae6abc96575295620a27ea2943fa50209317d264da50ef50
+>>> HIVE BACKEND: LOCAL
+>>> GPU CHECK:
+    device      = cpu (CPU)
+    dtype       = torch.float32
+    TF32        = True
+    deterministic= False
+>>> Hardware: cpu | Precision: Float32
+>>> Mode: EIDOS BRAIN UNIFIED v0.4.7.02 + Hippocampus (HDC/VSA)
+>>> ENGINE HASH: d1d8db7b5f8e70c0ae6abc96575295620a27ea2943fa50209317d264da50ef50
+>>> HIVE BACKEND: LOCAL
+>>> GPU CHECK:
+    device      = cpu (CPU)
+    dtype       = torch.float32
+    TF32        = True
+    deterministic= False
+>>> Hardware: cpu | Precision: Float32
+>>> Mode: EIDOS BRAIN UNIFIED v0.4.7.02 + Hippocampus (HDC/VSA)
+>>> ENGINE HASH: d1d8db7b5f8e70c0ae6abc96575295620a27ea2943fa50209317d264da50ef50
+>>> HIVE BACKEND: LOCAL
+final seed=227 scenario=benign_repetition complete
+>>> GPU CHECK:
+    device      = cpu (CPU)
+    dtype       = torch.float32
+    TF32        = True
+    deterministic= False
+>>> Hardware: cpu | Precision: Float32
+>>> Mode: EIDOS BRAIN UNIFIED v0.4.7.02 + Hippocampus (HDC/VSA)
+>>> ENGINE HASH: d1d8db7b5f8e70c0ae6abc96575295620a27ea2943fa50209317d264da50ef50
+>>> HIVE BACKEND: LOCAL
+>>> GPU CHECK:
+    device      = cpu (CPU)
+    dtype       = torch.float32
+    TF32        = True
+    deterministic= False
+>>> Hardware: cpu | Precision: Float32
+>>> Mode: EIDOS BRAIN UNIFIED v0.4.7.02 + Hippocampus (HDC/VSA)
+>>> ENGINE HASH: d1d8db7b5f8e70c0ae6abc96575295620a27ea2943fa50209317d264da50ef50
+>>> HIVE BACKEND: LOCAL
+>>> GPU CHECK:
+    device      = cpu (CPU)
+    dtype       = torch.float32
+    TF32        = True
+    deterministic= False
+>>> Hardware: cpu | Precision: Float32
+>>> Mode: EIDOS BRAIN UNIFIED v0.4.7.02 + Hippocampus (HDC/VSA)
+>>> ENGINE HASH: d1d8db7b5f8e70c0ae6abc96575295620a27ea2943fa50209317d264da50ef50
+>>> HIVE BACKEND: LOCAL
+>>> GPU CHECK:
+    device      = cpu (CPU)
+    dtype       = torch.float32
+    TF32        = True
+    deterministic= False
+>>> Hardware: cpu | Precision: Float32
+>>> Mode: EIDOS BRAIN UNIFIED v0.4.7.02 + Hippocampus (HDC/VSA)
+>>> ENGINE HASH: d1d8db7b5f8e70c0ae6abc96575295620a27ea2943fa50209317d264da50ef50
+>>> HIVE BACKEND: LOCAL
+>>> GPU CHECK:
+    device      = cpu (CPU)
+    dtype       = torch.float32
+    TF32        = True
+    deterministic= False
+>>> Hardware: cpu | Precision: Float32
+>>> Mode: EIDOS BRAIN UNIFIED v0.4.7.02 + Hippocampus (HDC/VSA)
+>>> ENGINE HASH: d1d8db7b5f8e70c0ae6abc96575295620a27ea2943fa50209317d264da50ef50
+>>> HIVE BACKEND: LOCAL
+final seed=227 scenario=harmful_repetition complete
+>>> GPU CHECK:
+    device      = cpu (CPU)
+    dtype       = torch.float32
+    TF32        = True
+    deterministic= False
+>>> Hardware: cpu | Precision: Float32
+>>> Mode: EIDOS BRAIN UNIFIED v0.4.7.02 + Hippocampus (HDC/VSA)
+>>> ENGINE HASH: d1d8db7b5f8e70c0ae6abc96575295620a27ea2943fa50209317d264da50ef50
+>>> HIVE BACKEND: LOCAL
+>>> GPU CHECK:
+    device      = cpu (CPU)
+    dtype       = torch.float32
+    TF32        = True
+    deterministic= False
+>>> Hardware: cpu | Precision: Float32
+>>> Mode: EIDOS BRAIN UNIFIED v0.4.7.02 + Hippocampus (HDC/VSA)
+>>> ENGINE HASH: d1d8db7b5f8e70c0ae6abc96575295620a27ea2943fa50209317d264da50ef50
+>>> HIVE BACKEND: LOCAL
+>>> GPU CHECK:
+    device      = cpu (CPU)
+    dtype       = torch.float32
+    TF32        = True
+    deterministic= False
+>>> Hardware: cpu | Precision: Float32
+>>> Mode: EIDOS BRAIN UNIFIED v0.4.7.02 + Hippocampus (HDC/VSA)
+>>> ENGINE HASH: d1d8db7b5f8e70c0ae6abc96575295620a27ea2943fa50209317d264da50ef50
+>>> HIVE BACKEND: LOCAL
+>>> GPU CHECK:
+    device      = cpu (CPU)
+    dtype       = torch.float32
+    TF32        = True
+    deterministic= False
+>>> Hardware: cpu | Precision: Float32
+>>> Mode: EIDOS BRAIN UNIFIED v0.4.7.02 + Hippocampus (HDC/VSA)
+>>> ENGINE HASH: d1d8db7b5f8e70c0ae6abc96575295620a27ea2943fa50209317d264da50ef50
+>>> HIVE BACKEND: LOCAL
+>>> GPU CHECK:
+    device      = cpu (CPU)
+    dtype       = torch.float32
+    TF32        = True
+    deterministic= False
+>>> Hardware: cpu | Precision: Float32
+>>> Mode: EIDOS BRAIN UNIFIED v0.4.7.02 + Hippocampus (HDC/VSA)
+>>> ENGINE HASH: d1d8db7b5f8e70c0ae6abc96575295620a27ea2943fa50209317d264da50ef50
+>>> HIVE BACKEND: LOCAL
+final seed=227 scenario=isolated_spike complete
+>>> GPU CHECK:
+    device      = cpu (CPU)
+    dtype       = torch.float32
+    TF32        = True
+    deterministic= False
+>>> Hardware: cpu | Precision: Float32
+>>> Mode: EIDOS BRAIN UNIFIED v0.4.7.02 + Hippocampus (HDC/VSA)
+>>> ENGINE HASH: d1d8db7b5f8e70c0ae6abc96575295620a27ea2943fa50209317d264da50ef50
+>>> HIVE BACKEND: LOCAL
+>>> GPU CHECK:
+    device      = cpu (CPU)
+    dtype       = torch.float32
+    TF32        = True
+    deterministic= False
+>>> Hardware: cpu | Precision: Float32
+>>> Mode: EIDOS BRAIN UNIFIED v0.4.7.02 + Hippocampus (HDC/VSA)
+>>> ENGINE HASH: d1d8db7b5f8e70c0ae6abc96575295620a27ea2943fa50209317d264da50ef50
+>>> HIVE BACKEND: LOCAL
+>>> GPU CHECK:
+    device      = cpu (CPU)
+    dtype       = torch.float32
+    TF32        = True
+    deterministic= False
+>>> Hardware: cpu | Precision: Float32
+>>> Mode: EIDOS BRAIN UNIFIED v0.4.7.02 + Hippocampus (HDC/VSA)
+>>> ENGINE HASH: d1d8db7b5f8e70c0ae6abc96575295620a27ea2943fa50209317d264da50ef50
+>>> HIVE BACKEND: LOCAL
+>>> GPU CHECK:
+    device      = cpu (CPU)
+    dtype       = torch.float32
+    TF32        = True
+    deterministic= False
+>>> Hardware: cpu | Precision: Float32
+>>> Mode: EIDOS BRAIN UNIFIED v0.4.7.02 + Hippocampus (HDC/VSA)
+>>> ENGINE HASH: d1d8db7b5f8e70c0ae6abc96575295620a27ea2943fa50209317d264da50ef50
+>>> HIVE BACKEND: LOCAL
+>>> GPU CHECK:
+    device      = cpu (CPU)
+    dtype       = torch.float32
+    TF32        = True
+    deterministic= False
+>>> Hardware: cpu | Precision: Float32
+>>> Mode: EIDOS BRAIN UNIFIED v0.4.7.02 + Hippocampus (HDC/VSA)
+>>> ENGINE HASH: d1d8db7b5f8e70c0ae6abc96575295620a27ea2943fa50209317d264da50ef50
+>>> HIVE BACKEND: LOCAL
+final seed=227 scenario=slow_drift complete
+>>> GPU CHECK:
+    device      = cpu (CPU)
+    dtype       = torch.float32
+    TF32        = True
+    deterministic= False
+>>> Hardware: cpu | Precision: Float32
+>>> Mode: EIDOS BRAIN UNIFIED v0.4.7.02 + Hippocampus (HDC/VSA)
+>>> ENGINE HASH: d1d8db7b5f8e70c0ae6abc96575295620a27ea2943fa50209317d264da50ef50
+>>> HIVE BACKEND: LOCAL
+>>> GPU CHECK:
+    device      = cpu (CPU)
+    dtype       = torch.float32
+    TF32        = True
+    deterministic= False
+>>> Hardware: cpu | Precision: Float32
+>>> Mode: EIDOS BRAIN UNIFIED v0.4.7.02 + Hippocampus (HDC/VSA)
+>>> ENGINE HASH: d1d8db7b5f8e70c0ae6abc96575295620a27ea2943fa50209317d264da50ef50
+>>> HIVE BACKEND: LOCAL
+>>> GPU CHECK:
+    device      = cpu (CPU)
+    dtype       = torch.float32
+    TF32        = True
+    deterministic= False
+>>> Hardware: cpu | Precision: Float32
+>>> Mode: EIDOS BRAIN UNIFIED v0.4.7.02 + Hippocampus (HDC/VSA)
+>>> ENGINE HASH: d1d8db7b5f8e70c0ae6abc96575295620a27ea2943fa50209317d264da50ef50
+>>> HIVE BACKEND: LOCAL
+>>> GPU CHECK:
+    device      = cpu (CPU)
+    dtype       = torch.float32
+    TF32        = True
+    deterministic= False
+>>> Hardware: cpu | Precision: Float32
+>>> Mode: EIDOS BRAIN UNIFIED v0.4.7.02 + Hippocampus (HDC/VSA)
+>>> ENGINE HASH: d1d8db7b5f8e70c0ae6abc96575295620a27ea2943fa50209317d264da50ef50
+>>> HIVE BACKEND: LOCAL
+>>> GPU CHECK:
+    device      = cpu (CPU)
+    dtype       = torch.float32
+    TF32        = True
+    deterministic= False
+>>> Hardware: cpu | Precision: Float32
+>>> Mode: EIDOS BRAIN UNIFIED v0.4.7.02 + Hippocampus (HDC/VSA)
+>>> ENGINE HASH: d1d8db7b5f8e70c0ae6abc96575295620a27ea2943fa50209317d264da50ef50
+>>> HIVE BACKEND: LOCAL
+final seed=227 scenario=regime_shift complete
+>>> GPU CHECK:
+    device      = cpu (CPU)
+    dtype       = torch.float32
+    TF32        = True
+    deterministic= False
+>>> Hardware: cpu | Precision: Float32
+>>> Mode: EIDOS BRAIN UNIFIED v0.4.7.02 + Hippocampus (HDC/VSA)
+>>> ENGINE HASH: d1d8db7b5f8e70c0ae6abc96575295620a27ea2943fa50209317d264da50ef50
+>>> HIVE BACKEND: LOCAL
+>>> GPU CHECK:
+    device      = cpu (CPU)
+    dtype       = torch.float32
+    TF32        = True
+    deterministic= False
+>>> Hardware: cpu | Precision: Float32
+>>> Mode: EIDOS BRAIN UNIFIED v0.4.7.02 + Hippocampus (HDC/VSA)
+>>> ENGINE HASH: d1d8db7b5f8e70c0ae6abc96575295620a27ea2943fa50209317d264da50ef50
+>>> HIVE BACKEND: LOCAL
+>>> GPU CHECK:
+    device      = cpu (CPU)
+    dtype       = torch.float32
+    TF32        = True
+    deterministic= False
+>>> Hardware: cpu | Precision: Float32
+>>> Mode: EIDOS BRAIN UNIFIED v0.4.7.02 + Hippocampus (HDC/VSA)
+>>> ENGINE HASH: d1d8db7b5f8e70c0ae6abc96575295620a27ea2943fa50209317d264da50ef50
+>>> HIVE BACKEND: LOCAL
+>>> GPU CHECK:
+    device      = cpu (CPU)
+    dtype       = torch.float32
+    TF32        = True
+    deterministic= False
+>>> Hardware: cpu | Precision: Float32
+>>> Mode: EIDOS BRAIN UNIFIED v0.4.7.02 + Hippocampus (HDC/VSA)
+>>> ENGINE HASH: d1d8db7b5f8e70c0ae6abc96575295620a27ea2943fa50209317d264da50ef50
+>>> HIVE BACKEND: LOCAL
+>>> GPU CHECK:
+    device      = cpu (CPU)
+    dtype       = torch.float32
+    TF32        = True
+    deterministic= False
+>>> Hardware: cpu | Precision: Float32
+>>> Mode: EIDOS BRAIN UNIFIED v0.4.7.02 + Hippocampus (HDC/VSA)
+>>> ENGINE HASH: d1d8db7b5f8e70c0ae6abc96575295620a27ea2943fa50209317d264da50ef50
+>>> HIVE BACKEND: LOCAL
+final seed=227 scenario=noisy_interval complete
+>>> GPU CHECK:
+    device      = cpu (CPU)
+    dtype       = torch.float32
+    TF32        = True
+    deterministic= False
+>>> Hardware: cpu | Precision: Float32
+>>> Mode: EIDOS BRAIN UNIFIED v0.4.7.02 + Hippocampus (HDC/VSA)
+>>> ENGINE HASH: d1d8db7b5f8e70c0ae6abc96575295620a27ea2943fa50209317d264da50ef50
+>>> HIVE BACKEND: LOCAL
+>>> GPU CHECK:
+    device      = cpu (CPU)
+    dtype       = torch.float32
+    TF32        = True
+    deterministic= False
+>>> Hardware: cpu | Precision: Float32
+>>> Mode: EIDOS BRAIN UNIFIED v0.4.7.02 + Hippocampus (HDC/VSA)
+>>> ENGINE HASH: d1d8db7b5f8e70c0ae6abc96575295620a27ea2943fa50209317d264da50ef50
+>>> HIVE BACKEND: LOCAL
+>>> GPU CHECK:
+    device      = cpu (CPU)
+    dtype       = torch.float32
+    TF32        = True
+    deterministic= False
+>>> Hardware: cpu | Precision: Float32
+>>> Mode: EIDOS BRAIN UNIFIED v0.4.7.02 + Hippocampus (HDC/VSA)
+>>> ENGINE HASH: d1d8db7b5f8e70c0ae6abc96575295620a27ea2943fa50209317d264da50ef50
+>>> HIVE BACKEND: LOCAL
+>>> GPU CHECK:
+    device      = cpu (CPU)
+    dtype       = torch.float32
+    TF32        = True
+    deterministic= False
+>>> Hardware: cpu | Precision: Float32
+>>> Mode: EIDOS BRAIN UNIFIED v0.4.7.02 + Hippocampus (HDC/VSA)
+>>> ENGINE HASH: d1d8db7b5f8e70c0ae6abc96575295620a27ea2943fa50209317d264da50ef50
+>>> HIVE BACKEND: LOCAL
+>>> GPU CHECK:
+    device      = cpu (CPU)
+    dtype       = torch.float32
+    TF32        = True
+    deterministic= False
+>>> Hardware: cpu | Precision: Float32
+>>> Mode: EIDOS BRAIN UNIFIED v0.4.7.02 + Hippocampus (HDC/VSA)
+>>> ENGINE HASH: d1d8db7b5f8e70c0ae6abc96575295620a27ea2943fa50209317d264da50ef50
+>>> HIVE BACKEND: LOCAL
+final seed=227 scenario=contaminated_calibration complete

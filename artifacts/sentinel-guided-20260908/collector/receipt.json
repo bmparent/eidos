@@ -1,0 +1,17 @@
+{
+  "startedAt": "2026-09-09T00:40:29.015Z",
+  "version": "0.160.0",
+  "input": "three explicitly synthetic OTLP gauge points",
+  "serviceInstalled": false,
+  "unrelatedCollection": false,
+  "sourceId": "source-f25973d2-8e75-4382-a9ba-02fd399b27e5",
+  "accepted": 3,
+  "eventValues": [
+    40,
+    41,
+    42
+  ],
+  "status": "passed",
+  "keyRevoked": true,
+  "finishedAt": "2026-09-09T00:41:02.861Z"
+}

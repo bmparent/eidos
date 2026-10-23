@@ -1,0 +1,76 @@
+incident-notes.txt browser -> parser -> analysis -> persisted result -> source passed
+incident-notes.html browser -> parser -> analysis -> persisted result -> source passed
+incident-notes.pdf browser -> parser -> analysis -> persisted result -> source passed
+plain.log browser -> parser -> analysis -> persisted result -> source passed
+{
+  "base": "http://127.0.0.1:3210",
+  "startedAt": "2026-09-09T00:12:24.196Z",
+  "checks": [
+    {
+      "name": "incident-notes.txt",
+      "status": "passed",
+      "runId": "gj-f3ff8052e20dc0b16d2c937f1a1f1ea9",
+      "datasetId": "ds-8126b09ae3d4031f46df73dc6b2b1245",
+      "method": "Sentence Transformer semantic embedding and cosine passage retrieval",
+      "inputSha256": "62442d4073e5ff8f43d5b70b744c8220474036969ce5226166146ec191dc6d1e",
+      "records": 3
+    },
+    {
+      "name": "incident-notes.html",
+      "status": "passed",
+      "runId": "gj-170c060aa0928bbf523d7e21a0507c17",
+      "datasetId": "ds-bab7dae8dcf78ccdf6e74aa86c429ee6",
+      "method": "Sentence Transformer semantic embedding and cosine passage retrieval",
+      "inputSha256": "85b5a0bfae17502b182fe7fb97cd09db52b9aad36ed422f177889f066c525c08",
+      "records": 3
+    },
+    {
+      "name": "incident-notes.pdf",
+      "status": "passed",
+      "runId": "gj-02211335a2d264be4b97272569958267",
+      "datasetId": "ds-e286dcc0677ae6ffcd072bd5fca0988f",
+      "method": "Sentence Transformer semantic embedding and cosine passage retrieval",
+      "inputSha256": "177415a7e72c0e0f6ce8f00758b010fcd43c0db10bfe8677eba1b55b840392b9",
+      "records": 1
+    },
+    {
+      "name": "plain.log",
+      "status": "passed",
+      "runId": "gj-7f6ec186a7da3c1c73410038e5454b52",
+      "datasetId": "ds-9eb2aca0ab2e180c07f3ede367c4cdbd",
+      "method": "Sentence Transformer semantic embedding and cosine passage retrieval",
+      "inputSha256": "28c47e60bdf19d1361555ac2aec0a23a34286eb2c2fa564ee38d3de02ea47080",
+      "records": 3
+    },
+    {
+      "name": "oversize browser rejection",
+      "status": "passed"
+    },
+    {
+      "name": "malformed parser failure visible in browser",
+      "status": "passed"
+    },
+    {
+      "name": "URL rejection 127.0.0.1",
+      "status": "passed",
+      "http": 400,
+      "message": "Private, local and special-use destinations are blocked."
+    },
+    {
+      "name": "URL rejection 169.254.169.254",
+      "status": "passed",
+      "http": 400,
+      "message": "Private, local and special-use destinations are blocked."
+    },
+    {
+      "name": "URL rejection httpbin.org",
+      "status": "passed",
+      "http": 400,
+      "message": "Private, local and special-use destinations are blocked."
+    }
+  ],
+  "errors": [],
+  "status": "failed",
+  "failure": "locator.waitFor: Timeout 300000ms exceeded.\nCall log:\n\u001b[2m  - waiting for getByRole('heading', { name: 'Confirm understanding', exact: true }) to be visible\u001b[22m\n",
+  "finishedAt": "2026-09-09T00:34:33.601Z"
+}

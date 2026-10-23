@@ -1,0 +1,54 @@
+{
+  "status": "passed",
+  "encoder": "sentence-transformers/all-MiniLM-L6-v2@c9745ed1d9f207416be6d2e6f8de32d1f16199bf:full-token-mean.v1",
+  "legacyEngineSha256": "d1d8db7b5f8e70c0ae6abc96575295620a27ea2943fa50209317d264da50ef50",
+  "sourceCommit": "da14cc77e988555fd7b607d0cb9b24ba5f5f8dc9",
+  "legacy64PrefixIdentical": true,
+  "semanticSuffixVectorDistance": 1.2528175972734894,
+  "paraphraseCosine": 0.7783400007723706,
+  "unrelatedCosine": 0.015375068712186628,
+  "allTokenWindows": true,
+  "cacheExact": true,
+  "legacySelectionExecutedASTLines": [
+    4300,
+    4301,
+    4304,
+    4305,
+    4306,
+    4308
+  ],
+  "observations": [
+    0.0,
+    10.0
+  ],
+  "legacySelectedPredictions": [
+    0.0,
+    10.0
+  ],
+  "scoreOrderControlledMathExample": {
+    "prior": 9.0,
+    "afterCurrentUpdate": 6.671058730453518,
+    "beta": 0.99,
+    "scope": "controlled arithmetic illustration, not an empirical benefit or exact full legacy MAD-history trace"
+  },
+  "actualLegacyBaselineBlock": {
+    "firstLine": 4331,
+    "lastLine": 4365,
+    "causalPriorScore": 30.352084176446795,
+    "legacyAfterCurrentScore": 30.048563334682328,
+    "historyBefore": 30,
+    "historyAfter": 31,
+    "legacyEmaAfter": 1.09,
+    "meaning": "actual old score block versus actual new prior baseline, controlled input; interpretability audit, not utility evidence"
+  },
+  "legacyBridge": {
+    "domain": "cicids_webattacks",
+    "features": 64,
+    "sha256": "5a63d21d5e16a16ec3f589949adc26266dacf2323bd72ad9d22e69b4e289d982",
+    "preserved": true,
+    "newGuidedProfile": "confirmed_named_measurements with direct selected feature count"
+  },
+  "legacyUnmodified": true,
+  "llmCalls": 0,
+  "researchGatesAdvanced": 0
+}

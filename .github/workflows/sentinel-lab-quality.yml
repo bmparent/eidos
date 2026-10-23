@@ -23,6 +23,7 @@ jobs:
       - run: npm ci --no-audit --no-fund
       - run: npm run lint
       - run: npm test
+      - run: for script in scripts/guided-*-qa.mjs; do node --check "$script"; done
       - run: npm run build
   runner:
     runs-on: ubuntu-latest

@@ -29,3 +29,8 @@ All logs, screenshots and sanitized receipts are local under artifacts/members-r
 **Evidence:** the deployment, migration, browser, provider, Gmail, maintenance and configuration receipts named above.
 
 **Remaining uncertainty:** live authenticated customer confirmation is pending; the original storefront is password-protected; long-term deliverability, subscriber volume, revenue and research performance were not measured. No new research metric or percentage is claimed.
+
+
+## Sentinel guided implementation
+
+Separate task entry: [Sentinel guided plain language test analysis.md](sentinel_guided_plain_language_test_analysis.md). The existing Works release entry above is preserved. All four product paths are implemented; full hosted compute remains blocked by Vercel HTTP 402. Local integration and partial hosted receipts, frozen qualification failures, source hashes and Drive status are documented in that entry.

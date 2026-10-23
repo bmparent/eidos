@@ -1,0 +1,24 @@
+{
+  "base": "http://127.0.0.1:3210",
+  "startedAt": "2026-09-09T01:27:03.358Z",
+  "checks": [
+    {
+      "name": "historical review saved with provenance",
+      "status": "passed"
+    },
+    {
+      "name": "related history includes its actual reviewed outcome",
+      "status": "passed"
+    },
+    {
+      "name": "review does not mutate model findings or frozen metrics",
+      "status": "passed"
+    },
+    {
+      "name": "second user cannot query private reviewed history",
+      "status": "passed"
+    }
+  ],
+  "status": "passed",
+  "finishedAt": "2026-09-09T01:27:09.843Z"
+}

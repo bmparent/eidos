@@ -1,0 +1,10 @@
+{
+  "status": "failed",
+  "checks": [
+    {
+      "name": "approved pilot login",
+      "status": "passed"
+    }
+  ],
+  "failure": "locator.waitFor: Timeout 240000ms exceeded.\nCall log:\n\u001b[2m  - waiting for getByRole('heading', { name: 'Confirm understanding', exact: true }) to be visible\u001b[22m\n"
+}

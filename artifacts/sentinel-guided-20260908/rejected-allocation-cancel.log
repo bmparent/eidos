@@ -1,0 +1,55 @@
+[
+  {
+    "id": "gj-285c56da4f0db951dc381ab2b08be699",
+    "status": "preparing",
+    "error": "Worker allocation or bootstrap was interrupted (create; HTTP 402; payment_required). Resume this job to reconcile its stable identity."
+  },
+  {
+    "id": "gj-2b56c5f1f44f1cab18edce9b157b3590",
+    "status": "cancelled",
+    "error": "Cancelled by the workspace owner."
+  },
+  {
+    "id": "gj-7eb249b739a5a05bca1a2037dadcb294",
+    "status": "completed",
+    "error": ""
+  },
+  {
+    "id": "gj-38d73f238075353b9fd6711f27577b59",
+    "status": "failed",
+    "error": "JSONDecodeError: Expecting property name enclosed in double quotes: line 1 column 2 (char 1)"
+  },
+  {
+    "id": "gj-698290e63441369991eb85c3e7cae77c",
+    "status": "completed",
+    "error": ""
+  },
+  {
+    "id": "gj-7f6a3f70c2eb7edde32d0728dfeaf66d",
+    "status": "completed",
+    "error": ""
+  },
+  {
+    "id": "gj-c6a12ca5679347daec595a72738664bf",
+    "status": "completed",
+    "error": ""
+  },
+  {
+    "id": "gj-a25c94ed9cf7a77e3cf2801071a6a796",
+    "status": "completed",
+    "error": ""
+  }
+]
+reconcile 200 {
+  id: 'gj-285c56da4f0db951dc381ab2b08be699',
+  status: 'cancelled',
+  createdAt: 1788916422553,
+  updatedAt: 1788916986122,
+  operation: 'parse',
+  error: 'Cancelled by the workspace owner.',
+  result: null,
+  bounds: {
+    maximumSeconds: 900,
+    progressKind: 'stage; not a completion estimate'
+  }
+}

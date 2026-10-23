@@ -1,0 +1,161 @@
+{
+  "createdAt": "2026-09-09T01:35:39.843828+00:00",
+  "productMilestones": [
+    1,
+    2,
+    3,
+    4
+  ],
+  "engineeringEvidence": [
+    [
+      "Guided CSV workflow, chronology, Torch, source, mobile, reload, two-user isolation",
+      "1,2",
+      "preview-final/browser-receipt.json",
+      "apps/sentinel-lab/components/guided-lab.tsx"
+    ],
+    [
+      "XLSX upload and original records",
+      "1",
+      "formats/receipt.json",
+      "services/sentinel-runner/sentinel_runner/guided/ingestion.py"
+    ],
+    [
+      "Parquet, JSON, JSONL, structured log upload",
+      "1",
+      "formats-verified/receipt.json",
+      "services/sentinel-runner/sentinel_runner/guided/ingestion.py"
+    ],
+    [
+      "Text, HTML, text PDF, plain log semantic retrieval",
+      "4",
+      "documents-verified/receipt.json",
+      "services/sentinel-runner/sentinel_runner/guided/semantic.py"
+    ],
+    [
+      "Real downloadable URL, web page, patterns, unsafe redirect rejection",
+      "1,4",
+      "urls-cold-server/receipt.json",
+      "apps/sentinel-lab/lib/guided/fetch-source.ts; patterns.ts"
+    ],
+    [
+      "Hosted semantic retrieval and public imports",
+      "4",
+      "preview-formats/receipt.json",
+      "services/sentinel-runner/sentinel_runner/guided/semantic.py"
+    ],
+    [
+      "Causal invariance, labels, irregular/entity boundaries, ingestion failures",
+      "1,2",
+      "runner-final.xml",
+      "services/sentinel-runner/tests/test_guided.py"
+    ],
+    [
+      "Frozen final baselines and memory/multiscale/regulation/TraceSeal ablations",
+      "2",
+      "evaluation/qualification.json",
+      "services/sentinel-runner/scripts/guided_evaluate.py"
+    ],
+    [
+      "State-equivalent real stream replay, late/gap/backpressure/reset/revocation",
+      "3",
+      "stream/receipt.json",
+      "apps/sentinel-lab/lib/guided/telemetry.ts"
+    ],
+    [
+      "Hosted ingress, scoped keys and browser health; processing blocked by billing",
+      "3",
+      "preview-budget/receipt.json",
+      "services/sentinel-runner/sentinel_runner/guided/telemetry.py"
+    ],
+    [
+      "Historical reviewed outcomes with owner scope and immutable metrics",
+      "1,4",
+      "reviewed-history/receipt.json",
+      "apps/sentinel-lab/lib/guided/api.ts"
+    ],
+    [
+      "Official Collector forwarding and configuration validation",
+      "3",
+      "collector/receipt.json",
+      "connectors/sentinel/"
+    ],
+    [
+      "Cancellation, same-intent retry and subsequent real job",
+      "1,3",
+      "cancellation/receipt.json",
+      "apps/sentinel-lab/lib/guided/jobs.ts"
+    ],
+    [
+      "Actual legacy selection and semantic suffix/cache audit",
+      "2,4",
+      "semantic-final/receipt.json",
+      "services/sentinel-runner/scripts/guided_semantic_audit.py"
+    ],
+    [
+      "Legacy full engine engineering and mechanisms regression",
+      "2",
+      "legacy-standard.log; legacy-mechanisms.log",
+      "services/sentinel-runner/scripts/verify_full_engine.py"
+    ],
+    [
+      "Account contracts, concurrent stores, private resources, pinned public IPv4",
+      "1,3",
+      "app-final-test.log",
+      "apps/sentinel-lab/tests/guided.test.ts"
+    ]
+  ],
+  "operationalQualification": {
+    "freezeSha256": "4acb1c2510bc88d8136c4b5cff8617b4568b896605fb5caad2d1d15f635c7f88",
+    "finalSummarySha256": "ebc660dbf806594a5ba4aefe105660ebea7d6faeb133f3b6fe11cb3197cf0fc0",
+    "decisions": [
+      {
+        "method": "eidos_adapt_all",
+        "gates": {
+          "MAE": 1,
+          "recall": 1,
+          "precision": 0,
+          "falseAlerts": 0,
+          "coverage": 1
+        },
+        "qualified": 0
+      },
+      {
+        "method": "eidos_multiscale",
+        "gates": {
+          "MAE": 1,
+          "recall": 1,
+          "precision": 0,
+          "falseAlerts": 0,
+          "coverage": 1
+        },
+        "qualified": 0
+      },
+      {
+        "method": "eidos_none",
+        "gates": {
+          "MAE": 1,
+          "recall": 1,
+          "precision": 0,
+          "falseAlerts": 0,
+          "coverage": 1
+        },
+        "qualified": 0
+      },
+      {
+        "method": "eidos_regulation",
+        "gates": {
+          "MAE": 1,
+          "recall": 1,
+          "precision": 0,
+          "falseAlerts": 0,
+          "coverage": 0
+        },
+        "qualified": 0
+      }
+    ],
+    "researchGatesAdvanced": 0
+  },
+  "researchReadinessScore": null,
+  "researchScoreReason": "No accepted research-gate audit in this product task",
+  "researchGatesAdvanced": 0
+}

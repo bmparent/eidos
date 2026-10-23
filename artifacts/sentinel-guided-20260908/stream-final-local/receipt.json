@@ -1,0 +1,71 @@
+{
+  "base": "http://127.0.0.1:3210",
+  "startedAt": "2026-09-09T01:27:13.056Z",
+  "checks": [
+    {
+      "name": "first batch has contiguous acknowledged offsets",
+      "status": "passed"
+    },
+    {
+      "name": "replay acknowledges duplicates without counting twice",
+      "status": "passed"
+    },
+    {
+      "name": "changed duplicate is rejected transactionally",
+      "status": "passed"
+    },
+    {
+      "name": "ingest credential cannot read monitor configuration",
+      "status": "passed"
+    },
+    {
+      "name": "other owner cannot read source",
+      "status": "passed"
+    },
+    {
+      "name": "worker and durable result survive client interruption",
+      "status": "passed"
+    },
+    {
+      "name": "warmup and first checkpoint persisted",
+      "status": "passed"
+    },
+    {
+      "name": "second batch resumes existing model",
+      "status": "passed"
+    },
+    {
+      "name": "late event and missing-time gap explicitly counted",
+      "status": "passed"
+    },
+    {
+      "name": "injected event remains an anomaly",
+      "status": "passed"
+    },
+    {
+      "name": "checkpoint-resume matches uninterrupted actual Torch replay",
+      "status": "passed"
+    },
+    {
+      "name": "real OTLP HTTP JSON endpoint accepts exact metric",
+      "status": "passed"
+    },
+    {
+      "name": "reset archives prior state and restarts warmup",
+      "status": "passed"
+    },
+    {
+      "name": "bounded buffer returns backpressure with no partial insertion",
+      "status": "passed"
+    },
+    {
+      "name": "revoked ingest key immediately rejected",
+      "status": "passed"
+    }
+  ],
+  "sourceId": "source-de2c7134-6c38-4b69-b15b-d1458c61601d",
+  "firstJobId": "gj-013978a573cad33bbf527395686731f4",
+  "status": "failed",
+  "failure": "locator.waitFor: Error: strict mode violation: getByRole('heading', { name: 'Synthetic connector acceptance', exact: true }) resolved to 2 elements:\n    1) <h3>Synthetic connector acceptance</h3> aka getByRole('heading', { name: 'Synthetic connector acceptance' }).first()\n    2) <h3>Synthetic connector acceptance</h3> aka getByRole('heading', { name: 'Synthetic connector acceptance' }).nth(1)\n\nCall log:\n\u001b[2m  - waiting for getByRole('heading', { name: 'Synthetic connector acceptance', exact: true }) to be visible\u001b[22m\n",
+  "finishedAt": "2026-09-09T01:28:57.962Z"
+}

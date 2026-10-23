@@ -1,0 +1,21 @@
+Token indices sequence length is longer than the specified maximum sequence length for this model (275 > 256). Running this sequence through the model will result in indexing errors
+>>> GPU CHECK:
+    device      = cpu (CPU)
+    dtype       = torch.float32
+    TF32        = True
+Traceback (most recent call last):
+    deterministic= False
+>>> Hardware: cpu | Precision: Float32
+>>> Mode: EIDOS BRAIN UNIFIED v0.4.7.02 + Hippocampus (HDC/VSA)
+>>> ENGINE HASH: d1d8db7b5f8e70c0ae6abc96575295620a27ea2943fa50209317d264da50ef50
+>>> HIVE BACKEND: LOCAL
+  File "C:\Users\bmpar\codex-worktrees\sentinel-guided-analysis-20260908\services\sentinel-runner\scripts\guided_semantic_audit.py", line 66, in <module>
+    if __name__ == "__main__": main()
+                               ^^^^^^
+  File "C:\Users\bmpar\codex-worktrees\sentinel-guided-analysis-20260908\services\sentinel-runner\scripts\guided_semantic_audit.py", line 43, in main
+    for node in nodes: exec(compile(ast.Module(body=[node], type_ignores=[]), str(engine_path), "exec"), scope)
+                       ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\bmpar\codex-worktrees\sentinel-guided-analysis-20260908\eidos\EIDOS_BRAIN_UNIFIED_v0_4.7.02.py", line 4300, in <module>
+    err_R_t = torch.linalg.norm(frame - y_R)
+                                        ^^^
+NameError: name 'y_R' is not defined. Did you mean: 'yR'?
