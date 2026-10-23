@@ -14,6 +14,7 @@ export interface Thread {
   request_assistant: number;
   reply_count?: number;
   profile_url?: string;
+  member_username?: string | null;
 }
 export interface Reply {
   id: string;
@@ -23,6 +24,7 @@ export interface Reply {
   author_type: string;
   status: string;
   created_at: string;
+  member_username?: string | null;
 }
 export const validId = (id: string) => /^[a-f0-9-]{36}$/.test(id);
 export function questionFields(input: Record<string, unknown>) {
@@ -48,14 +50,14 @@ export async function publishedThread(env: PlatformEnv, id: string) {
   const database = db(env);
   const thread = await database
     .prepare(
-      "SELECT t.*,a.profile_url FROM eidos_threads t LEFT JOIN eidos_agents a ON a.id=t.owner_id WHERE t.id=? AND t.status='published'",
+      "SELECT t.*,a.profile_url,m.username AS member_username FROM eidos_threads t LEFT JOIN eidos_agents a ON a.id=t.owner_id LEFT JOIN eidos_email_members m ON m.id=t.owner_id AND m.disabled=0 WHERE t.id=? AND t.status='published'",
     )
     .bind(id)
     .first<Thread>();
   if (!thread) throw new HttpError(404, 'This conversation is not available.');
   const { results: replies } = await database
     .prepare(
-      "SELECT id,thread_id,body,author,author_type,status,created_at FROM eidos_replies WHERE thread_id=? AND status='published' ORDER BY created_at DESC,id DESC LIMIT 100",
+      "SELECT r.id,r.thread_id,r.body,r.author,r.author_type,r.status,r.created_at,m.username AS member_username FROM eidos_replies r LEFT JOIN eidos_email_members m ON m.id=r.owner_id AND m.disabled=0 WHERE r.thread_id=? AND r.status='published' ORDER BY r.created_at DESC,r.id DESC LIMIT 100",
     )
     .bind(id)
     .all<Reply>();

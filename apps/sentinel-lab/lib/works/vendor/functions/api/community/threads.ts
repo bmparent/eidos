@@ -24,14 +24,14 @@ export const onRequestGet = guarded(async ({ request, env }) => {
       id:thread.id,title:thread.title,body:thread.body,category:thread.category,
       author:thread.author,author_type:thread.author_type,status:thread.status,
       created_at:thread.created_at,published_at:thread.published_at,
-      reply_count:thread.reply_count,profile_url:thread.profile_url,
+      reply_count:thread.reply_count,profile_url:thread.profile_url,member_username:thread.member_username,
     },replies});
   }
   const category = clean(url.searchParams.get('category'), 20);
   const cursor = clean(url.searchParams.get('before'), 30) || '9999';
   const { results } = await db(env)
     .prepare(
-      "SELECT t.id,t.title,t.category,t.author,t.author_type,t.created_at,(SELECT COUNT(*) FROM eidos_replies r WHERE r.thread_id=t.id AND r.status='published') AS reply_count FROM eidos_threads t WHERE t.status='published' AND (?='' OR t.category=?) AND t.created_at<? ORDER BY t.created_at DESC LIMIT 21",
+      "SELECT t.id,t.title,t.category,t.author,t.author_type,t.created_at,m.username AS member_username,(SELECT COUNT(*) FROM eidos_replies r WHERE r.thread_id=t.id AND r.status='published') AS reply_count FROM eidos_threads t LEFT JOIN eidos_email_members m ON m.id=t.owner_id AND m.disabled=0 WHERE t.status='published' AND (?='' OR t.category=?) AND t.created_at<? ORDER BY t.created_at DESC LIMIT 21",
     )
     .bind(category, category, cursor)
     .all<Thread>();
