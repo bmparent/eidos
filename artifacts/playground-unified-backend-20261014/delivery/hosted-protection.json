@@ -1,0 +1,8 @@
+{
+  "timestampUtc": "2026-10-14T18:50:50.687Z",
+  "deploymentId": "dpl_Hb3DmunnkTpknbwhqzpGhtKUbqY1",
+  "url": "https://eidos-sentinel-44ncm0vx1-1brentbm-1876s-projects.vercel.app",
+  "status": 302,
+  "protected": true,
+  "runtimeAuthentication": "Delegated to paired frontend CI; no protection bypass read here"
+}

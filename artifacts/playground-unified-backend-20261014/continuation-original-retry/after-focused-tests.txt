@@ -1,0 +1,10 @@
+✔ pending original retry after catalog change retains its version, price, signed payment and historical archive (259.6708ms)
+✔ pending original retry refuses unavailable or changed retained archive before provider dispatch (71.2628ms)
+ℹ tests 2
+ℹ suites 0
+ℹ pass 2
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 3602.2715

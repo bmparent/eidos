@@ -1,0 +1,18 @@
+{
+  "target": "C:\\Users\\bmpar\\codex-worktrees\\paid-templates-backend-20261010\\apps\\sentinel-lab\\.next",
+  "cleanup": "Automatic execution review rejected Remove-Item; no deletion performed",
+  "timestampUtc": "2026-10-11T00:30:49.6335627Z",
+  "privateArchives": [
+    "../../../../../../../private/templates/matter/1.0.0/developer.zip",
+    "../../../../../../../private/templates/matter/1.0.0/wordpress.zip",
+    "../../../../../../../private/templates/nightjar/1.0.0/developer.zip",
+    "../../../../../../../private/templates/nightjar/1.0.0/wordpress.zip",
+    "../../../../../../../private/templates/switchboard/1.0.0/developer.zip",
+    "../../../../../../../private/templates/switchboard/1.0.0/wordpress.zip",
+    "../../../../../../../private/templates/tideglass/1.0.0/developer.zip",
+    "../../../../../../../private/templates/tideglass/1.0.0/wordpress.zip"
+  ],
+  "freeBytesC": 89829376,
+  "fileCount": 149,
+  "bytes": 120971715.0
+}

@@ -1,0 +1,45 @@
+
+> eidos-sentinel-lab@0.2.0 test:project-delivery
+> node --import tsx --test tests/works-project-delivery.test.ts
+
+✔ isolated renderer graph matches its portable LF manifest and leaves legacy renderer separate (20.6084ms)
+✖ authenticated backend relay freezes exact schema-5 bytes on real libSQL without provider calls (63.8787ms)
+✖ delivery mode is opt-in and backend body allowance exceeds legacy ceiling but remains bounded (16.3464ms)
+ℹ tests 3
+ℹ suites 0
+ℹ pass 1
+ℹ fail 2
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 1609.8108
+
+✖ failing tests:
+
+test at tests\works-project-delivery.test.ts:1:3901
+✖ authenticated backend relay freezes exact schema-5 bytes on real libSQL without provider calls (63.8787ms)
+  Error: Unsupported project option.
+      at choice (C:\Users\bmpar\codex-worktrees\playground-unified-backend-20261014\apps\sentinel-lab\lib\works\project-delivery\src\playground\model.ts:208:39)
+      at <anonymous> (C:\Users\bmpar\codex-worktrees\playground-unified-backend-20261014\apps\sentinel-lab\lib\works\project-delivery\src\playground\model.ts:246:60)
+      at Array.map (<anonymous>)
+      at validateProject (C:\Users\bmpar\codex-worktrees\playground-unified-backend-20261014\apps\sentinel-lab\lib\works\project-delivery\src\playground\model.ts:242:31)
+      at pageProject (C:\Users\bmpar\codex-worktrees\playground-unified-backend-20261014\apps\sentinel-lab\lib\works\project-delivery\src\playground\purchaseSnapshot.ts:60:17)
+      at createProjectSnapshot (C:\Users\bmpar\codex-worktrees\playground-unified-backend-20261014\apps\sentinel-lab\lib\works\project-delivery\src\playground\purchaseSnapshot.ts:123:35)
+      at fixture (C:\Users\bmpar\codex-worktrees\playground-unified-backend-20261014\apps\sentinel-lab\tests\works-project-delivery.test.ts:28:26)
+      at async TestContext.<anonymous> (C:\Users\bmpar\codex-worktrees\playground-unified-backend-20261014\apps\sentinel-lab\tests\works-project-delivery.test.ts:54:13)
+      at async Test.run (node:internal/test_runner/test:1125:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:787:7)
+
+test at tests\works-project-delivery.test.ts:1:5649
+✖ delivery mode is opt-in and backend body allowance exceeds legacy ceiling but remains bounded (16.3464ms)
+  Error: Unsupported project option.
+      at choice (C:\Users\bmpar\codex-worktrees\playground-unified-backend-20261014\apps\sentinel-lab\lib\works\project-delivery\src\playground\model.ts:208:39)
+      at <anonymous> (C:\Users\bmpar\codex-worktrees\playground-unified-backend-20261014\apps\sentinel-lab\lib\works\project-delivery\src\playground\model.ts:246:60)
+      at Array.map (<anonymous>)
+      at validateProject (C:\Users\bmpar\codex-worktrees\playground-unified-backend-20261014\apps\sentinel-lab\lib\works\project-delivery\src\playground\model.ts:242:31)
+      at pageProject (C:\Users\bmpar\codex-worktrees\playground-unified-backend-20261014\apps\sentinel-lab\lib\works\project-delivery\src\playground\purchaseSnapshot.ts:60:17)
+      at createProjectSnapshot (C:\Users\bmpar\codex-worktrees\playground-unified-backend-20261014\apps\sentinel-lab\lib\works\project-delivery\src\playground\purchaseSnapshot.ts:123:35)
+      at fixture (C:\Users\bmpar\codex-worktrees\playground-unified-backend-20261014\apps\sentinel-lab\tests\works-project-delivery.test.ts:28:26)
+      at async TestContext.<anonymous> (C:\Users\bmpar\codex-worktrees\playground-unified-backend-20261014\apps\sentinel-lab\tests\works-project-delivery.test.ts:76:13)
+      at async Test.run (node:internal/test_runner/test:1125:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:787:7)

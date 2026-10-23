@@ -1,0 +1,30 @@
+{
+  "timestampUtc": "2026-10-11T00:48:39.337Z",
+  "deployment": "dpl_7V42tCLLY3HAwEndSo7VuASKM7GR",
+  "mode": "TEST protected preview",
+  "checks": [
+    {
+      "case": "unverified_wordpress",
+      "status": 503,
+      "response": {
+        "error": "This edition has not passed installation acceptance and cannot be purchased."
+      }
+    },
+    {
+      "case": "client_price_override",
+      "status": 400,
+      "response": {
+        "error": "Prices and package versions are set by the server."
+      }
+    },
+    {
+      "case": "unknown_receipt",
+      "status": 404,
+      "response": {
+        "error": "This purchase receipt was not found. Contact billing with your payment reference."
+      }
+    }
+  ],
+  "newOrdersCreated": false,
+  "chargesCreated": false
+}

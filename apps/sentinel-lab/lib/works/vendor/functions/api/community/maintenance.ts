@@ -1,4 +1,4 @@
-import { admin, db, guarded, json, hash } from '../../_shared/platform/core';
+import { admin, db, guarded, json, hash, recordOwnerAudit } from '../../_shared/platform/core';
 import { maybeSuggest } from '../../_shared/platform/community';
 import { deliverNewsletters } from '../../_shared/platform/newsletter';
 import { runStudioDiscussion, studioAgents } from '../../_shared/platform/studioAgents';
@@ -7,13 +7,19 @@ export const onRequestPost = guarded(async ({ request, env }) => {
     /^Bearer /,
     '',
   );
-  if (
-    !env.EIDOS_MAINTENANCE_TOKEN ||
-    env.EIDOS_MAINTENANCE_TOKEN.length < 32 ||
-    (await hash(token)) !== (await hash(env.EIDOS_MAINTENANCE_TOKEN))
-  )
-    await admin(request, env);
+  const serviceAuthenticated = Boolean(
+    env.EIDOS_MAINTENANCE_TOKEN &&
+    env.EIDOS_MAINTENANCE_TOKEN.length >= 32 &&
+    (await hash(token)) === (await hash(env.EIDOS_MAINTENANCE_TOKEN)),
+  );
+  if (serviceAuthenticated) await recordOwnerAudit(request, env, 'maintenance');
+  else await admin(request, env);
   const database = db(env);
+  if (env.EIDOS_PLAYGROUND_AI_MODE === 'test') {
+    const { reconcileAiDeadlines, reconcileAiReversals } = await import('../../_shared/platform/playgroundAi');
+    await reconcileAiDeadlines(env);
+    await reconcileAiReversals(env);
+  }
   const studio = await runStudioDiscussion(env);
   let suggestions = 0;
   if (env.EIDOS_PROACTIVE_ENABLED === 'true') {
@@ -27,6 +33,8 @@ export const onRequestPost = guarded(async ({ request, env }) => {
       if (await maybeSuggest(env, thread.id, true)) suggestions++;
   }
   const cutoff = Math.floor(Date.now() / 1000);
+  await database.prepare('DELETE FROM eidos_owner_audit WHERE created_at<?')
+    .bind(new Date(Date.now() - 90 * 86400000).toISOString()).run();
   await database.batch([
     database.prepare('DELETE FROM eidos_quotas WHERE expires<?').bind(cutoff),
     database
@@ -46,6 +54,14 @@ export const onRequestPost = guarded(async ({ request, env }) => {
   if (env.EIDOS_ACCOUNTS_ENABLED === 'true' || env.EIDOS_LOCAL_TEST === 'true') await database.batch([
     database.prepare('DELETE FROM eidos_signin_links WHERE expires<?').bind(cutoff),
     database.prepare('DELETE FROM eidos_member_sessions WHERE expires<?').bind(cutoff),
+    // Credential handlers require expires > now. Include the expiry boundary,
+    // but never delete a live claim solely because consumed is set: callbacks
+    // and signup/reset transactions still reference those rows while finishing.
+    // These are transient proofs only; linked identities and account/payment
+    // records have independent lifecycles and must not be pruned here.
+    database.prepare('DELETE FROM eidos_member_auth_tokens WHERE expires<=?').bind(cutoff),
+    database.prepare('DELETE FROM eidos_member_oauth_flows WHERE expires<=?').bind(cutoff),
+    database.prepare('DELETE FROM eidos_member_google_signup WHERE expires<=?').bind(cutoff),
   ]);
   const newsletter = await deliverNewsletters(env);
   return json({ ok: true, suggestions, newsletter, studio });

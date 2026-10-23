@@ -1,0 +1,26 @@
+{
+  "timestampUtc": "2026-10-14T23:49:41.946Z",
+  "projectId": "prj_5aL0COF1DONfPKI4fv25NitAdkOE",
+  "metadataOnly": true,
+  "decryptionRequested": false,
+  "valuesAccessed": false,
+  "mutationAttempted": false,
+  "reason": "Current primary Secret documentation forbids renaming a saved Secret; legacy sensitive rows are Secrets.",
+  "docs": [
+    "https://vercel.com/docs/rest-api/projects/edit-an-environment-variable",
+    "https://vercel.com/docs/environment-variables/sensitive-environment-variables"
+  ],
+  "variables": [
+    {
+      "id": "mj4prYyQIZvTkx3n",
+      "name": "eidos_sentinel_lab",
+      "type": "sensitive",
+      "targets": [
+        "production"
+      ],
+      "gitBranch": null,
+      "createdAt": 1792021264921,
+      "updatedAt": 1792021264921
+    }
+  ]
+}

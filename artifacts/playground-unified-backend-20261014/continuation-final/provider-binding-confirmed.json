@@ -1,0 +1,36 @@
+{
+  "timestampUtc": "2026-10-14T23:54:14.620Z",
+  "projectId": "prj_5aL0COF1DONfPKI4fv25NitAdkOE",
+  "metadataOnly": true,
+  "decryptionRequested": false,
+  "valuesAccessed": false,
+  "mutationAttempted": false,
+  "correctlyScoped": true,
+  "matchingVariables": [
+    {
+      "id": "9YDMCxs2BGx6KFac",
+      "name": "EIDOS_PLAYGROUND_OPENAI_API_KEY",
+      "type": "sensitive",
+      "visibility": "secret",
+      "targets": [
+        "production"
+      ],
+      "gitBranch": null,
+      "createdAt": 1792021933232,
+      "updatedAt": 1792021933232
+    },
+    {
+      "id": "gg2TpIhfVbit51oz",
+      "name": "EIDOS_PLAYGROUND_OPENAI_API_KEY",
+      "type": "sensitive",
+      "visibility": "secret",
+      "targets": [
+        "preview"
+      ],
+      "gitBranch": "codex/playground-unified-20261014",
+      "createdAt": 1792021933232,
+      "updatedAt": 1792021933232
+    }
+  ],
+  "mistakenProductionVariableUntouched": true
+}

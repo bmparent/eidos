@@ -1,3 +1,5 @@
+import { verifyAccessOwner } from './ownerSecurity';
+
 export interface Statement {
   bind(...values: unknown[]): Statement;
   first<T = Record<string, unknown>>(): Promise<T | null>;
@@ -9,9 +11,34 @@ export interface Database {
   batch(statements: Statement[]): Promise<unknown[]>;
 }
 export interface PlatformEnv {
+  EIDOS_PLAYGROUND_AI_ENABLED?: string;
+  EIDOS_PLAYGROUND_AI_KILL?: string;
+  EIDOS_PLAYGROUND_AI_CONFIG?: string;
+  EIDOS_PLAYGROUND_IMAGE_ENABLED?: string;
+  EIDOS_PLAYGROUND_AI_PROVIDER?: import('./playgroundLegacyAI').AIProvider;
+  EIDOS_SOURCE_REVISION?: string;
+  EIDOS_PLAYGROUND_AUTHORING_ENABLED?: string;
+  EIDOS_PLAYGROUND_RESUME_ENABLED?: string;
+  EIDOS_PASSWORD_AUTH_ENABLED?: string;
+  EIDOS_PASSWORD_SERVICE?: {
+    hash(password: string): Promise<string>;
+    verify(password: string, encoded: string | null): Promise<boolean>;
+  };
+  EIDOS_GOOGLE_CLIENT_ID?: string;
+  EIDOS_GOOGLE_CLIENT_SECRET?: string;
+  EIDOS_GOOGLE_REDIRECT_URI?: string;
+  EIDOS_GOOGLE_VERIFY?: (token: string, nonce: string) => Promise<{
+    subject: string; email: string; authoritativeEmail: boolean;
+  }>;
+  EIDOS_VALIDATE_PLAYGROUND_IMAGE?: (data: string) => Promise<void>;
   EIDOS_RUNTIME?: 'sentinel';
   EIDOS_DB?: Database;
   EIDOS_ADMIN_TOKEN?: string;
+  EIDOS_ADMIN_AUTOMATION_ALLOWED?: string;
+  EIDOS_ACCESS_TEAM_DOMAIN?: string;
+  EIDOS_ACCESS_AUD?: string;
+  EIDOS_OWNER_EMAIL?: string;
+  EIDOS_OWNER_AUDIT_DB?: Database;
   EIDOS_RATE_SECRET?: string;
   OPENAI_API_KEY?: string;
   EIDOS_ASSISTANT_MODEL?: string;
@@ -31,8 +58,21 @@ export interface PlatformEnv {
   EIDOS_PLAYGROUND_STRIPE_KEY?: string;
   EIDOS_PLAYGROUND_WEBHOOK_SECRET?: string;
   EIDOS_PLAYGROUND_TEST_PRICE_CENTS?: string;
+  EIDOS_PLAYGROUND_AI_MODE?: string;
+
+  EIDOS_PLAYGROUND_INPUT_COUNT_PRICING?: string;
+  EIDOS_PLAYGROUND_OPENAI_API_KEY?: string;
   EIDOS_KIT_WEBHOOK_SECRET?: string;
   EIDOS_SHOP_ENABLED?: string;
+  EIDOS_TEMPLATE_TEST_ENABLED?: string;
+  EIDOS_TEMPLATE_LIVE_ENABLED?: string;
+  EIDOS_TEMPLATE_STRIPE_ACCOUNT_ID?: string;
+  EIDOS_TEMPLATE_TEST_CHALLENGE?: string;
+  EIDOS_TEMPLATE_SOURCE_REVISION?: string;
+  EIDOS_TEMPLATE_VERIFIED_EDITIONS?: string;
+  EIDOS_TEMPLATE_ARCHIVES?: {
+    get(key: string): Promise<{ bytes: Uint8Array; sha256: string } | null>;
+  };
   EIDOS_ACCOUNTS_ENABLED?: string;
   EIDOS_NEWSLETTER_ENABLED?: string;
   EIDOS_MAIL_DAILY_LIMIT?: string;
@@ -70,10 +110,11 @@ export function json(body: unknown, status = 200) {
 }
 export function guarded(handler: (context: Context) => Promise<Response>) {
   return async (context: Context) => {
+    const started=Date.now();let response:Response;
     try {
-      return await handler(context);
+      response=await handler(context);
     } catch (error) {
-      return json(
+      response=json(
         {
           error:
             error instanceof HttpError
@@ -83,6 +124,20 @@ export function guarded(handler: (context: Context) => Promise<Response>) {
         error instanceof HttpError ? error.status : 503,
       );
     }
+    const path=new URL(context.request.url).pathname;
+    if(/^\/api\/(assistant|members\/(auth|credentials|google)|shop\/(checkout|webhook|download|purchases)|playground\/(ai|checkout|webhook|purchases))$/.test(path)) {
+      try {
+        const database=context.env.EIDOS_DB;
+        if (!database) return response;
+        const day=new Date().toISOString().slice(0,10);
+        let outcome=response.ok?'accepted':'http_'+response.status;
+        if(path==='/api/assistant' && response.ok){const result=await response.clone().json() as {mode?:string;note?:string};outcome=result.mode==='ai'?'ai_completed':result.note?'source_fallback':'source_answer';}
+        await database.prepare('CREATE TABLE IF NOT EXISTS eidos_outcomes(day TEXT,feature TEXT,outcome TEXT,count INTEGER,latency_ms INTEGER,updated TEXT,PRIMARY KEY(day,feature,outcome))').run();
+        await database.prepare('INSERT INTO eidos_outcomes VALUES(?,?,?,1,?,?) ON CONFLICT(day,feature,outcome) DO UPDATE SET count=count+1,latency_ms=latency_ms+excluded.latency_ms,updated=excluded.updated').bind(day,path,outcome,Date.now()-started,new Date().toISOString()).run();
+        await database.prepare('DELETE FROM eidos_outcomes WHERE day<?').bind(new Date(Date.now()-30*86400000).toISOString().slice(0,10)).run();
+      } catch { /* Observability failures cannot change billing/admission or expose request contents. */ }
+    }
+    return response;
   };
 }
 export async function readText(request: Pick<Request, 'headers' | 'body'>, max = 12000) {
@@ -207,14 +262,40 @@ export async function reserve(
   return Boolean(result);
 }
 export async function admin(request: Request, env: PlatformEnv) {
-  if (!env.EIDOS_ADMIN_TOKEN || env.EIDOS_ADMIN_TOKEN.length < 32)
-    throw new HttpError(503, 'Operator access is not configured.');
-  const token = (request.headers.get('authorization') || '').replace(
-    /^Bearer /,
-    '',
-  );
-  if ((await hash(token)) !== (await hash(env.EIDOS_ADMIN_TOKEN)))
+  let actor: string;
+  const assertion = request.headers.get('cf-access-jwt-assertion');
+  if (assertion) {
+    try {
+      actor = 'owner:' + await verifyAccessOwner(assertion, env);
+    } catch {
+      // A bad Access assertion cannot fall back to an automation credential.
+      throw new HttpError(401, 'Operator authentication is required.');
+    }
+  } else if (local(request, env) || env.EIDOS_ADMIN_AUTOMATION_ALLOWED === 'true') {
+    const token = (request.headers.get('authorization') || '').replace(/^Bearer /, '');
+    if (!env.EIDOS_ADMIN_TOKEN || env.EIDOS_ADMIN_TOKEN.length < 32 ||
+        !token || (await hash(token)) !== (await hash(env.EIDOS_ADMIN_TOKEN)))
+      throw new HttpError(401, 'Operator authentication is required.');
+    actor = 'automation';
+  } else {
     throw new HttpError(401, 'Operator authentication is required.');
+  }
+  await recordOwnerAudit(request, env, actor);
+  return actor;
+}
+export async function recordOwnerAudit(request: Request, env: PlatformEnv, actor: string) {
+  const audit = env.EIDOS_OWNER_AUDIT_DB || env.EIDOS_DB;
+  if (!audit) throw new HttpError(503, 'Owner audit storage is unavailable.');
+  try {
+    await audit.prepare('CREATE TABLE IF NOT EXISTS eidos_owner_audit(id TEXT PRIMARY KEY,actor TEXT NOT NULL,method TEXT NOT NULL,path TEXT NOT NULL,event TEXT NOT NULL,created_at TEXT NOT NULL)').run();
+    await audit.prepare('INSERT INTO eidos_owner_audit(id,actor,method,path,event,created_at) VALUES(?,?,?,?,?,?)')
+      .bind(crypto.randomUUID(), actor, request.method,
+        new URL(request.url).pathname.slice(0, 120), 'authorized',
+        new Date().toISOString()).run();
+  } catch {
+    // Fail before owner work begins; a mutation without an audit receipt is unsafe.
+    throw new HttpError(503, 'Owner audit storage is unavailable.');
+  }
 }
 export async function challenge(
   request: Request,
@@ -247,12 +328,27 @@ export async function challenge(
     success?: boolean;
     hostname?: string;
     action?: string;
+    metadata?: { result_with_testing_key?: boolean };
   };
+  // Cloudflare's public TEST keys deliberately return example.com and no action.
+  // Keep that documented behavior confined to explicitly named TEST candidates.
+  const testOrigin = siteOrigin(env);
+  const candidateAction = testOrigin === 'https://eidosworks-templates-test-20261010.pages.dev'
+    ? ['checkout','recovery'].includes(action)
+    : testOrigin === 'https://eidosworks-playground-test-20261015.pages.dev' &&
+      ['checkout','recovery','member'].includes(action);
+  const isolatedTestChallenge = env.EIDOS_TEMPLATE_TEST_CHALLENGE === 'true' &&
+    env.EIDOS_TEMPLATE_TEST_ENABLED === 'true' && /^[sr]k_test_/.test(env.STRIPE_SECRET_KEY || '') &&
+    env.TURNSTILE_SITE_KEY === '1x00000000000000000000AA' &&
+    env.TURNSTILE_SECRET_KEY === '1x0000000000000000000000000000000AA' &&
+    new URL(request.url).origin === testOrigin && candidateAction &&
+    (action !== 'member' || env.EIDOS_ACCOUNTS_ENABLED === 'true') &&
+    result.metadata?.result_with_testing_key === true &&
+    result.hostname === 'example.com';
   if (
     !response.ok ||
     !result.success ||
-    result.hostname !== new URL(request.url).hostname ||
-    result.action !== action
+    (!isolatedTestChallenge && (result.hostname !== new URL(request.url).hostname || result.action !== action))
   )
     throw new HttpError(
       400,

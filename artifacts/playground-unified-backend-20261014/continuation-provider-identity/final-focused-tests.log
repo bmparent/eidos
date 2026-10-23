@@ -1,0 +1,30 @@
+✔ 01: concurrent $0.60 actions with $1 remaining admit exactly one and only one dispatch (511.9251ms)
+✔ 02: concurrent action replay yields one reservation, dispatch and settlement; conflicting key fails (775.4298ms)
+✔ 03: $50 balance/$10 cap, included consumption and top-ups never lift the cap (2115.2101ms)
+✔ 04: projects/devices share owner cap and authenticated endpoints reject cross-account IDs/forged owners (519.5159ms)
+✔ 05: unknown pricing, forged totals/model/owner, large context and unbounded tools/retries fail closed (156.9761ms)
+✔ 06: actual usage releases difference; above-bound usage never overcharges and disables route (313.2393ms)
+✔ 06: extreme retail markup cannot prevent above-bound settlement and the route pause (216.0768ms)
+✔ 07: unusable technical output restores allowance while real provider expense remains counted (304.114ms)
+✔ 06/08: unmeterable usage pauses dispatch, retains unknown liability and never revives a waived charge (1495.9543ms)
+✔ 08: submitted timeout/crash/lease expiry retain provider cost; 24h waiver never retroactively debits (267.7803ms)
+✔ 08: pessimistic reconciliation retains provider identity; matching late evidence preserves the waiver (278.86ms)
+✔ 09/13: duplicate/unpaid/out-of-order grants, refunds, owner mismatch and TEST/LIVE isolation (225.7042ms)
+✔ 10: cap edits racing dispatch/settlement preserve the commitment floor and block new work (385.3168ms)
+✔ 11: monthly period is server UTC; pending budget survives, and late settlement stays original month (288.1715ms)
+✔ 12/14: owner aggregate budget admits only one customer; paused route has no provider fallback (293.0499ms)
+✔ migration/schema parity and conservative integer rounding cover sub-cent rates (6.0315ms)
+✔ independent database connections serialize shared provider/customer admission (1427.5099ms)
+ℹ Windows libSQL retains the synthetic temp database handle until process exit: C:\Users\bmpar\AppData\Local\Temp\eidos-ai-fixture-a937d8f1-ae07-4bfc-8c24-f714031aa8e9.db
+✔ owner budget reductions block reserved dispatch atomically across independent database connections (1615.3666ms)
+ℹ Windows libSQL retains the synthetic temp database handle until process exit: C:\Users\bmpar\AppData\Local\Temp\eidos-ai-budget-fixture-52c2f8da-f50d-4164-acec-61108745d6c5.db
+✔ concurrent conflicting reconciliation cannot replace the first recorded provider identity (905.2127ms)
+ℹ Windows libSQL retains the synthetic temp database handle until process exit: C:\Users\bmpar\AppData\Local\Temp\eidos-ai-identity-fixture-6d476c04-24e3-4027-8a8e-0ec0135e0fc5.db
+ℹ tests 19
+ℹ suites 0
+ℹ pass 19
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 17619.8719

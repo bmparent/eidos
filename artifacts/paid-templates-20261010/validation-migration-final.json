@@ -1,0 +1,9 @@
+{
+  "timestampUtc": "2026-10-11T00:37:39.889Z",
+  "databaseHost": "eidos-works-validation-vercel-icfg-j5glcbpipda5txwa0a43dmjx.aws-us-east-1.turso.io",
+  "migration": "0004_paid_templates.sql",
+  "mode": "TEST candidate validation only",
+  "existingOrderCountBefore": 6,
+  "existingOrderCountAfter": 6,
+  "preservedExistingOrders": true
+}

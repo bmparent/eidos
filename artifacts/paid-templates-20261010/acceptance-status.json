@@ -1,0 +1,59 @@
+{
+  "timestampUtc": "2026-10-11T00:43:16.868Z",
+  "scope": "TEST candidate; no production promotion",
+  "tests": {
+    "command": "npm --prefix apps/sentinel-lab test",
+    "passed": 63,
+    "failed": 0,
+    "skipped": 0,
+    "log": "tests-final.log"
+  },
+  "typecheck": {
+    "command": "npm --prefix apps/sentinel-lab run lint -- --incremental false",
+    "status": "passed",
+    "log": "typecheck-final.log"
+  },
+  "localBuild": {
+    "command": "npm --prefix apps/sentinel-lab run build -- --webpack",
+    "status": "passed before final additive async-failure and TEST challenge changes; final remote build pending",
+    "log": "build-webpack-retry.log",
+    "defaultTurbopack": "failed because node_modules junction resolved outside isolated worktree"
+  },
+  "archives": {
+    "count": 8,
+    "receipt": "private-archive-receipt-final.json",
+    "private": true,
+    "verifiedEditions": [
+      "switchboard-developer-v1",
+      "tideglass-developer-v1",
+      "matter-developer-v1",
+      "nightjar-developer-v1"
+    ],
+    "wordpress": "installation acceptance blocked",
+    "builderPilots": "unavailable"
+  },
+  "providers": {
+    "stripe": "existing Eidos Works TEST key verified against acct_1Rj03gKC8pRG5Tr9",
+    "database": "existing named validation database; updated additive migration preserved 6 of 6 legacy orders",
+    "mail": "blocked: selected sensitive Resend key unavailable for readback; no received-email claim",
+    "turnstile": "official public TEST keys and server validation; not live bot protection"
+  },
+  "hosted": {
+    "backend": "passed: protected READY and authenticated catalog/negative controls",
+    "frontend": "pending",
+    "testCheckout": "pending",
+    "providerWebhook": "pending",
+    "receivedEmail": "blocked",
+    "purchaseRecoveryEmail": "blocked",
+    "testChallenge": "passed: actual official public TEST siteverify and generic recovery"
+  },
+  "productionChanged": false,
+  "brainResearchChanged": false,
+  "cleanup": "automatic execution review rejected candidate .next removal; no deletion performed",
+  "remoteBuild": {
+    "status": "passed",
+    "deploymentId": "dpl_7V42tCLLY3HAwEndSo7VuASKM7GR",
+    "sourceCommit": "c074b4dedc0da2f13bce079c6c067aec66f6b29f",
+    "log": "remote-build.json"
+  }
+}

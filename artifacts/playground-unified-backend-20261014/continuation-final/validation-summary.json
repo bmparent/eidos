@@ -1,0 +1,73 @@
+{
+  "timestampUtc": "2026-10-14T23:56:48.878Z",
+  "sourceStage": "Final frozen app source before scoped commit; exact committed source/deployment pin follows in backend-preview receipt",
+  "tests": {
+    "passed": 128,
+    "failed": 0,
+    "skipped": 1,
+    "skipReason": "Existing Windows private archive symlink test requires authorized symlink-capable host",
+    "log": "full-tests.log"
+  },
+  "focusedProviderAccounting": {
+    "passed": 41,
+    "failed": 0,
+    "log": "../continuation-provider-adapter/focused-readiness-tests.txt"
+  },
+  "typecheck": {
+    "status": "passed",
+    "log": "typecheck.log"
+  },
+  "optimizedBuild": {
+    "status": "passed",
+    "version": "Next16.3.8",
+    "log": "build.log"
+  },
+  "compiledParity": {
+    "status": "passed",
+    "archiveSha256": "7036f418606de0f87fab460a13b632237bad849e14c48e7b0881ab081ec672e4",
+    "archiveBytes": 68025,
+    "receipt": "compiled-current-reference/receipt.json",
+    "network": "fetch forbidden",
+    "browserAcceptance": "not asserted for reference fixture"
+  },
+  "rendererGraph": {
+    "files": 18,
+    "inventorySha256": "19960a2f371b413e041e19773f5f2512efb72f43d32e984ed97d62e5c774471c"
+  },
+  "sourceFiles": [
+    {
+      "path": "apps/sentinel-lab/lib/works/vendor/functions/_shared/platform/playgroundAi.ts",
+      "sha256": "d16de593641edfa18d0cff382d2d4606ca3149d9fbdf4c5e861222892b74ec9e"
+    },
+    {
+      "path": "apps/sentinel-lab/lib/works/vendor/functions/_shared/platform/playgroundAiProvider.ts",
+      "sha256": "12caca18ae19e8b4ad28e2c5907e6461eb9b548b7f7648fa4d89375833ebe2d6"
+    },
+    {
+      "path": "apps/sentinel-lab/lib/works/vendor/functions/_shared/platform/templateShop.ts",
+      "sha256": "b4a333664bfc0c076930f55620c815779bd6cb3f514d9b3e6ca5d54c82a5fc5d"
+    },
+    {
+      "path": "apps/sentinel-lab/lib/works/vendor/functions/api/public-config.ts",
+      "sha256": "114d56a8b52c0731f30df233ef2c29333e687bde8954c2315cddb9db852e8feb"
+    },
+    {
+      "path": "apps/sentinel-lab/scripts/deploy-playground-preview.mjs",
+      "sha256": "6d7246b86e4e5c49489ba0b11ca1506dabd1881c71a95be569030c3670d4b7e6"
+    }
+  ],
+  "providerCalls": 0,
+  "realPaymentCalls": 0,
+  "realMailCalls": 0,
+  "privateArchivesBundled": 0,
+  "database": "none in manual deployment",
+  "keyBinding": "Metadata verifies dedicated Preview-branch Secret; value not read and validity not tested",
+  "inputCountPricing": "unverified; manual deployment leaves gate blank",
+  "remaining": [
+    "Actual provider usage and cost",
+    "Model comparison",
+    "Hosted account and TEST persistence acceptance",
+    "Signed real TEST payment/refund and inbox recovery",
+    "Human and physical-device acceptance"
+  ]
+}

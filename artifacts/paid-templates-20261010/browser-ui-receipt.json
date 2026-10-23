@@ -1,0 +1,86 @@
+{
+  "schema_version": 1,
+  "captured_at": "2026-10-11T01:58:09.802756+00:00",
+  "scope": "Authorized frontend Stripe TEST browser acceptance only; no LIVE charge, customer data, production mutation, or email delivery proof.",
+  "browser": {
+    "name": "Chromium",
+    "version": "145.0.7632.6"
+  },
+  "public_origin": "https://eidosworks-templates-test-20261010.pages.dev",
+  "product": {
+    "id": "switchboard-developer-v1",
+    "version": "1.0.0",
+    "amount_cents": 9900,
+    "currency": "USD"
+  },
+  "checkout_ui": {
+    "terms_checked": true,
+    "turnstile_test_frontend_ready": true,
+    "legitimate_frontend_button_used": true,
+    "stripe_sandbox_badge_observed": true,
+    "price_and_product_observed": true,
+    "capture_response_json_failed_during_navigation": true,
+    "private_current_checkout_saved": true
+  },
+  "successful_test_payment": {
+    "pay_clicked_once": true,
+    "synthetic_card_only": true,
+    "save_information_unchecked": true,
+    "human_challenge_observed": false,
+    "return_path": "/shop/start",
+    "return_query_empty": true,
+    "return_fragment_empty": true,
+    "visible_payment_verified": true,
+    "visible_package_ready": true,
+    "receipt_email_delivery": "failed, explicitly shown in UI"
+  },
+  "ui_download": {
+    "status": "passed",
+    "filename": "eidos-switchboard-developer-1.0.0.zip",
+    "bytes": 26816,
+    "sha256": "e56450de9adbac6320d9e2315601e1804d281fcf1b87dc0f95cef5ef8ae45e2a",
+    "private_saved_copy": true
+  },
+  "refund_ui": {
+    "status": "passed",
+    "reloaded_same_session": true,
+    "visible_status": "refunded",
+    "download_button_count": 0
+  },
+  "ordinary_decline_ui": {
+    "status": "passed",
+    "pay_clicked_once": true,
+    "official_synthetic_decline_card": true,
+    "save_information_unchecked": true,
+    "human_challenge_observed": false,
+    "visible_error": "Your credit card was declined. Try paying with a debit card instead.",
+    "still_on_stripe": true,
+    "payment_retries": 0,
+    "alternate_methods_selected": false
+  },
+  "provider_evidence": "Backend agent separately owns authoritative TEST mode, paid ledger, webhook, exact API ZIP, refund, token revocation and decline entitlement verification; this receipt records browser observations.",
+  "screenshots": [
+    {
+      "file": "actual-test-purchase.png",
+      "sha256": "04518c8d4f0f538eef9e8ad200a3cda1a2a6a035dc11ce1db1b655af6ef9ddc0",
+      "scope": "Paid return UI; no receipt capability, card or owned checkout email visible; public UUID order reference retained."
+    },
+    {
+      "file": "actual-test-refund-ui.png",
+      "sha256": "7f2bacaa41bf3c47f4b2721fc08c0e1e434a69251ba10a670811f81d535530b9",
+      "scope": "Refund return UI; no receipt capability, card or owned checkout email visible; public UUID order reference retained."
+    },
+    {
+      "file": "actual-test-decline-ui.png",
+      "sha256": "affdf044454518cc9a28d8651c86cd959fa3615a4b89f12391252ff9c7ffa6fd",
+      "scope": "Error element only; no payment fields, card, email, URL or capability visible."
+    }
+  ],
+  "limits": [
+    "Receipt email was not delivered.",
+    "No LIVE transaction performed.",
+    "No hosted native WordPress, Squarespace or GoDaddy installation proof is implied.",
+    "No physical-device or 3DS/authentication-challenge proof.",
+    "No human challenge was bypassed."
+  ]
+}

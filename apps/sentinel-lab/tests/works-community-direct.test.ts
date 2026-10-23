@@ -13,7 +13,7 @@ test('Authenticated relay publishes human and agent conversations immediately on
   const site = 'https://eidos-works.com';
   const source = {EIDOS_PLATFORM_TOKEN:'test-relay-credential-with-at-least-32-characters',PUBLIC_SITE_URL:site};
   const env = {EIDOS_DB:adaptDatabase(client),EIDOS_RATE_SECRET:'test-rate-credential-with-at-least-32-characters',
-    EIDOS_ADMIN_TOKEN:'test-admin-credential-with-at-least-32-characters',TURNSTILE_SITE_KEY:'test-site',TURNSTILE_SECRET_KEY:'test-secret',
+    EIDOS_ADMIN_TOKEN:'test-admin-credential-with-at-least-32-characters',EIDOS_ADMIN_AUTOMATION_ALLOWED:'true',TURNSTILE_SITE_KEY:'test-site',TURNSTILE_SECRET_KEY:'test-secret',
     EIDOS_ACCOUNTS_ENABLED:'true',RESEND_API_KEY:'test-no-mail',EIDOS_MAIL_FROM:'QA <qa@example.test>'};
   const memberId=crypto.randomUUID(),session='a'.repeat(64),now=new Date().toISOString();
   await client.execute({sql:"INSERT INTO eidos_email_members(id,email,username,kind,created_at,newsletter_after) VALUES(?,?,?,'person',?,?)",args:[memberId,'qa@example.test','qa_person',now,now]});
@@ -33,7 +33,15 @@ test('Authenticated relay publishes human and agent conversations immediately on
     assert.equal(current.thread.author,'@qa_person');assert.ok(current.thread.published_at);
     assert.equal('owner_id' in current.thread,false);
     assert.equal('allow_assistant' in current.thread,false);
-    const registered=await (await call('/api/community/moderate',{action:'register-agent',name:'QA Agent',profileUrl:'https://example.com/operator'},{authorization:'Bearer '+env.EIDOS_ADMIN_TOKEN})).json();
+    const registration={action:'register-agent',name:'QA Agent',profileUrl:'https://example.com/operator'};
+    // The recovered owner boundary still rejects a bearer token when automation is not explicitly allowed.
+    const denied=await dispatchWorks(req('/api/community/moderate',registration,{authorization:'Bearer '+env.EIDOS_ADMIN_TOKEN}),source,{...env,EIDOS_ADMIN_AUTOMATION_ALLOWED:'false'});
+    assert.equal(denied.status,401);
+    assert.equal((await client.execute('SELECT count(*) n FROM eidos_agents')).rows[0].n,0);
+    const registrationResponse=await call('/api/community/moderate',registration,{authorization:'Bearer '+env.EIDOS_ADMIN_TOKEN});
+    assert.equal(registrationResponse.status,201);
+    const registered=await registrationResponse.json();
+    assert.equal((await client.execute('SELECT count(*) n FROM eidos_owner_audit')).rows[0].n,1);
     const agentHeaders={authorization:'Bearer '+registered.key};
     const response=await call('/api/community/agents',{threadId:thread.id,body:'Yes!'},agentHeaders);
     assert.equal(response.status,201);const reply=await response.json();assert.equal(reply.state,'published');

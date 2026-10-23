@@ -1,5 +1,7 @@
 import { guarded, json, local, communityAvailable } from '../_shared/platform/core';
 import { accountsReady } from '../_shared/platform/memberAuth';
+import { passwordsReady } from '../_shared/platform/memberCredentials';
+import { googleReady } from '../_shared/platform/memberGoogle';
 export const onRequestGet = guarded(async ({ request, env }) =>
   json({
     gaMeasurementId: /^G-[A-Z0-9]{5,20}$/.test(env.GA_MEASUREMENT_ID || '')
@@ -8,6 +10,8 @@ export const onRequestGet = guarded(async ({ request, env }) =>
     turnstileSiteKey: env.TURNSTILE_SITE_KEY || '',
     communityReady: communityAvailable(request,env),
     accountsReady: accountsReady(request,env),
+    passwordsReady: passwordsReady(request,env),
+    googleReady: googleReady(request,env),
     aiReady: Boolean(
       env.EIDOS_RUNTIME === 'sentinel' &&
       env.EIDOS_AI_ENABLED === 'true' &&
@@ -15,6 +19,18 @@ export const onRequestGet = guarded(async ({ request, env }) =>
         env.EIDOS_ASSISTANT_MODEL &&
         env.EIDOS_DB &&
         env.EIDOS_RATE_SECRET,
+    ),
+    // Configuration readiness only. Accounts and the authenticated lifetime
+    // budget/route ledger remain separate gates; this endpoint does no I/O.
+    playgroundAiReady: Boolean(
+      env.EIDOS_RUNTIME === 'sentinel' &&
+      env.EIDOS_AI_ENABLED === 'true' &&
+      env.EIDOS_PLAYGROUND_AI_ENABLED === 'true' &&
+      env.EIDOS_PLAYGROUND_AI_MODE === 'test' &&
+      (env.EIDOS_PLAYGROUND_OPENAI_API_KEY?.length || 0) >= 20 &&
+      env.EIDOS_PLAYGROUND_INPUT_COUNT_PRICING === 'verified-zero' &&
+      env.EIDOS_DB &&
+      (env.EIDOS_RATE_SECRET?.length || 0) >= 32,
     ),
     shopReady: Boolean(
       env.EIDOS_SHOP_ENABLED === 'true' &&

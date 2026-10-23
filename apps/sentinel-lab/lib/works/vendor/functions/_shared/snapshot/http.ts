@@ -31,7 +31,7 @@ export async function readTextBodyLimited(request: Request, maxBytes: number) {
 
   if (!request.body) return ''
   const reader = request.body.getReader()
-  const decoder = new TextDecoder('utf-8', { fatal: false })
+  const decoder = new TextDecoder('utf-8', { fatal: false, ignoreBOM: false })
   const chunks: string[] = []
   let bytes = 0
 

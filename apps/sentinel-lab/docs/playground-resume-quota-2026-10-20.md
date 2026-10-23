@@ -1,0 +1,11 @@
+# Bounded Playground resume — October 20, 2026
+
+Branch `fix/playground-resume-quota-20261020` is stacked on held backend PR85 `0f44777604e9cec56c04e0dd00efe130b3b6469b`. The paired site branch `fix/playground-saving-account-20261020` starts at held PR131 `82b3ec85476aff7217b179c23e514d741bd2100c`. Both are review candidates for the held release branches, not production main.
+
+The shared source adds an explicit resume protocol with reported owner/capability and expected-owner writes. `EIDOS_PLAYGROUND_RESUME_ENABLED` is unset/default-off. No binding, resource, credential, migration execution, paid feature or production deployment is included. Existing authoring/AI/payment gates remain independent. The candidate's own branch is excluded from automatic Git preview deployment in the existing repository configuration.
+
+Storage reuses existing owner-scoped projects, immutable revisions and hash-deduplicated images. Existing 2 MB project input, 1.35 MB decoded image, 40 MB encoded image storage, 20-project and 100-revision limits remain. The added owner history cap is 20 MB of UTF-8 document bytes after image extraction. An additive transactional trigger prevents concurrent over-admission and preserves old records. Full storage rejects new writes with a recovery message; no record is deleted.
+
+Local tests cover full schema-5 reopen, cross-owner denial, default-off behavior, stale heads, quota rollback, concurrent requests competing for the last document bytes and absence of orphan projects. Site parity covers 108 files plus the independent 18-file delivery graph. Backend typecheck and webpack build pass. The full backend run passed 19 JavaScript tests (one skipped) and 174 TypeScript tests; its six temp Git fixtures failed in the sandbox's redirected temp path. All six pass unchanged when standard Node TEMP/TMP select the permitted task-specific Temp directory. The focused account/libSQL suite passes separately.
+
+Before activation, verify the exact pair in an isolated hosted database with two controlled accounts, current-format save/reopen/export, empty-device resume, quotas and account switching. This does not close real Google/inbox, payment or physical-device gates. Revert code through the held branches while retaining additive schema and all historical data.

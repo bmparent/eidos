@@ -4,6 +4,12 @@ artifacts/rng_null_proof*/
 __pycache__/
 *.py[cod]
 .pytest_cache/
+.vercel/
+.env.local
+.env.*.local
 
 # Immutable numerical experiment inputs and raw trajectories are bundled outside git.
 artifacts/controlled_memory_*/
+# Buyer packages are generated from pinned site sources, then uploaded privately.
+/apps/sentinel-lab/private/templates/
+/apps/sentinel-lab/private/templates-manifest.json

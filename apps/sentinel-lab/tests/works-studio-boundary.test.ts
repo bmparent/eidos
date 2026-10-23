@@ -1,3 +1,4 @@
+import {guarded, HttpError} from '../lib/works/vendor/functions/_shared/platform/core';
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import {assertCloudStudioBoundary, LOCAL_STUDIO_CLOUD_NOTICE} from '../lib/works/vendor/functions/_shared/platform/studioBoundary';
@@ -24,4 +25,12 @@ test('legacy schema-1 acceptance and malformed-input validation remain delegated
   const legacy=createProject(),snapshot=JSON.stringify(legacy);
   assert.doesNotThrow(()=>assertCloudStudioBoundary(legacy));assert.equal(JSON.stringify(legacy),snapshot);
   for(const value of [null,undefined,[],{},'invalid'])assert.doesNotThrow(()=>assertCloudStudioBoundary(value));
+});
+
+
+test('an unavailable optional telemetry binding preserves the controlled account response', async () => {
+  const env = Object.defineProperty({}, 'EIDOS_DB', {get() {throw Error('Unavailable telemetry');}}) as PlatformEnv;
+  const response = await guarded(async () => {throw new HttpError(409, 'Controlled account denial');})({env, request:new Request('https://eidos-works.com/api/members/credentials')});
+  assert.equal(response.status,409);
+  assert.equal((await response.json()).error,'Controlled account denial');
 });
