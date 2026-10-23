@@ -1,0 +1,26 @@
+{
+  "version": 1,
+  "scope": "exchange-host",
+  "files": [
+    {
+      "path": "functions/_shared/platform/core.ts",
+      "sha256": "bb3cf09dd22c6b94d4522b2b06df893f077688a5a12d261021c2b364a568a84f"
+    },
+    {
+      "path": "functions/_shared/platform/exchangeHost.ts",
+      "sha256": "abb3fc608ff6f899392d0d1fcddb6781b209995b1e9db3b164cb3176f157abfa"
+    },
+    {
+      "path": "functions/api/community/host.ts",
+      "sha256": "fd7b48f878c372c2158dcf36bdd5ec9474892d8e343b41f0403b1d45ce98e9b9"
+    },
+    {
+      "path": "functions/api/community/host-admin.ts",
+      "sha256": "41bdff8f1ad52010d32bf66b71534900fa2bfb23f545eea32b06be0f32d6821c"
+    },
+    {
+      "path": "migrations/0011_exchange_host.sql",
+      "sha256": "3ff0e49c254bc118f9966f16a5eb393f517bd6c73fe7c720baffd5600ea5c8a0"
+    }
+  ]
+}
