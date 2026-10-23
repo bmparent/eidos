@@ -22,10 +22,14 @@ const databaseIdentityHash = createHash('sha256').update(databaseUrl.hostname + 
 assert.equal(databaseIdentityHash, '0599028d2df7969a4992e86be8971499744c42e83382a41df7cbe13b28f49c48');
 const client = createClient({ url: databaseUrl.href, authToken: secrets.EIDOS_EXCHANGE_TEST_TURSO_AUTH_TOKEN });
 const continuation = secretFile + '.' + transport + '-continuation';
+const relayRegistration = process.argv.includes('--relay-registration');
+const registrationBase = new URL(process.env.EXCHANGE_QA_REGISTRATION_BASE_URL || base.origin);
+if (relayRegistration) assert.ok(transport === 'edge' && /^eidos-exchange-qa-20261023-[a-z0-9]+-1brentbm-1876s-projects\.vercel\.app$/.test(registrationBase.hostname) && registrationBase.protocol === 'https:' && registrationBase.pathname === '/');
 const receipt = { time: new Date().toISOString(), environment: 'isolated-hosted-' + transport + '-HTTP', baseUrl: base.origin,
   databaseIdentityHash, backendImplementation: '0c24ea9fba44b1f2f9183fc15845c2219dec424b', checks: [],
   independentOperatorsObserved: 0, productionWrites: 0, trustedRelayIpFixture: transport === 'direct',
   ...(transport === 'direct' ? { relayFixtureIp } : {}), status: 'failed' };
+if (relayRegistration) receipt.registrationTransport = 'Explicit trusted-relay reserved-IP fixture; all subsequent lifecycle requests use actual Pages transport. Prior edge signup receipts are separate.';
 let step = 'configuration', a, b, keepCredential = false;
 const progress = label => { step = label; console.log('QA check: ' + label); };
 async function call(path, data, key, extra = {}) {
@@ -68,14 +72,33 @@ try {
     for (const table of ['eidos_email_members', 'eidos_member_sessions', 'eidos_member_keys', 'eidos_orders', 'eidos_pg_projects']) assert.equal(await count(table), 0);
     const availability = await call('/api/community/agent-registration');
     assert.equal(availability.status, 200); assert.equal(availability.value.enabled, true); receipt.checks.push(step);
-    progress('two real HTTP registrations, no-store credentials and per-IP ceiling');
+    progress('two real HTTP registrations and no-store credentials');
     const suffix = randomUUID().slice(0, 8);
     const payload = name => ({ name, description: 'Controlled hosted security QA; not independent acquisition.', discoverySource: 'controlled', rulesVersion: availability.value.rulesVersion, operatorAuthorized: true, acceptPublicContributions: true });
-    const register = async name => { const response = await call('/api/community/agent-registration', payload(name));
+    const register = async name => { const response = relayRegistration ? await (async () => {
+      const r = await fetch(registrationBase.origin + '/api/works/v1/api/community/agent-registration', { method: 'POST',
+        headers: { 'content-type': 'application/json', 'x-vercel-protection-bypass': secrets.EIDOS_PLATFORM_PREVIEW_BYPASS,
+          'x-eidos-platform-token': secrets.EIDOS_PLATFORM_TOKEN, 'x-eidos-site-origin': origin, 'x-eidos-client-ip': relayFixtureIp },
+        body: JSON.stringify(payload(name)), redirect: 'error', signal: AbortSignal.timeout(20000) });
+      return { status: r.status, headers: r.headers, value: await r.json() };
+    })() : await call('/api/community/agent-registration', payload(name));
       assert.equal(response.status, 201); assert.equal(response.headers.get('cache-control'), 'no-store');
       assert.ok(/^ew_exchange_[a-f0-9]{64}$/.test(response.value.credential), 'Expected scoped credential format'); return response.value; };
     a = await register('qa-first-' + suffix); b = await register('qa-other-' + suffix);
-    assert.equal((await call('/api/community/agent-registration', payload('qa-third-' + suffix))).status, 429);
+    if (transport === 'direct') {
+      const third = await call('/api/community/agent-registration', payload('qa-third-' + suffix));
+      // Capture and revoke an unexpected successful write before asserting.
+      if (third.status === 201 && third.value?.id)
+        assert.equal((await moderate({ action: 'revoke-exchange-agent', id: third.value.id })).status, 200);
+      assert.equal(third.status, 429);
+      receipt.checks.push('same reserved relay-IP fixture rejects a third registration');
+    } else {
+      // The execution service can rotate its network egress between requests.
+      // Do not forge an IP or interpret a fresh IP allowance as a quota failure.
+      const quotas = await client.execute("SELECT used FROM eidos_quotas WHERE bucket LIKE 'exchange-registration-ip:%'");
+      assert.ok(quotas.rows.every(row => Number(row.used) <= 2));
+      receipt.perIpBoundary = 'All persisted IP counters are <=2; same-IP third-request rejection is covered separately by trusted-relay fixtures, not asserted for rotating edge egress';
+    }
     const stored = await client.execute({ sql: 'SELECT key_hash FROM eidos_exchange_identities WHERE id=?', args: [a.id] });
     assert.equal(stored.rows[0].key_hash, createHash('sha256').update(a.credential).digest('hex'));
     assert.ok(!JSON.stringify((await client.execute({ sql: 'SELECT * FROM eidos_exchange_identities WHERE id=?', args: [a.id] })).rows).includes(a.credential), 'Raw credential must not persist'); receipt.checks.push(step);

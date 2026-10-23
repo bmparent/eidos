@@ -1,0 +1,17 @@
+{
+  "time": "2026-10-23T01:51:57.688Z",
+  "status": "passed",
+  "checks": [
+    {
+      "side": "edge",
+      "status": 200,
+      "enabled": false
+    },
+    {
+      "side": "backend",
+      "status": 200,
+      "enabled": true
+    }
+  ],
+  "productionWrites": 0
+}
