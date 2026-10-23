@@ -1,0 +1,8 @@
+{
+  "initial_failure": "WSL Bash HCS_E_CONNECTION_TIMEOUT while packaging",
+  "repair": "Used installed Git Bash and TAR_OPTIONS=--force-local for the same supported Sites source helper",
+  "source_sha": "d0b06304055fef1cccf3ace36b3b6d9acde2054f",
+  "artifact_worker_sha256": "08b78952a24207f0880bfdcf4be733b93adbedc3e03883369a076d25425c4ea0",
+  "hosting_policy_changed": false,
+  "migrations_changed": false
+}

@@ -1,0 +1,35 @@
+test_cross_origin_or_inline_events_cannot_trigger_inference (test_local_model.LocalModelBoundaryTests.test_cross_origin_or_inline_events_cannot_trigger_inference) ... ok
+test_only_retained_collector_evidence_can_be_analyzed (test_local_model.LocalModelBoundaryTests.test_only_retained_collector_evidence_can_be_analyzed) ... ok
+test_repeated_analysis_is_cached_and_concurrency_is_bounded (test_local_model.LocalModelBoundaryTests.test_repeated_analysis_is_cached_and_concurrency_is_bounded) ... ok
+test_absolute_socket_deadline_closes_connection (test_local_server.LocalBoundaryTests.test_absolute_socket_deadline_closes_connection) ... ok
+test_certificate_failure_does_not_retry_insecurely (test_local_server.LocalBoundaryTests.test_certificate_failure_does_not_retry_insecurely) ... ok
+test_cooldown_and_no_overlap (test_local_server.LocalBoundaryTests.test_cooldown_and_no_overlap) ... ok
+test_direct_ip_skips_dns_and_uses_head_without_private_headers (test_local_server.LocalBoundaryTests.test_direct_ip_skips_dns_and_uses_head_without_private_headers) ... ok
+test_direct_public_ipv6_uses_ipv6_transport_and_bracketed_host (test_local_server.LocalBoundaryTests.test_direct_public_ipv6_uses_ipv6_transport_and_bracketed_host) ... ok
+test_dns_answer_pinned_and_all_returned_addresses_validated (test_local_server.LocalBoundaryTests.test_dns_answer_pinned_and_all_returned_addresses_validated) ... ok
+test_dns_deadline_is_bounded_and_does_not_start_transport (test_local_server.LocalBoundaryTests.test_dns_deadline_is_bounded_and_does_not_start_transport) ... ok
+test_dns_mixed_public_private_fails_before_transport (test_local_server.LocalBoundaryTests.test_dns_mixed_public_private_fails_before_transport) ... ok
+test_normalizes_domain_and_public_ipv4_ipv6 (test_local_server.LocalBoundaryTests.test_normalizes_domain_and_public_ipv4_ipv6) ... ok
+test_pinned_socket_keeps_host_and_tls_server_name (test_local_server.LocalBoundaryTests.test_pinned_socket_keeps_host_and_tls_server_name) ... ok
+test_redirect_is_recorded_without_following_or_reading_body (test_local_server.LocalBoundaryTests.test_redirect_is_recorded_without_following_or_reading_body) ... ok
+test_rejects_credentials_ports_queries_fragments_and_local_names (test_local_server.LocalBoundaryTests.test_rejects_credentials_ports_queries_fragments_and_local_names) ... ok
+test_rejects_private_reserved_and_embedded_addresses (test_local_server.LocalBoundaryTests.test_rejects_private_reserved_and_embedded_addresses) ... ok
+test_transport_errors_do_not_echo_private_exception_details (test_local_server.LocalBoundaryTests.test_transport_errors_do_not_echo_private_exception_details) ... ok
+test_untrusted_response_headers_are_reduced_to_enums (test_local_server.LocalBoundaryTests.test_untrusted_response_headers_are_reduced_to_enums) ... ok
+test_capabilities_are_explicit (test_local_server.LocalHTTPTests.test_capabilities_are_explicit) ... ok
+test_cross_origin_post_rejected (test_local_server.LocalHTTPTests.test_cross_origin_post_rejected) ... ok
+test_host_rebinding_header_rejected (test_local_server.LocalHTTPTests.test_host_rebinding_header_rejected) ... ok
+test_oversized_post_rejected_before_collection (test_local_server.LocalHTTPTests.test_oversized_post_rejected_before_collection) ... ok
+test_valid_post_returns_shared_event_contract (test_local_server.LocalHTTPTests.test_valid_post_returns_shared_event_contract) ... ok
+test_configured_relative_path_or_directory_is_rejected (test_sensor_log.SensorLogTests.test_configured_relative_path_or_directory_is_rejected) ... ok
+test_configured_symlink_is_rejected (test_sensor_log.SensorLogTests.test_configured_symlink_is_rejected) ... skipped 'Windows denied symlink creation (WinError 1314); metadata rejection is tested separately'
+test_disconnected_without_explicit_path (test_sensor_log.SensorLogTests.test_disconnected_without_explicit_path) ... ok
+test_file_limit_partial_lines_and_invalid_records_are_visible (test_sensor_log.SensorLogTests.test_file_limit_partial_lines_and_invalid_records_are_visible) ... ok
+test_sensor_metadata_whitelist_drops_arbitrary_fields (test_sensor_log.SensorLogTests.test_sensor_metadata_whitelist_drops_arbitrary_fields) ... ok
+test_symlink_metadata_is_rejected_before_open (test_sensor_log.SensorLogTests.test_symlink_metadata_is_rejected_before_open) ... ok
+test_tail_reloads_source_metadata_without_payload_or_notice_messages (test_sensor_log.SensorLogTests.test_tail_reloads_source_metadata_without_payload_or_notice_messages) ... ok
+
+----------------------------------------------------------------------
+Ran 30 tests in 1.379s
+
+OK (skipped=1)

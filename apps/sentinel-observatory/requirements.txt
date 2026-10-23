@@ -1,0 +1,4 @@
+# The live collector and web server otherwise use Python's standard library.
+numpy>=1.26,<3
+# Optional local interpreter: install llama-cpp-python separately, then set
+# OBSERVATORY_MODEL_PATH to an existing GGUF. No paid API or automatic download.

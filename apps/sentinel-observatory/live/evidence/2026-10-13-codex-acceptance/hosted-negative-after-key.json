@@ -1,0 +1,54 @@
+{
+  "started_at_utc": "2026-10-14T00:22:08.101Z",
+  "evidence_level": "actual_hosted_rejection_with_real_key_configured",
+  "checks": [
+    {
+      "name": "unknown_id",
+      "status": 404,
+      "expected_status": 404,
+      "passed": true,
+      "body": {
+        "error": {
+          "code": "evidence_not_retained",
+          "message": "The requested authoritative evidence is unavailable or outside retention. No model call was made."
+        }
+      }
+    },
+    {
+      "name": "imported_id",
+      "status": 400,
+      "expected_status": 400,
+      "passed": true,
+      "body": {
+        "error": {
+          "code": "invalid_request",
+          "message": "Supply one retained native edge or collector evidence ID; client observations and prompts are not accepted."
+        }
+      }
+    },
+    {
+      "name": "client_supplied_observation",
+      "status": 400,
+      "expected_status": 400,
+      "passed": true,
+      "body": {
+        "error": {
+          "code": "invalid_request",
+          "message": "Supply one retained native edge or collector evidence ID; client observations and prompts are not accepted."
+        }
+      }
+    },
+    {
+      "name": "cross_origin",
+      "status": 403,
+      "expected_status": 403,
+      "passed": true,
+      "body": {
+        "error": {
+          "code": "same_origin_required",
+          "message": "Interpretation requires the authorized Observatory origin."
+        }
+      }
+    }
+  ]
+}

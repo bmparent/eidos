@@ -1,0 +1,27 @@
+{
+  "run_id": "sentinel-observatory-sol-acceptance-20261013",
+  "task_date": "2026-10-13",
+  "task_timezone": "America/New_York",
+  "model": "gpt-6.1-sol",
+  "reasoning_effort": "low",
+  "strict_structured_output": true,
+  "manual_only": true,
+  "provider_store": false,
+  "limits": {
+    "daily_requests": 20,
+    "daily_reserved_usd": 0.5,
+    "reserved_usd_per_call": 0.05,
+    "cooldown_ms": 60000,
+    "max_output_tokens": 1024,
+    "max_request_bytes": 6000,
+    "provider_timeout_ms": 30000,
+    "receipt_retention_days": 8
+  },
+  "private_site_project_id": "appgprj_6ace6f7f4a5481918adb34a5cb366de3",
+  "secret_names_only": [
+    "OBSERVATORY_COLLECTOR_BYPASS_TOKEN",
+    "OBSERVATORY_COLLECTOR_SECRET",
+    "OBSERVATORY_COLLECTOR_URL",
+    "OPENAI_API_KEY"
+  ]
+}

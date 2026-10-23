@@ -1,0 +1,166 @@
+{
+  "fixture_only": false,
+  "actual_network": true,
+  "visual_verification": false,
+  "event": {
+    "id": "evt_d3bf638ec4b04d37a433a1995e82e91e",
+    "source_id": "target_9234f5f6f83adff9",
+    "target": "1.1.1.1",
+    "url": "https://1.1.1.1/",
+    "observed_at": "2026-10-13T20:12:51.739Z",
+    "method": "HEAD",
+    "kind": "measurement",
+    "status": null,
+    "error": {
+      "code": "transport_error",
+      "message": "The observer did not obtain a usable response; target availability is unknown.",
+      "scope": "observation_vantage"
+    },
+    "headers": {},
+    "security_headers": {
+      "hsts_present": null,
+      "csp_present": null,
+      "x_content_type_options": null,
+      "frame_options": null,
+      "referrer_policy": null,
+      "cache_private": null,
+      "cache_no_store": null
+    },
+    "redirect_count": 0,
+    "response_chain_complete": false,
+    "redirect": null,
+    "latency_ms": 5.085,
+    "completed_at": "2026-10-13T20:12:51.744Z",
+    "coverage": {
+      "vantage": "Local public-only pinned-address HTTP client",
+      "sampling": "One requested HEAD; no crawling or traffic capture",
+      "head_attempted": true,
+      "redirect_followed": false,
+      "body_collected": false,
+      "dns": {
+        "state": "literal_public_ip_pinned",
+        "address_pinned": true,
+        "resolver": "none: literal IP"
+      },
+      "missing": [
+        "Visitor traffic",
+        "Origin logs",
+        "Internal network",
+        "Packet capture",
+        "Certificate details",
+        "Authenticated application state"
+      ],
+      "dns_rebinding": "Every returned DNS address is checked; one validated numeric address is pinned for this connection.",
+      "protections": "Observational only; no network protections or defensive actions changed"
+    },
+    "elapsed_ms": 5.817,
+    "evidence_hash": "f1d418239e780a8f0143cdce23cba0d104de6f1f6f95ac0e9edb3c5c8fe79018"
+  },
+  "analysis": {
+    "summary": "This check did not record an HTTP status. The response chain was incomplete, so this is not a final-destination result.",
+    "facts": [
+      {
+        "text": "This check did not record an HTTP status. The response chain was incomplete, so this is not a final-destination result.",
+        "evidence_ids": [
+          "evt_d3bf638ec4b04d37a433a1995e82e91e"
+        ]
+      },
+      {
+        "text": "The observer measured 5.085 ms for this check.",
+        "evidence_ids": [
+          "evt_d3bf638ec4b04d37a433a1995e82e91e"
+        ]
+      },
+      {
+        "text": "The collector classified this observation as transport error.",
+        "evidence_ids": [
+          "evt_d3bf638ec4b04d37a433a1995e82e91e"
+        ]
+      }
+    ],
+    "hypotheses": [
+      {
+        "text": "Edge or origin response timing could contribute to this measurement.",
+        "support": [
+          "evt_d3bf638ec4b04d37a433a1995e82e91e"
+        ],
+        "against": [],
+        "next_observation": "Compare repeated checks with existing edge or origin timing records, if available."
+      },
+      {
+        "text": "The observer or its network path could contribute to this timing.",
+        "support": [
+          "evt_d3bf638ec4b04d37a433a1995e82e91e"
+        ],
+        "against": [],
+        "next_observation": "Compare the same read-only check from a second authorized observation point."
+      }
+    ],
+    "unknowns": [
+      "The model ranked predefined possibilities; neither their causes nor the usefulness of this ranking is established.",
+      "A single external check cannot establish a cause, visitor activity, or security incident.",
+      "Origin internals, private network traffic, and attacker intent are outside this observation."
+    ],
+    "kind": "model",
+    "provenance": {
+      "engine": "llama.cpp CPU",
+      "model": "Qwen/Qwen3-0.6B-GGUF Q8_0",
+      "model_ran": true,
+      "model_sha256": "9465e63a22add5354d9bb4b99e90117043c7124007664907259bd16d043bb031",
+      "adapter": "qwen3-chatml-nonthinking",
+      "output_accepted": true,
+      "prompt_version": "observatory-catalogue-ranking-v3",
+      "prompt_sha256": "0efe4a76ff75a3da96ac65821be1ee250734a11182de2190b71c39b2838ec596",
+      "input_evidence_ids": [
+        "evt_d3bf638ec4b04d37a433a1995e82e91e"
+      ],
+      "output_sha256": "16edbb0d8692cadf846958f9497d85867a304c0554f0aa29e0f932c2a054cb54",
+      "inference_ms": 5938.81,
+      "total_ms": 10622.31,
+      "usage": {
+        "prompt_tokens": 158,
+        "completion_tokens": 6,
+        "total_tokens": 164
+      },
+      "finish_reason": "stop",
+      "validation": "Two distinct eligible catalogue codes; references assigned by deterministic source rules",
+      "ranked_codes": [
+        "edge",
+        "path"
+      ],
+      "role": "ranked_catalogue_selection",
+      "semantic_verification": "Vetted conditional catalogue language; causal truth and ranking utility unverified",
+      "facts_policy": "Summary/facts/citations are deterministic measurements; hypothesis wording and next observations come from a vetted catalogue; model only ranks candidates",
+      "input_policy": "Bounded measurement scalars and enum headers; raw text, bodies, URLs and credentials excluded"
+    }
+  },
+  "passed": true,
+  "requests": [
+    {
+      "path": "/api/capabilities",
+      "status": 200,
+      "method": "GET"
+    },
+    {
+      "path": "/api/model/status",
+      "status": 200,
+      "method": "GET"
+    },
+    {
+      "path": "/api/observe",
+      "status": 200,
+      "method": "POST"
+    },
+    {
+      "path": "/api/analyze",
+      "status": 200,
+      "method": "POST"
+    }
+  ],
+  "dom_summary": {
+    "count": "1",
+    "model": "Model ready",
+    "session": "PAUSED · RECORDS RETAINED",
+    "interpretation": "Model-ranked possibilities · causes unverified1.1.1.1This check did not record an HTTP status. The response chain was incomplete, so this is not a final-destination result.Edge or origin response timing could contribute to this measurement.Next observation: Compare repeated checks with existing edge or origin timing records, if available.Supporting evidence · evt_d3bf638ec4b0…The observer or its network path could contribute to this timing.Next observation: Compare the same read-only check from a second authorized observation point.Supporting evidence · evt_d3bf638ec4b0…Still unknown: The model ranked predefined possibilities; neither their causes nor the usefulness of this ranking is established. · A single external check cannot establish a cause, visitor activity, or security incident. · Origin internals, private network traffic, and attacker intent are outside this observation.Interpretation evidence · evt_d3bf638ec4b0…Qwen/Qwen3-0.6B-GGUF Q8_0 · ranked_catalogue_selectionInterpreted Oct 14, 04:13:02 · 5,939 ms inference"
+  }
+}

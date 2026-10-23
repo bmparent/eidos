@@ -1,0 +1,92 @@
+{
+  "version": "sentinel-live-v5-sol",
+  "mode": "hosted",
+  "direct_ip": true,
+  "ip_transport": "Authenticated Node collector; validated literal public address pinned, TLS verified",
+  "interval_ms": 15000,
+  "max_targets": 4,
+  "model": {
+    "connected": true,
+    "configured": true,
+    "storage_attached": true,
+    "state": "available",
+    "mode": "hosted_gpt_sol",
+    "model_id": "gpt-6.1-sol",
+    "manual_only": true,
+    "auto": false,
+    "limits": {
+      "daily_requests": 20,
+      "daily_reserved_usd": 0.5,
+      "reserved_usd_per_call": 0.05,
+      "cooldown_ms": 60000,
+      "max_output_tokens": 1024,
+      "max_request_bytes": 6000,
+      "provider_timeout_ms": 30000,
+      "receipt_retention_days": 8
+    },
+    "reason": "Ready for a manual interpretation of retained server evidence; no model call has been proved by this capability check.",
+    "privacy": "Only bounded numeric and enum metadata from retained Observatory records is sent to OpenAI. No endpoints, IP addresses, URLs, bodies, headers, raw log text or API keys are sent in the model context. Inference is hosted, not on this device. Interpretation receipts and conservative reservations are retained for eight days and purged on the next valid retained-evidence interpretation request; no unattended cleanup is claimed.",
+    "model_execution_verified": false,
+    "evidence_scope": "Retained native Observatory source records only; browser imports cannot trigger paid inference",
+    "eido_status": "evaluation_candidate"
+  },
+  "hosted_interpretation": {
+    "connected": true,
+    "configured": true,
+    "storage_attached": true,
+    "state": "available",
+    "mode": "hosted_gpt_sol",
+    "model_id": "gpt-6.1-sol",
+    "manual_only": true,
+    "auto": false,
+    "limits": {
+      "daily_requests": 20,
+      "daily_reserved_usd": 0.5,
+      "reserved_usd_per_call": 0.05,
+      "cooldown_ms": 60000,
+      "max_output_tokens": 1024,
+      "max_request_bytes": 6000,
+      "provider_timeout_ms": 30000,
+      "receipt_retention_days": 8
+    },
+    "reason": "Ready for a manual interpretation of retained server evidence; no model call has been proved by this capability check.",
+    "privacy": "Only bounded numeric and enum metadata from retained Observatory records is sent to OpenAI. No endpoints, IP addresses, URLs, bodies, headers, raw log text or API keys are sent in the model context. Inference is hosted, not on this device. Interpretation receipts and conservative reservations are retained for eight days and purged on the next valid retained-evidence interpretation request; no unattended cleanup is claimed.",
+    "model_execution_verified": false,
+    "evidence_scope": "Retained native Observatory source records only; browser imports cannot trigger paid inference"
+  },
+  "security_sensor": {
+    "connected": true,
+    "mode": "observatory_edge",
+    "auto_start": true,
+    "source_id": "observatory-edge",
+    "source_name": "Observatory application-edge sensor",
+    "format": "auto",
+    "interval_ms": 5000,
+    "max_records": 1000,
+    "retention_days": 7,
+    "starts_capture": false,
+    "privacy": "Shows a seven-day window of this Observatory API request outcomes and requested public HEAD metadata, capped at 1000 records. Older rows are purged on the next sensor read or write; no unattended cleanup is claimed. No client IP, cookies, auth headers, user agent, query strings, request bodies, target paths or payloads are collected.",
+    "reason": "Attached to actual Observatory API traffic and requested outbound HEAD checks",
+    "coverage": {
+      "scope": "This protected Observatory service only",
+      "missing": [
+        "LAN and internal-network traffic",
+        "Packet capture",
+        "Other sites and remote target visitor traffic",
+        "Provider firewall or IDS events",
+        "Authentication denials before protected Sites dispatch"
+      ]
+    }
+  },
+  "recorded_url": "/recorded",
+  "transport": "Cloudflare Worker public HTTP HEAD",
+  "sampling": "While connected and visible in your browser; no unattended background monitor",
+  "history": "Browser-local retained records; export JSON for a portable copy",
+  "missing_coverage": [
+    "Visitor traffic",
+    "Packet capture",
+    "Internal services",
+    "Origin processing time",
+    "TLS certificate inspection"
+  ]
+}

@@ -1,0 +1,142 @@
+{
+  "scope": "Finite Sentinel Observatory private-app acceptance",
+  "status": "passed",
+  "acceptance_gates": [
+    {
+      "name": "Secure dedicated credential and private deployment",
+      "weight": 15,
+      "status": "passed",
+      "evidence": "secret-binding.json"
+    },
+    {
+      "name": "Actual accepted exact-model provider response",
+      "weight": 25,
+      "status": "passed",
+      "evidence": "actual-sol-provider-receipt.json"
+    },
+    {
+      "name": "Authoritative citations and durable cache",
+      "weight": 15,
+      "status": "passed",
+      "evidence": "authoritative-input-comparison.json"
+    },
+    {
+      "name": "Safe controls and provider-failure regressions",
+      "weight": 15,
+      "status": "passed",
+      "evidence": "hosted-concurrency-cooldown.json"
+    },
+    {
+      "name": "Authenticated desktop/mobile rendered acceptance",
+      "weight": 20,
+      "status": "passed",
+      "evidence": "browser-checks.json"
+    },
+    {
+      "name": "Reproducible proof package and journal",
+      "weight": 10,
+      "status": "passed",
+      "evidence": "run_manifest.json"
+    }
+  ],
+  "scoped_acceptance_score": 100,
+  "scoped_maximum": 100,
+  "overall_brain_proof_readiness_score": null,
+  "overall_reason": "No project-wide weighted proof-gate audit was performed; application acceptance does not accept global research gates.",
+  "north_star": "Eidos Brain is a self-monitoring streaming intelligence codec.",
+  "metrics": {
+    "provider_attempts": 2,
+    "reserved_usd": 0.1,
+    "actual_billed_usd": null,
+    "billing_note": "Reservations and code estimates are not a provider invoice.",
+    "first_usage": {
+      "input_tokens": 390,
+      "output_tokens": 54,
+      "total_tokens": 444
+    },
+    "second_usage": {
+      "input_tokens": 390,
+      "output_tokens": 70,
+      "total_tokens": 460
+    },
+    "native_normalized_records": 110,
+    "native_record_kinds": {
+      "request": 58,
+      "collector": 30,
+      "policy_event": 22
+    },
+    "raw_control_enforcement_records": 22,
+    "merged_incident_count": null,
+    "calibrated_precision": null,
+    "raw_precision": null,
+    "recall": null,
+    "false_positive_events": null,
+    "false_positives_per_10k": null,
+    "unknown_reason": "This finite app acceptance has no labeled attack/benign truth set or accepted incident ledger. Control records and experimental changes are not attack labels."
+  },
+  "unproven": [
+    "Ranking usefulness",
+    "Labeled detection quality and false-positive rates",
+    "Compression/anomaly preservation",
+    "Physical-phone and alternate-browser behavior",
+    "Remote Drive synchronization"
+  ],
+  "broader_gates": [
+    {
+      "name": "reproducible baseline",
+      "weight": 15,
+      "status": "unknown",
+      "gate_pass": null,
+      "reason": "Outside this finite app acceptance; existing global proof evidence was not audited."
+    },
+    {
+      "name": "labeled-domain proof",
+      "weight": 15,
+      "status": "unknown",
+      "gate_pass": null,
+      "reason": "Outside this finite app acceptance; existing global proof evidence was not audited."
+    },
+    {
+      "name": "precision/false-positive discipline",
+      "weight": 15,
+      "status": "unknown",
+      "gate_pass": null,
+      "reason": "Outside this finite app acceptance; existing global proof evidence was not audited."
+    },
+    {
+      "name": "Sentinel calibration/generalization",
+      "weight": 15,
+      "status": "unknown",
+      "gate_pass": null,
+      "reason": "Outside this finite app acceptance; existing global proof evidence was not audited."
+    },
+    {
+      "name": "compression/anomaly preservation",
+      "weight": 10,
+      "status": "unknown",
+      "gate_pass": null,
+      "reason": "Outside this finite app acceptance; existing global proof evidence was not audited."
+    },
+    {
+      "name": "incident cards/explanation",
+      "weight": 10,
+      "status": "unknown",
+      "gate_pass": null,
+      "reason": "Outside this finite app acceptance; existing global proof evidence was not audited."
+    },
+    {
+      "name": "domain demos",
+      "weight": 10,
+      "status": "unknown",
+      "gate_pass": null,
+      "reason": "Outside this finite app acceptance; existing global proof evidence was not audited."
+    },
+    {
+      "name": "one-command reproducibility/final report",
+      "weight": 10,
+      "status": "unknown",
+      "gate_pass": null,
+      "reason": "Outside this finite app acceptance; existing global proof evidence was not audited."
+    }
+  ]
+}

@@ -1,0 +1,32 @@
+{
+  "sites_source_sha": "d0b06304055fef1cccf3ace36b3b6d9acde2054f",
+  "deployment_id": "appgdep_6aced528a8808191b054fcb487216dbf",
+  "environment_revision": 5,
+  "verified_at_utc": "2026-10-14T01:09:53.990Z",
+  "checks": [
+    {
+      "route": "/network-panel.mjs",
+      "status": 200,
+      "source_path": "apps/sentinel-observatory/live/web/network-panel.mjs",
+      "normalized_source_matches": true,
+      "served_sha256": "562679f8b0b10667b245a564858a64824bfa190b6b79f98b1c114b65175cecd2"
+    },
+    {
+      "route": "/brain.mjs",
+      "status": 200,
+      "source_path": "apps/sentinel-observatory/live/brain.mjs",
+      "normalized_source_matches": true,
+      "served_sha256": "dbd0654feb62cb13af44382a9c2e6c21785cd761028bd61366b89fde51ca3d3e"
+    },
+    {
+      "route": "/recorded",
+      "status": 200,
+      "original_content_prefix_and_closing_match": true,
+      "provider_added_cloudflare_challenge_script": true,
+      "provider_injection_bytes": 938,
+      "served_sha256": "6f042a1fcea0afb1ffc47b7b0b548184525f22034b2bdc9d4e302bb0e5fdb191",
+      "note": "The original recorded HTML is preserved; Cloudflare appends its challenge-platform script before the closing body. No security protection was disabled.",
+      "normalized_source_recorded_sha256": "a96bada34c90cc6a13cf93682f1b99be030470020407a63367794016b364bb8f"
+    }
+  ]
+}

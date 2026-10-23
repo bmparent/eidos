@@ -1,0 +1,61 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="theme-color" content="#080f19">
+  <title>Sentinel — Eidos Observatory</title>
+  <link rel="stylesheet" href="/styles.css">
+</head>
+<body>
+  <a class="skip-link" href="#main">Skip to observations</a>
+  <header class="masthead">
+    <a class="brand" href="#main" aria-label="Sentinel, by Eidos">
+      <svg class="brand-mark" viewBox="0 0 38 38" aria-hidden="true"><path d="M30 11a14 14 0 1 0 0 16M24 13a8 8 0 1 0 0 12"/><circle cx="20" cy="19" r="2"/></svg>
+      <span>sentinel<small>by eidos</small></span>
+    </a>
+    <nav aria-label="Primary"><a class="nav-current" href="#main">Observatory</a><button type="button" id="coverage-open">Method & coverage</button></nav>
+    <div class="masthead-end"><span class="observational">Observation only</span><button class="button button-primary" id="probe-button"><svg viewBox="0 0 20 20" aria-hidden="true"><path d="M10 3v14M3 10h14"/></svg>Run diagnostic probe</button></div>
+  </header>
+  <main id="main">
+    <section class="intro" aria-labelledby="page-title">
+      <div><h1 id="page-title">A field of evidence.</h1><p id="boundary-summary">Waiting for the first measurement of our public routes.</p></div>
+      <div class="connection"><span class="mode-badge" id="mode-badge">CONNECTING</span><span id="freshness">No telemetry received</span><span class="mono" id="capture-time">Collector time · —</span></div>
+    </section>
+    <div id="connection-note" class="connection-note" role="status" hidden></div>
+    <section class="metrics" aria-label="Measured summary">
+      <div class="metric"><span class="metric-label">Observations</span><strong id="metric-count">—</strong><span class="metric-foot" id="metric-period">Awaiting first collection</span></div>
+      <div class="metric"><span class="metric-label">Latest observation</span><strong id="metric-latency">—<small>ms</small></strong><span class="metric-foot" id="metric-latency-source">No response yet</span></div>
+      <div class="metric"><span class="metric-label">Routes measured</span><strong id="metric-routes">—<small>/ 4</small></strong><span class="metric-foot">Public HTTP boundary</span></div>
+      <div class="metric"><span class="metric-label">Response changes</span><strong id="metric-changes">—</strong><span class="metric-foot">Status transitions, not threats</span></div>
+    </section>
+    <div class="observatory-layout">
+      <section class="field-section" aria-labelledby="field-title">
+        <div class="section-heading"><div><h2 id="field-title">The evidence field</h2><p>One observer. Four public routes. Nothing invented.</p></div><button class="text-button" id="reset-source" hidden>Show all routes <span aria-hidden="true">↗</span></button></div>
+        <div class="field-wrap"><svg id="evidence-field" viewBox="0 0 1000 600" role="group" aria-labelledby="field-title field-desc"><desc id="field-desc">Measured connections from one external observer to the monitored public routes. Each small dot represents one recorded observation. Select a route or a dot to inspect it.</desc></svg><div id="field-empty" class="field-empty"><span class="empty-orbit"></span><h3>Listening for evidence</h3><p>The field will appear when a real measurement arrives.</p></div></div>
+        <div class="field-legend"><span><i class="legend-dot mint"></i>Measured response</span><span><i class="legend-dot amber"></i>Change / unsuccessful response</span><span><i class="legend-dot muted"></i>Missing or waiting</span><span class="legend-explainer">A dot is an observation. Arcs connect measured routes.</span></div>
+        <div class="scope-strip"><span class="scope-symbol" aria-hidden="true">◌</span><p id="scope-note">Public HTTP measurements only. No visibility into visitor traffic, internal hosts, or security events.</p><button class="text-button" id="coverage-inline">View coverage <span aria-hidden="true">↗</span></button></div>
+      </section>
+      <aside class="inspector" aria-labelledby="inspector-title">
+        <div class="inspector-header"><span class="section-label">Evidence inspector</span><span class="inspector-live" id="inspector-kind">Observed fact</span></div>
+        <div id="inspector-content"><div class="inspector-empty"><h2 id="inspector-title">A clear line from signal to source.</h2><p>Select a route or an observation to see its original measurement, interpretation, and what remains unknown.</p></div></div>
+      </aside>
+    </div>
+    <section class="replay-bar" id="replay-bar" aria-labelledby="replay-title" hidden><div><strong id="replay-title">Recorded real-data replay</strong><span>Captured evidence · no live connection</span></div><button class="button" id="replay-play" aria-label="Play recorded observations">Play</button><input id="replay-scrub" aria-label="Replay observation" type="range" min="1" max="1" value="1"><output id="replay-position">—</output></section>
+    <section class="chronicle" aria-labelledby="chronicle-title">
+      <div class="section-heading"><div><h2 id="chronicle-title">The observation record</h2><p>Trace the sequence. Inspect the evidence.</p></div><div class="filter-group" role="group" aria-label="Filter observations"><button class="active" data-filter="all" aria-pressed="true">All</button><button data-filter="changes" aria-pressed="false">Changes</button><button data-filter="probes" aria-pressed="false">Probes</button></div></div>
+      <div class="timeline-wrap"><div class="timeline-label"><span>Observer elapsed time</span><span id="timeline-period">Collector timestamps</span></div><svg id="timeline" viewBox="0 0 1200 120" role="img" aria-label="Response latency over the measured period"></svg></div>
+      <div class="record-table"><div class="record-head"><span>Observation</span><span>Response</span><span>Latency</span><span>Collector time</span><span></span></div><div id="event-list"><p class="empty-state">No measurements received. A quiet field is an honest field.</p></div></div>
+      <button class="text-button more-button" id="show-more" hidden>Show more observations</button>
+    </section>
+    <section class="understanding" aria-labelledby="understanding-title">
+      <div class="understanding-heading"><h2 id="understanding-title">Understanding takes evidence.</h2><p>Brain / Sentinel detects changes. The interpreter explains them.<br>Neither is a verdict.</p></div>
+      <div class="understanding-body"><div class="model-status"><span class="section-label">Evidence interpreter</span><span id="model-state" class="small-state">Waiting</span></div><h3 id="model-name">Replaceable by design.</h3><p id="model-reason">Interpretation is separate from collection. The field keeps moving at the pace of measured evidence.</p><div class="forecast-row"><div><span class="section-label">What might happen next</span><h3 id="forecast-title">Forecast withheld</h3><p id="forecast-reason">Too little verified evidence to claim predictive value.</p></div><span id="forecast-metric">—</span></div><div id="forecast-comparison" class="forecast-comparison" hidden></div><details class="method-details"><summary>How to read Brain / Sentinel signals</summary><div id="brain-method">Experimental change signals describe this measurement stream. They do not establish attacks, compromise, or protection.</div></details></div>
+    </section>
+  </main>
+  <footer><span class="footer-brand">eidos <span>works</span></span><p>Evidence first. Interpretation second.</p><span>Experimental observatory · no defensive actions</span></footer>
+  <dialog id="coverage-dialog" aria-labelledby="coverage-title"><div class="dialog-head"><span class="section-label">A deliberately visible boundary</span><button class="icon-button" id="coverage-close" aria-label="Close coverage details">×</button></div><h2 id="coverage-title">Know what you can see.</h2><div id="coverage-content"></div><p class="dialog-footer">Observational only. No scanning, traffic blocking, or security rule changes.</p></dialog>
+  <div class="toast" id="toast" role="status" hidden></div>
+  <script src="/app.js"></script>
+</body>
+</html>

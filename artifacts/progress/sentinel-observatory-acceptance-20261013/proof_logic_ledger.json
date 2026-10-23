@@ -1,0 +1,29 @@
+{
+  "run_id": "sentinel-observatory-sol-acceptance-20261013",
+  "status": "passed",
+  "scope": "Finite Sentinel Observatory private-app acceptance",
+  "equations": [
+    "accepted = completed AND exact_model AND valid_usage AND eligible_ranking AND authoritative_ids",
+    "maximum_new_attempts = min(20, floor(0.50 / 0.05)) = 10",
+    "observed_reservations = 2 * 0.05 = 0.10",
+    "parity_tolerance = 1e-7 + 1e-8 * abs(reference)"
+  ],
+  "evidence": [
+    "secret-binding.json",
+    "actual-sol-provider-receipt.json",
+    "authoritative-input-comparison.json",
+    "hosted-concurrency-cooldown.json",
+    "browser-checks.json",
+    "run_manifest.json"
+  ],
+  "unknown_metrics": [
+    "actual_billed_usd",
+    "merged_incident_count",
+    "calibrated_precision",
+    "raw_precision",
+    "recall",
+    "false_positive_events",
+    "false_positives_per_10k"
+  ],
+  "philosophical_meaning": "Explanation before automation; restraint before alarm; revisitable truth."
+}

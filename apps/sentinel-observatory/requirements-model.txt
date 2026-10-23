@@ -1,0 +1,4 @@
+# Optional local CPU model; no credentials or hosted inference required.
+# Tested wheel: Python 3.12 x86_64. Install separately from the observer.
+--extra-index-url https://abetlen.github.io/llama-cpp-python/whl/cpu
+llama-cpp-python==0.3.36
