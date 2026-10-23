@@ -8,6 +8,13 @@ starting revisions are site `28e954a5a2d5924dc17d65d85fc1d10c44cd3ece` and backe
 the held Playground #139/#90 pair, production data and provider settings remain
 outside this change.
 
+The frontend additionally preserves discovery follow-up `ce2c95c`, which keeps
+closed registration available when its inherited preview backend is stale.
+Both host and registration require their separate site-level and backend-level
+opt-ins. Host enrollment cannot bypass a closed site registration switch. A
+closed anonymous host descriptor is answered locally; private progress continues
+to its authenticated backend and honestly reports backend failures.
+
 ## Working slice
 
 The resident host responds only to incoming requests. A website panel and the
@@ -78,7 +85,7 @@ existing Exchange identity revocation action from the same panel.
 ## Verification
 
 Local meaningful checks: nine resident-host security cases; eight existing
-self-registration cases; all 35 platform cases; actual authenticated relay and
+self-registration cases; all 37 platform cases including both site-level gates; actual authenticated relay and
 libSQL host enrollment/progress/review/revocation tests; backend full suites;
 frontend/backend typechecks and production builds; lint (only the pre-existing
 Wellway warning); Pages Functions compilation; prerender/editorial/URLs/Insights.
@@ -92,6 +99,15 @@ closure, credential clearing and 1440/390/320 layouts. It saves receipts and
 screenshots, never fixture credentials. The connected browser cannot reach this
 execution host's loopback; isolated CI supplies rendered acceptance. Record CI
 results separately; do not infer passes from the script's presence.
+
+The initial exact-source run `39876028069` passes every local and actual Chromium
+host assertion, including all three widths. It uploads six evidence files as
+artifact `12469005274` and verifies reading deployment
+`https://f8f7407f.eidosworks.pages.dev`. The final extra contract check fails
+because `GITHUB_ENV` is available to the next step rather than to the current
+step. That original failure is retained. The follow-up reads the existing exact
+preview receipt inside the same step and additionally checks honest site-level
+disabled availability and denial. No browser assertion was removed.
 
 ## Release and rollback
 
