@@ -28,7 +28,12 @@ export function authoringRuntime(initial: {
         document.head.append(style);
         style.textContent += '.pg-node-hover:not(.pg-node-selected){outline:1px dashed #719b58;outline-offset:3px}.pg-node-drop-container{outline:2px dashed #bce886;outline-offset:5px}.pg-node-label{align-self:center;padding:0 8px;font:600 12px Arial;max-width:150px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}';
         style.textContent += '.pg-layout-guides{position:fixed;inset:0;width:100%;height:100%;z-index:10997;overflow:hidden;pointer-events:none}.pg-layout-guides text{font:600 calc(12 * var(--pg-chrome-unit,1px)) Arial,sans-serif;fill:#fff;stroke:#15242c;stroke-width:4px;paint-order:stroke}.pg-node-toolbar [aria-pressed="true"]{background:#bce886;color:#15242c}';
+        // Give editor controls their own row. Floating above/below a block can
+        // cover its neighbour (including Duplicate/Remove over another text).
+        // Only the editing document reserves this space; exported pages do not.
+        style.textContent += 'body[data-editing="true"]{padding-top:var(--pg-toolbar-space,0px)}body[data-editing="true"] .pg-header{top:var(--pg-toolbar-space,0px)}.pg-node-toolbar-dock{position:fixed;inset:0 0 auto;height:var(--pg-toolbar-space,0px);z-index:11000;background:var(--bg,#f5f5ed);border-bottom:1px solid #15242c33}';
         let toolbar: HTMLElement | null = null, resize: HTMLButtonElement | null = null, split: HTMLButtonElement | null = null, marker: HTMLElement | null = null, frame = 0, mode: 'move' | 'crop' = 'move';
+        let dock: HTMLElement | null = null, toolbarObserver: ResizeObserver | null = null;
         let guides: SVGSVGElement | null = null, guideSignature = '';
         type Target = {
             parent: HTMLElement;
@@ -71,7 +76,12 @@ export function authoringRuntime(initial: {
         } | null = null;
         function send(action: Record<string, unknown>, stamp = config.compositionStamp) { parent.postMessage({ type: 'playground-block', channel: config.channel, stamp, ...action }, '*'); }
         function clearGuides() { guides?.remove(); guides = null; guideSignature = ''; }
-        function clearChrome() { clearGuides(); toolbar?.remove(); resize?.remove(); split?.remove(); toolbar = null; resize = null; split = null; }
+        function clearChrome() { clearGuides(); toolbarObserver?.disconnect(); toolbarObserver = null; dock?.remove(); dock = null; toolbar?.remove(); resize?.remove(); split?.remove(); toolbar = null; resize = null; split = null; document.documentElement.style.removeProperty('--pg-toolbar-space'); }
+        function attachToolbar() {
+            dock = document.createElement('div'); dock.className = 'pg-node-toolbar-dock';
+            document.body.append(dock); dock.append(toolbar!);
+            if (typeof ResizeObserver !== 'undefined') { toolbarObserver = new ResizeObserver(position); toolbarObserver.observe(toolbar!); }
+        }
         function cancel() { clearGuides(); const old = gesture; gesture = null; cancelAnimationFrame(frame); frame = 0; marker?.remove(); marker = null; all.forEach(n=>n.classList.remove('pg-node-drop-container')); delete document.body.dataset.gesture; if (old) {
             old.ghost?.remove();
             old.node.classList.remove('pg-node-placeholder');
@@ -94,15 +104,9 @@ export function authoringRuntime(initial: {
         function position() {
             const el = document.getElementById(selected);
             if (!el || !toolbar) return;
-            const r = el.getBoundingClientRect(), height = toolbar.offsetHeight;
-            const above = r.top - height - 5, below = r.bottom + 5;
-            const headerBottom = document.querySelector('.pg-header')?.getBoundingClientRect().bottom || 0;
-            // Never clamp an above-block toolbar onto the block's first line.
-            // Keep the sticky page header and its mobile menu usable as well.
-            // Large containers get a bottom dock, leaving their top content usable.
-            const top = above >= Math.max(6, headerBottom + 5) ? above : below + height <= innerHeight - 6 ? below : innerHeight - height - 6;
-            toolbar.style.left = Math.max(6, Math.min(innerWidth - toolbar.offsetWidth - 6, r.left)) + 'px';
-            toolbar.style.top = Math.max(6, Math.min(innerHeight - height - 6, top)) + 'px';
+            document.documentElement.style.setProperty('--pg-toolbar-space', (toolbar.offsetHeight + 12) + 'px');
+            toolbar.style.left = '6px';
+            toolbar.style.top = '6px';
             drawGuides(el);
         }
         function drawGuides(selectedNode: HTMLElement) {
@@ -155,7 +159,7 @@ export function authoringRuntime(initial: {
         }
         function selectStructure(node: HTMLElement) {
             cancel();finishText(true);clearChrome();all.forEach(n=>n.classList.remove('pg-node-selected'));
-            selected=node.id;toolbar=document.createElement('div');toolbar.className='pg-node-toolbar';toolbar.setAttribute('role','toolbar');toolbar.setAttribute('aria-label','Structure actions');document.body.append(toolbar);
+            selected=node.id;toolbar=document.createElement('div');toolbar.className='pg-node-toolbar';toolbar.setAttribute('role','toolbar');toolbar.setAttribute('aria-label','Structure actions');attachToolbar();
             structureButtons(node);position();
         }
         function select(node: HTMLElement, notify = true) {
@@ -171,7 +175,7 @@ export function authoringRuntime(initial: {
             toolbar.className = 'pg-node-toolbar';
             toolbar.setAttribute('role', 'toolbar');
             toolbar.setAttribute('aria-label', node.dataset.nodeName || 'Selected block');
-            document.body.append(toolbar);
+            attachToolbar();
             const label=document.createElement('span');label.className='pg-node-label';label.textContent=node.dataset.nodeName || 'Selected element';toolbar.append(label);
             const parent = node.parentElement?.closest<HTMLElement>('[data-node-container]');
             if(!parent)structureButtons(node);
