@@ -16,7 +16,7 @@ export const templateProducts: TemplateProduct[] = templateFamilies.flatMap(slug
   return {
     id: `${slug}-${editionId}-v1`, productId: `${slug}-${editionId}-v1`, editionId,
     name: `${slug[0].toUpperCase()}${slug.slice(1)} — ${editionId === 'wordpress' ? 'WordPress block theme' : 'developer source'}`,
-    version, priceCents: editionId === 'developer' ? 9900 : 12900,
+    version, priceCents: editionId === 'developer' ? (slug === 'switchboard' ? 2500 : 9900) : 12900,
     archiveKey: `templates/${slug}/${version}/${editionId}.zip`,
     downloadName: `eidos-${slug}-${editionId}-${version}.zip`,
     guidePath: `/templates/guides/${slug}/${editionId}/`,

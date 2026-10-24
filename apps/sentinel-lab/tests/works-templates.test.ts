@@ -381,7 +381,7 @@ test('checkout attempt retry preserves one ledger order and same server-owned TE
     f.setFailCheckout(false);
     const row=await f.begin(receipt); await f.begin(receipt);
     assert.equal(f.sessions.length,1);
-    assert.equal(f.sessions[0].get('line_items[0][price_data][unit_amount]'),'9900');
+    assert.equal(f.sessions[0].get('line_items[0][price_data][unit_amount]'),'2500');
     assert.equal((await f.database.prepare('SELECT COUNT(*) n FROM eidos_orders').first<{n:number}>())?.n,1);
     assert.equal(row.version,'1.0.3');
     assert.equal((await f.call(download,'/api/shop/download',{receipt})).status,403);
@@ -391,7 +391,7 @@ test('checkout attempt retry preserves one ledger order and same server-owned TE
   } finally {f.close();}
 });
 
-test('pending original retry after catalog change retains its version, price, signed payment and historical archive', async () => {
+test('pending $99 original retry under the $25 pilot retains version, signed payment and historical archive', async () => {
   const f = await fixture(), receipt = 'd'.repeat(64);
   try {
     const payload = { productId: 'switchboard-developer-v1', editionId: 'developer', acceptTerms: true, attempt: receipt };
@@ -400,16 +400,16 @@ test('pending original retry after catalog change retains its version, price, si
     // Model an immutable pending snapshot made under the previous server catalog.
     const originalBytes = new Uint8Array([80, 75, 3, 4, 6, 5, 4, 3]), originalHash = createHash('sha256').update(originalBytes).digest('hex');
     const originalKey = 'templates/switchboard/1.0.2/developer.zip', originalName = 'eidos-switchboard-developer-1.0.2.zip';
-    await f.database.prepare('UPDATE eidos_template_orders SET version=?,price_cents=?,archive_key=?,archive_sha256=?,download_name=? WHERE order_id=?').bind('1.0.2', 8900, originalKey, originalHash, originalName, pending.id).run();
+    await f.database.prepare('UPDATE eidos_template_orders SET version=?,price_cents=?,archive_key=?,archive_sha256=?,download_name=? WHERE order_id=?').bind('1.0.2', 9900, originalKey, originalHash, originalName, pending.id).run();
     // Retrying this original needs its historical archive, not availability of
     // the latest package currently advertised by the catalog.
     f.env.EIDOS_TEMPLATE_ARCHIVES = { async get(key) { return key === originalKey ? { bytes: originalBytes, sha256: originalHash } : null; } };
     f.setFailCheckout(false); const order = await f.begin(receipt); await f.begin(receipt);
     assert.equal(f.sessions.length, 1); const sent = f.sessions[0];
-    assert.equal(sent.get('metadata[eidos_version]'), '1.0.2'); assert.equal(sent.get('line_items[0][price_data][unit_amount]'), '8900');
+    assert.equal(sent.get('metadata[eidos_version]'), '1.0.2'); assert.equal(sent.get('line_items[0][price_data][unit_amount]'), '9900');
     assert.match(sent.get('line_items[0][price_data][product_data][description]')!, /^Version 1\.0\.2\./);
     assert.equal(templateProducts.find(product => product.id === payload.productId)!.version, '1.0.3');
-    assert.equal(templateProducts.find(product => product.id === payload.productId)!.priceCents, 9900);
+    assert.equal(templateProducts.find(product => product.id === payload.productId)!.priceCents, 2500);
     const metadata = Object.fromEntries([...sent.entries()].filter(([key]) => key.startsWith('metadata[')).map(([key, value]) => [key.slice(9, -1), value]));
     assert.equal((await f.event(order, 'evt_pending_original_retry', { metadata })).status, 200);
     assert.equal((await f.event(order, 'evt_pending_original_retry', { metadata })).status, 200);
